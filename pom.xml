@@ -1,41 +1,326 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <modules>
-    </modules>
 
     <parent>
         <artifactId>parent</artifactId>
         <groupId>ch.dvbern.maven</groupId>
-        <version>5.1.1</version>
+        <version>6.0.0-rc3</version>
     </parent>
 
-    <groupId>ch.dvbern.kita-scheduler</groupId>
-    <artifactId>kita-scheduler</artifactId>
-    <version>0.23.0-SNAPSHOT</version>
+    <groupId>ch.dvbern.ebegu</groupId>
+    <artifactId>ebegu</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
-        <ear.name>kita-scheduler</ear.name>
+        <!--<ear.name>kita-scheduler</ear.name>-->
 
         <!-- Wird ggf. im Profil "development-mode' ueberschrieben -->
         <skip-code-validation>false</skip-code-validation>
 
         <!-- local database properties -->
         <database.jdbc.driver>org.postgresql.Driver</database.jdbc.driver>
-        <database.jdbc.url>jdbc:postgresql:kita-scheduler</database.jdbc.url>
-        <database.jdbc.usr>kita</database.jdbc.usr>
-        <database.jdbc.pwd>kita</database.jdbc.pwd>
+        <database.jdbc.url>jdbc:postgresql:ebegu</database.jdbc.url>
+        <database.jdbc.usr>ebegu</database.jdbc.usr>
+        <database.jdbc.pwd>ebegu</database.jdbc.pwd>
 
-        <postgresql.version>9.4-1201-jdbc41</postgresql.version>
-        <hibernate.version>4.3.10.Final</hibernate.version>
-        <hibernate-search.version>5.2.0.Final</hibernate-search.version>
-        <infinispan.version>7.2.5.Final</infinispan.version>
-        <flyway.version>3.2.1</flyway.version>
-        <slf4j.version>1.7.10</slf4j.version>
+        <version.postgresql>9.4-1201-jdbc41</version.postgresql>
+        <version.hibernate>4.3.10.Final</version.hibernate>
+
+        <version.flyway>3.2.1</version.flyway>
+        <version.slf4j>1.7.10</version.slf4j>
     </properties>
 
-    <name>Kita-Scheduler - Multimodule Project</name>
+    <name>eBEGU - Multimodule Project</name>
+
+    <!--<build>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                         <!--<groupId>org.apache.maven.plugins</groupId>-->
+                         <!--<artifactId>maven-checkstyle-plugin</artifactId>-->
+                         <!--<executions>-->
+                             <!--<execution>-->
+                                 <!--<id>checkstyle-check</id>-->
+                                 <!--<phase>validate</phase>-->
+                                 <!--<configuration>-->
+                                     <!--<configLocation>rules/checkstyle/checkstyle-rules.xml</configLocation>-->
+                                     <!--<suppressionsLocation>rules/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>-->
+                                     <!--<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>-->
+                                     <!--<encoding>UTF-8</encoding>-->
+                                     <!--<consoleOutput>true</consoleOutput>-->
+                                     <!--<failsOnError>true</failsOnError>-->
+                                     <!--<failOnViolation>true</failOnViolation>-->
+                                     <!--<excludes>**/target/**/*</excludes>-->
+                                     <!--&lt;!&ndash;<linkXRef>false</linkXRef>&ndash;&gt;-->
+                                 <!--</configuration>-->
+                                 <!--<goals>-->
+                                     <!--<goal>check</goal>-->
+                                 <!--</goals>-->
+                             <!--</execution>-->
+                         <!--</executions>-->
+                         <!--<dependencies>-->
+                             <!--<dependency>-->
+                                 <!--<groupId>${project.groupId}</groupId>-->
+                                 <!--<artifactId>kita-scheduler-build-tools</artifactId>-->
+                                 <!--<version>${project.version}</version>-->
+                             <!--</dependency>-->
+                         <!--</dependencies>-->
+                     <!--</plugin>-->
+                     <!--<plugin>-->
+                         <!--<groupId>org.apache.maven.plugins</groupId>-->
+                         <!--<artifactId>maven-pmd-plugin</artifactId>-->
+                         <!--<configuration>-->
+                             <!--<failOnViolation>true</failOnViolation>-->
+                         <!--</configuration>-->
+                         <!--<executions>-->
+                             <!--<execution>-->
+                                 <!--<id>pmd</id>-->
+                                 <!--<phase>validate</phase>-->
+                                 <!--<goals>-->
+                                     <!--<goal>check</goal>-->
+                                 <!--</goals>-->
+                             <!--</execution>-->
+                         <!--</executions>-->
+                         <!--<dependencies>-->
+                             <!--<dependency>-->
+                                 <!--<groupId>${project.groupId}</groupId>-->
+                                 <!--<artifactId>kita-scheduler-build-tools</artifactId>-->
+                                 <!--<version>${project.version}</version>-->
+                             <!--</dependency>-->
+                         <!--</dependencies>-->
+                     <!--</plugin>-->
+                     <!--<plugin>-->
+                         <!--<groupId>org.codehaus.mojo</groupId>-->
+                         <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+                         <!--<configuration>-->
+                             <!--&lt;!&ndash;-->
+         						<!--Enables analysis which takes more memory but finds more bugs.-->
+         						<!--If you run out of memory, changes the value of the effort element-->
+         						<!--to 'Low'.-->
+         					<!--&ndash;&gt;-->
+                             <!--<effort>Max</effort>-->
+                             <!--&lt;!&ndash; Reports all bugs (other values are medium and max) &ndash;&gt;-->
+                             <!--<threshold>Low</threshold>-->
+                             <!--&lt;!&ndash; Produces XML report &ndash;&gt;-->
+                             <!--<xmlOutput>true</xmlOutput>-->
+                             <!--&lt;!&ndash; Configures the directory in which the XML report is created &ndash;&gt;-->
+                             <!--<findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>-->
+                             <!--<failOnError>true</failOnError>-->
+                             <!--<includeFilterFile>rules/findbugs/findbugs-includes.xml</includeFilterFile>-->
+                             <!--<excludeFilterFile>rules/findbugs/findbugs-excludes.xml</excludeFilterFile>-->
+                         <!--</configuration>-->
+                         <!--<executions>-->
+                             <!--<execution>-->
+                                 <!--<id>findbugs</id>-->
+                                 <!--<phase>compile</phase>-->
+                                 <!--<goals>-->
+                                     <!--<goal>check</goal>-->
+                                 <!--</goals>-->
+                             <!--</execution>-->
+                         <!--</executions>-->
+                         <!--<dependencies>-->
+                             <!--<dependency>-->
+                                 <!--<groupId>${project.groupId}</groupId>-->
+                                 <!--<artifactId>kita-scheduler-build-tools</artifactId>-->
+                                 <!--<version>${project.version}</version>-->
+                             <!--</dependency>-->
+                         <!--</dependencies>-->
+                     <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-7.0</artifactId>
+                <version>1.0.3.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0.20150826</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${version.hibernate}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>3.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>3.13</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>dom4j</artifactId>
+                        <groupId>dom4j</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!--&lt;!&ndash; Versionskonflikt &ndash;&gt;-->
+            <!--<groupId>org.hibernate.common</groupId>-->
+            <!--<artifactId>hibernate-commons-annotations</artifactId>-->
+            <!--<version>4.0.5.Final</version>-->
+            <!--</dependency>-->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${version.postgresql}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${version.flyway}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>commons-codec</groupId>-->
+            <!--<artifactId>commons-codec</artifactId>-->
+            <!--<version>1.9</version>-->
+            <!--</dependency>-->
+            <dependency>
+                <!-- Versionskonflikt -->
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>3.1.4.GA</version>
+            </dependency>
+
+            <!-- Submodule-dependencies should be on the project version -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-server</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-dbschema</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-rest</artifactId>
+                <type>war</type>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ebegu-testutils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-ext</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-ext-jdk15on</artifactId>
+                <version>1.52</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bull.javamelody</groupId>
+                <artifactId>javamelody-core</artifactId>
+                <version>1.58.0</version>
+                <!--<version>1.59.0-jpa21-SNAPSHOT</version>-->
+                <!--<scope>provided</scope>-->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+        </dependency>
+
+
+        <!-- Scope: test -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+
 
     <profiles>
         <profile>
@@ -55,17 +340,26 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Deaktiviere Annotation processing im maven-compiler-plugin.
+                    Es wird stattdessen das maven-processor-plugin verwendent-->
+                    <compilerArgument>-proc:none</compilerArgument>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>1.0-m5.1</version>
                 <configuration>
                     <flowInitContext>
                         <masterBranchName>master</masterBranchName>
-                        <developBranchName>develop</developBranchName>
+                        <developBranchName>dev</developBranchName>
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix />
+                        <versionTagPrefix/>
                     </flowInitContext>
                     <allowUntracked>true</allowUntracked>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -96,26 +390,26 @@
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
+                <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-deploy-plugin</artifactId>-->
+                <!--<version>2.8.2</version>-->
+                <!--</plugin>-->
                 <plugin>
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-maven-plugin</artifactId>
-                    <version>${flyway.version}</version>
+                    <version>${version.flyway}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.10.2</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
+                <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<version>2.6</version>-->
+                <!--</plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
@@ -148,244 +442,47 @@
                     <artifactId>hibernate4-maven-plugin</artifactId>
                     <version>1.1.0</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
-                    <executions>
-                        <execution>
-                            <id>check-maven-setup</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <fail>true</fail>
-                                <failFast>true</failFast>
-                                <rules>
-                                    <dependencyConvergence />
-                                    <reactorModuleConvergence />
-                                    <requireJavaVersion>
-                                        <!-- Bei aelteren Versionen aendern die Unit-Test-Ergebnisse bei Berechnungen mit BigDecimal -->
-                                        <version>[1.8.0-40,)</version>
-                                    </requireJavaVersion>
-                                    <requireMavenVersion>
-                                        <version>3.3</version>
-                                    </requireMavenVersion>
-                                    <!-- TODO: Pruefen, dass keine SNAPSHOT-Dependencies mehr drin sind -->
-                                </rules>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                <!-- todo fabio fragen ob man nicht das vom parent-pom verwenden kann-->
+                <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-enforcer-plugin</artifactId>-->
+                <!--<version>1.4.1</version>-->
+                <!--<executions>-->
+                <!--<execution>-->
+                <!--<id>check-maven-setup</id>-->
+                <!--<goals>-->
+                <!--<goal>enforce</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<fail>true</fail>-->
+                <!--<failFast>true</failFast>-->
+                <!--<rules>-->
+                <!--<dependencyConvergence />-->
+                <!--<reactorModuleConvergence />-->
+                <!--<requireJavaVersion>-->
+                <!--&lt;!&ndash; Bei aelteren Versionen aendern die Unit-Test-Ergebnisse bei Berechnungen mit BigDecimal &ndash;&gt;-->
+                <!--<version>[1.8.0-40,)</version>-->
+                <!--</requireJavaVersion>-->
+                <!--<requireMavenVersion>-->
+                <!--<version>3.3</version>-->
+                <!--</requireMavenVersion>-->
+                <!--&lt;!&ndash; TODO: Pruefen, dass keine SNAPSHOT-Dependencies mehr drin sind &ndash;&gt;-->
+                <!--</rules>-->
+                <!--</configuration>-->
+                <!--</execution>-->
+                <!--</executions>-->
+                <!--</plugin>-->
             </plugins>
         </pluginManagement>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-7.0</artifactId>
-                <version>1.0.0.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>annotations</artifactId>
-                <version>3.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains</groupId>
-                <artifactId>annotations</artifactId>
-                <version>13.0</version>
-                <!-- soll nur von der IDE genutzt werden -->
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>18.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-search-orm</artifactId>
-                <version>${hibernate-search.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>dom4j</groupId>
-                        <artifactId>dom4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jboss.spec.javax.transaction</groupId>
-                        <artifactId>jboss-transaction-api_1.2_spec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-search-infinispan</artifactId>
-                <version>${hibernate-search.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-core</artifactId>
-                <version>${infinispan.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-cachestore-jdbc</artifactId>
-                <version>${infinispan.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>3.13</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>3.13</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>dom4j</artifactId>
-                        <groupId>dom4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>5.1.3.Final</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>validation-api</artifactId>
-                        <groupId>javax.validation</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!--<dependency>-->
-            <!--&lt;!&ndash; Versionskonflikt &ndash;&gt;-->
-            <!--<groupId>org.hibernate.common</groupId>-->
-            <!--<artifactId>hibernate-commons-annotations</artifactId>-->
-            <!--<version>4.0.5.Final</version>-->
-            <!--</dependency>-->
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-core</artifactId>
-                <version>${flyway.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.3.2</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.4</version>
-            </dependency>
-            <!--<dependency>-->
-            <!--<groupId>commons-codec</groupId>-->
-            <!--<artifactId>commons-codec</artifactId>-->
-            <!--<version>1.9</version>-->
-            <!--</dependency>-->
-            <dependency>
-                <!-- Versionskonflikt -->
-                <groupId>org.jboss.logging</groupId>
-                <artifactId>jboss-logging</artifactId>
-                <version>3.1.4.GA</version>
-            </dependency>
 
-            <!-- Submodule-dependencies should be on the project version -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kita-scheduler-server</artifactId>
-                <version>${project.version}</version>
-                <type>ejb</type>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kita-scheduler-dbschema</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kita-scheduler-shared</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kita-scheduler-rest</artifactId>
-                <type>war</type>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kita-scheduler-test-utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-ext</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-ext-jdk15on</artifactId>
-                <version>1.52</version>
-            </dependency>
-            <dependency>
-                <groupId>net.bull.javamelody</groupId>
-                <artifactId>javamelody-core</artifactId>
-                <version>1.58.0</version>
-                <!--<version>1.59.0-jpa21-SNAPSHOT</version>-->
-                <!--<scope>provided</scope>-->
-            </dependency>
-            <dependency>
-                <groupId>ch.dvbern.lib</groupId>
-                <artifactId>dvbern-lib-datatypes</artifactId>
-                <version>0.0.8</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <modules>
+        <module>ebegu-dbschema</module>
+        <module>ebegu-shared</module>
+        <module>ebegu-server</module>
+        <module>ebegu-testutils</module>
+        <module>ebegu-rest</module>
+        <module>ebegu-runconfig</module>
+    </modules>
 </project>
