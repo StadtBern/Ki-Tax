@@ -1,0 +1,10 @@
+.idea/
+*.iml
+target/
+derby.log
+#LibreOffice Lockfiles (z.B. beim Bearbeiten von basisreport.xls)
+.~lock*
+# Irgendwelche Lockfiles (Citrix/Office?)
+.attribute^
+.access^
+~\$*
