@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 @TransactionManagement(TransactionManagementType.BEAN) //flyway managed transactions selber
 public class MigrateSchema {
 
-	private static final String DATASOURCE_NAME = "jdbc/kurstool";
+	private static final String DATASOURCE_NAME = "jdbc/ebegu";
 
 	@PostConstruct
 	public void migrateSchema() {

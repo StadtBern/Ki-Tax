@@ -15,9 +15,11 @@ import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +40,9 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
+	@Nonnull
 	@Override
-	public ApplicationProperty saveOrUpdateApplicationProperty(final String key, final String value) {
+	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) {
 		ApplicationProperty property = readApplicationProperty(key);
 		if (property == null) {
 			return persistence.persist(new ApplicationProperty(key, value));
@@ -53,7 +56,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nullable
 	@Override
-	public ApplicationProperty readApplicationProperty(final String key) {
+	public ApplicationProperty readApplicationProperty(@Nonnull final String key) {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
 	}
 

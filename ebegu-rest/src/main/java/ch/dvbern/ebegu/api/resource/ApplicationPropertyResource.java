@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.resource.util.JaxBConverter;
+import ch.dvbern.ebegu.api.util.JaxBConverter;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 
@@ -44,6 +44,9 @@ public class ApplicationPropertyResource {
 		ApplicationProperty propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
 
 		//todo homa handle does not exist error
+		if (propertyFromDB == null) {
+			return Response.ok(null).build();
+		}
 		return Response.ok(converter.applicationPropertieToJAX(propertyFromDB)).build();
 //		return Response.ok(converter.benutzerToResource(benutzer.get())).build();
 
@@ -59,14 +62,8 @@ public class ApplicationPropertyResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EntityNotFoundException {
 
-		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
+		return update(key, value, uriInfo, response);
 
-		URI uri = uriInfo.getBaseUriBuilder()
-			.path(ApplicationPropertyResource.class)
-			.path("/" + modifiedProperty.getName())
-			.build();
-
-		return Response.created(uri).build();
 	}
 
 	@Nullable

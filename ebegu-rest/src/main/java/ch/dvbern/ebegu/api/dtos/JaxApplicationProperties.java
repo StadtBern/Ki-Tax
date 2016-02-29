@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.resource.dtos;
+package ch.dvbern.ebegu.api.dtos;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;

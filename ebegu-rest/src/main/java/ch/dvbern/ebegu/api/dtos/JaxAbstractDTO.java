@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.resource.dtos;
+package ch.dvbern.ebegu.api.dtos;
 
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;

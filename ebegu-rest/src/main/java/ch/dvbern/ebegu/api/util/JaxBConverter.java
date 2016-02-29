@@ -1,7 +1,7 @@
-package ch.dvbern.ebegu.api.resource.util;
+package ch.dvbern.ebegu.api.util;
 
-import ch.dvbern.ebegu.api.resource.dtos.JaxAbstractDTO;
-import ch.dvbern.ebegu.api.resource.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
+import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import org.apache.commons.lang3.Validate;
@@ -54,6 +54,17 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
+	private <T extends AbstractEntity> T convertAbstractFieldsToEntity (JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
+		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
+		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
+		if (jaxToConvert.getId() != null) {
+			abstEntityToConvertTo.setId(jaxToConvert.getId());
+		}
+
+		return abstEntityToConvertTo;
+	}
+
+	@Nonnull
 	public JaxApplicationProperties applicationPropertieToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
@@ -66,7 +77,7 @@ public class JaxBConverter {
 	public ApplicationProperty applicationPropertieToEntity(JaxApplicationProperties jaxAP, @Nonnull final ApplicationProperty applicationProperty) {
 		Validate.notNull(applicationProperty);
 		Validate.notNull(jaxAP);
-
+		convertAbstractFieldsToEntity(jaxAP, applicationProperty);
 		applicationProperty.setName(jaxAP.getName());
 		applicationProperty.setValue(jaxAP.getValue());
 

@@ -83,7 +83,7 @@ public abstract class AbstractEntity implements Serializable {
 		return timestampErstellt;
 	}
 
-	public void setTimestampErstellt(@Nonnull LocalDateTime timestampErstellt) {
+	public void setTimestampErstellt(LocalDateTime timestampErstellt) {
 		this.timestampErstellt = timestampErstellt;
 	}
 
@@ -92,7 +92,7 @@ public abstract class AbstractEntity implements Serializable {
 		return timestampMutiert;
 	}
 
-	public void setTimestampMutiert(@Nonnull LocalDateTime timestampMutiert) {
+	public void setTimestampMutiert(LocalDateTime timestampMutiert) {
 		this.timestampMutiert = timestampMutiert;
 	}
 

@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 
@@ -17,14 +19,16 @@ public interface ApplicationPropertyService {
 	 * @param value Wert des Property
 	 * @return ApplicationProperty mit key und value
 	 */
-	ApplicationProperty saveOrUpdateApplicationProperty(String key, String value);
+	@Nonnull
+	ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull String key, @Nonnull String value);
 
 	/**
 
 	 * @param key name des Property
 	 * @return Property mit demg egebenen key oder null falls nicht vorhanden
 	 */
-	ApplicationProperty readApplicationProperty(String key);
+	@Nullable
+	ApplicationProperty readApplicationProperty(@Nonnull String key);
 
 	/**
 	 *

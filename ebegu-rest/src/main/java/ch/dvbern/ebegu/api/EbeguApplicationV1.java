@@ -7,7 +7,7 @@
  * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
  * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
-package ch.dvbern.ebegu.api.resource;
+package ch.dvbern.ebegu.api;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.ws.rs.ApplicationPath;
