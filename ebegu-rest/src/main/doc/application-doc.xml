@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationDocs targetNamespace="http://wadl.dev.java.net/2009/02">
+    <doc xml:lang="en" title="eBEGU REST API Version1">This is the documentation for the REST API of our eBEGU application</doc>
+</applicationDocs>

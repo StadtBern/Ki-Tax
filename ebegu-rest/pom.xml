@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ebegu</artifactId>
+        <groupId>ch.dvbern.ebegu</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ebegu-rest</artifactId>
+    <packaging>war</packaging>
+
+
+    <!-- todo team wenn wir das wadl generieren muessen waere das hier evtl eine Moeglichkeit-->
+    <!--<build>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<groupId>com.sun.jersey.contribs</groupId>-->
+    <!--<artifactId>maven-wadl-plugin</artifactId>-->
+    <!--<version>1.17</version>-->
+    <!--<executions>-->
+    <!--<execution>-->
+    <!--<id>generate</id>-->
+    <!--<goals>-->
+    <!--<goal>generate</goal>-->
+    <!--</goals>-->
+    <!--<phase>install</phase>-->
+    <!--</execution>-->
+    <!--</executions>-->
+    <!--<configuration>-->
+    <!--<wadlFile>${project.build.outputDirectory}/application.wadl-->
+    <!--</wadlFile>-->
+    <!--<formatWadlFile>true</formatWadlFile>-->
+    <!--<baseUri>http://localhost.com:8080/ebegu/api/v1</baseUri>-->
+    <!--<packagesResourceConfig>-->
+    <!--<param>ch.dvbern.ebegu.api.resource</param>-->
+    <!--</packagesResourceConfig>-->
+    <!--<wadlGenerators>-->
+    <!--<wadlGeneratorDescription>-->
+    <!--<className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc-->
+    <!--</className>-->
+    <!--<properties>-->
+    <!--<property>-->
+    <!--<name>applicationDocsFile</name>-->
+    <!--<value>${basedir}/src/main/doc/application-doc.xml</value>-->
+    <!--</property>-->
+    <!--</properties>-->
+    <!--</wadlGeneratorDescription>-->
+    <!--<wadlGeneratorDescription>-->
+    <!--<className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport-->
+    <!--</className>-->
+    <!--<properties>-->
+    <!--<property>-->
+    <!--<name>grammarsFile</name>-->
+    <!--<value>${basedir}/src/main/doc/application-grammars.xml</value>-->
+    <!--</property>-->
+    <!--</properties>-->
+    <!--</wadlGeneratorDescription>-->
+    <!--</wadlGenerators>-->
+    <!--</configuration>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.1.0.Alpha7</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-server</artifactId>
+            <type>ejb</type>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.transaction</groupId>
+            <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.annotation</groupId>
+            <artifactId>jboss-annotations-api_1.2_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- REST Dependency-->
+        <dependency>
+            <groupId>org.jboss.spec.javax.xml.ws</groupId>
+            <artifactId>jboss-jaxws-api_2.2_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <version>3.0.12.Final</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+
+</project>
