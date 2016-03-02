@@ -25,6 +25,9 @@ public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguExce
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
 
+	// todo Diese Methode ist gleich wie in EbeguRuntimeExceptionMapper.
+	// Wenn wir keine unterschiedliche Implemetierung brauchen sollten wir nur eine haben.
+	// Das hängt aber von der implementierung ab.
 	protected Response buildViolationReportResponse(EbeguException exception, Response.Status status) {
 		Response.ResponseBuilder builder = Response.status(status);
 		builder.header(Validation.VALIDATION_HEADER, "true");

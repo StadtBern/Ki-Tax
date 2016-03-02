@@ -41,9 +41,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	}
 
 	protected MediaType getAcceptMediaType(List<MediaType> accept) {
-		Iterator<MediaType> it = accept.iterator();
-		while (it.hasNext()) {
-			MediaType mt = it.next();
+		for (MediaType mt : accept) {
             /*
              * application/xml media type causes an exception:
              * org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure: Could not find MessageBodyWriter for response

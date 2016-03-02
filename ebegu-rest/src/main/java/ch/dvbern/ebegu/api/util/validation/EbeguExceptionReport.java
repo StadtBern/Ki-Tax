@@ -30,33 +30,33 @@ public class EbeguExceptionReport {
 		this.attribute = exception.getArgs().get(2).toString();
 	}
 
-	public String getException() {
-		return this.exception;
-	}
-
-	public String getEntityClass() {
-		return this.entityClass;
-	}
-
-	public String getAttributeValue() { return this.attributeValue; }
-
-	public String getAttribute() { return this.attribute;	}
-
-
-	public void setException(String exception) {
-		this.exception = exception;
-	}
-
-	public void setEntityClass(String entityClass) {
-		this.entityClass = entityClass;
-	}
-
-	public void setAttributeValue(String attributeValue) {
-		this.attributeValue = attributeValue;
-	}
-
-	public void setAttribute(String attribute) {
-		this.attribute = attribute;
-	}
+//	public String getException() {
+//		return this.exception;
+//	}
+//
+//	public String getEntityClass() {
+//		return this.entityClass;
+//	}
+//
+//	public String getAttributeValue() { return this.attributeValue; }
+//
+//	public String getAttribute() { return this.attribute;	}
+//
+//
+//	public void setException(String exception) {
+//		this.exception = exception;
+//	}
+//
+//	public void setEntityClass(String entityClass) {
+//		this.entityClass = entityClass;
+//	}
+//
+//	public void setAttributeValue(String attributeValue) {
+//		this.attributeValue = attributeValue;
+//	}
+//
+//	public void setAttribute(String attribute) {
+//		this.attribute = attribute;
+//	}
 
 }
