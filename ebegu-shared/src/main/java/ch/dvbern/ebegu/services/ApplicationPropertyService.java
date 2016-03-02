@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.errors.EbeguNotFoundException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

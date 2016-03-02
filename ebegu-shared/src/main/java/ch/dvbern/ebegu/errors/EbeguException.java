@@ -1,21 +1,19 @@
 package ch.dvbern.ebegu.errors;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.metamodel.SingularAttribute;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 /**
  * Created by imanol on 01.03.16.
  */
 public class EbeguException extends Exception {
+
 	private static final long serialVersionUID = -8018060653200749874L;
 
 	private final List<Serializable> args;
@@ -39,4 +37,6 @@ public class EbeguException extends Exception {
 	public List<Serializable> getArgs() {
 		return args;
 	}
+
+
 }

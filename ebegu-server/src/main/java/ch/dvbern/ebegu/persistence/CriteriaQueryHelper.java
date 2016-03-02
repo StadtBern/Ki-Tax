@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.persistence;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.errors.EbeguNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
-import javax.xml.bind.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -59,7 +58,7 @@ public class CriteriaQueryHelper {
 																	  @Nonnull final SingularAttribute<E, A> attribute) throws EbeguException {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
 		if (results.isEmpty()) {
-			throw new EbeguNotFoundException(entityClazz, attributeValue.toString(), attribute.getName());
+			throw new EbeguEntityNotFoundException(entityClazz, attributeValue.toString(), attribute.getName());
 		}
 		return ensureSingleResult(results, attributeValue);
 	}
