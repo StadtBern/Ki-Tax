@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.util;
+package ch.dvbern.ebegu.api.resource.util;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import java.util.Objects;
 
@@ -17,9 +16,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 
 @Dependent
-@SuppressWarnings("PMD.NcssTypeCount")
+@SuppressWarnings({"PMD.NcssTypeCount","unused"})
 public class JaxBConverter {
 
+	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
 
 	@Nonnull
@@ -47,17 +47,6 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	private <T extends AbstractEntity> T convertAbstractFieldsToEntity (JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
-		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
-		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
-		if (jaxToConvert.getId() != null) {
-			abstEntityToConvertTo.setId(jaxToConvert.getId());
-		}
-
-		return abstEntityToConvertTo;
-	}
-
-	@Nonnull
 	public JaxApplicationProperties applicationPropertieToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
@@ -70,7 +59,7 @@ public class JaxBConverter {
 	public ApplicationProperty applicationPropertieToEntity(JaxApplicationProperties jaxAP, @Nonnull final ApplicationProperty applicationProperty) {
 		Validate.notNull(applicationProperty);
 		Validate.notNull(jaxAP);
-		convertAbstractFieldsToEntity(jaxAP, applicationProperty);
+
 		applicationProperty.setName(jaxAP.getName());
 		applicationProperty.setValue(jaxAP.getValue());
 

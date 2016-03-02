@@ -21,6 +21,7 @@ public class MigrateSchema {
 
 	private static final String DATASOURCE_NAME = "jdbc/ebegu";
 
+	@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
 	@PostConstruct
 	public void migrateSchema() {
 		try {

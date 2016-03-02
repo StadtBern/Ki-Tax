@@ -45,8 +45,7 @@ public class CriteriaQueryHelper {
 		Root root = query.from(clazz);
 		query.select(root);
 		query.orderBy(cb.asc(root.get(orderBy)));
-		List resultList = persistence.getCriteriaResults(query);
-		return resultList;
+		return persistence.getCriteriaResults(query);
 	}
 
 	@SuppressWarnings("unchecked")

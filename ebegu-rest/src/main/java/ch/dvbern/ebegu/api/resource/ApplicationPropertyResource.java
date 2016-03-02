@@ -72,7 +72,7 @@ public class ApplicationPropertyResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(
 		@Nonnull @PathParam("key") String key,
-		@Nullable String value,
+		@Nonnull String value,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
