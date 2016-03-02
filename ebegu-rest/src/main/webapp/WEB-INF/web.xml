@@ -5,13 +5,13 @@
 		 version="3.1">
 
 	<display-name>ebegu-rest</display-name>
-<!--  todo team javamelody einbauen?
+
 	<filter>
 		<filter-name>javamelody</filter-name>
-		&lt;!&ndash; Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung &ndash;&gt;
-		&lt;!&ndash;<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>&ndash;&gt;
-		&lt;!&ndash; Wir benutzen unseren eigenen Filter in dem wir die IDs aus REST-Resourcen durch Platzhalter entfernen &ndash;&gt;
-		<filter-class>ch.dvbern.kitascheduler.api.v1.resource.monitoring.KitaMonitoringFilter</filter-class>
+		<!-- Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung -->
+		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+		<!-- Wir benutzen unseren eigenen Filter in dem wir die IDs aus REST-Resourcen durch Platzhalter entfernen -->
+		<!--<filter-class>ch.dvbern.ebegu.api.resource.monitoring.EbeguMonitoringFilter</filter-class>-->
 		<async-supported>true</async-supported>
 	</filter>
 	<filter-mapping>
@@ -22,5 +22,5 @@
 	</filter-mapping>
 	<listener>
 		<listener-class>net.bull.javamelody.SessionListener</listener-class>
-	</listener>-->
+	</listener>
 </web-app>
