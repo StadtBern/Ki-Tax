@@ -36,7 +36,6 @@
     <name>eBEGU - Multimodule Project</name>
 
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -308,7 +307,8 @@
                         <phase>validate</phase>
                         <configuration>
                             <configLocation>checkstyle/rules/checkstyle/checkstyle-rules.xml</configLocation>
-                            <suppressionsLocation>checkstyle/rules/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+                            <suppressionsLocation>checkstyle/rules/checkstyle/checkstyle-suppressions.xml
+                            </suppressionsLocation>
                             <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
@@ -402,10 +402,11 @@
                     <version>3.6</version>
                     <configuration>
                         <skip>${skip-code-validation}</skip>
-                        <!-- todo homa ich glaube das ist unnoetig-->
-                        <!--<rulesets>-->
-                            <!--<ruleset>checkstyle/rules/pmd/pmd-rules.xml</ruleset>-->
-                        <!--</rulesets>-->
+                        <rulesets>
+                            <!--regeln vom sonar-->
+                            <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default%20%28veraltet%29&amp;exporterKey=pmd</ruleset>
+                            <!--<ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default&amp;exporterKey=pmd</ruleset>-->
+                        </rulesets>
                     </configuration>
                 </plugin>
                 <plugin>
