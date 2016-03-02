@@ -12,6 +12,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -42,7 +44,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) {
+	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) throws EbeguException {
 		ApplicationProperty property = readApplicationProperty(key);
 		if (property == null) {
 			return persistence.persist(new ApplicationProperty(key, value));
@@ -56,7 +58,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nullable
 	@Override
-	public ApplicationProperty readApplicationProperty(@Nonnull final String key) {
+	public ApplicationProperty readApplicationProperty(@Nonnull final String key) throws EbeguException {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
 	}
 

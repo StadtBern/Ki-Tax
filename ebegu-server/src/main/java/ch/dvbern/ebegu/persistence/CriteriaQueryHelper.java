@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.persistence;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.errors.EbeguNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -15,6 +17,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
+import javax.xml.bind.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -51,8 +54,13 @@ public class CriteriaQueryHelper {
 
 	@SuppressWarnings("unchecked")
 	@Nullable
-	public <A, E> E getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz, @Nullable final A attributeValue, @Nonnull final SingularAttribute<E, A> attribute) {
+	public <A, E extends AbstractEntity> E getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
+																	  @Nullable final A attributeValue,
+																	  @Nonnull final SingularAttribute<E, A> attribute) throws EbeguException {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
+		if (results.isEmpty()) {
+			throw new EbeguNotFoundException(entityClazz, attributeValue.toString(), attribute.toString());
+		}
 		return ensureSingleResult(results, attributeValue);
 	}
 
