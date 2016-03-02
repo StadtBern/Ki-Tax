@@ -59,7 +59,7 @@ public class CriteriaQueryHelper {
 																	  @Nonnull final SingularAttribute<E, A> attribute) throws EbeguException {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
 		if (results.isEmpty()) {
-			throw new EbeguNotFoundException(entityClazz, attributeValue.toString(), attribute.toString());
+			throw new EbeguNotFoundException(entityClazz, attributeValue.toString(), attribute.getName());
 		}
 		return ensureSingleResult(results, attributeValue);
 	}
