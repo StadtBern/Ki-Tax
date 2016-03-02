@@ -1,8 +1,5 @@
 package ch.dvbern.ebegu.api.util.errors;
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;
 import javax.validation.GroupDefinitionException;
@@ -11,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
@@ -22,7 +18,7 @@ import org.jboss.resteasy.api.validation.ViolationReport;
  * Created by imanol on 01.03.16.
  */
 @Provider
-public class EbeguValidationExceptionMapper implements ExceptionMapper<ValidationException> {
+public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper<ValidationException> {
 
 	@Override
 	public Response toResponse(ValidationException exception) {
@@ -49,12 +45,6 @@ public class EbeguValidationExceptionMapper implements ExceptionMapper<Validatio
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
 
-	protected Response buildResponse(Object entity, String mediaType, Status status) {
-		ResponseBuilder builder = Response.status(status).entity(entity);
-		builder.type(MediaType.TEXT_PLAIN);
-		builder.header(Validation.VALIDATION_HEADER, "true");
-		return builder.build();
-	}
 
 	protected Response buildViolationReportResponse(ResteasyViolationException exception, Status status) {
 		ResponseBuilder builder = Response.status(status);
@@ -74,43 +64,8 @@ public class EbeguValidationExceptionMapper implements ExceptionMapper<Validatio
 		return builder.build();
 	}
 
-	protected String unwrapException(Throwable t) {
-		StringBuffer sb = new StringBuffer();
-		doUnwrapException(sb, t);
-		return sb.toString();
-	}
-
-	private void doUnwrapException(StringBuffer sb, Throwable t) {
-		if (t == null) {
-			return;
-		}
-		sb.append(t.toString());
-		if (t.getCause() != null && t != t.getCause()) {
-			sb.append('[');
-			doUnwrapException(sb, t.getCause());
-			sb.append(']');
-		}
-	}
-
-	private MediaType getAcceptMediaType(List<MediaType> accept) {
-		Iterator<MediaType> it = accept.iterator();
-		while (it.hasNext()) {
-			MediaType mt = it.next();
-            /*
-             * application/xml media type causes an exception:
-             * org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure: Could not find MessageBodyWriter for response
-             * object of type: org.jboss.resteasy.api.validation.ViolationReport of media type: application/xml
-             * Not anymore
-             */
-            if (MediaType.APPLICATION_XML_TYPE.getType().equals(mt.getType())
-                    && MediaType.APPLICATION_XML_TYPE.getSubtype().equals(mt.getSubtype())) {
-                return MediaType.APPLICATION_XML_TYPE;
-            }
-			if (MediaType.APPLICATION_JSON_TYPE.getType().equals(mt.getType())
-				&& MediaType.APPLICATION_JSON_TYPE.getSubtype().equals(mt.getSubtype())) {
-				return MediaType.APPLICATION_JSON_TYPE;
-			}
-		}
+	@Override
+	protected Response buildViolationReportResponse(ValidationException exception, Status status) {
 		return null;
 	}
 }
