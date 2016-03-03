@@ -14,22 +14,22 @@ import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service fuer ApplicationProperty
  */
 @Stateless
 @Local(ApplicationPropertyService.class)
-//@RolesAllowed({RoleNames.ADMIN_ROLENAME, RoleNames.SYSTEM_ROLENAME, RoleNames.SUBADMIN_ROLENAME, RoleNames.USER_ROLENAME})
 public class ApplicationPropertyServiceBean extends AbstractBaseService implements ApplicationPropertyService {
 
 
@@ -63,5 +63,15 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	public List<ApplicationProperty> listApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
+	}
+
+
+	@Override
+	public void removeApplicationProperty(@Nonnull String testKey) {
+		Validate.notNull(testKey);
+		ApplicationProperty propertyToRemove = readApplicationProperty(testKey);
+		Objects.requireNonNull(propertyToRemove, "Property to remove could not be found");
+		persistence.remove(propertyToRemove);
+
 	}
 }

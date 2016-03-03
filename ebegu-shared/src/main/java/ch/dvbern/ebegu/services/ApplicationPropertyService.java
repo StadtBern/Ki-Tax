@@ -36,4 +36,9 @@ public interface ApplicationPropertyService {
 	 */
 	Collection<ApplicationProperty> listApplicationProperties();
 
+	/**
+	 * removs an Application Property From the Databse
+	 * @param testKey
+	 */
+	void removeApplicationProperty(@Nonnull String testKey);
 }
