@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.api.util.errors;
 
+import org.jboss.resteasy.api.validation.ResteasyViolationException;
+import org.jboss.resteasy.api.validation.Validation;
+import org.jboss.resteasy.api.validation.ViolationReport;
+
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;
 import javax.validation.GroupDefinitionException;
@@ -10,12 +14,11 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.resteasy.api.validation.ResteasyViolationException;
-import org.jboss.resteasy.api.validation.Validation;
-import org.jboss.resteasy.api.validation.ViolationReport;
-
 /**
  * Created by imanol on 01.03.16.
+ * Exception Mapper der mit Validation Exceptions von javax umgehen kann. Diese werden zum Beispiel geworfen wenn ein
+ * ungueltiger Parameter in einen JAX-RS Aufruf reinkommt   .
+ * Der Mapper handhabt auch einige Subklassen von ValidationException
  */
 @Provider
 public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper<ValidationException> {
@@ -36,7 +39,7 @@ public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper
 			Exception e = resteasyViolationException.getException();
 			if (e != null) {
 				return buildResponse(unwrapException(e), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
-			} else if (resteasyViolationException.getReturnValueViolations().size() == 0) {
+			} else if (resteasyViolationException.getReturnValueViolations().isEmpty()) {
 				return buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST);
 			} else {
 				return buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR);

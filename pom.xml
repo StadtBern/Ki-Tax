@@ -41,7 +41,7 @@
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-bom</artifactId>
-                <version>3.0.6.Final</version>
+                <version>3.0.11.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

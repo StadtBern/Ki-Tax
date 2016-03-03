@@ -5,11 +5,12 @@ import org.jboss.resteasy.api.validation.Validation;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by imanol on 02.03.16.
+ * Basis Exception Mapper
+ * @see  <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
 
@@ -28,6 +29,11 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 		return sb.toString();
 	}
 
+	/**
+	 * unwrapped alle causes und fuegt sie zum Stringbuffer hinzu
+	 * @param sb buffer to append to
+	 * @param t throwable
+	 */
 	private void doUnwrapException(StringBuffer sb, Throwable t) {
 		if (t == null) {
 			return;
@@ -40,21 +46,20 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 		}
 	}
 
+	/**
+	 *
+	 * @param accept Liste mit Accepted media types
+	 * @return Gibt den ersten von uns unterstuetzten MediaType zurueck
+	 */
 	protected MediaType getAcceptMediaType(List<MediaType> accept) {
 		for (MediaType mt : accept) {
-            /*
-             * application/xml media type causes an exception:
-             * org.jboss.resteasy.core.NoMessageBodyWriterFoundFailure: Could not find MessageBodyWriter for response
-             * object of type: org.jboss.resteasy.api.validation.ViolationReport of media type: application/xml
-             * Not anymore
-             */
-			if (MediaType.APPLICATION_XML_TYPE.getType().equals(mt.getType())
-				&& MediaType.APPLICATION_XML_TYPE.getSubtype().equals(mt.getSubtype())) {
-				return MediaType.APPLICATION_XML_TYPE;
-			}
 			if (MediaType.APPLICATION_JSON_TYPE.getType().equals(mt.getType())
 				&& MediaType.APPLICATION_JSON_TYPE.getSubtype().equals(mt.getSubtype())) {
 				return MediaType.APPLICATION_JSON_TYPE;
+			}
+			if (MediaType.APPLICATION_XML_TYPE.getType().equals(mt.getType())
+				&& MediaType.APPLICATION_XML_TYPE.getSubtype().equals(mt.getSubtype())) {
+				return MediaType.APPLICATION_XML_TYPE;
 			}
 		}
 		return null;
