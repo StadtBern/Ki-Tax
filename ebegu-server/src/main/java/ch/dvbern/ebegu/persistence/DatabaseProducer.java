@@ -20,7 +20,7 @@ import javax.persistence.PersistenceContext;
 public class DatabaseProducer {
 
 	@SuppressWarnings("PMD.UnusedPrivateField")
-	@PersistenceContext(name = "KitaSchedulerPersistenceUnit")
+	@PersistenceContext(name = "ebeguPersistenceUnit")
 	private EntityManager em;
 
 	@Produces
