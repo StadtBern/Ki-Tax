@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.persistence;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -61,7 +62,7 @@ public class CriteriaQueryHelper {
 		if (results.isEmpty()) {
 			String attrValue = Objects.toString(attributeValue, "");
 			String attr = Objects.toString(attribute.getName(), "");
-			throw new EbeguEntityNotFoundException("getEntityByUniqueAttribute", "validation_error_no_entity", entityClazz.getSimpleName(), attr, attrValue);
+			throw new EbeguEntityNotFoundException("getEntityByUniqueAttribute", Constants.MessageKey.ERROR_ENTITY_NOT_FOUND, entityClazz.getSimpleName(), attr, attrValue);
 		}
 		return ensureSingleResult(results, attributeValue);
 	}

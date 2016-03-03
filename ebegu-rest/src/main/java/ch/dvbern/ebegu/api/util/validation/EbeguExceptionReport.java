@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.api.util.validation;
 
+import ch.dvbern.ebegu.api.util.ServerMessageUtil;
+import ch.dvbern.ebegu.api.util.filter.LocaleThreadLocal;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import org.jboss.resteasy.api.validation.Validation;
@@ -46,7 +48,13 @@ public class EbeguExceptionReport {
 			this.methodName = exception.getMethodName();
 			this.argumentList.addAll(exception.getArgs());
 		}
+	}
 
+	public EbeguExceptionReport(String exceptionName, String methodName, String message, List<String> argumentList) {
+		this.exceptionName = exceptionName;
+		this.methodName = methodName;
+		this.message = message;
+		this.argumentList = argumentList;
 	}
 
 	public String getExceptionName() {
@@ -83,15 +91,17 @@ public class EbeguExceptionReport {
 
 	public static Response buildResponse(Response.Status status, EbeguException ex) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
-		builder.entity(new EbeguExceptionReport(ex));
-		return builder.build();
+		String translatedMessage = ServerMessageUtil.getMessage(ex.getMessage(), LocaleThreadLocal.get());
+		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(),ex.getMethodName(),translatedMessage,ex.getArgs());
+		return builder.entity(exceptionReport).build();
 
 	}
 
 	public static Response buildResponse(Response.Status status, EbeguRuntimeException ex) {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
-			builder.entity(new EbeguExceptionReport(ex));
-			return builder.build();
+		String translatedMessage = ServerMessageUtil.getMessage(ex.getMessage(), LocaleThreadLocal.get());
+		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(),ex.getMethodName(),translatedMessage,ex.getArgs());
+		return builder.entity(exceptionReport).build();
 
 		}
 
