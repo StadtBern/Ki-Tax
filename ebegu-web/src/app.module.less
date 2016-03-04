@@ -1,0 +1,27 @@
+@nodeModules: ~"../node_modules";
+
+@import "@{nodeModules}/bootstrap/less/bootstrap.less";
+//@import "@{nodeModules}/bootstrap/less/theme.less";
+@import "@{nodeModules}/font-awesome/less/font-awesome.less";
+@fa-font-path: "@{nodeModules}/font-awesome/fonts";
+
+/* Component LESS */
+@import "core/core.module.less";
+/* Add Component LESS Above */
+
+/* Required for Angular UI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a {
+	cursor: pointer;
+}
+
+/* Personal preference for BS modal.  The LESS below makes the backdrop white and
+   causes the modal to fade in rather than slide in. */
+//@modal-backdrop-bg: white;
+//.modal {
+//	&.fade {
+//		.transition(opacity .3s);
+//	}
+//	&.fade .modal-dialog {
+//		.translate(0,0);
+//	}
+//}

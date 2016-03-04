@@ -1,0 +1,34 @@
+{
+  "generator-dvb-angular": {
+    "partialDirectory": "partial/",
+    "modalDirectory": "partial/",
+    "directiveDirectory": "directive/",
+    "componentDirectory": "component/",
+    "filterDirectory": "filter/",
+    "serviceDirectory": "service/",
+    "inject": {
+      "js": {
+        "file": "index.html",
+        "marker": "<!-- Add New Component JS Above -->",
+        "template": "<script src=\"<%= filename %>\"></script>"
+      },
+      "less": {
+        "relativeToModule": true,
+        "file": "<%= module %>.less",
+        "marker": "/* Add Component LESS Above */",
+        "template": "@import \"<%= filename %>\";"
+      }
+    },
+    "primaryModule": "ebeguWeb",
+    "modules": [
+      {
+        "name": "ebeguWeb",
+        "file": "src/app.module.js"
+      },
+      {
+        "name": "ebeguWeb.core",
+        "file": "src/core/core.module.js"
+      }
+    ]
+  }
+}
