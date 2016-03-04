@@ -2,10 +2,10 @@
     'use strict';
 
     angular
-        .module('ebeguWeb.core').run(appRun);
+        .module('ebeguWeb.admin').run(ebeguWebAdminRun);
 
     /* @ngInject */
-    function appRun(routerHelper) {
+    function ebeguWebAdminRun(routerHelper) {
         routerHelper.configureStates(getStates());
     }
 

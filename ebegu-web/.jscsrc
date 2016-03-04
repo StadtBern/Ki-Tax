@@ -21,7 +21,7 @@
         "allowComments": true,
         "allowRegex": true
     },
-    "validateIndentation": "\t",
+    "validateIndentation": 4,
     "validateQuoteMarks": "'",
     "disallowMultipleLineStrings": true,
     "disallowMixedSpacesAndTabs": true,

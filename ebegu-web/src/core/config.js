@@ -1,12 +1,12 @@
 (function () {
-	'use strict';
+    'use strict';
 
-	angular
-		.module('ebeguWeb.core').config(configure);
+    angular
+        .module('ebeguWeb.core').config(configure);
 
-	/* @ngInject */
-	function configure() {
+    /* @ngInject */
+    function configure() {
 
-	}
+    }
 
 })();

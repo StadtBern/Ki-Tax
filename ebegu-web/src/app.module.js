@@ -1,8 +1,6 @@
 (function () {
-	'use strict';
+    'use strict';
 
-	angular.module('ebeguWeb', [
-		'ebeguWeb.core'
-	]);
+    angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin']);
 
 })();
