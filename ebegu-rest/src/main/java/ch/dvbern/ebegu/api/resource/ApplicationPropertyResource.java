@@ -91,9 +91,9 @@ public class ApplicationPropertyResource {
 	@DELETE
 	@Path("/{key}")
 	@Consumes(MediaType.WILDCARD)
-	public Response removeFirma(
-					@Nonnull @PathParam("key") String keyParam,
-					@Context HttpServletResponse response) {
+	public Response remove(
+		@Nonnull @PathParam("key") String keyParam,
+		@Context HttpServletResponse response) {
 
 		applicationPropertyService.removeApplicationProperty(keyParam);
 		return Response.ok().build();

@@ -96,23 +96,26 @@ public class ApplicationPropertyServiceTest {
 
 	@Test
 	public void removeApplicationPropertyTest() {
-		persistence.persist(new ApplicationProperty("testKey", "testValue"));
-		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
-		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
+		insertNewEntity();
 		applicationPropertyService.removeApplicationProperty("testKey");
 		Assert.assertEquals(0, applicationPropertyService.listApplicationProperties().size());
 
 	}
-
 	@Test
 	public void updateApplicationPropertyTest() {
-		persistence.persist(new ApplicationProperty("testKey", "testValue"));
-		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
-		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
+		insertNewEntity();
 		applicationPropertyService.saveOrUpdateApplicationProperty("testKey","changed");
 		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty("testKey").getValue());
 
 	}
+
+	// Help Methods
+
+	private void insertNewEntity() {
+		persistence.persist(new ApplicationProperty("testKey", "testValue"));
+		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
+	}
+
 }
