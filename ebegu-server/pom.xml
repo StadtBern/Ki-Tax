@@ -44,10 +44,7 @@
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
             <version>1.7</version>
         </dependency>
-        <dependency>
-            <groupId>net.bull.javamelody</groupId>
-            <artifactId>javamelody-core</artifactId>
-        </dependency>
+
     </dependencies>
 
 

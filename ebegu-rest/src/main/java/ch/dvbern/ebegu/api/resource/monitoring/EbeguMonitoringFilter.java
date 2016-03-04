@@ -10,8 +10,7 @@ import java.util.regex.Pattern;
  * Created by imanol on 02.03.16.
  *
  * In REST-Resourcen enthaelt die URL immer auch irgendeine Business-ID, z.B. /api/v1/kinder/123/foo/bar
- * Fuers Monitoring ist die ID (hier: 123) aber nicht relevant und muss durch einen Platzhalter ersetzt werden.
- * TODO: eigentlich muesste javamelody hier REST-Interceptors liefern...
+ * Fuers Monitoring ist die ID (hier: 123) aber nicht relevant und soll durch einen Platzhalter ersetzt werden.
  */
 public class EbeguMonitoringFilter extends MonitoringFilter {
 	private static final Pattern ID_PATTERN = Pattern.compile("/\\d+");

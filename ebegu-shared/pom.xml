@@ -55,10 +55,7 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>net.bull.javamelody</groupId>
-            <artifactId>javamelody-core</artifactId>
-        </dependency>
+
     </dependencies>
 
     <build>
