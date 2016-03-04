@@ -16,8 +16,11 @@
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-shared</artifactId>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
