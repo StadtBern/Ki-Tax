@@ -27,7 +27,7 @@
         <database.jdbc.pwd>ebegu</database.jdbc.pwd>
 
         <version.postgresql>9.4-1201-jdbc41</version.postgresql>
-        <version.hibernate>4.3.10.Final</version.hibernate>
+        <version.hibernate>5.1.0.Final</version.hibernate>
 
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
@@ -41,12 +41,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-7.0</artifactId>
-                <version>1.0.3.Final</version>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>jboss-javaee-7.0-wildfly</artifactId>
+                <version>10.0.0.CR2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>annotations</artifactId>
