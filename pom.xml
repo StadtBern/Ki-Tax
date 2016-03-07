@@ -63,6 +63,12 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${version.hibernate}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -352,8 +358,14 @@
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-embedded</artifactId>
-                    <version>9.0.2.Final</version>
+                    <version>10.0.0.Alpha6</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.wildfly.core</groupId>
+                    <artifactId>wildfly-embedded</artifactId>
+                    <version>2.0.10.Final</version>
+                </dependency>
+
             </dependencies>
 
             <build>
@@ -377,7 +389,7 @@
                                         <artifactItem>
                                             <groupId>org.wildfly</groupId>
                                             <artifactId>wildfly-dist</artifactId>
-                                            <version>9.0.2.Final</version>
+                                            <version>10.0.0.Final</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>target</outputDirectory>
@@ -397,8 +409,8 @@
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                                 <!-- the maven dependency plugin will have already downloaded the server on /target -->
-                                <jboss.home>${project.basedir}/target/wildfly-9.0.2.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-9.0.2.Final/modules</module.path>
+                                <jboss.home>${project.basedir}/target/wildfly-10.0.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-10.0.0.Final/modules</module.path>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         </configuration>

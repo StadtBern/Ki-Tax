@@ -45,77 +45,77 @@ import java.io.File;
  * Dies ist ein Beispiel einer Arquillian Test Klasse. Es wird vor jedem Test die Datenbank mit dem leeren Dataset
  * initialisiert.
  */
-//@RunWith(Arquillian.class)
-//@UsingDataSet("datasets/empty.xml")
-//@Transactional(TransactionMode.DISABLED)
+@RunWith(Arquillian.class)
+@UsingDataSet("datasets/empty.xml")
+@Transactional(TransactionMode.DISABLED)
 public class ApplicationPropertyServiceTest {
 
 
-//	@Deployment
-//	public static Archive<?> createTestArchive() {
-//
-//		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
-//		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
-//		File[] testDeps = pom.importTestDependencies().resolve().withTransitivity().asFile();
-//
-//		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
-//		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
-//			.addPackages(true, "ch/dvbern/ebegu/persistence")
-//			.addPackages(true, "ch/dvbern/ebegu/services")
-//			.addPackages(true, "ch/dvbern/ebegu/validation")
-//			.addClasses(Persistence.class, ISessionContextService.class, AbstractEntity.class)
-//
-//			.addAsLibraries(runtimeDeps)
-//			.addAsLibraries(testDeps)
-//
-//			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-//			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
-//			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
-//			// Deploy our test datasource
-//			.addAsWebInfResource("test-ds.xml");
-//		//Folgende Zeile gibt im /tmp dir das archiv aus zum debuggen nuetzlich
-//		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebArchive.war"), true);
-//		return webArchive;
-//	}
-//
-//	@Inject
-//	private ApplicationPropertyService applicationPropertyService;
-//
-//	@Inject
-//	private Persistence<ApplicationProperty> persistence;
+	@Deployment
+	public static Archive<?> createTestArchive() {
+
+		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
+		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
+		File[] testDeps = pom.importTestDependencies().resolve().withTransitivity().asFile();
+
+		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
+		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+			.addPackages(true, "ch/dvbern/ebegu/persistence")
+			.addPackages(true, "ch/dvbern/ebegu/services")
+			.addPackages(true, "ch/dvbern/ebegu/validation")
+			.addClasses(Persistence.class, ISessionContextService.class, AbstractEntity.class)
+
+			.addAsLibraries(runtimeDeps)
+			.addAsLibraries(testDeps)
+
+			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
+			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+			// Deploy our test datasource
+			.addAsWebInfResource("test-ds.xml");
+		//Folgende Zeile gibt im /tmp dir das archiv aus zum debuggen nuetzlich
+		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebArchive.war"), true);
+		return webArchive;
+	}
+
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	private Persistence<ApplicationProperty> persistence;
 
 
-//	@Test
-//	public void saveOrUpdateApplicationPropertyTest() {
-//		Assert.assertNotNull(applicationPropertyService);
-//		applicationPropertyService.saveOrUpdateApplicationProperty("testKey", "testValue");
-//		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
-//		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
-//
-//	}
-//
-//	@Test
-//	public void removeApplicationPropertyTest() {
-//		insertNewEntity();
-//		applicationPropertyService.removeApplicationProperty("testKey");
-//		Assert.assertEquals(0, applicationPropertyService.listApplicationProperties().size());
-//
-//	}
-//	@Test
-//	public void updateApplicationPropertyTest() {
-//		insertNewEntity();
-//		applicationPropertyService.saveOrUpdateApplicationProperty("testKey","changed");
-//		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty("testKey").getValue());
-//
-//	}
+	@Test
+	public void saveOrUpdateApplicationPropertyTest() {
+		Assert.assertNotNull(applicationPropertyService);
+		applicationPropertyService.saveOrUpdateApplicationProperty("testKey", "testValue");
+		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
+
+	}
+
+	@Test
+	public void removeApplicationPropertyTest() {
+		insertNewEntity();
+		applicationPropertyService.removeApplicationProperty("testKey");
+		Assert.assertEquals(0, applicationPropertyService.listApplicationProperties().size());
+
+	}
+	@Test
+	public void updateApplicationPropertyTest() {
+		insertNewEntity();
+		applicationPropertyService.saveOrUpdateApplicationProperty("testKey","changed");
+		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty("testKey").getValue());
+
+	}
 
 	// Help Methods
 
-//	private void insertNewEntity() {
-//		persistence.persist(new ApplicationProperty("testKey", "testValue"));
-//		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
-//		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
-//		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
-//	}
+	private void insertNewEntity() {
+		persistence.persist(new ApplicationProperty("testKey", "testValue"));
+		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").getValue());
+	}
 
 }
