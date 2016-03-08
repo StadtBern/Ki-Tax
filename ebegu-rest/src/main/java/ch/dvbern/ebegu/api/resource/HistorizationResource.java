@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
-import ch.dvbern.ebegu.api.util.JaxBConverter;
+import ch.dvbern.ebegu.api.resource.util.JaxBConverter;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.HistorizationService;

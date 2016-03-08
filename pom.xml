@@ -41,9 +41,22 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+<<<<<<< HEAD
                 <groupId>org.wildfly.bom</groupId>
                 <artifactId>jboss-javaee-7.0-wildfly</artifactId>
                 <version>10.0.0.CR2</version>
+=======
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-bom</artifactId>
+                <version>3.0.11.Final</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-7.0</artifactId>
+                <version>1.0.3.Final</version>
+>>>>>>> dev
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
