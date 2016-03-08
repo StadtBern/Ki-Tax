@@ -1,11 +1,13 @@
 package ch.dvbern.ebegu.api.util.errors;
 
+import ch.dvbern.ebegu.config.config.EbeguConfiguration;
 import ch.dvbern.ebegu.util.Constants;
 import org.jboss.resteasy.api.validation.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -25,6 +27,9 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 
 	@Context
 	private HttpHeaders headers;
+
+	@Inject
+	protected EbeguConfiguration configuration;
 
 	protected Response buildResponse(Object entity, String mediaType, Response.Status status) {
 		Response.ResponseBuilder builder = Response.status(status).entity(entity);

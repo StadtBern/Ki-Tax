@@ -14,6 +14,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguException> {
 
+
 	@Override
 	public Response toResponse(EbeguException exception) {
 		// wollen wir das hier so handhaben?
@@ -23,7 +24,7 @@ public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguExce
 
 	@Override
 	protected Response buildViolationReportResponse(EbeguException exception, Response.Status status) {
-		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader());
+		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader(), configuration.getIsDevmode());
 
 	}
 
