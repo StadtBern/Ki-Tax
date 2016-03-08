@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.persistence;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -21,7 +18,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Hilfsklasse welche CriteriaQueries erstellt.
@@ -53,18 +50,16 @@ public class CriteriaQueryHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Nullable
-	public <A, E extends AbstractEntity> E getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
-																	  @Nullable final A attributeValue,
-																	  @Nonnull final SingularAttribute<E, A> attribute) throws EbeguException {
+	@Nonnull
+	public <A, E extends AbstractEntity> Optional<E> getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
+																				@Nullable final A attributeValue,
+																				@Nonnull final SingularAttribute<E, A> attribute){
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
-		//wollen wir hier wirklich eine exception werfen
-		if (results.isEmpty()) {
-			String attrValue = Objects.toString(attributeValue, "");
+		E result = ensureSingleResult(results, attributeValue);
+		/*String attrValue = Objects.toString(attributeValue, "");
 			String attr = Objects.toString(attribute.getName(), "");
-			throw new EbeguEntityNotFoundException("getEntityByUniqueAttribute", Constants.MessageKey.ERROR_ENTITY_NOT_FOUND, entityClazz.getSimpleName(), attr, attrValue);
-		}
-		return ensureSingleResult(results, attributeValue);
+		throw new EbeguEntityNotFoundException("getEntityByUniqueAttribute", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, entityClazz.getSimpleName(), attr, attrValue);*/
+		return Optional.ofNullable(result);
 	}
 
 	@Nullable

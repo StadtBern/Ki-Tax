@@ -12,19 +12,19 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
-import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service fuer ApplicationProperty
@@ -43,24 +43,22 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) {
+	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value)  {
 		Validate.notNull(key);
 		Validate.notNull(value);
-
-		ApplicationProperty property = readApplicationProperty(key);
-		if (property == null) {
-			return persistence.persist(new ApplicationProperty(key, value));
-
+		Optional<ApplicationProperty> property = readApplicationProperty(key);
+		if (property.isPresent()) {
+			property.get().setValue(value);
+			return persistence.merge(property.get());
 		} else {
-			property.setValue(value);
-			return persistence.merge(property);
+			return persistence.persist(new ApplicationProperty(key, value));
 		}
 
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
-	public ApplicationProperty readApplicationProperty(@Nonnull final String key) throws EbeguException {
+	public Optional<ApplicationProperty> readApplicationProperty(@Nonnull final String key) {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
 	}
 
@@ -73,9 +71,9 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	public void removeApplicationProperty(@Nonnull String testKey) {
 		Validate.notNull(testKey);
-		ApplicationProperty propertyToRemove = readApplicationProperty(testKey);
-		Objects.requireNonNull(propertyToRemove, "Property to remove could not be found");
-		persistence.remove(propertyToRemove);
+		Optional<ApplicationProperty> propertyToRemove = readApplicationProperty(testKey);
+		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeApplicationProperty", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, testKey));
+		persistence.remove(propertyToRemove.get());
 
 	}
 }

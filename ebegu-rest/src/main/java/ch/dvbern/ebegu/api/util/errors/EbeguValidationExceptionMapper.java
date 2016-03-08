@@ -3,6 +3,8 @@ package ch.dvbern.ebegu.api.util.errors;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 import org.jboss.resteasy.api.validation.Validation;
 import org.jboss.resteasy.api.validation.ViolationReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintDefinitionException;
@@ -23,8 +25,12 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper<ValidationException> {
 
+	private final Logger LOG = LoggerFactory.getLogger(EbeguValidationExceptionMapper.class.getSimpleName());
+
 	@Override
 	public Response toResponse(ValidationException exception) {
+		LOG.error("ResteasyValidationException occured ", exception);
+
 		if (exception instanceof ConstraintDefinitionException) {
 			return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 		}

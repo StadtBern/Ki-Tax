@@ -11,6 +11,7 @@
 package ch.dvbern.ebegu.util;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Interface fuer Konstanten.
@@ -23,6 +24,8 @@ public interface Constants {
 	int UUID_LENGTH = 36;
 	int PLZ_LENGTH = 4;
 
+	Locale DEFAULT_LOCALE = new Locale("de", "CH");
+
 
 	String REGEX_EMAIL = "[\\S\\-.]+@([\\S-]+\\.)+[\\S-]+";
 	String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
@@ -32,8 +35,4 @@ public interface Constants {
 
 	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
 
-	interface MessageKey {
-		String ERROR_ENTITY_NOT_FOUND = "error_entity_not_found";
-
-	}
 }

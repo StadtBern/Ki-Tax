@@ -16,9 +16,9 @@ import java.util.ResourceBundle;
 public class ServerMessageUtil {
 
 
-	private static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Constants.SERVER_MESSAGE_BUNDLE_NAME, DEFAULT_LOCALE);
+
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Constants.SERVER_MESSAGE_BUNDLE_NAME, Constants.DEFAULT_LOCALE);
 
 
 	public static String getMessage(String key) {
@@ -41,7 +41,7 @@ public class ServerMessageUtil {
 		try {
 			return bundle.getString(key);
 		} catch (MissingResourceException ex) {
-			return "???_" + key + "_???";
+			return "???" + key + "???";
 		}
 	}
 
@@ -58,12 +58,14 @@ public class ServerMessageUtil {
 	 * Uebersetzt einen Enum-Wert
 	 */
 	@Nonnull
-	public static String translateEnumValue(@Nullable final Enum<?> e) {
+	public static String translateEnumValue(@Nullable final Enum<?> e, Locale locale) {
 		if (e == null) {
 			return StringUtils.EMPTY;
 		}
-		return getMessage(getKey(e));
+		return getMessage(getKey(e),locale);
 	}
+
+
 
 	/**
 	 * Gibt den Bundle-Key für einen Enum-Wert zurück.

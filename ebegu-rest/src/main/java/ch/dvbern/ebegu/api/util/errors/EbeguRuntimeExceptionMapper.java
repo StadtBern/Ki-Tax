@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.util.errors;
 
 import ch.dvbern.ebegu.api.util.validation.EbeguExceptionReport;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 
 import javax.ws.rs.core.MediaType;
@@ -15,20 +16,30 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class EbeguRuntimeExceptionMapper extends AbstractEbeguExceptionMapper<EbeguRuntimeException> {
 
+
+
 	@Override
 	public Response toResponse(EbeguRuntimeException exception) {
-		//wie handhaben wir die subexceptions
-		if (exception instanceof EbeguRuntimeException) {
-			EbeguRuntimeException ebeguRuntimeException = EbeguRuntimeException.class.cast(exception);
-			return buildViolationReportResponse(ebeguRuntimeException, Status.BAD_REQUEST);
+		logException(exception);
+		//standardfall, wenn manche subexceptions speziell gehandhabt werden muessen kann mit instanceof ein if block gemacht werden
+
+		if (exception instanceof EbeguEntityNotFoundException) {
+			// wollen wir das hier so handhaben?
+			EbeguEntityNotFoundException ebeguEntityNotFoundException = EbeguEntityNotFoundException.class.cast(exception);
+			return buildViolationReportResponse(ebeguEntityNotFoundException, Status.NOT_FOUND);
 		}
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
+
 	}
 
 
+	@Override
 	protected Response buildViolationReportResponse(EbeguRuntimeException exception, Response.Status status) {
-		return EbeguExceptionReport.buildResponse(status, exception);
+
+		return EbeguExceptionReport.buildResponse(status, exception, getLocaleFromHeader());
 
 	}
+
+
 
 }

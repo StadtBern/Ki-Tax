@@ -1,11 +1,18 @@
 package ch.dvbern.ebegu.api.util.errors;
 
+import ch.dvbern.ebegu.util.Constants;
 import org.jboss.resteasy.api.validation.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by imanol on 02.03.16.
@@ -13,6 +20,11 @@ import java.util.List;
  * @see  <a href="https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly/" >https://samaxes.com/2014/04/jaxrs-beanvalidation-javaee7-wildfly</a>
  */
 public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
+	@Context
+	private HttpHeaders headers;
 
 	protected Response buildResponse(Object entity, String mediaType, Response.Status status) {
 		Response.ResponseBuilder builder = Response.status(status).entity(entity);
@@ -51,6 +63,7 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 	 * @param accept Liste mit Accepted media types
 	 * @return Gibt den ersten von uns unterstuetzten MediaType zurueck
 	 */
+	@Nullable
 	protected MediaType getAcceptMediaType(List<MediaType> accept) {
 		for (MediaType mt : accept) {
 			if (MediaType.APPLICATION_JSON_TYPE.getType().equals(mt.getType())
@@ -63,6 +76,19 @@ public abstract class AbstractEbeguExceptionMapper<E extends Throwable> implemen
 			}
 		}
 		return null;
+	}
+
+	protected void logException(Exception exception) {
+		LOG.warn("Exception occured: " ,exception);
+	}
+
+
+	protected Locale getLocaleFromHeader() {
+		if (!headers.getAcceptableLanguages().isEmpty()) {
+			return headers.getAcceptableLanguages().get(0);
+		}
+		return Constants.DEFAULT_LOCALE;
+
 	}
 
 }

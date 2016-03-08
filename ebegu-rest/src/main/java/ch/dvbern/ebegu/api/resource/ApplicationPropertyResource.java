@@ -1,7 +1,10 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.util.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.api.resource.util.JaxBConverter;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 
@@ -17,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * Resource fuer ApplicationProperties
@@ -37,15 +41,13 @@ public class ApplicationPropertyResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{key}")
-	public Response getByKey(
+	public JaxApplicationProperties getByKey(
 		@Nonnull @PathParam("key") String keyParam,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
-		ApplicationProperty propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
-
-		return Response.ok(converter.applicationPropertieToJAX(propertyFromDB)).build();
-//		return Response.ok(converter.benutzerToResource(benutzer.get())).build();
-
+		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
+		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
+		return converter.applicationPropertieToJAX(propertyFromDB.get());
 	}
 
 	@Nullable
@@ -68,7 +70,7 @@ public class ApplicationPropertyResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(
 		@Nonnull @PathParam("key") String key,
-		@Nonnull String value,
+		@Nonnull @NotNull String value,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
