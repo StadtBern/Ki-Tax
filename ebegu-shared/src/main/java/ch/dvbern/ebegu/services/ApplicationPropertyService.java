@@ -34,6 +34,7 @@ public interface ApplicationPropertyService {
 	 *
 	 * @return Liste aller ApplicationProperties aus der DB
 	 */
+	@Nonnull
 	Collection<ApplicationProperty> listApplicationProperties();
 
 }

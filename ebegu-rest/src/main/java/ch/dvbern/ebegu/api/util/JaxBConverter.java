@@ -5,11 +5,8 @@ import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import java.util.Objects;
 
@@ -48,11 +45,12 @@ public class JaxBConverter {
 
 	@Nonnull
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity (JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
-		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
-		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
-		if (jaxToConvert.getId() != null) {
-			abstEntityToConvertTo.setId(jaxToConvert.getId());
-		}
+//		diese elemente sollten nicht geschrieben werden sondern nur gelesen
+//		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
+//		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
+//		if (jaxToConvert.getId() != null) {
+//			abstEntityToConvertTo.setId(jaxToConvert.getId());
+//		}
 
 		return abstEntityToConvertTo;
 	}

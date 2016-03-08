@@ -11,6 +11,13 @@
 
     function getStates() {
         return [
+            {
+                state: 'admin',
+                config: {
+                    template: '<admin-view></admin-view>',
+                    url: '/admin'
+                }
+            }
             /* Add New States Above */
         ];
     }

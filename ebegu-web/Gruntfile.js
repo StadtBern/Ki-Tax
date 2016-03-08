@@ -214,7 +214,7 @@ module.exports = function (grunt) {
                 files: [  //this files data is also updated in the watch handler, if updated change there too
                     '<%= dom_munger.data.appjs %>', // TODO flatten dom_munger.data.appjs for Karma Versions > 0.8.*
                     'node_modules/angular-mocks/angular-mocks.js',
-                    globs.createFolderGlobs('*-spec.js')
+                    globs.createFolderGlobs('*.spec.js')
                 ],
                 logLevel: 'ERROR',
                 reporters: ['mocha'],
@@ -315,8 +315,8 @@ module.exports = function (grunt) {
 
             //find the appropriate unit test for the changed file
             var spec = filepath;
-            if (filepath.lastIndexOf('-spec.js') === -1 || filepath.lastIndexOf('-spec.js') !== filepath.length - 8) {
-                spec = filepath.substring(0, filepath.length - 3) + '-spec.js';
+            if (filepath.lastIndexOf('.spec.js') === -1 || filepath.lastIndexOf('.spec.js') !== filepath.length - 8) {
+                spec = filepath.substring(0, filepath.length - 3) + '.spec.js';
             }
 
             //if the spec exists then lets run it

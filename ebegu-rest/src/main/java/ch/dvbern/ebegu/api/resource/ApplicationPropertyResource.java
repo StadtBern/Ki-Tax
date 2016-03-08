@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
 import ch.dvbern.ebegu.api.util.JaxBConverter;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
@@ -62,20 +63,6 @@ public class ApplicationPropertyResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EntityNotFoundException {
 
-		return update(key, value, uriInfo, response);
-
-	}
-
-	@Nullable
-	@PUT
-	@Path("/{key}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update(
-		@Nonnull @PathParam("key") String key,
-		@Nonnull String value,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
-
 		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -83,7 +70,24 @@ public class ApplicationPropertyResource {
 			.path("/" + modifiedProperty.getName())
 			.build();
 
-		return Response.created(uri).build();
+		return Response.created(uri).entity(converter.applicationPropertieToJAX(modifiedProperty)).build();
+
+
+	}
+
+	@Nullable
+	@PUT
+	@Path("/{key}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public JaxApplicationProperties update(
+		@Nonnull @PathParam("key") String key,
+		@Nonnull String value,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
+
+		return converter.applicationPropertieToJAX(modifiedProperty);
 	}
 
 
