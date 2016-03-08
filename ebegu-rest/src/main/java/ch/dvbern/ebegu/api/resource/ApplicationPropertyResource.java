@@ -2,13 +2,13 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.util.JaxBConverter;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -39,14 +39,10 @@ public class ApplicationPropertyResource {
 	@Path("/{key}")
 	public Response getByKey(
 		@Nonnull @PathParam("key") String keyParam,
-		@Context HttpServletResponse response) {
+		@Context HttpServletResponse response) throws EbeguException {
 
 		ApplicationProperty propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
 
-		//todo homa handle does not exist error
-		if (propertyFromDB == null) {
-			return Response.ok(null).build();
-		}
 		return Response.ok(converter.applicationPropertieToJAX(propertyFromDB)).build();
 //		return Response.ok(converter.benutzerToResource(benutzer.get())).build();
 
@@ -60,7 +56,7 @@ public class ApplicationPropertyResource {
 		@Nonnull @NotNull @PathParam("key") String key,
 		@Nonnull @NotNull String value,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EntityNotFoundException {
+		@Context HttpServletResponse response) throws EbeguException {
 
 		return update(key, value, uriInfo, response);
 
@@ -74,7 +70,7 @@ public class ApplicationPropertyResource {
 		@Nonnull @PathParam("key") String key,
 		@Nonnull String value,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
+		@Context HttpServletResponse response) throws EbeguException {
 
 		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
 

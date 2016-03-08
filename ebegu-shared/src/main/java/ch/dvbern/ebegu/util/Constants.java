@@ -30,4 +30,10 @@ public interface Constants {
 	String PATTERN_DATE = "dd.MM.yyyy";
 	DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_DATE);
 
+	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
+
+	interface MessageKey {
+		String ERROR_ENTITY_NOT_FOUND = "error_entity_not_found";
+
+	}
 }
