@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,13 +24,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service fuer ApplicationProperty
  */
 @Stateless
 @Local(ApplicationPropertyService.class)
-//@RolesAllowed({RoleNames.ADMIN_ROLENAME, RoleNames.SYSTEM_ROLENAME, RoleNames.SUBADMIN_ROLENAME, RoleNames.USER_ROLENAME})
 public class ApplicationPropertyServiceBean extends AbstractBaseService implements ApplicationPropertyService {
 
 
@@ -42,7 +43,10 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) throws EbeguException {
+	public ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) {
+		Validate.notNull(key);
+		Validate.notNull(value);
+
 		ApplicationProperty property = readApplicationProperty(key);
 		if (property == null) {
 			return persistence.persist(new ApplicationProperty(key, value));
@@ -63,5 +67,15 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	public List<ApplicationProperty> listApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
+	}
+
+
+	@Override
+	public void removeApplicationProperty(@Nonnull String testKey) {
+		Validate.notNull(testKey);
+		ApplicationProperty propertyToRemove = readApplicationProperty(testKey);
+		Objects.requireNonNull(propertyToRemove, "Property to remove could not be found");
+		persistence.remove(propertyToRemove);
+
 	}
 }

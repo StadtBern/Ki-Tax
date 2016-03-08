@@ -3,8 +3,8 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
 import ch.dvbern.ebegu.util.Constants;
-import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.Hibernate;
 
 import javax.annotation.Nonnull;
@@ -169,8 +169,11 @@ public abstract class AbstractEntity implements Serializable {
 		}
 	}*/
 
+
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("id", getId()).toString();
+		return new ToStringBuilder(this)
+			.append("id", getId())
+			.toString();
 	}
 }

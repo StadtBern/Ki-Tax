@@ -83,4 +83,17 @@ public class ApplicationPropertyResource {
 	}
 
 
+	@Nullable
+	@DELETE
+	@Path("/{key}")
+	@Consumes(MediaType.WILDCARD)
+	public Response remove(
+		@Nonnull @PathParam("key") String keyParam,
+		@Context HttpServletResponse response) {
+
+		applicationPropertyService.removeApplicationProperty(keyParam);
+		return Response.ok().build();
+	}
+
+
 }
