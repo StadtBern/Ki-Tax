@@ -12,7 +12,6 @@ package ch.dvbern.ebegu.converters;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.persistence.Converter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
@@ -20,7 +19,6 @@ import java.time.LocalDate;
 /**
  * Konvertiert ein LocalDate Java 8 Objekt in einen String fuer JSON
  */
-@Converter(autoApply = true)
 @XmlJavaTypeAdapter(value = LocalDateXMLConverter.class, type = LocalDate.class)
 public class LocalDateXMLConverter extends XmlAdapter<String, LocalDate>  {
 
