@@ -10,6 +10,7 @@
 
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.entities.ApplicationProperty_;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -34,7 +35,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 
 	@Inject
-	private Persistence<ApplicationProperty> persistence;
+	private Persistence<AbstractEntity> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;

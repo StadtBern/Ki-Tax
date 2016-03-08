@@ -13,7 +13,9 @@ import java.util.Locale;
  * Aus diesem Grund muss man seine eigene PhysicalStrategy bauen.
  * Check http://stackoverflow.com/questions/32437202/improvednamingstrategy-no-longer-working-in-hibernate-5
  */
-public class EbeguPhysicalNamingStrategyImpl extends PhysicalNamingStrategyStandardImpl implements Serializable {
+public class EbeguPhysicalNamingStrategyImpl extends PhysicalNamingStrategyStandardImpl {
+
+	private static final long serialVersionUID = 7069586216789441113L;
 
 	public static final EbeguPhysicalNamingStrategyImpl INSTANCE = new EbeguPhysicalNamingStrategyImpl();
 

@@ -2,14 +2,15 @@ package ch.dvbern.ebegu.api.util;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import java.util.Objects;
 
@@ -19,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Dependent
 @SuppressWarnings("PMD.NcssTypeCount")
 public class JaxBConverter {
-
 
 
 	@Nonnull
@@ -39,7 +39,7 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX (@Nonnull final AbstractEntity abstEntity, T jaxDTOToConvertTo) {
+	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX(@Nonnull final AbstractEntity abstEntity, T jaxDTOToConvertTo) {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
 		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));
@@ -47,7 +47,7 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	private <T extends AbstractEntity> T convertAbstractFieldsToEntity (JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
+	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
 		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
 		if (jaxToConvert.getId() != null) {
@@ -76,4 +76,19 @@ public class JaxBConverter {
 
 		return applicationProperty;
 	}
+
+	@Nonnull
+	public JaxEnversRevision enversRevisionToJAX(@Nonnull final DefaultRevisionEntity revisionEntity,
+												 @Nonnull final AbstractEntity abstractEntity, RevisionType accessType) {
+
+		JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
+		if (abstractEntity instanceof ApplicationProperty) {
+			jaxEnversRevision.setEntity(applicationPropertieToJAX((ApplicationProperty) abstractEntity));
+		}
+		jaxEnversRevision.setRev(revisionEntity.getId());
+		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
+		jaxEnversRevision.setAccessType(accessType);
+		return jaxEnversRevision;
+	}
+
 }
