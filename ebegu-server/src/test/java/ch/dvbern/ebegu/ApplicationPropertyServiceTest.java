@@ -89,7 +89,7 @@ public class ApplicationPropertyServiceTest {
 	public void saveOrUpdateApplicationPropertyTest() {
 		Assert.assertNotNull(applicationPropertyService);
 		applicationPropertyService.saveOrUpdateApplicationProperty("testKey", "testValue");
-		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
 		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
 
 	}
@@ -98,7 +98,7 @@ public class ApplicationPropertyServiceTest {
 	public void removeApplicationPropertyTest() {
 		insertNewEntity();
 		applicationPropertyService.removeApplicationProperty("testKey");
-		Assert.assertEquals(0, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertEquals(0, applicationPropertyService.getAllApplicationProperties().size());
 
 	}
 	@Test
@@ -113,7 +113,7 @@ public class ApplicationPropertyServiceTest {
 
 	private void insertNewEntity() {
 		persistence.persist(new ApplicationProperty("testKey", "testValue"));
-		Assert.assertEquals(1, applicationPropertyService.listApplicationProperties().size());
+		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
 		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
 		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
 	}

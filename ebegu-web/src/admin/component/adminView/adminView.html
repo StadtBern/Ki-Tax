@@ -1,30 +1,51 @@
 <div class="adminView">
-    <h1>Admin</h1>
+    <h1 data-translate="ADMIN"></h1>
     <div class="row">
+
+
+        <form ng-submit="vm.submit()" name="form">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row top5">
+                        <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+
+                        </label>
+                        <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
+                               ng-maxlength="vm.length" class="col-md-8" required>
+                            <span ng-show="form.propertyKey.$error.maxlength" class="error col-md-offset-4 col-md-8"
+                                  data-translate="ERROR_LENGTH">
+                        </span>
+                        </div>
+                    <div class="row top5">
+                        <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-4">
+                        </label>
+                        <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
+                               ng-maxlength="vm.length" class="col-md-8">
+                        <span ng-show="form.propertyValue.$error.maxlength" class="error col-md-offset-4 col-md-8"
+                              data-translate="ERROR_LENGTH">
+                            </span>
+
+                    </div>
+                    <div class="row">
+
+                        <button class="btn-primary" type="submit">
+                            submit
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="row">
+        <br/>
+        <br/>
+        <br/>
         <div class="col-md-3">
             <label>currentTime</label>
         </div>
         <div class="col-md-9"> &nbsp;</div>
         <div class="col-md-1" ng-bind="vm.now"></div>
-
-        <div class="row">
-            <div class="col-md-12">
-            <form ng-submit="vm.submit()">
-                <label>
-                    My Property Key
-                    <input type="text" name="propertyValue" ng-model="vm.applicationProperty.key">
-                </label>
-                <label>
-                    My Property Value
-                    <input type="text" name="propertyValue" ng-model="vm.applicationProperty.value">
-                </label>
-
-                <button class="btn-primary" type="submit">
-                    submit
-                </button>
-            </form>
-            </div>
-        </div>
-
     </div>
 </div>

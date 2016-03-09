@@ -11,6 +11,7 @@
             'dvbAngular.router',
             /* 3rd-party modules */
             'ui.bootstrap',
-            'angularMoment'
+            'angularMoment',
+            'pascalprecht.translate'
         ]);
 })();

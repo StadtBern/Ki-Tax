@@ -8,13 +8,22 @@
 /* Component LESS */
 @import "core/core.module.less";
 @import "admin/admin.module.less";
-@import "admin/admin.module.less";
-@import "admin/admin.module.less";
+
 /* Add Component LESS Above */
 
 /* Required for Angular UI Bootstrap */
 .nav, .pagination, .carousel, .panel-title a {
     cursor: pointer;
+}
+
+body {
+    //todo remove me just testing
+    padding-top: 50px;
+
+    .starter-template {
+        padding: 40px 15px;
+        text-align: center;
+    }
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and

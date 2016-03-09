@@ -20,7 +20,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Resource fuer ApplicationProperties
@@ -49,6 +51,17 @@ public class ApplicationPropertyResource {
 		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
 		return converter.applicationPropertieToJAX(propertyFromDB.get());
 	}
+
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxApplicationProperties> getAllApplicationProperties() {
+		return applicationPropertyService.getAllApplicationProperties().stream()
+			.map(ap -> converter.applicationPropertieToJAX(ap))
+			.collect(Collectors.toList());
+	}
+
 
 	@Nullable
 	@POST

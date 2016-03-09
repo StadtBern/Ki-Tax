@@ -127,8 +127,9 @@ module.exports = function (grunt) {
             main: {
                 files: [
                     {src: ['node_modules/font-awesome/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true},
-                    {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true}
-                    //todo bilder json translations einfuegen {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true}
+                    {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true},
+                    {src: ['src/translations/**'], dest: 'dist/', filter: 'isFile', expand: true},
+                    //todo bilder  einfuegen {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true}
                 ]
             }
         },

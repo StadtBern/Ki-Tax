@@ -11,10 +11,11 @@
 
     angular.module('ebeguWeb.admin').component('adminView', componentConfig);
 
-    AdminView.$inject = ['moment', 'applicationPropertyRS'];
+    AdminView.$inject = ['moment', 'applicationPropertyRS', 'MAX_LENGTH'];
 
-    function AdminView(moment, applicationPropertyRS) {
+    function AdminView(moment, applicationPropertyRS, MAX_LENGTH) {
         var vm = this;
+        vm.length = MAX_LENGTH;
         vm.now = moment();
         vm.applicationProperty = {key: '', value: ''};
         vm.submit = submit;
