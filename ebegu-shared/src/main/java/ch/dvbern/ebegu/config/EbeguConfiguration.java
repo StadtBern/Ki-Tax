@@ -8,7 +8,7 @@
  * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
  */
 
-package ch.dvbern.ebegu.config.config;
+package ch.dvbern.ebegu.config;
 
 
 /**

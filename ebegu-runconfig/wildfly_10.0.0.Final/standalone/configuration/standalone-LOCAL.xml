@@ -417,9 +417,4 @@
         </outbound-socket-binding>
     </socket-binding-group>
 
-    <deployments>
-        <deployment name="ebegu-rest-0.0.1-SNAPSHOT.war" runtime-name="ebegu-rest-0.0.1-SNAPSHOT.war">
-            <fs-archive path="/home/imanol/projects/ebegu/ebegu-rest/target/ebegu-rest-0.0.1-SNAPSHOT.war"/>
-        </deployment>
-    </deployments>
 </server>

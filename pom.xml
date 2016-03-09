@@ -317,6 +317,7 @@
                 <skip-code-validation>true</skip-code-validation>
             </properties>
         </profile>
+
         <profile>
             <!--INFO: Das funktioniert im Moment nicht da ein Nullpointer auftritt https://developer.jboss.org/message/723563-->
             <id>arquillian-weld-ee-embedded</id>
