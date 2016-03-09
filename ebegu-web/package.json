@@ -14,7 +14,7 @@
     "angular-moment": "~0.10",
     "angular-resource": "~1.5",
     "angular-sanitize": "~1.5",
-    "ng-table": "~0.5",
+    "angular-smart-table": "~2.1",
     "angular-translate": "~2.10",
     "angular-translate-loader-static-files": "~2.10",
     "angular-ui-bootstrap": "~1.2",

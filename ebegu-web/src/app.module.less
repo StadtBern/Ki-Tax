@@ -9,6 +9,7 @@
 @import "core/core.module.less";
 @import "admin/admin.module.less";
 
+@import "variables.less";
 /* Add Component LESS Above */
 
 /* Required for Angular UI Bootstrap */
@@ -23,6 +24,36 @@ body {
     .starter-template {
         padding: 40px 15px;
         text-align: center;
+    }
+}
+
+@background-color: white;
+
+.ErrorInput {
+    border-color: @state-danger-text;
+    background-color: @background-color;
+}
+
+form {
+    &.ng-submitted {
+        input {
+            &.ng-invalid {
+                .ErrorInput
+            }
+        }
+        .ng-invalid.highlight-input-fields-when-invalid {
+            input {
+                .ErrorInput
+            }
+        }
+        .error-message {
+            display: inherit;
+            line-height: @floating-text-line-height;
+            color: @color-contrast-hover;
+        }
+    }
+    .error-message {
+        display: none;
     }
 }
 

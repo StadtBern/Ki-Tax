@@ -1,43 +1,79 @@
 <div class="adminView">
     <h1 data-translate="ADMIN"></h1>
+
     <div class="row">
+        <div class="col-md-12">
 
+            <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" class="table table-striped">
+                <thead>
+                <tr>
+                    <th st-sort="name" data-translate="PROPERTY_KEY"></th>
+                    <th st-sort="value" data-translate="PROPERTY_TEXT"></th>
+                </tr>
+                <tr>
+                    <th colspan="5"><input st-search="" class="form-control" placeholder="global search ..."
+                                           type="text"/></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection">
+                    <td>{{row.name}}</td>
+                    <td>{{row.value}}</td>
+                    <td>
+                        <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
+                            <i class="glyphicon glyphicon-remove-circle">
+                            </i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-        <form ng-submit="vm.submit()" name="form">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="row top5">
-                        <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+        </div>
+        <div class="col-md-12">
+            <button type="button" ng-click="vm.createItem()" class="btn btn-sm btn-success">
+                <i class="glyphicon glyphicon-plus">
+                </i> add item
+            </button>
+        </div>
 
-                        </label>
-                        <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
-                               ng-maxlength="vm.length" class="col-md-8" required>
+    </div>
+
+    <form ng-submit="form.$valid && vm.submit()" name="form" novalidate ng-show="vm.applicationProperty">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row top5">
+                    <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+
+                    </label>
+                    <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
+                           ng-maxlength="vm.length" class="col-md-8" required max="vm.length">
                             <span ng-show="form.propertyKey.$error.maxlength" class="error col-md-offset-4 col-md-8"
                                   data-translate="ERROR_LENGTH">
                         </span>
-                        </div>
-                    <div class="row top5">
-                        <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-4">
-                        </label>
-                        <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               ng-maxlength="vm.length" class="col-md-8">
+                </div>
+                <div class="row top5">
+                    <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-4">
+                    </label>
+                    <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
+                           ng-maxlength="vm.length" class="col-md-8">
                         <span ng-show="form.propertyValue.$error.maxlength" class="error col-md-offset-4 col-md-8"
                               data-translate="ERROR_LENGTH">
                             </span>
 
-                    </div>
-                    <div class="row">
-
-                        <button class="btn-primary" type="submit">
-                            submit
-                        </button>
-                    </div>
-
                 </div>
-            </div>
-        </form>
 
-    </div>
+                <div class="row">
+
+                    <button class="btn-primary" type="submit">
+                        submit
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
     <div class="row">
         <br/>
         <br/>

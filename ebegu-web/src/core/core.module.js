@@ -12,6 +12,7 @@
             /* 3rd-party modules */
             'ui.bootstrap',
             'angularMoment',
+            'smart-table',
             'pascalprecht.translate'
         ]);
 })();

@@ -21,6 +21,8 @@ describe('applicationPropertyRS', function () {
     // set the mock response
     beforeEach(function () {
         $httpBackend.when('GET', REST_API + 'application-properties/' + testKey).respond(mockApplicationProperty);
+        $httpBackend.when('GET', REST_API + 'application-properties/').respond([mockApplicationProperty]);
+        $httpBackend.when('DELETE', REST_API + 'application-properties/' + testKey).respond(200, '');
         $httpBackend.when('POST', REST_API + 'application-properties/' + testKey)
             .respond(201, mockApplicationProperty, {Location: 'http://localhost:8080/ebegu/api/v1/application-properties/test2'});
 
@@ -52,9 +54,7 @@ describe('applicationPropertyRS', function () {
                 expect(property).toEqual(mockApplicationProperty);
 
             });
-            it('should create a property', function () {
 
-            });
         });
 
         describe('create', function () {
@@ -70,6 +70,40 @@ describe('applicationPropertyRS', function () {
                 });
                 $httpBackend.flush();
                 expect(property).toEqual(mockApplicationProperty);
+
+            });
+        });
+
+        describe('getAllApplicationProperties', function () {
+
+            it('should fetch a list of all properties', function () {
+                $httpBackend.expectGET(REST_API + 'application-properties/');
+                var promise = applicationPropertyRS.getAllApplicationProperties();
+                var list = null;
+
+                promise.then(function (response) {
+                    list = response.data;
+
+                });
+                $httpBackend.flush();
+                expect(list).toEqual([mockApplicationProperty]);
+
+            });
+        });
+
+        describe('remove', function () {
+
+            it('should remove a property', function () {
+                $httpBackend.expectDELETE(REST_API + 'application-properties/' + testKey);
+                var promise = applicationPropertyRS.remove(testKey);
+                var status = null;
+
+                promise.then(function (response) {
+                    status = response.status;
+
+                });
+                $httpBackend.flush();
+                expect(200).toEqual(status);
 
             });
         });

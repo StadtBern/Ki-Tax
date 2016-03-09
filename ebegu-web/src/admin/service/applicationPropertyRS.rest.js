@@ -12,7 +12,9 @@
         var srv = {
             // Public API
             getByKey: getByKey,
-            create: create
+            create: create,
+            remove: remove,
+            getAllApplicationProperties: getAllApplicationProperties
 
         };
 
@@ -31,7 +33,14 @@
                     'Content-Type': 'text/plain'
                 }
             });
+        }
 
+        function remove(key) {
+            return $http.delete(serviceURL + '/' + encodeURIComponent(key));
+        }
+
+        function getAllApplicationProperties() {
+            return $http.get(serviceURL + '/');
         }
 
     }
