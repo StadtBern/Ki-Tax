@@ -48,6 +48,14 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+            	<groupId>org.jboss.resteasy</groupId>
+            	<artifactId>resteasy-bom</artifactId>
+            	<version>3.0.14.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
                 <version>${version.hibernate}</version>
@@ -121,6 +129,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>1.10</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

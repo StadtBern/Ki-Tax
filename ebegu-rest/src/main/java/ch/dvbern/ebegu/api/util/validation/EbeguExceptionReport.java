@@ -128,7 +128,9 @@ public class EbeguExceptionReport {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
 		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader);
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
+		if (addDebugInfo) {
 		addDevelopmentDebugInformation(exceptionReport, ex);
+				}
 		return builder.entity(exceptionReport).build();
 
 	}
@@ -137,15 +139,15 @@ public class EbeguExceptionReport {
 		Response.ResponseBuilder builder = setResponseHeaderAndStatus(status);
 		String translatedEnumMessage = ServerMessageUtil.translateEnumValue(ex.getErrorCodeEnum(), localeFromHeader);
 		EbeguExceptionReport exceptionReport = new EbeguExceptionReport(ex.getClass().getSimpleName(), ex.getErrorCodeEnum(), ex.getMethodName(), translatedEnumMessage, ex.getCustomMessage(), ex.getArgs());
+		if (addDebugInfo) {
 		addDevelopmentDebugInformation(exceptionReport, ex);
+		}
 		return builder.entity(exceptionReport).build();
 
 	}
 
 	private static void addDevelopmentDebugInformation(EbeguExceptionReport exceptionReport, Exception e) {
-//		if (config.isDevMode()) { // todo team check if devmode
 			exceptionReport.setStackTrace(ExceptionUtils.getStackTrace(e));
-//		}
 	}
 
 	@Nonnull

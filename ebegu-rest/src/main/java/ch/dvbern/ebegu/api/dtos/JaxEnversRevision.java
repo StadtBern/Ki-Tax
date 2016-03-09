@@ -3,15 +3,12 @@ package ch.dvbern.ebegu.api.dtos;
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import org.hibernate.envers.RevisionType;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.TimeZone;
 
 /**
  * DTO fuer Application Propertie

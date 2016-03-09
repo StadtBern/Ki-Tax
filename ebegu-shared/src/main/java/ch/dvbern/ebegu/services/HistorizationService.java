@@ -22,7 +22,8 @@ public interface HistorizationService {
 	List<Object[]> getAllRevisionsById(@Nonnull String entityName, @Nonnull String entityId);
 
 	/**
-	 * Gibt alle Objekte der Art entityName auf einer bestimmten Revision zurueck.
+	 * Gibt alle Objekte der Art entityName auf einer bestimmten Revision zurueck. Das heisst der Zustand
+	 * einer "Tabelle" in Revision x
 	 *
 	 * @param entityName Klassename der Entity
 	 * @param revision Revision
