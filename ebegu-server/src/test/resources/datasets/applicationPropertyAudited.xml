@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<applicationProperty id="67219837-0e12-4d97-b245-649b90d9d2a5" timestampErstellt="2016-03-04 16:14:28.134"
+						 timestampMutiert="2016-03-04 16:14:28.134" userErstellt="me" userMutiert="me"
+						 version="2" name="code1" value="entry2" />
+	<applicationProperty_AUD id="67219837-0e12-4d97-b245-649b90d9d2a5" timestampErstellt="2016-03-04 16:14:28.134"
+							  timestampMutiert="2016-03-04 16:14:28.134" userErstellt="me" userMutiert="me"
+							  rev="1" revtype="0" name="code1" value="entry1" />
+	<applicationProperty_AUD id="67219837-0e12-4d97-b245-649b90d9d2a5" timestampErstellt="2016-03-04 16:14:28.134"
+							  timestampMutiert="2016-03-04 16:14:28.134" userErstellt="me" userMutiert="me"
+							  rev="2" revtype="1" name="code2" value="entry2" />
+	<revinfo rev="1" revtstmp="1457104468194" />
+	<revinfo rev="2" revtstmp="1457104468194" />
+</dataset>
