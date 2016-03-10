@@ -1,6 +1,6 @@
-package ch.dvbern.ebegu.api.util.errors;
+package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.api.util.validation.EbeguExceptionReport;
+import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 

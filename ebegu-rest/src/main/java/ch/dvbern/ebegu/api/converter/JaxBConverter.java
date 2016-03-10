@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.resource.util;
+package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;

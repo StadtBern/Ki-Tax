@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.util.validation;
+package ch.dvbern.ebegu.api.validation;
 
 import ch.dvbern.ebegu.api.util.ServerMessageUtil;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;

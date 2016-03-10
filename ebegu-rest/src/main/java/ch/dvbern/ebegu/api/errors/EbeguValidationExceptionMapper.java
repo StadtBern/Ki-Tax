@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.util.errors;
+package ch.dvbern.ebegu.api.errors;
 
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 import org.jboss.resteasy.api.validation.Validation;

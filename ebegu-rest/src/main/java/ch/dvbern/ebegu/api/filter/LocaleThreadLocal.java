@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.util.filter;
+package ch.dvbern.ebegu.api.filter;
 
 import java.util.Locale;
 

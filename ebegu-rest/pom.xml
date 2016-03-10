@@ -180,6 +180,8 @@
             <artifactId>resteasy-validator-provider-11</artifactId>
             <scope>provided</scope>
         </dependency>
+
+
     </dependencies>
 
 
