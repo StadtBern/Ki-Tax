@@ -9,5 +9,7 @@
                  version="2.1">
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 
+	<converter class="ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter"/>
+	<converter class="ch.dvbern.ebegu.converters.LocalDatePersistenceConverter"/>
 
 </entity-mappings>

@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.Hibernate;
+import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @SuppressWarnings("ClassReferencesSubclass")
 @MappedSuperclass
+@Audited
 @EntityListeners(AbstractEntityListener.class)
 public abstract class AbstractEntity implements Serializable {
 

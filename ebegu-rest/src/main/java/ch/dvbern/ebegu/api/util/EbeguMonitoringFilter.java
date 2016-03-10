@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.resource.monitoring;
+package ch.dvbern.ebegu.api.util;
 
 import net.bull.javamelody.MonitoringFilter;
 

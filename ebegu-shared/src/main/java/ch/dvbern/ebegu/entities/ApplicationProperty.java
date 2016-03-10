@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
 /**
  * Entitaet zum Speichern von diversen Applikationsproperties in der Datenbank.
  */
+@Audited
 @Entity
 public class ApplicationProperty extends AbstractEntity {
 

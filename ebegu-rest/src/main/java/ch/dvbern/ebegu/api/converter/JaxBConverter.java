@@ -1,10 +1,14 @@
-package ch.dvbern.ebegu.api.resource.util;
+package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
 import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
+import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +51,17 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
+	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
+		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
+		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
+		if (jaxToConvert.getId() != null) {
+			abstEntityToConvertTo.setId(jaxToConvert.getId());
+		}
+
+		return abstEntityToConvertTo;
+	}
+
+	@Nonnull
 	public JaxApplicationProperties applicationPropertieToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
@@ -59,10 +74,24 @@ public class JaxBConverter {
 	public ApplicationProperty applicationPropertieToEntity(JaxApplicationProperties jaxAP, @Nonnull final ApplicationProperty applicationProperty) {
 		Validate.notNull(applicationProperty);
 		Validate.notNull(jaxAP);
-
+		convertAbstractFieldsToEntity(jaxAP, applicationProperty);
 		applicationProperty.setName(jaxAP.getName());
 		applicationProperty.setValue(jaxAP.getValue());
 
 		return applicationProperty;
+	}
+
+	@Nonnull
+	public JaxEnversRevision enversRevisionToJAX(@Nonnull final DefaultRevisionEntity revisionEntity,
+												 @Nonnull final AbstractEntity abstractEntity, RevisionType accessType) {
+
+		JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
+		if (abstractEntity instanceof ApplicationProperty) {
+			jaxEnversRevision.setEntity(applicationPropertieToJAX((ApplicationProperty) abstractEntity));
+		}
+		jaxEnversRevision.setRev(revisionEntity.getId());
+		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
+		jaxEnversRevision.setAccessType(accessType);
+		return jaxEnversRevision;
 	}
 }
