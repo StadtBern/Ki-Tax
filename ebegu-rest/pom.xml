@@ -180,8 +180,11 @@
             <artifactId>resteasy-validator-provider-11</artifactId>
             <scope>provided</scope>
         </dependency>
-
-
+        <!--SWAGGER-API-->
+        <dependency>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-jaxrs</artifactId>
+        </dependency>
     </dependencies>
 
 

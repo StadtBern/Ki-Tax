@@ -71,12 +71,6 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 		this.timestampMutiert = timestampMutiert;
 	}
 
-	/**
-	 * convenience method: damit das Setzen direkt aus der Entity bequem moeglich ist :)
-	 */
-	public void setId(@Nonnull Long id) {
-		setId(String.valueOf(id));
-	}
 
 	@Override
 	public boolean equals(Object o) {
