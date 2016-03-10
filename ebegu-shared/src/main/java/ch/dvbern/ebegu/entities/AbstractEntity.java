@@ -16,9 +16,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import org.hibernate.envers.Audited;
 
 @SuppressWarnings("ClassReferencesSubclass")
 @MappedSuperclass
+@Audited
 @EntityListeners(AbstractEntityListener.class)
 public abstract class AbstractEntity implements Serializable {
 

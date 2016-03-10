@@ -27,7 +27,7 @@
         <database.jdbc.pwd>ebegu</database.jdbc.pwd>
 
         <version.postgresql>9.4-1201-jdbc41</version.postgresql>
-        <version.hibernate>4.3.10.Final</version.hibernate>
+        <version.hibernate>5.1.0.Final</version.hibernate>
 
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
@@ -41,19 +41,44 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-bom</artifactId>
-                <version>3.0.11.Final</version>
-                <scope>import</scope>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>jboss-javaee-7.0-wildfly</artifactId>
+                <version>10.0.0.CR2</version>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-7.0</artifactId>
-                <version>1.0.3.Final</version>
+            	<groupId>org.jboss.resteasy</groupId>
+            	<artifactId>resteasy-bom</artifactId>
+            	<version>3.0.14.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-envers</artifactId>
+                <version>${version.hibernate}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- mit dom4j kann orm.xml nicht geparst werden -->
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${version.hibernate}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>dom4j</groupId>
+                        <artifactId>dom4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>annotations</artifactId>
@@ -114,6 +139,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.lib</groupId>
+                <artifactId>dvbern-lib-date</artifactId>
+                <version>1.5.0</version>
             </dependency>
             <!--<dependency>-->
             <!--<groupId>commons-codec</groupId>-->
@@ -230,8 +260,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
-
-
+        <dependency>
+            <groupId>ch.dvbern.lib</groupId>
+            <artifactId>dvbern-lib-date</artifactId>
+        </dependency>
         <!-- Scope: test -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -285,6 +317,7 @@
                 <skip-code-validation>true</skip-code-validation>
             </properties>
         </profile>
+
         <profile>
             <!--INFO: Das funktioniert im Moment nicht da ein Nullpointer auftritt https://developer.jboss.org/message/723563-->
             <id>arquillian-weld-ee-embedded</id>
@@ -328,7 +361,7 @@
         </profile>
 
         <profile>
-            <id>wildfy902-embedded</id>
+            <id>wildfy10-embedded</id>
             <activation>
                 <property>
                     <!-- hiermit wird getestet ob ein property disable-embedded-wildfly existiert, wenn nicht lauft
@@ -336,7 +369,7 @@
                     <name>!disable-embedded-wildfly</name>
                 </property>
             </activation>
-            <!-- the dependencies for Wildfly9.0.2.Final  -->
+            <!-- the dependencies for Wildfly10.0.0.Final  -->
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -346,8 +379,14 @@
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-embedded</artifactId>
-                    <version>9.0.2.Final</version>
+                    <version>10.0.0.Alpha6</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.wildfly.core</groupId>
+                    <artifactId>wildfly-embedded</artifactId>
+                    <version>2.0.10.Final</version>
+                </dependency>
+
             </dependencies>
 
             <build>
@@ -371,7 +410,7 @@
                                         <artifactItem>
                                             <groupId>org.wildfly</groupId>
                                             <artifactId>wildfly-dist</artifactId>
-                                            <version>9.0.2.Final</version>
+                                            <version>10.0.0.Final</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>target</outputDirectory>
@@ -391,14 +430,27 @@
                             <systemPropertyVariables>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                                 <!-- the maven dependency plugin will have already downloaded the server on /target -->
-                                <jboss.home>${project.basedir}/target/wildfly-9.0.2.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-9.0.2.Final/modules</module.path>
+                                <jboss.home>${project.basedir}/target/wildfly-10.0.0.Final</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-10.0.0.Final/modules</module.path>
                             </systemPropertyVariables>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Arquillian WildFly remote profile -->
+        <profile>
+            <id>arq-widlfly-remote</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-remote</artifactId>
+                    <version>1.1.0.Beta1</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
 
     </profiles>

@@ -5,12 +5,15 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
+
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
 
 /**
  * Entitaet zum Speichern von diversen Applikationsproperties in der Datenbank.
  */
+@Audited
 @Entity
 public class ApplicationProperty extends AbstractEntity {
 

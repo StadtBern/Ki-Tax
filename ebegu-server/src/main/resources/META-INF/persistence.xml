@@ -11,9 +11,7 @@
 
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
-			<property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
-			<!-- TODO: migrate to Non-Deprecated delegator mechanism: -->
-			<!--<property name="hibernate.ejb.naming_strategy_delegator" value="org.hibernate.cfg.naming.ImprovedNamingStrategyDelegator"/>-->
+			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
 
 			<!-- SQL Logging bitte via Logger konfigurieren -->
 			<property name="hibernate.show_sql" value="true"/>
