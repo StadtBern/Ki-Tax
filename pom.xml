@@ -12,7 +12,7 @@
 
     <groupId>ch.dvbern.kita-scheduler</groupId>
     <artifactId>kita-scheduler</artifactId>
-    <version>0.23.0-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
     <properties>
