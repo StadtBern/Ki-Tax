@@ -121,25 +121,33 @@
 
                     <plugin>
                         <groupId>de.juplo</groupId>
-                        <artifactId>hibernate4-maven-plugin</artifactId>
-                        <version>1.1.0</version>
+                        <artifactId>hibernate-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>export</goal>
+                                    <goal>create</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
-                            <force>true</force>
-                            <hibernateNamingStrategy>org.hibernate.cfg.ImprovedNamingStrategy</hibernateNamingStrategy>
-                            <hibernateDialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernateDialect>
-                            <target>SCRIPT</target>
-                            <type>CREATE</type>
+                            <dialect>org.hibernate.dialect.PostgreSQL92Dialect</dialect>
+                            <physicalNamingStrategy>ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl</physicalNamingStrategy>
+                            <export>false</export>
+                            <format>true</format>
                             <outputFile>${project.build.directory}/ebegu-schema.ddl</outputFile>
+                            <show>true</show>
                         </configuration>
+                        <dependencies>
+                            <!--fuer dialect ?-->
+                            <dependency>
+                                <groupId>org.hibernate</groupId>
+                                <artifactId>hibernate-java8</artifactId>
+                                <version>5.1.0.Final</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
+
             </build>
         </profile>
     </profiles>
