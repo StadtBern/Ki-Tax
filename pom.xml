@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,6 +13,9 @@
     <artifactId>ebegu</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <name>eBEGU - Multimodule Project</name>
+
 
     <properties>
         <!--<ear.name>kita-scheduler</ear.name>-->
@@ -34,9 +38,6 @@
 
     </properties>
 
-    <name>eBEGU - Multimodule Project</name>
-
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -47,9 +48,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-            	<groupId>org.jboss.resteasy</groupId>
-            	<artifactId>resteasy-bom</artifactId>
-            	<version>3.0.14.Final</version>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-bom</artifactId>
+                <version>3.0.14.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -233,6 +234,12 @@
                 <version>1.1.11.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <!--SWAGGER-API-->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-jaxrs</artifactId>
+                <version>1.5.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -534,45 +541,49 @@
             <!--todo team remove: hack: das ist ein workaround bis die pmd rules ueber sonar geladen werden koennen-->
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>2.0</version>
-                      <executions>
-                          <!-- set absolute base path from super pom -->
-                          <execution>
-                              <id>find-basepath</id>
-                              <phase>validate</phase>
-                              <goals>
-                                  <goal>execute</goal>
-                              </goals>
-                              <configuration>
-                                  <source>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <!-- set absolute base path from super pom -->
+                    <execution>
+                        <id>find-basepath</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
                                       <![CDATA[
-                                          import java.io.File;
-                                          log.info('## define projects super pom absolute path through basepath_marker')
-                                          String p = "basepath_marker";
-                                          File f = null;
-                                          if( p != null ) {
-                                              def _max_child_poms = 0
-                                              while( _max_child_poms++ < 5 ) { f = new File( p ); if( f.exists() ) { break;
-                                                  }
-                                                  p = "../" + p;
-                                              }
-                                          }
-                                          if( f != null ) {
-                                              String basePath = f.getCanonicalPath();
-                                              basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
-                                              project.properties['base-path'] = basePath.replace( '\\' , '/');
-                                              log.info(' - used base path = ' + project.properties['base-path'] );
-                                          } else {
-                                              log.error( 'Could not find basepath_marker marker file!' );
-                                              System.stop( 0 );
-                                          }
-                                      ]]>
-                                  </source>
-                              </configuration>
-                          </execution>
-                      </executions>
-                  </plugin>
+                                import java.io.File;
+
+                                log.info('## define projects super pom absolute path through basepath_marker')
+                                String p = "basepath_marker";
+                                File f = null;
+                                if (p != null) {
+                                    def _max_child_poms = 0
+                                    while (_max_child_poms++ < 5) {
+                                        f = new File(p);
+                                        if (f.exists()) {
+                                            break;
+                                        }
+                                        p = "../" + p;
+                                    }
+                                }
+                                if (f != null) {
+                                    String basePath = f.getCanonicalPath();
+                                    basePath = basePath.substring(0, basePath.lastIndexOf(File.separator));
+                                    project.properties['base-path'] = basePath.replace('\\', '/');
+                                    log.info(' - used base path = ' + project.properties['base-path']);
+                                } else {
+                                    log.error('Could not find basepath_marker marker file!');
+                                    System.stop(0);
+                                }
+                                ]]>
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
