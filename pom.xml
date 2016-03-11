@@ -14,6 +14,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>eBEGU - Multimodule Project</name>
+
+
     <properties>
         <!--<ear.name>kita-scheduler</ear.name>-->
 
@@ -240,9 +243,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-
-    <name>eBEGU - Multimodule Project</name>
 
 
     <dependencies>
