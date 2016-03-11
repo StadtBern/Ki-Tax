@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ebegu</artifactId>
+        <groupId>ch.dvbern.ebegu</groupId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ebegu-web</artifactId>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>0.0.29</version>
+
+                <!--The installation directory is the folder where your dependencies are installed e.g. node.exe.
+                 You can also set this property on the different goals .-->
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                </configuration>
+
+
+                <executions>
+
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v4.4.0</nodeVersion>
+                            <npmVersion>2.14.20</npmVersion>
+                            <!--<nodeDownloadRoot>https://nodejs.org/nodejs/dist/</nodeDownloadRoot>-->
+                            <!--<npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>-->
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <!-- Optional configuration which provides for running any npm command -->
+                        <configuration>
+                            <arguments>install</arguments>
+                            <installDirectory>target</installDirectory>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>grunt build</id>
+                        <goals>
+                            <goal>grunt</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>build --no-color</arguments>
+                        </configuration>
+                    </execution>
+
+
+                </executions>
+            </plugin>
+
+            <plugin>
+
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle tar.gz artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <!-- Nur Deployen wenn alle Module erfolgreich gebaut wurden -->
+                    <deployAtEnd>true</deployAtEnd>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle tar.gz artifact</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <version>${project.version}</version>
+                            <file>${project.build.directory}/ebegu-web-${project.version}-client</file>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

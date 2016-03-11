@@ -716,5 +716,6 @@
         <module>ebegu-testutils</module>
         <module>ebegu-rest</module>
         <module>ebegu-runconfig</module>
+        <module>ebegu-web</module>
     </modules>
 </project>
