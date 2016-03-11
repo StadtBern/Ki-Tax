@@ -36,6 +36,14 @@ describe('applicationPropertyRS', function () {
             expect(applicationPropertyRS.create).toBeDefined();
         });
 
+        it('should include a remove() function', function () {
+            expect(applicationPropertyRS.remove).toBeDefined();
+        });
+
+        it('should include a getAllApplicationProperties() function', function () {
+            expect(applicationPropertyRS.getAllApplicationProperties()).toBeDefined();
+        });
+
     });
 
     describe('API Usage', function () {

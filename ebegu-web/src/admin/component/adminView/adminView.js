@@ -13,12 +13,11 @@
 
     angular.module('ebeguWeb.admin').component('adminView', componentConfig);
 
-    AdminView.$inject = ['moment', 'applicationPropertyRS', 'MAX_LENGTH'];
+    AdminView.$inject = ['applicationPropertyRS', 'MAX_LENGTH'];
 
-    function AdminView(moment, applicationPropertyRS, MAX_LENGTH) {
+    function AdminView(applicationPropertyRS, MAX_LENGTH) {
         var vm = this;
         vm.length = MAX_LENGTH;
-        vm.now = moment();
         vm.applicationProperty = null;
         vm.submit = submit;
         vm.removeRow = removeRow;
@@ -35,6 +34,7 @@
                     vm.applicationProperties.push(response.data);
 
                 });
+            //todo team fehlerhandling
         }
 
         function removeRow(row) {

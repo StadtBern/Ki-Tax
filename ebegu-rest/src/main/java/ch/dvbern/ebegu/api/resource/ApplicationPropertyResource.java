@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
+import io.swagger.annotations.Api;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Path("application-properties")
 @Stateless
+@Api
 public class ApplicationPropertyResource {
 
 	@Inject
