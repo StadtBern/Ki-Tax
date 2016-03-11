@@ -22,4 +22,4 @@ add constraint FK_application_property_aud_revinfo
 foreign key (rev)
 references revinfo;
 
-create sequence hibernate_sequence;
+    create sequence hibernate_sequence start 1 increment 1;

@@ -119,23 +119,37 @@
 
                     <plugin>
                         <groupId>de.juplo</groupId>
-                        <artifactId>hibernate4-maven-plugin</artifactId>
-                        <version>1.1.0</version>
+                        <artifactId>hibernate-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>export</goal>
+                                    <goal>create</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
-                            <force>true</force>
-                            <hibernateNamingStrategy>org.hibernate.cfg.ImprovedNamingStrategy</hibernateNamingStrategy>
-                            <hibernateDialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernateDialect>
-                            <target>SCRIPT</target>
-                            <type>CREATE</type>
+                            <!--Der verwendete Dialekt fuer die Schema generierung-->
+                            <dialect>org.hibernate.dialect.PostgreSQL92Dialect</dialect>
+                            <!-- Optionale Namensgebungsstrategie. Hiermit koennen die Tabellennamen zum Beispiel mit -->
+                            <!-- underscore generiert werden statt mit CamelCase (application-property statt ApplicationProperty) -->
+                            <physicalNamingStrategy>ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl
+                            </physicalNamingStrategy>
+                            <!--verhindert, dass das Plugin versucht das schema physisch in eine DB zu schreiben-->
+                            <export>false</export>
+                            <format>true</format>
+                            <!--File in welches das Schema exportiert wird (defaultist create.sql)-->
                             <outputFile>${project.build.directory}/ebegu-schema.ddl</outputFile>
+                            <!--definiert ob der text fuer das sql-schema in die console geloggt wird-->
+                            <show>true</show>
                         </configuration>
+                        <dependencies>
+                            <!--hibernate 5 mit java 8 support-->
+                            <dependency>
+                                <groupId>org.hibernate</groupId>
+                                <artifactId>hibernate-java8</artifactId>
+                                <version>5.1.0.Final</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
