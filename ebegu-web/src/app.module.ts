@@ -1,5 +1,5 @@
 /// <reference path="../typings/browser.d.ts" />
-module app {
+module ebeguWeb {
     'use strict';
 
     angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin']);
