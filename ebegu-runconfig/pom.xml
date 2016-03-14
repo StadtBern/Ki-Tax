@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -8,6 +9,92 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ebegu-runconfig</artifactId>
+    <description>Dieses POM dient dazu die aktuelle Version von ebegu-rest in ein Docker image zu packen welches
+        einen Wildfly 10 enthaelt.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-rest</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <!--dependency fuer docker-image vorbereiten-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy ebegu-rest for docker</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.dvbern.ebegu</groupId>
+                                    <artifactId>ebegu-rest</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <destFileName>ebegu-rest.war</destFileName>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/warToAddToDocker</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--docker image builden-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.3</version>
+                <configuration>
+                    <!--unter diesem namen ist das image nach dem builden vorhanden-->
+                    <imageName>docker.dvbern.ch:5000/dvbern/ebegu</imageName>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
+                    <dockerDirectory>src/main/resources/wildfly-ebegu-dockerconfiguration</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}/warToAddToDocker</directory>
+                            <include>ebegu-rest.war</include>
+                        </resource>
+                    </resources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build docker image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <!--stellt sich die Frage wann wir neue build in unser dvbern repo pushen, mal bei deploy?
+                    koennte auch mit -DpushImage aausgeloest werden-->
+                    <execution>
+                        <id>push docker image to repo</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

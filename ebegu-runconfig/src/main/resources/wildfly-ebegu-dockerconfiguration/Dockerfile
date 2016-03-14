@@ -7,6 +7,9 @@ ADD customization /opt/jboss/wildfly/customization/
 ADD modules /opt/jboss/wildfly/modules/
 
 
+#Applikation hinzufuegen
+ ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
+
 # Run constomization script that adds driver and datasource
 USER root
 RUN /opt/jboss/wildfly/customization/execute.sh
@@ -20,7 +23,6 @@ RUN /opt/jboss/wildfly/bin/add-user.sh admin Admin#70365 --silent
 
  CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
 
- #ADD your-awesome-app.war /opt/jboss/wildfly/standalone/deployments/
 
-
- #info this dockerfile could be run with  sudo docker run -it -p 8080:8080 -p 9990:9990 wildfly-test
+ # info this dockerfile could be run with   docker run -it -p 8080:8080 -p 9990:9990 my-tag name  oder mit
+ # docker run -it --net=host docker.dvbern.ch:5000/dvbern/ebegu
