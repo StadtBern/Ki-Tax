@@ -1,4 +1,5 @@
-(function () {
+/// <reference path="../../typings/browser.d.ts" />
+module ebeguWeb.utils {
     'use strict';
 
     angular
@@ -6,4 +7,4 @@
         .constant('REST_API', '/ebegu/api/v1/')
         .constant('MAX_LENGTH', 255);
 
-})();
+}

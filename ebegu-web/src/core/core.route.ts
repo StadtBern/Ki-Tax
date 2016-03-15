@@ -1,8 +1,8 @@
-(function () {
+/// <reference path="../../typings/browser.d.ts" />
+module ebeguWeb.routes {
     'use strict';
 
-    angular
-        .module('ebeguWeb.core').run(appRun);
+    angular.module('ebeguWeb.core').run(appRun);
 
     /* @ngInject */
     function appRun(routerHelper) {
@@ -14,4 +14,4 @@
             /* Add New States Above */
         ];
     }
-})();
+}

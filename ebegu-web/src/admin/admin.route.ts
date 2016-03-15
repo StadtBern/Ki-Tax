@@ -1,4 +1,5 @@
-(function () {
+/// <reference path="../../typings/browser.d.ts" />
+module ebeguWeb.routes {
     'use strict';
 
     angular
@@ -9,23 +10,23 @@
         routerHelper.configureStates(getStates());
     }
 
+    /**
+     * @returns {angular.ui.IState[]}
+     */
     function getStates() {
         return [
             {
-                state: 'admin',
-                config: {
-                    template: '<admin-view application-properties="vm.applicationProperties"></admin-view>',
-                    url: '/admin',
-                    controller: function (applicationProperties) {
-                        var vm = this;
-                        vm.applicationProperties = applicationProperties;
-                    },
-                    controllerAs: 'vm',
-                    resolve: {
-                        applicationProperties: applicationProperties
-                    }
+                name: 'admin',
+                template: '<admin-view application-properties="vm.applicationProperties"></admin-view>',
+                url: '/admin',
+                controller: function (applicationProperties) {
+                    var vm = this;
+                    vm.applicationProperties = applicationProperties;
+                },
+                controllerAs: 'vm',
+                resolve: {
+                    applicationProperties: applicationProperties
                 }
-
             }
             /* Add New States Above */
         ];
@@ -39,4 +40,4 @@
                 return response.data;
             });
     }
-})();
+}
