@@ -2,42 +2,59 @@
 module ebeguWeb.routes {
     'use strict';
 
-    angular
-        .module('ebeguWeb.admin').run(ebeguWebAdminRun);
 
-    /* @ngInject */
-    function ebeguWebAdminRun(routerHelper) {
-        routerHelper.configureStates(getStates());
+    export class EbeguStateController {
+        applicationProperties: any;
+
+        static $inject = ['applicationProperties'];
+        constructor(applicationProperties) {
+            var vm = this;
+            vm.applicationProperties = applicationProperties;
+        }
     }
 
-    /**
-     * @returns {angular.ui.IState[]}
-     */
-    function getStates() {
-        return [
-            {
-                name: 'admin',
-                template: '<admin-view application-properties="vm.applicationProperties"></admin-view>',
-                url: '/admin',
-                controller: function (applicationProperties) {
-                    var vm = this;
-                    vm.applicationProperties = applicationProperties;
-                },
-                controllerAs: 'vm',
-                resolve: {
-                    applicationProperties: applicationProperties
-                }
+    export class EbeguState implements angular.ui.IState {
+        name = 'admin';
+        template = '<admin-view application-properties="vm.applicationProperties"></admin-view>';
+        url = '/admin';
+        controller = EbeguStateController;
+        controllerAs = 'vm';
+        resolve = {
+            //applicationProperties();
+            applicationProperties : function(applicationPropertyRS) {
+                return applicationPropertyRS.getAllApplicationProperties()
+                    .then(function (response) {
+                        return response.data;
+                    });
             }
-            /* Add New States Above */
-        ];
+        };
+
+        constructor() {
+        }
+
     }
 
-    applicationProperties.$inject = ['applicationPropertyRS'];
 
-    function applicationProperties(applicationPropertyRS) {
-        return applicationPropertyRS.getAllApplicationProperties()
-            .then(function (response) {
-                return response.data;
-            });
+    export class EbeguWebAdminRun {
+        static $inject = ['routerHelper'];
+        /* @ngInject */
+        constructor(routerHelper: IRouterHelper) {
+            routerHelper.configureStates(this.getStates());
+        }
+
+        /**
+         * @returns {angular.ui.IState[]}
+         */
+        public getStates(): Array<angular.ui.IState> {
+            return [new EbeguState()];
+        }
+
+        public static Factory(routerHelper) : EbeguWebAdminRun {
+            return new EbeguWebAdminRun(routerHelper);
+        }
+
     }
+
+
+    angular.module('ebeguWeb.admin').run(EbeguWebAdminRun.Factory);
 }

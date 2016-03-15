@@ -17,8 +17,8 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in displayedCollection">
-                    <td>{{row.name}}</td>
-                    <td>{{row.value}}</td>
+                    <td ng-bind="row.name"></td>
+                    <td ng-bind="row.value"></td>
                     <td>
                         <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
                             <i class="glyphicon glyphicon-remove-circle">

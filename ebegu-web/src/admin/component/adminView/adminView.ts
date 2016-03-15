@@ -48,17 +48,17 @@ module ebeguWeb.components {
         applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
         applicationProperties: any;
 
-        fetchList: () => any; // todo imanol add type
-        submit: () => void; // todo imanol add type
+        fetchList: () => angular.IHttpPromise<any>;
+        submit: () => void;
         removeRow: (row: any) => void; // todo imanol add type
-        createItem: () => void; // todo imanol add type
+        createItem: () => void;
     }
 
     export class AdminView implements IAdminView {
         length: number;
         applicationProperty: ApplicationProperty;
-        applicationPropertyRS: any;
-        applicationProperties: any;
+        applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
+        applicationProperties: Array<ApplicationProperty>;
 
         static $inject = ['applicationPropertyRS', 'MAX_LENGTH'];
 
@@ -79,8 +79,6 @@ module ebeguWeb.components {
             var vm = this;
             this.applicationPropertyRS.create(this.applicationProperty.key, this.applicationProperty.value)
                 .then(function (response) {
-                    console.log("appProp_KEY:" + vm.applicationProperty.key);
-                    console.log("appProp_VALUE:" + vm.applicationProperty.value);
                     vm.applicationProperty = null;
                     vm.applicationProperties.push(response.data);
                 });
@@ -96,7 +94,6 @@ module ebeguWeb.components {
                 }
 
             });
-
         }
 
         createItem() {

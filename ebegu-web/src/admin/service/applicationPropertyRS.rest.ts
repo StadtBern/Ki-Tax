@@ -6,10 +6,10 @@ module ebeguWeb.services {
         serviceURL: string;
         http: angular.IHttpService;
 
-        getByKey: (key: string) => any; // todo imanol add type
-        create: (key: string, value: string) => any; // todo imanol add type
-        remove: (key: string) => any; // todo imanol add type
-        getAllApplicationProperties: () => any; // todo imanol add type
+        getByKey: (key: string) => angular.IHttpPromise<any>;
+        create: (key: string, value: string) => angular.IHttpPromise<any>;
+        remove: (key: string) => angular.IHttpPromise<any>;
+        getAllApplicationProperties: () => angular.IHttpPromise<any>;
     }
 
     export class ApplicationPropertyRS implements IApplicationPropertyRS {

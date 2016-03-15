@@ -5,7 +5,7 @@ module ebeguWeb.routes {
     angular.module('ebeguWeb.core').run(appRun);
 
     /* @ngInject */
-    function appRun(routerHelper) {
+    export function appRun(routerHelper : IRouterHelper) {
         routerHelper.configureStates(getStates());
     }
 

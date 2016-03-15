@@ -4,7 +4,7 @@ module ebeguWeb.config {
 
     angular.module('ebeguWeb.core').config(configure);
     /* @ngInject */
-    function configure($translateProvider) {
+    export function configure($translateProvider: angular.translate.ITranslateProvider) {
 
         $translateProvider.useSanitizeValueStrategy('escapeParameters');
         $translateProvider.useStaticFilesLoader({
