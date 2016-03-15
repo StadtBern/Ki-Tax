@@ -65,7 +65,7 @@
                     <imageTags>
                         <imageTag>${project.version}</imageTag>
                     </imageTags>
-                    <dockerDirectory>src/main/resources/wildfly-ebegu-dockerconfiguration</dockerDirectory>
+                    <dockerDirectory>${project.basedir}/src/main/resources/wildfly-ebegu-dockerconfiguration</dockerDirectory>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
