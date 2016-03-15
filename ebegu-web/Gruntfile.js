@@ -291,26 +291,24 @@ module.exports = function (grunt) {
                 }
             }
         },
-        typescript: {
-            base: {
+        ts: {
+            default: {
                 src: ['src/*.ts', 'src/**/*.ts', '!**/*-spec.ts'],
-                dest: 'temp/src.js',
+                out: 'temp/src.js',
+                reference: "reference.ts",
                 options: {
-                    module: 'amd', //or commonjs
-                    target: 'es5', //or es3
-                    //rootDir: '',
-                    sourceMap: true,
-                    declaration: true
+                    target: 'es5',
+                    module: 'amd'
                 }
             }
         }
     });
 
     grunt.registerTask('build', ['clean:before', 'jshint:main', 'jscs:main', 'less:production', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
-    grunt.registerTask('serve', ['dom_munger:read', 'jshint:main', 'jscs:main', 'configureProxies:dev', 'connect:dev', 'typescript', 'less:development', 'watch']);
+    grunt.registerTask('serve', ['dom_munger:read', 'jshint:main', 'jscs:main', 'configureProxies:dev', 'connect:dev', 'ts', 'less:development', 'watch']);
     grunt.registerTask('test', ['dom_munger:read', 'karma:all_tests']);
     grunt.registerTask('doc', ['jsdoc']);
-    grunt.registerTask('ts', ['typescript']);
+    grunt.registerTask('type', ['ts']);
     grunt.registerTask('jenkins-build', ['clean:before', 'jshint:jenkins', 'jscs:jenkins', 'less:production', 'dom_munger:read', 'karma:jenkins', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
     grunt.registerTask('jenkins-deploy-snapshot', ['jenkins-build', 'maven_deploy:snapshot_dist']);
     grunt.registerTask('jenkins-deploy-release', ['jenkins-build', 'maven_deploy:release_dist']);
