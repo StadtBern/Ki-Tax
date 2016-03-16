@@ -1,4 +1,5 @@
 Dies ist ein Dockerfile welches wildlfy-10 definiert und mit einer lokalen postgresql DB verbindet.
+Das Admin gui wird ebenfalls aufgeschaltet und es wird ein user dafuer erzeugt
 
 
 1. DATENBANK INSTALLIEREN
@@ -14,10 +15,10 @@ Dies ist ein Dockerfile welches wildlfy-10 definiert und mit einer lokalen postg
 3A. DOCKER FILE BUILDEN UND STARTEN (beinhaltet ebegu-rest nicht)
     Wenn man etwas am File ändern will oder
     Danach kann das Dockerfile mit folgenden befehl gebaut werden:
-    docker build --rm --tag wildfly-ebegu-dev .
+    docker build --rm --tag dvbern/deb-wildfly-ebegu-dev .
 
     Das Ausfuehren sollte lokal mit  folgenden Befehl gemacht werden
-    docker run -it --net=host wildfly-ebegu-dev
+    docker run -it --net=host dvbern/deb-wildfly-ebegu-dev
 
 ODER
 3B. DOCKER IMAGE AUS DEM DVBERN REPO STARTEN (inkl. ebegu-rest)
