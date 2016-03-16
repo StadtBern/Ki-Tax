@@ -50,7 +50,7 @@ module ebeguWeb.components {
 
         fetchList: () => angular.IHttpPromise<any>;
         submit: () => void;
-        removeRow: (row: any) => void; // todo imanol add type
+        removeRow: (row: any) => void; // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
         createItem: () => void;
     }
 
@@ -76,21 +76,19 @@ module ebeguWeb.components {
         }
 
         submit() {
-            var vm = this;
             this.applicationPropertyRS.create(this.applicationProperty.key, this.applicationProperty.value)
-                .then(function (response) {
-                    vm.applicationProperty = null;
-                    vm.applicationProperties.push(response.data);
+                .then((response) => {
+                    this.applicationProperty = null;
+                    this.applicationProperties.push(response.data);
                 });
             //todo team fehlerhandling
         }
 
         removeRow(row: any) {
-            var vm = this;
-            this.applicationPropertyRS.remove(row.name).then(function (reponse) {
-                var index = vm.applicationProperties.indexOf(row);
+            this.applicationPropertyRS.remove(row.name).then((reponse) => {
+                var index = this.applicationProperties.indexOf(row);
                 if (index !== -1) {
-                    vm.applicationProperties.splice(index, 1);
+                    this.applicationProperties.splice(index, 1);
                 }
 
             });

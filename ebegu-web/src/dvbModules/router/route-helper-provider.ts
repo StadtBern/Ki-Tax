@@ -29,9 +29,8 @@ module ebeguWeb.routes {
          * @param {string} [otherwisePath]
          */
         public configureStates(states, otherwisePath) {
-            var vm = this;
-            states.forEach(function (state) {
-                vm.stateProvider.state(state);
+            states.forEach((state) => {
+                this.stateProvider.state(state);
             });
             if (otherwisePath && !this.hasOtherwise) {
                 this.hasOtherwise = true;

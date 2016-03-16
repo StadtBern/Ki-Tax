@@ -293,13 +293,7 @@ module.exports = function (grunt) {
         },
         ts: {
             default: {
-                src: ['src/*.ts', 'src/**/*.ts', '!**/*-spec.ts'],
-                out: 'temp/src.js',
-                reference: "reference.ts",
-                options: {
-                    target: 'es5',
-                    module: 'amd'
-                }
+                tsconfig: true
             }
         }
     });
