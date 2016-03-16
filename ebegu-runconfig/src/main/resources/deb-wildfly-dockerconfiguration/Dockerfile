@@ -3,8 +3,8 @@ FROM debian:8.3
 MAINTAINER Markus Hofstetter <markus.hofstetter@dvbern.ch>
 
 ENV JDK_PACKAGE_VERSION=8u74+8u73arm-1~webupd8~1
-ENV WILDFLY_VERSION=9.0.2.Final
-ENV WILDFLY_SHA1=75738379f726c865d41e544e9b61f7b27d2853c7
+ENV WILDFLY_VERSION=10.0.0.Final
+ENV WILDFLY_SHA1=c0dd7552c5207b0d116a9c25eb94d10b4f375549
 ENV POSTGRESQL_DRIVER_VERSION=9.4.1208.jre7
 
 ##############
@@ -62,6 +62,9 @@ RUN $JBOSS_HOME/bin/jboss-cli.sh --file=ebegu-customization.cli
 
 #Wildfly Admin user einfuegen
 RUN $JBOSS_HOME/bin/add-user.sh ebegu-admin jbtwLs --silent
+
+#Applikation hinzufuegen
+ADD ebegu-rest.war /opt/jboss/wildfly/standalone/deployments/
 
 ###########
 # cleanup #
