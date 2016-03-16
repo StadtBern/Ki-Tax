@@ -2,31 +2,7 @@
 module ebeguWeb.components {
     'use strict';
 
-    export class ApplicationProperty {
-        private _key: string;
-        private _value: string;
 
-        constructor(key: string, value: string) {
-            this._key = key;
-            this._value = value;
-        }
-
-        public set key(key: string) {
-            this._key = key;
-        }
-
-        public set value(value: string) {
-            this._value = value;
-        }
-
-        public get key():string {
-            return this._key;
-        }
-
-        public get value():string {
-            return this._value;
-        }
-    }
 
     export class ComponentConfig implements angular.IComponentOptions {
         transclude: boolean = false;
@@ -56,9 +32,9 @@ module ebeguWeb.components {
 
     export class AdminView implements IAdminView {
         length: number;
-        applicationProperty: ApplicationProperty;
+        applicationProperty: ebeguWeb.API.ApplicationProperty;
         applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
-        applicationProperties: Array<ApplicationProperty>;
+        applicationProperties: Array<ebeguWeb.API.ApplicationProperty>;
 
         static $inject = ['applicationPropertyRS', 'MAX_LENGTH'];
 
@@ -95,7 +71,7 @@ module ebeguWeb.components {
         }
 
         createItem() {
-            this.applicationProperty = new ApplicationProperty('', '');
+            this.applicationProperty = new ebeguWeb.API.ApplicationProperty('', '');
         }
     }
 

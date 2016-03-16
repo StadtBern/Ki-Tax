@@ -14,6 +14,7 @@
         "src/dvbModules/router/route-helper-provider.ts",
         "src/admin/admin.module.ts",
         "src/admin/admin.route.ts",
+        "src/models/ApplicationProperty.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts"
     ]
