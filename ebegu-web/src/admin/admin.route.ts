@@ -1,10 +1,12 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.routes {
+    import IApplicationPropertyRS = ebeguWeb.services.IApplicationPropertyRS;
+    import ApplicationProperty = ebeguWeb.API.ApplicationProperty;
     'use strict';
 
 
     export class EbeguStateController {
-        applicationProperties: any;
+        applicationProperties: Array<ApplicationProperty>;
 
         static $inject = ['applicationProperties'];
         constructor(applicationProperties) {
@@ -49,12 +51,12 @@ module ebeguWeb.routes {
             return [new EbeguState()];
         }
 
-        public static Factory(routerHelper) : EbeguWebAdminRun {
+        public static instance(routerHelper) : EbeguWebAdminRun {
             return new EbeguWebAdminRun(routerHelper);
         }
 
     }
 
 
-    angular.module('ebeguWeb.admin').run(EbeguWebAdminRun.Factory);
+    angular.module('ebeguWeb.admin').run(EbeguWebAdminRun.instance);
 }
