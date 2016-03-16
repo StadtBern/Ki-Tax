@@ -10,7 +10,9 @@
   "dependencies": {
     "angular": "~1.5",
     "angular-animate": "~1.5",
+    "angular-aria": "~1.5.0",
     "angular-cookies": "~1.5",
+    "angular-messages": "~1.5",
     "angular-moment": "~0.10",
     "angular-resource": "~1.5",
     "angular-sanitize": "~1.5",
@@ -59,6 +61,7 @@
     "karma-phantomjs-launcher": "~1.0.0",
     "load-grunt-tasks": "~3.4.1",
     "phantomjs-prebuilt": "~2.1.4",
-    "protractor-jasmine2-screenshot-reporter": "~0.3.0"
+    "protractor-jasmine2-screenshot-reporter": "~0.3.0",
+    "swagger-ui": "~2.1.4"
   }
 }

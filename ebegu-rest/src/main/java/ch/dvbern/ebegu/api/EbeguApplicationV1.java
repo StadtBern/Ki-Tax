@@ -51,7 +51,7 @@ public class EbeguApplicationV1 extends Application {
 		beanConfig.setVersion("1.0");
 		beanConfig.setSchemes(new String[]{"http"}); //later also add https
 		beanConfig.setHost("localhost:8080");
-		beanConfig.setBasePath(API_ROOT_PATH);
+		beanConfig.setBasePath("/ebegu" + API_ROOT_PATH); //context ist hier auch wichtig
 		beanConfig.setResourcePackage("ch.dvbern.ebegu.api.resource");
 		beanConfig.setScan(true);
 		beanConfig.setPrettyPrint(true);

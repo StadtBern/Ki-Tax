@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +41,7 @@ public class ApplicationPropertyResource {
 	private JaxBConverter converter;
 
 
+	@ApiOperation(value = "Find a property by its unique name (called key)", response = JaxApplicationProperties.class)
 	@Nullable
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -65,6 +67,9 @@ public class ApplicationPropertyResource {
 	}
 
 
+	@ApiOperation(value = "Create a new ApplicationProperty with the given key and value",
+		response = JaxApplicationProperties.class,
+		consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@POST
 	@Path("/{key}")
@@ -87,6 +92,9 @@ public class ApplicationPropertyResource {
 
 	}
 
+	@ApiOperation(value = "Aktualisiert ein bestehendes ApplicationProperty",
+			response = JaxApplicationProperties.class,
+			consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@PUT
 	@Path("/{key}")

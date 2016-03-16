@@ -9,14 +9,20 @@
                 <tr>
                     <th st-sort="name" data-translate="PROPERTY_KEY"></th>
                     <th st-sort="value" data-translate="PROPERTY_TEXT"></th>
+                    <th data-translate="AKTION"></th>
                 </tr>
                 <tr>
-                    <th colspan="5"><input st-search="" class="form-control" placeholder="global search ..."
-                                           type="text"/></th>
+                    <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
+                               type="text"/></th>
+                    <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                               type="text"/></th>
+                    <th></th>
+
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="row in displayedCollection">
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.editRow(row)">
                     <td>{{row.name}}</td>
                     <td>{{row.value}}</td>
                     <td>
@@ -43,33 +49,43 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="row top5">
-                    <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
-
-                    </label>
-                    <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
-                           ng-maxlength="vm.length" class="col-md-8" required max="vm.length">
-                            <span ng-show="form.propertyKey.$error.maxlength" class="error col-md-offset-4 col-md-8"
-                                  data-translate="ERROR_LENGTH">
-                        </span>
+                    <dv-input-row label="{{'PROPERTY_KEY' | translate}}">
+                        <input id="propKey2" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
+                               ng-maxlength="vm.length" class="col-md-8" required max="vm.length" min="2">
+                    </dv-input-row>
                 </div>
+                <div class="row top5">
+                    <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+                    </label>
+                    <input id="propKey" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
+                           ng-maxlength="vm.length" class="col-md-8" required max="vm.length"
+                           ng-disabled="vm.applicationProperty.timestampErstellt">
+                    <dv-error-messages ng-if="form.$submitted" for="form.propertyName.$error"
+                                       class="error col-md-offset-4 col-md-8"></dv-error-messages>
+                </div>
+
+
                 <div class="row top5">
                     <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-4">
                     </label>
                     <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
                            ng-maxlength="vm.length" class="col-md-8">
-                        <span ng-show="form.propertyValue.$error.maxlength" class="error col-md-offset-4 col-md-8"
-                              data-translate="ERROR_LENGTH">
-                            </span>
+
+                    <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
 
                 </div>
+            </div>
 
-                <div class="row">
+        </div>
+        <div class="row">
+            <div class="col-md-1">
 
-                    <button class="btn-primary" type="submit">
-                        submit
-                    </button>
-                </div>
-
+                <button class="btn-primary" type="submit" data-translate="SAVE">
+                </button>
+            </div>
+            <div class="col-md-10">
+                <a href="#" id="cancelLink" data-translate="CANCEL"
+                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
             </div>
         </div>
     </form>

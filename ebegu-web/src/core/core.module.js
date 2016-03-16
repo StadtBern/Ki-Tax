@@ -6,6 +6,8 @@
             /* Angular modules */
             'ngAnimate',
             'ngSanitize',
+            'ngMessages',
+            'ngAria',
             'ngCookies',
             /* shared DVBern modules */
             'dvbAngular.router',

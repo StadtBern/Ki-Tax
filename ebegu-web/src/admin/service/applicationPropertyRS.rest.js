@@ -13,6 +13,7 @@
             // Public API
             getByKey: getByKey,
             create: create,
+            update: update,
             remove: remove,
             getAllApplicationProperties: getAllApplicationProperties
 
@@ -28,6 +29,14 @@
         }
 
         function create(key, value) {
+            return $http.post(serviceURL + '/' + encodeURIComponent(key), value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
+        }
+
+        function update(key, value) {
             return $http.post(serviceURL + '/' + encodeURIComponent(key), value, {
                 headers: {
                     'Content-Type': 'text/plain'

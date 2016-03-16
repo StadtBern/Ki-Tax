@@ -3,6 +3,7 @@
 
     var componentConfig = {
         transclude: false,
+        require: ['^form'],
         bindings: {
             applicationProperties: '<'
         },
@@ -22,19 +23,43 @@
         vm.submit = submit;
         vm.removeRow = removeRow;
         vm.createItem = createItem;
+        vm.editRow = editRow;
+        vm.resetForm = resetForm;
 
         function fetchList() {
             return applicationPropertyRS.getAllApplicationProperties();
         }
 
-        function submit() {
-            applicationPropertyRS.create(vm.applicationProperty.key, vm.applicationProperty.value)
-                .then(function (response) {
-                    vm.applicationProperty = null;
-                    vm.applicationProperties.push(response.data);
+        function getIndexOfElementwithID(prop) {
+            var idToSearch = prop.id;
+            for (var i = 0; i < vm.applicationProperties.length; i++) {
+                if (vm.applicationProperties[i].id === idToSearch) {
+                    return i;
+                }
+            }
+            return -1;
 
-                });
-            //todo team fehlerhandling
+        }
+
+        function submit() {
+            //testen ob aktuelles property schon gespeichert ist
+            if (vm.applicationProperty.timestampErstellt) {
+                applicationPropertyRS.update(vm.applicationProperty.name, vm.applicationProperty.value)
+                    .then(function (response) {
+                        var index = getIndexOfElementwithID(response.data);
+                        vm.applicationProperties[index] = response.data;
+                        resetForm();
+
+                    });
+
+            } else {
+                applicationPropertyRS.create(vm.applicationProperty.name, vm.applicationProperty.value)
+                    .then(function (response) {
+                        vm.applicationProperties.push(response.data);
+
+                    });
+            }
+
         }
 
         function removeRow(row) {
@@ -49,7 +74,15 @@
         }
 
         function createItem() {
-            vm.applicationProperty = {key: '', value: ''};
+            vm.applicationProperty = {name: '', value: ''};
+        }
+
+        function editRow(row) {
+            vm.applicationProperty = row;
+        }
+
+        function resetForm() {
+            vm.applicationProperty = null;
         }
 
     }
