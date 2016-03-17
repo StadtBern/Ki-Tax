@@ -50,6 +50,6 @@ module ebeguWeb.services {
     }
 
 
-    angular.module('ebeguWeb.admin').factory('applicationPropertyRS', ApplicationPropertyRS.instance);
+    angular.module('ebeguWeb.admin').service('applicationPropertyRS', ApplicationPropertyRS);
 
 }

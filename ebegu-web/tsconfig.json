@@ -10,6 +10,7 @@
         "src/core/core.route.ts",
         "src/core/config.ts",
         "src/core/constants.ts",
+        "src/core/directive/dv-max-length.ts",
         "src/dvbModules/router/router.module.ts",
         "src/dvbModules/router/route-helper-provider.ts",
         "src/admin/admin.module.ts",

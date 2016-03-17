@@ -74,8 +74,6 @@ module ebeguWeb.components {
         }
     }
 
-
     angular.module('ebeguWeb.admin').component('adminView', new ComponentConfig());
-
 
 }

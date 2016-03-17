@@ -47,7 +47,7 @@
 
                     </label>
                     <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
-                           ng-maxlength="vm.length" class="col-md-8" required max="vm.length">
+                           dv-max-length class="col-md-8" required max="vm.length">
                             <span ng-show="form.propertyKey.$error.maxlength" class="error col-md-offset-4 col-md-8"
                                   data-translate="ERROR_LENGTH">
                         </span>
@@ -65,7 +65,7 @@
 
                 <div class="row">
 
-                    <button class="btn-primary" type="submit">
+                    <button class="btn-primary" type="submit" >
                         submit
                     </button>
                 </div>
