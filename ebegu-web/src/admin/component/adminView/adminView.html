@@ -51,14 +51,14 @@
                 <div class="row top5">
                     <dv-input-row label="{{'PROPERTY_KEY' | translate}}">
                         <input id="propKey2" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               ng-maxlength="vm.length" class="col-md-8" required max="vm.length" min="2">
+                               dv-max-length class="col-md-8" required max="vm.length" min="2">
                     </dv-input-row>
                 </div>
                 <div class="row top5">
                     <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
                     </label>
                     <input id="propKey" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                           ng-maxlength="vm.length" class="col-md-8" required max="vm.length"
+                           dv-max-length class="col-md-8" required max="vm.length"
                            ng-disabled="vm.applicationProperty.timestampErstellt">
                     <dv-error-messages ng-if="form.$submitted" for="form.propertyName.$error"
                                        class="error col-md-offset-4 col-md-8"></dv-error-messages>

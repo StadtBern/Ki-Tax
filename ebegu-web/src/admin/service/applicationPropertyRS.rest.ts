@@ -8,6 +8,7 @@ module ebeguWeb.services {
 
         getByKey: (key: string) => angular.IHttpPromise<any>;
         create: (key: string, value: string) => angular.IHttpPromise<any>;
+        update: (key: string, value: string) => angular.IHttpPromise<any>;
         remove: (key: string) => angular.IHttpPromise<any>;
         getAllApplicationProperties: () => angular.IHttpPromise<any>;
     }
@@ -28,6 +29,14 @@ module ebeguWeb.services {
         }
 
         create(key, value) {
+            return this.http.post(this.serviceURL + '/' + encodeURIComponent(key), value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
+        }
+
+        update(key, value) {
             return this.http.post(this.serviceURL + '/' + encodeURIComponent(key), value, {
                 headers: {
                     'Content-Type': 'text/plain'

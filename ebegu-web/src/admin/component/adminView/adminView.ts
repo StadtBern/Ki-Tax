@@ -3,7 +3,7 @@ module ebeguWeb.components {
     'use strict';
 
 
-    export class ComponentConfig implements angular.IComponentOptions {
+    export class AdminViewComponentConfig implements angular.IComponentOptions {
         transclude:boolean = false;
         bindings:any = {
             applicationProperties: '<'
@@ -27,6 +27,8 @@ module ebeguWeb.components {
         submit: () => void;
         removeRow: (row:any) => void; // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
         createItem: () => void;
+        editRow: (row:any) => void;
+        resetForm: () => void;
     }
 
     export class AdminViewController implements IAdminViewController {
@@ -72,8 +74,16 @@ module ebeguWeb.components {
         createItem() {
             this.applicationProperty = new ebeguWeb.API.ApplicationProperty('', '');
         }
+
+        editRow(row) {
+            this.applicationProperty = row;
+        }
+
+        resetForm() {
+            this.applicationProperty = null;
+        }
     }
 
-    angular.module('ebeguWeb.admin').component('adminView', new ComponentConfig());
+    angular.module('ebeguWeb.admin').component('adminView', new AdminViewComponentConfig());
 
 }

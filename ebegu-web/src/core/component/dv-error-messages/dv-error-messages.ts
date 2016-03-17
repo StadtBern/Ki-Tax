@@ -1,22 +1,24 @@
-(function () {
+/// <reference path="../../../../typings/browser.d.ts" />
+module ebeguWeb.components {
     'use strict';
 
-    var componentConfig = {
-        transclude: false,
-        bindings: {
+
+    export class DvErrorMessagesComponentConfig implements angular.IComponentOptions {
+        transclude:boolean = false;
+        bindings:any = {
             errorObject: '<for'
-        },
-        templateUrl: 'src/core/component/dv-error-messages/dv-error-messages.html',
-        controller: DvErrorMessages,
-        controllerAs: 'vm'
-    };
+        };
+        templateUrl:string = 'src/core/component/dv-error-messages/dv-error-messages.html';
+        controller:any  = DvErrorMessages;
+        controllerAs:string = 'vm';
 
-    angular.module('ebeguWeb.core').component('dvErrorMessages', componentConfig);
-
-    DvErrorMessages.$inject = [];
-
-    function DvErrorMessages() {
-        var vm = this;
-
+        constructor() {
+        }
     }
-})();
+
+    export class DvErrorMessages {
+    }
+    angular.module('ebeguWeb.core').component('dvErrorMessages', new DvErrorMessagesComponentConfig());
+}
+
+

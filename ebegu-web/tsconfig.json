@@ -11,6 +11,7 @@
         "src/core/config.ts",
         "src/core/constants.ts",
         "src/core/directive/dv-max-length.ts",
+        "src/core/component/dv-error-messages/dv-error-messages.ts",
         "src/dvbModules/router/router.module.ts",
         "src/dvbModules/router/route-helper-provider.ts",
         "src/admin/admin.module.ts",
