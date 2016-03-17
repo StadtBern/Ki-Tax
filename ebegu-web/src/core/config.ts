@@ -1,10 +1,10 @@
-(function () {
+/// <reference path="../../typings/browser.d.ts" />
+module ebeguWeb.config {
     'use strict';
 
-    angular
-        .module('ebeguWeb.core').config(configure);
+    angular.module('ebeguWeb.core').config(configure);
     /* @ngInject */
-    function configure($translateProvider) {
+    export function configure($translateProvider: angular.translate.ITranslateProvider) {
 
         $translateProvider.useSanitizeValueStrategy('escapeParameters');
         $translateProvider.useStaticFilesLoader({
@@ -16,4 +16,4 @@
 
     }
 
-})();
+}

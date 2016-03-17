@@ -1,4 +1,5 @@
-(function () {
+/// <reference path="../../typings/browser.d.ts" />
+module ebeguWeb {
     'use strict';
 
     angular
@@ -13,8 +14,7 @@
             'dvbAngular.router',
             /* 3rd-party modules */
             'ui.bootstrap',
-            'angularMoment',
             'smart-table',
             'pascalprecht.translate'
         ]);
-})();
+}

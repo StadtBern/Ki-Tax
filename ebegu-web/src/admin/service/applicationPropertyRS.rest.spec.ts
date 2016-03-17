@@ -1,18 +1,19 @@
+/// <reference path="../../../typings/browser.d.ts" />
 describe('applicationPropertyRS', function () {
 
-    var applicationPropertyRS;
-    var $httpBackend;
-    var REST_API;
-    var testKey = 'myTestKey';
+    var applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
+    var $httpBackend: angular.IHttpBackendService;
+    var REST_API: string;
+    var testKey: string = 'myTestKey';
 
     var mockApplicationProperty = {
         name: testKey,
         value: 'myTestValue'
     };
 
-    beforeEach(module('ebeguWeb.admin'));
+    beforeEach(angular.mock.module('ebeguWeb.admin'));
 
-    beforeEach(inject(function (_applicationPropertyRS_, _$httpBackend_, _REST_API_) {
+    beforeEach(angular.mock.inject(function (_applicationPropertyRS_, _$httpBackend_, _REST_API_) {
         applicationPropertyRS = _applicationPropertyRS_;
         $httpBackend = _$httpBackend_;
         REST_API = _REST_API_;
