@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "outFile": "temp/src.js",
+        "target": "ES5"
+    },
+    "files": [
+        "src/app.module.ts",
+        "src/core/core.module.ts",
+        "src/core/core.route.ts",
+        "src/core/config.ts",
+        "src/core/constants.ts",
+        "src/core/directive/dv-max-length.ts",
+        "src/dvbModules/router/router.module.ts",
+        "src/dvbModules/router/route-helper-provider.ts",
+        "src/admin/admin.module.ts",
+        "src/admin/admin.route.ts",
+        "src/models/ApplicationProperty.ts",
+        "src/admin/component/adminView/adminView.ts",
+        "src/admin/service/applicationPropertyRS.rest.ts"
+    ]
+}

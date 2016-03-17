@@ -45,7 +45,7 @@ module.exports = function (grunt) {
                     livereload: true,
                     livereloadOnError: false
                 },
-                files: [globs.createFolderGlobs(['*.js', '*.html']), '!_SpecRunner.html', '!.grunt'],
+                files: [globs.createFolderGlobs(['*.js','*.ts', '*.html']), '!_SpecRunner.html', '!.grunt'],
                 tasks: [] //all the tasks are run dynamically during the watch event handler
             },
             less: {
@@ -290,13 +290,19 @@ module.exports = function (grunt) {
                     destination: 'build/doc'
                 }
             }
+        },
+        ts: {
+            default: {
+                tsconfig: true
+            }
         }
     });
 
     grunt.registerTask('build', ['clean:before', 'jshint:main', 'jscs:main', 'less:production', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
-    grunt.registerTask('serve', ['dom_munger:read', 'jshint:main', 'jscs:main', 'configureProxies:dev', 'connect:dev', 'less:development', 'watch']);
+    grunt.registerTask('serve', ['dom_munger:read', 'jshint:main', 'jscs:main', 'configureProxies:dev', 'connect:dev', 'ts', 'less:development', 'watch']);
     grunt.registerTask('test', ['dom_munger:read', 'karma:all_tests']);
     grunt.registerTask('doc', ['jsdoc']);
+    grunt.registerTask('type', ['ts']);
     grunt.registerTask('jenkins-build', ['clean:before', 'jshint:jenkins', 'jscs:jenkins', 'less:production', 'dom_munger:read', 'karma:jenkins', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
     grunt.registerTask('jenkins-deploy-snapshot', ['jenkins-build', 'maven_deploy:snapshot_dist']);
     grunt.registerTask('jenkins-deploy-release', ['jenkins-build', 'maven_deploy:release_dist']);

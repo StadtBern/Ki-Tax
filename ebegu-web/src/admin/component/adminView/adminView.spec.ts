@@ -1,10 +1,13 @@
+/// <reference path="../../../../typings/browser.d.ts" />
 describe('adminView', function () {
 
-    beforeEach(module('ebeguWeb.admin'));
+    beforeEach(angular.mock.module('ebeguWeb.admin'));
 
-    var component, scope, $componentController;
+    var component: any;
+    var scope: angular.IScope;
+    var $componentController: any;
 
-    beforeEach(inject(function (_$componentController_, $rootScope) {
+    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
