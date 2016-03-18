@@ -1,15 +1,17 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.converters.LocalDatePersistenceConverter;
+import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import ch.dvbern.ebegu.util.Constants;
+import java.time.LocalDate;
 
 /**
  * Entitaet zum Speichern von Adressen in der Datenbank.
@@ -48,10 +50,16 @@ public class Adresse extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String gemeinde = null;
 
-	@Size(max = Constants.DB_DEFAULT_SHORT_LENGTH)
-	@Nullable
-	@Column(nullable = true, length = Constants.DB_DEFAULT_SHORT_LENGTH)
-	private String postfach = null;
+	@NotNull
+	@Column(nullable = false)
+	@Convert(converter = LocalDatePersistenceConverter.class)
+	private LocalDate gueltigAb;
+
+	@NotNull
+	@Column(nullable = false)
+	@Convert(converter = LocalDatePersistenceConverter.class)
+	private LocalDate gueltigBis;
+
 
 	public Adresse() {
 	}
@@ -101,13 +109,12 @@ public class Adresse extends AbstractEntity {
 		this.ort = ort;
 	}
 
-	@Nullable
-	public String getPostfach() {
-		return postfach;
-	}
+	public LocalDate getGueltigAb() { return gueltigAb; }
 
-	public void setPostfach(@Nullable String postfach) {
-		this.postfach = postfach;
-	}
+	public void setGueltigAb(LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
+
+	public LocalDate getGueltigBis() { return gueltigBis; }
+
+	public void setGueltigBis(LocalDate gueltigBis) { this.gueltigBis = gueltigBis; }
 
 }

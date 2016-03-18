@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -40,11 +41,10 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void saveAdressTest() {
+	public void createAdressTest() {
 		Assert.assertNotNull(adresseService);
 		Adresse adresse = new Adresse();
-		adresse.setStrasse("Strasse Muster");
-		adresse.setHausnummer("32");
+		fillDefaultAdressData(adresse);
 		adresseService.createAdresse(adresse);
 		Collection<Adresse> allAdressen = adresseService.getAllAdressen();
 		Assert.assertEquals(1, allAdressen.size());
@@ -79,11 +79,18 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 
 	private Adresse insertNewEntity() {
 		Adresse adresse = new Adresse();
+		fillDefaultAdressData(adresse);
+		persistence.persist(adresse);
+		return adresse;
+	}
+
+	private void fillDefaultAdressData(Adresse adresse) {
 		adresse.setId("f15121ee-2a0f-4708-a121-1234f5b237ad");
 		adresse.setStrasse("Strasse Muster");
 		adresse.setHausnummer("32");
-		persistence.persist(adresse);
-		return adresse;
+		LocalDate now = LocalDate.now();
+		adresse.setGueltigAb(now);
+		adresse.setGueltigBis(now);
 	}
 
 }

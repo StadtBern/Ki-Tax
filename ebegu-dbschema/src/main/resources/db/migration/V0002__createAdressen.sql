@@ -6,10 +6,11 @@ create table adresse (
   user_mutiert varchar(36) not null,
   version int8 not null,
   gemeinde varchar(255),
+  gueltig_ab timestamp not null,
+  gueltig_bis timestamp not null,
   hausnummer varchar(100),
   ort varchar(100) not null,
-  plz varchar(4),
-  postfach varchar(100),
+  plz varchar(4) not null,
   strasse varchar(255) not null,
   constraint PK_adresse primary key (id)
 )

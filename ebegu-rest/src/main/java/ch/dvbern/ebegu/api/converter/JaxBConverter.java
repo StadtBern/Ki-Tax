@@ -88,7 +88,8 @@ public class JaxBConverter {
 		adresse.setPlz(jaxAdresse.getPlz());
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
-		adresse.setPostfach(jaxAdresse.getPostfach());
+		adresse.setGueltigAb(jaxAdresse.getGueltigAb());
+		adresse.setGueltigBis(jaxAdresse.getGueltigBis());
 
 		return adresse;
 	}
@@ -102,7 +103,8 @@ public class JaxBConverter {
 		jaxAdresse.setPlz(adresse.getPlz());
 		jaxAdresse.setOrt(adresse.getOrt());
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
-		jaxAdresse.setPostfach(adresse.getPostfach());
+		jaxAdresse.setGueltigAb(adresse.getGueltigAb());
+		jaxAdresse.setGueltigBis(adresse.getGueltigBis());
 		return jaxAdresse;
 	}
 

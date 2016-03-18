@@ -1,9 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 
 /**
  * Created by imanol on 17.03.16.
@@ -23,7 +28,12 @@ public class JaxAdresse extends JaxAbstractDTO {
 	@NotNull
 	private String ort;
 	private String gemeinde;
-	private String postfach;
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate gueltigAb;
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate gueltigBis;
 
 
 	public String getStrasse() {
@@ -66,12 +76,14 @@ public class JaxAdresse extends JaxAbstractDTO {
 		this.ort = ort;
 	}
 
-	public String getPostfach() {
-		return postfach;
-	}
+	@Nullable
+	public LocalDate getGueltigAb() { return gueltigAb; }
 
-	public void setPostfach(String postfach) {
-		this.postfach = postfach;
-	}
+	public void setGueltigAb(@Nullable LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
+
+	@Nullable
+	public LocalDate getGueltigBis() { return gueltigBis; }
+
+	public void setGueltigBis(@Nullable LocalDate gueltigBis) {	this.gueltigBis = gueltigBis; }
 
 }

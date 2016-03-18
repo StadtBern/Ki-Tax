@@ -21,10 +21,11 @@ create table adresse_aud (
     user_erstellt varchar(36),
     user_mutiert varchar(36),
     gemeinde varchar(255),
+    gueltig_ab timestamp,
+    gueltig_bis timestamp,
     hausnummer varchar(100),
     ort varchar(100),
     plz varchar(4),
-    postfach varchar(100),
     strasse varchar(255),
     constraint PK_adresse_aud primary key (id, rev)
 );
