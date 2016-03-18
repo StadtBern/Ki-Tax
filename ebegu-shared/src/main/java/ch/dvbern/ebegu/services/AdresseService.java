@@ -42,8 +42,8 @@ public interface AdresseService {
 
 	/**
 	 * entfernt eine Adresse aus der Databse
-	 * @param key PK (id) der Adresse
+	 * @param adresse Adresse zu entfernen
 	 */
-	void removeAdresse(@Nonnull String key);
+	void removeAdresse(@Nonnull Adresse adresse);
 
 }

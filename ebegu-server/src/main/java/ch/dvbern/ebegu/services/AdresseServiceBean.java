@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -56,7 +59,10 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 	}
 
 	@Override
-	public void removeAdresse(@Nonnull String key) {
-
+	public void removeAdresse(@Nonnull Adresse adresse) {
+		Validate.notNull(adresse);
+		Optional<Adresse> propertyToRemove = findAdresse(adresse.getId());
+		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeAdresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, adresse));
+		persistence.remove(propertyToRemove.get());
 	}
 }
