@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LandConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.Land;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -24,10 +26,17 @@ public class JaxAdresse extends JaxAbstractDTO {
 	@NotNull
 	private String strasse;
 	private String hausnummer;
+
+	private String zusatzzeile;
 	@NotNull
 	private String plz;
 	@NotNull
 	private String ort;
+
+	@NotNull
+	@XmlJavaTypeAdapter(LandConverter.class)
+	private Land land = Land.CH;
+
 	private String gemeinde;
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
@@ -87,4 +96,19 @@ public class JaxAdresse extends JaxAbstractDTO {
 
 	public void setGueltigBis(@Nullable LocalDate gueltigBis) {	this.gueltigBis = gueltigBis; }
 
+	public String getZusatzzeile() {
+		return zusatzzeile;
+	}
+
+	public void setZusatzzeile(String zusatzzeile) {
+		this.zusatzzeile = zusatzzeile;
+	}
+
+	public Land getLand() {
+		return land;
+	}
+
+	public void setLand(Land land) {
+		this.land = land;
+	}
 }

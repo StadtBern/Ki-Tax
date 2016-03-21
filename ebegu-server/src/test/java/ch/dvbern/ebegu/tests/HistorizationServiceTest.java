@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
@@ -36,7 +36,7 @@ public class HistorizationServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive();
+		return createTestArchive();
 	}
 
 

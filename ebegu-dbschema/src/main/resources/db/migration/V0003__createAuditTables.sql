@@ -24,9 +24,11 @@ create table adresse_aud (
     gueltig_ab timestamp,
     gueltig_bis timestamp,
     hausnummer varchar(100),
+    land varchar(255),
     ort varchar(100),
     plz varchar(4),
     strasse varchar(255),
+    zusatzzeile varchar(255),
     constraint PK_adresse_aud primary key (id, rev)
 );
 

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
@@ -50,7 +50,7 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive();
+		return createTestArchive();
 	}
 
 

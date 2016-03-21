@@ -1,14 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.converters.LocalDatePersistenceConverter;
+import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -33,6 +32,13 @@ public class Adresse extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_SHORT_LENGTH)
 	private String hausnummer;
 
+
+
+	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
+	private String zusatzzeile;
+
 	@Size(max = Constants.PLZ_LENGTH)
 	@Nonnull
 	@NotNull
@@ -44,6 +50,11 @@ public class Adresse extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false, length = Constants.DB_DEFAULT_SHORT_LENGTH)
 	private String ort;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Land land = Land.CH;
 
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nullable
@@ -117,4 +128,20 @@ public class Adresse extends AbstractEntity {
 
 	public void setGueltigBis(LocalDate gueltigBis) { this.gueltigBis = gueltigBis; }
 
+	@Nullable
+	public String getZusatzzeile() {
+		return zusatzzeile;
+	}
+
+	public void setZusatzzeile(@Nullable String zusatzzeile) {
+		this.zusatzzeile = zusatzzeile;
+	}
+
+	public Land getLand() {
+		return land;
+	}
+
+	public void setLand(Land land) {
+		this.land = land;
+	}
 }

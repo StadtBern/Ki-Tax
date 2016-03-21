@@ -1,6 +1,7 @@
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -16,8 +17,6 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Optional;
-
-import static ch.dvbern.ebegu.TestDataUtil.createDefaultAdresse;
 
 /**
  * Created by imanol on 18.03.16.
@@ -36,20 +35,21 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive();
+		return createTestArchive();
 	}
 
 	@Test
 	public void createAdressTest() {
 		Assert.assertNotNull(adresseService);
-		Adresse adresse = createDefaultAdresse();
+		Adresse adresse = TestDataUtil.createDefaultAdresse();
 
 		adresseService.createAdresse(adresse);
 		Collection<Adresse> allAdressen = adresseService.getAllAdressen();
 		Assert.assertEquals(1, allAdressen.size());
 		Adresse nextAdresse = allAdressen.iterator().next();
-		Assert.assertEquals("Strasse Muster", nextAdresse.getStrasse());
-		Assert.assertEquals("32", nextAdresse.getHausnummer());
+		Assert.assertEquals("Nussbaumstrasse", nextAdresse.getStrasse());
+		Assert.assertEquals("21", nextAdresse.getHausnummer());
+		Assert.assertEquals(Land.CH, nextAdresse.getLand());
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(adresseService);
 		Adresse insertedAdresses = insertNewEntity();
 		Optional<Adresse> adresse = adresseService.findAdresse(insertedAdresses.getId());
-		Assert.assertEquals("32", adresse.get().getHausnummer());
+		Assert.assertEquals("21", adresse.get().getHausnummer());
 
 		adresse.get().setHausnummer("99");
 		adresseService.updateAdresse(adresse.get());
@@ -77,7 +77,7 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 	// Help Methods
 
 	private Adresse insertNewEntity() {
-		Adresse adresse = createDefaultAdresse();
+		Adresse adresse = TestDataUtil.createDefaultAdresse();
 		persistence.persist(adresse);
 		return adresse;
 	}

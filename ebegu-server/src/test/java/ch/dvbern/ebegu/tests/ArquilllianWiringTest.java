@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.cdi.LoggerProducer;
 import org.jboss.arquillian.container.test.api.Deployment;

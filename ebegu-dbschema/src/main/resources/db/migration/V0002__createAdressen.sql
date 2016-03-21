@@ -11,6 +11,8 @@ create table adresse (
   hausnummer varchar(100),
   ort varchar(100) not null,
   plz varchar(4) not null,
+  land varchar(255) not null,
   strasse varchar(255) not null,
+  zusatzzeile varchar(255),
   constraint PK_adresse primary key (id)
 )

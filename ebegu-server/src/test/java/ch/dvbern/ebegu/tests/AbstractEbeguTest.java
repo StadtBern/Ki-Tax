@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu;
+package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
@@ -33,7 +33,7 @@ public abstract class AbstractEbeguTest {
 			.addPackages(true, "ch/dvbern/ebegu/validation")
 			.addPackages(true, "ch/dvbern/ebegu/errors")
 			.addPackages(true, "ch/dvbern/ebegu/entities")
-
+			.addPackages(true, "ch/dvbern/ebegu/tests")
 			.addClasses(AbstractEbeguTest.class, Persistence.class,
 				ISessionContextService.class, AbstractEntity.class)
 
