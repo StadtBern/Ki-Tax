@@ -8,6 +8,7 @@
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
                  version="2.1">
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
+	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
 
 	<converter class="ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter"/>
 	<converter class="ch.dvbern.ebegu.converters.LocalDatePersistenceConverter"/>

@@ -23,7 +23,7 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 
 	@Nullable
 	@NotNull(groups = Persisted.class)
-	private String id = null;
+	private JaxId id = null;
 
 
 
@@ -40,16 +40,16 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 		// nop
 	}
 
-	protected JaxAbstractDTO(@Nonnull String id) {
+	protected JaxAbstractDTO(@Nonnull JaxId id) {
 		this.id = Objects.requireNonNull(id);
 	}
 
 	@Nullable
-	public String getId() {
+	public JaxId getId() {
 		return id;
 	}
 
-	public void setId(@Nonnull String id) {
+	public void setId(@Nonnull JaxId id) {
 		this.id = Objects.requireNonNull(id);
 	}
 
