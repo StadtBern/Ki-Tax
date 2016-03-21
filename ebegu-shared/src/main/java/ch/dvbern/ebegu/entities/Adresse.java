@@ -26,29 +26,29 @@ public class Adresse extends AbstractEntity {
 	@Nonnull
 	@NotNull
 	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	private String strasse = "";
+	private String strasse ;
 
 	@Size(max = Constants.DB_DEFAULT_SHORT_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_DEFAULT_SHORT_LENGTH)
-	private String hausnummer = null;
+	private String hausnummer;
 
 	@Size(max = Constants.PLZ_LENGTH)
 	@Nonnull
 	@NotNull
 	@Column(nullable = true, length = Constants.PLZ_LENGTH)
-	private String plz = "";
+	private String plz;
 
 	@Size(max = Constants.DB_DEFAULT_SHORT_LENGTH)
 	@Nonnull
 	@NotNull
 	@Column(nullable = false, length = Constants.DB_DEFAULT_SHORT_LENGTH)
-	private String ort = "";
+	private String ort;
 
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	private String gemeinde = null;
+	private String gemeinde;
 
 	@NotNull
 	@Column(nullable = false)

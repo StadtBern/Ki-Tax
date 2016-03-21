@@ -50,9 +50,7 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive(new Class[] {
-			ApplicationPropertyServiceTest.class
-		});
+		return AbstractEbeguTest.createTestArchive();
 	}
 
 

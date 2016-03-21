@@ -36,9 +36,7 @@ public class HistorizationServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive(new Class[] {
-			HistorizationServiceTest.class
-		});
+		return AbstractEbeguTest.createTestArchive();
 	}
 
 

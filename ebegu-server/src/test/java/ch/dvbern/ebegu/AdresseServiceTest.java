@@ -14,9 +14,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
+
+import static ch.dvbern.ebegu.TestDataUtil.createDefaultAdresse;
 
 /**
  * Created by imanol on 18.03.16.
@@ -35,16 +36,14 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive(new Class[] {
-			AdresseServiceTest.class
-		});
+		return AbstractEbeguTest.createTestArchive();
 	}
 
 	@Test
 	public void createAdressTest() {
 		Assert.assertNotNull(adresseService);
-		Adresse adresse = new Adresse();
-		fillDefaultAdressData(adresse);
+		Adresse adresse = createDefaultAdresse();
+
 		adresseService.createAdresse(adresse);
 		Collection<Adresse> allAdressen = adresseService.getAllAdressen();
 		Assert.assertEquals(1, allAdressen.size());
@@ -78,19 +77,11 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 	// Help Methods
 
 	private Adresse insertNewEntity() {
-		Adresse adresse = new Adresse();
-		fillDefaultAdressData(adresse);
+		Adresse adresse = createDefaultAdresse();
 		persistence.persist(adresse);
 		return adresse;
 	}
 
-	private void fillDefaultAdressData(Adresse adresse) {
-		adresse.setId("f15121ee-2a0f-4708-a121-1234f5b237ad");
-		adresse.setStrasse("Strasse Muster");
-		adresse.setHausnummer("32");
-		LocalDate now = LocalDate.now();
-		adresse.setGueltigAb(now);
-		adresse.setGueltigBis(now);
-	}
+
 
 }

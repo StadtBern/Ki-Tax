@@ -3,7 +3,6 @@ package ch.dvbern.ebegu;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -11,7 +10,7 @@ import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -20,7 +19,7 @@ import java.io.File;
  */
 public abstract class AbstractEbeguTest {
 
-	public static Archive<?> createTestArchive(Class[] classesToAdd) {
+	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
 		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
@@ -32,7 +31,9 @@ public abstract class AbstractEbeguTest {
 			.addPackages(true, "ch/dvbern/ebegu/persistence")
 			.addPackages(true, "ch/dvbern/ebegu/services")
 			.addPackages(true, "ch/dvbern/ebegu/validation")
-			.addClasses(classesToAdd)
+			.addPackages(true, "ch/dvbern/ebegu/errors")
+			.addPackages(true, "ch/dvbern/ebegu/entities")
+
 			.addClasses(AbstractEbeguTest.class, Persistence.class,
 				ISessionContextService.class, AbstractEntity.class)
 
@@ -44,9 +45,17 @@ public abstract class AbstractEbeguTest {
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 				// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
+		if (classesToAdd != null) {
+			webArchive.addClasses(classesToAdd);
+		}
 		//Folgende Zeile gibt im /tmp dir das archiv aus zum debuggen nuetzlich
 		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebArchive.war"), true);
 		return webArchive;
+	}
+
+	public static Archive<?> createTestArchive() {
+
+		return createTestArchive(null);
 	}
 
 }
