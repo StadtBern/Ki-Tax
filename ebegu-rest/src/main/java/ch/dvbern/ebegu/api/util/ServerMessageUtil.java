@@ -13,13 +13,13 @@ import java.util.ResourceBundle;
 /**
  * Util welche einfach erlaubt eine Message aus dem server Seitigen Message Bundle zu lesen
  */
-public class ServerMessageUtil {
-
-
-
+public final class ServerMessageUtil {
 
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(Constants.SERVER_MESSAGE_BUNDLE_NAME, Constants.DEFAULT_LOCALE);
 
+
+	private ServerMessageUtil() {
+	}
 
 	public static String getMessage(String key) {
 		return readStringFromBundleOrReturnKey(BUNDLE, key);
