@@ -30,7 +30,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 

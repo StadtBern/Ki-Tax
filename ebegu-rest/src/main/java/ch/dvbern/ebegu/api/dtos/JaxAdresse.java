@@ -18,7 +18,8 @@ import java.time.LocalDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxAdresse extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -2249803693436143445L;
+
+	private static final long serialVersionUID = -1093677998323618626L;
 
 	@NotNull
 	private String strasse;

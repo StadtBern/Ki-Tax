@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * Created by imanol on 17.03.16.
  *
- * Resource fuer Adressen
+ * REST Resource fuer Adressen
  */
 @Path("adressen")
 @Stateless
