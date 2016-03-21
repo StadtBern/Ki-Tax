@@ -4,11 +4,11 @@ Ich lasse das hier mal drin damit man eine Vorlage hat wie man so eine kompllizi
 wir aber beschlossen rows eher auf folgende Art zu definieren:
 
          <div class="row top5">
-             <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+             <label data-translate="PROPERTY_NAME" for="propName" class="col-md-4">
              </label>
-             <input id="propKey" type="text" name="propertyKey" ng-model="vm.applicationProperty.key"
+             <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.Name"
                     ng-maxlength="vm.length" class="col-md-8" required max="vm.length">
-             <dv-error-messages ng-if="form.$submitted" for="form.propertyKey.$error"
+             <dv-error-messages ng-if="form.$submitted" for="form.propertyName.$error"
                                 class="error col-md-offset-4 col-md-8"></dv-error-messages>
          </div>
 

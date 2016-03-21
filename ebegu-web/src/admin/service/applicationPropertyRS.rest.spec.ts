@@ -4,10 +4,10 @@ describe('applicationPropertyRS', function () {
     var applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
     var $httpBackend: angular.IHttpBackendService;
     var REST_API: string;
-    var testKey: string = 'myTestKey';
+    var testName: string = 'myTestName';
 
     var mockApplicationProperty = {
-        name: testKey,
+        name: testName,
         value: 'myTestValue'
     };
 
@@ -21,17 +21,17 @@ describe('applicationPropertyRS', function () {
 
     // set the mock response
     beforeEach(function () {
-        $httpBackend.when('GET', REST_API + 'application-properties/' + testKey).respond(mockApplicationProperty);
+        $httpBackend.when('GET', REST_API + 'application-properties/' + testName).respond(mockApplicationProperty);
         $httpBackend.when('GET', REST_API + 'application-properties/').respond([mockApplicationProperty]);
-        $httpBackend.when('DELETE', REST_API + 'application-properties/' + testKey).respond(200, '');
-        $httpBackend.when('POST', REST_API + 'application-properties/' + testKey)
+        $httpBackend.when('DELETE', REST_API + 'application-properties/' + testName).respond(200, '');
+        $httpBackend.when('POST', REST_API + 'application-properties/' + testName)
             .respond(201, mockApplicationProperty, {Location: 'http://localhost:8080/ebegu/api/v1/application-properties/test2'});
 
     });
 
     describe('Public API', function () {
-        it('should include a getByKey() function', function () {
-            expect(applicationPropertyRS.getByKey).toBeDefined();
+        it('should include a getByName() function', function () {
+            expect(applicationPropertyRS.getByName).toBeDefined();
         });
         it('should include a create() function', function () {
             expect(applicationPropertyRS.create).toBeDefined();
@@ -48,11 +48,11 @@ describe('applicationPropertyRS', function () {
     });
 
     describe('API Usage', function () {
-        describe('getByKey', function () {
+        describe('getByName', function () {
 
-            it('should fetch property with given key', function () {
-                $httpBackend.expectGET(REST_API + 'application-properties/' + testKey);
-                var promise = applicationPropertyRS.getByKey(testKey);
+            it('should fetch property with given name', function () {
+                $httpBackend.expectGET(REST_API + 'application-properties/' + testName);
+                var promise = applicationPropertyRS.getByName(testName);
                 var property = null;
 
                 promise.then(function (response) {
@@ -68,8 +68,8 @@ describe('applicationPropertyRS', function () {
 
         describe('create', function () {
 
-            it('should create property with key and value', function () {
-                $httpBackend.expectPOST(REST_API + 'application-properties/' + testKey, mockApplicationProperty.value);
+            it('should create property with name and value', function () {
+                $httpBackend.expectPOST(REST_API + 'application-properties/' + testName, mockApplicationProperty.value);
                 var promise = applicationPropertyRS.create(mockApplicationProperty.name, mockApplicationProperty.value);
                 var property = null;
 
@@ -103,8 +103,8 @@ describe('applicationPropertyRS', function () {
         describe('remove', function () {
 
             it('should remove a property', function () {
-                $httpBackend.expectDELETE(REST_API + 'application-properties/' + testKey);
-                var promise = applicationPropertyRS.remove(testKey);
+                $httpBackend.expectDELETE(REST_API + 'application-properties/' + testName);
+                var promise = applicationPropertyRS.remove(testName);
                 var status = null;
 
                 promise.then(function (response) {

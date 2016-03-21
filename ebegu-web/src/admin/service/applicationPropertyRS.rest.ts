@@ -6,10 +6,10 @@ module ebeguWeb.services {
         serviceURL: string;
         http: angular.IHttpService;
 
-        getByKey: (key: string) => angular.IHttpPromise<any>;
-        create: (key: string, value: string) => angular.IHttpPromise<any>;
-        update: (key: string, value: string) => angular.IHttpPromise<any>;
-        remove: (key: string) => angular.IHttpPromise<any>;
+        getByName: (name: string) => angular.IHttpPromise<any>;
+        create: (name: string, value: string) => angular.IHttpPromise<any>;
+        update: (name: string, value: string) => angular.IHttpPromise<any>;
+        remove: (name: string) => angular.IHttpPromise<any>;
         getAllApplicationProperties: () => angular.IHttpPromise<any>;
     }
 
@@ -24,28 +24,32 @@ module ebeguWeb.services {
             this.http = $http;
         }
 
-        getByKey(key) {
-            return this.http.get(this.serviceURL + '/' + encodeURIComponent(key));
+        //toApplicationProperty() {
+        //    //todo DOOOOO
+        //}
+
+        getByName(name) {
+            return this.http.get(this.serviceURL + '/' + encodeURIComponent(name));//.then(this.toApplicationProperty());
         }
 
-        create(key, value) {
-            return this.http.post(this.serviceURL + '/' + encodeURIComponent(key), value, {
+        create(name, value) {
+            return this.http.post(this.serviceURL + '/' + encodeURIComponent(name), value, {
                 headers: {
                     'Content-Type': 'text/plain'
                 }
             });
         }
 
-        update(key, value) {
-            return this.http.post(this.serviceURL + '/' + encodeURIComponent(key), value, {
+        update(name, value) {
+            return this.http.post(this.serviceURL + '/' + encodeURIComponent(name), value, {
                 headers: {
                     'Content-Type': 'text/plain'
                 }
             });
         }
 
-        remove(key) {
-            return this.http.delete(this.serviceURL + '/' + encodeURIComponent(key));
+        remove(name) {
+            return this.http.delete(this.serviceURL + '/' + encodeURIComponent(name));
         }
 
         getAllApplicationProperties() {

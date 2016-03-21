@@ -4,7 +4,7 @@
     "ADMIN": "Administration",
     "CANCEL": "Abbrechen",
     "ERROR_LENGTH": "Text ist zu lang",
-    "PROPERTY_KEY": "Property-Key",
+    "PROPERTY_Name": "Property-Name",
     "PROPERTY_TEXT": "Text",
     "ERROR_REQUIRED": "Feld wird benötigt",
     "ERROR_MIN_LENG": "Eingabe zu kurz ",

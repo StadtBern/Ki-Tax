@@ -33,9 +33,9 @@ module ebeguWeb.components {
 
     export class AdminViewController implements IAdminViewController {
         length:number;
-        applicationProperty:ebeguWeb.API.ApplicationProperty;
+        applicationProperty:ebeguWeb.API.TSApplicationProperty;
         applicationPropertyRS:ebeguWeb.services.IApplicationPropertyRS;
-        applicationProperties:Array<ebeguWeb.API.ApplicationProperty>;
+        applicationProperties:Array<ebeguWeb.API.TSApplicationProperty>;
 
         static $inject = ['applicationPropertyRS', 'MAX_LENGTH'];
 
@@ -53,11 +53,23 @@ module ebeguWeb.components {
         //}
 
         submit() {
-            this.applicationPropertyRS.create(this.applicationProperty.key, this.applicationProperty.value)
-                .then((response:angular.IHttpPromiseCallbackArg<any>) => {
-                    this.applicationProperty = null;
-                    this.applicationProperties.push(response.data);
-                });
+            //testen ob aktuelles property schon gespeichert ist
+            if (this.applicationProperty.timestampErstellt) {
+                this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
+                    .then((response) => {
+                        var index = this.getIndexOfElementwithID(response.data);
+                        this.applicationProperties[index] = response.data;
+                        this.resetForm();
+
+                    });
+
+            } else {
+                this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
+                    .then((response) => {
+                        this.applicationProperties.push(response.data);
+                        this.resetForm();
+                    });
+            }
             //todo team fehlerhandling
         }
 
@@ -66,13 +78,13 @@ module ebeguWeb.components {
                 var index = this.applicationProperties.indexOf(row);
                 if (index !== -1) {
                     this.applicationProperties.splice(index, 1);
+                    this.resetForm();
                 }
-
             });
         }
 
         createItem() {
-            this.applicationProperty = new ebeguWeb.API.ApplicationProperty('', '');
+            this.applicationProperty = new ebeguWeb.API.TSApplicationProperty('', '');
         }
 
         editRow(row) {
@@ -81,6 +93,17 @@ module ebeguWeb.components {
 
         resetForm() {
             this.applicationProperty = null;
+        }
+
+        private  getIndexOfElementwithID(prop : ebeguWeb.API.TSApplicationProperty) {
+            var idToSearch = prop.id;
+            for (var i = 0; i < this.applicationProperties.length; i++) {
+                if (this.applicationProperties[i].id === idToSearch) {
+                    return i;
+                }
+            }
+            return -1;
+
         }
     }
 

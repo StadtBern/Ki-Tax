@@ -7,7 +7,7 @@
             <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" class="table table-striped">
                 <thead>
                 <tr>
-                    <th st-sort="name" data-translate="PROPERTY_KEY"></th>
+                    <th st-sort="name" data-translate="PROPERTY_NAME"></th>
                     <th st-sort="value" data-translate="PROPERTY_TEXT"></th>
                     <th data-translate="AKTION"></th>
                 </tr>
@@ -49,15 +49,9 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="row top5">
-                    <dv-input-row label="{{'PROPERTY_KEY' | translate}}">
-                        <input id="propKey2" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-8" required max="vm.length" min="2">
-                    </dv-input-row>
-                </div>
-                <div class="row top5">
-                    <label data-translate="PROPERTY_KEY" for="propKey" class="col-md-4">
+                    <label data-translate="PROPERTY_NAME" for="propName" class="col-md-4">
                     </label>
-                    <input id="propKey" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
+                    <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
                            dv-max-length class="col-md-8" required max="vm.length"
                            ng-disabled="vm.applicationProperty.timestampErstellt">
                     <dv-error-messages ng-if="form.$submitted" for="form.propertyName.$error"

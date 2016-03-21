@@ -1,7 +1,7 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.routes {
     import IApplicationPropertyRS = ebeguWeb.services.IApplicationPropertyRS;
-    import ApplicationProperty = ebeguWeb.API.ApplicationProperty;
+    import ApplicationProperty = ebeguWeb.API.TSApplicationProperty;
     'use strict';
 
 
