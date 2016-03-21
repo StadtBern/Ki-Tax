@@ -5,13 +5,14 @@ import java.util.Locale;
 /**
  ** A {@link ThreadLocal}um zu speichern was fuer eine Sprache wir verwenden fuer den aktuellen Request
  */
-public class LocaleThreadLocal {
+public final class LocaleThreadLocal {
 
 
     public static final ThreadLocal<Locale> THREAD_LOCAL = new ThreadLocal<Locale>();
 
+	private LocaleThreadLocal() {}
 
-    public static Locale get() {
+	public static Locale get() {
 		return (THREAD_LOCAL.get() == null) ? Locale.getDefault() : THREAD_LOCAL.get();
     }
 
