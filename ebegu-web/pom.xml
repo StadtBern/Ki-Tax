@@ -11,6 +11,24 @@
     <artifactId>ebegu-web</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <nexus.repo.id>dvb.snapshot</nexus.repo.id>
+        <nexus.url>${maven.nexus.snapshot.url}</nexus.url>
+    </properties>
+
+    <profiles>
+        <profile>
+            <!--bei einem eigentlichen release wollen wir in ein anderes nexus deployen-->
+            <!--stellt sich die frage ob wir zwei builds machen, ist mir noch unklar-->
+            <id>release-mode</id>
+            <properties>
+                <nexus.repo.id>dvb</nexus.repo.id>
+                <nexus.url>${maven.nexus.url}</nexus.url>
+            </properties>
+        </profile>
+
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -102,6 +120,8 @@
                             <goal>deploy-file</goal>
                         </goals>
                         <configuration>
+                            <repositoryId>${nexus.repo.id}</repositoryId>
+                            <url>${nexus.url}</url>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
                             <version>${project.version}</version>
