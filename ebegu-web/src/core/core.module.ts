@@ -1,4 +1,3 @@
-/// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb {
     'use strict';
 
@@ -15,6 +14,7 @@ module ebeguWeb {
             /* 3rd-party modules */
             'ui.bootstrap',
             'smart-table',
-            'pascalprecht.translate'
+            'pascalprecht.translate',
+            'angularMoment'
         ]);
 }

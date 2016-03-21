@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/browser.d.ts" />
 module ebeguWeb.directive {
     'use strict';
     class DVMaxLength implements ng.IDirective {

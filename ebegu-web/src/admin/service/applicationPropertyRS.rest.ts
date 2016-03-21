@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/browser.d.ts" />
 /// <reference path="../../utils/ebeguRestUtil.ts" />
 module ebeguWeb.services {
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
@@ -28,7 +27,7 @@ module ebeguWeb.services {
 
         getByName(name) {
             return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
-                (response: any) => EbeguRestUtil.parseApplicationProperties(response)
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
             );
         }
 
@@ -54,7 +53,7 @@ module ebeguWeb.services {
 
         getAllApplicationProperties() {
             return this.http.get(this.serviceURL + '/').then(
-                (response: any) => EbeguRestUtil.parseApplicationProperties(response)
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
             );
         }
 

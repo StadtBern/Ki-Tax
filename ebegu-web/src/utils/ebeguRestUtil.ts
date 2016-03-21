@@ -1,4 +1,3 @@
-/// <reference path="../../typings/browser.d.ts" />
 /// <reference path="./DateUtil.ts" />
 module ebeguWeb.utils {
     'use strict';
@@ -6,24 +5,21 @@ module ebeguWeb.utils {
     export class EbeguRestUtil {
 
         /**
-         * Holt die Data aus response und wandelt sie in einen TSApplicationProperty Array um, welches danach zurueckliefert
-         * @param response
+         * Wndelt Data in einen TSApplicationProperty Array um, welches danach zurueckgeliefert wird
+         * @param data
          * @returns {any}
          */
-        public static parseApplicationProperties(response: angular.IHttpPromiseCallbackArg<any>) : ebeguWeb.API.TSApplicationProperty[] {
-            if (response != null) {
-                var appProperties: ebeguWeb.API.TSApplicationProperty[] = new Array<ebeguWeb.API.TSApplicationProperty>(response.data.length);
-                if (Array.isArray(response.data)) {
-                    for (var i = 0; i < response.data.length; i++) {
-                        appProperties[i] = EbeguRestUtil.parseApplicationProperty(new ebeguWeb.API.TSApplicationProperty('', ''), response.data[i]);
-                    }
+        public static parseApplicationProperties(data: any) : ebeguWeb.API.TSApplicationProperty[] {
+            var appProperties: ebeguWeb.API.TSApplicationProperty[] = new Array<ebeguWeb.API.TSApplicationProperty>();
+            if (data !== null && Array.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    appProperties[i] = EbeguRestUtil.parseApplicationProperty(new ebeguWeb.API.TSApplicationProperty('', ''), data[i]);
                 }
-                else {
-                    appProperties[0] = EbeguRestUtil.parseApplicationProperty(new ebeguWeb.API.TSApplicationProperty('', ''), response.data);
-                }
-                return appProperties;
             }
-            return [];
+            else {
+                appProperties[0] = EbeguRestUtil.parseApplicationProperty(new ebeguWeb.API.TSApplicationProperty('', ''), data);
+            }
+            return appProperties;
         }
 
         /**

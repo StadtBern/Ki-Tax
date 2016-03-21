@@ -1,4 +1,3 @@
-/// <reference path="../../../../typings/browser.d.ts" />
 module ebeguWeb.components {
     'use strict';
 
@@ -58,18 +57,22 @@ module ebeguWeb.components {
                 this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
                     .then((response) => {
                         var index = this.getIndexOfElementwithID(response.data);
-                        this.applicationProperties[index] = response.data;
-                        this.resetForm();
-
+                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        if (items != null && items.length > 0) {
+                            this.applicationProperties[index] = items[0];
+                        }
                     });
 
             } else {
                 this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
                     .then((response) => {
-                        this.applicationProperties.push(response.data);
-                        this.resetForm();
+                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        if (items != null && items.length > 0) {
+                            this.applicationProperties.push(items[0]);
+                        }
                     });
             }
+            this.resetForm();
             //todo team fehlerhandling
         }
 
