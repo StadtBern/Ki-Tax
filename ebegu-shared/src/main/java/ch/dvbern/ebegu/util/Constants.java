@@ -20,6 +20,7 @@ public interface Constants {
 
 	int DB_DEFAULT_MAX_LENGTH = 255;
 	int DB_TEXTAREA_LENGTH = 1000;
+	int DB_DEFAULT_SHORT_LENGTH = 100;
 
 	int UUID_LENGTH = 36;
 	int PLZ_LENGTH = 4;

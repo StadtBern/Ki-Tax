@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
  */
 public class JaxId {
 
-		@NotNull
-		private String id;
+	@NotNull
+	private String id;
 
-		public JaxId(String id) {
+	public JaxId(String id) {
 			this.id = id;
 		}
 
