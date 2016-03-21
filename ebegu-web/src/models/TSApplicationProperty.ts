@@ -1,7 +1,7 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.API {
 
-    export class TSApplicationProperty extends TSAbstractEntity{
+    export class TSApplicationProperty extends TSAbstractEntity {
         private _name:string;
         private _value:string;
 

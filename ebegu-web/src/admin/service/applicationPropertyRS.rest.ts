@@ -1,16 +1,18 @@
 /// <reference path="../../../typings/browser.d.ts" />
+/// <reference path="../../utils/ebeguRestUtil.ts" />
 module ebeguWeb.services {
+    import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
     export interface IApplicationPropertyRS {
         serviceURL: string;
         http: angular.IHttpService;
 
-        getByName: (name: string) => angular.IHttpPromise<any>;
+        getByName: (name: string) => angular.IPromise<any>;
         create: (name: string, value: string) => angular.IHttpPromise<any>;
         update: (name: string, value: string) => angular.IHttpPromise<any>;
         remove: (name: string) => angular.IHttpPromise<any>;
-        getAllApplicationProperties: () => angular.IHttpPromise<any>;
+        getAllApplicationProperties: () => angular.IPromise<any>;
     }
 
     export class ApplicationPropertyRS implements IApplicationPropertyRS {
@@ -24,12 +26,10 @@ module ebeguWeb.services {
             this.http = $http;
         }
 
-        //toApplicationProperty() {
-        //    //todo DOOOOO
-        //}
-
         getByName(name) {
-            return this.http.get(this.serviceURL + '/' + encodeURIComponent(name));//.then(this.toApplicationProperty());
+            return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response)
+            );
         }
 
         create(name, value) {
@@ -53,7 +53,9 @@ module ebeguWeb.services {
         }
 
         getAllApplicationProperties() {
-            return this.http.get(this.serviceURL + '/');
+            return this.http.get(this.serviceURL + '/').then(
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response)
+            );
         }
 
         static instance($http, REST_API): IApplicationPropertyRS {

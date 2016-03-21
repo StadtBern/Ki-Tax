@@ -22,12 +22,8 @@ module ebeguWeb.routes {
         controller = EbeguStateController;
         controllerAs = 'vm';
         resolve = {
-            //applicationProperties();
             applicationProperties : function(applicationPropertyRS) {
-                return applicationPropertyRS.getAllApplicationProperties()
-                    .then(function (response) {
-                        return response.data;
-                    });
+                return applicationPropertyRS.getAllApplicationProperties();
             }
         };
 

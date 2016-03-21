@@ -3,9 +3,9 @@ module ebeguWeb.API {
     'use strict';
 
     export class TSAbstractEntity {
-        _id: string;
-        _timestampErstellt: moment.Moment;
-        _timestampMutiert: moment.Moment;
+        private _id: string;
+        private _timestampErstellt: moment.Moment;
+        private _timestampMutiert: moment.Moment;
 
 
         public set id(id:string) {
