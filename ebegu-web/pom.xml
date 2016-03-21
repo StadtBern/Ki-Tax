@@ -125,7 +125,7 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
                             <version>${project.version}</version>
-                            <file>${project.build.directory}/${project.artifactId}-${project.version}-client.tar.gz</file>
+                            <file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>
                         </configuration>
                     </execution>
 

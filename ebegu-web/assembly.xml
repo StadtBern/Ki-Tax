@@ -1,15 +1,25 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
-  <id>client</id>
-  <formats>
-    <format>tar.gz</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <fileSets>
-    <fileSet>
-      <directory>dist</directory>
-      <outputDirectory>/</outputDirectory>
-    </fileSet>
-  </fileSets>
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+    <id>client</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>dist</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <!--could be used to rename the generated file but would probably have to be done in a second assembly descriptor-->
+    <!--<files>-->
+    <!--<file>-->
+    <!--<source>${project.build.directory}/${project.artifactId}-${project.version}-client.tar.gz</source>-->
+    <!--<outputDirectory>/</outputDirectory>-->
+    <!--<destName>${project.build.directory}/${project.artifactId}-${project.version}-client.tgz</destName>-->
+    <!--</file>-->
+    <!--</files>-->
+
 </assembly>
