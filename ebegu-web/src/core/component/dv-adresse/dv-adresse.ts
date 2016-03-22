@@ -2,7 +2,7 @@
 module app.DvAdresse {
     'use strict';
 
-    class ComponentConfig implements angular.IComponentOptions {
+    export class ComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
         bindings: any;
         templateUrl: string | Function;
@@ -19,12 +19,17 @@ module app.DvAdresse {
     }
 
 
-    class DvAdresse  {
+    export class DvAdresse  {
+        adresse:ebeguWeb.API.TSAdresse;
+        adresseRS:ebeguWeb.services.IAdresseRS;
+        adressen:Array<ebeguWeb.API.TSAdresse>;
 
-        static $inject = [];
+        static $inject = ['adressRS'];
         /* @ngInject */
-        constructor() {
-            var vm = this;
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
+            this.adresse = null;
+            this.adressen = null;
+            this.adresseRS = adresseRS;
         }
     }
 

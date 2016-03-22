@@ -1,4 +1,4 @@
-/// <reference path="../../../typings/browser.d.ts" />
+/// <reference path="../../../../typings/browser.d.ts" />
 describe('dvAdresse', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
