@@ -21,7 +21,11 @@ module ebeguWeb.services {
         }
 
         public create(adresse) {
-            return this.http.post(this.serviceURL, adresse);
+            return this.http.post(this.serviceURL, adresse, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
         }
 
         static instance ($http, REST_API) : IAdresseRS {

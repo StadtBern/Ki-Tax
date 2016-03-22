@@ -25,7 +25,7 @@ module app.DvAdresse {
         adresseRS:ebeguWeb.services.IAdresseRS;
         adressen:Array<ebeguWeb.API.TSAdresse>;
 
-        static $inject = ['adressRS', 'MAX_LENGTH'];
+        static $inject = ['adresseRS', 'MAX_LENGTH'];
         /* @ngInject */
         constructor(adresseRS:ebeguWeb.services.IAdresseRS, MAX_LENGTH:number) {
             this.maxLength = MAX_LENGTH;
@@ -35,11 +35,12 @@ module app.DvAdresse {
         }
 
         submit () {
-            this.adresseRS.create(this.adresse);
-                //.then((response) => {
-                //    var items: Array<ebeguWeb.API.TSAdresse> = ebeguWeb.utils.EbeguRestUtil.parseAdressen(response.data);
-                //});
-            this.resetForm();
+            this.adresseRS.create(this.adresse)
+                .then((response) => {
+                    if (response.status === 201) {
+                        this.resetForm();
+                    }
+                });
         }
 
         removeRow(row:any) {
