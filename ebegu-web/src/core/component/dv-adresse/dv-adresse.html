@@ -65,8 +65,15 @@
         <div class="form-group">
             <label data-translate="ADRESSE_LAND" for="land">
             </label>
-            <input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"
-                   dv-max-length class="form-control" required>
+            <!--<input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"-->
+            <!--dv-max-length class="form-control" required>-->
+            <select id="land" name="adresseLand" ng-model="vm.adresse.land" class="form-control" required>
+                <option value="CH">Schweiz</option>
+                <option value="DE">Deutschland</option>
+                <option value="FR">Frankreich</option>
+                <option value="IT">Italien</option>
+                <option value="AT">Österreich</option>
+            </select>
         </div>
     </div>
 </div>

@@ -6,7 +6,7 @@
 
     <h2 data-translate="GESUCHSTELLERIN"></h2>
 
-    <from ng-submit="form.$valid && vm.submit()"  role="form" name="form" class="form-horizontal">
+    <form ng-submit="form.$valid && vm.submit()"  role="form" name="form" class="form-horizontal">
 
         <!--Geschlecht-->
         <div class="row">
@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <label data-translate="VORNAME" for="vorname_ID">
                     </label>
-                    <input id="vorname_ID" type="text" name="vorname" ng-model=""
+                    <input id="vorname_ID" type="text" name="vorname" ng-model="vm.stammdaten.vorname"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
                                        class="error col-md-12"></dv-error-messages>
@@ -29,7 +29,7 @@
                 <div class="form-group">
                     <label data-translate="NAME" for="name_ID">
                     </label>
-                    <input id="name_ID" type="text" name="name" ng-model=""
+                    <input id="name_ID" type="text" name="name" ng-model="vm.stammdaten.nachname"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
                                        class="error col-md-12"></dv-error-messages>
@@ -44,7 +44,7 @@
                 <div class="form-group">
                     <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                     </label>
-                    <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-model=""
+                    <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-model="vm.stammdaten.geburtsdatum"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
                                        class="error col-md-12"></dv-error-messages>
@@ -58,7 +58,7 @@
                 <div class="form-group">
                     <label data-translate="EMAIL" for="email_ID">
                     </label>
-                    <input id="email_ID" type="text" name="email" ng-model=""
+                    <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.email"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
                                        class="error col-md-12"></dv-error-messages>
@@ -73,7 +73,7 @@
                 <div class="form-group">
                     <label data-translate="MOBILE" for="mobile_ID">
                     </label>
-                    <input id="mobile_ID" type="text" name="mobile" ng-model=""
+                    <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                        class="error col-md-12"></dv-error-messages>
@@ -83,9 +83,23 @@
                 <div class="form-group">
                     <label data-translate="TELEFON" for="tel_ID">
                     </label>
-                    <input id="tel_ID" type="text" name="telefon" ng-model=""
+                    <input id="tel_ID" type="text" name="telefon" ng-model="vm.stammdaten.telefon"
                            dv-max-length class="form-control" required max="vm.length">
                     <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+        </div>
+
+        <!--Umzug-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="UMZUG" for="umzug_ID">
+                    </label>
+                    <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.stammdaten.umzug"
+                           class="form-control" >
+                    <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
                                        class="error col-md-12"></dv-error-messages>
                 </div>
             </div>
@@ -102,6 +116,6 @@
             </div>
         </div>
 
-    </from>
+    </form>
 
 </div>
