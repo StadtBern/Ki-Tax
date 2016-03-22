@@ -5,6 +5,8 @@ module ebeguWeb.services {
     export interface IAdresseRS {
         serviceURL: string;
         http: angular.IHttpService;
+
+        create: (adresse: ebeguWeb.API.TSAdresse)  => angular.IHttpPromise<any>;
     }
 
     export class AdresseRS implements IAdresseRS {
@@ -16,6 +18,10 @@ module ebeguWeb.services {
         constructor($http: angular.IHttpService, REST_API: string) {
             this.serviceURL = REST_API + 'adressen';
             this.http = $http;
+        }
+
+        public create(adresse) {
+            return this.http.post(this.serviceURL, adresse);
         }
 
         static instance ($http, REST_API) : IAdresseRS {

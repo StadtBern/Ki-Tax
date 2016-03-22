@@ -15,6 +15,22 @@ module ebeguWeb.utils {
             return theMoment.isValid() ? theMoment : null;
         }
 
+        /**
+         * @param {moment.Moment} aMoment time instance
+         * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
+         */
+        public static momentToLocalDate(aMoment: moment.Moment): string {
+            return moment(aMoment).startOf('day').format('YYYY-MM-DD');
+        }
+
+        /**
+         * @param {moment.Moment} aMoment time instance
+         * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
+         */
+        public static momentToLocalDateTime(aMoment: moment.Moment): string {
+            return moment(aMoment).format('YYYY-MM-DDTHH:mm:ss.SSS');
+        }
+
     }
 
 }

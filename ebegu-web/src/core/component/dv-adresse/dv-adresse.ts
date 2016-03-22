@@ -2,7 +2,7 @@
 module app.DvAdresse {
     'use strict';
 
-    export class ComponentConfig implements angular.IComponentOptions {
+    export class AdresseComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
         bindings: any;
         templateUrl: string | Function;
@@ -13,26 +13,55 @@ module app.DvAdresse {
             this.transclude = false;
             this.bindings = {};
             this.templateUrl = 'src/core/component/dv-adresse/dv-adresse.html';
-            this.controller = DvAdresse;
+            this.controller = DvAdresseController;
             this.controllerAs = 'vm';
         }
     }
 
 
-    export class DvAdresse  {
+    export class DvAdresseController  {
+        maxLength: number;
         adresse:ebeguWeb.API.TSAdresse;
         adresseRS:ebeguWeb.services.IAdresseRS;
         adressen:Array<ebeguWeb.API.TSAdresse>;
 
-        static $inject = ['adressRS'];
+        static $inject = ['adressRS', 'MAX_LENGTH'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, MAX_LENGTH:number) {
+            this.maxLength = MAX_LENGTH;
             this.adresse = null;
             this.adressen = null;
             this.adresseRS = adresseRS;
         }
+
+        submit () {
+            this.adresseRS.create(this.adresse);
+                //.then((response) => {
+                //    var items: Array<ebeguWeb.API.TSAdresse> = ebeguWeb.utils.EbeguRestUtil.parseAdressen(response.data);
+                //});
+            this.resetForm();
+        }
+
+        removeRow(row:any) {
+            //this.adresseRS.remove(row.name).then((reponse:angular.IHttpPromiseCallbackArg<any>) => {
+            //    var index = this.adressen.indexOf(row);
+            //    if (index !== -1) {
+            //        this.adressen.splice(index, 1);
+            //        this.resetForm();
+            //    }
+            //});
+        }
+
+        createItem() {
+            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', null, null);
+        }
+
+        resetForm() {
+            this.adresse = null;
+        }
+
     }
 
-    angular.module('ebeguWeb.core').component('dvAdresse', new ComponentConfig());
+    angular.module('ebeguWeb.core').component('dvAdresse', new AdresseComponentConfig());
 
 }

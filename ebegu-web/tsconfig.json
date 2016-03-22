@@ -18,6 +18,9 @@
         "src/admin/admin.route.ts",
         "src/models/TSAbstractEntity.ts",
         "src/models/TSApplicationProperty.ts",
+        "src/models/TSAdresse.ts",
+        "src/core/component/dv-adresse/dv-adresse.ts",
+        "src/core/service/adresseRS.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts"
     ]
