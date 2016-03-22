@@ -33,6 +33,10 @@
       {
         "name": "ebeguWeb.admin",
         "file": "src/admin/admin.module.ts"
+      },
+      {
+        "name": "ebeguWeb.stammdaten",
+        "file": "src/stammdaten/stammdaten.module.ts"
       }
     ]
   }

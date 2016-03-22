@@ -7,9 +7,11 @@
 
 /* Component LESS */
 @import "core/core.module.less";
+@import "stammdaten/stammdaten.module.less";
 @import "admin/admin.module.less";
 
 @import "variables.less";
+@import "navbar.less";
 /* Add Component LESS Above */
 
 /* Required for Angular UI Bootstrap */
@@ -18,13 +20,42 @@
 }
 
 body {
-    //todo remove me just testing
-    padding-top: 50px;
+    //navbar paddingtodo remove me just testing
+    padding-top: 80px;
 
     .starter-template {
         padding: 40px 15px;
         text-align: center;
     }
+}
+//logobar
+.navbar-fixed-top {
+    top: 30px;
+}
+
+#Intro {
+    top: 0;
+    position: fixed;
+    background-color: white;
+    height: 40px;
+    width: 100%;
+    display: block;
+    z-index: 1040;
+}
+
+.logo-bern{
+    background-image: url('/src/images/logo-bern.png') ;
+    background-repeat: no-repeat;
+    background-size: Auto 40px;
+    background-position: left 10px center;
+}
+.logo-text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    width:150px;
+    margin: 0 auto;
+    font-weight: bolder;
 }
 
 @background-color: white;
