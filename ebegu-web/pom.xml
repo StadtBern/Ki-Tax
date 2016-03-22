@@ -112,24 +112,24 @@
                     <!-- Nur Deployen wenn alle Module erfolgreich gebaut wurden -->
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>bundle tar.gz artifact</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy-file</goal>
-                        </goals>
-                        <configuration>
-                            <repositoryId>${nexus.repo.id}</repositoryId>
-                            <url>${nexus.url}</url>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}</artifactId>
-                            <version>${project.version}</version>
-                            <file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>
-                        </configuration>
-                    </execution>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>bundle tar.gz artifact</id>-->
+                        <!--<phase>deploy</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>deploy-file</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<repositoryId>${nexus.repo.id}</repositoryId>-->
+                            <!--<url>${nexus.url}</url>-->
+                            <!--<groupId>${project.groupId}</groupId>-->
+                            <!--<artifactId>${project.artifactId}</artifactId>-->
+                            <!--<version>${project.version}</version>-->
+                            <!--<file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
 
-                </executions>
+                <!--</executions>-->
             </plugin>
         </plugins>
     </build>
