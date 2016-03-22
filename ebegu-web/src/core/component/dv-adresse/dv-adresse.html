@@ -1,74 +1,87 @@
-<div class="dv-adresse">
-    <form ng-submit="form.$valid && vm.submit()" name="form" novalidate >
-        <div class="row">
-            <div class="col-md-6">
-                <div class="row top5">
-                    <label data-translate="ADRESSE_STRASSE" for="strasse" class="col-md-4">
-                    </label>
-                    <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_HAUSNUMMER" for="hausnummer" class="col-md-4">
-                    </label>
-                    <input id="hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
-                           dv-max-length class="col-md-8" max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_ZUSATZZEILE" for="zusatzzeile" class="col-md-4">
-                    </label>
-                    <input id="zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
-                           dv-max-length class="col-md-8" max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_PLZ" for="plz" class="col-md-4">
-                    </label>
-                    <input id="plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_ORT" for="ort" class="col-md-4">
-                    </label>
-                    <input id="ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_LAND" for="land" class="col-md-4">
-                    </label>
-                    <input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_GEMEINDE" for="gemeinde" class="col-md-4">
-                    </label>
-                    <input id="gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
-                           dv-max-length class="col-md-8" max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb" class="col-md-4">
-                    </label>
-                    <input id="gueltigAb" type="text" name="adresseGueltigAb" ng-model="vm.adresse.gueltigAb"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-                <div class="row top5">
-                    <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis" class="col-md-4">
-                    </label>
-                    <input id="gueltigBis" type="text" name="adresseGueltigBis" ng-model="vm.adresse.gueltigBis"
-                           dv-max-length class="col-md-8" required max="vm.length">
-                </div>
-
-            </div>
-
+<!--<form ng-submit="form.$valid && vm.submit()" name="form" novalidate >-->
+<!-- strasse/hausnummer -->
+<div class="dv-adresse row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_STRASSE" for="strasse">
+            </label>
+            <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
+                   dv-max-length class="form-control" required>
         </div>
-        <div class="row">
-            <div class="col-md-1">
-                <button class="btn-primary" type="submit" data-translate="SAVE">
-                </button>
-            </div>
-            <div class="col-md-10">
-                <a href="#" id="cancelLink" data-translate="CANCEL"
-                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-            </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_HAUSNUMMER" for="hausnummer">
+            </label>
+            <input id="hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
+                   dv-max-length class="form-control">
         </div>
-    </form>
+    </div>
 </div>
+<!-- Adresse Zusatz-->
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_ZUSATZZEILE" for="zusatzzeile">
+            </label>
+            <input id="zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
+                   dv-max-length class="form-control">
+        </div>
+    </div>
+</div>
+<!-- PLZ ORT-->
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_PLZ" for="plz">
+            </label>
+            <input id="plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
+                   dv-max-length class="form-control" required>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_ORT" for="ort">
+            </label>
+            <input id="ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
+                   dv-max-length class="form-control" required>
+        </div>
+    </div>
+</div>
+<!-- Gemeinde-->
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_GEMEINDE" for="gemeinde">
+            </label>
+            <input id="gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
+                   dv-max-length class="form-control">
+        </div>
+    </div>
+</div>
+<!-- Land-->
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label data-translate="ADRESSE_LAND" for="land">
+            </label>
+            <input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"
+                   dv-max-length class="form-control" required>
+        </div>
+    </div>
+</div>
+<!-- gueltig ab / gueltig bis -->
+<div class="form-group" ng-if="vm.showDate">
+    <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb">
+    </label>
+    <input id="gueltigAb" type="text" name="adresseGueltigAb" ng-model="vm.adresse.gueltigAb"
+           dv-max-length class="form-control" required>
+</div>
+<div class="form-group" ng-if="vm.showDate">
+    <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis">
+    </label>
+    <input id="gueltigBis" type="text" name="adresseGueltigBis" ng-model="vm.adresse.gueltigBis"
+           dv-max-length class="form-control" required>
+</div>
+
+<!--</form>-->

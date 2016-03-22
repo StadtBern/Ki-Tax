@@ -24,14 +24,15 @@ module app.DvAdresse {
         adresse:ebeguWeb.API.TSAdresse;
         adresseRS:ebeguWeb.services.IAdresseRS;
         adressen:Array<ebeguWeb.API.TSAdresse>;
+        showDate:boolean;
 
-        static $inject = ['adresseRS', 'MAX_LENGTH'];
+        static $inject = ['adresseRS'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS, MAX_LENGTH:number) {
-            this.maxLength = MAX_LENGTH;
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
             this.adresse = null;
             this.adressen = null;
             this.adresseRS = adresseRS;
+            this.showDate = false;
         }
 
         submit () {

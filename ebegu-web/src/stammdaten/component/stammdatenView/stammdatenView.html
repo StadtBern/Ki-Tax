@@ -1,12 +1,12 @@
 <div class="stammdatenView">
 
-    <dv-adresse></dv-adresse>
+
 
     <h1 data-translate="STAMMDATEN"></h1>
 
     <h2 data-translate="GESUCHSTELLERIN"></h2>
 
-    <from role="form" name="form" class="form-horizontal">
+    <from ng-submit="form.$valid && vm.submit()"  role="form" name="form" class="form-horizontal">
 
         <!--Geschlecht-->
         <div class="row">
@@ -36,9 +36,8 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <!--heir kommt die adresse-->
-        </div>
+        <!-- Adresse-->
+        <dv-adresse></dv-adresse>
         <!--Geburtsdatum-->
         <div class="row">
             <div class="col-md-6">
@@ -69,30 +68,39 @@
 
 
         <!--Mibile /Telefon-->
-               <div class="row">
-                   <div class="col-md-6">
-                       <div class="form-group">
-                           <label data-translate="MOBILE" for="mobile_ID">
-                           </label>
-                           <input id="mobile_ID" type="text" name="mobile" ng-model=""
-                                  dv-max-length class="form-control" required max="vm.length">
-                           <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
-                                              class="error col-md-12"></dv-error-messages>
-                       </div>
-                   </div>
-                   <div class="col-md-6">
-                       <div class="form-group">
-                           <label data-translate="TELEFON" for="tel_ID">
-                           </label>
-                           <input id="tel_ID" type="text" name="telefon" ng-model=""
-                                  dv-max-length class="form-control" required max="vm.length">
-                           <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
-                                              class="error col-md-12"></dv-error-messages>
-                       </div>
-                   </div>
-               </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="MOBILE" for="mobile_ID">
+                    </label>
+                    <input id="mobile_ID" type="text" name="mobile" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="TELEFON" for="tel_ID">
+                    </label>
+                    <input id="tel_ID" type="text" name="telefon" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+        </div>
 
-        <button type="submit" class="btn btn-default">Submit</button>
+        <div class="row">
+            <div class="col-md-1">
+                <button class="btn-primary" type="submit" data-translate="SAVE">
+                </button>
+            </div>
+            <div class="col-md-10">
+                <a href="#" id="cancelLink" data-translate="CANCEL"
+                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+            </div>
+        </div>
 
     </from>
 
