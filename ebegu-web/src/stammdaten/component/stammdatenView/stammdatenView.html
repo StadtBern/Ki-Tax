@@ -1,5 +1,98 @@
 <div class="stammdatenView">
-    <p>hallo welt</p>
 
+
+    <h1 data-translate="STAMMDATEN"></h1>
+
+    <h2 data-translate="GESUCHSTELLERIN"></h2>
+
+    <from role="form" name="form" class="form-horizontal">
+
+        <!--Geschlecht-->
+        <div class="row">
+            <div class="col-md-12">
+            </div>
+        </div>
+        <!--Vorname/Name-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="VORNAME" for="vorname_ID">
+                    </label>
+                    <input id="vorname_ID" type="text" name="vorname" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="NAME" for="name_ID">
+                    </label>
+                    <input id="name_ID" type="text" name="name" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!--heir kommt die adresse-->
+        </div>
+        <!--Geburtsdatum-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                    </label>
+                    <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+        </div>
+
+        <!--Email-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="EMAIL" for="email_ID">
+                    </label>
+                    <input id="email_ID" type="text" name="email" ng-model=""
+                           dv-max-length class="form-control" required max="vm.length">
+                    <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
+                                       class="error col-md-12"></dv-error-messages>
+                </div>
+            </div>
+        </div>
+
+
+        <!--Mibile /Telefon-->
+               <div class="row">
+                   <div class="col-md-6">
+                       <div class="form-group">
+                           <label data-translate="MOBILE" for="mobile_ID">
+                           </label>
+                           <input id="mobile_ID" type="text" name="mobile" ng-model=""
+                                  dv-max-length class="form-control" required max="vm.length">
+                           <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
+                                              class="error col-md-12"></dv-error-messages>
+                       </div>
+                   </div>
+                   <div class="col-md-6">
+                       <div class="form-group">
+                           <label data-translate="TELEFON" for="tel_ID">
+                           </label>
+                           <input id="tel_ID" type="text" name="telefon" ng-model=""
+                                  dv-max-length class="form-control" required max="vm.length">
+                           <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                              class="error col-md-12"></dv-error-messages>
+                       </div>
+                   </div>
+               </div>
+
+        <button type="submit" class="btn btn-default">Submit</button>
+
+    </from>
 
 </div>
