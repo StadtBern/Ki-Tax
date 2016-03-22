@@ -34,9 +34,9 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v4.4.0</nodeVersion>
-                            <npmVersion>2.14.20</npmVersion>
-                            <!--<nodeDownloadRoot>https://nodejs.org/nodejs/dist/</nodeDownloadRoot>-->
-                            <!--<npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>-->
+                            <npmVersion>3.8.1</npmVersion>
+                            <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+                            <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
                         </configuration>
                     </execution>
 
@@ -53,7 +53,7 @@
                     </execution>
 
                     <execution>
-                        <id>grunt build</id>
+                        <id>grunt jenkins-build</id>
                         <goals>
                             <goal>grunt</goal>
                         </goals>
@@ -105,7 +105,7 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
                             <version>${project.version}</version>
-                            <file>${project.build.directory}/ebegu-web-${project.version}-client.tar.gz</file>
+                            <file>${project.build.directory}/${project.artifactId}-${project.version}-client.tar.gz</file>
                         </configuration>
                     </execution>
 

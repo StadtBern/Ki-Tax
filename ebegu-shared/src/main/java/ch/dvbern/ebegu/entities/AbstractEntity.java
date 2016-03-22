@@ -57,12 +57,9 @@ public abstract class AbstractEntity implements Serializable {
 
 	public AbstractEntity() {
 		//da wir teilweise schon eine id brauchen bevor die Entities gespeichert werden initialisieren wir die uuid hier
-		if (id == null) {
-			id = UUID.randomUUID().toString();
-		}
+		id = UUID.randomUUID().toString();
 	}
 
-	@Nullable // Nullable, da erst im PrePersist gesetzt
 	public String getId() {
 		return id;
 	}
@@ -153,13 +150,13 @@ public abstract class AbstractEntity implements Serializable {
 	 * Diese Methode faengt die Exception ab und gibt einen fixen Text zurueck.
 	 * <pre>
 	 * {@code
-	 *	public String toString() {
-	 *		return MoreObjects.toStringHelper(this)
-	 *			.add("id", getId())
-	 *			.add("kontaktperson", getSilent(() -> kontaktperson))
-	 *			.add("kind", getSilent(() -> kind))
-	 *			.toString();
-	 *	}
+	 * 	public String toString() {
+	 * 		return MoreObjects.toStringHelper(this)
+	 * 			.add("id", getId())
+	 * 			.add("kontaktperson", getSilent(() -> kontaktperson))
+	 * 			.add("kind", getSilent(() -> kind))
+	 * 			.toString();
+	 * 	}
 	 * }
 	 * </pre>
 	 */
