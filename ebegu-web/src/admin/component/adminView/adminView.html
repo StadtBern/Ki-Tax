@@ -27,7 +27,7 @@
                     ng-click="vm.editRow(row)">
                     <td ng-bind="row.name"></td>
                     <td ng-bind="row.value"></td>
-                    <td ng-bind="row.timestampErstellt"></td>
+                    <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td>
                         <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
                             <i class="glyphicon glyphicon-remove-circle">
@@ -48,7 +48,7 @@
 
     </div>
 
-    <form ng-submit="form.$valid && vm.submit()" name="form" novalidate ng-show="vm.applicationProperty">
+    <form ng-submit="form.$valid && vm.submit()" name="form" novalidate ng-if="vm.applicationProperty">
         <div class="row">
             <div class="col-md-6">
                 <div class="row top5">
