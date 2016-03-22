@@ -24,15 +24,15 @@
     "modules": [
       {
         "name": "ebeguWeb",
-        "file": "src/app.module.js"
+        "file": "src/app.module.ts"
       },
       {
         "name": "ebeguWeb.core",
-        "file": "src/core/core.module.js"
+        "file": "src/core/core.module.ts"
       },
       {
         "name": "ebeguWeb.admin",
-        "file": "src/admin/admin.module.js"
+        "file": "src/admin/admin.module.ts"
       }
     ]
   }
