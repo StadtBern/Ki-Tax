@@ -14,8 +14,8 @@ module.exports = function (grunt) {
         connect: {
             options: {
                 port: 9001,
-                hostname: 'localhost',
-                //hostname: '*', // enable to allow remote access to this server
+                // hostname: 'localhost',
+                hostname: '*', // enable to allow remote access to this server
                 middleware: function (connect, options, middlewares) {
                     var proxy = require('grunt-connect-proxy/lib/utils').proxyRequest;
                     return [proxy].concat(middlewares);

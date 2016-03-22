@@ -8,10 +8,12 @@ module app.DvAdresse {
         templateUrl: string | Function;
         controller: any;
         controllerAs: string;
+        require: any;
 
         constructor() {
             this.transclude = false;
-            this.bindings = {};
+            this.bindings = {adresse:'<'};
+            this.require = {parentForm: '?^form'};
             this.templateUrl = 'src/core/component/dv-adresse/dv-adresse.html';
             this.controller = DvAdresseController;
             this.controllerAs = 'vm';
@@ -23,11 +25,11 @@ module app.DvAdresse {
         adresse:ebeguWeb.API.TSAdresse;
         adresseRS:ebeguWeb.services.IAdresseRS;
         showDate:boolean;
+        parentForm: angular.IFormController;
 
         static $inject = ['adresseRS'];
         /* @ngInject */
         constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
-            this.adresse = null;
             this.adresseRS = adresseRS;
             this.showDate = false;
         }

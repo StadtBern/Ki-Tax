@@ -2,6 +2,8 @@
 /// <reference path="../../../models/TSStammdaten.ts" />
 module app.StammdatenView {
     'use strict';
+    import EnumEx = ebeguWeb.utils.EnumEx;
+    import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -22,11 +24,14 @@ module app.StammdatenView {
 
     class StammdatenViewController  {
         stammdaten: ebeguWeb.API.TSStammdaten;
+        geschlechter:any;
 
         static $inject = [];
         /* @ngInject */
         constructor() {
-            this.stammdaten = null;
+            this.stammdaten = new ebeguWeb.API.TSStammdaten();
+            this.stammdaten.adresse = new ebeguWeb.API.TSAdresse();
+            this.geschlechter = EnumEx.getNames(TSGeschlecht);
         }
 
         submit () {
@@ -36,12 +41,14 @@ module app.StammdatenView {
         }
 
         createItem() {
-            this.stammdaten = new ebeguWeb.API.TSStammdaten('', '', null, '', '', '', false);
+            // this.stammdaten = new ebeguWeb.API.TSStammdaten('', '', undefined, '', '', '', false);
         }
 
         resetForm() {
-            this.stammdaten = null;
+            this.stammdaten = undefined;
         }
+
+
 
     }
 

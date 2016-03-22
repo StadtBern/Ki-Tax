@@ -13,19 +13,34 @@
 
     //    error styling
     form {
-        //.ng-invalid-required:after, .ng-required:after {
-        //    content: '***';
-        //
-        //}
-        //.ng-invalid:after {
-        //    content: '***';
-        //}
-
-        input {
-            border: 0;
-            border-bottom: 2px solid black;
+/*        .ng-invalid-required:after, .ng-required:after {
+            content: '***';
 
         }
+        .ng-invalid:after {
+            content: '***';
+        }*/
+
+        input[type="text"] {
+            border: 0;
+            border-bottom: 1px solid lightgray;
+            outline:0;
+            border-radius: 0px;
+            font-size:20px;
+            font-weight: 500;
+            color: black;
+            padding: 2px 2px 1px;
+        }
+        input[type="text"]:focus {
+            border-color: @input-boder-focus;
+        }
+
+        label {
+            font-weight: normal;
+        }
+    }
+    .marginLeft10{
+       margin-left: 10px;
 
     }
 

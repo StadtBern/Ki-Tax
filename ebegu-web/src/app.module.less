@@ -28,6 +28,7 @@ body {
         text-align: center;
     }
 }
+
 //logobar
 .navbar-fixed-top {
     top: 30px;
@@ -43,37 +44,37 @@ body {
     z-index: 1040;
 }
 
-.logo-bern{
-    background-image: url('/src/images/logo1-bern.png') ;
+.logo-bern {
+    background-image: url('/src/images/logo1-bern.png');
     background-repeat: no-repeat;
     background-size: Auto 40px;
     background-position: left 10px center;
 }
-.logo-text{
+
+.logo-text {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
     text-align: center;
-    width:150px;
+    width: 150px;
     margin: 0 auto;
     font-weight: bolder;
 }
 
-@background-color: white;
-
-
+@background-error-color: white;
 
 .ErrorInput {
     border-color: @state-danger-text;
-    background-color: @background-color;
+    background-color: @background-error-color;
 }
 
-
+//todo das braucht es wohl gar nicht mehr
+.form-horizontal {
+    dv-error-messages {
+        padding-left: 1px;
+    }
+}
 
 form {
-
-    //.required-ng, .ng-invalid-required {
-    //    background-color: blue;
-    //}
 
     &.ng-submitted {
         input {

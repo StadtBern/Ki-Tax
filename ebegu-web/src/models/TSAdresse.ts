@@ -13,15 +13,15 @@ module ebeguWeb.API {
         private _gueltigAb:moment.Moment;
         private _gueltigBis:moment.Moment;
 
-        constructor(strasse:string, hausnummer:string, zusatzzeile:string, plz:string, ort:string,
-                    land:any, gemeinde:string, gueltigAb:moment.Moment, gueltigBis:moment.Moment) {
+        constructor(strasse?:string, hausnummer?:string, zusatzzeile?:string, plz?:string, ort?:string,
+                    land?:any, gemeinde?:string, gueltigAb?:moment.Moment, gueltigBis?:moment.Moment) {
             super();
             this._strasse = strasse;
             this._hausnummer = hausnummer;
             this._zusatzzeile = zusatzzeile;
             this._plz = plz;
             this._ort = ort;
-            this._land = land;
+            this._land = land || 'CH';
             this._gemeinde = gemeinde;
             this._gueltigAb = gueltigAb;
             this._gueltigBis = gueltigBis;

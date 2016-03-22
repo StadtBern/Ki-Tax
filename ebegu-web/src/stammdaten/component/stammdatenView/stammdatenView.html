@@ -1,126 +1,157 @@
-<div class="stammdatenView">
+<div class="stammdatenView row">
+    <div class="col-md-3 sidenav">
+        <ul class="sidenav">
+            <li>01 Familiensituation</li>
+            <li style="border-bottom: 1px solid #333333;">02 Stammdaten Gesuchstellerin</li>
+            <li>03 Erwerbspensum</li>
+            <li>04 FinanzielleSituation</li>
+            <li>05 Einkommensverschlechterung</li>
+            <li>06 Stammdaten der Kinder</li>
+            <li>07 Platzbestätigung</li>
+            <li>08 Anlageverzeichnis</li>
+            <li>09 Reigabequittung</li>
+        </ul>
+    </div>
+    <div class="col-md-5">
+        <h1 data-translate="STAMMDATEN"></h1>
+        <h4 data-translate="GESUCHSTELLERIN"></h4>
+        <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
 
+            <!--Geschlecht-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Geschlecht</label>
+                        <div ng-repeat="current in vm.geschlechter" class="radio">
+                            <label><input type="radio" name="geschlecht" ng-model="vm.stammdaten.geschlecht"
+                                          ng-value="current">{{current | translate}}</label>
+                        </div>
 
-
-    <h1 data-translate="STAMMDATEN"></h1>
-
-    <h2 data-translate="GESUCHSTELLERIN"></h2>
-
-    <form ng-submit="form.$valid && vm.submit()"  role="form" name="form" class="form-horizontal" novalidate>
-
-        <!--Geschlecht-->
-        <div class="row">
-            <div class="col-md-12">
-            </div>
-        </div>
-        <!--Vorname/Name-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="VORNAME" for="vorname_ID">
-                    </label>
-                    <input id="vorname_ID" type="text" name="vorname" ng-model="vm.stammdaten.vorname"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
-                                       class="error col-md-12"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="NAME" for="name_ID">
-                    </label>
-                    <input id="name_ID" type="text" name="name" ng-model="vm.stammdaten.nachname"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
-                                       class="error col-md-12"></dv-error-messages>
+            <!--Vorname/Name-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="VORNAME" for="vorname_ID">
+                        </label>
+                        <input id="vorname_ID" type="text" name="vorname" ng-model="vm.stammdaten.vorname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group secondColumn">
+                        <label data-translate="NAME" for="name_ID">
+                        </label>
+                        <input id="name_ID" type="text" name="name" ng-model="vm.stammdaten.nachname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Adresse-->
-        <dv-adresse></dv-adresse>
-        <!--Geburtsdatum-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
-                    </label>
-                    <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-model="vm.stammdaten.geburtsdatum"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
-                                       class="error col-md-12"></dv-error-messages>
+            <!--Geburtsdatum-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                        </label>
+                        <input id="geburtsdatum_ID" type="text" name="geburtsdatum"
+                               ng-model="vm.stammdaten.geburtsdatum"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-        </div>
+            <!-- Adresse-->
+            <dv-adresse adresse="vm.stammdaten.adresse"></dv-adresse>
 
-        <!--Email-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="EMAIL" for="email_ID">
-                    </label>
-                    <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.email"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
-                                       class="error col-md-12"></dv-error-messages>
+
+            <!--Email-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="EMAIL" for="email_ID">
+                        </label>
+                        <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.email"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-        <!--Mibile /Telefon-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="MOBILE" for="mobile_ID">
-                    </label>
-                    <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
-                                       class="error col-md-12"></dv-error-messages>
+            <!--Mibile /Telefon-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="MOBILE" for="mobile_ID">
+                        </label>
+                        <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group secondColumn">
+                        <label data-translate="TELEFON" for="tel_ID">
+                        </label>
+                        <input id="tel_ID" type="text" name="telefon" ng-model="vm.stammdaten.telefon"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="TELEFON" for="tel_ID">
-                    </label>
-                    <input id="tel_ID" type="text" name="telefon" ng-model="vm.stammdaten.telefon"
-                           dv-max-length class="form-control" required max="vm.length">
-                    <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
-                                       class="error col-md-12"></dv-error-messages>
+
+            <!--Umzug-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class=" checkbox">
+                        <label>
+                            <!--<span data-translate="UMZUG" />-->
+
+                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.stammdaten.umzug">
+                            {{'UMZUG' | translate}}
+                        </label>
+                        <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                    <!--                <div class="form-group">
+                                        <div class="col-lg-3">
+                                            <label for="MyCheckBox">My Checkbox</label>
+                                        </div>
+                                        <div class="col-lg-9">
+                                            <input type="checkbox" name="MyCheckBox" class="pull-left">
+                                        </div>
+                                    </div>-->
                 </div>
             </div>
-        </div>
 
-        <!--Umzug-->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label data-translate="UMZUG" for="umzug_ID">
-                    </label>
-                    <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.stammdaten.umzug"
-                           class="form-control" >
-                    <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
-                                       class="error col-md-12"></dv-error-messages>
+
+            <!-- Umzugadresse -->
+            <div ng-show="vm.stammdaten.umzug">
+                <dv-adresse></dv-adresse>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <button class="btn btn-primary" type="submit" data-translate="SAVE">
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
                 </div>
             </div>
-        </div>
 
-        <!-- Umzugadresse -->
-        <div ng-show="vm.stammdaten.umzug">
-            <dv-adresse></dv-adresse>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1">
-                <button class="btn-primary" type="submit" data-translate="SAVE">
-                </button>
-            </div>
-            <div class="col-md-10">
-                <a href="#" id="cancelLink" data-translate="CANCEL"
-                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-            </div>
-        </div>
-
-    </form>
+        </form>
+    </div>
 
 </div>
