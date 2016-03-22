@@ -1,7 +1,7 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.routes {
     import IApplicationPropertyRS = ebeguWeb.services.IApplicationPropertyRS;
-    import ApplicationProperty = ebeguWeb.API.ApplicationProperty;
+    import ApplicationProperty = ebeguWeb.API.TSApplicationProperty;
     'use strict';
 
 
@@ -22,12 +22,8 @@ module ebeguWeb.routes {
         controller = EbeguStateController;
         controllerAs = 'vm';
         resolve = {
-            //applicationProperties();
             applicationProperties : function(applicationPropertyRS) {
-                return applicationPropertyRS.getAllApplicationProperties()
-                    .then(function (response) {
-                        return response.data;
-                    });
+                return applicationPropertyRS.getAllApplicationProperties();
             }
         };
 

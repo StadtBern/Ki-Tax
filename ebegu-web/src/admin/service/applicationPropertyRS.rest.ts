@@ -1,15 +1,18 @@
 /// <reference path="../../../typings/browser.d.ts" />
+/// <reference path="../../utils/ebeguRestUtil.ts" />
 module ebeguWeb.services {
+    import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
     export interface IApplicationPropertyRS {
         serviceURL: string;
         http: angular.IHttpService;
 
-        getByKey: (key: string) => angular.IHttpPromise<any>;
-        create: (key: string, value: string) => angular.IHttpPromise<any>;
-        remove: (key: string) => angular.IHttpPromise<any>;
-        getAllApplicationProperties: () => angular.IHttpPromise<any>;
+        getByName: (name: string) => angular.IPromise<any>;
+        create: (name: string, value: string) => angular.IHttpPromise<any>;
+        update: (name: string, value: string) => angular.IHttpPromise<any>;
+        remove: (name: string) => angular.IHttpPromise<any>;
+        getAllApplicationProperties: () => angular.IPromise<any>;
     }
 
     export class ApplicationPropertyRS implements IApplicationPropertyRS {
@@ -23,24 +26,36 @@ module ebeguWeb.services {
             this.http = $http;
         }
 
-        getByKey(key) {
-            return this.http.get(this.serviceURL + '/' + encodeURIComponent(key));
+        getByName(name) {
+            return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
+            );
         }
 
-        create(key, value) {
-            return this.http.post(this.serviceURL + '/' + encodeURIComponent(key), value, {
+        create(name, value) {
+            return this.http.post(this.serviceURL + '/' + encodeURIComponent(name), value, {
                 headers: {
                     'Content-Type': 'text/plain'
                 }
             });
         }
 
-        remove(key) {
-            return this.http.delete(this.serviceURL + '/' + encodeURIComponent(key));
+        update(name, value) {
+            return this.http.post(this.serviceURL + '/' + encodeURIComponent(name), value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
+        }
+
+        remove(name) {
+            return this.http.delete(this.serviceURL + '/' + encodeURIComponent(name));
         }
 
         getAllApplicationProperties() {
-            return this.http.get(this.serviceURL + '/');
+            return this.http.get(this.serviceURL + '/').then(
+                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
+            );
         }
 
         static instance($http, REST_API): IApplicationPropertyRS {

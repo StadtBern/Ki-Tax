@@ -3,7 +3,7 @@ module ebeguWeb.components {
     'use strict';
 
 
-    export class ComponentConfig implements angular.IComponentOptions {
+    export class AdminViewComponentConfig implements angular.IComponentOptions {
         transclude:boolean = false;
         bindings:any = {
             applicationProperties: '<'
@@ -27,13 +27,15 @@ module ebeguWeb.components {
         submit: () => void;
         removeRow: (row:any) => void; // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
         createItem: () => void;
+        editRow: (row:any) => void;
+        resetForm: () => void;
     }
 
     export class AdminViewController implements IAdminViewController {
         length:number;
-        applicationProperty:ebeguWeb.API.ApplicationProperty;
+        applicationProperty:ebeguWeb.API.TSApplicationProperty;
         applicationPropertyRS:ebeguWeb.services.IApplicationPropertyRS;
-        applicationProperties:Array<ebeguWeb.API.ApplicationProperty>;
+        applicationProperties:Array<ebeguWeb.API.TSApplicationProperty>;
 
         static $inject = ['applicationPropertyRS', 'MAX_LENGTH'];
 
@@ -51,11 +53,27 @@ module ebeguWeb.components {
         //}
 
         submit() {
-            this.applicationPropertyRS.create(this.applicationProperty.key, this.applicationProperty.value)
-                .then((response:angular.IHttpPromiseCallbackArg<any>) => {
-                    this.applicationProperty = null;
-                    this.applicationProperties.push(response.data);
-                });
+            //testen ob aktuelles property schon gespeichert ist
+            if (this.applicationProperty.timestampErstellt) {
+                this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
+                    .then((response) => {
+                        var index = this.getIndexOfElementwithID(response.data);
+                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        if (items != null && items.length > 0) {
+                            this.applicationProperties[index] = items[0];
+                        }
+                    });
+
+            } else {
+                this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
+                    .then((response) => {
+                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        if (items != null && items.length > 0) {
+                            this.applicationProperties.push(items[0]);
+                        }
+                    });
+            }
+            this.resetForm();
             //todo team fehlerhandling
         }
 
@@ -64,16 +82,35 @@ module ebeguWeb.components {
                 var index = this.applicationProperties.indexOf(row);
                 if (index !== -1) {
                     this.applicationProperties.splice(index, 1);
+                    this.resetForm();
                 }
-
             });
         }
 
         createItem() {
-            this.applicationProperty = new ebeguWeb.API.ApplicationProperty('', '');
+            this.applicationProperty = new ebeguWeb.API.TSApplicationProperty('', '');
+        }
+
+        editRow(row) {
+            this.applicationProperty = row;
+        }
+
+        resetForm() {
+            this.applicationProperty = null;
+        }
+
+        private  getIndexOfElementwithID(prop : ebeguWeb.API.TSApplicationProperty) {
+            var idToSearch = prop.id;
+            for (var i = 0; i < this.applicationProperties.length; i++) {
+                if (this.applicationProperties[i].id === idToSearch) {
+                    return i;
+                }
+            }
+            return -1;
+
         }
     }
 
-    angular.module('ebeguWeb.admin').component('adminView', new ComponentConfig());
+    angular.module('ebeguWeb.admin').component('adminView', new AdminViewComponentConfig());
 
 }

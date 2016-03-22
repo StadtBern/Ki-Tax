@@ -6,7 +6,8 @@ module ebeguWeb.directive {
         require = 'ngModel';
         length:number;
 
-        constructor(private MAX_LENGTH:number) {
+        static $inject = ['MAX_LENGTH'];
+        constructor(MAX_LENGTH:number) {
 
             this.length = MAX_LENGTH;
         }
@@ -16,8 +17,8 @@ module ebeguWeb.directive {
                 return;
             }
 
-            ctrl.$validators.dvMaxLength = function (modelValue, viewValue) {
-                return ctrl.$isEmpty(viewValue) || (viewValue.length <= length);
+            ctrl.$validators.dvMaxLength = (modelValue, viewValue) => {
+                return ctrl.$isEmpty(viewValue) || (viewValue.length <= this.length);
             };
         };
 

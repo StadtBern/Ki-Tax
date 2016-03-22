@@ -6,6 +6,8 @@
     "angular-translate": "registry:dt/angular-translate#2.4.0+20160111144358",
     "angular-ui-router": "registry:dt/angular-ui-router#1.1.5+20160112161118",
     "jasmine": "registry:dt/jasmine#2.2.0+20160303225035",
-    "jquery": "registry:dt/jquery#2.0.0+20160303223636"
+    "jquery": "registry:dt/jquery#2.0.0+20160303223636",
+    "moment": "registry:dt/moment#2.8.0+20160316155526",
+    "moment-node": "registry:dt/moment-node#2.11.1+20160317120654"
   }
 }

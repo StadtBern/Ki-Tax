@@ -1,25 +1,26 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.API {
 
-    export class ApplicationProperty {
-        private _key:string;
+    export class TSApplicationProperty extends TSAbstractEntity {
+        private _name:string;
         private _value:string;
 
-        constructor(key:string, value:string) {
-            this._key = key;
+        constructor(name:string, value:string) {
+            super();
+            this._name = name;
             this._value = value;
         }
 
-        public set key(key:string) {
-            this._key = key;
+        public set name(name:string) {
+            this._name = name;
         }
 
         public set value(value:string) {
             this._value = value;
         }
 
-        public get key():string {
-            return this._key;
+        public get name():string {
+            return this._name;
         }
 
         public get value():string {
