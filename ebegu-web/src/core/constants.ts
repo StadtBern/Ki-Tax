@@ -1,3 +1,4 @@
+/// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.utils {
     'use strict';
 

@@ -1,3 +1,4 @@
+/// <reference path="../../../typings/browser.d.ts" />
 /// <reference path="../../utils/ebeguRestUtil.ts" />
 module ebeguWeb.services {
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
