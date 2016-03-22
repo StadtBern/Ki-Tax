@@ -11,6 +11,24 @@
     <artifactId>ebegu-web</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <nexus.repo.id>dvb.snapshots</nexus.repo.id>
+        <nexus.url>${maven.nexus.snapshot.url}</nexus.url>
+    </properties>
+
+    <profiles>
+        <profile>
+            <!--bei einem eigentlichen release wollen wir in ein anderes nexus deployen-->
+            <!--stellt sich die frage ob wir zwei builds machen, ist mir noch unklar-->
+            <id>release-mode</id>
+            <properties>
+                <nexus.repo.id>dvb</nexus.repo.id>
+                <nexus.url>${maven.nexus.url}</nexus.url>
+            </properties>
+        </profile>
+
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -94,22 +112,24 @@
                     <!-- Nur Deployen wenn alle Module erfolgreich gebaut wurden -->
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>bundle tar.gz artifact</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}</artifactId>
-                            <version>${project.version}</version>
-                            <file>${project.build.directory}/${project.artifactId}-${project.version}-client.tar.gz</file>
-                        </configuration>
-                    </execution>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>bundle tar.gz artifact</id>-->
+                        <!--<phase>deploy</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>deploy-file</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<repositoryId>${nexus.repo.id}</repositoryId>-->
+                            <!--<url>${nexus.url}</url>-->
+                            <!--<groupId>${project.groupId}</groupId>-->
+                            <!--<artifactId>${project.artifactId}</artifactId>-->
+                            <!--<version>${project.version}</version>-->
+                            <!--<file>${project.build.directory}/${project.artifactId}-${project.version}-client.zip</file>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
 
-                </executions>
+                <!--</executions>-->
             </plugin>
         </plugins>
     </build>
