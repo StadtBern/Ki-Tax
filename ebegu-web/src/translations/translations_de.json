@@ -5,12 +5,11 @@
     "CANCEL": "Abbrechen",
     "ERROR_LENGTH": "Text ist zu lang",
     "PROPERTY_Name": "Property-Name",
-    "PROPERTY_TEXT": "Text",
     "ERROR_REQUIRED": "Feld wird benötigt",
     "ERROR_MIN_LENG": "Eingabe zu kurz ",
     "ERROR_MAX_LENG": "Eingabe zu lang ",
     "ERROR_EMAIL": "Keine gültige Email ",
-    "SAVE": "Speichern "
+    "SAVE": "Speichern ",
     "PROPERTY_KEY": "Property-Key",
     "PROPERTY_TEXT": "Text",
     "Land_AD ":" Andorra",
