@@ -54,11 +54,11 @@ module app.DvAdresse {
         }
 
         createItem() {
-            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', null, null);
+            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', undefined, undefined);
         }
 
         resetForm() {
-            this.adresse = null;
+            this.adresse = undefined;
         }
 
     }

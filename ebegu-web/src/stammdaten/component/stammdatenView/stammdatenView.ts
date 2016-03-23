@@ -4,6 +4,7 @@ module app.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
     import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
+    import DateUtil = ebeguWeb.utils.DateUtil;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -31,10 +32,15 @@ module app.StammdatenView {
         constructor() {
             this.stammdaten = new ebeguWeb.API.TSStammdaten();
             this.stammdaten.adresse = new ebeguWeb.API.TSAdresse();
+            let umzugAdr = new ebeguWeb.API.TSAdresse();
+            umzugAdr.ort = 'Bern';
+            umzugAdr.gueltigAb = undefined;
+            this.stammdaten.umzugadresse = umzugAdr;
             this.geschlechter = EnumEx.getNames(TSGeschlecht);
         }
 
         submit () {
+            console.log(this.stammdaten)
         }
 
         removeRow() {

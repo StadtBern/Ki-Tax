@@ -13,7 +13,6 @@
         </ul>
     </div>
     <div class="col-md-5">
-        <h1 data-translate="STAMMDATEN"></h1>
         <h4 data-translate="GESUCHSTELLERIN"></h4>
         <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
 
@@ -61,6 +60,7 @@
                         </label>
                         <input id="geburtsdatum_ID" type="text" name="geburtsdatum"
                                ng-model="vm.stammdaten.geburtsdatum"
+                               placeholder="tt.MM.JJJJ"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
                                            class="error"></dv-error-messages>
@@ -93,7 +93,7 @@
                         <label data-translate="MOBILE" for="mobile_ID">
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
-                               dv-max-length class="form-control" required>
+                               dv-max-length class="form-control" >
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -103,7 +103,7 @@
                         <label data-translate="TELEFON" for="tel_ID">
                         </label>
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.stammdaten.telefon"
-                               dv-max-length class="form-control" required>
+                               dv-max-length class="form-control" >
                         <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -123,21 +123,14 @@
                         <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
                                            class="error"></dv-error-messages>
                     </div>
-                    <!--                <div class="form-group">
-                                        <div class="col-lg-3">
-                                            <label for="MyCheckBox">My Checkbox</label>
-                                        </div>
-                                        <div class="col-lg-9">
-                                            <input type="checkbox" name="MyCheckBox" class="pull-left">
-                                        </div>
-                                    </div>-->
+
                 </div>
             </div>
 
 
             <!-- Umzugadresse -->
             <div ng-show="vm.stammdaten.umzug">
-                <dv-adresse></dv-adresse>
+                <dv-adresse adresse="vm.stammdaten.umzugadresse"></dv-adresse>
             </div>
 
             <div class="row">

@@ -12,6 +12,7 @@ module ebeguWeb.API {
         private _umzug:boolean;
         private _geschlecht:ebeguWeb.API.TSGeschlecht;
         private _adresse : ebeguWeb.API.TSAdresse;
+        private _umzugadresse : ebeguWeb.API.TSAdresse;
 
         // constructor(vorname:string, nachname:string, geburtsdatum:moment.Moment, email:string, mobile:string,
         //             telefon:string, umzug:boolean) {
@@ -102,6 +103,15 @@ module ebeguWeb.API {
 
         public set geschlecht(value:ebeguWeb.API.TSGeschlecht) {
             this._geschlecht = value;
+        }
+
+
+        public get umzugadresse():ebeguWeb.API.TSAdresse {
+            return this._umzugadresse;
+        }
+
+        public set umzugadresse(value:ebeguWeb.API.TSAdresse) {
+            this._umzugadresse = value;
         }
     }
 }
