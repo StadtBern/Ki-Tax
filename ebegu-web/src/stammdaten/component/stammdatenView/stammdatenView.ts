@@ -25,7 +25,7 @@ module app.StammdatenView {
 
     class StammdatenViewController  {
         stammdaten: ebeguWeb.API.TSStammdaten;
-        geschlechter:any;
+        geschlechter: Array<string>;
 
         static $inject = [];
         /* @ngInject */
