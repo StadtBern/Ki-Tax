@@ -9,13 +9,14 @@ module ebeguWeb.API {
         private _email:string;
         private _mobile:string;
         private _telefon:string;
+        private _telefonAusland:string;
         private _umzug:boolean;
         private _geschlecht:ebeguWeb.API.TSGeschlecht;
-        private _adresse : ebeguWeb.API.TSAdresse;
-        private _umzugadresse : ebeguWeb.API.TSAdresse;
+        private _adresse:ebeguWeb.API.TSAdresse;
+        private _umzugadresse:ebeguWeb.API.TSAdresse;
 
         constructor(vorname?:string, nachname?:string, geburtsdatum?:moment.Moment, email?:string, mobile?:string,
-                    telefon?:string, umzug?:boolean) {
+                    telefon?:string, telefonAusland?:string, umzug?:boolean) {
             super();
             this._vorname = vorname;
             this._nachname = nachname;
@@ -23,10 +24,9 @@ module ebeguWeb.API {
             this._email = email;
             this._mobile = mobile;
             this._telefon = telefon;
+            this._telefonAusland = telefonAusland;
             this._umzug = umzug;
         }
-        
-
 
 
         public get vorname():string {
@@ -110,6 +110,15 @@ module ebeguWeb.API {
 
         public set umzugadresse(value:ebeguWeb.API.TSAdresse) {
             this._umzugadresse = value;
+        }
+
+
+        public get telefonAusland():string {
+            return this._telefonAusland;
+        }
+
+        public set telefonAusland(value:string) {
+            this._telefonAusland = value;
         }
     }
 }

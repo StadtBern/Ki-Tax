@@ -40,7 +40,6 @@ module app.StammdatenView {
         }
 
         submit () {
-            console.log(this.stammdaten)
         }
 
         removeRow() {
