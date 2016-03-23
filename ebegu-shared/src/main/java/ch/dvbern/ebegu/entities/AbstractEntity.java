@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
 import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,12 +36,10 @@ public abstract class AbstractEntity implements Serializable {
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
 	@Column(nullable = false)
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	private LocalDateTime timestampErstellt;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
 	@Column(nullable = false)
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	private LocalDateTime timestampMutiert;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt

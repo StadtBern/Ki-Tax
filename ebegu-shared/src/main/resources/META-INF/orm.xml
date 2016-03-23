@@ -10,7 +10,4 @@
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
 
-	<converter class="ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter"/>
-	<converter class="ch.dvbern.ebegu.converters.LocalDatePersistenceConverter"/>
-
 </entity-mappings>
