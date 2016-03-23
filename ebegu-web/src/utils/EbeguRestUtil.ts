@@ -37,6 +37,23 @@ module ebeguWeb.utils {
             return parsedAppProperty;
         }
 
+        public static adresseToRestObject(restAdresse: any, adresse: ebeguWeb.API.TSAdresse): ebeguWeb.API.TSAdresse {
+            restAdresse.id = adresse.id;
+            restAdresse.strasse = adresse.strasse;
+            restAdresse.hausnummer = adresse.hausnummer;
+            restAdresse.zusatzzeile = adresse.zusatzzeile;
+            restAdresse.plz = adresse.plz;
+            restAdresse.ort = adresse.ort;
+            restAdresse.land = adresse.land;
+            restAdresse.gemeinde = adresse.gemeinde;
+            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
+            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigBis);
+            restAdresse.timestampErstellt = DateUtil.momentToLocalDateTime(adresse.timestampErstellt);
+            restAdresse.timestampMutiert = DateUtil.momentToLocalDateTime(adresse.timestampMutiert);
+
+            return restAdresse;
+        }
+
     }
 
 }

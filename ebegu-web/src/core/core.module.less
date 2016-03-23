@@ -1,6 +1,7 @@
 /* Component LESS */
 @import "component/dv-error-messages/dv-error-messages.less";
 @import "../variables.less";
+@import "component/dv-adresse/dv-adresse.less";
 /* Add Component LESS Above */
 
 .ebegu {
@@ -9,4 +10,44 @@
         background: @highlight-color;
         color: white;
     }
+
+    //    error styling
+    form {
+/*        .ng-invalid-required:after, .ng-required:after {
+            content: '***';
+
+        }
+        .ng-invalid:after {
+            content: '***';
+        }*/
+
+        input[type="text"] {
+            border: 0;
+            border-bottom: 1px solid lightgray;
+            outline:0;
+            border-radius: 0px;
+            font-size:20px;
+            font-weight: 600;
+            color: black;
+            padding: 2px 2px 1px;
+        }
+
+        input[type="text"]:placeholder-shown {
+            font-size:16px;
+
+        }
+
+        input[type="text"]:focus {
+            border-color: @input-boder-focus;
+        }
+
+        label {
+            font-weight: normal;
+        }
+    }
+    .marginLeft10{
+       margin-left: 10px;
+
+    }
+
 }

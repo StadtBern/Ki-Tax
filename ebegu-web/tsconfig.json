@@ -14,14 +14,19 @@
         "src/core/component/dv-error-messages/dv-error-messages.ts",
         "src/dvbModules/router/router.module.ts",
         "src/dvbModules/router/route-helper-provider.ts",
+        "src/utils/EnumEx.ts",
         "src/admin/admin.module.ts",
         "src/admin/admin.route.ts",
+        "src/models/TSGeschlecht.ts",
         "src/models/TSAbstractEntity.ts",
         "src/models/TSApplicationProperty.ts",
+        "src/models/TSAdresse.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts",
         "src/stammdaten/stammdaten.module.ts",
         "src/stammdaten/stammdaten.route.ts",
-        "src/stammdaten/component/stammdatenView/stammdatenView.ts"
+        "src/stammdaten/component/stammdatenView/stammdatenView.ts",
+        "src/core/service/adresseRS.ts",
+        "src/core/component/dv-adresse/dv-adresse.ts"
     ]
 }

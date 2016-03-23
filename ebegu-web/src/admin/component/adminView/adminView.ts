@@ -69,6 +69,7 @@ module ebeguWeb.components {
                     .then((response) => {
                         var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
                         if (items != null && items.length > 0) {
+                            //todo pruefen ob das item schon existiert hat wie oben
                             this.applicationProperties.push(items[0]);
                         }
                     });
