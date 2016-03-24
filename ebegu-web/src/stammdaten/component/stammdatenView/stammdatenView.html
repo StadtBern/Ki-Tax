@@ -9,7 +9,7 @@
             <li>06 Stammdaten der Kinder</li>
             <li>07 Platzbestätigung</li>
             <li>08 Anlageverzeichnis</li>
-            <li>09 Reigabequittung</li>
+            <li>09 Freigabequittung</li>
         </ul>
     </div>
     <div class="col-md-5">
@@ -78,7 +78,7 @@
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
                         <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.email"
-                               dv-max-length class="form-control" required>
+                               dv-max-length class="form-control" required placeholder="hans.muster@example.com">
                         <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -86,14 +86,15 @@
             </div>
 
 
-            <!--Mibile /Telefon-->
+            <!--Mobile /Telefon-->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label data-translate="MOBILE" for="mobile_ID">
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
-                               dv-max-length class="form-control" >
+                               dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
+                        ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -103,8 +104,22 @@
                         <label data-translate="TELEFON" for="tel_ID">
                         </label>
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.stammdaten.telefon"
-                               dv-max-length class="form-control" >
+                               dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
+                               ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--auslaendische tel nummer-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group secondColumn">
+                        <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
+                        </label>
+                        <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.stammdaten.telefonAusland"
+                               dv-max-length class="form-control" ng-pattern="/^[+//0-9]*$/">
+                        <dv-error-messages ng-if="form.$submitted" for="form.telefonAusland.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>
