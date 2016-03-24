@@ -74,7 +74,11 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
+        <!--java 8 support fuer hibernate (LocalDate)-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -142,14 +146,6 @@
                             <!--definiert ob der text fuer das sql-schema in die console geloggt wird-->
                             <show>true</show>
                         </configuration>
-                        <dependencies>
-                            <!--hibernate 5 mit java 8 support-->
-                            <dependency>
-                                <groupId>org.hibernate</groupId>
-                                <artifactId>hibernate-java8</artifactId>
-                                <version>5.1.0.Final</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>

@@ -241,6 +241,12 @@
                 <artifactId>swagger-jaxrs</artifactId>
                 <version>1.5.7</version>
             </dependency>
+            <!--hibernate 5 mit java 8 support-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-java8</artifactId>
+                <version>${version.hibernate}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
