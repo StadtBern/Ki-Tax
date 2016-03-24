@@ -129,6 +129,7 @@ module.exports = function (grunt) {
                     {src: ['node_modules/font-awesome/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true},
                     {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true},
                     {src: ['src/translations/**'], dest: 'dist/', filter: 'isFile', expand: true},
+                    {src: ['package.json'], dest: 'dist/', filter: 'isFile', expand: true},
                     {src: ['src/images/**'], dest: 'dist/'},
                     //vielleicht kann man hier swagger-ui separat deployen todo team remove
                     {src: ['node_modules/swagger-ui/dist/*'], dest: 'dist/swagger-ui/'},
