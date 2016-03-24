@@ -5,7 +5,7 @@ module ebeguWeb.routes {
     'use strict';
 
 /*
-    export class EbeguStammdatenStateController {
+    export class EbeguGesuchStateController {
         applicationProperties: Array<ApplicationProperty>;
 
         static $inject = ['applicationProperties'];
@@ -15,11 +15,11 @@ module ebeguWeb.routes {
         }
     }*/
 
-    export class EbeguStammdatenState implements angular.ui.IState {
-        name = 'stammdaten';
+    export class EbeguGesuchState implements angular.ui.IState {
+        name = 'gesuch';
         template = '<stammdaten-view>';
-        url = '/stammdaten';
-        // controller = EbeguStammdatenStateController;
+        url = '/gesuch';
+        // controller = EbeguGesuchStateController;
         // controllerAs = 'vm';
       /*  resolve = {
             applicationProperties : function(applicationPropertyRS) {
@@ -32,7 +32,7 @@ module ebeguWeb.routes {
 
     }
 
-    export class EbeguWebStammdatenRun {
+    export class EbeguWebGesuchRun {
         static $inject = ['routerHelper'];
         /* @ngInject */
         constructor(routerHelper: IRouterHelper) {
@@ -43,15 +43,15 @@ module ebeguWeb.routes {
          * @returns {angular.ui.IState[]}
          */
         public getStates(): Array<angular.ui.IState> {
-            return [new EbeguStammdatenState()];
+            return [new EbeguGesuchState()];
         }
 
-        public static instance(routerHelper) : EbeguWebStammdatenRun {
-            return new EbeguWebStammdatenRun(routerHelper);
+        public static instance(routerHelper) : EbeguWebGesuchRun {
+            return new EbeguWebGesuchRun(routerHelper);
         }
 
     }
 
 
-    angular.module('ebeguWeb.stammdaten').run(EbeguWebStammdatenRun.instance);
+    angular.module('ebeguWeb.gesuch').run(EbeguWebGesuchRun.instance);
 }

@@ -25,9 +25,9 @@
         "src/models/TSAdresse.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts",
-        "src/stammdaten/stammdaten.module.ts",
-        "src/stammdaten/stammdaten.route.ts",
-        "src/stammdaten/component/stammdatenView/stammdatenView.ts",
+        "src/gesuch/gesuch.module.ts",
+        "src/gesuch/gesuch.route.ts",
+        "src/gesuch/component/stammdatenView/stammdatenView.ts",
         "src/core/service/adresseRS.ts",
         "src/core/component/dv-adresse/dv-adresse.ts"
     ]

@@ -2,6 +2,6 @@
 module ebeguWeb {
     'use strict';
 
-    angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.stammdaten']);
+    angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);
 
 }

@@ -16,7 +16,7 @@ module app.StammdatenView {
         constructor() {
             this.transclude = false;
             this.bindings = {};
-            this.templateUrl = 'src/stammdaten/component/stammdatenView/stammdatenView.html';
+            this.templateUrl = 'src/gesuch/component/stammdatenView/stammdatenView.html';
             this.controller = StammdatenViewController;
             this.controllerAs = 'vm';
         }
@@ -57,6 +57,6 @@ module app.StammdatenView {
 
     }
 
-    angular.module('ebeguWeb.stammdaten').component('stammdatenView', new StammdatenViewComponentConfig());
+    angular.module('ebeguWeb.gesuch').component('stammdatenView', new StammdatenViewComponentConfig());
 
 }
