@@ -3,7 +3,7 @@
 module app.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
-    import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
+    import EnumGeschlecht = ebeguWeb.API.EnumGeschlecht;
     import DateUtil = ebeguWeb.utils.DateUtil;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
@@ -36,7 +36,7 @@ module app.StammdatenView {
             umzugAdr.ort = 'Bern';
             umzugAdr.gueltigAb = undefined;
             this.stammdaten.umzugadresse = umzugAdr;
-            this.geschlechter = EnumEx.getNames(TSGeschlecht);
+            this.geschlechter = EnumEx.getNames(EnumGeschlecht);
         }
 
         submit () {

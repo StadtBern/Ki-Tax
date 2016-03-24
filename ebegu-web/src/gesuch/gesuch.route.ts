@@ -17,7 +17,8 @@ module ebeguWeb.routes {
 
     export class EbeguGesuchState implements angular.ui.IState {
         name = 'gesuch';
-        template = '<stammdaten-view>';
+        template = '<familiensituation-view>';
+        //template = '<stammdaten-view>';
         url = '/gesuch';
         // controller = EbeguGesuchStateController;
         // controllerAs = 'vm';

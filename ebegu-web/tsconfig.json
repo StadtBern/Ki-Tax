@@ -19,7 +19,7 @@
         "src/utils/EbeguRestUtil.ts",
         "src/admin/admin.module.ts",
         "src/admin/admin.route.ts",
-        "src/models/TSGeschlecht.ts",
+        "src/models/enums/EnumGeschlecht.ts",
         "src/models/TSAbstractEntity.ts",
         "src/models/TSApplicationProperty.ts",
         "src/models/TSAdresse.ts",
@@ -28,6 +28,7 @@
         "src/gesuch/gesuch.module.ts",
         "src/gesuch/gesuch.route.ts",
         "src/gesuch/component/stammdatenView/stammdatenView.ts",
+        "src/gesuch/component/familiensituationView/familiensituationView.ts",
         "src/core/service/adresseRS.ts",
         "src/core/component/dv-adresse/dv-adresse.ts"
     ]
