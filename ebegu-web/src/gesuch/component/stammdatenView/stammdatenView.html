@@ -1,7 +1,7 @@
 <div class="stammdatenView row">
     <div class="col-md-12">
         <h4 data-translate="GESUCHSTELLERIN"></h4>
-        <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate>
 
             <!--Geschlecht-->
             <div class="row">
@@ -136,26 +136,17 @@
             </div>
 
             <div class="row">
-                <div class="col-md-2">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE">
+                <div class="col-md-6 text-right">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
                     </button>
                 </div>
-                <div class="col-md-3">
-                    <a href="#" id="cancelLink" data-translate="CANCEL"
-                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 text-right">
-                    <a ui-sref="gesuch.familiensituation">
-                        <label data-translate="ZURUECK_UPPER" class="previous"></label>
-                    </a>
-                </div>
                 <div class="col-md-6">
-                    <a ui-sref="#">
-                        <label data-translate="SPEICHERN_UPPER" class="next"></label>
-                    </a>
+                    <button type="submit" class="btn btn-link next" >
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
                 </div>
             </div>
 

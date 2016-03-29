@@ -26,10 +26,12 @@ module app.StammdatenView {
     class StammdatenViewController  {
         stammdaten: ebeguWeb.API.TSStammdaten;
         geschlechter: Array<string>;
+        state: angular.ui.IStateService
 
-        static $inject = [];
+        static $inject = ['$state'];
         /* @ngInject */
-        constructor() {
+        constructor($state: angular.ui.IStateService) {
+            this.state = $state;
             this.stammdaten = new ebeguWeb.API.TSStammdaten();
             this.stammdaten.adresse = new ebeguWeb.API.TSAdresse();
             let umzugAdr = new ebeguWeb.API.TSAdresse();
@@ -39,7 +41,11 @@ module app.StammdatenView {
             this.geschlechter = EnumEx.getNames(EnumGeschlecht);
         }
 
-        submit () {
+        submit ($form: angular.IFormController) {
+            if ($form.$valid) {
+                //do all things
+                //this.state.go("next.step"); //go to the next step
+            }
         }
 
         removeRow() {
@@ -53,7 +59,9 @@ module app.StammdatenView {
             this.stammdaten = undefined;
         }
 
-
+        previousStep() {
+            this.state.go("gesuch.familiensituation");
+        }
 
     }
 

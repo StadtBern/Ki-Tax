@@ -21,10 +21,18 @@ module app.FamiliensituationView {
 
     class FamiliensituationViewController  {
         gesuch: any; // todo Add right type
+        state: angular.ui.IStateService
 
-        static $inject = [];
+        static $inject = ['$state'];
         /* @ngInject */
-        constructor() {
+        constructor($state: angular.ui.IStateService) {
+            this.state = $state;
+        }
+
+        submit ($form: angular.IFormController) {
+            if ($form.$valid) {
+                this.state.go("gesuch.stammdaten");
+            }
         }
 
     }

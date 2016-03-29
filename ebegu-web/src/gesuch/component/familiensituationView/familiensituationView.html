@@ -1,7 +1,7 @@
 <div class="familiensituationView row">
 
     <div class="col-md-12">
-        <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate>
 
             <!--familiensituation-->
             <div class="col-md-12">
@@ -62,9 +62,10 @@
             </div>
 
             <div class="col-md-6 col-md-offset-6">
-                <a ui-sref="gesuch.stammdaten">
-                    <label data-translate="SPEICHERN_UPPER" class="next"> </label>
-                </a>
+                <button type="submit" class="btn btn-link next" >
+                    <span data-translate="SPEICHERN_UPPER"></span>
+                    <span class="fa fa-chevron-right"></span>
+                </button>
             </div>
 
         </form>
