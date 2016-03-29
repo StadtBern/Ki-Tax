@@ -146,15 +146,17 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <a ui-sref="gesuch.familiensituation" class="btn btn-block btn-info" data-translate="ZURUECK">>
-                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
-                </a>
-            </div>
-            <div class="col-md-6">
-                <a ui-sref="#" class="btn btn-block btn-info" data-translate="SPEICHERN">>
-                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
-                </a>
+            <div class="row">
+                <div class="col-md-6 text-right">
+                    <a ui-sref="gesuch.familiensituation">
+                        <label data-translate="ZURUECK_UPPER" class="previous"></label>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a ui-sref="#">
+                        <label data-translate="SPEICHERN_UPPER" class="next"></label>
+                    </a>
+                </div>
             </div>
 
         </form>
