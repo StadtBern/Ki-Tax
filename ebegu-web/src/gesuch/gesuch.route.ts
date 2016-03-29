@@ -4,34 +4,36 @@ module ebeguWeb.routes {
     import ApplicationProperty = ebeguWeb.API.TSApplicationProperty;
     'use strict';
 
-/*
-    export class EbeguGesuchStateController {
-        applicationProperties: Array<ApplicationProperty>;
-
-        static $inject = ['applicationProperties'];
-        constructor(applicationProperties) {
-            var vm = this;
-            // vm.applicationProperties = applicationProperties;
-        }
-    }*/
 
     export class EbeguGesuchState implements angular.ui.IState {
         name = 'gesuch';
-        template = '<familiensituation-view>';
-        //template = '<stammdaten-view>';
+        templateUrl = 'src/gesuch/gesuch.html';
         url = '/gesuch';
-        // controller = EbeguGesuchStateController;
-        // controllerAs = 'vm';
-      /*  resolve = {
-            applicationProperties : function(applicationPropertyRS) {
-                return applicationPropertyRS.getAllApplicationProperties();
-            }
-        };*/
+
+        constructor() {
+        }
+    }
+
+    export class EbeguFamiliensituationState implements angular.ui.IState {
+        name = 'gesuch.familiensituation';
+        template = '<familiensituation-view>';
+        url = '/familiensituation';
 
         constructor() {
         }
 
     }
+
+    export class EbeguStammDatenState implements angular.ui.IState {
+        name = 'gesuch.stammdaten';
+        template = '<stammdaten-view>';
+        url = '/stammdaten';
+
+        constructor() {
+        }
+
+    }
+
 
     export class EbeguWebGesuchRun {
         static $inject = ['routerHelper'];
@@ -44,7 +46,7 @@ module ebeguWeb.routes {
          * @returns {angular.ui.IState[]}
          */
         public getStates(): Array<angular.ui.IState> {
-            return [new EbeguGesuchState()];
+            return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammDatenState()];
         }
 
         public static instance(routerHelper) : EbeguWebGesuchRun {

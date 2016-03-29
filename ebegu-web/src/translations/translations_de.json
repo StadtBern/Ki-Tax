@@ -297,6 +297,8 @@
     "ALLEINE":"alleine",
     "ZU_ZWEIT":"zu zweit",
     "BEMERKUNGEN":"Bemerkungen",
-    "BEMERKUNGEN_PLACEHOLDER":"Hier kann das Jugendamt zusätzliche Informationen erfassen."
+    "BEMERKUNGEN_PLACEHOLDER":"Hier kann das Jugendamt zusätzliche Informationen erfassen.",
+    "SPEICHERN":"Speichern",
+    "ZURUECK":"Zurück"
 }
 

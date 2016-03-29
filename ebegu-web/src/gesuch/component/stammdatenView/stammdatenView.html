@@ -1,18 +1,5 @@
 <div class="stammdatenView row">
-    <div class="col-md-3 sidenav">
-        <ul class="sidenav">
-            <li>01 Familiensituation</li>
-            <li style="border-bottom: 1px solid #333333;">02 Stammdaten Gesuchstellerin</li>
-            <li>03 Erwerbspensum</li>
-            <li>04 FinanzielleSituation</li>
-            <li>05 Einkommensverschlechterung</li>
-            <li>06 Stammdaten der Kinder</li>
-            <li>07 Platzbestätigung</li>
-            <li>08 Anlageverzeichnis</li>
-            <li>09 Freigabequittung</li>
-        </ul>
-    </div>
-    <div class="col-md-5">
+    <div class="col-md-12">
         <h4 data-translate="GESUCHSTELLERIN"></h4>
         <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
 
@@ -157,6 +144,17 @@
                     <a href="#" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
                 </div>
+            </div>
+
+            <div class="col-md-6">
+                <a ui-sref="gesuch.familiensituation" class="btn btn-block btn-info" data-translate="ZURUECK">>
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a ui-sref="#" class="btn btn-block btn-info" data-translate="SPEICHERN">>
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                </a>
             </div>
 
         </form>

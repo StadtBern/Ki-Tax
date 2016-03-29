@@ -1,20 +1,6 @@
 <div class="familiensituationView row">
 
-    <div class="col-md-3 sidenav">
-        <ul class="sidenav">
-            <li style="border-bottom: 1px solid #333333;">01 Familiensituation</li>
-            <li>02 Stammdaten Gesuchstellerin</li>
-            <li>03 Erwerbspensum</li>
-            <li>04 FinanzielleSituation</li>
-            <li>05 Einkommensverschlechterung</li>
-            <li>06 Stammdaten der Kinder</li>
-            <li>07 Platzbestätigung</li>
-            <li>08 Anlageverzeichnis</li>
-            <li>09 Freigabequittung</li>
-        </ul>
-    </div>
-
-    <div class="col-md-5">
+    <div class="col-md-12">
         <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
 
             <!--familiensituation-->
@@ -56,11 +42,11 @@
                 <div class="form-group">
                     <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
                     <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
+                        <label><input type="radio" name="beantragen" ng-model="vm.gesuch"
                                       ng-value="ALLEINE">{{'ALLEINE' | translate}}</label>
                     </div>
                     <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
+                        <label><input type="radio" name="beantragen" ng-model="vm.gesuch"
                                       ng-value="ZU_ZWEIT">{{'ZU_ZWEIT' | translate}}</label>
                     </div>
                 </div>
@@ -73,6 +59,13 @@
                     <textarea class="form-control" rows="6" id="notes"
                         placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                 </div>
+            </div>
+
+            <div class="col-md-6 col-md-offset-6">
+                <a ui-sref="gesuch.stammdaten">
+                    <label data-translate="SPEICHERN"></label>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
             </div>
 
         </form>
