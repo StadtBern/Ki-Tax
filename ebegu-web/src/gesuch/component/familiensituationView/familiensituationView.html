@@ -4,68 +4,82 @@
         <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate>
 
             <!--familiensituation-->
-            <div class="col-md-12">
-                <div class="form-group">
-                    <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="ALLEINERZIEHEND">{{'ALLEINERZIEHEND' | translate}}</label>
-                    </div>
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="VERHEIRATET">{{'VERHEIRATET' | translate}}</label>
-                    </div>
-                    <br />
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="KONKUBINAT">{{'KONKUBINAT' | translate}}</label>
-                    </div>
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="LAENGER_FUENF_JAHRE">{{'LAENGER_FUENF_JAHRE' | translate}}</label>
-                    </div>
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="WENIGER_FUENF_JAHRE">{{'WENIGER_FUENF_JAHRE' | translate}}</label>
-                    </div>
-                    <br />
-                    <div class="radio">
-                        <label><input type="radio" name="familiensituation" ng-model="vm.gesuch"
-                                      ng-value="PARTNERSCHAFT">{{'PARTNERSCHAFT' | translate}}</label>
-                    </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
+                        <dv-error-messages ng-if="form.$submitted" for="form.familiensituation.$error"
+                                           class="error"></dv-error-messages>
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'ALLEINERZIEHEND'">{{'ALLEINERZIEHEND' | translate}}</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'VERHEIRATET'">{{'VERHEIRATET' | translate}}</label>
+                        </div>
+                        <br />
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'KONKUBINAT'">{{'KONKUBINAT' | translate}}</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'LAENGER_FUENF_JAHRE'">{{'LAENGER_FUENF_JAHRE' | translate}}</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'WENIGER_FUENF_JAHRE'">{{'WENIGER_FUENF_JAHRE' | translate}}</label>
+                        </div>
+                        <br />
+                        <div class="radio">
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
+                                          ng-value="'PARTNERSCHAFT'">{{'PARTNERSCHAFT' | translate}}</label>
+                        </div>
 
+                    </div>
                 </div>
             </div>
 
+            <br />
+
             <!--beantragen-->
-            <div class="col-md-12">
-                <div class="form-group">
-                    <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
-                    <div class="radio">
-                        <label><input type="radio" name="beantragen" ng-model="vm.gesuch"
-                                      ng-value="ALLEINE">{{'ALLEINE' | translate}}</label>
-                    </div>
-                    <div class="radio">
-                        <label><input type="radio" name="beantragen" ng-model="vm.gesuch"
-                                      ng-value="ZU_ZWEIT">{{'ZU_ZWEIT' | translate}}</label>
+            <div class="row">
+                <div class="col-md-12" ng-show="vm.showBeantragen()">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                        <dv-error-messages ng-if="form.$submitted" for="form.beantragen.$error"
+                                           class="error"></dv-error-messages>
+                        <div class="radio">
+                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen" ng-required="vm.showBeantragen()"
+                                          ng-value="'ALLEINE'">{{'ALLEINE' | translate}}</label>
+                        </div>
+                        <div class="radio">
+                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen"  ng-required="vm.showBeantragen()"
+                                          ng-value="'ZU_ZWEIT'">{{'ZU_ZWEIT' | translate}}</label>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!--bemerkungen-->
-            <div class="col-md-12" ng-if="vm.isAdminRole()">
-                <div class="form-group">
-                    <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                    <textarea class="form-control" rows="6" id="notes"
-                        placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
+            <div class="row">
+                <div class="col-md-12" ng-show="vm.isAdminRole()">
+                    <div class="form-group">
+                        <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
+                    <textarea class="form-control" rows="6" id="notes" ng-model="vm.gesuch.bemerkungen"
+                              placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-6 col-md-offset-6">
-                <button type="submit" class="btn btn-link next" >
-                    <span data-translate="SPEICHERN_UPPER"></span>
-                    <span class="fa fa-chevron-right"></span>
-                </button>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-6">
+                    <button type="submit" class="btn btn-link next" >
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
             </div>
 
         </form>

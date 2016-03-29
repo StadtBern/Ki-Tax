@@ -1,7 +1,9 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 /// <reference path="../../component/abstractGesuchView.ts" />
+/// <reference path="../../../models/TSGesuch.ts" />
 module ebeguWeb.FamiliensituationView {
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
+    import TSGesuch = ebeguWeb.API.TSGesuch;
     'use strict';
 
     class FamiliensituationViewComponentConfig implements angular.IComponentOptions {
@@ -22,18 +24,23 @@ module ebeguWeb.FamiliensituationView {
 
 
     class FamiliensituationViewController extends AbstractGesuchViewController {
-        gesuch: any; // todo Add right type
+        gesuch: TSGesuch;
 
         static $inject = ['$state'];
         /* @ngInject */
         constructor($state: angular.ui.IStateService) {
             super($state);
+            this.gesuch = new TSGesuch();
         }
 
         submit ($form: angular.IFormController) {
             if ($form.$valid) {
                 this.state.go("gesuch.stammdaten");
             }
+        }
+
+        showBeantragen(): boolean {
+            return this.gesuch.familiensituation === 'ALLEINERZIEHEND' || this.gesuch.familiensituation === 'WENIGER_FUENF_JAHRE';
         }
 
     }
