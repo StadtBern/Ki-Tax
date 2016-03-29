@@ -23,7 +23,7 @@
                         <label>Geschlecht</label>
                         <div ng-repeat="current in vm.geschlechter" class="radio">
                             <label><input type="radio" name="geschlecht" ng-model="vm.stammdaten.geschlecht"
-                                          ng-value="current">{{current | translate}}</label>
+                                          ng-value="current"><span data-translate="{{current}}"></span></label>
                         </div>
 
                     </div>
@@ -71,6 +71,25 @@
             <dv-adresse adresse="vm.stammdaten.adresse"></dv-adresse>
 
 
+            <!--Korrenspondenzadr Checkbox-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class=" checkbox">
+                        <label>
+
+                            <input id="korrespoAdrCheckbox_ID" type="checkbox" name="korrespondenzAdr" ng-model="vm.showKorrespondadr" ng-value="true"
+                                   ng-click="vm.korrespondenzAdrClicked()">
+                            <span data-translate="KORRESPONDENZADR"></span>
+                        </label>
+                        <dv-error-messages ng-if="form.$submitted" for="form.korrespondenzAdr.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <dv-adresse adresse="vm.stammdaten.korrespondenzAdr" ng-if="vm.showKorrespondadr"></dv-adresse>
+
+
             <!--Email-->
             <div class="row">
                 <div class="col-md-6">
@@ -94,7 +113,7 @@
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.stammdaten.mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                        ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
+                               ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -130,21 +149,20 @@
                 <div class="col-md-6">
                     <div class=" checkbox">
                         <label>
-                            <!--<span data-translate="UMZUG" />-->
 
-                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.stammdaten.umzug">
-                            {{'UMZUG' | translate}}
+                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.showUmzug" ng-value="true"
+                                   ng-click="vm.umzugadreseClicked()">
+                            <span data-translate="UMZUG"></span>
                         </label>
                         <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
                                            class="error"></dv-error-messages>
                     </div>
-
                 </div>
             </div>
 
 
             <!-- Umzugadresse -->
-            <div ng-if="vm.stammdaten.umzug">
+            <div ng-if="vm.showUmzug">
                 <dv-adresse adresse="vm.stammdaten.umzugadresse"></dv-adresse>
             </div>
 

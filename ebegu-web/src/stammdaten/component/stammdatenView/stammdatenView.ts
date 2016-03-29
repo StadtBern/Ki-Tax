@@ -5,6 +5,7 @@ module app.StammdatenView {
     import EnumEx = ebeguWeb.utils.EnumEx;
     import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
     import DateUtil = ebeguWeb.utils.DateUtil;
+    import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -26,23 +27,49 @@ module app.StammdatenView {
     class StammdatenViewController  {
         stammdaten: ebeguWeb.API.TSStammdaten;
         geschlechter: Array<string>;
+        showUmzug : boolean;
+        showKorrespondadr : boolean;
 
         static $inject = [];
         /* @ngInject */
         constructor() {
             this.stammdaten = new ebeguWeb.API.TSStammdaten();
-            this.stammdaten.adresse = new ebeguWeb.API.TSAdresse();
-            let umzugAdr = new ebeguWeb.API.TSAdresse();
-            umzugAdr.ort = 'Bern';
-            umzugAdr.gueltigAb = undefined;
-            this.stammdaten.umzugadresse = umzugAdr;
+            let wohnAdr =  new ebeguWeb.API.TSAdresse();
+            wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
+            this.stammdaten.adresse = wohnAdr;
+
             this.geschlechter = EnumEx.getNames(TSGeschlecht);
+            this.showUmzug = false;
+            this.showKorrespondadr = false;
         }
 
         submit () {
         }
 
         removeRow() {
+        }
+
+        umzugadreseClicked() {
+            if(this.showUmzug) {
+                let umzugAdr = new ebeguWeb.API.TSAdresse();
+                umzugAdr.showDatumVon = true;
+                umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
+                this.stammdaten.umzugadresse = umzugAdr;
+            } else{
+                this.stammdaten.umzugadresse = undefined;
+
+            }
+        }
+        korrespondenzAdrClicked() {
+            if(this.showKorrespondadr) {
+                let korrAdr = new ebeguWeb.API.TSAdresse();
+                korrAdr.showDatumVon = false;
+                korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+                this.stammdaten.korrespondenzAdresse = korrAdr;
+            } else{
+                this.stammdaten.korrespondenzAdresse = undefined;
+
+            }
         }
 
         createItem() {

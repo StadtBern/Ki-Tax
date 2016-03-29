@@ -2,6 +2,7 @@
 /// <reference path="./DateUtil.ts" />
 module ebeguWeb.utils {
     'use strict';
+    import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
 
     export class EbeguRestUtil {
 
@@ -38,18 +39,25 @@ module ebeguWeb.utils {
         }
 
         public static adresseToRestObject(restAdresse: any, adresse: ebeguWeb.API.TSAdresse): ebeguWeb.API.TSAdresse {
-            restAdresse.id = adresse.id;
-            restAdresse.strasse = adresse.strasse;
-            restAdresse.hausnummer = adresse.hausnummer;
-            restAdresse.zusatzzeile = adresse.zusatzzeile;
-            restAdresse.plz = adresse.plz;
-            restAdresse.ort = adresse.ort;
-            restAdresse.land = adresse.land;
-            restAdresse.gemeinde = adresse.gemeinde;
-            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
-            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigBis);
-            restAdresse.timestampErstellt = DateUtil.momentToLocalDateTime(adresse.timestampErstellt);
-            restAdresse.timestampMutiert = DateUtil.momentToLocalDateTime(adresse.timestampMutiert);
+            if(adresse) {
+
+                restAdresse.id = adresse.id;
+                restAdresse.strasse = adresse.strasse;
+                restAdresse.hausnummer = adresse.hausnummer;
+                restAdresse.zusatzzeile = adresse.zusatzzeile;
+                restAdresse.plz = adresse.plz;
+                restAdresse.ort = adresse.ort;
+                restAdresse.land = adresse.land;
+                restAdresse.gemeinde = adresse.gemeinde;
+                restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
+                restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigBis);
+                restAdresse.timestampErstellt = DateUtil.momentToLocalDateTime(adresse.timestampErstellt);
+                restAdresse.timestampMutiert = DateUtil.momentToLocalDateTime(adresse.timestampMutiert);
+                //todo homa wie kann man das hier transformieren ohne das ein compilefehler entsteht
+                // restAdresse.adresseTyp = adresse.adresseTyp ? TSAdressetyp[adresse.adresseTyp] : undefined;
+                console.log("adresseToRest");
+                console.log(adresse);
+            }
 
             return restAdresse;
         }

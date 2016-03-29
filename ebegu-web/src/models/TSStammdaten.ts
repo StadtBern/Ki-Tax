@@ -13,6 +13,7 @@ module ebeguWeb.API {
         private _umzug:boolean;
         private _geschlecht:ebeguWeb.API.TSGeschlecht;
         private _adresse:ebeguWeb.API.TSAdresse;
+        private _korrespondenzAdresse:ebeguWeb.API.TSAdresse;
         private _umzugadresse:ebeguWeb.API.TSAdresse;
 
         constructor(vorname?:string, nachname?:string, geburtsdatum?:moment.Moment, email?:string, mobile?:string,
@@ -119,6 +120,15 @@ module ebeguWeb.API {
 
         public set telefonAusland(value:string) {
             this._telefonAusland = value;
+        }
+
+
+        public get korrespondenzAdresse():ebeguWeb.API.TSAdresse {
+            return this._korrespondenzAdresse;
+        }
+
+        public set korrespondenzAdresse(value:ebeguWeb.API.TSAdresse) {
+            this._korrespondenzAdresse = value;
         }
     }
 }

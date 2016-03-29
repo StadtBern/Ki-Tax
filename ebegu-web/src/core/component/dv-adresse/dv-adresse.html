@@ -1,115 +1,134 @@
 <!-- strasse/hausnummer -->
 <div ng-form="adresseForm">
     <fieldset>
-    <div class="dv-adresse row">
-        <!--Strasse-->
-        <div class="col-md-6">
-            <div class="form-group">
-                <label data-translate="ADRESSE_STRASSE" for="strasse">
-                </label>
-                <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
-                       dv-max-length class="form-control" required>
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseStrasse.$error"
-                                   class="error"></dv-error-messages>
+        <div class="dv-adresse row">
+            <!--Strasse-->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="ADRESSE_STRASSE" for="strasse">
+                    </label>
+                    <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
+                           dv-max-length class="form-control" required>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseStrasse.$error"
+                                       class="error"></dv-error-messages>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group  secondColumn">
+                    <label data-translate="ADRESSE_HAUSNUMMER" for="hausnummer">
+                    </label>
+                    <input id="hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
+                           dv-max-length class="form-control">
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseHausnummer.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group  secondColumn">
-                <label data-translate="ADRESSE_HAUSNUMMER" for="hausnummer">
-                </label>
-                <input id="hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
-                       dv-max-length class="form-control">
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseHausnummer.$error"
-                                   class="error"></dv-error-messages>
+        <!-- Adresse Zusatz-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="ADRESSE_ZUSATZZEILE" for="zusatzzeile">
+                    </label>
+                    <input id="zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
+                           dv-max-length class="form-control">
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseZusatzzeile.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Adresse Zusatz-->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label data-translate="ADRESSE_ZUSATZZEILE" for="zusatzzeile">
-                </label>
-                <input id="zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
-                       dv-max-length class="form-control">
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseZusatzzeile.$error"
-                                   class="error"></dv-error-messages>
+        <!-- PLZ ORT-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="ADRESSE_PLZ" for="plz">
+                    </label>
+                    <input id="plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
+                           dv-max-length class="form-control" required>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adressePlz.$error"
+                                       class="error"></dv-error-messages>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group secondColumn">
+                    <label data-translate="ADRESSE_ORT" for="ort">
+                    </label>
+                    <input id="ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
+                           dv-max-length class="form-control" required>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseOrt.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- PLZ ORT-->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label data-translate="ADRESSE_PLZ" for="plz">
-                </label>
-                <input id="plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
-                       dv-max-length class="form-control" required>
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adressePlz.$error"
-                                   class="error"></dv-error-messages>
+        <!-- Gemeinde-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="ADRESSE_GEMEINDE" for="gemeinde">
+                    </label>
+                    <input id="gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
+                           dv-max-length class="form-control">
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGemeinde.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group secondColumn">
-                <label data-translate="ADRESSE_ORT" for="ort">
-                </label>
-                <input id="ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
-                       dv-max-length class="form-control" required>
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseOrt.$error"
-                                   class="error"></dv-error-messages>
+        <!-- Land-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label data-translate="ADRESSE_LAND" for="land">
+                    </label>
+                    <!--<input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"-->
+                    <!--dv-max-length class="form-control" required>-->
+                    <select id="land" name="adresseLand" ng-model="vm.adresse.land" class="form-control" required>
+                        <option value="CH">Schweiz</option>
+                        <option value="DE">Deutschland</option>
+                        <option value="FR">Frankreich</option>
+                        <option value="IT">Italien</option>
+                        <option value="AT">Österreich</option>
+                    </select>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseLand.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Gemeinde-->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label data-translate="ADRESSE_GEMEINDE" for="gemeinde">
-                </label>
-                <input id="gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
-                       dv-max-length class="form-control">
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGemeinde.$error"
-                                   class="error"></dv-error-messages>
+        <!-- gueltig ab / gueltig bis -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group" ng-if="vm.adresse.showDatumVon">
+                    <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb">
+                    </label>
+                    <p class="input-group">
+                        <input id="gueltigAb" type="text" placeholder="tt.MM.JJJJ" class="form-control"
+                               uib-datepicker-popup="dd.MM.yyyy"
+                               ng-model="vm.adresse.gueltigAb" is-open="vm.popup.opened" ng-required="true"
+                               close-text="Close"
+                               name="adresseGueltigAb" required/>
+                            <span class="input-group-btn">
+                              <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
+                                  <i class="fa fa-calendar"></i></button>
+                            </span>
+                        <!--</p>-->
+                        <!--<input id="gueltigAb" type="text" name="adresseGueltigAb" ng-model="vm.adresse.gueltigAb"-->
+                        <!--dv-max-length class="form-control" required>-->
+                        <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigAb.$error"
+                                           class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Land-->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label data-translate="ADRESSE_LAND" for="land">
-                </label>
-                <!--<input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"-->
-                <!--dv-max-length class="form-control" required>-->
-                <select id="land" name="adresseLand" ng-model="vm.adresse.land" class="form-control" required>
-                    <option value="CH">Schweiz</option>
-                    <option value="DE">Deutschland</option>
-                    <option value="FR">Frankreich</option>
-                    <option value="IT">Italien</option>
-                    <option value="AT">Österreich</option>
-                </select>
-                <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseLand.$error"
-                                   class="error"></dv-error-messages>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group secondColumn" ng-if="vm.showDate">
+                    <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis">
+                    </label>
+                    <input id="gueltigBis" type="text" name="adresseGueltigBis" ng-model="vm.adresse.gueltigBis"
+                           dv-max-length class="form-control" required>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigBis.$error"
+                                       class="error"></dv-error-messages>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- gueltig ab / gueltig bis -->
-    <div class="form-group " ng-if="vm.showDate">
-        <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb">
-        </label>
-        <input id="gueltigAb" type="text" name="adresseGueltigAb" ng-model="vm.adresse.gueltigAb"
-               dv-max-length class="form-control" required>
-        <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigAb.$error"
-                           class="error"></dv-error-messages>
-    </div>
-    <div class="form-group secondColumn" ng-if="vm.showDate">
-        <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis">
-        </label>
-        <input id="gueltigBis" type="text" name="adresseGueltigBis" ng-model="vm.adresse.gueltigBis"
-               dv-max-length class="form-control" required>
-        <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigBis.$error"
-                           class="error"></dv-error-messages>
-    </div>
     </fieldset>
 </div>
 

@@ -18,17 +18,17 @@ module ebeguWeb.components {
 
 
     export interface IAdminViewController {
-        length?: number;
-        applicationProperty: any;
-        applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
-        applicationProperties: any;
+        length?:number;
+        applicationProperty:any;
+        applicationPropertyRS:ebeguWeb.services.IApplicationPropertyRS;
+        applicationProperties:any;
 
         //fetchList: () => angular.IHttpPromise<any>;
-        submit: () => void;
-        removeRow: (row:any) => void; // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
-        createItem: () => void;
-        editRow: (row:any) => void;
-        resetForm: () => void;
+        submit:() => void;
+        removeRow:(row:any) => void; // todo team add type (muessen warten bis es eine DefinitelyTyped fuer smarttable gibt)
+        createItem:() => void;
+        editRow:(row:any) => void;
+        resetForm:() => void;
     }
 
     export class AdminViewController implements IAdminViewController {
@@ -58,7 +58,7 @@ module ebeguWeb.components {
                 this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
                     .then((response) => {
                         var index = this.getIndexOfElementwithID(response.data);
-                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        var items:Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
                         if (items != null && items.length > 0) {
                             this.applicationProperties[index] = items[0];
                         }
@@ -67,7 +67,7 @@ module ebeguWeb.components {
             } else {
                 this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
                     .then((response) => {
-                        var items: Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
+                        var items:Array<ebeguWeb.API.TSApplicationProperty> = ebeguWeb.utils.EbeguRestUtil.parseApplicationProperties(response.data);
                         if (items != null && items.length > 0) {
                             //todo pruefen ob das item schon existiert hat wie oben
                             this.applicationProperties.push(items[0]);

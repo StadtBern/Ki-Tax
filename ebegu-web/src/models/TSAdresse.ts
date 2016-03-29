@@ -10,11 +10,13 @@ module ebeguWeb.API {
         private _ort:string;
         private _land:any; // todo type for Land
         private _gemeinde:string;
+        private _showDatumVon:boolean;
         private _gueltigAb:moment.Moment;
         private _gueltigBis:moment.Moment;
+        private _adresseTyp:TSAdressetyp = TSAdressetyp.WOHNADRESSE;
 
         constructor(strasse?:string, hausnummer?:string, zusatzzeile?:string, plz?:string, ort?:string,
-                    land?:any, gemeinde?:string, gueltigAb?:moment.Moment, gueltigBis?:moment.Moment) {
+                    land?:any, gemeinde?:string, gueltigAb?:moment.Moment, gueltigBis?:moment.Moment ,adresseTyp?:TSAdressetyp) {
             super();
             this._strasse = strasse;
             this._hausnummer = hausnummer;
@@ -25,6 +27,8 @@ module ebeguWeb.API {
             this._gemeinde = gemeinde;
             this._gueltigAb = gueltigAb;
             this._gueltigBis = gueltigBis;
+            this._adresseTyp = adresseTyp;
+
         }
 
 
@@ -98,6 +102,24 @@ module ebeguWeb.API {
 
         public set gueltigBis(value:moment.Moment) {
             this._gueltigBis = value;
+        }
+
+
+        public get showDatumVon():boolean {
+            return this._showDatumVon;
+        }
+
+        public set showDatumVon(value:boolean) {
+            this._showDatumVon = value;
+        }
+
+
+        get adresseTyp():ebeguWeb.API.TSAdressetyp {
+            return this._adresseTyp;
+        }
+
+        set adresseTyp(value:ebeguWeb.API.TSAdressetyp) {
+            this._adresseTyp = value;
         }
     }
 }

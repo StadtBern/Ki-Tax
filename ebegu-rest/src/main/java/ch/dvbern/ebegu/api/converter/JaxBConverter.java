@@ -90,6 +90,7 @@ public class JaxBConverter {
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
 		adresse.setGueltigAb(jaxAdresse.getGueltigAb());
 		adresse.setGueltigBis(jaxAdresse.getGueltigBis());
+		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
 		return adresse;
 	}
@@ -105,6 +106,7 @@ public class JaxBConverter {
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
 		jaxAdresse.setGueltigAb(adresse.getGueltigAb());
 		jaxAdresse.setGueltigBis(adresse.getGueltigBis());
+		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());
 		return jaxAdresse;
 	}
 

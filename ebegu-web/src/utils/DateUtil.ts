@@ -10,8 +10,8 @@ module ebeguWeb.utils {
          * @param {string} localDateTimeString string with format YYYY-MM-DDTHH:mm:ss.SSS
          * @returns {?moment.Moment}
          */
-        public static localDateTimeToMoment(localDateTimeString: string): moment.Moment {
-            var theMoment: moment.Moment = moment(localDateTimeString, 'YYYY-MM-DDTHH:mm:ss.SSS', true);
+        public static localDateTimeToMoment(localDateTimeString:string):moment.Moment {
+            var theMoment:moment.Moment = moment(localDateTimeString, 'YYYY-MM-DDTHH:mm:ss.SSS', true);
             return theMoment.isValid() ? theMoment : null;
         }
 
@@ -19,7 +19,7 @@ module ebeguWeb.utils {
          * @param {moment.Moment} aMoment time instance
          * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
          */
-        public static momentToLocalDate(aMoment: moment.Moment): string {
+        public static momentToLocalDate(aMoment:moment.Moment):string {
             return moment(aMoment).startOf('day').format('YYYY-MM-DD');
         }
 
@@ -27,8 +27,13 @@ module ebeguWeb.utils {
          * @param {moment.Moment} aMoment time instance
          * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
          */
-        public static momentToLocalDateTime(aMoment: moment.Moment): string {
+        public static momentToLocalDateTime(aMoment:moment.Moment):string {
             return moment(aMoment).format('YYYY-MM-DDTHH:mm:ss.SSS');
+        }
+
+        public static today() {
+            return moment().startOf('day');
+
         }
 
     }

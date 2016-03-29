@@ -71,6 +71,8 @@ public class Adresse extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDate gueltigBis;
 
+	private AdresseTyp adresseTyp;
+
 
 	public Adresse() {
 	}
@@ -143,5 +145,13 @@ public class Adresse extends AbstractEntity {
 
 	public void setLand(Land land) {
 		this.land = land;
+	}
+
+	public AdresseTyp getAdresseTyp() {
+		return adresseTyp;
+	}
+
+	public void setAdresseTyp(AdresseTyp adresseTyp) {
+		this.adresseTyp = adresseTyp;
 	}
 }

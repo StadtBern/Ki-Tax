@@ -1,6 +1,9 @@
 /// <reference path="../../../../typings/browser.d.ts" />
+
 module app.DvAdresse {
     'use strict';
+
+
 
     export class AdresseComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -26,12 +29,15 @@ module app.DvAdresse {
         adresseRS:ebeguWeb.services.IAdresseRS;
         showDate:boolean;
         parentForm: angular.IFormController;
+        popup: any;   //todo team welchen datepicker wollen wir
+
 
         static $inject = ['adresseRS'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, uiBootstrap ) {
             this.adresseRS = adresseRS;
             this.showDate = false;
+            this.popup = {opened: false}
         }
 
         submit () {
@@ -59,6 +65,10 @@ module app.DvAdresse {
 
         resetForm() {
             this.adresse = undefined;
+        }
+        openPopup(){     //todo team welchen datepicker wollen wir
+            this.popup.opened = true;
+            console.log(this.popup.opened);
         }
 
     }
