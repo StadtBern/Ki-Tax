@@ -1,10 +1,12 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 /// <reference path="../../../models/TSStammdaten.ts" />
-module app.StammdatenView {
+/// <reference path="../../component/abstractGesuchView.ts" />
+module ebeguWeb.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
     import EnumGeschlecht = ebeguWeb.API.EnumGeschlecht;
     import DateUtil = ebeguWeb.utils.DateUtil;
+    import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -23,15 +25,14 @@ module app.StammdatenView {
     }
 
 
-    class StammdatenViewController  {
+    class StammdatenViewController extends AbstractGesuchViewController {
         stammdaten: ebeguWeb.API.TSStammdaten;
         geschlechter: Array<string>;
-        state: angular.ui.IStateService
 
         static $inject = ['$state'];
         /* @ngInject */
         constructor($state: angular.ui.IStateService) {
-            this.state = $state;
+            super($state);
             this.stammdaten = new ebeguWeb.API.TSStammdaten();
             this.stammdaten.adresse = new ebeguWeb.API.TSAdresse();
             let umzugAdr = new ebeguWeb.API.TSAdresse();
@@ -41,8 +42,8 @@ module app.StammdatenView {
             this.geschlechter = EnumEx.getNames(EnumGeschlecht);
         }
 
-        submit ($form: angular.IFormController) {
-            if ($form.$valid) {
+        submit (form: angular.IFormController) {
+            if (form.$valid) {
                 //do all things
                 //this.state.go("next.step"); //go to the next step
             }

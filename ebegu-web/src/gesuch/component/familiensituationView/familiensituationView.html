@@ -53,7 +53,7 @@
             </div>
 
             <!--bemerkungen-->
-            <div class="col-md-12">
+            <div class="col-md-12" ng-if="vm.isAdminRole()">
                 <div class="form-group">
                     <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
                     <textarea class="form-control" rows="6" id="notes"

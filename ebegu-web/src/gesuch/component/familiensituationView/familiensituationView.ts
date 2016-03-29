@@ -1,5 +1,7 @@
 /// <reference path="../../../../typings/browser.d.ts" />
-module app.FamiliensituationView {
+/// <reference path="../../component/abstractGesuchView.ts" />
+module ebeguWeb.FamiliensituationView {
+    import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
     'use strict';
 
     class FamiliensituationViewComponentConfig implements angular.IComponentOptions {
@@ -19,14 +21,13 @@ module app.FamiliensituationView {
     }
 
 
-    class FamiliensituationViewController  {
+    class FamiliensituationViewController extends AbstractGesuchViewController {
         gesuch: any; // todo Add right type
-        state: angular.ui.IStateService
 
         static $inject = ['$state'];
         /* @ngInject */
         constructor($state: angular.ui.IStateService) {
-            this.state = $state;
+            super($state);
         }
 
         submit ($form: angular.IFormController) {
