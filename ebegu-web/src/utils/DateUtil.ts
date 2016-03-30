@@ -30,6 +30,16 @@ module ebeguWeb.utils {
         public static momentToLocalDateTime(aMoment:moment.Moment):string {
             return moment(aMoment).format('YYYY-MM-DDTHH:mm:ss.SSS');
         }
+        
+        /**
+         * @param {string} localDateString string with format YYYY-MM-DD
+         * @returns {?moment}
+         */
+        public static localDateToMoment(localDateString) {
+            var theMoment = moment(localDateString, 'YYYY-MM-DD', true);
+            return theMoment.isValid() ? theMoment : null;
+        }
+
 
         public static today() {
             return moment().startOf('day');

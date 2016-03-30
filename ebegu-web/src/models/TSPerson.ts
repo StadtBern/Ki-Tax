@@ -1,12 +1,12 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.API {
 
-    export class TSStammdaten extends TSAbstractEntity {
+    export class TSPerson extends TSAbstractEntity {
 
         private _vorname:string;
         private _nachname:string;
         private _geburtsdatum:moment.Moment;
-        private _email:string;
+        private _mail:string;
         private _mobile:string;
         private _telefon:string;
         private _telefonAusland:string;
@@ -14,7 +14,7 @@ module ebeguWeb.API {
         private _geschlecht:ebeguWeb.API.TSGeschlecht;
         private _adresse:ebeguWeb.API.TSAdresse;
         private _korrespondenzAdresse:ebeguWeb.API.TSAdresse;
-        private _umzugadresse:ebeguWeb.API.TSAdresse;
+        private _umzugAdresse:ebeguWeb.API.TSAdresse;
 
         constructor(vorname?:string, nachname?:string, geburtsdatum?:moment.Moment, email?:string, mobile?:string,
                     telefon?:string, telefonAusland?:string, umzug?:boolean) {
@@ -22,7 +22,7 @@ module ebeguWeb.API {
             this._vorname = vorname;
             this._nachname = nachname;
             this._geburtsdatum = geburtsdatum;
-            this._email = email;
+            this._mail = email;
             this._mobile = mobile;
             this._telefon = telefon;
             this._telefonAusland = telefonAusland;
@@ -54,12 +54,12 @@ module ebeguWeb.API {
             this._geburtsdatum = value;
         }
 
-        public get email():string {
-            return this._email;
+        public get mail():string {
+            return this._mail;
         }
 
-        public set email(value:string) {
-            this._email = value;
+        public set mail(value:string) {
+            this._mail = value;
         }
 
         public get mobile():string {
@@ -105,12 +105,12 @@ module ebeguWeb.API {
         }
 
 
-        public get umzugadresse():ebeguWeb.API.TSAdresse {
-            return this._umzugadresse;
+        public get umzugAdresse():ebeguWeb.API.TSAdresse {
+            return this._umzugAdresse;
         }
 
-        public set umzugadresse(value:ebeguWeb.API.TSAdresse) {
-            this._umzugadresse = value;
+        public set umzugAdresse(value:ebeguWeb.API.TSAdresse) {
+            this._umzugAdresse = value;
         }
 
 

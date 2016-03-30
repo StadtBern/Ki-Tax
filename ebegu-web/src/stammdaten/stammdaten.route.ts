@@ -18,7 +18,7 @@ module ebeguWeb.routes {
     export class EbeguStammdatenState implements angular.ui.IState {
         name = 'stammdaten';
         template = '<stammdaten-view>';
-        url = '/stammdaten';
+        url = '/stammdaten';  // ?id lesen mit $stateParams.id laden im resolve und uebergeben
         // controller = EbeguStammdatenStateController;
         // controllerAs = 'vm';
       /*  resolve = {

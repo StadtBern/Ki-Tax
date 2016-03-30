@@ -285,8 +285,9 @@
     "Land_ZA ":"Südafrika",
     "Land_ZM ":"Sambia",
     "Land_ZW ":"Simbabwe",
-    "MANN":"männlich",
-    "FRAU":"weiblich"
+    "MAENNLICH":"männlich",
+    "WEIBLICH":"weiblich"
+
 
 }
 

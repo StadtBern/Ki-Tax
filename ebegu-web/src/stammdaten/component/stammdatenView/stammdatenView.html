@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-5">
         <h4 data-translate="GESUCHSTELLERIN"></h4>
-        <form ng-submit="vm.submit()" role="form" name="form" class="" novalidate>
+        <form ng-submit="form.$valid && vm.submit()" role="form" name="form" class="" novalidate>
 
             <!--Geschlecht-->
             <div class="row">
@@ -58,7 +58,7 @@
                     <div class="form-group">
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
-                        <input id="geburtsdatum_ID" type="text" name="geburtsdatum"
+                        <input type="date" id="geburtsdatum_ID" name="geburtsdatum"
                                ng-model="vm.stammdaten.geburtsdatum"
                                placeholder="tt.MM.JJJJ"
                                dv-max-length class="form-control" required>
@@ -77,7 +77,8 @@
                     <div class=" checkbox">
                         <label>
 
-                            <input id="korrespoAdrCheckbox_ID" type="checkbox" name="korrespondenzAdr" ng-model="vm.showKorrespondadr" ng-value="true"
+                            <input id="korrespoAdrCheckbox_ID" type="checkbox" name="korrespondenzAdr"
+                                   ng-model="vm.showKorrespondadr"
                                    ng-click="vm.korrespondenzAdrClicked()">
                             <span data-translate="KORRESPONDENZADR"></span>
                         </label>
@@ -87,7 +88,7 @@
                 </div>
             </div>
 
-            <dv-adresse adresse="vm.stammdaten.korrespondenzAdr" ng-if="vm.showKorrespondadr"></dv-adresse>
+            <dv-adresse adresse="vm.stammdaten.korrespondenzAdresse" ng-if="vm.showKorrespondadr"></dv-adresse>
 
 
             <!--Email-->
@@ -96,7 +97,7 @@
                     <div class="form-group">
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
-                        <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.email"
+                        <input id="email_ID" type="text" name="email" ng-model="vm.stammdaten.mail"
                                dv-max-length class="form-control" required placeholder="hans.muster@example.com">
                         <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
                                            class="error"></dv-error-messages>
@@ -137,20 +138,20 @@
                         <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
                         </label>
                         <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.stammdaten.telefonAusland"
-                               dv-max-length class="form-control" ng-pattern="/^[+//0-9]*$/">
+                               dv-max-length class="form-control">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefonAusland.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
 
-            <!--Umzug-->
+            <!--Umzug checkbox-->
             <div class="row">
                 <div class="col-md-6">
                     <div class=" checkbox">
                         <label>
 
-                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.showUmzug" ng-value="true"
+                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.showUmzug"
                                    ng-click="vm.umzugadreseClicked()">
                             <span data-translate="UMZUG"></span>
                         </label>
@@ -163,12 +164,16 @@
 
             <!-- Umzugadresse -->
             <div ng-if="vm.showUmzug">
-                <dv-adresse adresse="vm.stammdaten.umzugadresse"></dv-adresse>
+                <dv-adresse adresse="vm.stammdaten.umzugAdresse"></dv-adresse>
             </div>
 
             <div class="row">
                 <div class="col-md-2">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE">
+                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
+                            ng-if="vm.stammdaten.timestampErstellt === undefined">
+                    </button>
+                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
+                            ng-if="vm.stammdaten.timestampErstellt">
                     </button>
                 </div>
                 <div class="col-md-3">
@@ -176,7 +181,6 @@
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
                 </div>
             </div>
-
         </form>
     </div>
 

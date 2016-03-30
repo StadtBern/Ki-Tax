@@ -5,10 +5,11 @@
             <!--Strasse-->
             <div class="col-md-6">
                 <div class="form-group">
-                    <label data-translate="ADRESSE_STRASSE" for="strasse">
+                    <label>
+                        <span data-translate="ADRESSE_STRASSE"></span>
+                        <input type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
+                               dv-max-length class="form-control" required>
                     </label>
-                    <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
-                           dv-max-length class="form-control" required>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseStrasse.$error"
                                        class="error"></dv-error-messages>
                 </div>
