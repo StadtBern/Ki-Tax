@@ -18,6 +18,7 @@
         "src/utils/DateUtil.ts",
         "src/admin/admin.module.ts",
         "src/admin/admin.route.ts",
+        "src/core/service/listResourceRS.ts",
         "src/models/TSGeschlecht.ts",
         "src/models/enums/TSAdressetyp.ts",
         "src/models/TSAbstractEntity.ts",

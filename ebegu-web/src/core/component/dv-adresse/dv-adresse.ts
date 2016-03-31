@@ -33,13 +33,23 @@ module app.DvAdresse {
         adresseRS:ebeguWeb.services.IAdresseRS;
         parentForm: angular.IFormController;
         popup: any;   //todo team welchen datepicker wollen wir
+        laenderList: any;
+        filter:any;
 
-
-        static $inject = ['adresseRS'];
+        static $inject = ['adresseRS', 'listResourceRS', '$filter'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS, $filter:any) {
             this.adresseRS = adresseRS;
             this.popup = {opened: false}
+            this.filter = $filter;
+            listResourceRS.getLaenderList().then((response: any) => {
+                this.laenderList = response.data;
+                // todo imanol in converter machen
+                // Es braucht eine kleine formattierung damit es uebersetzt werden kann.
+                for (var i = 0; i < this.laenderList.length; i++) {
+                    this.laenderList[i] = 'Land_' + this.laenderList[i];
+                }
+            });
         }
 
         submit () {
@@ -69,5 +79,22 @@ module app.DvAdresse {
     }
 
     angular.module('ebeguWeb.core').component('dvAdresse', new AdresseComponentConfig());
+
+
+
+
+    export function translatedOrder($filter) {
+        return function(item : Array<string>) {
+            let result = [];
+            if (item !== undefined) {
+                for (var i = 0; i < item.length; i++) {
+                    result[i] = $filter('translate')(item[i]).toString();
+                }
+
+            }
+            return result.sort();
+        }
+    }
+    angular.module("ebeguWeb.core").filter('dvTranslatedOrder', translatedOrder);
 
 }

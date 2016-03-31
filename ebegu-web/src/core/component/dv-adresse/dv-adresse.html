@@ -80,15 +80,9 @@
                 <div class="form-group">
                     <label data-translate="ADRESSE_LAND" for="land">
                     </label>
-                    <!--<input id="land" type="text" name="adresseLand" ng-model="vm.adresse.land"-->
-                    <!--dv-max-length class="form-control" required>-->
-                    <select id="land" name="adresseLand" ng-model="vm.adresse.land" class="form-control" required>
-                        <option value="CH">Schweiz</option>
-                        <option value="DE">Deutschland</option>
-                        <option value="FR">Frankreich</option>
-                        <option value="IT">Italien</option>
-                        <option value="AT">Österreich</option>
-                    </select>
+                    <select name="adresseLand" id="land"
+                            ng-options="land | translate for land in vm.laenderList | dvTranslatedOrder "
+                            ng-model="vm.adresse.land" class="form-control" required></select>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>
                 </div>
@@ -118,6 +112,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group secondColumn" ng-if="false">
@@ -130,6 +125,7 @@
                 </div>
             </div>
         </div>
+
     </fieldset>
 </div>
 
