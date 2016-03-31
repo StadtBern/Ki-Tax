@@ -9,4 +9,12 @@
 
     <artifactId>ebegu-testutils</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-shared</artifactId>
+        </dependency>
+    </dependencies>
+
+
 </project>

@@ -15,6 +15,10 @@
             <artifactId>ebegu-shared</artifactId>
         </dependency>
         <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-testutils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>

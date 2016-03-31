@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.tests;
+package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.Person;
@@ -7,15 +7,11 @@ import ch.dvbern.ebegu.enums.Geschlecht;
 import java.time.LocalDate;
 
 /**
- * User: homa
- * Date: 21.03.16
  * comments homa
  */
 public final class TestDataUtil {
 
-
 	private TestDataUtil(){
-
 	}
 
 	public  static Adresse createDefaultAdresse() {
@@ -45,6 +41,5 @@ public final class TestDataUtil {
 		person.setTelefon("031 378 24 24");
 		person.setZpvNumber("0761234567897");
 		return person;
-
 	}
 }

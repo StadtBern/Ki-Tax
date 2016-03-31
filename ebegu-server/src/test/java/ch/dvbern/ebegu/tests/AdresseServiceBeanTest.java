@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
