@@ -144,8 +144,8 @@
                     </security>
                 </datasource>
                 <datasource jndi-name="java:/jdbc/ebegu" pool-name="ebeguPool" enabled="true">
-                    <connection-url>jdbc:postgresql://localhost/ebegu</connection-url>
-                    <driver>postgres</driver>
+                    <connection-url>jdbc:mysql://localhost/ebegu</connection-url>
+                    <driver>mariadbsql</driver>
                     <security>
                         <user-name>ebegu</user-name>
                         <password>ebegu</password>
@@ -155,8 +155,9 @@
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
                     </driver>
-                    <driver name="postgres" module="org.postgres">
-                        <driver-class>org.postgresql.Driver</driver-class>
+                    <driver name="mariadbsql" module="org.mariadb">
+                        <driver-class>org.mariadb.jdbc.Driver</driver-class>
+						<xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
                     </driver>
                 </drivers>
             </datasources>

@@ -65,7 +65,7 @@
                         <version>0.4.3</version>
                         <configuration>
                             <!--unter diesem namen ist das image nach dem builden vorhanden-->
-                            <imageName>docker.dvbern.ch:5000/dvbern/ebegu</imageName>
+                            <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly</imageName>
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
                             </imageTags>

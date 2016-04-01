@@ -2,10 +2,10 @@ FROM debian:8.3
 
 MAINTAINER Markus Hofstetter <markus.hofstetter@dvbern.ch>
 
-ENV JDK_PACKAGE_VERSION=8u74+8u73arm-1~webupd8~1
+ENV JDK_PACKAGE_VERSION=8u77+8u77arm-1~webupd8~3
 ENV WILDFLY_VERSION=10.0.0.Final
 ENV WILDFLY_SHA1=c0dd7552c5207b0d116a9c25eb94d10b4f375549
-ENV POSTGRESQL_DRIVER_VERSION=9.4.1208.jre7
+ENV MARIADB_DRIVER_VERSION=1.3.7
 
 ##############
 # Prepare OS #
@@ -56,8 +56,8 @@ RUN apt-cache policy oracle-java8-installer
 RUN mkdir $JBOSS_HOME/customization
 WORKDIR $JBOSS_HOME/customization
 COPY customization/ebegu-customization.cli ebegu-customization.cli
-ADD http://nexus.dvbern.dvb.ch/nexus/service/local/repositories/central/content/org/postgresql/postgresql/$POSTGRESQL_DRIVER_VERSION/postgresql-$POSTGRESQL_DRIVER_VERSION.jar \
-		postgresql.jar
+ADD http://nexus.dvbern.dvb.ch/nexus/service/local/repositories/central/content/org/mariadb/jdbc/mariadb-java-client/$MARIADB_DRIVER_VERSION/mariadb-java-client-$MARIADB_DRIVER_VERSION.jar \
+		mariadb-java-client.jar
 RUN $JBOSS_HOME/bin/jboss-cli.sh --file=ebegu-customization.cli
 
 #Wildfly Admin user einfuegen
