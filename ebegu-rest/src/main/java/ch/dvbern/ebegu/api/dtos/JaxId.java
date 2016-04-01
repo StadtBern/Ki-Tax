@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,9 +12,9 @@ public class JaxId {
 	@NotNull
 	private String id;
 
-	public JaxId(String id) {
-			this.id = id;
-		}
+	public JaxId(@JsonProperty("id") String id) {
+		this.id = id;
+	}
 
 	public String getId() {
 		return id;

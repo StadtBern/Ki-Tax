@@ -10,6 +10,7 @@
 
 package ch.dvbern.ebegu.util;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -36,4 +37,5 @@ public interface Constants {
 
 	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
 
+	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
 }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LandConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Land;
 
 import javax.annotation.Nullable;
@@ -44,6 +45,7 @@ public class JaxAdresse extends JaxAbstractDTO {
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate gueltigBis;
+	private AdresseTyp adresseTyp;
 
 
 	public String getStrasse() {
@@ -110,5 +112,13 @@ public class JaxAdresse extends JaxAbstractDTO {
 
 	public void setLand(Land land) {
 		this.land = land;
+	}
+
+	public void setAdresseTyp(AdresseTyp adresseTyp) {
+		this.adresseTyp = adresseTyp;
+	}
+
+	public AdresseTyp getAdresseTyp() {
+		return adresseTyp;
 	}
 }
