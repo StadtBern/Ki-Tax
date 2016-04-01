@@ -6,10 +6,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -34,23 +31,20 @@ public class Adresse extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_SHORT_LENGTH)
 	private String hausnummer;
 
-
-
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zusatzzeile;
 
-	@Size(max = Constants.PLZ_LENGTH)
-	@Nonnull
-	@NotNull
-	@Column(nullable = true, length = Constants.PLZ_LENGTH)
-	private String plz;
-
 	@Size(max = Constants.DB_DEFAULT_SHORT_LENGTH)
-	@Nonnull
 	@NotNull
 	@Column(nullable = false, length = Constants.DB_DEFAULT_SHORT_LENGTH)
+	private String plz;
+
+	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Nonnull
+	@NotNull
+	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String ort;
 
 	@NotNull
@@ -64,12 +58,19 @@ public class Adresse extends AbstractEntity {
 	private String gemeinde;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
+	private AdresseTyp adresseTyp = AdresseTyp.WOHNADRESSE;
+
+	@NotNull
 	@Column(nullable = false)
 	private LocalDate gueltigAb;
 
 	@NotNull
 	@Column(nullable = false)
 	private LocalDate gueltigBis;
+
+	@ManyToOne(optional = false)
+	private Person person;
 
 
 	public Adresse() {
@@ -143,5 +144,21 @@ public class Adresse extends AbstractEntity {
 
 	public void setLand(Land land) {
 		this.land = land;
+	}
+
+	public AdresseTyp getAdresseTyp() {
+		return adresseTyp;
+	}
+
+	public void setAdresseTyp(AdresseTyp adresseTyp) {
+		this.adresseTyp = adresseTyp;
+	}
+
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 }

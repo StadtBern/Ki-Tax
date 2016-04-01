@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,13 +20,12 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Created by imanol on 18.03.16.
  * Tests fuer die Klasse AdresseService
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class AdresseServiceTest extends AbstractEbeguTest {
+public class AdresseServiceBeanTest extends AbstractEbeguTest {
 
 	@Inject
 	private AdresseService adresseService;
@@ -42,6 +42,7 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 	public void createAdressTest() {
 		Assert.assertNotNull(adresseService);
 		Adresse adresse = TestDataUtil.createDefaultAdresse();
+		adresse.setPerson(persistence.persist(adresse.getPerson()));
 
 		adresseService.createAdresse(adresse);
 		Collection<Adresse> allAdressen = adresseService.getAllAdressen();
@@ -60,8 +61,9 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals("21", adresse.get().getHausnummer());
 
 		adresse.get().setHausnummer("99");
-		adresseService.updateAdresse(adresse.get());
-		Assert.assertEquals("99", adresse.get().getHausnummer());
+		Adresse updatedAdr = adresseService.updateAdresse(adresse.get());
+		Assert.assertEquals("99", updatedAdr.getHausnummer());
+		Assert.assertEquals("99", adresseService.findAdresse(updatedAdr.getId()).get().getHausnummer());
 	}
 
 	@Test
@@ -78,6 +80,7 @@ public class AdresseServiceTest extends AbstractEbeguTest {
 
 	private Adresse insertNewEntity() {
 		Adresse adresse = TestDataUtil.createDefaultAdresse();
+		persistence.persist(adresse.getPerson());
 		persistence.persist(adresse);
 		return adresse;
 	}

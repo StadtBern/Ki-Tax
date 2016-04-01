@@ -1,6 +1,9 @@
 /// <reference path="../../../../typings/browser.d.ts" />
+
 module app.DvAdresse {
     'use strict';
+
+
 
     export class AdresseComponentConfig implements angular.IComponentOptions {
         transclude: boolean;
@@ -12,7 +15,10 @@ module app.DvAdresse {
 
         constructor() {
             this.transclude = false;
-            this.bindings = {adresse:'<'};
+            this.bindings = {
+                adresse:'<',
+                prefix:'@'
+            };
             this.require = {parentForm: '?^form'};
             this.templateUrl = 'src/core/component/dv-adresse/dv-adresse.html';
             this.controller = DvAdresseController;
@@ -23,15 +29,17 @@ module app.DvAdresse {
 
     export class DvAdresseController  {
         adresse:ebeguWeb.API.TSAdresse;
+        prefix: string;
         adresseRS:ebeguWeb.services.IAdresseRS;
-        showDate:boolean;
         parentForm: angular.IFormController;
+        popup: any;   //todo team welchen datepicker wollen wir
+
 
         static $inject = ['adresseRS'];
         /* @ngInject */
         constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
             this.adresseRS = adresseRS;
-            this.showDate = false;
+            this.popup = {opened: false}
         }
 
         submit () {
@@ -43,15 +51,7 @@ module app.DvAdresse {
                 });
         }
 
-        removeRow(row:any) {
-            //this.adresseRS.remove(row.name).then((reponse:angular.IHttpPromiseCallbackArg<any>) => {
-            //    var index = this.adressen.indexOf(row);
-            //    if (index !== -1) {
-            //        this.adressen.splice(index, 1);
-            //        this.resetForm();
-            //    }
-            //});
-        }
+
 
         createItem() {
             this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', undefined, undefined);
@@ -59,6 +59,11 @@ module app.DvAdresse {
 
         resetForm() {
             this.adresse = undefined;
+        }
+
+        openPopup(){     //todo team welchen datepicker wollen wir
+            this.popup.opened = true;
+            console.log(this.popup.opened);
         }
 
     }

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "amd",
+        "module": "commonjs",
         "outFile": "temp/src.js",
         "target": "ES5"
     },
@@ -16,19 +16,22 @@
         "src/dvbModules/router/route-helper-provider.ts",
         "src/utils/EnumEx.ts",
         "src/utils/DateUtil.ts",
-        "src/utils/EbeguRestUtil.ts",
         "src/admin/admin.module.ts",
         "src/admin/admin.route.ts",
         "src/models/TSGeschlecht.ts",
+        "src/models/enums/TSAdressetyp.ts",
         "src/models/TSAbstractEntity.ts",
         "src/models/TSApplicationProperty.ts",
         "src/models/TSAdresse.ts",
+        "src/models/TSPerson.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts",
         "src/stammdaten/stammdaten.module.ts",
         "src/stammdaten/stammdaten.route.ts",
         "src/stammdaten/component/stammdatenView/stammdatenView.ts",
         "src/core/service/adresseRS.ts",
-        "src/core/component/dv-adresse/dv-adresse.ts"
+        "src/core/service/personRS.rest.ts",
+        "src/core/component/dv-adresse/dv-adresse.ts",
+        "src/utils/EbeguRestUtil.ts"
     ]
 }
