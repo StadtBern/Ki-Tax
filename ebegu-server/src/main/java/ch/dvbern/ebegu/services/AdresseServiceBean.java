@@ -122,7 +122,6 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 		CriteriaQuery<Adresse> query = cb.createQuery(Adresse.class);
 		Root<Adresse> root = query.from(Adresse.class);
-		Join<Adresse, Person> join = root.join(Adresse_.person);
 		Predicate personPredicate = cb.equal(root.get(Adresse_.person).get(Person_.id), personIdParam);
 		Predicate typePredicate = cb.equal(root.get(Adresse_.adresseTyp), typParam);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();

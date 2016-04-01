@@ -1,3 +1,21 @@
+Datenbank einrichten (mariadb):
+=================================
+- mariadb installieren: sudo apt-get install mariadb-server
+- schema und Benutzer konfigurieren (in mysql command line):
+create schema ebegu;
+create user 'ebegue' identified by 'ebegu';
+grant all on ebegu.* to 'ebegu';
+
+Wildfly konfigurieren
+=========================
+MariaDB Driver als Modul in Jboss einfügen, Datasource konfigurieren:
+-----------------------------------------------------------------------
+- modules und noetige standalone.xml Anpassungen kopieren  aus config ordner
+
+
+
+
+
 Datenbank einrichten (PostgreSQL):
 =================================
 - Ubuntu Software-Center: "postgresql" installieren
