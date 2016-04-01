@@ -25,6 +25,7 @@
         "src/models/TSApplicationProperty.ts",
         "src/models/TSAdresse.ts",
         "src/models/TSPerson.ts",
+        "src/models/TSLand.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts",
         "src/stammdaten/stammdaten.module.ts",

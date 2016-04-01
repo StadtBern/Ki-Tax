@@ -7,9 +7,15 @@ module ebeguWeb.utils {
     import TSAdresse = ebeguWeb.API.TSAdresse;
 
     export class EbeguRestUtil {
+        public filter:any;
+        static $inject = ['$filter'];
+
+        constructor($filter: any) {
+            this.filter = $filter;
+        }
 
         /**
-         * Wndelt Data in einen TSApplicationProperty Array um, welches danach zurueckgeliefert wird
+         * Wandelt Data in einen TSApplicationProperty Array um, welches danach zurueckgeliefert wird
          * @param data
          * @returns {any}
          */
@@ -89,8 +95,11 @@ module ebeguWeb.utils {
 
         }
 
-        public static personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
+        public landCodeToTSLand(landCode: string): any {
+            return new ebeguWeb.API.TSLand(landCode, this.filter('translate')(landCode).toString());
+        }
 
+        public static personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
             if (person) {
                 EbeguRestUtil.abstractEntityToRestObject(restPerson, person);
 
@@ -134,5 +143,12 @@ module ebeguWeb.utils {
 
         }
 
+        static instance ($filter) : EbeguRestUtil {
+            return new EbeguRestUtil($filter);
+        }
+
     }
+
+    angular.module('ebeguWeb.core').factory('ebeguRestUtil', EbeguRestUtil.instance);
+
 }

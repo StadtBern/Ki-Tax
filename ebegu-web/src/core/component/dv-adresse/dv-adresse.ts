@@ -1,6 +1,7 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 
 module app.DvAdresse {
+    import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
 
@@ -33,21 +34,25 @@ module app.DvAdresse {
         adresseRS:ebeguWeb.services.IAdresseRS;
         parentForm: angular.IFormController;
         popup: any;   //todo team welchen datepicker wollen wir
-        laenderList: any;
-        filter:any;
+        laenderList: Array<ebeguWeb.API.TSLand>;
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
-        static $inject = ['adresseRS', 'listResourceRS', '$filter'];
+        static $inject = ['adresseRS', 'listResourceRS', 'ebeguRestUtil'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS, $filter:any) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS,
+                    ebeguRestUtil:ebeguWeb.utils.EbeguRestUtil) {
+
             this.adresseRS = adresseRS;
             this.popup = {opened: false}
-            this.filter = $filter;
+            this.laenderList = [];
+            this.ebeguRestUtil = ebeguRestUtil;
             listResourceRS.getLaenderList().then((response: any) => {
-                this.laenderList = response.data;
                 // todo imanol in converter machen
                 // Es braucht eine kleine formattierung damit es uebersetzt werden kann.
-                for (var i = 0; i < this.laenderList.length; i++) {
-                    this.laenderList[i] = 'Land_' + this.laenderList[i];
+                for (var i = 0; i < response.data.length; i++) {
+                    let parsedCode: string = 'Land_' + response.data[i];
+                    let land: ebeguWeb.API.TSLand = ebeguRestUtil.landCodeToTSLand(parsedCode);
+                    this.laenderList.push(land);
                 }
             });
         }
@@ -61,10 +66,8 @@ module app.DvAdresse {
                 });
         }
 
-
-
         createItem() {
-            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', undefined, undefined);
+            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', undefined, '', undefined, undefined, undefined);
         }
 
         resetForm() {
@@ -80,21 +83,5 @@ module app.DvAdresse {
 
     angular.module('ebeguWeb.core').component('dvAdresse', new AdresseComponentConfig());
 
-
-
-
-    export function translatedOrder($filter) {
-        return function(item : Array<string>) {
-            let result = [];
-            if (item !== undefined) {
-                for (var i = 0; i < item.length; i++) {
-                    result[i] = $filter('translate')(item[i]).toString();
-                }
-
-            }
-            return result.sort();
-        }
-    }
-    angular.module("ebeguWeb.core").filter('dvTranslatedOrder', translatedOrder);
 
 }
