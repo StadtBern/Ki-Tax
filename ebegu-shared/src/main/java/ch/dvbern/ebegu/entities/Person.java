@@ -46,7 +46,7 @@ public class Person extends AbstractEntity {
 	private String mail;
 
 	@Column(nullable = false)
-	@NotNull()
+	@NotNull
 	private LocalDate geburtsdatum;
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
@@ -58,7 +58,6 @@ public class Person extends AbstractEntity {
 	private String telefon;
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	@Pattern(regexp = Constants.REGEX_TELEFON, message = "{error_invalid_mobilenummer}")
 	private String telefonAusland;
 
 

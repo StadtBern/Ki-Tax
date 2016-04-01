@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.util.Constants;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -40,7 +41,7 @@ public class JaxPerson extends JaxAbstractDTO {
 	@NotNull
 	private String mail;
 
-	@NotNull()
+	@NotNull
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate geburtsdatum;
 
@@ -58,10 +59,14 @@ public class JaxPerson extends JaxAbstractDTO {
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
 	//Adressen
+	@NotNull
+	@Valid
 	private JaxAdresse wohnAdresse;
 
+	@Valid
 	private JaxAdresse alternativeAdresse;
 
+	@Valid
 	private JaxAdresse umzugAdresse;
 
 

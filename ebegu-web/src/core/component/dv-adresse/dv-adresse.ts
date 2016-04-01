@@ -31,16 +31,14 @@ module app.DvAdresse {
         adresse:ebeguWeb.API.TSAdresse;
         prefix: string;
         adresseRS:ebeguWeb.services.IAdresseRS;
-        showDate:boolean;
         parentForm: angular.IFormController;
         popup: any;   //todo team welchen datepicker wollen wir
 
 
         static $inject = ['adresseRS'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS, uiBootstrap ) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
             this.adresseRS = adresseRS;
-            this.showDate = false;
             this.popup = {opened: false}
         }
 
@@ -62,6 +60,7 @@ module app.DvAdresse {
         resetForm() {
             this.adresse = undefined;
         }
+
         openPopup(){     //todo team welchen datepicker wollen wir
             this.popup.opened = true;
             console.log(this.popup.opened);

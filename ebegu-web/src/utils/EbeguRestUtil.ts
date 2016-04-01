@@ -43,13 +43,13 @@ module ebeguWeb.utils {
             parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
             parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
             parsedAppProperty.id = receivedAppProperty.id;
-        };
+        }
 
         private static abstractEntityToRestObject(restObject:any, typescriptObject:ebeguWeb.API.TSAbstractEntity) {
             restObject.id = typescriptObject.id;
             restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
             restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
-        };
+        }
 
         public static adresseToRestObject(restAdresse:any, adresse:ebeguWeb.API.TSAdresse):ebeguWeb.API.TSAdresse {
             if (adresse) {
@@ -61,7 +61,7 @@ module ebeguWeb.utils {
                 restAdresse.ort = adresse.ort;
                 restAdresse.land = adresse.land;
                 restAdresse.gemeinde = adresse.gemeinde;
-                restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
+                restAdresse.gueltigAb =  DateUtil.momentToLocalDate(adresse.gueltigAb);
                 restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigBis);
                 restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
                 return restAdresse;

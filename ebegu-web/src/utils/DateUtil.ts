@@ -12,7 +12,7 @@ module ebeguWeb.utils {
          */
         public static localDateTimeToMoment(localDateTimeString:string):moment.Moment {
             var theMoment:moment.Moment = moment(localDateTimeString, 'YYYY-MM-DDTHH:mm:ss.SSS', true);
-            return theMoment.isValid() ? theMoment : null;
+            return theMoment.isValid() ? theMoment : undefined;
         }
 
         /**
@@ -20,6 +20,9 @@ module ebeguWeb.utils {
          * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
          */
         public static momentToLocalDate(aMoment:moment.Moment):string {
+            if(!aMoment){
+                return undefined;
+            }
             return moment(aMoment).startOf('day').format('YYYY-MM-DD');
         }
 
@@ -30,14 +33,14 @@ module ebeguWeb.utils {
         public static momentToLocalDateTime(aMoment:moment.Moment):string {
             return moment(aMoment).format('YYYY-MM-DDTHH:mm:ss.SSS');
         }
-        
+
         /**
          * @param {string} localDateString string with format YYYY-MM-DD
          * @returns {?moment}
          */
         public static localDateToMoment(localDateString) {
             var theMoment = moment(localDateString, 'YYYY-MM-DD', true);
-            return theMoment.isValid() ? theMoment : null;
+            return theMoment.isValid() ? theMoment : undefined;
         }
 
 

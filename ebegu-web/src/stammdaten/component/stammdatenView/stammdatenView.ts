@@ -51,7 +51,7 @@ module app.StammdatenView {
             this.geschlechter = EnumEx.getNames(TSGeschlecht);
             this.showUmzug = false;
             this.showKorrespondadr = false;
-        };
+        }
 
         submit() {
             if (!this.showUmzug) {
@@ -90,7 +90,7 @@ module app.StammdatenView {
             umzugAdr.showDatumVon = true;
             umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
             return umzugAdr;
-        };
+        }
 
         private  initKorrespondenzAdresse():TSAdresse {
             let korrAdr = new ebeguWeb.API.TSAdresse();

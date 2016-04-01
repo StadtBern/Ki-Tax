@@ -115,7 +115,7 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 	 */
 	private TypedQuery<Adresse> getAdresseQuery(@Nonnull String personID, @Nonnull AdresseTyp typ, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		ParameterExpression<String> kindIdParam = cb.parameter(String.class, "personID");
+		ParameterExpression<String> personIdParam = cb.parameter(String.class, "personID");
 		ParameterExpression<AdresseTyp> typParam = cb.parameter(AdresseTyp.class, "adresseTyp");
 		ParameterExpression<LocalDate> gueltigVonParam = cb.parameter(LocalDate.class, "gueltigVon");
 		ParameterExpression<LocalDate> gueltigBisParam = cb.parameter(LocalDate.class, "gueltigBis");
@@ -123,7 +123,7 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 		CriteriaQuery<Adresse> query = cb.createQuery(Adresse.class);
 		Root<Adresse> root = query.from(Adresse.class);
 		Join<Adresse, Person> join = root.join(Adresse_.person);
-		Predicate personPredicate = cb.equal(root.get(Adresse_.person).get(Person_.id), kindIdParam);
+		Predicate personPredicate = cb.equal(root.get(Adresse_.person).get(Person_.id), personIdParam);
 		Predicate typePredicate = cb.equal(root.get(Adresse_.adresseTyp), typParam);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 

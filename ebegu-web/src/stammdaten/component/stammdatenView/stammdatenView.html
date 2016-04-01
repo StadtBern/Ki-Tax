@@ -23,8 +23,10 @@
                         <label>Geschlecht</label>
                         <div ng-repeat="current in vm.geschlechter" class="radio">
                             <label><input type="radio" name="geschlecht" ng-model="vm.stammdaten.geschlecht"
-                                          ng-value="current"><span data-translate="{{current}}"></span></label>
+                                          ng-value="current" required><span data-translate="{{current}}"></span></label>
                         </div>
+                        <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
+                                           class="error"></dv-error-messages>
 
                     </div>
                 </div>

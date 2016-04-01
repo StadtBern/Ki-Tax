@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -54,7 +55,7 @@ public class PersonResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
-		@Nonnull @NotNull JaxPerson personJAXP,
+		@Nonnull @NotNull @Valid JaxPerson personJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -105,9 +106,10 @@ public class PersonResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxPerson update(
-		@Nonnull @NotNull JaxPerson personJAXP,
+		@Nonnull @NotNull @Valid JaxPerson personJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
 		Validate.notNull(personJAXP.getId());
 		String personID = converter.toEntityId(personJAXP);
 		Optional<Person> optional = personService.findPerson(converter.toEntityId(personJAXP));
@@ -134,12 +136,11 @@ public class PersonResource {
 			Adresse updateAdresseToMerge = converter.adresseToEntity(personJAXP.getUmzugAdresse(), umzugAdresseFromDB);
 			Validate.notNull(updateAdresseToMerge.getGueltigAb(), "gueltigAb muss fuer Umzugadresse gesetzt sein");
 			wohnadresseToMerge.setGueltigBis(updateAdresseToMerge.getGueltigAb().minusDays(1));
-			jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.updateAdresse(wohnadresseToMerge)));
 			jaxPerson.setUmzugAdresse(converter.adresseToJAX(adresseService.updateAdresse(updateAdresseToMerge)));
-
-		} else {
-			jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.updateAdresse(wohnadresseToMerge)));
 		}
+
+		jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.updateAdresse(wohnadresseToMerge)));
+
 		return jaxPerson;
 	}
 
@@ -174,7 +175,7 @@ public class PersonResource {
 
 		//wenn beide gleich sind gibt es keine Umzugadresse
 		if (currentWohnadresse.equals(umzugAdresse)) {
-			jaxPerson.setWohnAdresse(converter.adresseToJAX(currentWohnadresse));
+		    jaxPerson.setWohnAdresse(converter.adresseToJAX(currentWohnadresse));
 			jaxPerson.setUmzugAdresse(null);
 
 		} else {
