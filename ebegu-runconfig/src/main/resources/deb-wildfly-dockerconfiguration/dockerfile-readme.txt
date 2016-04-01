@@ -1,9 +1,9 @@
-Dies ist ein Dockerfile welches wildlfy-10 definiert und mit einer lokalen postgresql DB verbindet.
+Dies ist ein Dockerfile welches wildlfy-10 definiert und mit einer lokalen maria DB verbindet.
 Das Admin gui wird ebenfalls aufgeschaltet und es wird ein user dafuer erzeugt
 
 
 1. DATENBANK INSTALLIEREN
-    Der Name der Datenbank muss "ebegu" sein: connection String sieht so aus "jdbc:postgresql://localhost/ebegu"
+    Der Name der Datenbank muss "ebegu" sein: connection String sieht so aus "jdbc:mysql://localhost/ebegu"
 
 2. DOCKER INSTALLIEREN
     Zum verwenden bitte Docker gemaess Anleitung installieren.
