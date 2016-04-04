@@ -9,7 +9,7 @@ module ebeguWeb.API {
         private _zusatzzeile:string;
         private _plz:string;
         private _ort:string;
-        private _land:TSLand;
+        private _land:string;
         private _gemeinde:string;
         private _showDatumVon:boolean;
         private _gueltigAb:moment.Moment;
@@ -17,7 +17,7 @@ module ebeguWeb.API {
         private _adresseTyp:TSAdressetyp = TSAdressetyp.WOHNADRESSE;
 
         constructor(strasse?:string, hausnummer?:string, zusatzzeile?:string, plz?:string, ort?:string,
-                    land?:TSLand, gemeinde?:string, gueltigAb?:moment.Moment, gueltigBis?:moment.Moment,
+                    land?:string, gemeinde?:string, gueltigAb?:moment.Moment, gueltigBis?:moment.Moment,
                     adresseTyp?:TSAdressetyp) {
 
             super();
@@ -26,7 +26,7 @@ module ebeguWeb.API {
             this._zusatzzeile = zusatzzeile;
             this._plz = plz;
             this._ort = ort;
-            this._land = new TSLand('Land_CH', 'Schweiz');
+            this._land = land || 'Land_CH';
             this._gemeinde = gemeinde;
             this._gueltigAb = gueltigAb;
             this._gueltigBis = gueltigBis;

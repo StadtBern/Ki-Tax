@@ -82,7 +82,7 @@
                     </label>
                     <select name="adresseLand" id="land" ng-model="vm.adresse.land" class="form-control" required>
                         <option ng-repeat="land in vm.laenderList | orderBy: 'name'" ng-value="land.code"
-                                ng-bind="land.name" ng-selected="land.code == vm.adresse.land.code"></option>
+                                ng-bind="land.name" ng-selected="land.code == vm.adresse.land"></option>
                     </select>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>

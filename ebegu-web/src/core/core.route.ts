@@ -5,10 +5,10 @@ module ebeguWeb.routes {
     angular.module('ebeguWeb.core').run(appRun);
 
     /* @ngInject */
-    export function appRun(angularMomentConfig : any ,routerHelper : IRouterHelper) {
+    export function appRun(angularMomentConfig : any ,routerHelper : IRouterHelper, listResourceRS: ebeguWeb.services.ListResourceRS) {
         routerHelper.configureStates(getStates());
-        angularMomentConfig.format = 'DD.MM.YYYY'
-
+        angularMomentConfig.format = 'DD.MM.YYYY';
+        listResourceRS.getLaenderList();
     }
 
     function getStates() {

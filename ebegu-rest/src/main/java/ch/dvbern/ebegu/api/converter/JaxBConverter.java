@@ -91,6 +91,7 @@ public class JaxBConverter {
 		adresse.setPlz(jaxAdresse.getPlz());
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
+		adresse.setLand(jaxAdresse.getLand());
 		adresse.setGueltigAb(jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb());
 		adresse.setGueltigBis(jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis());
 		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
@@ -107,6 +108,7 @@ public class JaxBConverter {
 		jaxAdresse.setPlz(adresse.getPlz());
 		jaxAdresse.setOrt(adresse.getOrt());
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
+		jaxAdresse.setLand(adresse.getLand());
 		jaxAdresse.setGueltigAb(adresse.getGueltigAb());
 		jaxAdresse.setGueltigBis(adresse.getGueltigBis());
 		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());

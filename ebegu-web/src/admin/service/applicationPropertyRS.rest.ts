@@ -7,6 +7,7 @@ module ebeguWeb.services {
     export interface IApplicationPropertyRS {
         serviceURL: string;
         http: angular.IHttpService;
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
         getByName: (name: string) => angular.IPromise<any>;
         create: (name: string, value: string) => angular.IHttpPromise<any>;
@@ -18,17 +19,19 @@ module ebeguWeb.services {
     export class ApplicationPropertyRS implements IApplicationPropertyRS {
         serviceURL: string;
         http: angular.IHttpService;
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil
 
-        static $inject = ['$http', 'REST_API'];
+        static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
         /* @ngInject */
-        constructor($http: angular.IHttpService, REST_API: string) {
+        constructor($http: angular.IHttpService, REST_API: string, ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
             this.serviceURL = REST_API + 'application-properties';
             this.http = $http;
+            this.ebeguRestUtil = ebeguRestUtil;
         }
 
         getByName(name) {
             return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
-                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
+                (response: any) => this.ebeguRestUtil.parseApplicationProperties(response.data)
             );
         }
 
@@ -54,12 +57,12 @@ module ebeguWeb.services {
 
         getAllApplicationProperties() {
             return this.http.get(this.serviceURL + '/').then(
-                (response: any) => EbeguRestUtil.parseApplicationProperties(response.data)
+                (response: any) => this.ebeguRestUtil.parseApplicationProperties(response.data)
             );
         }
 
-        static instance($http, REST_API): IApplicationPropertyRS {
-            return new ApplicationPropertyRS($http, REST_API);
+        static instance($http, REST_API, ebeguRestUtil): IApplicationPropertyRS {
+            return new ApplicationPropertyRS($http, REST_API, ebeguRestUtil);
         }
 
     }
