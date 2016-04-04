@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,9 @@ public class Familiensituation extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
+
+	@ManyToOne(optional = false)
+	private Gesuch gesuch;
 
 
 	public Familiensituation() {
