@@ -35,26 +35,16 @@ module app.DvAdresse {
         parentForm: angular.IFormController;
         popup: any;   //todo team welchen datepicker wollen wir
         laenderList: Array<ebeguWeb.API.TSLand>;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
-        static $inject = ['adresseRS', 'listResourceRS', 'ebeguRestUtil'];
+        static $inject = ['adresseRS', 'listResourceRS'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS,
-                    ebeguRestUtil:ebeguWeb.utils.EbeguRestUtil) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS) {
 
             this.adresseRS = adresseRS;
-            this.popup = {opened: false}
-            this.laenderList = [];
-            this.ebeguRestUtil = ebeguRestUtil;
-            listResourceRS.getLaenderList().then((response: any) => {
-                // todo imanol in converter machen
-                // Es braucht eine kleine formattierung damit es uebersetzt werden kann.
-                for (var i = 0; i < response.data.length; i++) {
-                    let parsedCode: string = 'Land_' + response.data[i];
-                    let land: ebeguWeb.API.TSLand = ebeguRestUtil.landCodeToTSLand(parsedCode);
-                    this.laenderList.push(land);
-                }
-            });
+            this.popup = {opened: false};
+            listResourceRS.getLaenderList().then((laenderList) => {
+                this.laenderList = laenderList;
+            })
         }
 
         submit () {

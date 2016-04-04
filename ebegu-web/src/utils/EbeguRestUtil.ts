@@ -20,7 +20,7 @@ module ebeguWeb.utils {
          * @returns {any}
          */
         public static parseApplicationProperties(data:any):ebeguWeb.API.TSApplicationProperty[] {
-            var appProperties:ebeguWeb.API.TSApplicationProperty[] = new Array<ebeguWeb.API.TSApplicationProperty>();
+            var appProperties:ebeguWeb.API.TSApplicationProperty[] = [];
             if (data !== null && Array.isArray(data)) {
                 for (var i = 0; i < data.length; i++) {
                     appProperties[i] = EbeguRestUtil.parseApplicationProperty(new ebeguWeb.API.TSApplicationProperty('', ''), data[i]);
@@ -96,7 +96,13 @@ module ebeguWeb.utils {
         }
 
         public landCodeToTSLand(landCode: string): any {
-            return new ebeguWeb.API.TSLand(landCode, this.filter('translate')(landCode).toString());
+            if (landCode) {
+                if (landCode.lastIndexOf('Land_', 0) !== 0) {
+                    landCode = 'Land_' + landCode;
+                }
+                return new ebeguWeb.API.TSLand(landCode, this.filter('translate')(landCode).toString());
+            }
+            return undefined;
         }
 
         public static personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
