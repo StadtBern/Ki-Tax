@@ -2,7 +2,15 @@
 module ebeguWeb.API {
 
     export enum TSGesuchKardinalitaet {
-        ALLEINE,
-        ZU_ZWEIT
+        ALLEINE = <any>"ALLEINE",
+        ZU_ZWEIT = <any>"ZU_ZWEIT"
     }
+
+    export function getTSGesuchKardinalitaetValues(): Array<TSGesuchKardinalitaet> {
+        return [
+            TSGesuchKardinalitaet.ALLEINE,
+            TSGesuchKardinalitaet.ZU_ZWEIT
+        ];
+    }
+
 }

@@ -30,8 +30,8 @@ module ebeguWeb.FamiliensituationView {
     class FamiliensituationViewController extends AbstractGesuchViewController {
         familiensituation: TSFamiliensituation;
         familiensituationRS: ebeguWeb.services.IFamiliensituationRS;
-        familienstatusValues: Array<string>;
-        gesuchKardinalitaetValues: Array<string>;
+        familienstatusValues: Array<TSFamilienstatus>;
+        gesuchKardinalitaetValues: Array<TSGesuchKardinalitaet>;
 
         static $inject = ['$state', 'familiensituationRS'];
         /* @ngInject */
@@ -39,8 +39,8 @@ module ebeguWeb.FamiliensituationView {
             super($state);
             this.familiensituation = new TSFamiliensituation();
             this.familiensituationRS = familiensituationRS;
-            this.familienstatusValues = EnumEx.getNames(TSFamilienstatus);
-                this.gesuchKardinalitaetValues = EnumEx.getNames(TSGesuchKardinalitaet);
+            this.familienstatusValues = ebeguWeb.API.getTSFamilienstatusValues();
+            this.gesuchKardinalitaetValues = ebeguWeb.API.getTSGesuchKardinalitaetValues();
         }
 
         submit ($form: angular.IFormController) {
@@ -56,8 +56,8 @@ module ebeguWeb.FamiliensituationView {
         }
 
         showGesuchKardinalitaet(): boolean {
-            return this.familiensituation.familienstatus === TSFamilienstatus[TSFamilienstatus.ALLEINERZIEHEND].toString()
-                || this.familiensituation.familienstatus === TSFamilienstatus[TSFamilienstatus.WENIGER_FUENF_JAHRE].toString();
+            return this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND
+                || this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
         }
 
     }

@@ -18,11 +18,10 @@ module ebeguWeb.utils {
             );
         }
 
-        static getNamesAndValues(e:any) {
-            return EnumEx.getValues(e).map(v => { return {name = e[v] as string, value: v};
-            });
-        }
-
+        //static getNamesAndValues(e:any) {
+        //    return EnumEx.getValues(e).map(v => { return {name : e[v] as string, value: v};
+        //    });
+        //}
 
     }
 }
