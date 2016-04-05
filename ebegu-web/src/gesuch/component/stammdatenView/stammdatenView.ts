@@ -72,14 +72,14 @@ module app.StammdatenView {
                 if (!this.stammdaten.timestampErstellt) {
                     //es handel sich um eine neue Person
                     this.personRS.create(this.stammdaten).then((response) => {
-                            this.stammdaten = ebeguRestUtil.parsePerson(new TSPerson(), response.data);
+                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
                         }
                     );
 
                 } else {
                     //update
                     this.personRS.update(this.stammdaten).then((response) => {
-                            this.stammdaten = ebeguRestUtil.parsePerson(new TSPerson(), response.data);
+                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
                         }
                     );
                 }
