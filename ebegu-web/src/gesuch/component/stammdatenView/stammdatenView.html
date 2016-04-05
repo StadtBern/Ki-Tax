@@ -1,20 +1,8 @@
 <div class="stammdatenView row">
-    <div class="col-md-3 sidenav">
-        <ul class="sidenav">
-            <li>01 Familiensituation</li>
-            <li style="border-bottom: 1px solid #333333;">02 Stammdaten Gesuchstellerin</li>
-            <li>03 Erwerbspensum</li>
-            <li>04 FinanzielleSituation</li>
-            <li>05 Einkommensverschlechterung</li>
-            <li>06 Stammdaten der Kinder</li>
-            <li>07 Platzbestätigung</li>
-            <li>08 Anlageverzeichnis</li>
-            <li>09 Freigabequittung</li>
-        </ul>
-    </div>
-    <div class="col-md-5">
-        <h4 data-translate="GESUCHSTELLERIN"></h4>
-        <form ng-submit="form.$valid && vm.submit()" role="form" name="form" class="" novalidate>
+    <div class="col-md-12">
+        <h4 class="mainTitle" data-translate="GESUCHSTELLERIN"></h4>
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
 
             <!--Geschlecht-->
             <div class="row">
@@ -170,6 +158,12 @@
             </div>
 
             <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
                 <div class="col-md-2">
                     <button class="btn btn-primary" type="submit" data-translate="SAVE"
                             ng-if="vm.stammdaten.timestampErstellt === undefined">
@@ -178,9 +172,16 @@
                             ng-if="vm.stammdaten.timestampErstellt">
                     </button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <a href="#" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
                 </div>
             </div>
         </form>

@@ -1,14 +1,17 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 /// <reference path="../../../models/TSPerson.ts" />
+/// <reference path="../../component/abstractGesuchView.ts" />
 module app.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
-    import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
+    // import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
     import DateUtil = ebeguWeb.utils.DateUtil;
     import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
     import TSAdresse = ebeguWeb.API.TSAdresse;
     import TSPerson = ebeguWeb.API.TSPerson;
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
+    import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
+    import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude:boolean;
@@ -20,14 +23,14 @@ module app.StammdatenView {
         constructor() {
             this.transclude = false;
             this.bindings = {};
-            this.templateUrl = 'src/stammdaten/component/stammdatenView/stammdatenView.html';
+            this.templateUrl = 'src/gesuch/component/stammdatenView/stammdatenView.html';
             this.controller = StammdatenViewController;
             this.controllerAs = 'vm';
         }
     }
 
 
-    class StammdatenViewController {
+    class StammdatenViewController extends AbstractGesuchViewController {
         stammdaten:ebeguWeb.API.TSPerson;
         geschlechter:Array<string>;
         showUmzug:boolean;
@@ -35,9 +38,10 @@ module app.StammdatenView {
         personRS:ebeguWeb.services.IPersonRS;
         ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil
 
-        static $inject = ['personRS', 'ebeguRestUtil'];
+        static $inject = ['personRS', '$state','ebeguRestUtil'];
         /* @ngInject */
-        constructor(_personRS_, ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
+        constructor(_personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
+            super($state);
             this.initViewmodel();
             this.personRS = _personRS_;
             this.ebeguRestUtil = ebeguRestUtil;
@@ -55,29 +59,33 @@ module app.StammdatenView {
             this.showKorrespondadr = false;
         }
 
-        submit() {
-            if (!this.showUmzug) {
-                this.stammdaten.umzugAdresse = undefined;
-            }
-            if (!this.showKorrespondadr) {
-                this.stammdaten.korrespondenzAdresse = undefined;
-            }
-            if (!this.stammdaten.timestampErstellt) {
-                //es handel sich um eine neue Person
-                this.personRS.create(this.stammdaten).then((response) => {
-                        this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                    }
-                );
+        submit(form:angular.IFormController) {
+            if (form.$valid) {
+                //do all things
+                //this.state.go("next.step"); //go to the next step
+                if (!this.showUmzug) {
+                    this.stammdaten.umzugAdresse = undefined;
+                }
+                if (!this.showKorrespondadr) {
+                    this.stammdaten.korrespondenzAdresse = undefined;
+                }
+                if (!this.stammdaten.timestampErstellt) {
+                    //es handel sich um eine neue Person
+                    this.personRS.create(this.stammdaten).then((response) => {
+                            this.stammdaten = ebeguRestUtil.parsePerson(new TSPerson(), response.data);
+                        }
+                    );
 
-            } else {
-                //update
-                this.personRS.update(this.stammdaten).then((response) => {
-                        this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                    }
-                );
+                } else {
+                    //update
+                    this.personRS.update(this.stammdaten).then((response) => {
+                            this.stammdaten = ebeguRestUtil.parsePerson(new TSPerson(), response.data);
+                        }
+                    );
+                }
             }
-
         }
+
 
         umzugadreseClicked() {
             if (this.showUmzug) {
@@ -115,9 +123,12 @@ module app.StammdatenView {
             this.initViewmodel();
         }
 
+        previousStep() {
+            this.state.go("gesuch.familiensituation");
+        }
 
     }
 
-    angular.module('ebeguWeb.stammdaten').component('stammdatenView', new StammdatenViewComponentConfig());
+    angular.module('ebeguWeb.gesuch').component('stammdatenView', new StammdatenViewComponentConfig());
 
 }

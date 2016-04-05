@@ -285,8 +285,23 @@
     "Land_ZA":"Südafrika",
     "Land_ZM":"Sambia",
     "Land_ZW":"Simbabwe",
-    "MANN":"männlich",
-    "FRAU":"weiblich"
+    "MAENNLICH": "männlich",
+    "WEIBLICH": "weiblich",
+    "ALLEINERZIEHEND": "alleinerziehend",
+    "VERHEIRATET": "verheiratet",
+    "KONKUBINAT": "im Konkubinat lebend",
+    "LAENGER_FUENF_JAHRE": "länger als 5 Jahre in einer Beziehung",
+    "WENIGER_FUENF_JAHRE": "weniger als 5 Jahre in einer Beziehung",
+    "PARTNERSCHAFT": "in eingetragener Partnerschaft",
+    "FAMILIENSITUATION_FRAGE_1": "Wie sieht ihre Familiensituation aus?",
+    "FAMILIENSITUATION_FRAGE_2": "Möchten Sie das Gesuch alleine oder mit einer anderen erziehungsberechtigen Person beantragen?",
+    "ALLEINE": "alleine",
+    "ZU_ZWEIT": "zu zweit",
+    "BEMERKUNGEN": "Bemerkungen",
+    "BEMERKUNGEN_PLACEHOLDER": "Hier kann das Jugendamt zusätzliche Informationen erfassen.",
+    "SPEICHERN_UPPER": "SPEICHERN",
+    "PFLICHTFELDER_HINT": "Pflichtfelder sind mit * gekennzeichnet",
+    "ZURUECK_UPPER": "ZURÜCK"
 
 }
 

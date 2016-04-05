@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Adresse_;
+import ch.dvbern.ebegu.entities.Person_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -96,7 +99,7 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 		List<Adresse> results = query.getResultList();
 		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Person mit guelitBis EndOfTime
 		if (results.isEmpty()) {
-			throw new EbeguRuntimeException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personID);
+			throw new EbeguEntityNotFoundException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personID);
 		}
 		if (results.size() > 1) {
 			throw new EbeguRuntimeException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, personID);
@@ -109,11 +112,11 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 	 * Erstellt ein query gegen die Adresse mit den gegebenen parametern
 	 * @param personID person fuer die Adressen gesucht werden
 	 * @param typ typ der Adresse der gesucht wird
-	 * @param datumVon datum ab dem gesucht wird (incl)
-	 * @param datumBis datum bis zu dem gesucht wird (incl)
+	 * @param maximalDatumVon datum ab dem gesucht wird (incl)
+	 * @param minimalDatumBis datum bis zu dem gesucht wird (incl)
 	 * @return
 	 */
-	private TypedQuery<Adresse> getAdresseQuery(@Nonnull String personID, @Nonnull AdresseTyp typ, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis) {
+	private TypedQuery<Adresse> getAdresseQuery(@Nonnull String personID, @Nonnull AdresseTyp typ, @Nullable LocalDate maximalDatumVon, @Nullable LocalDate minimalDatumBis) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		ParameterExpression<String> personIdParam = cb.parameter(String.class, "personID");
 		ParameterExpression<AdresseTyp> typParam = cb.parameter(AdresseTyp.class, "adresseTyp");
@@ -129,15 +132,15 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 		predicatesToUse.add(personPredicate);
 		predicatesToUse.add(typePredicate);
 		//noinspection VariableNotUsedInsideIf
-		if (datumVon != null) {
-			Predicate datumVonPredicate = cb.greaterThanOrEqualTo(root.get(gueltigAb), gueltigVonParam);
-			predicatesToUse.add(datumVonPredicate);
+		if (maximalDatumVon != null) {
+			Predicate datumVonLessThanPred = cb.lessThanOrEqualTo(root.get(gueltigAb), gueltigVonParam);
+			predicatesToUse.add(datumVonLessThanPred);
 
 		}
 		//noinspection VariableNotUsedInsideIf
-		if (datumBis != null) {
-			Predicate datumBisPredicate = cb.lessThanOrEqualTo(root.get(gueltigBis), gueltigBisParam);
-			predicatesToUse.add(datumBisPredicate);
+		if (minimalDatumBis != null) {
+			Predicate datumBisGreaterThanPRed = cb.greaterThanOrEqualTo(root.get(gueltigBis), gueltigBisParam);
+			predicatesToUse.add(datumBisGreaterThanPRed);
 
 		}
 
@@ -148,11 +151,11 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 		typedQuery.setParameter("personID", personID);
 		typedQuery.setParameter("adresseTyp", typ);
-		if (datumVon != null) {
-			typedQuery.setParameter("gueltigVon", datumVon);
+		if (maximalDatumVon != null) {
+			typedQuery.setParameter("gueltigVon", maximalDatumVon);
 		}
-		if (datumBis != null) {
-			typedQuery.setParameter("gueltigBis", datumBis);
+		if (minimalDatumBis != null) {
+			typedQuery.setParameter("gueltigBis", minimalDatumBis);
 		}
 		return typedQuery;
 	}

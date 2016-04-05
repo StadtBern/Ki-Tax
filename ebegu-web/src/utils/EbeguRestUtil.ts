@@ -5,6 +5,7 @@ module ebeguWeb.utils {
     import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
     import TSPerson = ebeguWeb.API.TSPerson;
     import TSAdresse = ebeguWeb.API.TSAdresse;
+    import EnumGeschlecht = ebeguWeb.API.TSGeschlecht;
 
     export class EbeguRestUtil {
         public filter:any;
