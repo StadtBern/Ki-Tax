@@ -1,6 +1,7 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 
 module app.DvAdresse {
+    import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
 
@@ -33,13 +34,17 @@ module app.DvAdresse {
         adresseRS:ebeguWeb.services.IAdresseRS;
         parentForm: angular.IFormController;
         popup: any;   //todo team welchen datepicker wollen wir
+        laenderList: Array<ebeguWeb.API.TSLand>;
 
-
-        static $inject = ['adresseRS'];
+        static $inject = ['adresseRS', 'listResourceRS'];
         /* @ngInject */
-        constructor(adresseRS:ebeguWeb.services.IAdresseRS) {
+        constructor(adresseRS:ebeguWeb.services.IAdresseRS, listResourceRS: ebeguWeb.services.IListResourceRS) {
+
             this.adresseRS = adresseRS;
-            this.popup = {opened: false}
+            this.popup = {opened: false};
+            listResourceRS.getLaenderList().then((laenderList) => {
+                this.laenderList = laenderList;
+            })
         }
 
         submit () {
@@ -51,10 +56,8 @@ module app.DvAdresse {
                 });
         }
 
-
-
         createItem() {
-            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', '', '', undefined, undefined);
+            this.adresse = new ebeguWeb.API.TSAdresse('', '', '', '', '', undefined, '', undefined, undefined, undefined);
         }
 
         resetForm() {
@@ -69,5 +72,6 @@ module app.DvAdresse {
     }
 
     angular.module('ebeguWeb.core').component('dvAdresse', new AdresseComponentConfig());
+
 
 }

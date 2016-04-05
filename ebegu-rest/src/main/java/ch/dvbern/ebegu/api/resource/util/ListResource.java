@@ -26,8 +26,8 @@ public class ListResource {
 		for (final Land landIsoCode : Land.values()) {
 			if (!(Land.NICHTANERKANNT == landIsoCode
 				|| Land.UNBEKANNT == landIsoCode
-				|| Land.STAATENLOS == landIsoCode
-				&& landIsoCode.isValid())) {
+				|| Land.STAATENLOS == landIsoCode)
+				&& landIsoCode.isValid()) {
 				laender.add(landIsoCode);
 			}
 		}

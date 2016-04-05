@@ -36,14 +36,15 @@ module app.StammdatenView {
         showUmzug:boolean;
         showKorrespondadr:boolean;
         personRS:ebeguWeb.services.IPersonRS;
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
-        static $inject = ['personRS', '$state'];
+        static $inject = ['personRS', '$state','ebeguRestUtil'];
         /* @ngInject */
-        constructor(_personRS_, $state:angular.ui.IStateService) {
+        constructor(_personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
             super($state);
             this.initViewmodel();
             this.personRS = _personRS_;
-
+            this.ebeguRestUtil = ebeguRestUtil;
         }
 
         private initViewmodel() {
@@ -71,14 +72,14 @@ module app.StammdatenView {
                 if (!this.stammdaten.timestampErstellt) {
                     //es handel sich um eine neue Person
                     this.personRS.create(this.stammdaten).then((response) => {
-                            this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
+                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
                         }
                     );
 
                 } else {
                     //update
                     this.personRS.update(this.stammdaten).then((response) => {
-                            this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
+                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
                         }
                     );
                 }
