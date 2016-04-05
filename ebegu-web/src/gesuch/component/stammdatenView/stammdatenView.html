@@ -1,7 +1,8 @@
 <div class="stammdatenView row">
     <div class="col-md-12">
-        <h4 data-translate="GESUCHSTELLERIN"></h4>
+        <h4 class="mainTitle" data-translate="GESUCHSTELLERIN"></h4>
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
 
             <!--Geschlecht-->
             <div class="row">
@@ -157,7 +158,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 text-right">
+                <div class="col-md-4 ">
                     <button ng-click="vm.previousStep()" class="btn btn-link previous">
                         <span class="fa fa-chevron-left"></span>
                         <span data-translate="ZURUECK_UPPER"></span>
@@ -171,8 +172,13 @@
                             ng-if="vm.stammdaten.timestampErstellt">
                     </button>
                 </div>
-                <div class="col-md-6">
-                    <button type="submit" class="btn btn-link next" >
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
                     </button>

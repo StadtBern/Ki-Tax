@@ -11,7 +11,7 @@ module ebeguWeb.API {
         private _telefon:string;
         private _telefonAusland:string;
         private _umzug:boolean;
-        private _geschlecht:ebeguWeb.API.EnumGeschlecht;
+        private _geschlecht:ebeguWeb.API.TSGeschlecht;
         private _adresse:ebeguWeb.API.TSAdresse;
         private _korrespondenzAdresse:ebeguWeb.API.TSAdresse;
         private _umzugAdresse:ebeguWeb.API.TSAdresse;
@@ -96,11 +96,11 @@ module ebeguWeb.API {
         }
 
 
-        public get geschlecht():ebeguWeb.API.EnumGeschlecht {
+        public get geschlecht():ebeguWeb.API.TSGeschlecht {
             return this._geschlecht;
         }
 
-        public set geschlecht(value:ebeguWeb.API.EnumGeschlecht) {
+        public set geschlecht(value:ebeguWeb.API.TSGeschlecht) {
             this._geschlecht = value;
         }
 

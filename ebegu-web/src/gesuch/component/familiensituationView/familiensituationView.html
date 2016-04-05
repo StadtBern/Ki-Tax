@@ -11,37 +11,48 @@
                         <dv-error-messages ng-if="form.$submitted" for="form.familiensituation.$error"
                                            class="error"></dv-error-messages>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'ALLEINERZIEHEND'">{{'ALLEINERZIEHEND' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'ALLEINERZIEHEND'">
+                                <span data-translate="ALLEINERZIEHEND"></span> </label>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'VERHEIRATET'">{{'VERHEIRATET' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'VERHEIRATET'">
+                                <span data-translate="VERHEIRATET"></span> </label>
                         </div>
-                        <br />
+                        <br/>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'KONKUBINAT'">{{'KONKUBINAT' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'KONKUBINAT'">
+                                <span data-translate="KONKUBINAT"></span></label>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'LAENGER_FUENF_JAHRE'">{{'LAENGER_FUENF_JAHRE' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'LAENGER_FUENF_JAHRE'">
+                                <span data-translate="LAENGER_FUENF_JAHRE"></span></label>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'WENIGER_FUENF_JAHRE'">{{'WENIGER_FUENF_JAHRE' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'WENIGER_FUENF_JAHRE'">
+                                <span data-translate="WENIGER_FUENF_JAHRE"></span></label>
                         </div>
-                        <br />
+                        <br/>
                         <div class="radio">
-                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation" required
-                                          ng-value="'PARTNERSCHAFT'">{{'PARTNERSCHAFT' | translate}}</label>
+                            <label><input type="radio" name="familiensituation" ng-model="vm.gesuch.familiensituation"
+                                          required
+                                          ng-value="'PARTNERSCHAFT'">
+                                <span data-translate="PARTNERSCHAFT"></span>
+                            </label>
                         </div>
-
                     </div>
                 </div>
             </div>
-
-            <br />
+            <br/>
 
             <!--beantragen-->
             <div class="row">
@@ -51,11 +62,13 @@
                         <dv-error-messages ng-if="form.$submitted" for="form.beantragen.$error"
                                            class="error"></dv-error-messages>
                         <div class="radio">
-                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen" ng-required="vm.showBeantragen()"
+                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen"
+                                          ng-required="vm.showBeantragen()"
                                           ng-value="'ALLEINE'">{{'ALLEINE' | translate}}</label>
                         </div>
                         <div class="radio">
-                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen"  ng-required="vm.showBeantragen()"
+                            <label><input type="radio" name="beantragen" ng-model="vm.gesuch.beantragen"
+                                          ng-required="vm.showBeantragen()"
                                           ng-value="'ZU_ZWEIT'">{{'ZU_ZWEIT' | translate}}</label>
                         </div>
                     </div>
@@ -75,14 +88,12 @@
 
             <div class="row">
                 <div class="col-md-6 col-md-offset-6">
-                    <button type="submit" class="btn btn-link next" >
+                    <button type="submit" class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
                     </button>
                 </div>
             </div>
-
         </form>
     </div>
-
 </div>

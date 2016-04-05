@@ -16,7 +16,5 @@ module ebeguWeb.GesuchView {
         isAdminRole(): boolean {
             return true; // todo team wenn die Role definiert sind hier muss die Rolle berechnet werden
         }
-
     }
-
 }

@@ -1,16 +1,17 @@
 /// <reference path="../../../../typings/browser.d.ts" />
-/// <reference path="../../../models/TSStammdaten.ts" />
+/// <reference path="../../../models/TSPerson.ts" />
 /// <reference path="../../component/abstractGesuchView.ts" />
 module app.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
-    import EnumGeschlecht = ebeguWeb.API.EnumGeschlecht;
+    // import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
     import DateUtil = ebeguWeb.utils.DateUtil;
     import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
     import TSAdresse = ebeguWeb.API.TSAdresse;
     import TSPerson = ebeguWeb.API.TSPerson;
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
+    import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude:boolean;
@@ -36,57 +37,54 @@ module app.StammdatenView {
         showKorrespondadr:boolean;
         personRS:ebeguWeb.services.IPersonRS;
 
-        static $inject = ['personRS','$state'];
+        static $inject = ['personRS', '$state'];
         /* @ngInject */
-        constructor(_personRS_, $state: angular.ui.IStateService) {
+        constructor(_personRS_, $state:angular.ui.IStateService) {
             super($state);
             this.initViewmodel();
             this.personRS = _personRS_;
 
         }
-        private initViewmodel() {
-                   this.stammdaten = new ebeguWeb.API.TSPerson();
-                   let wohnAdr = new ebeguWeb.API.TSAdresse();
-                   wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-                   this.stammdaten.adresse = wohnAdr;
-                   this.stammdaten.umzugAdresse = undefined;
-                   this.stammdaten.korrespondenzAdresse = undefined;
-                   this.geschlechter = EnumEx.getNames(TSGeschlecht);
-                   this.showUmzug = false;
-                   this.showKorrespondadr = false;
-               }
 
-        submit (form: angular.IFormController) {
+        private initViewmodel() {
+            this.stammdaten = new ebeguWeb.API.TSPerson();
+            let wohnAdr = new ebeguWeb.API.TSAdresse();
+            wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
+            this.stammdaten.adresse = wohnAdr;
+            this.stammdaten.umzugAdresse = undefined;
+            this.stammdaten.korrespondenzAdresse = undefined;
+            this.geschlechter = EnumEx.getNames(TSGeschlecht);
+            this.showUmzug = false;
+            this.showKorrespondadr = false;
+        }
+
+        submit(form:angular.IFormController) {
             if (form.$valid) {
                 //do all things
                 //this.state.go("next.step"); //go to the next step
                 if (!this.showUmzug) {
-                              this.stammdaten.umzugAdresse = undefined;
-                          }
-                          if (!this.showKorrespondadr) {
-                              this.stammdaten.korrespondenzAdresse = undefined;
-                          }
-                          if (!this.stammdaten.timestampErstellt) {
-                              //es handel sich um eine neue Person
-                              this.personRS.create(this.stammdaten).then((response) => {
-                                      this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
-                                  }
-                              );
-              
-                          } else {
-                              //update
-                              this.personRS.update(this.stammdaten).then((response) => {
-                                      this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
-                                  }
-                              );
-                          }
+                    this.stammdaten.umzugAdresse = undefined;
+                }
+                if (!this.showKorrespondadr) {
+                    this.stammdaten.korrespondenzAdresse = undefined;
+                }
+                if (!this.stammdaten.timestampErstellt) {
+                    //es handel sich um eine neue Person
+                    this.personRS.create(this.stammdaten).then((response) => {
+                            this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
+                        }
+                    );
+
+                } else {
+                    //update
+                    this.personRS.update(this.stammdaten).then((response) => {
+                            this.stammdaten = EbeguRestUtil.parsePerson(new TSPerson(), response.data);
+                        }
+                    );
+                }
             }
         }
 
-        removeRow() {
-        }
-
-        }
 
         umzugadreseClicked() {
             if (this.showUmzug) {
