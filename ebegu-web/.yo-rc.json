@@ -35,8 +35,8 @@
         "file": "src/admin/admin.module.ts"
       },
       {
-        "name": "ebeguWeb.stammdaten",
-        "file": "src/stammdaten/stammdaten.module.ts"
+        "name": "ebeguWeb.gesuch",
+        "file": "src/gesuch/gesuch.module.ts"
       }
     ]
   }

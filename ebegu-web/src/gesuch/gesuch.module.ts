@@ -2,5 +2,5 @@
 module ebeguWeb {
     'use strict';
 
-    angular.module('ebeguWeb.stammdaten', ['ebeguWeb.core']);
+    angular.module('ebeguWeb.gesuch', ['ebeguWeb.core', 'ui.router']);
 }

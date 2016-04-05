@@ -1,7 +1,7 @@
-/// <reference path="../../../typings/browser.d.ts" />
+/// <reference path="../../../../typings/browser.d.ts" />
 describe('stammdatenView', function () {
 
-    beforeEach(angular.mock.module('ebeguWeb.stammdaten'));
+    beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
     var component : any;
     var scope : angular.IScope;
