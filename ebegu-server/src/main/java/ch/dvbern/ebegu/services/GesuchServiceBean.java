@@ -8,6 +8,8 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +19,8 @@ import java.util.Optional;
 /**
  * Service fuer Gesuch
  */
+@Stateless
+@Local(GesuchService.class)
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
 
 	@Inject

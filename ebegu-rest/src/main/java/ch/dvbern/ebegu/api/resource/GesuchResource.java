@@ -5,10 +5,12 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.services.GesuchService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -21,6 +23,9 @@ import javax.ws.rs.core.UriInfo;
 /**
  * Resource fuer Gesuch
  */
+@Path("gesuche")
+@Stateless
+@Api
 public class GesuchResource {
 
 	@Inject
