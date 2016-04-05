@@ -1,7 +1,7 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.API {
 
-    export class TSGesuch extends TSAbstractEntity {
+    export class TSFamiliensituation extends TSAbstractEntity {
 
         private _familiensituation: string;
         private _beantragen: string;

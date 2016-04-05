@@ -3,19 +3,19 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.EnumBeantragen;
 import ch.dvbern.ebegu.enums.EnumFamiliensituation;
 import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
  */
+@Audited
+@Entity
 public class Familiensituation extends AbstractEntity {
 
 	@Enumerated(value = EnumType.STRING)

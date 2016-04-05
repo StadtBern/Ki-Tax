@@ -26,6 +26,7 @@
         "src/models/TSPerson.ts",
         "src/models/TSGesuch.ts",
         "src/models/TSLand.ts",
+        "src/models/TSFamiliensituation.ts",
         "src/admin/component/adminView/adminView.ts",
         "src/admin/service/applicationPropertyRS.rest.ts",
         "src/core/service/adresseRS.ts",

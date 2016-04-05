@@ -1,9 +1,10 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 /// <reference path="../../component/abstractGesuchView.ts" />
-/// <reference path="../../../models/TSGesuch.ts" />
+/// <reference path="../../../models/TSFamiliensituation.ts" />
+/// <reference path="../../service/familiensituationRS.rest.ts" />
 module ebeguWeb.FamiliensituationView {
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
-    import TSGesuch = ebeguWeb.API.TSGesuch;
+    import TSFamiliensituation = ebeguWeb.API.TSFamiliensituation;
     'use strict';
 
     class FamiliensituationViewComponentConfig implements angular.IComponentOptions {
@@ -24,23 +25,30 @@ module ebeguWeb.FamiliensituationView {
 
 
     class FamiliensituationViewController extends AbstractGesuchViewController {
-        gesuch: TSGesuch;
+        familiensituation: TSFamiliensituation;
+        familienSituationRS: ebeguWeb.services.IFamiliensituationRS;
 
         static $inject = ['$state'];
         /* @ngInject */
         constructor($state: angular.ui.IStateService) {
             super($state);
-            this.gesuch = new TSGesuch();
+            this.familiensituation = new TSFamiliensituation();
         }
 
         submit ($form: angular.IFormController) {
             if ($form.$valid) {
+                //testen ob aktuelles familiensituation schon gespeichert ist
+                if (this.familiensituation.timestampErstellt) {
+                    this.familienSituationRS.update(this.familiensituation);
+                } else {
+                    this.familienSituationRS.create(this.familiensituation);
+                }
                 this.state.go("gesuch.stammdaten");
             }
         }
 
         showBeantragen(): boolean {
-            return this.gesuch.familiensituation === 'ALLEINERZIEHEND' || this.gesuch.familiensituation === 'WENIGER_FUENF_JAHRE';
+            return this.familiensituation.familiensituation === 'ALLEINERZIEHEND' || this.familiensituation.familiensituation === 'WENIGER_FUENF_JAHRE';
         }
 
     }

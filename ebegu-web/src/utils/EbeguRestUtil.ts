@@ -11,7 +11,7 @@ module ebeguWeb.utils {
         public filter:any;
         static $inject = ['$filter'];
 
-        constructor($filter: any) {
+        constructor($filter:any) {
             this.filter = $filter;
         }
 
@@ -93,7 +93,6 @@ module ebeguWeb.utils {
                 return adresseTS;
             }
             return undefined;
-
         }
 
         /**
@@ -123,9 +122,9 @@ module ebeguWeb.utils {
             }
             return undefined;
         }
-        
 
-        public personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
+        public static personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
+
             if (person) {
                 this.abstractEntityToRestObject(restPerson, person);
 
@@ -169,7 +168,16 @@ module ebeguWeb.utils {
 
         }
 
-        static instance ($filter) : EbeguRestUtil {
+        public familiensituationToRestObject(restFamiliensituation: any, familiensituation: ebeguWeb.API.TSFamiliensituation): ebeguWeb.API.TSFamiliensituation {
+            restFamiliensituation.familiensituation = familiensituation.familiensituation;
+            restFamiliensituation.beantragen = familiensituation.beantragen;
+            restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
+            EbeguRestUtil.abstractEntityToRestObject(restFamiliensituation, familiensituation);
+
+            return restFamiliensituation;
+        }
+
+        static instance($filter):EbeguRestUtil {
             return new EbeguRestUtil($filter);
         }
 
