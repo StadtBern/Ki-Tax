@@ -19,7 +19,7 @@ module ebeguWeb.services {
     export class ApplicationPropertyRS implements IApplicationPropertyRS {
         serviceURL: string;
         http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
         static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
         /* @ngInject */

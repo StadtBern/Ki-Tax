@@ -8,7 +8,7 @@ module ebeguWeb.routes {
     export function appRun(angularMomentConfig : any ,routerHelper : IRouterHelper, listResourceRS: ebeguWeb.services.ListResourceRS) {
         routerHelper.configureStates(getStates());
         angularMomentConfig.format = 'DD.MM.YYYY';
-        listResourceRS.getLaenderList();
+        listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
     }
 
     function getStates() {

@@ -66,7 +66,7 @@ module ebeguWeb.utils {
                 restAdresse.zusatzzeile = adresse.zusatzzeile;
                 restAdresse.plz = adresse.plz;
                 restAdresse.ort = adresse.ort;
-                restAdresse.land = this.tsLandCodeToLandCode(adresse.land);
+                restAdresse.land = adresse.land;
                 restAdresse.gemeinde = adresse.gemeinde;
                 restAdresse.gueltigAb =  DateUtil.momentToLocalDate(adresse.gueltigAb);
                 restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigBis);
@@ -105,7 +105,7 @@ module ebeguWeb.utils {
         public landCodeToTSLand(landCode: string): ebeguWeb.API.TSLand {
             if (landCode) {
                 let parsedLandCode = this.landCodeToTSLandCode(landCode);
-                return new ebeguWeb.API.TSLand(parsedLandCode, this.filter('translate')(parsedLandCode).toString());
+                return new ebeguWeb.API.TSLand(landCode, this.filter('translate')(parsedLandCode).toString());
             }
             return undefined;
         }
@@ -123,18 +123,7 @@ module ebeguWeb.utils {
             }
             return undefined;
         }
-
-        /**
-         * Entfernt das 'Land_' vom eingegebenen Landcode.
-         * @param land
-         * @returns {any}
-         */
-        public tsLandCodeToLandCode(land: string): string {
-            if (land) {
-                return land.replace('Land_', '');
-            }
-            return undefined;
-        }
+        
 
         public personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
             if (person) {

@@ -36,7 +36,7 @@ module app.StammdatenView {
         showUmzug:boolean;
         showKorrespondadr:boolean;
         personRS:ebeguWeb.services.IPersonRS;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil
+        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
         static $inject = ['personRS', '$state','ebeguRestUtil'];
         /* @ngInject */

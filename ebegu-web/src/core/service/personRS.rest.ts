@@ -28,7 +28,7 @@ module ebeguWeb.services {
 
         public update(person) {
             let pers = {};
-             pers = this.ebeguRestUtil.personToRestObject(pers,person)
+             pers = this.ebeguRestUtil.personToRestObject(pers,person);
 
             return this.http.put(this.serviceURL,  pers, {
                 headers: {
@@ -39,7 +39,7 @@ module ebeguWeb.services {
 
         public create(person) {
             let pers = {};
-            pers = this.ebeguRestUtil.personToRestObject(pers,person)
+            pers = this.ebeguRestUtil.personToRestObject(pers,person);
             return this.http.post(this.serviceURL, pers, {
                 headers: {
                     'Content-Type': 'application/json'
