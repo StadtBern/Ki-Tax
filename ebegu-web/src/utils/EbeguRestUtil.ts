@@ -169,8 +169,8 @@ module ebeguWeb.utils {
         }
 
         public familiensituationToRestObject(restFamiliensituation: any, familiensituation: ebeguWeb.API.TSFamiliensituation): ebeguWeb.API.TSFamiliensituation {
-            restFamiliensituation.familiensituation = familiensituation.familiensituation;
-            restFamiliensituation.beantragen = familiensituation.beantragen;
+            restFamiliensituation.familienstatus = familiensituation.familienstatus;
+            restFamiliensituation.gesuchKardinalitaet = familiensituation.gesuchKardinalitaet;
             restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
             EbeguRestUtil.abstractEntityToRestObject(restFamiliensituation, familiensituation);
 

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.EnumBeantragen;
-import ch.dvbern.ebegu.enums.EnumFamiliensituation;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchKardinalitaet;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -21,12 +21,12 @@ public class Familiensituation extends AbstractEntity {
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	@Column(nullable = false)
-	private EnumFamiliensituation familiensituation;
+	private EnumFamilienstatus familienstatus;
 
 	@Enumerated(value = EnumType.STRING)
 	@Nullable
 	@Column(nullable = true)
-	private EnumBeantragen beantragen;
+	private EnumGesuchKardinalitaet gesuchKardinalitaet;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -41,21 +41,21 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	@Nonnull
-	public EnumFamiliensituation getFamiliensituation() {
-		return familiensituation;
+	public EnumFamilienstatus getFamilienstatus() {
+		return familienstatus;
 	}
 
-	public void setFamiliensituation(@Nonnull EnumFamiliensituation familiensituation) {
-		this.familiensituation = familiensituation;
+	public void setFamilienstatus(@Nonnull EnumFamilienstatus familienstatus) {
+		this.familienstatus = familienstatus;
 	}
 
 	@Nullable
-	public EnumBeantragen getBeantragen() {
-		return beantragen;
+	public EnumGesuchKardinalitaet getGesuchKardinalitaet() {
+		return gesuchKardinalitaet;
 	}
 
-	public void setBeantragen(@Nullable EnumBeantragen beantragen) {
-		this.beantragen = beantragen;
+	public void setGesuchKardinalitaet(@Nullable EnumGesuchKardinalitaet gesuchKardinalitaet) {
+		this.gesuchKardinalitaet = gesuchKardinalitaet;
 	}
 
 	@Nullable

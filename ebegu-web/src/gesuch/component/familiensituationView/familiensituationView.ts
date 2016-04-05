@@ -3,8 +3,11 @@
 /// <reference path="../../../models/TSFamiliensituation.ts" />
 /// <reference path="../../service/familiensituationRS.rest.ts" />
 module ebeguWeb.FamiliensituationView {
+    import EnumEx = ebeguWeb.utils.EnumEx;
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
     import TSFamiliensituation = ebeguWeb.API.TSFamiliensituation;
+    import TSFamilienstatus = ebeguWeb.API.TSFamilienstatus;
+    import TSGesuchKardinalitaet = ebeguWeb.API.TSGesuchKardinalitaet;
     'use strict';
 
     class FamiliensituationViewComponentConfig implements angular.IComponentOptions {
@@ -26,29 +29,35 @@ module ebeguWeb.FamiliensituationView {
 
     class FamiliensituationViewController extends AbstractGesuchViewController {
         familiensituation: TSFamiliensituation;
-        familienSituationRS: ebeguWeb.services.IFamiliensituationRS;
+        familiensituationRS: ebeguWeb.services.IFamiliensituationRS;
+        familienstatusValues: Array<string>;
+        gesuchKardinalitaetValues: Array<string>;
 
-        static $inject = ['$state'];
+        static $inject = ['$state', 'familiensituationRS'];
         /* @ngInject */
-        constructor($state: angular.ui.IStateService) {
+        constructor($state: angular.ui.IStateService, familiensituationRS: ebeguWeb.services.IFamiliensituationRS) {
             super($state);
             this.familiensituation = new TSFamiliensituation();
+            this.familiensituationRS = familiensituationRS;
+            this.familienstatusValues = EnumEx.getNames(TSFamilienstatus);
+                this.gesuchKardinalitaetValues = EnumEx.getNames(TSGesuchKardinalitaet);
         }
 
         submit ($form: angular.IFormController) {
             if ($form.$valid) {
                 //testen ob aktuelles familiensituation schon gespeichert ist
                 if (this.familiensituation.timestampErstellt) {
-                    this.familienSituationRS.update(this.familiensituation);
+                    this.familiensituationRS.update(this.familiensituation);
                 } else {
-                    this.familienSituationRS.create(this.familiensituation);
+                    this.familiensituationRS.create(this.familiensituation);
                 }
                 this.state.go("gesuch.stammdaten");
             }
         }
 
-        showBeantragen(): boolean {
-            return this.familiensituation.familiensituation === 'ALLEINERZIEHEND' || this.familiensituation.familiensituation === 'WENIGER_FUENF_JAHRE';
+        showGesuchKardinalitaet(): boolean {
+            return this.familiensituation.familienstatus === TSFamilienstatus[TSFamilienstatus.ALLEINERZIEHEND].toString()
+                || this.familiensituation.familienstatus === TSFamilienstatus[TSFamilienstatus.WENIGER_FUENF_JAHRE].toString();
         }
 
     }

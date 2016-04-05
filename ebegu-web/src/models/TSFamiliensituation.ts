@@ -1,34 +1,37 @@
 /// <reference path="../../typings/browser.d.ts" />
 module ebeguWeb.API {
+    'use strict';
+    import TSFamilienstatus = ebeguWeb.API.TSFamilienstatus;
+    import TSGesuchKardinalitaet = ebeguWeb.API.TSGesuchKardinalitaet;
 
     export class TSFamiliensituation extends TSAbstractEntity {
 
-        private _familiensituation: string;
-        private _beantragen: string;
+        private _familienstatus: TSFamilienstatus;
+        private _gesuchKardinalitaet: TSGesuchKardinalitaet;
         private _bemerkungen: string;
 
 
-        constructor(familiensituation?:string, beantragen?: string, bemerkungen?: string) {
+        constructor(familienstatus?:TSFamilienstatus, gesuchKardinalitaet?: TSGesuchKardinalitaet, bemerkungen?: string) {
             super();
-            this._familiensituation = familiensituation;
-            this._beantragen = beantragen;
+            this._familienstatus = familienstatus;
+            this._gesuchKardinalitaet = gesuchKardinalitaet;
             this._bemerkungen = bemerkungen;
         }
 
-        public get familiensituation():string {
-            return this._familiensituation;
+        public get familienstatus():TSFamilienstatus {
+            return this._familienstatus;
         }
 
-        public set familiensituation(familiensituation:string) {
-            this._familiensituation = familiensituation;
+        public set familienstatus(familienstatus:TSFamilienstatus) {
+            this._familienstatus = familienstatus;
         }
 
-        public get beantragen():string {
-            return this._beantragen;
+        public get gesuchKardinalitaet():TSGesuchKardinalitaet {
+            return this._gesuchKardinalitaet;
         }
 
-        public set beantragen(beantragen:string) {
-            this._beantragen = beantragen;
+        public set gesuchKardinalitaet(gesuchKardinalitaet:TSGesuchKardinalitaet) {
+            this._gesuchKardinalitaet = gesuchKardinalitaet;
         }
 
         public get bemerkungen():string {

@@ -4,10 +4,10 @@ module ebeguWeb.utils {
     export class EnumEx {
         /**
          *
-         * @param e takes an enum and returns the names of the objects as a string arry
+         * @param e takes an enum and returns the names of the objects as a string array
          * @returns {string[]}
          */
-        static getNames(e:any) {
+        static getNames(e:any): Array<string> {
             return Object.keys(e).filter(v => isNaN(parseInt(v, 10))
             );
         }
@@ -19,8 +19,10 @@ module ebeguWeb.utils {
         }
 
         static getNamesAndValues(e:any) {
-            return EnumEx.getValues(e).map(v => { return {name: e[v] as string, value: v};
+            return EnumEx.getValues(e).map(v => { return {name = e[v] as string, value: v};
             });
         }
+
+
     }
 }

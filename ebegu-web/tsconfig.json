@@ -20,6 +20,8 @@
         "src/admin/admin.route.ts",
         "src/models/enums/TSAdressetyp.ts",
         "src/models/enums/TSGeschlecht.ts",
+        "src/models/enums/TSFamilienstatus.ts",
+        "src/models/enums/TSGesuchKardinalitaet.ts",
         "src/models/TSAbstractEntity.ts",
         "src/models/TSApplicationProperty.ts",
         "src/models/TSAdresse.ts",

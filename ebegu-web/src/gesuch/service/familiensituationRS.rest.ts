@@ -49,6 +49,12 @@ module ebeguWeb.services {
             return this.http.get( this.serviceURL + '/' + encodeURIComponent(familiensituationID));
         }
 
+        static instance ($http, REST_API, ebeguRestUtil) : IFamiliensituationRS {
+            return new FamiliensituationRS($http, REST_API, ebeguRestUtil);
+        }
+
     }
+
+    angular.module('ebeguWeb.core').factory('familiensituationRS', FamiliensituationRS.instance);
 
 }

@@ -20,31 +20,31 @@ CREATE TABLE fall_aud (
 );
 
 CREATE TABLE familiensituation (
-  id                 VARCHAR(36)  NOT NULL,
-  timestamp_erstellt DATETIME     NOT NULL,
-  timestamp_mutiert  DATETIME     NOT NULL,
-  user_erstellt      VARCHAR(36)  NOT NULL,
-  user_mutiert       VARCHAR(36)  NOT NULL,
-  version            BIGINT       NOT NULL,
-  beantragen         VARCHAR(255),
-  bemerkungen        VARCHAR(1000),
-  familiensituation  VARCHAR(255) NOT NULL,
-  gesuch_id          VARCHAR(36)  NOT NULL,
+  id                   VARCHAR(36)  NOT NULL,
+  timestamp_erstellt   DATETIME     NOT NULL,
+  timestamp_mutiert    DATETIME     NOT NULL,
+  user_erstellt        VARCHAR(36)  NOT NULL,
+  user_mutiert         VARCHAR(36)  NOT NULL,
+  version              BIGINT       NOT NULL,
+  gesuch_kardinalitaet VARCHAR(255),
+  bemerkungen          VARCHAR(1000),
+  familienstatus       VARCHAR(255) NOT NULL,
+  gesuch_id            VARCHAR(36)  NOT NULL,
   CONSTRAINT PK_familiensituation PRIMARY KEY (id)
 );
 
 CREATE TABLE familiensituation_aud (
-  id                 VARCHAR(36) NOT NULL,
-  rev                INTEGER     NOT NULL,
-  revtype            TINYINT,
-  timestamp_erstellt DATETIME,
-  timestamp_mutiert  DATETIME,
-  user_erstellt      VARCHAR(36),
-  user_mutiert       VARCHAR(36),
-  beantragen         VARCHAR(255),
-  bemerkungen        VARCHAR(1000),
-  familiensituation  VARCHAR(255),
-  gesuch_id          VARCHAR(36),
+  id                  VARCHAR(36) NOT NULL,
+  rev                 INTEGER     NOT NULL,
+  revtype             TINYINT,
+  timestamp_erstellt  DATETIME,
+  timestamp_mutiert   DATETIME,
+  user_erstellt       VARCHAR(36),
+  user_mutiert        VARCHAR(36),
+  gesuchKardinalitaet VARCHAR(255),
+  bemerkungen         VARCHAR(1000),
+  familienstatus      VARCHAR(255),
+  gesuch_id           VARCHAR(36),
   CONSTRAINT PK_familiensituation_aud PRIMARY KEY (id, rev)
 );
 

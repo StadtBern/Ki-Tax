@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.enums;
 /**
  * Enum fuer Feld Familiensituation
  */
-public enum EnumFamiliensituation {
+public enum EnumFamilienstatus {
 
 	ALLEINERZIEHEND,
 	VERHEIRATET,
