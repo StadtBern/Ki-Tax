@@ -34,7 +34,18 @@ module.exports = function (grunt) {
                         }
                     }
                 ]
-            }
+            },
+            swaggerUi: {
+                options: {
+                    port: 9002,
+                    // hostname: 'localhost',
+                    base: './dist/swagger-ui',
+                    host: 'localhost',
+                    open: 'http://localhost:9002/index.html?url=http://localhost:8080/ebegu/api/v1/swagger.json#!/default/'
+                    }
+
+            },
+
         },
         watch: {
             options: {
@@ -45,7 +56,7 @@ module.exports = function (grunt) {
                     livereload: true,
                     livereloadOnError: false
                 },
-                files: [globs.createFolderGlobs(['*.js','*.ts', '*.html']), '!_SpecRunner.html', '!.grunt'],
+                files: [globs.createFolderGlobs(['*.js', '*.ts', '*.html']), '!_SpecRunner.html', '!.grunt'],
                 tasks: [] //all the tasks are run dynamically during the watch event handler
             },
             less: {
@@ -132,7 +143,8 @@ module.exports = function (grunt) {
                     {src: ['package.json'], dest: 'dist/', filter: 'isFile', expand: true},
                     {src: ['src/images/**'], dest: 'dist/'},
                     //vielleicht kann man hier swagger-ui separat deployen todo team remove
-                    {src: ['node_modules/swagger-ui/dist/*'], dest: 'dist/swagger-ui/'},
+                    {cwd: 'node_modules/swagger-ui/dist/', src: ['**'], dest: 'dist/swagger-ui/', expand: true},
+                    // {src: ['node_modules/swagger-ui/dist/*'], dest: 'dist/swagger-ui/'},
                     //todo bilder  einfuegen {src: ['node_modules/bootstrap/fonts/**'], dest: 'dist/', filter: 'isFile', expand: true}
                 ]
             }
@@ -304,6 +316,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', ['clean:before', 'jshint:main', 'jscs:main', 'less:production', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
     grunt.registerTask('serve', ['dom_munger:read', 'jshint:main', 'jscs:main', 'configureProxies:dev', 'connect:dev', 'ts', 'less:development', 'watch']);
+    grunt.registerTask('serve-swagger', ['build','connect:swaggerUi:keepalive']);
     grunt.registerTask('test', ['dom_munger:read', 'karma:all_tests']);
     grunt.registerTask('doc', ['jsdoc']);
     grunt.registerTask('type', ['ts']);
