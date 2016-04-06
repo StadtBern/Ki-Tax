@@ -1,66 +1,49 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.routes {
-    'use strict';
+import {IState, IUrlRouterProvider, IStateProvider} from 'angular-ui-router';
+import {IServiceProvider, ILocationProvider} from 'angular';
 
-    export interface IRouterHelper {
-        hasOtherwise: boolean;
-        stateProvider: angular.IServiceProvider;
-        urlRouterProvider: angular.ui.IUrlRouterProvider;
+export class RouterHelper {
+    static $inject = ['$stateProvider', '$urlRouterProvider'];
 
-        configureStates: (states: Array<angular.ui.IState>, otherwisePath?: string) => void;
-        getStates: () => Array<angular.ui.IState>;
+    hasOtherwise: boolean;
+    stateProvider: IStateProvider;
+    urlRouterProvider: IUrlRouterProvider;
+
+    /* @ngInject */
+    constructor($stateProvider: IStateProvider, $urlRouterProvider: IUrlRouterProvider) {
+        this.hasOtherwise = false;
+        this.stateProvider = $stateProvider;
+        this.urlRouterProvider = $urlRouterProvider;
     }
 
-    export class RouterHelper implements IRouterHelper {
-        hasOtherwise: boolean;
-        stateProvider: angular.ui.IStateProvider;
-        urlRouterProvider: angular.ui.IUrlRouterProvider;
-
-        static $inject = ['$stateProvider', '$urlRouterProvider'];
-        /* @ngInject */
-        constructor($stateProvider, $urlRouterProvider) {
-            this.hasOtherwise = false;
-            this.stateProvider = $stateProvider;
-            this.urlRouterProvider = $urlRouterProvider;
+    public configureStates(states: IState[], otherwisePath?: string): void {
+        states.forEach((state) => {
+            this.stateProvider.state(state);
+        });
+        if (otherwisePath && !this.hasOtherwise) {
+            this.hasOtherwise = true;
+            this.urlRouterProvider.otherwise(otherwisePath);
         }
-
-        /**
-         * @param {Array} states
-         * @param {string} [otherwisePath]
-         */
-        public configureStates(states, otherwisePath) {
-            states.forEach((state) => {
-                this.stateProvider.state(state);
-            });
-            if (otherwisePath && !this.hasOtherwise) {
-                this.hasOtherwise = true;
-                this.urlRouterProvider.otherwise(otherwisePath);
-            }
-        }
-
-        public getStates() {
-            return this.stateProvider.$get();
-        }
-
     }
 
-    export class RouterHelperProvider implements angular.IServiceProvider {
-
-        private routerHelper: IRouterHelper;
-
-        static $inject = ['$locationProvider', '$stateProvider', '$urlRouterProvider'];
-        /* @ngInject */
-        constructor($locationProvider: angular.ILocationProvider, $stateProvider, $urlRouterProvider) {
-            $locationProvider.html5Mode(false);
-            this.routerHelper = new RouterHelper($stateProvider, $urlRouterProvider);
-        }
-
-        $get(): IRouterHelper {
-            return this.routerHelper;
-        }
-
+    public getStates(): IState[] {
+        return this.stateProvider.$get();
     }
-
-    angular.module('dvbAngular.router').provider('routerHelper', RouterHelperProvider);
-
 }
+
+export default class RouterHelperProvider implements IServiceProvider {
+    static $inject = ['$locationProvider', '$stateProvider', '$urlRouterProvider'];
+
+    private routerHelper: RouterHelper;
+
+    /* @ngInject */
+    constructor($locationProvider: ILocationProvider, $stateProvider: IStateProvider, $urlRouterProvider: IUrlRouterProvider) {
+        $locationProvider.html5Mode(false);
+        this.routerHelper = new RouterHelper($stateProvider, $urlRouterProvider);
+    }
+
+    $get(): RouterHelper {
+        return this.routerHelper;
+    }
+}
+
+angular.module('dvbAngular.router').provider('routerHelper', RouterHelperProvider);

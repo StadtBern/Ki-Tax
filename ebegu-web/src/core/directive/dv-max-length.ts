@@ -1,36 +1,41 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.directive {
-    'use strict';
-    class DVMaxLength implements ng.IDirective {
-        restrict = 'A';
-        require = 'ngModel';
-        length:number;
+import {
+    IDirective,
+    IDirectiveFactory,
+    IDirectiveLinkFn,
+    IScope,
+    IAugmentedJQuery,
+    IAttributes,
+    INgModelController
+} from 'angular';
 
-        static $inject = ['MAX_LENGTH'];
-        constructor(MAX_LENGTH:number) {
+class DVMaxLength implements IDirective {
+    static $inject = ['MAX_LENGTH'];
 
-            this.length = MAX_LENGTH;
-        }
+    restrict = 'A';
+    require = 'ngModel';
+    length: number;
+    link: IDirectiveLinkFn;
 
-        link = (scope:ng.IScope, element:ng.IAugmentedJQuery, attrs:ng.IAttributes, ctrl:any) => {
-            if (!ctrl) {
-                return;
-            }
-
-            ctrl.$validators.dvMaxLength = (modelValue, viewValue) => {
-                return ctrl.$isEmpty(viewValue) || (viewValue.length <= this.length);
-            };
-        };
-
-        static factory():ng.IDirectiveFactory {
-            const directive = (MAX_LENGTH:number) => new DVMaxLength(MAX_LENGTH);
-            directive.$inject = ['MAX_LENGTH'];
-            return directive;
-        }
+    constructor(MAX_LENGTH: number) {
+        this.length = MAX_LENGTH;
+        this.link = this.linkFunction;
     }
 
-    angular.module('ebeguWeb.core').directive('dvMaxLength', DVMaxLength.factory());
+    static factory(): IDirectiveFactory {
+        const directive = (MAX_LENGTH: number) => new DVMaxLength(MAX_LENGTH);
+        directive.$inject = ['MAX_LENGTH'];
+        return directive;
+    }
 
+    private linkFunction(scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) {
+        if (!ctrl) {
+            return;
+        }
+
+        ctrl.$validators.dvMaxLength = (modelValue: any, viewValue: any) => {
+            return ctrl.$isEmpty(viewValue) || (viewValue.length <= this.length);
+        };
+    }
 }
 
-
+angular.module('ebeguWeb.core').directive('dvMaxLength', DVMaxLength.factory());

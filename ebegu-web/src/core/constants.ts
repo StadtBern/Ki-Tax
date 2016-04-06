@@ -1,14 +1,11 @@
-/// <reference path="../../typings/browser.d.ts" />
-module ebeguWeb.utils {
-    'use strict';
+// TODO replace with Typescript constants?
 
-    angular
-        .module('ebeguWeb.core')
-        .constant('REST_API', '/ebegu/api/v1/')
-        .constant('MAX_LENGTH', 255)
-        .constant('CONFIG', {
-            name: 'EBEGU',
-            REST_API: '/ebegu/api/v1/'
-        })
+export default angular
+    .module('ebeguWeb.core')
+    .constant('REST_API', '/ebegu/api/v1/')
+    .constant('MAX_LENGTH', 255)
+    .constant('CONFIG', {
+        name: 'EBEGU',
+        REST_API: '/ebegu/api/v1/'
+    });
 
-}

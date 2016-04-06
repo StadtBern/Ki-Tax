@@ -270,35 +270,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-        maven_deploy: { // jshint ignore:line
-            options: {
-                groupId: 'ch.dvbern.ebegu',
-                artifactId: 'ebegu-web',
-                packaging: 'tgz',
-                version: pkg.version,
-                goal: 'deploy'
-            },
-            snapshot_dist: { // jshint ignore:line
-                options: {
-                    url: 'http://nexus/nexus/content/repositories/dvb.snapshots/',
-                    repositoryId: 'dvb.snapshots',
-                    file: function () {
-                        return 'build/<=% artifactId =>-' + pkg.version + '-dist.tgz';
-                    }
-                },
-                files: [{expand: true, cwd: 'dist/', src: '**'}]
-            },
-            release_dist: { // jshint ignore:line
-                options: {
-                    url: 'http://nexus/nexus/content/repositories/dvb/',
-                    repositoryId: 'dvb',
-                    file: function () {
-                        return 'build/<=% artifactId =>-' + pkg.version + '-dist.tgz';
-                    }
-                },
-                files: [{expand: true, cwd: 'dist/', src: '**'}]
-            }
-        },
         jsdoc: {
             dist: {
                 src: 'src/**/*.js',
@@ -309,7 +280,9 @@ module.exports = function (grunt) {
         },
         ts: {
             default: {
-                tsconfig: true
+                tsconfig: {
+                    updateFiles: false
+                }
             }
         }
     });
@@ -321,8 +294,6 @@ module.exports = function (grunt) {
     grunt.registerTask('doc', ['jsdoc']);
     grunt.registerTask('type', ['ts']);
     grunt.registerTask('jenkins-build', ['clean:before', 'jshint:jenkins', 'jscs:jenkins', 'less:production', 'dom_munger:read', 'karma:jenkins', 'dom_munger', 'ngtemplates', 'cssmin', 'concat', 'ngAnnotate', 'uglify', 'copy', 'htmlmin', 'clean:after']);
-    grunt.registerTask('jenkins-deploy-snapshot', ['jenkins-build', 'maven_deploy:snapshot_dist']);
-    grunt.registerTask('jenkins-deploy-release', ['jenkins-build', 'maven_deploy:release_dist']);
 
     grunt.event.on('watch', function (action, filepath) {
         //https://github.com/gruntjs/grunt-contrib-watch/issues/156

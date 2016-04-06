@@ -1,10 +1,5 @@
-/// <reference path="../typings/browser.d.ts" />
+import 'angular';
+import './core/core.module.ts';
+import './admin/admin.module.ts';
 
-/*import {TSAdresse} from "models/TSAdresse"*/
-
-module ebeguWeb {
-    'use strict';
-
-    angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);
-
-}
+angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);

@@ -1,11 +1,12 @@
-/// <reference path="../../../typings/browser.d.ts" />
+import AdresseRS from './adresseRS';
+
 describe('adresseRS', function () {
 
-    var adresseRS : any;
+    let adresseRS: AdresseRS;
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    beforeEach(angular.mock.inject(function (_adresseRS_) {
+    beforeEach(angular.mock.inject(function (_adresseRS_: AdresseRS) {
         adresseRS = _adresseRS_;
     }));
 

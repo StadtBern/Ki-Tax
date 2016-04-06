@@ -1,9 +1,26 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "outFile": "temp/src.js",
-        "target": "ES5"
+        "target": "es5",
+        "module": "amd",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "noImplicitReturns": true,
+        "outFile": "temp/src.js"
     },
+    "filesGlob": [
+        "src/**/*.ts",
+        "typings/browser.d.ts",
+        "!src/**/*spec.ts",
+        "!node_modules/**/*.ts",
+        "!typings/main/**",
+        "!typings/main.d.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false,
     "files": [
         "src/app.module.ts",
         "src/core/core.module.ts",

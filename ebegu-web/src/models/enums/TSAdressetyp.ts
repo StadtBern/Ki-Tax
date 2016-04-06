@@ -1,7 +1,4 @@
-module ebeguWeb.API {
-
-    export  enum TSAdressetyp {
-        KORRESPONDENZADRESSE,
-        WOHNADRESSE,
-    }
+export enum TSAdressetyp {
+    KORRESPONDENZADRESSE = <any>'KORRESPONDENZADRESSE',
+    WOHNADRESSE = <any>'KORRESPONDENZADRESSE'
 }

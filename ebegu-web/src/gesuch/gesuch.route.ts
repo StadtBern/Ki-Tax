@@ -1,60 +1,37 @@
-/// <reference path="../../typings/browser.d.ts" />
-module ebeguWeb.routes {
-    import IApplicationPropertyRS = ebeguWeb.services.IApplicationPropertyRS;
-    import ApplicationProperty = ebeguWeb.API.TSApplicationProperty;
-    'use strict';
+import {IState} from 'angular-ui-router';
+import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 
-
-    export class EbeguGesuchState implements angular.ui.IState {
-        name = 'gesuch';
-        templateUrl = 'src/gesuch/gesuch.html';
-        url = '/gesuch';
-
-        constructor() {
-        }
+export class EbeguWebGesuchRun {
+    static $inject = ['routerHelper'];
+    /* @ngInject */
+    constructor(routerHelper: RouterHelper) {
+        routerHelper.configureStates(this.getStates());
     }
 
-    export class EbeguFamiliensituationState implements angular.ui.IState {
-        name = 'gesuch.familiensituation';
-        template = '<familiensituation-view>';
-        url = '/familiensituation';
-
-        constructor() {
-        }
-
+    public static instance(routerHelper: RouterHelper): EbeguWebGesuchRun {
+        return new EbeguWebGesuchRun(routerHelper);
     }
 
-    export class EbeguStammDatenState implements angular.ui.IState {
-        name = 'gesuch.stammdaten';
-        template = '<stammdaten-view>';
-        url = '/stammdaten';
+    public getStates(): IState[] {
+        return [
+            {
+                name: 'gesuch',
+                templateUrl: 'src/gesuch/gesuch.html',
+                url: '/gesuch'
+            },
+            {
+                name: 'gesuch.familiensituation',
+                template: '<familiensituation-view>',
+                url: '/familiensituation'
 
-        constructor() {
-        }
-
+            },
+            {
+                name: 'gesuch.stammdaten',
+                template: '<stammdaten-view>',
+                url: '/stammdaten'
+            }
+        ];
     }
-
-
-    export class EbeguWebGesuchRun {
-        static $inject = ['routerHelper'];
-        /* @ngInject */
-        constructor(routerHelper: IRouterHelper) {
-            routerHelper.configureStates(this.getStates());
-        }
-
-        /**
-         * @returns {angular.ui.IState[]}
-         */
-        public getStates(): Array<angular.ui.IState> {
-            return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammDatenState()];
-        }
-
-        public static instance(routerHelper) : EbeguWebGesuchRun {
-            return new EbeguWebGesuchRun(routerHelper);
-        }
-
-    }
-
-
-    angular.module('ebeguWeb.gesuch').run(EbeguWebGesuchRun.instance);
 }
+
+angular.module('ebeguWeb.gesuch').run(EbeguWebGesuchRun.instance);

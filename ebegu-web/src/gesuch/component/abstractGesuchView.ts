@@ -1,20 +1,21 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.GesuchView {
+import {IStateService} from 'angular-ui-router';
+import {IFormController} from 'angular';
 
-    export class AbstractGesuchViewController {
+export default class AbstractGesuchViewController {
 
-        state: angular.ui.IStateService;
+    state: IStateService;
 
-        constructor($state: angular.ui.IStateService) {
-            this.state = $state;
-        }
+    constructor($state: IStateService) {
+        this.state = $state;
+    }
 
-        submit(form: angular.IFormController): void {}
+    submit(form: IFormController): void {
+    }
 
-        previousStep(): void {}
+    previousStep(): void {
+    }
 
-        isAdminRole(): boolean {
-            return true; // todo team wenn die Role definiert sind hier muss die Rolle berechnet werden
-        }
+    isAdminRole(): boolean {
+        return true; // todo team wenn die Role definiert sind hier muss die Rolle berechnet werden
     }
 }
