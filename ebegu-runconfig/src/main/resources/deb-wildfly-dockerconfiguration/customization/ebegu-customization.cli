@@ -2,16 +2,6 @@ embed-server --std-out=echo
 
 batch
 
-# Add maria DB module + driver
-module add --name=org.mariadb \
-	--slot=main \
-	--resources=mariadb-java-client.jar \
-	--dependencies=javax.api,javax.transaction.api
-
-/subsystem=datasources/jdbc-driver=mariadbsql:add( \
-	driver-name="mariadbsql",\
-	driver-module-name="org.mariadb",\
-	driver-class-name=org.mariadb.jdbc.Driver)
 
 # Add ebegu Datasource
 #FIXME: in dev/test/prod ist die url als xa-datasource-properties gesetzt, ist das auch gut als --url-property?
@@ -20,7 +10,7 @@ xa-data-source add \
 	--name = ebegu \
 	--use-ccm = true \
 	--xa-datasource-class = org.mariadb.jdbc.MariaDbDataSource \
-	--driver-name = mariadbsql \
+	--driver-name = mariadb \
 	--transaction-isolation = TRANSACTION_READ_COMMITTED \
 	--min-pool-size = 5 \
 	--initial-pool-size = 1 \
