@@ -26,7 +26,8 @@
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
                         <div ng-repeat="current in vm.gesuchKardinalitaetValues" class="radio famStatus-{{$index}}">
                             <label><input type="radio" name="gesuchKardinalitaet" ng-model="vm.familiensituation.gesuchKardinalitaet"
-                                          ng-value="current" required><span data-translate="{{current}}"></span></label>
+                                          ng-value="current" ng-required="vm.showGesuchKardinalitaet()">
+                                <span data-translate="{{current}}"></span></label>
                         </div>
                         <dv-error-messages ng-if="form.$submitted" for="form.gesuchKardinalitaet.$error"
                                            class="error"></dv-error-messages>
@@ -39,7 +40,7 @@
                 <div class="col-md-12" ng-show="vm.isAdminRole()">
                     <div class="form-group">
                         <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                    <textarea class="form-control" rows="6" id="notes" ng-model="vm.gesuch.bemerkungen"
+                    <textarea class="form-control" rows="6" id="notes" ng-model="vm.familiensituation.bemerkungen"
                               placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                     </div>
                 </div>

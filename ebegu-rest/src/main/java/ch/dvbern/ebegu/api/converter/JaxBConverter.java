@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -160,4 +157,54 @@ public class JaxBConverter {
 		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
 		return jaxPerson;
 	}
+
+	public Familiensituation familiensituationToEntity(@Nonnull JaxFamilienSituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
+		Validate.notNull(familiensituation);
+		Validate.notNull(familiensituationJAXP);
+		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
+		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
+		familiensituation.setGesuchKardinalitaet(familiensituationJAXP.getGesuchKardinalitaet());
+		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
+		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
+		return familiensituation;
+	}
+
+	public JaxFamilienSituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
+		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
+		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
+		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
+		jaxFamiliensituation.setGesuchKardinalitaet(persistedFamiliensituation.getGesuchKardinalitaet());
+		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
+		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
+		return jaxFamiliensituation;
+	}
+
+	public Fall fallToEntity(@Nonnull JaxFall fallJAXP, @Nonnull Fall fall) {
+		Validate.notNull(fall);
+		Validate.notNull(fallJAXP);
+		convertAbstractFieldsToEntity(fallJAXP, fall);
+		return fall;
+	}
+
+	public JaxFall fallToJAX(@Nonnull Fall persistedFall) {
+		JaxFall jaxFall = new JaxFall();
+		convertAbstractFieldsToJAX(persistedFall, jaxFall);
+		return jaxFall;
+	}
+
+	public Gesuch gesuchToEntity(@Nonnull JaxGesuch gesuchJAXP, @Nonnull Gesuch gesuch) {
+		Validate.notNull(gesuch);
+		Validate.notNull(gesuchJAXP);
+		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
+		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall())); //todo imanol sollte Fall nicht aus der DB geholt werden?
+		return gesuch;
+	}
+
+	public JaxGesuch gesuchToJAX(@Nonnull Gesuch persistedGesuch) {
+		JaxGesuch jaxGesuch = new JaxGesuch();
+		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
+		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
+		return jaxGesuch;
+	}
+
 }

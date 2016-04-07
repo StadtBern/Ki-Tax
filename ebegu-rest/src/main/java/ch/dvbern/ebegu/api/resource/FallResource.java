@@ -1,10 +1,13 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFall;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -19,6 +22,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 /**
  * Resource fuer Fall
@@ -30,10 +34,13 @@ public class FallResource {
 
 	@Inject
 	private FallService fallService;
-//	@Inject
-//	private PersonService personService;
+	@Inject
+	private PersonService personService;
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private JaxBConverter converter;
+
 
 	@ApiOperation(value = "Creates a new Fall in the database. The transfer object also has a relation to Gesuch " +
 			"which is stored in the database as well.")
@@ -46,7 +53,17 @@ public class FallResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		return null;
+		Fall convertedFall = converter.fallToEntity(fallJAXP, new Fall());
+		Fall persistedFall = this.fallService.createFall(convertedFall);
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(FallResource.class)
+			.path("/" + persistedFall.getId())
+			.build();
+
+		JaxFall jaxFall = converter.fallToJAX(persistedFall);
+
+		return Response.created(uri).entity(jaxFall).build();
 	}
 
 	@Nullable

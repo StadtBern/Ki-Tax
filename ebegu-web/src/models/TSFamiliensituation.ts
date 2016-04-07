@@ -3,12 +3,14 @@ module ebeguWeb.API {
     'use strict';
     import TSFamilienstatus = ebeguWeb.API.TSFamilienstatus;
     import TSGesuchKardinalitaet = ebeguWeb.API.TSGesuchKardinalitaet;
+    import TSGesuch = ebeguWeb.API.TSGesuch;
 
     export class TSFamiliensituation extends TSAbstractEntity {
 
         private _familienstatus: TSFamilienstatus;
         private _gesuchKardinalitaet: TSGesuchKardinalitaet;
         private _bemerkungen: string;
+        private _gesuch: TSGesuch;
 
 
         constructor(familienstatus?:TSFamilienstatus, gesuchKardinalitaet?: TSGesuchKardinalitaet, bemerkungen?: string) {
@@ -40,6 +42,14 @@ module ebeguWeb.API {
 
         public set bemerkungen(bemerkungen:string) {
             this._bemerkungen = bemerkungen;
+        }
+
+        public get gesuch():TSGesuch {
+            return this._gesuch;
+        }
+
+        public set gesuch(value:TSGesuch) {
+            this._gesuch = value;
         }
     }
 

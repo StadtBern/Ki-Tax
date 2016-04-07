@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFamilienSituation;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import io.swagger.annotations.Api;
@@ -18,6 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 /**
  * Resource fuer Familiensituation
@@ -30,6 +33,10 @@ public class FamilienSituationResource {
 	@Inject
 	private FamiliensituationService familiensituationService;
 
+	@Inject
+	private JaxBConverter converter;
+
+
 	@ApiOperation(value = "Creates a new Familiensituation in the database. ")
 	@Nullable
 	@POST
@@ -40,7 +47,17 @@ public class FamilienSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		return null;
+		Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, new Familiensituation());
+		Familiensituation persistedFamiliensituation = this.familiensituationService.createFamiliensituation(convertedFamiliensituation);
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(FamilienSituationResource.class)
+			.path("/" + persistedFamiliensituation.getId())
+			.build();
+
+		JaxFamilienSituation jaxPerson = converter.familiensituationToJAX(persistedFamiliensituation);
+
+		return Response.created(uri).entity(jaxPerson).build();
 	}
 
 	@Nullable

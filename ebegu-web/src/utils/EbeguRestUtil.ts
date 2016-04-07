@@ -123,7 +123,7 @@ module ebeguWeb.utils {
             return undefined;
         }
 
-        public static personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
+        public personToRestObject(restPerson:any, person:ebeguWeb.API.TSPerson):any {
 
             if (person) {
                 this.abstractEntityToRestObject(restPerson, person);
@@ -172,9 +172,23 @@ module ebeguWeb.utils {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchKardinalitaet = familiensituation.gesuchKardinalitaet;
             restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
-            EbeguRestUtil.abstractEntityToRestObject(restFamiliensituation, familiensituation);
+            restFamiliensituation.gesuch = familiensituation.gesuch;
+            this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
 
             return restFamiliensituation;
+        }
+
+        public fallToRestObject(restFall: any, fall: ebeguWeb.API.TSFall): ebeguWeb.API.TSFall {
+            this.abstractEntityToRestObject(restFall, fall);
+
+            return restFall;
+        }
+
+        public gesuchToRestObject(restGesuch: any, gesuch: ebeguWeb.API.TSGesuch): ebeguWeb.API.TSGesuch {
+            this.abstractEntityToRestObject(restGesuch, gesuch);
+            restGesuch.fall = gesuch.fall;
+
+            return restGesuch;
         }
 
         static instance($filter):EbeguRestUtil {

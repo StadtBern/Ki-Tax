@@ -66,4 +66,12 @@ public class Familiensituation extends AbstractEntity {
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
 	}
+
+	public Gesuch getGesuch() {
+		return gesuch;
+	}
+
+	public void setGesuch(Gesuch gesuch) {
+		this.gesuch = gesuch;
+	}
 }

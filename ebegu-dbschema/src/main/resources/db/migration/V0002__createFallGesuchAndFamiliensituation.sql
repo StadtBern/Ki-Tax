@@ -34,17 +34,17 @@ CREATE TABLE familiensituation (
 );
 
 CREATE TABLE familiensituation_aud (
-  id                  VARCHAR(36) NOT NULL,
-  rev                 INTEGER     NOT NULL,
-  revtype             TINYINT,
-  timestamp_erstellt  DATETIME,
-  timestamp_mutiert   DATETIME,
-  user_erstellt       VARCHAR(36),
-  user_mutiert        VARCHAR(36),
-  gesuchKardinalitaet VARCHAR(255),
-  bemerkungen         VARCHAR(1000),
-  familienstatus      VARCHAR(255),
-  gesuch_id           VARCHAR(36),
+  id                   VARCHAR(36) NOT NULL,
+  rev                  INTEGER     NOT NULL,
+  revtype              TINYINT,
+  timestamp_erstellt   DATETIME,
+  timestamp_mutiert    DATETIME,
+  user_erstellt        VARCHAR(36),
+  user_mutiert         VARCHAR(36),
+  gesuch_kardinalitaet VARCHAR(255),
+  bemerkungen          VARCHAR(1000),
+  familienstatus       VARCHAR(255),
+  gesuch_id            VARCHAR(36),
   CONSTRAINT PK_familiensituation_aud PRIMARY KEY (id, rev)
 );
 

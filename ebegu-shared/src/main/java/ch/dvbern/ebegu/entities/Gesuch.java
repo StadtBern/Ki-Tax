@@ -15,4 +15,11 @@ public class Gesuch extends AbstractEntity {
 	@ManyToOne(optional = false)
 	private Fall fall;
 
+	public Fall getFall() {
+		return fall;
+	}
+
+	public void setFall(Fall fall) {
+		this.fall = fall;
+	}
 }
