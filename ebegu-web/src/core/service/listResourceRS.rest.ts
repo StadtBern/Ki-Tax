@@ -2,11 +2,7 @@
 module ebeguWeb.services {
     'use strict';
 
-    export interface IListResourceRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IListResourceRS extends IEntityRS {
         getLaenderList: () => angular.IPromise<any>;
     }
 

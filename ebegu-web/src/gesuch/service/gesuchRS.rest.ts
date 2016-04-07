@@ -2,11 +2,7 @@
 module ebeguWeb.services {
     'use strict';
 
-    export interface IGesuchRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IGesuchRS extends IEntityRS {
         findGesuch: (gesuchID:string) => angular.IHttpPromise<any>;
         create: (gesuch:ebeguWeb.API.TSGesuch) => angular.IHttpPromise<any>;
         update: (gesuch:ebeguWeb.API.TSGesuch) => angular.IHttpPromise<any>;

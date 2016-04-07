@@ -4,11 +4,7 @@ module ebeguWeb.services {
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
-    export interface IApplicationPropertyRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IApplicationPropertyRS extends IEntityRS {
         getByName: (name: string) => angular.IPromise<any>;
         create: (name: string, value: string) => angular.IHttpPromise<any>;
         update: (name: string, value: string) => angular.IHttpPromise<any>;

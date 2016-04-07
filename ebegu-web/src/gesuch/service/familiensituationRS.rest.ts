@@ -1,12 +1,9 @@
 /// <reference path="../../../typings/browser.d.ts" />
 module ebeguWeb.services {
+    import IEntityRS = ebeguWeb.services.IEntityRS;
     'use strict';
 
-    export interface IFamiliensituationRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IFamiliensituationRS extends IEntityRS {
         findFamiliensituation: (familiensituationID: string) => angular.IHttpPromise<any>;
         create: (familiensituation: ebeguWeb.API.TSFamiliensituation) => angular.IHttpPromise<any>;
         update: (familiensituation: ebeguWeb.API.TSFamiliensituation) => angular.IHttpPromise<any>;

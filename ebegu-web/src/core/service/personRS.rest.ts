@@ -3,11 +3,7 @@ module ebeguWeb.services {
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     'use strict';
 
-    export interface IPersonRS {
-        serviceURL:string;
-        http:angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IPersonRS extends IEntityRS {
         create:(person:ebeguWeb.API.TSPerson)  => angular.IHttpPromise<any>;
         update:(person:ebeguWeb.API.TSPerson)  => angular.IHttpPromise<any>;
         findPerson:(personID:string)  => angular.IHttpPromise<any>;

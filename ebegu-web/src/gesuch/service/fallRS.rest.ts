@@ -2,11 +2,7 @@
 module ebeguWeb.services {
     'use strict';
 
-    export interface IFallRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
+    export interface IFallRS extends IEntityRS {
         findFall: (fallID:string) => angular.IHttpPromise<any>;
         create: (fall:ebeguWeb.API.TSFall) => angular.IHttpPromise<any>;
         update: (fall:ebeguWeb.API.TSFall) => angular.IHttpPromise<any>;

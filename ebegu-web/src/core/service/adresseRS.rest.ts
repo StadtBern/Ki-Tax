@@ -2,14 +2,13 @@
 module ebeguWeb.services {
     'use strict';
 
-    export interface IAdresseRS {
-        serviceURL: string;
-        http: angular.IHttpService;
+    export interface IAdresseRS extends IEntityRS {
 
         create: (adresse: ebeguWeb.API.TSAdresse)  => angular.IHttpPromise<any>;
     }
 
     export class AdresseRS implements IAdresseRS {
+        ebeguRestUtil:ebeguWeb.utils.EbeguRestUtil;
         serviceURL: string;
         http: angular.IHttpService;
 
