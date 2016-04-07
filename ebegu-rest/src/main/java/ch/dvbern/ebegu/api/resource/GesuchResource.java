@@ -4,11 +4,15 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * Resource fuer Gesuch
@@ -33,6 +38,8 @@ public class GesuchResource {
 
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private PersonService personService;
 	@Inject
 	private FamiliensituationService familiensituationService;
 	@Inject
@@ -71,7 +78,19 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		return null;
+		Validate.notNull(gesuchJAXP.getId());
+		String gesuchsID = converter.toEntityId(gesuchJAXP);
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchsID);
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId().toString()));
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
+
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
+
+		// todo team entscheiden ob wir Gesuch updaten und dann autmoatisch die abhaengige
+		// datensaetze oder jeder Datensatz soll getrennt gespeichert werden (Gesuch->Gesuchssteller)
+
+		return converter.gesuchToJAX(modifiedGesuch);
+
 	}
 
 	@Nullable

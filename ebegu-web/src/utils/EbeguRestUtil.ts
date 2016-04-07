@@ -5,6 +5,7 @@ module ebeguWeb.utils {
     import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
     import TSPerson = ebeguWeb.API.TSPerson;
     import TSAdresse = ebeguWeb.API.TSAdresse;
+    import TSFamiliensituation = ebeguWeb.API.TSFamiliensituation;
     import EnumGeschlecht = ebeguWeb.API.TSGeschlecht;
 
     export class EbeguRestUtil {
@@ -168,11 +169,11 @@ module ebeguWeb.utils {
 
         }
 
-        public familiensituationToRestObject(restFamiliensituation: any, familiensituation: ebeguWeb.API.TSFamiliensituation): ebeguWeb.API.TSFamiliensituation {
+        public familiensituationToRestObject(restFamiliensituation: any, familiensituation: TSFamiliensituation): TSFamiliensituation {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchKardinalitaet = familiensituation.gesuchKardinalitaet;
             restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
-            restFamiliensituation.gesuch = familiensituation.gesuch;
+            restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
             this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
 
             return restFamiliensituation;
@@ -187,6 +188,8 @@ module ebeguWeb.utils {
         public gesuchToRestObject(restGesuch: any, gesuch: ebeguWeb.API.TSGesuch): ebeguWeb.API.TSGesuch {
             this.abstractEntityToRestObject(restGesuch, gesuch);
             restGesuch.fall = gesuch.fall;
+            restGesuch.gesuchssteller1 = this.personToRestObject({}, gesuch.gesuchssteller1);
+            restGesuch.gesuchssteller2 = this.personToRestObject({}, gesuch.gesuchssteller2);
 
             return restGesuch;
         }

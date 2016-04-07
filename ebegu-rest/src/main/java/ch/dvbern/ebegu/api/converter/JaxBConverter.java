@@ -197,6 +197,12 @@ public class JaxBConverter {
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
 		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall())); //todo imanol sollte Fall nicht aus der DB geholt werden?
+		if (gesuchJAXP.getGesuchssteller1() != null) {
+			gesuch.setGesuchssteller1(this.personToEntity(gesuchJAXP.getGesuchssteller1(), new Person())); //todo imanol sollte Person nicht aus der DB geholt werden?
+		}
+		if (gesuchJAXP.getGesuchssteller2() != null) {
+			gesuch.setGesuchssteller2(this.personToEntity(gesuchJAXP.getGesuchssteller2(), new Person())); //todo imanol sollte Person nicht aus der DB geholt werden?
+		}
 		return gesuch;
 	}
 

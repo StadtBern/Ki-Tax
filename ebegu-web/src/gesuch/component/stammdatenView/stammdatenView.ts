@@ -4,7 +4,7 @@
 module app.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
-    // import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
+    import GesuchForm = ebeguWeb.services.GesuchForm;
     import DateUtil = ebeguWeb.utils.DateUtil;
     import TSAdressetyp = ebeguWeb.API.TSAdressetyp;
     import TSAdresse = ebeguWeb.API.TSAdresse;
@@ -12,6 +12,8 @@ module app.StammdatenView {
     import EbeguRestUtil = ebeguWeb.utils.EbeguRestUtil;
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
     import TSGeschlecht = ebeguWeb.API.TSGeschlecht;
+    import IGesuchRS = ebeguWeb.services.IGesuchRS;
+
 
     class StammdatenViewComponentConfig implements angular.IComponentOptions {
         transclude:boolean;
@@ -31,6 +33,8 @@ module app.StammdatenView {
 
 
     class StammdatenViewController extends AbstractGesuchViewController {
+        gesuchRS: IGesuchRS;
+        gesuchForm: GesuchForm;
         stammdaten:ebeguWeb.API.TSPerson;
         geschlechter:Array<string>;
         showUmzug:boolean;
@@ -38,11 +42,14 @@ module app.StammdatenView {
         personRS:ebeguWeb.services.IPersonRS;
         ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
 
-        static $inject = ['personRS', '$state','ebeguRestUtil'];
+        static $inject = ['personRS', '$state','ebeguRestUtil', 'gesuchRS', 'gesuchForm'];
         /* @ngInject */
-        constructor(_personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
+        constructor(_personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil,
+                    gesuchRS: IGesuchRS, gesuchForm: GesuchForm) {
             super($state);
             this.initViewmodel();
+            this.gesuchForm = gesuchForm;
+            this.gesuchRS = gesuchRS;
             this.personRS = _personRS_;
             this.ebeguRestUtil = ebeguRestUtil;
         }
@@ -73,6 +80,8 @@ module app.StammdatenView {
                     //es handel sich um eine neue Person
                     this.personRS.create(this.stammdaten).then((response) => {
                             this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
+                            this.gesuchForm.gesuch.gesuchssteller1 = response.data;
+                            this.gesuchRS.update(this.gesuchForm.gesuch);
                         }
                     );
 

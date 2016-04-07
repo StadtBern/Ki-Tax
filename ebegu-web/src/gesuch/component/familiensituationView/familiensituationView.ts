@@ -5,9 +5,8 @@
 module ebeguWeb.FamiliensituationView {
     import EnumEx = ebeguWeb.utils.EnumEx;
     import AbstractGesuchViewController = ebeguWeb.GesuchView.AbstractGesuchViewController;
+    import GesuchForm = ebeguWeb.services.GesuchForm;
 
-    import TSFall = ebeguWeb.API.TSFall;
-    import TSGesuch = ebeguWeb.API.TSGesuch;
     import TSFamiliensituation = ebeguWeb.API.TSFamiliensituation;
 
     import IFallRS = ebeguWeb.services.IFallRS;
@@ -36,8 +35,7 @@ module ebeguWeb.FamiliensituationView {
 
 
     class FamiliensituationViewController extends AbstractGesuchViewController {
-        fall: TSFall;
-        gesuch: TSGesuch;
+        gesuchForm: GesuchForm;
         familiensituation: TSFamiliensituation;
         fallRS: IFallRS;
         gesuchRS: IGesuchRS;
@@ -45,13 +43,12 @@ module ebeguWeb.FamiliensituationView {
         familienstatusValues: Array<TSFamilienstatus>;
         gesuchKardinalitaetValues: Array<TSGesuchKardinalitaet>;
 
-        static $inject = ['$state', 'familiensituationRS', 'fallRS', 'gesuchRS'];
+        static $inject = ['$state', 'familiensituationRS', 'fallRS', 'gesuchRS', 'gesuchForm'];
         /* @ngInject */
         constructor($state: angular.ui.IStateService, familiensituationRS: IFamiliensituationRS,
-                    fallRS: IFallRS, gesuchRS: IGesuchRS) {
+                    fallRS: IFallRS, gesuchRS: IGesuchRS, gesuchForm: GesuchForm) {
             super($state);
-            this.fall = new TSFall();
-            this.gesuch = new TSGesuch();
+            this.gesuchForm = gesuchForm;
             this.familiensituation = new TSFamiliensituation();
             this.fallRS = fallRS;
             this.gesuchRS = gesuchRS;
@@ -64,19 +61,19 @@ module ebeguWeb.FamiliensituationView {
             if ($form.$valid) {
                 //testen ob aktuelles familiensituation schon gespeichert ist
                 if (this.familiensituation.timestampErstellt) {
-                    this.fallRS.update(this.fall); //todo imanol id holen und dem gesuch geben
-                    this.gesuchRS.update(this.gesuch);//todo imanol id holen und der Familiensituation geben
+                    this.fallRS.update(this.gesuchForm.fall); //todo imanol id holen und dem gesuch geben
+                    this.gesuchRS.update(this.gesuchForm.gesuch);//todo imanol id holen und der Familiensituation geben
                     this.familiensituationRS.update(this.familiensituation);
                 } else {
                     //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
-                    this.fallRS.create(this.fall).then((fallResponse: any) => {
+                    this.fallRS.create(this.gesuchForm.fall).then((fallResponse: any) => {
                         if (!(fallResponse.data instanceof Array)) {
-                            this.gesuch.fall = fallResponse.data;
-                            this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
+                            this.gesuchForm.fall = fallResponse.data;
+                            this.gesuchForm.gesuch.fall = fallResponse.data;
+                            this.gesuchRS.create(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
                                 if (!(gesuchResponse.data instanceof Array)) {
-                                    console.log('PREV:'+this.familiensituation.gesuch);
+                                    this.gesuchForm.gesuch = gesuchResponse.data;
                                     this.familiensituation.gesuch = gesuchResponse.data;
-                                    console.log('POST:'+this.familiensituation.gesuch);
                                     this.familiensituationRS.create(this.familiensituation);
                                 }
                             });

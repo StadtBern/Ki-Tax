@@ -56,6 +56,8 @@ CREATE TABLE gesuch (
   user_mutiert       VARCHAR(36) NOT NULL,
   version            BIGINT      NOT NULL,
   fall_id            VARCHAR(36) NOT NULL,
+  gesuchssteller1_id VARCHAR(36),
+  gesuchssteller2_id VARCHAR(36),
   CONSTRAINT PK_gesuch PRIMARY KEY (id)
 );
 
@@ -68,6 +70,8 @@ CREATE TABLE gesuch_aud (
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   fall_id            VARCHAR(36),
+  gesuchssteller1_id VARCHAR(36),
+  gesuchssteller2_id VARCHAR(36),
   CONSTRAINT PK_gesuch_aud PRIMARY KEY (id, rev)
 );
 
@@ -90,6 +94,16 @@ ALTER TABLE gesuch
 ADD CONSTRAINT FK_gesuch_fall_id
 FOREIGN KEY (fall_id)
 REFERENCES fall (id);
+
+ALTER TABLE gesuch
+ADD CONSTRAINT FK_gesuch_gesuchssteller1_id
+FOREIGN KEY (gesuchssteller1_id)
+REFERENCES person (id);
+
+ALTER TABLE gesuch
+ADD CONSTRAINT FK_gesuch_gesuchssteller2_id
+FOREIGN KEY (gesuchssteller2_id)
+REFERENCES person (id);
 
 ALTER TABLE gesuch_aud
 ADD CONSTRAINT FK_gesuch_aud_revinfo
