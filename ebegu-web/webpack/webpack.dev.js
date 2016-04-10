@@ -23,16 +23,16 @@ module.exports = {
             inject: 'body',
             hash: true
         }),
-        new BrowserSyncPlugin({
-            host: 'localhost',
-            port: 8080,
-            server: {
-                baseDir: 'dist'
-            },
-            ui: false,
-            online: false,
-            notify: false
-        }),
+        // new BrowserSyncPlugin({
+        //     host: 'localhost',
+        //     port: 8080,
+        //     server: {
+        //         baseDir: 'dist'
+        //     },
+        //     ui: false,
+        //     online: false,
+        //     notify: false
+        // }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',

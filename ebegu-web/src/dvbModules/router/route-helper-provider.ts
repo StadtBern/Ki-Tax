@@ -45,5 +45,3 @@ export default class RouterHelperProvider implements IServiceProvider {
         return this.routerHelper;
     }
 }
-
-angular.module('dvbAngular.router').provider('routerHelper', RouterHelperProvider);

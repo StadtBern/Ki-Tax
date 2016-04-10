@@ -1,5 +1,7 @@
 import 'angular';
-import './core/core.module.ts';
-import './admin/admin.module.ts';
+import './app.module.less';
 
-angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);
+import core from './core/core.module';
+
+// export default angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);
+export default angular.module('ebeguWeb', [core.name]);
