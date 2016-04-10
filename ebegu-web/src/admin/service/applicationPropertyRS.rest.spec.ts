@@ -105,7 +105,7 @@ describe('applicationPropertyRS', function () {
             it('should remove a property', function () {
                 $httpBackend.expectDELETE(REST_API + 'application-properties/' + testName);
                 let promise = applicationPropertyRS.remove(testName);
-                let status: string = undefined;
+                let status: number = undefined;
 
                 promise.then(function (response) {
                     status = response.status;

@@ -1,11 +1,12 @@
-/// <reference path="../../../typings/browser.d.ts" />
+import ListResourceRS from "./listResourceRS";
+
 describe('listResourceRS', function () {
 
-    var listResourceRS : any;
+    var listResourceRS : ListResourceRS;
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    beforeEach(angular.mock.inject(function (_listResourceRS_) {
+    beforeEach(angular.mock.inject(function (_listResourceRS_: ListResourceRS) {
         listResourceRS = _listResourceRS_;
     }));
 
