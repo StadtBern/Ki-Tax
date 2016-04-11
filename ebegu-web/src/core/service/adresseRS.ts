@@ -7,10 +7,6 @@ export default class AdresseRS {
     serviceURL: string;
     http: IHttpService;
 
-    static instance($http: IHttpService, REST_API: string): AdresseRS {
-        return new AdresseRS($http, REST_API);
-    }
-
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string) {
         this.serviceURL = REST_API + 'adressen';
@@ -25,6 +21,3 @@ export default class AdresseRS {
         });
     }
 }
-
-angular.module('ebeguWeb.core').factory('adresseRS', AdresseRS.instance);
-

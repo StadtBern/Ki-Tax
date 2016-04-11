@@ -12,12 +12,9 @@ export default class EbeguRestUtil {
 
     private filter: IFilterService;
 
+    /* @ngInject */
     constructor($filter: IFilterService) {
         this.filter = $filter;
-    }
-
-    static instance($filter: IFilterService): EbeguRestUtil {
-        return new EbeguRestUtil($filter);
     }
 
     /**
@@ -170,5 +167,3 @@ export default class EbeguRestUtil {
         restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
     }
 }
-
-angular.module('ebeguWeb.core').factory('ebeguRestUtil', EbeguRestUtil.instance);

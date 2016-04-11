@@ -1,4 +1,4 @@
-describe('ebeguRestUtil', function () {
+describe('EbeguRestUtil', function () {
 
     //todo team create tests
 

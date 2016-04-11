@@ -11,13 +11,17 @@
         "noImplicitReturns": true,
         "outDir": "temp/js"
     },
-    "filesGlob": [
-        "src/**/*.ts",
+//    "filesGlob": [
+//        "src/**/*.ts",
+//        "typings/browser.d.ts",
+//        "!src/**/*spec.ts",
+//        "!node_modules/**/*.ts",
+//        "!typings/main/**",
+//        "!typings/main.d.ts"
+//    ],
+    "files": [
         "typings/browser.d.ts",
-        "!src/**/*spec.ts",
-        "!node_modules/**/*.ts",
-        "!typings/main/**",
-        "!typings/main.d.ts"
+        "src/core/bootstrap.ts"
     ],
     "compileOnSave": false,
     "buildOnSave": false

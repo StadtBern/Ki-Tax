@@ -3,8 +3,30 @@ import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import ApplicationPropertyRS from './service/applicationPropertyRS.rest';
 
+adminRun.$inject = ['RouterHelper'];
+
+/* @ngInject */
+export function adminRun(routerHelper: RouterHelper) {
+    routerHelper.configureStates(getStates());
+}
+
+function getStates(): IState[] {
+    return [
+        {
+            name: 'admin',
+            template: '<dv-admin-view application-properties="vm.applicationProperties"></dv-admin-view>',
+            url: '/admin',
+            controller: EbeguStateController,
+            controllerAs: 'vm',
+            resolve: {
+                applicationProperties: getApplicationProperties
+            }
+        }
+    ];
+}
+
 class EbeguStateController {
-    static $inject = ['applicationProperties'];
+    static $inject = ['ApplicationPropertyRS'];
 
     applicationProperties: TSApplicationProperty[];
 
@@ -14,34 +36,9 @@ class EbeguStateController {
     }
 }
 
-class EbeguWebAdminRun {
-    static $inject = ['routerHelper'];
-    /* @ngInject */
-    constructor(routerHelper: RouterHelper) {
-        routerHelper.configureStates(this.getStates());
-    }
-
-    public static instance(routerHelper: RouterHelper): EbeguWebAdminRun {
-        return new EbeguWebAdminRun(routerHelper);
-    }
-
-    public getStates(): IState[] {
-        return [
-            {
-                name: 'admin',
-                template: '<admin-view application-properties="vm.applicationProperties"></admin-view>',
-                url: '/admin',
-                controller: EbeguStateController,
-                controllerAs: 'vm',
-                resolve: {
-                    applicationProperties: function (applicationPropertyRS: ApplicationPropertyRS) {
-                        return applicationPropertyRS.getAllApplicationProperties();
-                    }
-                }
-            }
-        ];
-    }
-
+// FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
+getApplicationProperties.$inject = ['ApplicationPropertyRS'];
+/* @ngInject */
+function getApplicationProperties(ApplicationPropertyRS: ApplicationPropertyRS) {
+    return ApplicationPropertyRS.getAllApplicationProperties();
 }
-
-angular.module('ebeguWeb.admin').run(EbeguWebAdminRun.instance);

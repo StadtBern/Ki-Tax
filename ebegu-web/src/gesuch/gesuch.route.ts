@@ -1,37 +1,32 @@
 import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
+import * as gesuchTpl from './gesuch.html';
 
-export class EbeguWebGesuchRun {
-    static $inject = ['routerHelper'];
-    /* @ngInject */
-    constructor(routerHelper: RouterHelper) {
-        routerHelper.configureStates(this.getStates());
-    }
+gesuchRun.$inject = ['RouterHelper'];
 
-    public static instance(routerHelper: RouterHelper): EbeguWebGesuchRun {
-        return new EbeguWebGesuchRun(routerHelper);
-    }
-
-    public getStates(): IState[] {
-        return [
-            {
-                name: 'gesuch',
-                templateUrl: 'src/gesuch/gesuch.html',
-                url: '/gesuch'
-            },
-            {
-                name: 'gesuch.familiensituation',
-                template: '<familiensituation-view>',
-                url: '/familiensituation'
-
-            },
-            {
-                name: 'gesuch.stammdaten',
-                template: '<stammdaten-view>',
-                url: '/stammdaten'
-            }
-        ];
-    }
+/* @ngInject */
+export function gesuchRun(routerHelper: RouterHelper) {
+    routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
 }
 
-angular.module('ebeguWeb.gesuch').run(EbeguWebGesuchRun.instance);
+function getStates(): IState[] {
+    return [
+        {
+            name: 'gesuch',
+            template: gesuchTpl,
+            url: '/gesuch',
+            abstract: true
+        },
+        {
+            name: 'gesuch.familiensituation',
+            template: '<familiensituation-view>',
+            url: '/familiensituation'
+
+        },
+        {
+            name: 'gesuch.stammdaten',
+            template: '<stammdaten-view>',
+            url: '/stammdaten'
+        }
+    ];
+}

@@ -1,6 +1,6 @@
 import {PersonRS} from './personRS.rest';
 
-describe('personRS', function () {
+describe('PersonRS', function () {
 
     let personRS: PersonRS;
 

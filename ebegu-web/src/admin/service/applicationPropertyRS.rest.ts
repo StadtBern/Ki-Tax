@@ -3,7 +3,7 @@ import TSApplicationProperty from '../../models/TSApplicationProperty';
 import {IHttpService, IPromise, IHttpPromise} from 'angular';
 
 export default class ApplicationPropertyRS {
-    static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
 
     serviceURL: string;
     http: IHttpService;
@@ -52,5 +52,3 @@ export default class ApplicationPropertyRS {
         );
     }
 }
-
-angular.module('ebeguWeb.admin').service('applicationPropertyRS', ApplicationPropertyRS);

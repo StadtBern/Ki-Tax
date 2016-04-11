@@ -2,17 +2,19 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSGesuch from '../../../models/TSGesuch';
+import * as template from './familiensituationView.html';
+import './familiensituationView.less';
 
-class FamiliensituationViewComponentConfig implements IComponentOptions {
+export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
-    templateUrl = 'src/gesuch/component/familiensituationView/familiensituationView.html';
+    template = template;
     controller = FamiliensituationViewController;
     controllerAs = 'vm';
 }
 
 
-class FamiliensituationViewController extends AbstractGesuchViewController {
+export class FamiliensituationViewController extends AbstractGesuchViewController {
     static $inject = ['$state'];
 
     gesuch: TSGesuch;
@@ -33,5 +35,3 @@ class FamiliensituationViewController extends AbstractGesuchViewController {
         return this.gesuch.familiensituation === 'ALLEINERZIEHEND' || this.gesuch.familiensituation === 'WENIGER_FUENF_JAHRE';
     }
 }
-
-angular.module('ebeguWeb.gesuch').component('familiensituationView', new FamiliensituationViewComponentConfig());

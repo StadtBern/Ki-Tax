@@ -2,7 +2,33 @@ var loaders = require('./loaders');
 var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
+var helpers = require('./helpers');
+
+/**
+ * Webpack Constants
+ */
+const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
+const HMR = helpers.hasProcessFlag('hot');
+const METADATA = {
+    title: 'Angular2 Webpack Starter by @gdi2990 from @AngularClass',
+    baseUrl: '/',
+    host: 'localhost',
+    port: 3000,
+    ENV: ENV,
+    HMR: HMR
+};
+
 module.exports = {
+    // Static metadata for index.html
+    //
+    // See: (custom attribute)
+    metadata: METADATA,
+
+    // Switch loaders to debug mode.
+    //
+    // See: http://webpack.github.io/docs/configuration.html#debug
+    debug: true,
+
     entry: ['./src/core/bootstrap.ts'],
     // entry: ['webpack/hot/dev-server', '/src/app.module.ts'],
     output: {
@@ -40,7 +66,7 @@ module.exports = {
             'window.jquery': 'jquery'
         })
     ],
-    module:{
+    module: {
         loaders: loaders
     }
 };

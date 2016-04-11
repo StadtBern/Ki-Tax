@@ -1,8 +1,8 @@
 import 'angular';
 import 'angular-animate';
 import 'angular-sanitize';
-import 'angular-messages'
-import 'angular-aria'
+import 'angular-messages';
+import 'angular-aria';
 import 'angular-cookies';
 import 'angular-translate';
 import 'angular-translate-loader-static-files';

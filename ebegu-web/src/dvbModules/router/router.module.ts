@@ -4,4 +4,4 @@ import RouterHelperProvider from './route-helper-provider';
 
 export default angular.module('dvbAngular.router', [
     'ui.router'
-]).provider('routerHelper', RouterHelperProvider);
+]).provider('RouterHelper', RouterHelperProvider);

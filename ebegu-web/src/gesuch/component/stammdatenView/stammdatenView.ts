@@ -1,6 +1,6 @@
 import TSPerson from '../../../models/TSPerson';
 import TSAdresse from '../../../models/TSAdresse';
-import {PersonRS} from '../../../core/service/personRS.rest';
+import PersonRS from '../../../core/service/personRS.rest';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
@@ -8,17 +8,19 @@ import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
+import * as template from './stammdatenView.html';
+import './stammdatenView.less';
 
-class StammdatenViewComponentConfig implements IComponentOptions {
+export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
-    templateUrl = 'src/gesuch/component/stammdatenView/stammdatenView.html';
+    template = template;
     controller = StammdatenViewController;
     controllerAs = 'vm';
 }
 
-class StammdatenViewController extends AbstractGesuchViewController {
-    static $inject = ['personRS', '$state', 'ebeguRestUtil'];
+export class StammdatenViewController extends AbstractGesuchViewController {
+    static $inject = ['PersonRS', '$state', 'EbeguRestUtil'];
 
     stammdaten: TSPerson;
     geschlechter: string[];
@@ -114,5 +116,3 @@ class StammdatenViewController extends AbstractGesuchViewController {
         return korrAdr;
     }
 }
-
-angular.module('ebeguWeb.gesuch').component('stammdatenView', new StammdatenViewComponentConfig());

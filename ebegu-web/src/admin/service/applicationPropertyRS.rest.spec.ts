@@ -2,7 +2,7 @@ import {IHttpBackendService} from 'angular';
 import ApplicationPropertyRS from './applicationPropertyRS.rest';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
 
-describe('applicationPropertyRS', function () {
+describe('ApplicationPropertyRS', function () {
 
     let applicationPropertyRS: ApplicationPropertyRS;
     let $httpBackend: IHttpBackendService;

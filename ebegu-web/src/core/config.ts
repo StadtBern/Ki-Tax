@@ -1,7 +1,7 @@
 import {ITranslateProvider} from 'angular-translate';
 
 /* @ngInject */
-export function configure($translateProvider:ITranslateProvider) {
+export function configure($translateProvider: ITranslateProvider) {
 
     $translateProvider.useSanitizeValueStrategy('escapeParameters');
     $translateProvider.useStaticFilesLoader({

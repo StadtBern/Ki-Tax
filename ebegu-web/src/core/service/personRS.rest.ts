@@ -2,16 +2,12 @@ import TSPerson from '../../models/TSPerson';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 
-export class PersonRS {
+export default class PersonRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
 
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
-
-    static instance($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil): PersonRS {
-        return new PersonRS($http, REST_API, ebeguRestUtil);
-    }
 
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
@@ -45,5 +41,3 @@ export class PersonRS {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(personID));
     }
 }
-
-angular.module('ebeguWeb.core').factory('personRS', PersonRS.instance);

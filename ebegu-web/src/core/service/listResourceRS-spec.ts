@@ -1,6 +1,6 @@
 import ListResourceRS from "./listResourceRS";
 
-describe('listResourceRS', function () {
+describe('ListResourceRS', function () {
 
     var listResourceRS : ListResourceRS;
 

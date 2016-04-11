@@ -3,7 +3,7 @@ import TSLand from '../../models/TSLand';
 import {IPromise, IHttpService} from 'angular';
 
 export default class ListResourceRS {
-    static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
 
     static laenderList: TSLand[];
 
@@ -35,4 +35,3 @@ export default class ListResourceRS {
     }
 }
 
-angular.module('ebeguWeb.core').factory('listResourceRS', ListResourceRS.instance);

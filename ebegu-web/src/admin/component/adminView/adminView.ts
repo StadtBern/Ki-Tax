@@ -2,20 +2,21 @@ import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import ApplicationPropertyRS from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {IHttpPromiseCallbackArg} from 'angular';
+import * as template from './adminView.html';
+import './adminView.less';
 
-class AdminViewComponentConfig implements angular.IComponentOptions {
+export class AdminViewComponentConfig implements angular.IComponentOptions {
     transclude: boolean = false;
     bindings: any = {
         applicationProperties: '<'
     };
-    templateUrl: string = 'src/admin/component/adminView/adminView.html';
+    template: string = template;
     controller: any = AdminViewController;
     controllerAs: string = 'vm';
-
 }
 
-export default class AdminViewController {
-    static $inject = ['applicationPropertyRS', 'MAX_LENGTH'];
+export class AdminViewController {
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -96,5 +97,3 @@ export default class AdminViewController {
 
     }
 }
-
-angular.module('ebeguWeb.admin').component('adminView', new AdminViewComponentConfig());

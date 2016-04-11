@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
     <base href="">
     <title></title>
@@ -27,10 +28,10 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="#">Home</a></li>
-                <li><a href="#/admin">Admin</a></li>
-                <li class="active"><a href="#/stammdaten">Stammdaten</a></li>
-                <li><a href="#contact">Kontakt</a></li>
+                <li ui-sref-active="active"><a href="#">Home</a></li>
+                <li ui-sref-active="active"><a ui-sref="admin">Admin</a></li>
+                <li ui-sref-active="active"><a ui-sref="gesuch.familiensituation">Stammdaten</a></li>
+                <li ui-sref-active="active"><a href="#contact">Kontakt</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

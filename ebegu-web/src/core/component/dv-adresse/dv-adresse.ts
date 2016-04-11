@@ -17,7 +17,7 @@ class AdresseComponentConfig implements angular.IComponentOptions {
 
 
 export default class DvAdresseController {
-    static $inject = ['adresseRS', 'listResourceRS'];
+    static $inject = ['AdresseRS', 'ListResourceRS'];
 
     adresse: TSAdresse;
     prefix: string;

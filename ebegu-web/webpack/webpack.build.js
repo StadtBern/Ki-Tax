@@ -3,7 +3,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: ['./src/index.ts'],
+    entry: ['./src/core/bootstrap.ts'],
     output: {
         filename: 'build.js',
         path: 'dist'

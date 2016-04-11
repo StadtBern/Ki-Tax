@@ -1,6 +1,6 @@
 import AdresseRS from './adresseRS';
 
-describe('adresseRS', function () {
+describe('AdresseRS', function () {
 
     let adresseRS: AdresseRS;
 
