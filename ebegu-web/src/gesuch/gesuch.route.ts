@@ -28,7 +28,7 @@ module ebeguWeb.routes {
         name = 'gesuch.stammdaten';
         template = '<stammdaten-view>';
         url = '/stammdaten';
-
+        
         constructor() {
         }
 

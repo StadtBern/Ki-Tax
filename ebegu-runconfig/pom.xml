@@ -41,6 +41,7 @@
                                 </goals>
                                 <configuration>
                                     <artifactItems>
+                                        <!--REST Services-->
                                         <artifactItem>
                                             <groupId>ch.dvbern.ebegu</groupId>
                                             <artifactId>ebegu-rest</artifactId>
@@ -49,6 +50,19 @@
                                             <destFileName>ebegu-rest.war</destFileName>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${project.build.directory}/warToAddToDocker
+                                            </outputDirectory>
+                                        </artifactItem>
+                                        <!--Webteil-->
+                                        <artifactItem>
+                                            <groupId>ch.dvbern.ebegu</groupId>
+                                            <artifactId>ebegu-web</artifactId>
+                                            <version>${project.version}</version>
+                                            <classifier>client</classifier>
+                                            <type>tar.gz</type>
+
+                                            <destFileName>ebegu-web.tgz</destFileName>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}/clientToAddToDocker
                                             </outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
@@ -64,20 +78,7 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>0.4.3</version>
                         <configuration>
-                            <!--unter diesem namen ist das image nach dem builden vorhanden-->
-                            <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly</imageName>
-                            <imageTags>
-                                <imageTag>${project.version}</imageTag>
-                            </imageTags>
-                            <dockerDirectory>${project.basedir}/src/main/resources/deb-wildfly-dockerconfiguration
-                            </dockerDirectory>
-                            <resources>
-                                <resource>
-                                    <targetPath>/</targetPath>
-                                    <directory>${project.build.directory}/warToAddToDocker</directory>
-                                    <include>ebegu-rest.war</include>
-                                </resource>
-                            </resources>
+
                         </configuration>
                         <executions>
                             <execution>
@@ -86,6 +87,47 @@
                                 <goals>
                                     <goal>build</goal>
                                 </goals>
+                                <configuration>
+                                    <!--unter diesem namen ist das image nach dem builden vorhanden-->
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly</imageName>
+                                    <imageTags>
+                                        <imageTag>${project.version}</imageTag>
+                                    </imageTags>
+                                    <dockerDirectory>
+                                        ${project.basedir}/src/main/resources/deb-wildfly-dockerconfiguration
+                                    </dockerDirectory>
+                                    <resources>
+                                        <resource>
+                                            <targetPath>/</targetPath>
+                                            <directory>${project.build.directory}/warToAddToDocker</directory>
+                                            <include>ebegu-rest.war</include>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build web-client docker image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <!--unter diesem namen ist das image nach dem builden vorhanden-->
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix</imageName>
+                                    <imageTags>
+                                        <imageTag>${project.version}</imageTag>
+                                    </imageTags>
+                                    <dockerDirectory>
+                                        ${project.basedir}/src/main/resources/nginx-dockerconfiguration
+                                    </dockerDirectory>
+                                    <resources>
+                                        <resource>
+                                            <targetPath>/</targetPath>
+                                            <directory>${project.build.directory}/clientToAddToDocker</directory>
+                                            <include>ebegu-web.tgz</include>
+                                        </resource>
+                                    </resources>
+                                </configuration>
                             </execution>
                             <!--stellt sich die Frage wann wir neue build in unser dvbern repo pushen, mal bei deploy?
                             koennte auch mit -DpushImage aausgeloest werden-->
