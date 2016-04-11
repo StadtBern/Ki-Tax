@@ -39,7 +39,7 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void createAdressTest() {
+	public void createAdresseTest() {
 		Assert.assertNotNull(adresseService);
 		Adresse adresse = TestDataUtil.createDefaultAdresse();
 		adresse.setPerson(persistence.persist(adresse.getPerson()));
@@ -54,7 +54,7 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateAdressTest() {
+	public void updateAdresseTest() {
 		Assert.assertNotNull(adresseService);
 		Adresse insertedAdresses = insertNewEntity();
 		Optional<Adresse> adresse = adresseService.findAdresse(insertedAdresses.getId());
@@ -67,7 +67,7 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void removeAdressTest() {
+	public void removeAdresseTest() {
 		Assert.assertNotNull(adresseService);
 		Adresse insertedAdresses = insertNewEntity();
 		Assert.assertEquals(1, adresseService.getAllAdressen().size());
