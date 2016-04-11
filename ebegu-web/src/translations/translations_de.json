@@ -301,7 +301,9 @@
     "BEMERKUNGEN_PLACEHOLDER": "Hier kann das Jugendamt zusätzliche Informationen erfassen.",
     "SPEICHERN_UPPER": "SPEICHERN",
     "PFLICHTFELDER_HINT": "Pflichtfelder sind mit * gekennzeichnet",
-    "ZURUECK_UPPER": "ZURÜCK"
+    "ZURUECK_UPPER": "ZURÜCK",
+    "KINDER_HINT1": "Bitte erfassen Sie sowohl die familienergänzend betreuten Kinder wie auch die weiteren Kinder, die in Ihrem Haushalt wohnen.",
+    "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden."
 
 }
 

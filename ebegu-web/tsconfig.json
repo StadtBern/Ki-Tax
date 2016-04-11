@@ -41,6 +41,7 @@
         "src/gesuch/gesuch.module.ts",
         "src/gesuch/gesuch.route.ts",
         "src/gesuch/component/abstractGesuchView.ts",
+        "src/gesuch/component/kinderView/kinderView.ts",
         "src/gesuch/component/stammdatenView/stammdatenView.ts",
         "src/gesuch/component/familiensituationView/familiensituationView.ts",
         "src/core/component/dv-adresse/dv-adresse.ts",

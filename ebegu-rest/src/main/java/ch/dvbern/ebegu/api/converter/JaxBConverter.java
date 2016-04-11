@@ -210,6 +210,12 @@ public class JaxBConverter {
 		JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
+		if(persistedGesuch.getGesuchsteller1() != null) {
+			jaxGesuch.setGesuchsteller1(this.personToJAX(persistedGesuch.getGesuchsteller1()));
+		}
+		if(persistedGesuch.getGesuchsteller2() != null) {
+			jaxGesuch.setGesuchsteller2(this.personToJAX(persistedGesuch.getGesuchsteller2()));
+		}
 		return jaxGesuch;
 	}
 

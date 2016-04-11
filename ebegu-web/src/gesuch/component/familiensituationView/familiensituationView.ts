@@ -72,8 +72,10 @@ module ebeguWeb.FamiliensituationView {
                         this.gesuchRS.create(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
                             this.gesuchForm.gesuch = gesuchResponse.data;
                             this.familiensituation.gesuch = gesuchResponse.data;
-                            this.familiensituationRS.create(this.familiensituation);
-                            this.state.go("gesuch.stammdaten");
+                            this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
+                                this.gesuchForm.familiensituation = familienResponse.data;
+                                this.state.go("gesuch.stammdaten", {gesuchstellerNumber:1});
+                            });
                         });
                     });
                 }

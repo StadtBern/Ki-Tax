@@ -1,7 +1,7 @@
 /// <reference path="../../../../typings/browser.d.ts" />
 /// <reference path="../../../models/TSPerson.ts" />
 /// <reference path="../../component/abstractGesuchView.ts" />
-module app.StammdatenView {
+module ebeguWeb.StammdatenView {
     'use strict';
     import EnumEx = ebeguWeb.utils.EnumEx;
     import GesuchForm = ebeguWeb.services.GesuchForm;
@@ -31,39 +31,49 @@ module app.StammdatenView {
         }
     }
 
-
     class StammdatenViewController extends AbstractGesuchViewController {
         gesuchRS: IGesuchRS;
         gesuchForm: GesuchForm;
-        stammdaten:ebeguWeb.API.TSPerson;
         geschlechter:Array<string>;
         showUmzug:boolean;
         showKorrespondadr:boolean;
         personRS:ebeguWeb.services.IPersonRS;
         ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
+        gesuchstellerNumber: number;
 
-        static $inject = ['personRS', '$state','ebeguRestUtil', 'gesuchRS', 'gesuchForm'];
+        static $inject = ['$stateParams', 'personRS', '$state','ebeguRestUtil', 'gesuchRS', 'gesuchForm'];
         /* @ngInject */
-        constructor(_personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil,
+        constructor($stateParams: ebeguWeb.routes.IStammdatenStateParams, _personRS_, $state:angular.ui.IStateService,ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil,
                     gesuchRS: IGesuchRS, gesuchForm: GesuchForm) {
             super($state);
-            this.initViewmodel();
             this.gesuchForm = gesuchForm;
             this.gesuchRS = gesuchRS;
             this.personRS = _personRS_;
             this.ebeguRestUtil = ebeguRestUtil;
+            this.setGesuchstellerNumber($stateParams.gesuchstellerNumber);
+            this.initViewmodel();
         }
 
         private initViewmodel() {
-            this.stammdaten = new ebeguWeb.API.TSPerson();
+            this.setStammdatenToWorkWith(new ebeguWeb.API.TSPerson());
             let wohnAdr = new ebeguWeb.API.TSAdresse();
             wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-            this.stammdaten.adresse = wohnAdr;
-            this.stammdaten.umzugAdresse = undefined;
-            this.stammdaten.korrespondenzAdresse = undefined;
+            this.getStammdatenToWorkWith().adresse = wohnAdr;
+            this.getStammdatenToWorkWith().umzugAdresse = undefined;
+            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
             this.geschlechter = EnumEx.getNames(TSGeschlecht);
             this.showUmzug = false;
             this.showKorrespondadr = false;
+        }
+
+        private setGesuchstellerNumber(gsNumber: number) {
+            //todo team ueberlegen ob es by default 1 sein muss oder ob man irgendeinen Fehler zeigen soll
+            if (gsNumber == 1 || gsNumber == 2) {
+                this.gesuchstellerNumber = gsNumber;
+            }
+            else {
+                this.gesuchstellerNumber = 1;
+            }
         }
 
         submit(form:angular.IFormController) {
@@ -71,14 +81,16 @@ module app.StammdatenView {
                 //do all things
                 //this.state.go("next.step"); //go to the next step
                 if (!this.showUmzug) {
-                    this.stammdaten.umzugAdresse = undefined;
+                    this.getStammdatenToWorkWith().umzugAdresse = undefined;
                 }
                 if (!this.showKorrespondadr) {
-                    this.stammdaten.korrespondenzAdresse = undefined;
+                    this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
                 }
 
-                this.gesuchForm.gesuch.gesuchsteller1 = this.stammdaten;
-                this.gesuchRS.update(this.gesuchForm.gesuch);
+                this.gesuchRS.update(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
+                    this.gesuchForm.gesuch = gesuchResponse.data;
+                    this.nextStep();
+                });
 
             }
         }
@@ -86,9 +98,9 @@ module app.StammdatenView {
 
         umzugadreseClicked() {
             if (this.showUmzug) {
-                this.stammdaten.umzugAdresse = this.initUmzugadresse();
+                this.getStammdatenToWorkWith().umzugAdresse = this.initUmzugadresse();
             } else {
-                this.stammdaten.umzugAdresse = undefined;
+                this.getStammdatenToWorkWith().umzugAdresse = undefined;
             }
         }
 
@@ -108,20 +120,46 @@ module app.StammdatenView {
 
         korrespondenzAdrClicked() {
             if (this.showKorrespondadr) {
-                var korrAdr = this.initKorrespondenzAdresse();
-                this.stammdaten.korrespondenzAdresse = korrAdr;
+                this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
             } else {
-                this.stammdaten.korrespondenzAdresse = undefined;
+                this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
             }
         }
 
         resetForm() {
-            this.stammdaten = undefined;
+            this.setStammdatenToWorkWith(undefined);
             this.initViewmodel();
         }
 
         previousStep() {
             this.state.go("gesuch.familiensituation");
+        }
+
+        nextStep() {
+            if((this.gesuchstellerNumber == 1) && this.gesuchForm.isGesuchsteller2Required()) {
+                this.state.go("gesuch.stammdaten", {gesuchstellerNumber:2});
+            }
+            else {
+                this.state.go("gesuch.kinder");
+            }
+        }
+
+        private getStammdatenToWorkWith():ebeguWeb.API.TSPerson {
+            if(this.gesuchstellerNumber == 1) {
+                return this.gesuchForm.gesuch.gesuchsteller1;
+            }
+            else {
+                return this.gesuchForm.gesuch.gesuchsteller2;
+            }
+        }
+
+        private setStammdatenToWorkWith(stammdaten: ebeguWeb.API.TSPerson):void {
+            if(this.gesuchstellerNumber == 1) {
+                this.gesuchForm.gesuch.gesuchsteller1 = stammdaten;
+            }
+            else {
+                this.gesuchForm.gesuch.gesuchsteller2 = stammdaten;
+            }
         }
 
     }

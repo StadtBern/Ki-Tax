@@ -26,7 +26,7 @@ module ebeguWeb.API {
             this._zusatzzeile = zusatzzeile;
             this._plz = plz;
             this._ort = ort;
-            this._land = land || 'Land_CH';
+            this._land = land || 'CH';
             this._gemeinde = gemeinde;
             this._gueltigAb = gueltigAb;
             this._gueltigBis = gueltigBis;
