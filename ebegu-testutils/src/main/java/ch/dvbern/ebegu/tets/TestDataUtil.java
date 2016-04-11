@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.enums.EnumGesuchKardinalitaet;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
 
 import java.time.LocalDate;
@@ -47,7 +47,7 @@ public final class TestDataUtil {
 	public static Familiensituation createDefaultFamiliensituation(){
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		familiensituation.setGesuchKardinalitaet(EnumGesuchKardinalitaet.ALLEINE);
+		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setBemerkungen("DVBern");
 		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;

@@ -3,8 +3,10 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -17,12 +19,12 @@ public class Gesuch extends AbstractEntity {
 	private Fall fall;
 
 	@Nullable
-	@ManyToOne(optional = true)
-	private Person gesuchssteller1;
+	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	private Person gesuchsteller1;
 
 	@Nullable
-	@ManyToOne(optional = true)
-	private Person gesuchssteller2;
+	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	private Person gesuchsteller2;
 
 
 	public Fall getFall() {
@@ -34,20 +36,20 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Person getGesuchssteller1() {
-		return gesuchssteller1;
+	public Person getGesuchsteller1() {
+		return gesuchsteller1;
 	}
 
-	public void setGesuchssteller1(@Nullable Person gesuchssteller1) {
-		this.gesuchssteller1 = gesuchssteller1;
+	public void setGesuchsteller1(@Nullable Person gesuchsteller1) {
+		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Person getGesuchssteller2() {
-		return gesuchssteller2;
+	public Person getGesuchsteller2() {
+		return gesuchsteller2;
 	}
 
-	public void setGesuchssteller2(@Nullable Person gesuchssteller2) {
-		this.gesuchssteller2 = gesuchssteller2;
+	public void setGesuchsteller2(@Nullable Person gesuchsteller2) {
+		this.gesuchsteller2 = gesuchsteller2;
 	}
 }

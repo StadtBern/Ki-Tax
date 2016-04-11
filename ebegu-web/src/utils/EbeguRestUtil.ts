@@ -171,7 +171,7 @@ module ebeguWeb.utils {
 
         public familiensituationToRestObject(restFamiliensituation: any, familiensituation: TSFamiliensituation): TSFamiliensituation {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
-            restFamiliensituation.gesuchKardinalitaet = familiensituation.gesuchKardinalitaet;
+            restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
             restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
             this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
@@ -188,8 +188,8 @@ module ebeguWeb.utils {
         public gesuchToRestObject(restGesuch: any, gesuch: ebeguWeb.API.TSGesuch): ebeguWeb.API.TSGesuch {
             this.abstractEntityToRestObject(restGesuch, gesuch);
             restGesuch.fall = gesuch.fall;
-            restGesuch.gesuchssteller1 = this.personToRestObject({}, gesuch.gesuchssteller1);
-            restGesuch.gesuchssteller2 = this.personToRestObject({}, gesuch.gesuchssteller2);
+            restGesuch.gesuchsteller1 = this.personToRestObject({}, gesuch.gesuchsteller1);
+            restGesuch.gesuchsteller2 = this.personToRestObject({}, gesuch.gesuchsteller2);
 
             return restGesuch;
         }

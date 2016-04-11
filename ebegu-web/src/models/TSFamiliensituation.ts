@@ -2,21 +2,21 @@
 module ebeguWeb.API {
     'use strict';
     import TSFamilienstatus = ebeguWeb.API.TSFamilienstatus;
-    import TSGesuchKardinalitaet = ebeguWeb.API.TSGesuchKardinalitaet;
+    import TSGesuchstellerKardinalitaet = ebeguWeb.API.TSGesuchstellerKardinalitaet;
     import TSGesuch = ebeguWeb.API.TSGesuch;
 
     export class TSFamiliensituation extends TSAbstractEntity {
 
         private _familienstatus: TSFamilienstatus;
-        private _gesuchKardinalitaet: TSGesuchKardinalitaet;
+        private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
         private _bemerkungen: string;
         private _gesuch: TSGesuch;
 
 
-        constructor(familienstatus?:TSFamilienstatus, gesuchKardinalitaet?: TSGesuchKardinalitaet, bemerkungen?: string) {
+        constructor(familienstatus?:TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet, bemerkungen?: string) {
             super();
             this._familienstatus = familienstatus;
-            this._gesuchKardinalitaet = gesuchKardinalitaet;
+            this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
             this._bemerkungen = bemerkungen;
         }
 
@@ -28,12 +28,12 @@ module ebeguWeb.API {
             this._familienstatus = familienstatus;
         }
 
-        public get gesuchKardinalitaet():TSGesuchKardinalitaet {
-            return this._gesuchKardinalitaet;
+        public get gesuchstellerKardinalitaet():TSGesuchstellerKardinalitaet {
+            return this._gesuchstellerKardinalitaet;
         }
 
-        public set gesuchKardinalitaet(gesuchKardinalitaet:TSGesuchKardinalitaet) {
-            this._gesuchKardinalitaet = gesuchKardinalitaet;
+        public set gesuchstellerKardinalitaet(gesuchstellerKardinalitaet:TSGesuchstellerKardinalitaet) {
+            this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
         }
 
         public get bemerkungen():string {

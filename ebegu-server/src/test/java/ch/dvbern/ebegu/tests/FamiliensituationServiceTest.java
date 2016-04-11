@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.enums.EnumGesuchKardinalitaet;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -49,7 +49,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(1, allFamiliensituation.size());
 		Familiensituation nextFamsit = allFamiliensituation.iterator().next();
 		Assert.assertEquals(EnumFamilienstatus.ALLEINERZIEHEND, nextFamsit.getFamilienstatus());
-		Assert.assertEquals(EnumGesuchKardinalitaet.ALLEINE, nextFamsit.getGesuchKardinalitaet());
+		Assert.assertEquals(EnumGesuchstellerKardinalitaet.ALLEINE, nextFamsit.getGesuchstellerKardinalitaet());
 		Assert.assertEquals("DVBern", nextFamsit.getBemerkungen());
 	}
 

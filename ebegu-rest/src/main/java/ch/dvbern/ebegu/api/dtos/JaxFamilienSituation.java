@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.EnumGesuchKardinalitaet;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.util.Constants;
 
@@ -24,7 +24,7 @@ public class JaxFamilienSituation extends JaxAbstractDTO{
 	private EnumFamilienstatus familienstatus;
 
 	@Nullable
-	private EnumGesuchKardinalitaet gesuchKardinalitaet;
+	private EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -46,12 +46,12 @@ public class JaxFamilienSituation extends JaxAbstractDTO{
 	}
 
 	@Nullable
-	public EnumGesuchKardinalitaet getGesuchKardinalitaet() {
-		return gesuchKardinalitaet;
+	public EnumGesuchstellerKardinalitaet getGesuchstellerKardinalitaet() {
+		return gesuchstellerKardinalitaet;
 	}
 
-	public void setGesuchKardinalitaet(@Nullable EnumGesuchKardinalitaet gesuchKardinalitaet) {
-		this.gesuchKardinalitaet = gesuchKardinalitaet;
+	public void setGesuchstellerKardinalitaet(@Nullable EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet) {
+		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
 	}
 
 	@Nullable

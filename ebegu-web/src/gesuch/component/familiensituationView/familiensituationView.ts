@@ -14,7 +14,7 @@ module ebeguWeb.FamiliensituationView {
     import IFamiliensituationRS = ebeguWeb.services.IFamiliensituationRS;
 
     import TSFamilienstatus = ebeguWeb.API.TSFamilienstatus;
-    import TSGesuchKardinalitaet = ebeguWeb.API.TSGesuchKardinalitaet;
+    import TSGesuchstellerKardinalitaet = ebeguWeb.API.TSGesuchstellerKardinalitaet;
     'use strict';
 
     class FamiliensituationViewComponentConfig implements angular.IComponentOptions {
@@ -41,7 +41,7 @@ module ebeguWeb.FamiliensituationView {
         gesuchRS: IGesuchRS;
         familiensituationRS: IFamiliensituationRS;
         familienstatusValues: Array<TSFamilienstatus>;
-        gesuchKardinalitaetValues: Array<TSGesuchKardinalitaet>;
+        gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
         static $inject = ['$state', 'familiensituationRS', 'fallRS', 'gesuchRS', 'gesuchForm'];
         /* @ngInject */
@@ -54,7 +54,7 @@ module ebeguWeb.FamiliensituationView {
             this.gesuchRS = gesuchRS;
             this.familiensituationRS = familiensituationRS;
             this.familienstatusValues = ebeguWeb.API.getTSFamilienstatusValues();
-            this.gesuchKardinalitaetValues = ebeguWeb.API.getTSGesuchKardinalitaetValues();
+            this.gesuchstellerKardinalitaetValues = ebeguWeb.API.getTSGesuchstellerKardinalitaetValues();
         }
 
         submit ($form: angular.IFormController) {
@@ -67,24 +67,20 @@ module ebeguWeb.FamiliensituationView {
                 } else {
                     //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
                     this.fallRS.create(this.gesuchForm.fall).then((fallResponse: any) => {
-                        if (!(fallResponse.data instanceof Array)) {
-                            this.gesuchForm.fall = fallResponse.data;
-                            this.gesuchForm.gesuch.fall = fallResponse.data;
-                            this.gesuchRS.create(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
-                                if (!(gesuchResponse.data instanceof Array)) {
-                                    this.gesuchForm.gesuch = gesuchResponse.data;
-                                    this.familiensituation.gesuch = gesuchResponse.data;
-                                    this.familiensituationRS.create(this.familiensituation);
-                                }
-                            });
-                        }
+                        this.gesuchForm.fall = fallResponse.data;
+                        this.gesuchForm.gesuch.fall = fallResponse.data;
+                        this.gesuchRS.create(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
+                            this.gesuchForm.gesuch = gesuchResponse.data;
+                            this.familiensituation.gesuch = gesuchResponse.data;
+                            this.familiensituationRS.create(this.familiensituation);
+                            this.state.go("gesuch.stammdaten");
+                        });
                     });
                 }
-                this.state.go("gesuch.stammdaten");
             }
         }
 
-        showGesuchKardinalitaet(): boolean {
+        showGesuchstellerKardinalitaet(): boolean {
             return this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND
                 || this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
         }

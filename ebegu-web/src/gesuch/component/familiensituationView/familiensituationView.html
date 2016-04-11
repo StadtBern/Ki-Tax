@@ -19,17 +19,17 @@
             </div>
             <br/>
 
-            <!--gesuchKardinalitaet-->
+            <!--gesuchstellerKardinalitaet-->
             <div class="row">
-                <div class="col-md-12" ng-show="vm.showGesuchKardinalitaet()">
+                <div class="col-md-12" ng-show="vm.showGesuchstellerKardinalitaet()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
-                        <div ng-repeat="current in vm.gesuchKardinalitaetValues" class="radio famStatus-{{$index}}">
-                            <label><input type="radio" name="gesuchKardinalitaet" ng-model="vm.familiensituation.gesuchKardinalitaet"
-                                          ng-value="current" ng-required="vm.showGesuchKardinalitaet()">
+                        <div ng-repeat="current in vm.gesuchstellerKardinalitaetValues" class="radio famStatus-{{$index}}">
+                            <label><input type="radio" name="gesuchstellerKardinalitaet" ng-model="vm.familiensituation.gesuchstellerKardinalitaet"
+                                          ng-value="current" ng-required="vm.showGesuchstellerKardinalitaet()">
                                 <span data-translate="{{current}}"></span></label>
                         </div>
-                        <dv-error-messages ng-if="form.$submitted" for="form.gesuchKardinalitaet.$error"
+                        <dv-error-messages ng-if="form.$submitted" for="form.gesuchstellerKardinalitaet.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>

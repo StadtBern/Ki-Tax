@@ -163,7 +163,7 @@ public class JaxBConverter {
 		Validate.notNull(familiensituationJAXP);
 		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
 		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
-		familiensituation.setGesuchKardinalitaet(familiensituationJAXP.getGesuchKardinalitaet());
+		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
 		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
 		return familiensituation;
@@ -173,7 +173,7 @@ public class JaxBConverter {
 		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
 		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
 		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
-		jaxFamiliensituation.setGesuchKardinalitaet(persistedFamiliensituation.getGesuchKardinalitaet());
+		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
 		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
 		return jaxFamiliensituation;
@@ -196,12 +196,12 @@ public class JaxBConverter {
 		Validate.notNull(gesuch);
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
-		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall())); //todo imanol sollte Fall nicht aus der DB geholt werden?
-		if (gesuchJAXP.getGesuchssteller1() != null) {
-			gesuch.setGesuchssteller1(this.personToEntity(gesuchJAXP.getGesuchssteller1(), new Person())); //todo imanol sollte Person nicht aus der DB geholt werden?
+		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));
+		if (gesuchJAXP.getGesuchsteller1() != null) {
+			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
 		}
-		if (gesuchJAXP.getGesuchssteller2() != null) {
-			gesuch.setGesuchssteller2(this.personToEntity(gesuchJAXP.getGesuchssteller2(), new Person())); //todo imanol sollte Person nicht aus der DB geholt werden?
+		if (gesuchJAXP.getGesuchsteller2() != null) {
+			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
 		}
 		return gesuch;
 	}

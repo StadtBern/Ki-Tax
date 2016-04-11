@@ -4,8 +4,8 @@ module ebeguWeb.API {
 
     export class TSGesuch extends TSAbstractEntity {
         private _fall: TSFall;
-        private _gesuchssteller1: TSPerson;
-        private _gesuchssteller2: TSPerson;
+        private _gesuchsteller1: TSPerson;
+        private _gesuchsteller2: TSPerson;
 
 
         public get fall():TSFall {
@@ -16,20 +16,20 @@ module ebeguWeb.API {
             this._fall = value;
         }
 
-        public get gesuchssteller1():TSPerson {
-            return this._gesuchssteller1;
+        public get gesuchsteller1():TSPerson {
+            return this._gesuchsteller1;
         }
 
-        public set gesuchssteller1(value:TSPerson) {
-            this._gesuchssteller1 = value;
+        public set gesuchsteller1(value:TSPerson) {
+            this._gesuchsteller1 = value;
         }
 
-        public get gesuchssteller2():TSPerson {
-            return this._gesuchssteller2;
+        public get gesuchsteller2():TSPerson {
+            return this._gesuchsteller2;
         }
 
-        public set gesuchssteller2(value:TSPerson) {
-            this._gesuchssteller2 = value;
+        public set gesuchsteller2(value:TSPerson) {
+            this._gesuchsteller2 = value;
         }
     }
 }

@@ -87,7 +87,7 @@ public class GesuchResource {
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
 
 		// todo team entscheiden ob wir Gesuch updaten und dann autmoatisch die abhaengige
-		// datensaetze oder jeder Datensatz soll getrennt gespeichert werden (Gesuch->Gesuchssteller)
+		// datensaetze oder jeder Datensatz soll getrennt gespeichert werden (Gesuch->Gesuchsteller)
 
 		return converter.gesuchToJAX(modifiedGesuch);
 

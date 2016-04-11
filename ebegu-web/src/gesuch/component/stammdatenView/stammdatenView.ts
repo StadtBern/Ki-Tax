@@ -76,22 +76,10 @@ module app.StammdatenView {
                 if (!this.showKorrespondadr) {
                     this.stammdaten.korrespondenzAdresse = undefined;
                 }
-                if (!this.stammdaten.timestampErstellt) {
-                    //es handel sich um eine neue Person
-                    this.personRS.create(this.stammdaten).then((response) => {
-                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                            this.gesuchForm.gesuch.gesuchssteller1 = response.data;
-                            this.gesuchRS.update(this.gesuchForm.gesuch);
-                        }
-                    );
 
-                } else {
-                    //update
-                    this.personRS.update(this.stammdaten).then((response) => {
-                            this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                        }
-                    );
-                }
+                this.gesuchForm.gesuch.gesuchsteller1 = this.stammdaten;
+                this.gesuchRS.update(this.gesuchForm.gesuch);
+
             }
         }
 
