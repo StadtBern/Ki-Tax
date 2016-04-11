@@ -1,5 +1,6 @@
 import {ITranslateProvider} from 'angular-translate';
 
+configure.$inject = ['$translateProvider'];
 /* @ngInject */
 export function configure($translateProvider: ITranslateProvider) {
 
@@ -10,5 +11,4 @@ export function configure($translateProvider: ITranslateProvider) {
         })
         .fallbackLanguage('de')
         .preferredLanguage('de');
-
 }
