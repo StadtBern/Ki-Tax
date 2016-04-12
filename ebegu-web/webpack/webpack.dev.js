@@ -10,7 +10,7 @@ var helpers = require('./helpers');
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HMR = helpers.hasProcessFlag('hot');
 const METADATA = {
-    title: 'Angular2 Webpack Starter by @gdi2990 from @AngularClass',
+    title: 'ebegu Webpack',
     baseUrl: '/',
     host: 'localhost',
     port: 3000,
@@ -66,6 +66,23 @@ module.exports = {
             'window.jquery': 'jquery'
         })
     ],
+
+    // Webpack Development Server configuration
+    // Description: The webpack-dev-server is a little node.js Express server.
+    // The server emits information about the compilation state to the client,
+    // which reacts to those events.
+    //
+    // See: https://webpack.github.io/docs/webpack-dev-server.html
+    devServer: {
+        port: METADATA.port,
+        host: METADATA.host,
+        historyApiFallback: true,
+        watchOptions: {
+            aggregateTimeout: 300,
+            poll: 1000
+        }
+    },
+
     module: {
         loaders: loaders
     }
