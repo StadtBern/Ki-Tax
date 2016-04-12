@@ -8,7 +8,7 @@ import './familiensituationView.less';
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
-    template = template;
+    template = template;   //todo low prio evtl mit require statt mit import
     controller = FamiliensituationViewController;
     controllerAs = 'vm';
 }
