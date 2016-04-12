@@ -49,21 +49,12 @@ module.exports = {
             inject: 'body',
             hash: true
         }),
-        // new BrowserSyncPlugin({
-        //     host: 'localhost',
-        //     port: 8080,
-        //     server: {
-        //         baseDir: 'dist'
-        //     },
-        //     ui: false,
-        //     online: false,
-        //     notify: false
-        // }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery',
-            'window.jquery': 'jquery'
+            'window.jquery': 'jquery',
+            'moment': 'moment'
         })
     ],
 
@@ -80,6 +71,12 @@ module.exports = {
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000
+        },
+        proxy: {
+            '/ebegu*': {
+                target: 'http://localhost:8080',
+                secure: false
+            }
         }
     },
 

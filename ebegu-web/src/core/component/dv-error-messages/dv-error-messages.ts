@@ -1,4 +1,4 @@
-class DvErrorMessagesComponentConfig implements angular.IComponentOptions {
+export class DvErrorMessagesComponentConfig implements angular.IComponentOptions {
     transclude = false;
     bindings: any = {
         errorObject: '<for'
@@ -8,9 +8,8 @@ class DvErrorMessagesComponentConfig implements angular.IComponentOptions {
     controllerAs = 'vm';
 }
 
-export default class DvErrorMessages {
+export class DvErrorMessages {
 }
 
-angular.module('ebeguWeb.core').component('dvErrorMessages', new DvErrorMessagesComponentConfig());
 
 

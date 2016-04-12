@@ -1,9 +1,9 @@
-import TSAdresse from '../../../models/TSAdresse';
-import AdresseRS from '../../service/adresseRS';
-import TSLand from '../../../models/TSLand';
-import ListResourceRS from '../../service/listResourceRS';
+import TSAdresse from "../../../models/TSAdresse";
+import AdresseRS from "../../service/adresseRS";
+import TSLand from "../../../models/TSLand";
+import ListResourceRS from "../../service/listResourceRS";
 
-class AdresseComponentConfig implements angular.IComponentOptions {
+export class AdresseComponentConfig implements angular.IComponentOptions {
     transclude = false;
     bindings: any = {
         adresse: '<',
@@ -16,7 +16,7 @@ class AdresseComponentConfig implements angular.IComponentOptions {
 }
 
 
-export default class DvAdresseController {
+export  class DvAdresseController {
     static $inject = ['AdresseRS', 'ListResourceRS'];
 
     adresse: TSAdresse;
@@ -59,4 +59,3 @@ export default class DvAdresseController {
 
 }
 
-angular.module('ebeguWeb.core').component('dvAdresse', new AdresseComponentConfig());

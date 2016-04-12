@@ -1,9 +1,9 @@
-import TSApplicationProperty from '../../../models/TSApplicationProperty';
-import ApplicationPropertyRS from '../../service/applicationPropertyRS.rest';
-import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg} from 'angular';
-import * as template from './adminView.html';
-import './adminView.less';
+import TSApplicationProperty from "../../../models/TSApplicationProperty";
+import ApplicationPropertyRS from "../../service/applicationPropertyRS.rest";
+import EbeguRestUtil from "../../../utils/EbeguRestUtil";
+import {IHttpPromiseCallbackArg} from "angular";
+import * as template from "./adminView.html";
+import "./adminView.less";
 
 export class AdminViewComponentConfig implements angular.IComponentOptions {
     transclude: boolean = false;
@@ -16,7 +16,7 @@ export class AdminViewComponentConfig implements angular.IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH' , 'EbeguRestUtil'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -27,8 +27,8 @@ export class AdminViewController {
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil) {
         this.length = MAX_LENGTH;
-        this.applicationProperty = null;
-        this.applicationProperties = null;
+        this.applicationProperty = undefined;
+        // this.applicationProperties = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
         this.ebeguRestUtil = ebeguRestUtil;
         //this.fetchList();
@@ -56,7 +56,9 @@ export class AdminViewController {
                     var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         //todo pruefen ob das item schon existiert hat wie oben
-                        this.applicationProperties.push(items[0]);
+                        console.log(this.applicationProperties);
+                        this.applicationProperties =  this.applicationProperties.concat(items[0]);
+                        //this.applicationProperties.push(items[0]);
                     }
                 });
         }
@@ -83,7 +85,7 @@ export class AdminViewController {
     }
 
     resetForm(): void {
-        this.applicationProperty = null;
+        this.applicationProperty = undefined;
     }
 
     private getIndexOfElementwithID(prop: TSApplicationProperty) {
