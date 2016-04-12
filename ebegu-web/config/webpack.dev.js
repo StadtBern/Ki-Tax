@@ -27,6 +27,7 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#debug
     debug: true,
+    entry: ['./src/core/bootstrap.ts'],
     // entry: ['webpack/hot/dev-server', '/src/app.module.ts'],
     output: {
         filename: 'build.js',
