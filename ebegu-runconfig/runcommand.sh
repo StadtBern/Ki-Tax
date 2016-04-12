@@ -1,8 +1,9 @@
+#!/bin/bash
 #host-ip auslesen
 alias hostip="ip route show 0.0.0.0/0 | grep -Eo 'via \S+' | awk '{ print \$2 }'"
 
 #Datenbank initialisieren
-docker run -d --name EBEGU-MARIADB  -e MYSQL_DATABASE=ebegu  -e MYSQL_USER=ebegu -e MYSQL_PASSWORD=ebegu -e MYSQL_ROOT_PASSWORD=ebegu  mariadb:latest --character-set-server=utf8 --collation-server=utf8_unicode_ci --verbose
+docker run -d --name EBEGU-MARIADB  -e MYSQL_DATABASE=ebegu  -e MYSQL_USER=ebegu -e MYSQL_PASSWORD=ebegu -e MYSQL_ROOT_PASSWORD=ebegu  mariadb:latest --character-set-server=utf8 --collation-server=utf8_unicode_ci --verbose || docker start EBEGU-MARIADB
 #Auf Datenbank warten
 docker run --rm --link EBEGU-MARIADB:mysql digit/wait-for-mysql
 #Wildfly Server starten
