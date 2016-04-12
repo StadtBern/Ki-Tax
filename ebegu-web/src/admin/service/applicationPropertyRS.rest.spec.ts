@@ -1,19 +1,22 @@
-/// <reference path="../../../typings/browser.d.ts" />
-describe('applicationPropertyRS', function () {
+import {IHttpBackendService} from 'angular';
+import ApplicationPropertyRS from './applicationPropertyRS.rest';
+import TSApplicationProperty from '../../models/TSApplicationProperty';
 
-    var applicationPropertyRS: ebeguWeb.services.IApplicationPropertyRS;
-    var $httpBackend: angular.IHttpBackendService;
-    var REST_API: string;
-    var testName: string = 'myTestName';
+describe('ApplicationPropertyRS', function () {
 
-    var mockApplicationProperty = {
+    let applicationPropertyRS: ApplicationPropertyRS;
+    let $httpBackend: IHttpBackendService;
+    let REST_API: string;
+    let testName: string = 'myTestName';
+
+    let mockApplicationProperty = {
         name: testName,
         value: 'myTestValue'
     };
 
     beforeEach(angular.mock.module('ebeguWeb.admin'));
 
-    beforeEach(angular.mock.inject(function (_applicationPropertyRS_, _$httpBackend_, _REST_API_) {
+    beforeEach(angular.mock.inject(function (_applicationPropertyRS_: ApplicationPropertyRS, _$httpBackend_: IHttpBackendService, _REST_API_: string) {
         applicationPropertyRS = _applicationPropertyRS_;
         $httpBackend = _$httpBackend_;
         REST_API = _REST_API_;
@@ -52,12 +55,11 @@ describe('applicationPropertyRS', function () {
 
             it('should fetch property with given name', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/' + testName);
-                var promise = applicationPropertyRS.getByName(testName);
-                var property = null;
+                let promise = applicationPropertyRS.getByName(testName);
+                let property: TSApplicationProperty = undefined;
 
-                promise.then(function (response) {
-                    property = response.data;
-
+                promise.then(function (data) {
+                    property = data;
                 });
                 $httpBackend.flush();
                 expect(property).toEqual(mockApplicationProperty);
@@ -70,12 +72,11 @@ describe('applicationPropertyRS', function () {
 
             it('should create property with name and value', function () {
                 $httpBackend.expectPOST(REST_API + 'application-properties/' + testName, mockApplicationProperty.value);
-                var promise = applicationPropertyRS.create(mockApplicationProperty.name, mockApplicationProperty.value);
-                var property = null;
+                let promise = applicationPropertyRS.create(mockApplicationProperty.name, mockApplicationProperty.value);
+                let property: TSApplicationProperty = undefined;
 
                 promise.then(function (response) {
                     property = response.data;
-
                 });
                 $httpBackend.flush();
                 expect(property).toEqual(mockApplicationProperty);
@@ -87,12 +88,11 @@ describe('applicationPropertyRS', function () {
 
             it('should fetch a list of all properties', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/');
-                var promise = applicationPropertyRS.getAllApplicationProperties();
-                var list = null;
+                let promise = applicationPropertyRS.getAllApplicationProperties();
+                let list: TSApplicationProperty[] = undefined;
 
-                promise.then(function (response) {
-                    list = response.data;
-
+                promise.then(function (data) {
+                    list = data;
                 });
                 $httpBackend.flush();
                 expect(list).toEqual([mockApplicationProperty]);
@@ -104,8 +104,8 @@ describe('applicationPropertyRS', function () {
 
             it('should remove a property', function () {
                 $httpBackend.expectDELETE(REST_API + 'application-properties/' + testName);
-                var promise = applicationPropertyRS.remove(testName);
-                var status = null;
+                let promise = applicationPropertyRS.remove(testName);
+                let status: number = undefined;
 
                 promise.then(function (response) {
                     status = response.status;

@@ -1,58 +1,44 @@
-/// <reference path="../../typings/browser.d.ts" />
-module ebeguWeb.routes {
-    import IApplicationPropertyRS = ebeguWeb.services.IApplicationPropertyRS;
-    import ApplicationProperty = ebeguWeb.API.TSApplicationProperty;
-    'use strict';
+import TSApplicationProperty from "../models/TSApplicationProperty";
+import {IState} from "angular-ui-router";
+import {RouterHelper} from "../dvbModules/router/route-helper-provider";
+import ApplicationPropertyRS from "./service/applicationPropertyRS.rest";
 
+adminRun.$inject = ['RouterHelper'];
 
-    export class EbeguStateController {
-        applicationProperties: Array<ApplicationProperty>;
+/* @ngInject */
+export function adminRun(routerHelper: RouterHelper) {
+    routerHelper.configureStates(getStates());
+}
 
-        static $inject = ['applicationProperties'];
-        constructor(applicationProperties) {
-            var vm = this;
-            vm.applicationProperties = applicationProperties;
-        }
-    }
-
-    export class EbeguState implements angular.ui.IState {
-        name = 'admin';
-        template = '<admin-view application-properties="vm.applicationProperties"></admin-view>';
-        url = '/admin';
-        controller = EbeguStateController;
-        controllerAs = 'vm';
-        resolve = {
-            applicationProperties : function(applicationPropertyRS) {
-                return applicationPropertyRS.getAllApplicationProperties();
+function getStates(): IState[] {
+    return [
+        {
+            name: 'admin',
+            template: '<dv-admin-view application-properties="vm.applicationProperties"></dv-admin-view>',
+            url: '/admin',
+            controller: EbeguStateController,
+            controllerAs: 'vm',
+            resolve: {
+                applicationProperties: getApplicationProperties
             }
-        };
-
-        constructor() {
         }
+    ];
+}
 
+class EbeguStateController {
+    static $inject = ['applicationProperties'];
+
+    applicationProperties: TSApplicationProperty[];
+
+    constructor(applicationProperties: TSApplicationProperty[]) {
+        var vm = this;
+        vm.applicationProperties = applicationProperties;
     }
+}
 
-
-    export class EbeguWebAdminRun {
-        static $inject = ['routerHelper'];
-        /* @ngInject */
-        constructor(routerHelper: IRouterHelper) {
-            routerHelper.configureStates(this.getStates());
-        }
-
-        /**
-         * @returns {angular.ui.IState[]}
-         */
-        public getStates(): Array<angular.ui.IState> {
-            return [new EbeguState()];
-        }
-
-        public static instance(routerHelper) : EbeguWebAdminRun {
-            return new EbeguWebAdminRun(routerHelper);
-        }
-
-    }
-
-
-    angular.module('ebeguWeb.admin').run(EbeguWebAdminRun.instance);
+// FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
+getApplicationProperties.$inject = ['ApplicationPropertyRS'];
+/* @ngInject */
+function getApplicationProperties(ApplicationPropertyRS: ApplicationPropertyRS) {
+    return ApplicationPropertyRS.getAllApplicationProperties();
 }

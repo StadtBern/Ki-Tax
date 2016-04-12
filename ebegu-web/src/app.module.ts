@@ -1,10 +1,8 @@
-/// <reference path="../typings/browser.d.ts" />
+import 'angular';
+import './app.module.less';
 
-/*import {TSAdresse} from "models/TSAdresse"*/
+import {EbeguWebCore} from './core/core.module';
+import {EbeguWebAdmin} from './admin/admin.module';
+import {EbeguWebGesuch} from './gesuch/gesuch.module';
 
-module ebeguWeb {
-    'use strict';
-
-    angular.module('ebeguWeb', ['ebeguWeb.core', 'ebeguWeb.admin', 'ebeguWeb.gesuch']);
-
-}
+export default angular.module('ebeguWeb', [EbeguWebCore.name, EbeguWebAdmin.name, EbeguWebGesuch.name]);

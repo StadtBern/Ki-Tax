@@ -1,10 +1,14 @@
+import {IRootScopeService, IScope} from 'angular';
+
 describe('dvErrorMessages', function () {
 
-    beforeEach(module('ebeguWeb.core'));
+    beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    var component, scope, $componentController;
+    let component: any;
+    let scope: IScope;
+    let $componentController: any;
 
-    beforeEach(inject(function (_$componentController_, $rootScope) {
+    beforeEach(inject(function (_$componentController_: any, $rootScope: IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
@@ -14,7 +18,7 @@ describe('dvErrorMessages', function () {
          To initialise your component controller you have to setup your (mock) bindings and
          pass them to $componentController.
          */
-        var bindings = {};
+        let bindings = {};
         component = $componentController('dvErrorMessages', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });

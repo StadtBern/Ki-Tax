@@ -76,7 +76,7 @@
                             <goal>grunt</goal>
                         </goals>
                         <configuration>
-                            <arguments>build --no-color</arguments>
+                            <arguments>--no-color build-jenkins</arguments>
                         </configuration>
                     </execution>
 

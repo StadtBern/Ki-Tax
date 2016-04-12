@@ -1,38 +1,23 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.services {
-    'use strict';
+import TSAdresse from '../../models/TSAdresse';
+import {IHttpService, IHttpPromise} from 'angular';
 
-    export interface IAdresseRS {
-        serviceURL: string;
-        http: angular.IHttpService;
+export default class AdresseRS {
+    static $inject = ['$http', 'REST_API'];
 
-        create: (adresse: ebeguWeb.API.TSAdresse)  => angular.IHttpPromise<any>;
+    serviceURL: string;
+    http: IHttpService;
+
+    /* @ngInject */
+    constructor($http: IHttpService, REST_API: string) {
+        this.serviceURL = REST_API + 'adressen';
+        this.http = $http;
     }
 
-    export class AdresseRS implements IAdresseRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-
-        static $inject = ['$http', 'REST_API'];
-        /* @ngInject */
-        constructor($http: angular.IHttpService, REST_API: string) {
-            this.serviceURL = REST_API + 'adressen';
-            this.http = $http;
-        }
-
-        public create(adresse) {
-            return this.http.post(this.serviceURL, adresse, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-
-        static instance ($http, REST_API) : IAdresseRS {
-            return new AdresseRS($http, REST_API);
-        }
+    public create(adresse: TSAdresse): IHttpPromise<any> {
+        return this.http.post(this.serviceURL, adresse, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
-
-    angular.module('ebeguWeb.core').factory('adresseRS', AdresseRS.instance);
-
 }

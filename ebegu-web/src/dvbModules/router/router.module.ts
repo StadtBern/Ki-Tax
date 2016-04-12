@@ -1,8 +1,7 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.routes {
-    'use strict';
+import 'angular';
+import 'angular-ui-router';
+import RouterHelperProvider from './route-helper-provider';
 
-    angular.module('dvbAngular.router', [
-        'ui.router'
-    ]);
-}
+export default angular.module('dvbAngular.router', [
+    'ui.router'
+]).provider('RouterHelper', RouterHelperProvider);
