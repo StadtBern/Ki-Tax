@@ -1,4 +1,4 @@
-import TSAbstractEntity from "./TSAbstractEntity";
+import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSApplicationProperty extends TSAbstractEntity {
     private _name: string;

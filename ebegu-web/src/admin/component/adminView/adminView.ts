@@ -1,9 +1,9 @@
-import TSApplicationProperty from "../../../models/TSApplicationProperty";
-import ApplicationPropertyRS from "../../service/applicationPropertyRS.rest";
-import EbeguRestUtil from "../../../utils/EbeguRestUtil";
-import {IHttpPromiseCallbackArg} from "angular";
-import * as template from "./adminView.html";
-import "./adminView.less";
+import TSApplicationProperty from '../../../models/TSApplicationProperty';
+import ApplicationPropertyRS from '../../service/applicationPropertyRS.rest';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import {IHttpPromiseCallbackArg} from 'angular';
+import * as template from './adminView.html';
+import './adminView.less';
 
 export class AdminViewComponentConfig implements angular.IComponentOptions {
     transclude: boolean = false;

@@ -1,15 +1,15 @@
-import TSPerson from "../../../models/TSPerson";
-import TSAdresse from "../../../models/TSAdresse";
-import PersonRS from "../../../core/service/personRS.rest";
-import {TSAdressetyp} from "../../../models/enums/TSAdressetyp";
-import EbeguRestUtil from "../../../utils/EbeguRestUtil";
-import {EnumEx} from "../../../utils/EnumEx";
-import {IComponentOptions, IFormController} from "angular";
-import {IStateService} from "angular-ui-router";
-import AbstractGesuchViewController from "../abstractGesuchView";
-import {TSGeschlecht} from "../../../models/enums/TSGeschlecht";
-import * as template from "./stammdatenView.html";
-import "./stammdatenView.less";
+import TSPerson from '../../../models/TSPerson';
+import TSAdresse from '../../../models/TSAdresse';
+import PersonRS from '../../../core/service/personRS.rest';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import {EnumEx} from '../../../utils/EnumEx';
+import {IComponentOptions, IFormController} from 'angular';
+import {IStateService} from 'angular-ui-router';
+import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
+import * as template from './stammdatenView.html';
+import './stammdatenView.less';
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;

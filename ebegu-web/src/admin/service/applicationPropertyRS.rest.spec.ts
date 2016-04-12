@@ -1,6 +1,6 @@
-import {IHttpBackendService} from "angular";
-import ApplicationPropertyRS from "./applicationPropertyRS.rest";
-import TSApplicationProperty from "../../models/TSApplicationProperty";
+import {IHttpBackendService} from 'angular';
+import ApplicationPropertyRS from './applicationPropertyRS.rest';
+import TSApplicationProperty from '../../models/TSApplicationProperty';
 
 describe('ApplicationPropertyRS', function () {
 

@@ -1,7 +1,7 @@
-import TSAdresse from "../../../models/TSAdresse";
-import AdresseRS from "../../service/adresseRS";
-import TSLand from "../../../models/TSLand";
-import ListResourceRS from "../../service/listResourceRS";
+import TSAdresse from '../../../models/TSAdresse';
+import AdresseRS from '../../service/adresseRS';
+import TSLand from '../../../models/TSLand';
+import ListResourceRS from '../../service/listResourceRS';
 
 export class AdresseComponentConfig implements angular.IComponentOptions {
     transclude = false;

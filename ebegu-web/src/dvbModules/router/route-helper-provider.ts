@@ -1,5 +1,5 @@
-import {IState, IUrlRouterProvider, IStateProvider} from "angular-ui-router";
-import {IServiceProvider, ILocationProvider} from "angular";
+import {IState, IUrlRouterProvider, IStateProvider} from 'angular-ui-router';
+import {IServiceProvider, ILocationProvider} from 'angular';
 
 export class RouterHelper {
     static $inject = ['$stateProvider', '$urlRouterProvider'];

@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from "angular";
+import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 
 class DVMaxLength implements IDirective {
     static $inject = ['MAX_LENGTH'];

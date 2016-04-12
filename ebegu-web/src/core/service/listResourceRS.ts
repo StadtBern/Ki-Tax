@@ -1,6 +1,6 @@
-import EbeguRestUtil from "../../utils/EbeguRestUtil";
-import TSLand from "../../models/TSLand";
-import {IPromise, IHttpService} from "angular";
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSLand from '../../models/TSLand';
+import {IPromise, IHttpService} from 'angular';
 
 export default class ListResourceRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];

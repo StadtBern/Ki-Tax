@@ -1,6 +1,6 @@
-import TSPerson from "../../models/TSPerson";
-import EbeguRestUtil from "../../utils/EbeguRestUtil";
-import {IHttpService, IHttpPromise} from "angular";
+import TSPerson from '../../models/TSPerson';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {IHttpService, IHttpPromise} from 'angular';
 
 export default class PersonRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];

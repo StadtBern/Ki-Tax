@@ -4,8 +4,8 @@
  https://angular-translate.github.io/docs/#/guide/22_unit-testing-with-angular-translate
  */
 import IProvideService = angular.auto.IProvideService;
-import {ITranslateProvider} from "angular-translate";
-import {IQService} from "angular";
+import {ITranslateProvider} from 'angular-translate';
+import {IQService} from 'angular';
 
 beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideService, $translateProvider: ITranslateProvider) {
 

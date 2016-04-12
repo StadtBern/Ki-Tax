@@ -1,11 +1,11 @@
-import TSApplicationProperty from "../models/TSApplicationProperty";
-import TSAbstractEntity from "../models/TSAbstractEntity";
-import TSAdresse from "../models/TSAdresse";
-import {TSAdressetyp} from "../models/enums/TSAdressetyp";
-import TSPerson from "../models/TSPerson";
-import DateUtil from "./DateUtil";
-import {IFilterService} from "angular";
-import TSLand from "../models/TSLand";
+import TSApplicationProperty from '../models/TSApplicationProperty';
+import TSAbstractEntity from '../models/TSAbstractEntity';
+import TSAdresse from '../models/TSAdresse';
+import {TSAdressetyp} from '../models/enums/TSAdressetyp';
+import TSPerson from '../models/TSPerson';
+import DateUtil from './DateUtil';
+import {IFilterService} from 'angular';
+import TSLand from '../models/TSLand';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
