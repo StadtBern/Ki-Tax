@@ -1,6 +1,6 @@
-import TSAbstractEntity from './TSAbstractEntity';
-import TSAdresse from './TSAdresse';
-import {TSGeschlecht} from './enums/TSGeschlecht';
+import TSAbstractEntity from "./TSAbstractEntity";
+import TSAdresse from "./TSAdresse";
+import {TSGeschlecht} from "./enums/TSGeschlecht";
 
 export default class TSPerson extends TSAbstractEntity {
 

@@ -1,6 +1,6 @@
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSApplicationProperty from '../../models/TSApplicationProperty';
-import {IHttpService, IPromise, IHttpPromise} from 'angular';
+import EbeguRestUtil from "../../utils/EbeguRestUtil";
+import TSApplicationProperty from "../../models/TSApplicationProperty";
+import {IHttpService, IPromise, IHttpPromise} from "angular";
 
 export default class ApplicationPropertyRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];

@@ -1,4 +1,4 @@
-import {IRootScopeService, IScope} from 'angular';
+import {IRootScopeService, IScope} from "angular";
 
 describe('dvErrorMessages', function () {
 

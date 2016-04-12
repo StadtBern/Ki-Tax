@@ -1,4 +1,4 @@
-import {IScope, IRootScopeService} from 'angular';
+import {IScope, IRootScopeService} from "angular";
 
 describe('adminView', function () {
 

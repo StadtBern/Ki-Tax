@@ -1,6 +1,6 @@
-import {IState} from 'angular-ui-router';
-import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import * as gesuchTpl from './gesuch.html';
+import {IState} from "angular-ui-router";
+import {RouterHelper} from "../dvbModules/router/route-helper-provider";
+import * as gesuchTpl from "./gesuch.html";
 
 gesuchRun.$inject = ['RouterHelper'];
 

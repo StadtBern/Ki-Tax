@@ -1,4 +1,4 @@
-import {PersonRS} from './personRS.rest';
+import {PersonRS} from "./personRS.rest";
 
 describe('PersonRS', function () {
 

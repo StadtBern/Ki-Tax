@@ -1,4 +1,4 @@
-import {ITranslateProvider} from 'angular-translate';
+import {ITranslateProvider} from "angular-translate";
 
 configure.$inject = ['$translateProvider'];
 /* @ngInject */

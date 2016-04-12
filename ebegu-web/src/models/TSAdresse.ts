@@ -1,5 +1,5 @@
-import TSAbstractEntity from './TSAbstractEntity';
-import {TSAdressetyp} from './enums/TSAdressetyp';
+import TSAbstractEntity from "./TSAbstractEntity";
+import {TSAdressetyp} from "./enums/TSAdressetyp";
 
 export default class TSAdresse extends TSAbstractEntity {
 

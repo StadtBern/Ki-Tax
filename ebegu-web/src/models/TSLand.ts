@@ -1,4 +1,4 @@
-import TSAbstractEntity from './TSAbstractEntity';
+import TSAbstractEntity from "./TSAbstractEntity";
 
 export default class TSLand extends TSAbstractEntity {
     private _name: string;

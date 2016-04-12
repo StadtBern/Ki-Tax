@@ -1,5 +1,5 @@
-import {IStateService} from 'angular-ui-router';
-import {IFormController} from 'angular';
+import {IStateService} from "angular-ui-router";
+import {IFormController} from "angular";
 
 export default class AbstractGesuchViewController {
 
