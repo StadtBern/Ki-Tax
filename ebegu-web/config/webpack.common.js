@@ -1,9 +1,6 @@
-/**
- * @author: @AngularClass
- */
-
 var webpack = require('webpack');
 var helpers = require('./helpers');
+var loaders = require('./loaders');
 
 /**
  * Webpack Plugins
@@ -44,14 +41,11 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#entry
     // change dvbern
-    // entry: {
-    //
-    //     'polyfills': './src/polyfills.ts',
-    //     'vendor': './src/vendor.ts',
-    //     'main': './src/main.browser.ts',
-    //
-    // },
-    entry: ['./src/core/bootstrap.ts'],
+    entry: {
+        // 'polyfills': './src/polyfills.ts',
+        // 'vendor': './src/vendor.ts',
+        'main': './src/core/bootstrap.ts'
+    },
 
     // Options affecting the resolving of modules.
     //
@@ -96,7 +90,7 @@ module.exports = {
                 exclude: [
                     // these packages have problems with their sourcemaps
                     helpers.root('node_modules/rxjs'),
-                    helpers.root('node_modules/@angular2-material')
+                    //helpers.root('node_modules/@angular2-material')
                 ]
             }
 
@@ -108,45 +102,7 @@ module.exports = {
         // This means they are not resolved relative to the configuration file.
         //
         // See: http://webpack.github.io/docs/configuration.html#module-loaders
-        loaders: [
-
-            // Typescript loader support for .ts and Angular 2 async routes via .async.ts
-            //
-            // See: https://github.com/s-panferov/awesome-typescript-loader
-            {
-                test: /\.ts$/,
-                loader: 'awesome-typescript-loader',
-                exclude: [/\.(spec|e2e)\.ts$/]
-            },
-
-            // Json loader support for *.json files.
-            //
-            // See: https://github.com/webpack/json-loader
-            {
-                test: /\.json$/,
-                loader: 'json-loader'
-            },
-
-            // Raw loader support for *.css files
-            // Returns file content as string
-            //
-            // See: https://github.com/webpack/raw-loader
-            {
-                test: /\.css$/,
-                loader: 'raw-loader'
-            },
-
-            // Raw loader support for *.html
-            // Returns file content as string
-            //
-            // See: https://github.com/webpack/raw-loader
-            {
-                test: /\.html$/,
-                loader: 'raw-loader',
-                exclude: [helpers.root('src/index.html')]
-            },
-
-        ]
+        loaders: loaders
 
     },
 
@@ -186,10 +142,9 @@ module.exports = {
         // Copies project static assets.
         //
         // See: https://www.npmjs.com/package/copy-webpack-plugin
-        new CopyWebpackPlugin([{
-            from: 'src/assets',
-            to: 'assets'
-        }]),
+        new CopyWebpackPlugin([
+            {from: 'src/assets', to: 'src/assets'},
+        ]),
 
         // Plugin: HtmlWebpackPlugin
         // Description: Simplifies creation of HTML files to serve your webpack bundles.

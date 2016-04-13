@@ -1,4 +1,4 @@
-import 'moment';
+import * as moment from 'moment';
 import Moment = moment.Moment; // TODO kann das über ein anderes Import Format gelöst werden (import ... from 'moment')?
 
 export default class DateUtil {

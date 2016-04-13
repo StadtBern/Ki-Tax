@@ -40,7 +40,7 @@
     "server": "npm run server:dev",
       "server:dev": "webpack-dev-server --config config/webpack.dev.js --inline --progress --profile --colors --watch --display-error-details --display-cached --content-base src/",
       "server:dev:hmr": "npm run server:dev -- --hot",
-      "server:prod": "http-server dist --cors",
+      "server:prod": "http-server dist --cors -p 3000 --proxy http://localhost:8080/",
 
     "webdriver:update": "npm run webdriver-manager update",
     "webdriver:start": "npm run webdriver-manager start",
@@ -63,7 +63,7 @@
     "postinstall": "npm run typings -- install",
 
 
-    "serve": "webpack-dev-server --hot"
+    "hotstart": "npm run server:dev:hmr"
   },
   "dependencies": {
     "angular": "~1.5.3",
@@ -87,6 +87,7 @@
   "devDependencies": {
     "angular-mocks": "~1.5",
     "awesome-typescript-loader": "~0.17.0-rc.0",
+    "compression-webpack-plugin": "~0.3.0",
     "browser-sync": "~2.11.2",
     "browser-sync-webpack-plugin": "~1.0.1",
     "copy-webpack-plugin": "~1.1.1",
@@ -145,7 +146,8 @@
     "url-loader": "~0.5.7",
     "webpack": "~1.12.14",
     "webpack-dev-server": "~1.14.1",
-    "webpack-md5-hash": "0.0.5"
+    "webpack-md5-hash": "~0.0.5",
+    "webpack-merge": "~0.8.4"
   },
   "engines": {
     "node": ">= 4.4.0",

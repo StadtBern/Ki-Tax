@@ -6,7 +6,7 @@ export function configure($translateProvider: ITranslateProvider) {
 
     $translateProvider.useSanitizeValueStrategy('escapeParameters');
     $translateProvider.useStaticFilesLoader({
-            prefix: 'src/translations/translations_',
+            prefix: 'src/assets/translations/translations_',
             suffix: '.json'
         })
         .fallbackLanguage('de')
