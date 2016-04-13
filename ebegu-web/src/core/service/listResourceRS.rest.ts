@@ -1,43 +1,34 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.services {
-    'use strict';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSLand from '../../models/TSLand';
+import {IPromise, IHttpService} from 'angular';
 
-    export interface IListResourceRS extends IEntityRS {
-        getLaenderList: () => angular.IPromise<any>;
+export default class ListResourceRS {
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+
+    static laenderList: TSLand[];
+
+    serviceURL: string;
+    http: IHttpService;
+    ebeguRestUtil: EbeguRestUtil;
+
+    /* @ngInject */
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
+        this.serviceURL = REST_API + 'lists';
+        this.http = $http;
+        this.ebeguRestUtil = ebeguRestUtil;
+        ListResourceRS.laenderList = [];
     }
 
-    export class ListResourceRS implements IListResourceRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-        static laenderList: Array<ebeguWeb.API.TSLand>;
-
-        static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
-        /* @ngInject */
-        constructor($http: angular.IHttpService, REST_API: string,
-                    ebeguRestUtil:ebeguWeb.utils.EbeguRestUtil) {
-            this.serviceURL = REST_API + 'lists';
-            this.http = $http;
-            this.ebeguRestUtil = ebeguRestUtil;
-            ListResourceRS.laenderList = [];
-        }
-
-        getLaenderList() {
-            return this.http.get(this.serviceURL + '/laender', { cache: true }).then((response: any) => {
-                if (ListResourceRS.laenderList.length <= 0) { // wenn die Laenderliste schon ausgefuellt wurde, nichts machen
-                    for (var i = 0; i < response.data.length; i++) {
-                        ListResourceRS.laenderList.push(this.ebeguRestUtil.landCodeToTSLand(response.data[i]));
-                    }
+    getLaenderList() {
+        return this.http.get(this.serviceURL + '/laender', { cache: true }).then((response: any) => {
+            if (ListResourceRS.laenderList.length <= 0) { // wenn die Laenderliste schon ausgefuellt wurde, nichts machen
+                for (var i = 0; i < response.data.length; i++) {
+                    ListResourceRS.laenderList.push(this.ebeguRestUtil.landCodeToTSLand(response.data[i]));
                 }
-                return ListResourceRS.laenderList;
-            });
-        }
-
-        static instance ($http, REST_API, ebeguRestUtil) : IListResourceRS {
-            return new ListResourceRS($http, REST_API, ebeguRestUtil);
-        }
+            }
+            return ListResourceRS.laenderList;
+        });
     }
 
-    angular.module('ebeguWeb.core').factory('listResourceRS', ListResourceRS.instance);
+    }
 
-}

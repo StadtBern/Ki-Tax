@@ -1,32 +1,17 @@
-/// <reference path="../../../../typings/browser.d.ts" />
-module ebeguWeb.KinderView {
-    'use strict';
+import {IComponentOptions} from 'angular';
 
-    class KinderViewComponentConfig implements angular.IComponentOptions {
-        transclude: boolean;
-        bindings: any;
-        templateUrl: string | Function;
-        controller: any;
-        controllerAs: string;
+export class KinderViewComponentConfig implements IComponentOptions {
+    transclude = false;
+    templateUrl = 'src/gesuch/component/kinderView/kinderView.html';
+    controller = KinderViewController;
+    controllerAs = 'vm';
+}
 
-        constructor() {
-            this.transclude = false;
-            this.bindings = {};
-            this.templateUrl = 'src/gesuch/component/kinderView/kinderView.html';
-            this.controller = KinderViewController;
-            this.controllerAs = 'vm';
-        }
+export class KinderViewController  {
+
+    static $inject: string[] = [];
+    /* @ngInject */
+    constructor() {
+
     }
-
-    class KinderViewController  {
-
-        static $inject = [];
-        /* @ngInject */
-        constructor() {
-
-        }
-    }
-
-    angular.module('ebeguWeb.gesuch').component('kinderView', new KinderViewComponentConfig());
-
 }

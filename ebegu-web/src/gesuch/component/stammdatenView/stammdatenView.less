@@ -1,10 +1,27 @@
+@import '../../../variables.less';
+
 .sidenav {
     li {
-        border-bottom: 1px solid lightgray;
-        height:20px;
-        margin-top:12px;
-        margin-right:40px;
+
+        height: 20px;
+        margin-top: 12px;
+        margin-right: 40px;
         list-style: none;
+        border-bottom: 1px solid lightgray;
+
+        a {
+            color: black;
+            cursor: pointer;
+            padding-left: 10px;
+
+        }
 
     }
+
+    li.active {
+        border-bottom: 2px solid black;
+
+        border-left: 4px solid @color-guide;;
+    }
+
 }

@@ -1,11 +1,8 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.services {
-    'use strict';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {IHttpService} from 'angular';
 
-    export interface IEntityRS {
-        serviceURL: string;
-        http: angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-    }
-
+export interface IEntityRS {
+    serviceURL: string;
+    http: IHttpService;
+    ebeguRestUtil: EbeguRestUtil;
 }

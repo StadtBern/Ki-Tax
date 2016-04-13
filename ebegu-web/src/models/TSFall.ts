@@ -1,8 +1,5 @@
-/// <reference path="../../typings/browser.d.ts" />
-module ebeguWeb.API {
-    'use strict';
+import TSAbstractEntity from './TSAbstractEntity';
 
-    export class TSFall extends TSAbstractEntity {
+export default class TSFall extends TSAbstractEntity {
 
-    }
 }

@@ -1,57 +1,43 @@
-/// <reference path="../../../typings/browser.d.ts" />
-module ebeguWeb.services {
-    import IEntityRS = ebeguWeb.services.IEntityRS;
-    'use strict';
+import {IHttpPromise, IHttpService} from 'angular';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSFamiliensituation from '../../models/TSFamiliensituation';
 
-    export interface IFamiliensituationRS extends IEntityRS {
-        findFamiliensituation: (familiensituationID: string) => angular.IHttpPromise<any>;
-        create: (familiensituation: ebeguWeb.API.TSFamiliensituation) => angular.IHttpPromise<any>;
-        update: (familiensituation: ebeguWeb.API.TSFamiliensituation) => angular.IHttpPromise<any>;
+
+export default class FamiliensituationRS {
+    serviceURL:string;
+    http:IHttpService;
+    ebeguRestUtil: EbeguRestUtil;
+
+    static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
+    /* @ngInject */
+    constructor($http:IHttpService, REST_API:string, ebeguRestUtil: EbeguRestUtil) {
+        this.serviceURL = REST_API + 'familiensituation';
+        this.http = $http;
+        this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    export class FamiliensituationRS implements IFamiliensituationRS {
-        serviceURL:string;
-        http:angular.IHttpService;
-        ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil;
-
-        static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
-        /* @ngInject */
-        constructor($http:angular.IHttpService, REST_API:string, ebeguRestUtil: ebeguWeb.utils.EbeguRestUtil) {
-            this.serviceURL = REST_API + 'familiensituation';
-            this.http = $http;
-            this.ebeguRestUtil = ebeguRestUtil;
-        }
-
-        public create(familiensituation) {
-            let returnedFamiliensituation = {};
-            returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation,familiensituation);
-            return this.http.post(this.serviceURL, returnedFamiliensituation, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-
-        public update(familiensituation) {
-            let returnedFamiliensituation = {};
-            returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation,familiensituation);
-            return this.http.put(this.serviceURL,  returnedFamiliensituation, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-
-        public findFamiliensituation(familiensituationID:string) {
-            return this.http.get( this.serviceURL + '/' + encodeURIComponent(familiensituationID));
-        }
-
-        static instance ($http, REST_API, ebeguRestUtil) : IFamiliensituationRS {
-            return new FamiliensituationRS($http, REST_API, ebeguRestUtil);
-        }
-
+    public create(familiensituation: TSFamiliensituation): IHttpPromise<any> {
+        let returnedFamiliensituation = {};
+        returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation,familiensituation);
+        return this.http.post(this.serviceURL, returnedFamiliensituation, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
-    angular.module('ebeguWeb.core').factory('familiensituationRS', FamiliensituationRS.instance);
+    public update(familiensituation: TSFamiliensituation): IHttpPromise<any> {
+        let returnedFamiliensituation = {};
+        returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation,familiensituation);
+        return this.http.put(this.serviceURL,  returnedFamiliensituation, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    public findFamiliensituation(familiensituationID:string): IHttpPromise<any> {
+        return this.http.get( this.serviceURL + '/' + encodeURIComponent(familiensituationID));
+    }
 
 }
