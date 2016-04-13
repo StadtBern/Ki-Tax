@@ -9,4 +9,4 @@ docker run --rm --link EBEGU-MARIADB:mysql digit/wait-for-mysql
 #Wildfly Server starten
 docker run -dP --name EBEGU-WILDFLY -p 8080:8080 -p 8443:8443 -p 9990:9990  --link EBEGU-MARIADB:EBEGU-MARIADB docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly
 #Applikation starten
-docker run -dP --name EBEGU-NGNIX --link EBEGU-WILDFLY:EBEGU-WILDFLY -p 3000:80   docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix
+docker run -dP --name EBEGU-NGNIX --link EBEGU-WILDFLY:EBEGU-WILDFLY -p 80:80   docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix
