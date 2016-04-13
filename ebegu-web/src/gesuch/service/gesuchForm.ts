@@ -100,7 +100,7 @@ export default class GesuchForm {
     }
 
     public initStammdaten():void {
-        if((this.getStammdatenToWorkWith() === undefined) || (this.getStammdatenToWorkWith() === null)){
+        if(!this.getStammdatenToWorkWith()){
             //todo imanol improve this e.g. try to load data from database and only if nothing is there create a new model
             if(this.gesuchstellerNumber == 1) {
                 this.gesuch.gesuchsteller1 = new TSPerson();
@@ -109,7 +109,7 @@ export default class GesuchForm {
                 this.gesuch.gesuchsteller2 = new TSPerson();
             }
 
-            if((this.getStammdatenToWorkWith().adresse === undefined) || (this.getStammdatenToWorkWith().adresse === null)) {
+            if(!this.getStammdatenToWorkWith().adresse) {
                 this.setAdresse();
                 this.setKorrespondenzAdresse(false);
                 this.setUmzugAdresse(false);
