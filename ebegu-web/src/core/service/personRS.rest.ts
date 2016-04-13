@@ -4,12 +4,12 @@ import {IHttpService, IHttpPromise} from 'angular';
 
 export default class PersonRS {
     serviceURL:string;
-    http:angular.IHttpService;
+    http:IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
     static $inject = ['$http', 'REST_API'];
     /* @ngInject */
-    constructor($http:angular.IHttpService, REST_API:string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http:IHttpService, REST_API:string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'personen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;

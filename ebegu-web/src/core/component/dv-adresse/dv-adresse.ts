@@ -3,8 +3,9 @@ import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import * as adrTempl from './dv-adresse.html';
+import {IComponentOptions, IFormController} from 'angular';
 
-export class AdresseComponentConfig implements angular.IComponentOptions {
+export class AdresseComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         adresse: '<',
@@ -23,7 +24,7 @@ export  class DvAdresseController {
     adresse: TSAdresse;
     prefix: string;
     adresseRS: AdresseRS;
-    parentForm: angular.IFormController;
+    parentForm: IFormController;
     popup: any;   //todo team welchen datepicker wollen wir
     laenderList: TSLand[];
 

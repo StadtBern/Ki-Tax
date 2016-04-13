@@ -5,12 +5,12 @@ import {IHttpService, IPromise, IHttpPromise} from 'angular';
 
 export class ApplicationPropertyRS {
     serviceURL: string;
-    http: angular.IHttpService;
+    http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor($http: angular.IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'application-properties';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;

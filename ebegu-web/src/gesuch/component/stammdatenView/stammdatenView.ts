@@ -69,7 +69,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form:angular.IFormController) {
+    submit(form:IFormController) {
         if (form.$valid) {
             //do all things
             //this.state.go("next.step"); //go to the next step

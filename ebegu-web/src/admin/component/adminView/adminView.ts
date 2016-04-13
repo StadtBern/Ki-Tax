@@ -1,11 +1,11 @@
 import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg} from 'angular';
+import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
 import * as template from './adminView.html';
 import './adminView.less';
 
-export class AdminViewComponentConfig implements angular.IComponentOptions {
+export class AdminViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
     bindings: any = {
         applicationProperties: '<'

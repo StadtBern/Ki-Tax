@@ -3,16 +3,27 @@ import TSGesuch from '../../models/TSGesuch';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
 import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
+import FallRS from './fallRS.rest';
+import GesuchRS from './gesuchRS.rest';
+import FamiliensituationRS from './familiensituationRS.rest';
 
 
 export default class GesuchForm {
     fall:TSFall;
     gesuch:TSGesuch;
     familiensituation: TSFamiliensituation;
+    fallRS: FallRS;
+    gesuchRS: GesuchRS;
+    familiensituationRS: FamiliensituationRS;
 
-    static $inject: string[] = [];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS'];
     /* @ngInject */
-    constructor() {
+    constructor(familiensituationRS: FamiliensituationRS,
+                fallRS: FallRS, gesuchRS: GesuchRS) {
+
+        this.fallRS = fallRS;
+        this.gesuchRS = gesuchRS;
+        this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.setFamilienSituation(new TSFamiliensituation());
@@ -28,6 +39,29 @@ export default class GesuchForm {
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         }
         return false;
+    }
+
+    public updateFamiliensituation() {
+        //testen ob aktuelles familiensituation schon gespeichert ist
+        if (this.familiensituation.timestampErstellt) {
+            return this.familiensituationRS.update(this.familiensituation).then((familienResponse: any) => {
+                this.familiensituation = familienResponse.data;
+            });
+        } else {
+            //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
+            return this.fallRS.create(this.fall).then((fallResponse: any) => {
+                this.fall = fallResponse.data;
+                this.gesuch.fall = fallResponse.data;
+                return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
+                    this.gesuch = gesuchResponse.data;
+                    this.familiensituation.gesuch = gesuchResponse.data;
+                    return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
+                        return this.familiensituation = familienResponse.data;
+
+                    });
+                });
+            });
+        }
     }
 
     /**
