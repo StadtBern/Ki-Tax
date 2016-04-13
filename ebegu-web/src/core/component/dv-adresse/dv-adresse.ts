@@ -2,6 +2,7 @@ import TSAdresse from '../../../models/TSAdresse';
 import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
+import * as adrTempl from './dv-adresse.html';
 
 export class AdresseComponentConfig implements angular.IComponentOptions {
     transclude = false;
@@ -9,7 +10,7 @@ export class AdresseComponentConfig implements angular.IComponentOptions {
         adresse: '<',
         prefix: '@'
     };
-    templateUrl = 'src/core/component/dv-adresse/dv-adresse.html';
+    template = adrTempl;
     controller = DvAdresseController;
     controllerAs = 'vm';
     require: any = {parentForm: '?^form'};
