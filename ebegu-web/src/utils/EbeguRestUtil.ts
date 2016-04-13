@@ -33,7 +33,6 @@ export default class EbeguRestUtil {
         } else {
             appProperties[0] = this.parseApplicationProperty(new TSApplicationProperty('', ''), data);
         }
-        console.log('parsed application properites', appProperties);
         return appProperties;
     }
 
@@ -93,7 +92,7 @@ export default class EbeguRestUtil {
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.gueltigAb = DateUtil.localDateToMoment(receivedAdresse.gueltigAb);
             adresseTS.gueltigBis = DateUtil.localDateToMoment(receivedAdresse.gueltigBis);
-            adresseTS.adresseTyp = TSAdressetyp[<string>receivedAdresse.adresseTyp];
+            adresseTS.adresseTyp = receivedAdresse.adresseTyp;
             return adresseTS;
         }
         return undefined;

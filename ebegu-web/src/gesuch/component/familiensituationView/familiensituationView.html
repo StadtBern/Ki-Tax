@@ -9,7 +9,7 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
                         <div ng-repeat="current in vm.familienstatusValues" class="radio famStatus-{{$index}}">
-                            <label><input type="radio" name="familienstatus" ng-model="vm.familiensituation.familienstatus"
+                            <label><input type="radio" name="familienstatus" ng-model="vm.getFamiliensituation().familienstatus"
                                           ng-value="current" required><span data-translate="{{current}}"></span></label>
                         </div>
                         <dv-error-messages ng-if="form.$submitted" for="form.familienstatus.$error"
@@ -25,7 +25,7 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
                         <div ng-repeat="current in vm.gesuchstellerKardinalitaetValues" class="radio famStatus-{{$index}}">
-                            <label><input type="radio" name="gesuchstellerKardinalitaet" ng-model="vm.familiensituation.gesuchstellerKardinalitaet"
+                            <label><input type="radio" name="gesuchstellerKardinalitaet" ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"
                                           ng-value="current" ng-required="vm.showGesuchstellerKardinalitaet()">
                                 <span data-translate="{{current}}"></span></label>
                         </div>
@@ -40,7 +40,7 @@
                 <div class="col-md-12" ng-show="vm.isAdminRole()">
                     <div class="form-group">
                         <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                    <textarea class="form-control" rows="6" id="notes" ng-model="vm.familiensituation.bemerkungen"
+                    <textarea class="form-control" rows="6" id="notes" ng-model="vm.getFamiliensituation().bemerkungen"
                               placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                     </div>
                 </div>

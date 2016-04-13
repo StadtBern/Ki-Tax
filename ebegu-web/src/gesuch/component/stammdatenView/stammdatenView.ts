@@ -34,7 +34,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     ebeguRestUtil: EbeguRestUtil;
     gesuchstellerNumber: number;
 
-    static $inject = ['$stateParams', 'personRS', '$state','ebeguRestUtil', 'gesuchRS', 'gesuchForm'];
+    static $inject = ['$stateParams', 'PersonRS', '$state','EbeguRestUtil', 'GesuchRS', 'GesuchForm'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, _personRS_: PersonRS, $state:IStateService, ebeguRestUtil: EbeguRestUtil,
                 gesuchRS: GesuchRS, gesuchForm: GesuchForm) {

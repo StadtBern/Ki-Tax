@@ -15,7 +15,7 @@ export default class GesuchForm {
     constructor() {
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
-        this.familiensituation = new TSFamiliensituation();
+        this.setFamilienSituation(new TSFamiliensituation());
     }
 
     /**
@@ -23,13 +23,22 @@ export default class GesuchForm {
      * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
      */
     public isGesuchsteller2Required():boolean {
-        return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
+        if ((this.familiensituation !== null) && (this.familiensituation !== undefined)) {
+            return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
-
+        }
+        return false;
     }
 
-    static instance () : GesuchForm {
-        return new GesuchForm();
+    /**
+     +         * Die Familiensituation wird nur durch die gegebene Familiensituation ersetzt wenn die erste
+     +         * null oder undefined ist.
+     +         * @param familiensituation
+     +         */
+    public setFamilienSituation(familiensituation: TSFamiliensituation): void {
+        if((this.familiensituation === undefined) || (this.familiensituation === null)) {
+            this.familiensituation = familiensituation;
+        }
     }
 
 }

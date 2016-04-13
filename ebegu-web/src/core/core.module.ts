@@ -42,10 +42,10 @@ export const EbeguWebCore = angular
     .service('PersonRS', PersonRS)
     .service('AdresseRS', AdresseRS)
     .service('ListResourceRS', ListResourceRS)
-    .service('fallRS', FallRS)
-    .service('familiensituationRS', FamiliensituationRS)
-    .service('gesuchForm', GesuchForm)
-    .service('gesuchRS', GesuchRS)
+    .service('FallRS', FallRS)
+    .service('FamiliensituationRS', FamiliensituationRS)
+    .service('GesuchForm', GesuchForm)
+    .service('GesuchRS', GesuchRS)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig());
 

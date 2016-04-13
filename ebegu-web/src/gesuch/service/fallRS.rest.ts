@@ -7,7 +7,7 @@ export default class FallRS {
     http:IHttpService;
     ebeguRestUtil:EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
     constructor($http:IHttpService, REST_API:string, ebeguRestUtil:EbeguRestUtil) {
         this.serviceURL = REST_API + 'falle';

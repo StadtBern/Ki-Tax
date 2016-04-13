@@ -56,7 +56,6 @@ export class AdminViewController {
                     var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         //todo pruefen ob das item schon existiert hat wie oben
-                        console.log(this.applicationProperties);
                         this.applicationProperties =  this.applicationProperties.concat(items[0]);
                         //this.applicationProperties.push(items[0]);
                     }

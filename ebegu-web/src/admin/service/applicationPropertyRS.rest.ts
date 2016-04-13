@@ -8,7 +8,7 @@ export class ApplicationPropertyRS {
     http: angular.IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'ebeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
     constructor($http: angular.IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'application-properties';

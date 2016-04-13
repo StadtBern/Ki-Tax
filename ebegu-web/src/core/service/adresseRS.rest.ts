@@ -21,7 +21,4 @@ export default class AdresseRS {
         });
     }
 
-    static instance ($http: IHttpService, REST_API: string) : AdresseRS {
-        return new AdresseRS($http, REST_API);
-    }
 }

@@ -23,20 +23,18 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 
 export class FamiliensituationViewController extends AbstractGesuchViewController {
     gesuchForm: GesuchForm;
-    familiensituation: TSFamiliensituation;
     fallRS: FallRS;
     gesuchRS: GesuchRS;
     familiensituationRS: FamiliensituationRS;
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
-    static $inject = ['$state', 'familiensituationRS', 'fallRS', 'gesuchRS', 'gesuchForm'];
+    static $inject = ['$state', 'FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchForm'];
     /* @ngInject */
     constructor($state: angular.ui.IStateService, familiensituationRS: FamiliensituationRS,
                 fallRS: FallRS, gesuchRS: GesuchRS, gesuchForm: GesuchForm) {
         super($state);
         this.gesuchForm = gesuchForm;
-        this.familiensituation = new TSFamiliensituation();
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
         this.familiensituationRS = familiensituationRS;
@@ -47,10 +45,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     submit ($form: angular.IFormController) {
         if ($form.$valid) {
             //testen ob aktuelles familiensituation schon gespeichert ist
-            if (this.familiensituation.timestampErstellt) {
-                this.fallRS.update(this.gesuchForm.fall); //todo imanol id holen und dem gesuch geben
-                this.gesuchRS.update(this.gesuchForm.gesuch);//todo imanol id holen und der Familiensituation geben
-                this.familiensituationRS.update(this.familiensituation);
+            if (this.getFamiliensituation().timestampErstellt) {
+                this.familiensituationRS.update(this.getFamiliensituation()).then((familienResponse: any) => {
+                    this.gesuchForm.familiensituation = familienResponse.data;
+                    this.state.go("gesuch.stammdaten", {gesuchstellerNumber:1});
+                });
             } else {
                 //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
                 this.fallRS.create(this.gesuchForm.fall).then((fallResponse: any) => {
@@ -58,8 +57,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
                     this.gesuchForm.gesuch.fall = fallResponse.data;
                     this.gesuchRS.create(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
                         this.gesuchForm.gesuch = gesuchResponse.data;
-                        this.familiensituation.gesuch = gesuchResponse.data;
-                        this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
+                        this.getFamiliensituation().gesuch = gesuchResponse.data;
+                        this.familiensituationRS.create(this.getFamiliensituation()).then((familienResponse: any) => {
                             this.gesuchForm.familiensituation = familienResponse.data;
                             this.state.go("gesuch.stammdaten", {gesuchstellerNumber:1});
                         });
@@ -70,8 +69,12 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     showGesuchstellerKardinalitaet(): boolean {
-        return this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND
-            || this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+        return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
+            || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+    }
+
+    public getFamiliensituation(): TSFamiliensituation {
+        return this.gesuchForm.familiensituation;
     }
 
 }
