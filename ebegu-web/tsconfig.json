@@ -1,43 +1,21 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "outFile": "temp/src.js",
-        "target": "ES5"
+        "target": "es5",
+        "module": "amd",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "noImplicitReturns": true,
+        "outDir": "temp/js"
     },
-    "files": [
-        "src/app.module.ts",
-        "src/core/core.module.ts",
-        "src/core/core.route.ts",
-        "src/core/config.ts",
-        "src/core/constants.ts",
-        "src/core/directive/dv-max-length.ts",
-        "src/core/component/dv-error-messages/dv-error-messages.ts",
-        "src/dvbModules/router/router.module.ts",
-        "src/dvbModules/router/route-helper-provider.ts",
-        "src/utils/EnumEx.ts",
-        "src/utils/DateUtil.ts",
-        "src/admin/admin.module.ts",
-        "src/admin/admin.route.ts",
-        "src/models/enums/TSAdressetyp.ts",
-        "src/models/enums/TSGeschlecht.ts",
-        "src/models/TSAbstractEntity.ts",
-        "src/models/TSApplicationProperty.ts",
-        "src/models/TSAdresse.ts",
-        "src/models/TSPerson.ts",
-        "src/models/TSGesuch.ts",
-        "src/models/TSLand.ts",
-        "src/admin/component/adminView/adminView.ts",
-        "src/admin/service/applicationPropertyRS.rest.ts",
-        "src/core/service/adresseRS.ts",
-        "src/core/service/personRS.rest.ts",
-        "src/core/service/listResourceRS.ts",
-        "src/gesuch/gesuch.module.ts",
-        "src/gesuch/gesuch.route.ts",
-        "src/gesuch/component/abstractGesuchView.ts",
-        "src/gesuch/component/stammdatenView/stammdatenView.ts",
-        "src/gesuch/component/familiensituationView/familiensituationView.ts",
 
-        "src/core/component/dv-adresse/dv-adresse.ts",
-        "src/utils/EbeguRestUtil.ts"
-    ]
+    "files": [
+        "typings/browser.d.ts",
+        "src/core/bootstrap.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false
 }

@@ -71,14 +71,25 @@
                     </execution>
 
                     <execution>
-                        <id>grunt jenkins-build</id>
+                        <id>npm build</id>
                         <goals>
-                            <goal>grunt</goal>
+                            <goal>npm</goal>
                         </goals>
+                        <!-- Optional configuration which provides for running any npm command -->
                         <configuration>
-                            <arguments>build --no-color</arguments>
+                            <arguments>run --no-color build:prod </arguments>
                         </configuration>
                     </execution>
+
+                    <!--<execution>-->
+                        <!--<id>grunt jenkins-build</id>-->
+                        <!--<goals>-->
+                            <!--<goal>grunt</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<arguments>&#45;&#45;no-color build-jenkins</arguments>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
 
 
                 </executions>

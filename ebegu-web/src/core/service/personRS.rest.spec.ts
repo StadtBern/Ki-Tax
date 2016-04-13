@@ -1,11 +1,12 @@
-/// <reference path="../../../typings/browser.d.ts" />
-describe('personRS', function () {
+import {PersonRS} from './personRS.rest';
 
-    var personRS : any;
+describe('PersonRS', function () {
+
+    let personRS: PersonRS;
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
-    beforeEach(angular.mock.inject(function (_personRS_) {
+    beforeEach(angular.mock.inject(function (_personRS_: PersonRS) {
         personRS = _personRS_;
     }));
 

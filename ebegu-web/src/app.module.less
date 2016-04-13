@@ -1,17 +1,20 @@
 @nodeModules: ~"../node_modules";
+@import '~bootstrap/less/bootstrap';
+@import '~font-awesome/less/font-awesome';
 
-@import "@{nodeModules}/bootstrap/less/bootstrap.less";
-//@import "@{nodeModules}/bootstrap/less/theme.less";
-@import "@{nodeModules}/font-awesome/less/font-awesome.less";
-@fa-font-path: "@{nodeModules}/font-awesome/fonts";
-
+//@import '@{nodeModules}/bootstrap/less/bootstrap.less';
+//@import '@{nodeModules}/bootstrap/less/theme.less';
+//@import '@{nodeModules}/font-awesome/less/font-awesome.less';
+//@fa-font-path: "@{nodeModules}/font-awesome/fonts";
+@fa-font-path: "~font-awesome/fonts/";
+//
 /* Component LESS */
-@import "core/core.module.less";
-@import "gesuch/gesuch.module.less";
-@import "admin/admin.module.less";
+@import 'core/core.module.less';
+@import 'gesuch/gesuch.module.less';
+@import 'admin/admin.module.less';
 
-@import "variables.less";
-@import "navbar.less";
+@import 'variables.less';
+@import 'navbar.less';
 /* Add Component LESS Above */
 
 /* Required for Angular UI Bootstrap */
@@ -44,7 +47,7 @@ body {
 }
 
 .logo-bern {
-    background-image: url('/src/images/logo1-bern.png');
+    background-image: url('/src/assets/images/logo1-bern.png');
     background-repeat: no-repeat;
     background-size: Auto 40px;
     background-position: left 10px center;

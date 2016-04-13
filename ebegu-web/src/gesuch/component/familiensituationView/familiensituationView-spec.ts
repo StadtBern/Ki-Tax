@@ -1,13 +1,14 @@
-/// <reference path="../../../../typings/browser.d.ts" />
+import {IScope, IRootScopeService} from 'angular';
+
 describe('familiensituationView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    let component: any;
+    let scope: IScope;
+    let $componentController: any;
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
+    beforeEach(angular.mock.inject(function (_$componentController_: any, $rootScope: IRootScopeService) {
         $componentController = _$componentController_;
         scope = $rootScope.$new();
     }));
