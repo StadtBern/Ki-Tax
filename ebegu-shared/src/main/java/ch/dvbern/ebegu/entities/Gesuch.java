@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -19,11 +18,11 @@ public class Gesuch extends AbstractEntity {
 	private Fall fall;
 
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	@OneToOne(optional = true)
 	private Person gesuchsteller1;
 
 	@Nullable
-	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	@OneToOne(optional = true)
 	private Person gesuchsteller2;
 
 

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.services.PersonService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -12,8 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -21,6 +24,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Dependent
 @SuppressWarnings({"PMD.NcssTypeCount", "unused"})
 public class JaxBConverter {
+
+	@Inject
+	PersonService personService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -198,10 +204,14 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
 		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));
 		if (gesuchJAXP.getGesuchsteller1() != null) {
-			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
+			Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller1().getId().getId());
+			gesuch.setGesuchsteller1(person.get());
+//			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null) {
-			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
+			Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller2().getId().getId());
+			gesuch.setGesuchsteller2(person.get());
+//			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
 		}
 		return gesuch;
 	}

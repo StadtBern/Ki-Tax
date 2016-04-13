@@ -54,7 +54,7 @@ public class PersonResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(
+	public JaxPerson create(
 		@Nonnull @NotNull @Valid JaxPerson personJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -97,7 +97,8 @@ public class PersonResource {
 			jaxPerson.setWohnAdresse(converter.adresseToJAX(persistedwohnAdr));
 		}
 
-		return Response.created(uri).entity(jaxPerson).build();
+//		return Response.created(uri).entity(jaxPerson).build();
+		return jaxPerson;
 
 	}
 

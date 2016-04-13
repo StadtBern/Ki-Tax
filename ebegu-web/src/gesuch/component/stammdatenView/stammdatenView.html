@@ -1,7 +1,7 @@
 <div class="stammdatenView row">
     <div class="col-md-12">
         <h4 class="mainTitle">
-            <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchstellerNumber}}
+            <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchForm.gesuchstellerNumber}}
         </h4>
         <hr class="header"/>
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate>
@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <label>Geschlecht</label>
                         <div ng-repeat="current in vm.geschlechter" class="radio">
-                            <label><input type="radio" name="geschlecht" ng-model="vm.getStammdatenToWorkWith().geschlecht"
+                            <label><input type="radio" name="geschlecht" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht"
                                           ng-value="current" required><span data-translate="{{current}}"></span></label>
                         </div>
                         <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
@@ -29,7 +29,7 @@
                     <div class="form-group">
                         <label data-translate="VORNAME" for="vorname_ID">
                         </label>
-                        <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getStammdatenToWorkWith().vorname"
+                        <input id="vorname_ID" type="text" name="vorname" ng-model="vm.gesuchForm.getStammdatenToWorkWith().vorname"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
                                            class="error"></dv-error-messages>
@@ -39,7 +39,7 @@
                     <div class="form-group secondColumn">
                         <label data-translate="NAME" for="name_ID">
                         </label>
-                        <input id="name_ID" type="text" name="name" ng-model="vm.getStammdatenToWorkWith().nachname"
+                        <input id="name_ID" type="text" name="name" ng-model="vm.gesuchForm.getStammdatenToWorkWith().nachname"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
                                            class="error"></dv-error-messages>
@@ -53,7 +53,7 @@
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
                         <input type="date" id="geburtsdatum_ID" name="geburtsdatum"
-                               ng-model="vm.getStammdatenToWorkWith().geburtsdatum"
+                               ng-model="vm.gesuchForm.getStammdatenToWorkWith().geburtsdatum"
                                placeholder="tt.MM.JJJJ"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <!-- Adresse-->
-            <dv-adresse adresse="vm.getStammdatenToWorkWith().adresse"></dv-adresse>
+            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().adresse"></dv-adresse>
 
 
             <!--Korrenspondenzadr Checkbox-->
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <dv-adresse adresse="vm.getStammdatenToWorkWith().korrespondenzAdresse" ng-if="vm.showKorrespondadr"></dv-adresse>
+            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().korrespondenzAdresse" ng-if="vm.showKorrespondadr"></dv-adresse>
 
 
             <!--Email-->
@@ -91,7 +91,7 @@
                     <div class="form-group">
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
-                        <input id="email_ID" type="text" name="email" ng-model="vm.getStammdatenToWorkWith().mail"
+                        <input id="email_ID" type="text" name="email" ng-model="vm.gesuchForm.getStammdatenToWorkWith().mail"
                                dv-max-length class="form-control" required placeholder="hans.muster@example.com">
                         <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
                                            class="error"></dv-error-messages>
@@ -106,7 +106,7 @@
                     <div class="form-group">
                         <label data-translate="MOBILE" for="mobile_ID">
                         </label>
-                        <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getStammdatenToWorkWith().mobile"
+                        <input id="mobile_ID" type="text" name="mobile" ng-model="vm.gesuchForm.getStammdatenToWorkWith().mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
                                ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
@@ -117,7 +117,7 @@
                     <div class="form-group secondColumn">
                         <label data-translate="TELEFON" for="tel_ID">
                         </label>
-                        <input id="tel_ID" type="text" name="telefon" ng-model="vm.getStammdatenToWorkWith().telefon"
+                        <input id="tel_ID" type="text" name="telefon" ng-model="vm.gesuchForm.getStammdatenToWorkWith().telefon"
                                dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
                                ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
@@ -131,7 +131,7 @@
                     <div class="form-group secondColumn">
                         <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
                         </label>
-                        <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.getStammdatenToWorkWith().telefonAusland"
+                        <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.gesuchForm.getStammdatenToWorkWith().telefonAusland"
                                dv-max-length class="form-control">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefonAusland.$error"
                                            class="error"></dv-error-messages>
@@ -158,7 +158,7 @@
 
             <!-- Umzugadresse -->
             <div ng-if="vm.showUmzug">
-                <dv-adresse adresse="vm.getStammdatenToWorkWith().umzugAdresse"></dv-adresse>
+                <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().umzugAdresse"></dv-adresse>
             </div>
 
             <div class="row">
@@ -170,10 +170,10 @@
                 </div>
                 <div class="col-md-2">
                     <button class="btn btn-primary" type="submit" data-translate="SAVE"
-                            ng-if="vm.getStammdatenToWorkWith().timestampErstellt === undefined">
+                            ng-if="vm.gesuchForm.getStammdatenToWorkWith().timestampErstellt === undefined">
                     </button>
                     <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
-                            ng-if="vm.getStammdatenToWorkWith().timestampErstellt">
+                            ng-if="vm.gesuchForm.getStammdatenToWorkWith().timestampErstellt">
                     </button>
                 </div>
                 <div class="col-md-2">

@@ -57,8 +57,8 @@ export default class EbeguRestUtil {
 
     private abstractEntityToRestObject(restObject:any, typescriptObject:TSAbstractEntity) {
         restObject.id = typescriptObject.id;
-        restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
-        restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
+        //restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
+        //restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
     }
 
     public adresseToRestObject(restAdresse:any, adresse:TSAdresse):TSAdresse {

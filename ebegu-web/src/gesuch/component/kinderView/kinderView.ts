@@ -1,8 +1,9 @@
 import {IComponentOptions} from 'angular';
+import * as template from './kinderView.html';
 
 export class KinderViewComponentConfig implements IComponentOptions {
     transclude = false;
-    templateUrl = 'src/gesuch/component/kinderView/kinderView.html';
+    template = template;
     controller = KinderViewController;
     controllerAs = 'vm';
 }

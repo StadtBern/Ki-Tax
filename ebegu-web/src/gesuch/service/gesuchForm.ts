@@ -1,11 +1,15 @@
 import TSFall from '../../models/TSFall';
 import TSGesuch from '../../models/TSGesuch';
+import TSPerson from '../../models/TSPerson';
+import TSAdresse from '../../models/TSAdresse';
+import {TSAdressetyp} from '../../models/enums/TSAdressetyp';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
 import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
+import {IPromise} from 'angular';
 
 
 export default class GesuchForm {
@@ -15,18 +19,17 @@ export default class GesuchForm {
     fallRS: FallRS;
     gesuchRS: GesuchRS;
     familiensituationRS: FamiliensituationRS;
+    gesuchstellerNumber: number;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS,
-                fallRS: FallRS, gesuchRS: GesuchRS) {
-
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
         this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
-        this.setFamilienSituation(new TSFamiliensituation());
+        this.familiensituation = new TSFamiliensituation();
     }
 
     /**
@@ -41,14 +44,17 @@ export default class GesuchForm {
         return false;
     }
 
-    public updateFamiliensituation() {
+    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
         //testen ob aktuelles familiensituation schon gespeichert ist
         if (this.familiensituation.timestampErstellt) {
             return this.familiensituationRS.update(this.familiensituation).then((familienResponse: any) => {
-                this.familiensituation = familienResponse.data;
+                return this.familiensituation = familienResponse.data;
             });
-        } else {
+        }
+        else {
             //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
+
+            //todo team Parse alle response.XXX
             return this.fallRS.create(this.fall).then((fallResponse: any) => {
                 this.fall = fallResponse.data;
                 this.gesuch.fall = fallResponse.data;
@@ -65,14 +71,92 @@ export default class GesuchForm {
     }
 
     /**
-     +         * Die Familiensituation wird nur durch die gegebene Familiensituation ersetzt wenn die erste
-     +         * null oder undefined ist.
-     +         * @param familiensituation
-     +         */
-    public setFamilienSituation(familiensituation: TSFamiliensituation): void {
-        if((this.familiensituation === undefined) || (this.familiensituation === null)) {
-            this.familiensituation = familiensituation;
+     * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
+     * automatisch gespeichert wenn Gesuch gespeichert wird.
+     */
+    public updateGesuch(): IPromise<TSGesuch> {
+        return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+            return this.gesuch = gesuchResponse.data;
+        });
+    }
+
+    public setGesuchstellerNumber(gsNumber: number) {
+        //todo team ueberlegen ob es by default 1 sein muss oder ob man irgendeinen Fehler zeigen soll
+        if (gsNumber == 1 || gsNumber == 2) {
+            this.gesuchstellerNumber = gsNumber;
         }
+        else {
+            this.gesuchstellerNumber = 1;
+        }
+    }
+
+    public getStammdatenToWorkWith(): TSPerson {
+        if(this.gesuchstellerNumber == 1) {
+            return this.gesuch.gesuchsteller1;
+        }
+        else {
+            return this.gesuch.gesuchsteller2;
+        }
+    }
+
+    public initStammdaten():void {
+        if((this.getStammdatenToWorkWith() === undefined) || (this.getStammdatenToWorkWith() === null)){
+            //todo imanol improve this e.g. try to load data from database and only if nothing is there create a new model
+            if(this.gesuchstellerNumber == 1) {
+                this.gesuch.gesuchsteller1 = new TSPerson();
+            }
+            else {
+                this.gesuch.gesuchsteller2 = new TSPerson();
+            }
+
+            if((this.getStammdatenToWorkWith().adresse === undefined) || (this.getStammdatenToWorkWith().adresse === null)) {
+                this.setAdresse();
+                this.setKorrespondenzAdresse(false);
+                this.setUmzugAdresse(false);
+            }
+        }
+
+    }
+
+    public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
+        if (showKorrespondadr) {
+            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
+        } else {
+            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
+        }
+    }
+
+    public setUmzugAdresse(showUmzug: boolean): void {
+        if (showUmzug) {
+            this.getStammdatenToWorkWith().umzugAdresse = this.initUmzugadresse();
+        } else {
+            this.getStammdatenToWorkWith().umzugAdresse = undefined;
+        }
+    }
+
+    public setAdresse(): void {
+        this.getStammdatenToWorkWith().adresse = this.initAdresse();
+    }
+
+    private initAdresse():TSAdresse {
+        let wohnAdr = new TSAdresse();
+        wohnAdr.showDatumVon = false;
+        wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        return wohnAdr;
+    }
+
+    private initKorrespondenzAdresse():TSAdresse {
+        let korrAdr = new TSAdresse();
+        korrAdr.showDatumVon = false;
+        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
+        return korrAdr;
+    }
+
+    private initUmzugadresse():TSAdresse {
+        let umzugAdr = new TSAdresse();
+        umzugAdr.showDatumVon = true;
+        umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        return umzugAdr;
     }
 
 }

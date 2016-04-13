@@ -1,9 +1,5 @@
 import TSPerson from '../../../models/TSPerson';
-import TSAdresse from '../../../models/TSAdresse';
 import TSGesuch from '../../../models/TSGesuch';
-import PersonRS from '../../../core/service/personRS.rest';
-import GesuchRS from '../../service/gesuchRS.rest';
-import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
 import {IComponentOptions, IFormController} from 'angular';
@@ -25,48 +21,29 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 
 
 export class StammdatenViewController extends AbstractGesuchViewController {
-    gesuchRS: GesuchRS;
     gesuchForm: GesuchForm;
     geschlechter:Array<string>;
     showUmzug:boolean;
     showKorrespondadr:boolean;
-    personRS: PersonRS;
     ebeguRestUtil: EbeguRestUtil;
-    gesuchstellerNumber: number;
 
-    static $inject = ['$stateParams', 'PersonRS', '$state','EbeguRestUtil', 'GesuchRS', 'GesuchForm'];
+
+    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchForm'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, _personRS_: PersonRS, $state:IStateService, ebeguRestUtil: EbeguRestUtil,
-                gesuchRS: GesuchRS, gesuchForm: GesuchForm) {
+    constructor($stateParams: IStammdatenStateParams, $state:IStateService, ebeguRestUtil: EbeguRestUtil,
+                gesuchForm: GesuchForm) {
         super($state);
         this.gesuchForm = gesuchForm;
-        this.gesuchRS = gesuchRS;
-        this.personRS = _personRS_;
         this.ebeguRestUtil = ebeguRestUtil;
-        this.setGesuchstellerNumber($stateParams.gesuchstellerNumber);
+        this.gesuchForm.setGesuchstellerNumber($stateParams.gesuchstellerNumber);
         this.initViewmodel();
     }
 
     private initViewmodel() {
-        this.setStammdatenToWorkWith(new TSPerson());
-        let wohnAdr = new TSAdresse();
-        wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        this.getStammdatenToWorkWith().adresse = wohnAdr;
-        this.getStammdatenToWorkWith().umzugAdresse = undefined;
-        this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
+        this.gesuchForm.initStammdaten();
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showUmzug = false;
         this.showKorrespondadr = false;
-    }
-
-    private setGesuchstellerNumber(gsNumber: number) {
-        //todo team ueberlegen ob es by default 1 sein muss oder ob man irgendeinen Fehler zeigen soll
-        if (gsNumber == 1 || gsNumber == 2) {
-            this.gesuchstellerNumber = gsNumber;
-        }
-        else {
-            this.gesuchstellerNumber = 1;
-        }
     }
 
     submit(form:IFormController) {
@@ -74,53 +51,28 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             //do all things
             //this.state.go("next.step"); //go to the next step
             if (!this.showUmzug) {
-                this.getStammdatenToWorkWith().umzugAdresse = undefined;
+                this.gesuchForm.setUmzugAdresse(this.showUmzug);
             }
             if (!this.showKorrespondadr) {
-                this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
+                this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
             }
 
-            this.gesuchRS.update(this.gesuchForm.gesuch).then((gesuchResponse: any) => {
-                this.gesuchForm.gesuch = gesuchResponse.data;
+            this.gesuchForm.updateGesuch().then((gesuchResponse: any) => {
                 this.nextStep();
             });
-
         }
     }
-
 
     umzugadreseClicked() {
-        if (this.showUmzug) {
-            this.getStammdatenToWorkWith().umzugAdresse = this.initUmzugadresse();
-        } else {
-            this.getStammdatenToWorkWith().umzugAdresse = undefined;
-        }
-    }
-
-    private initUmzugadresse() {
-        let umzugAdr = new TSAdresse();
-        umzugAdr.showDatumVon = true;
-        umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return umzugAdr;
-    }
-
-    private  initKorrespondenzAdresse():TSAdresse {
-        let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
+        this.gesuchForm.setUmzugAdresse(this.showUmzug);
     }
 
     korrespondenzAdrClicked() {
-        if (this.showKorrespondadr) {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
-        } else {
-            this.getStammdatenToWorkWith().korrespondenzAdresse = undefined;
-        }
+        this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
     resetForm() {
-        this.setStammdatenToWorkWith(undefined);
+        this.gesuchForm.initStammdaten();
         this.initViewmodel();
     }
 
@@ -129,29 +81,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     nextStep() {
-        if((this.gesuchstellerNumber == 1) && this.gesuchForm.isGesuchsteller2Required()) {
+        if((this.gesuchForm.gesuchstellerNumber == 1) && this.gesuchForm.isGesuchsteller2Required()) {
             this.state.go("gesuch.stammdaten", {gesuchstellerNumber:2});
         }
         else {
             this.state.go("gesuch.kinder");
-        }
-    }
-
-    private getStammdatenToWorkWith():TSPerson {
-        if(this.gesuchstellerNumber == 1) {
-            return this.gesuchForm.gesuch.gesuchsteller1;
-        }
-        else {
-            return this.gesuchForm.gesuch.gesuchsteller2;
-        }
-    }
-
-    private setStammdatenToWorkWith(stammdaten: TSPerson):void {
-        if(this.gesuchstellerNumber == 1) {
-            this.gesuchForm.gesuch.gesuchsteller1 = stammdaten;
-        }
-        else {
-            this.gesuchForm.gesuch.gesuchsteller2 = stammdaten;
         }
     }
 

@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxPerson;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Person;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -40,6 +42,9 @@ public class GesuchResource {
 	private GesuchService gesuchService;
 	@Inject
 	private PersonService personService;
+	@Inject
+	private PersonResource personResource;
+
 	@Inject
 	private FamiliensituationService familiensituationService;
 	@Inject
@@ -82,14 +87,41 @@ public class GesuchResource {
 		String gesuchsID = converter.toEntityId(gesuchJAXP);
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchsID);
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId().toString()));
-		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 
+		JaxPerson gesuchsteller1 = null;
+		if(gesuchJAXP.getGesuchsteller1() != null) {
+			if (gesuchJAXP.getGesuchsteller1().getTimestampErstellt() != null) {
+				gesuchsteller1 = personResource.update(gesuchJAXP.getGesuchsteller1(), uriInfo, response);
+			} else {
+				gesuchsteller1 = personResource.create(gesuchJAXP.getGesuchsteller1(), uriInfo, response);
+			}
+		}
+
+		JaxPerson gesuchsteller2 = null;
+		if(gesuchJAXP.getGesuchsteller2() != null) {
+			if (gesuchJAXP.getGesuchsteller2().getTimestampErstellt() != null) {
+				gesuchsteller2 = personResource.update(gesuchJAXP.getGesuchsteller2(), uriInfo, response);
+			} else {
+				gesuchsteller2 = personResource.create(gesuchJAXP.getGesuchsteller2(), uriInfo, response);
+			}
+		}
+
+		gesuchJAXP.setGesuchsteller1(gesuchsteller1);
+		gesuchJAXP.setGesuchsteller2(gesuchsteller2);
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
 
 		// todo team entscheiden ob wir Gesuch updaten und dann autmoatisch die abhaengige
 		// datensaetze oder jeder Datensatz soll getrennt gespeichert werden (Gesuch->Gesuchsteller)
 
-		return converter.gesuchToJAX(modifiedGesuch);
+		JaxGesuch jaxGesuch = converter.gesuchToJAX(modifiedGesuch);
+		if(gesuchsteller1 != null) {
+			jaxGesuch.setGesuchsteller1(gesuchsteller1);
+		}
+		if(gesuchsteller2 != null) {
+			jaxGesuch.setGesuchsteller1(gesuchsteller2);
+		}
+		return jaxGesuch;
 
 	}
 
