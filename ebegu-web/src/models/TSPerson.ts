@@ -7,6 +7,7 @@ export default class TSPerson extends TSAbstractEntity {
     private _vorname: string;
     private _nachname: string;
     private _geburtsdatum: moment.Moment;
+    private _gebDatumAsDate : Date;
     private _mail: string;
     private _mobile: string;
     private _telefon: string;
@@ -130,5 +131,14 @@ export default class TSPerson extends TSAbstractEntity {
 
     public set korrespondenzAdresse(value: TSAdresse) {
         this._korrespondenzAdresse = value;
+    }
+
+
+    get gebDatumAsDate(): Date {
+        return this._gebDatumAsDate;
+    }
+
+    set gebDatumAsDate(value: Date) {
+        this._gebDatumAsDate = value;
     }
 }

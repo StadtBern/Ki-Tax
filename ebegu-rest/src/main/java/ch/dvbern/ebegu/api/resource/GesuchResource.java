@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxPerson;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Person;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -90,7 +89,8 @@ public class GesuchResource {
 
 		JaxPerson gesuchsteller1 = null;
 		if(gesuchJAXP.getGesuchsteller1() != null) {
-			if (gesuchJAXP.getGesuchsteller1().getTimestampErstellt() != null) {
+			//todo beim hier direkt in db pruefen ob das objekt schon existiert
+			if (gesuchJAXP.getGesuchsteller1().getId() != null) {
 				gesuchsteller1 = personResource.update(gesuchJAXP.getGesuchsteller1(), uriInfo, response);
 			} else {
 				gesuchsteller1 = personResource.create(gesuchJAXP.getGesuchsteller1(), uriInfo, response);
@@ -99,7 +99,7 @@ public class GesuchResource {
 
 		JaxPerson gesuchsteller2 = null;
 		if(gesuchJAXP.getGesuchsteller2() != null) {
-			if (gesuchJAXP.getGesuchsteller2().getTimestampErstellt() != null) {
+			if (gesuchJAXP.getGesuchsteller2().getId() != null) {
 				gesuchsteller2 = personResource.update(gesuchJAXP.getGesuchsteller2(), uriInfo, response);
 			} else {
 				gesuchsteller2 = personResource.create(gesuchJAXP.getGesuchsteller2(), uriInfo, response);
@@ -115,12 +115,13 @@ public class GesuchResource {
 		// datensaetze oder jeder Datensatz soll getrennt gespeichert werden (Gesuch->Gesuchsteller)
 
 		JaxGesuch jaxGesuch = converter.gesuchToJAX(modifiedGesuch);
-		if(gesuchsteller1 != null) {
+		//todo homa review imma hier gabs einen tippfehler und ich glaube es ist nicht noetig
+/*		if(gesuchsteller1 != null) {
 			jaxGesuch.setGesuchsteller1(gesuchsteller1);
 		}
 		if(gesuchsteller2 != null) {
-			jaxGesuch.setGesuchsteller1(gesuchsteller2);
-		}
+			jaxGesuch.setGesuchsteller2(gesuchsteller2);
+		}*/
 		return jaxGesuch;
 
 	}

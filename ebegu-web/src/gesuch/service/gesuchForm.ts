@@ -10,33 +10,36 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise} from 'angular';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 
 export default class GesuchForm {
-    fall:TSFall;
-    gesuch:TSGesuch;
+    fall: TSFall;
+    gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
     fallRS: FallRS;
     gesuchRS: GesuchRS;
     familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
+    ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS) {
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, ebeguRestUtil: EbeguRestUtil) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
         this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
+        this.ebeguRestUtil = ebeguRestUtil;
     }
 
     /**
      * Prueft ob der 2. Gesuchtsteller eingetragen werden muss je nach dem was in Familiensituation ausgewaehlt wurde
      * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
      */
-    public isGesuchsteller2Required():boolean {
+    public isGesuchsteller2Required(): boolean {
         if ((this.familiensituation !== null) && (this.familiensituation !== undefined)) {
             return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
@@ -48,22 +51,19 @@ export default class GesuchForm {
         //testen ob aktuelles familiensituation schon gespeichert ist
         if (this.familiensituation.timestampErstellt) {
             return this.familiensituationRS.update(this.familiensituation).then((familienResponse: any) => {
-                return this.familiensituation = familienResponse.data;
+                return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
             });
-        }
-        else {
+        } else {
             //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
-
-            //todo team Parse alle response.XXX
+            //todo homa beim review das sollte nicht so verschachtelt sein imho ist aber nur temporaer so gedacht
             return this.fallRS.create(this.fall).then((fallResponse: any) => {
-                this.fall = fallResponse.data;
-                this.gesuch.fall = fallResponse.data;
+                this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
+                this.gesuch.fall = this.fall;
                 return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
-                    this.gesuch = gesuchResponse.data;
-                    this.familiensituation.gesuch = gesuchResponse.data;
+                    this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+                    this.familiensituation.gesuch = this.gesuch;
                     return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
-                        return this.familiensituation = familienResponse.data;
-
+                        return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
                     });
                 });
             });
@@ -76,43 +76,35 @@ export default class GesuchForm {
      */
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-            return this.gesuch = gesuchResponse.data;
+            return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
         });
     }
 
     public setGesuchstellerNumber(gsNumber: number) {
-        //todo team ueberlegen ob es by default 1 sein muss oder ob man irgendeinen Fehler zeigen soll
-        if (gsNumber == 1 || gsNumber == 2) {
+        if (gsNumber === 1 || gsNumber === 2) {
             this.gesuchstellerNumber = gsNumber;
-        }
-        else {
+        } else {
             this.gesuchstellerNumber = 1;
         }
     }
 
     public getStammdatenToWorkWith(): TSPerson {
-        if(this.gesuchstellerNumber == 1) {
+        if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1;
-        }
-        else {
+        } else {
             return this.gesuch.gesuchsteller2;
         }
     }
 
-    public initStammdaten():void {
-        if(!this.getStammdatenToWorkWith()){
+    public initStammdaten(): void {
+        if (!this.getStammdatenToWorkWith()) {
             //todo imanol improve this e.g. try to load data from database and only if nothing is there create a new model
-            if(this.gesuchstellerNumber == 1) {
+            if (this.gesuchstellerNumber === 1) {
                 this.gesuch.gesuchsteller1 = new TSPerson();
-            }
-            else {
+                this.gesuch.gesuchsteller1.adresse = this.initAdresse();
+            } else {
                 this.gesuch.gesuchsteller2 = new TSPerson();
-            }
-
-            if(!this.getStammdatenToWorkWith().adresse) {
-                this.setAdresse();
-                this.setKorrespondenzAdresse(false);
-                this.setUmzugAdresse(false);
+                this.gesuch.gesuchsteller2.adresse = this.initAdresse();
             }
         }
 
@@ -134,25 +126,23 @@ export default class GesuchForm {
         }
     }
 
-    public setAdresse(): void {
-        this.getStammdatenToWorkWith().adresse = this.initAdresse();
-    }
 
-    private initAdresse():TSAdresse {
+
+    private initAdresse(): TSAdresse {
         let wohnAdr = new TSAdresse();
         wohnAdr.showDatumVon = false;
         wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
         return wohnAdr;
     }
 
-    private initKorrespondenzAdresse():TSAdresse {
+    private initKorrespondenzAdresse(): TSAdresse {
         let korrAdr = new TSAdresse();
         korrAdr.showDatumVon = false;
         korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
         return korrAdr;
     }
 
-    private initUmzugadresse():TSAdresse {
+    private initUmzugadresse(): TSAdresse {
         let umzugAdr = new TSAdresse();
         umzugAdr.showDatumVon = true;
         umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;

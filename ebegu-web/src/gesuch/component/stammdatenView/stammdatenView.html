@@ -52,8 +52,9 @@
                     <div class="form-group">
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
-                        <input type="date" id="geburtsdatum_ID" name="geburtsdatum"
-                               ng-model="vm.gesuchForm.getStammdatenToWorkWith().geburtsdatum"
+                        <input type="text" id="geburtsdatum_ID" name="geburtsdatum"
+                               ng-model="vm.gesuchForm.getStammdatenToWorkWith().gebDatumAsDate"
+                               uib-datepicker-popup="dd.MM.yyyy"
                                placeholder="tt.MM.JJJJ"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"

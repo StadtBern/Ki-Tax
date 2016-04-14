@@ -2,6 +2,9 @@ package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.PersonService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
@@ -26,7 +29,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class JaxBConverter {
 
 	@Inject
-	PersonService personService;
+	private PersonService personService;
+
+	@Inject
+	private FallService fallService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -59,6 +65,7 @@ public class JaxBConverter {
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		if (jaxToConvert.getId() != null) {
 			abstEntityToConvertTo.setId(toEntityId(jaxToConvert));
+			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 
 		return abstEntityToConvertTo;
@@ -202,16 +209,27 @@ public class JaxBConverter {
 		Validate.notNull(gesuch);
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
-		gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));
-		if (gesuchJAXP.getGesuchsteller1() != null) {
-			Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller1().getId().getId());
-			gesuch.setGesuchsteller1(person.get());
+		Optional<Fall> fallFromDB =  fallService.findFall(toEntityId(gesuchJAXP.getFall()));
+		if(fallFromDB.isPresent()) {
+			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));  //todo homa review beim das ist glaub falsch fall kann schon existieren, dann sollte man den von db nehmen vergl person
+			if (gesuchJAXP.getGesuchsteller1() != null) {
+				//todo homa beim review das ist recht seltsam, so wird nie etwas vom client gespeichert oder?
+				//todo hier gibt es noch 2 groessere probleme: 1. es gibt NPE
+				// ausserdem wird hier nicht aktualisiert,
+				// moeglicherweise wollen wir hier auch gar keine ralationen transformieren, vergl. personen converter
+
+
+				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller1().getId().getId());
+				gesuch.setGesuchsteller1(person.get());
 //			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
-		}
-		if (gesuchJAXP.getGesuchsteller2() != null) {
-			Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller2().getId().getId());
-			gesuch.setGesuchsteller2(person.get());
+			}
+			if (gesuchJAXP.getGesuchsteller2() != null) {
+				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller2().getId().getId());
+				gesuch.setGesuchsteller2(person.get());
 //			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
+			}
+		} else {
+			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
 		}
 		return gesuch;
 	}

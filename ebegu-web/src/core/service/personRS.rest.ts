@@ -3,13 +3,13 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 
 export default class PersonRS {
-    serviceURL:string;
-    http:IHttpService;
+    serviceURL: string;
+    http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor($http:IHttpService, REST_API:string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'personen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -17,9 +17,9 @@ export default class PersonRS {
 
     public update(person: TSPerson): IHttpPromise<any> {
         let pers = {};
-        pers = this.ebeguRestUtil.personToRestObject(pers,person);
+        pers = this.ebeguRestUtil.personToRestObject(pers, person);
 
-        return this.http.put(this.serviceURL,  pers, {
+        return this.http.put(this.serviceURL, pers, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -28,7 +28,7 @@ export default class PersonRS {
 
     public create(person: TSPerson): IHttpPromise<any> {
         let pers = {};
-        pers = this.ebeguRestUtil.personToRestObject(pers,person);
+        pers = this.ebeguRestUtil.personToRestObject(pers, person);
         return this.http.post(this.serviceURL, pers, {
             headers: {
                 'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export default class PersonRS {
     }
 
     public findPerson(personID: string): IHttpPromise<any> {
-        return this.http.get( this.serviceURL + '/' + encodeURIComponent(personID));
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(personID));
     }
 
 }

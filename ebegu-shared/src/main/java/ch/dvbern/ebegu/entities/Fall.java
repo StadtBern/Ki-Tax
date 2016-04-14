@@ -11,4 +11,5 @@ import javax.persistence.Entity;
 @Entity
 public class Fall extends AbstractEntity {
 
+	private static final long serialVersionUID = -9154456879261811678L;
 }

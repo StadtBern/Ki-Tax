@@ -2,11 +2,14 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import GesuchForm from '../../service/gesuchForm';
-import TSFamiliensituation from '../../../models/TSFamiliensituation'
+import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import * as template from './familiensituationView.html';
 import './familiensituationView.less';
 import {TSFamilienstatus, getTSFamilienstatusValues} from '../../../models/enums/TSFamilienstatus';
-import {TSGesuchstellerKardinalitaet, getTSGesuchstellerKardinalitaetValues} from '../../../models/enums/TSGesuchstellerKardinalitaet';
+import {
+    TSGesuchstellerKardinalitaet,
+    getTSGesuchstellerKardinalitaetValues
+} from '../../../models/enums/TSGesuchstellerKardinalitaet';
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -32,10 +35,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
     }
 
-    submit ($form: IFormController) {
+    submit($form: IFormController) {
         if ($form.$valid) {
             this.gesuchForm.updateFamiliensituation().then((response: any) => {
-                this.state.go("gesuch.stammdaten", {gesuchstellerNumber:1});
+                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
             });
         }
     }

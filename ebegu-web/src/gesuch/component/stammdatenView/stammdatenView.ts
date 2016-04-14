@@ -1,5 +1,3 @@
-import TSPerson from '../../../models/TSPerson';
-import TSGesuch from '../../../models/TSGesuch';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
 import {IComponentOptions, IFormController} from 'angular';
@@ -22,31 +20,32 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 
 export class StammdatenViewController extends AbstractGesuchViewController {
     gesuchForm: GesuchForm;
-    geschlechter:Array<string>;
-    showUmzug:boolean;
-    showKorrespondadr:boolean;
+    geschlechter: Array<string>;
+    showUmzug: boolean;
+    showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
 
 
     static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchForm'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state:IStateService, ebeguRestUtil: EbeguRestUtil,
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
                 gesuchForm: GesuchForm) {
         super($state);
         this.gesuchForm = gesuchForm;
         this.ebeguRestUtil = ebeguRestUtil;
-        this.gesuchForm.setGesuchstellerNumber($stateParams.gesuchstellerNumber);
+        let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.gesuchForm.setGesuchstellerNumber(parsedNum);
         this.initViewmodel();
     }
 
     private initViewmodel() {
         this.gesuchForm.initStammdaten();
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.showUmzug = false;
-        this.showKorrespondadr = false;
+        this.showUmzug = (this.gesuchForm.getStammdatenToWorkWith().umzugAdresse) ? true : false;
+        this.showKorrespondadr = (this.gesuchForm.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
     }
 
-    submit(form:IFormController) {
+    submit(form: IFormController) {
         if (form.$valid) {
             //do all things
             //this.state.go("next.step"); //go to the next step
@@ -77,15 +76,19 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     previousStep() {
-        this.state.go("gesuch.familiensituation");
+        if ((this.gesuchForm.gesuchstellerNumber === 2)) {
+            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
+        } else {
+            this.state.go('gesuch.familiensituation');
+        }
+
     }
 
     nextStep() {
-        if((this.gesuchForm.gesuchstellerNumber == 1) && this.gesuchForm.isGesuchsteller2Required()) {
-            this.state.go("gesuch.stammdaten", {gesuchstellerNumber:2});
-        }
-        else {
-            this.state.go("gesuch.kinder");
+        if ((this.gesuchForm.gesuchstellerNumber === 1) && this.gesuchForm.isGesuchsteller2Required()) {
+            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
+        } else {
+            this.state.go('gesuch.kinder');
         }
     }
 

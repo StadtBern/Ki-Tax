@@ -8,27 +8,27 @@ export default class TSGesuch extends TSAbstractEntity {
     private _gesuchsteller2: TSPerson;
 
 
-    public get fall():TSFall {
+    public get fall(): TSFall {
         return this._fall;
     }
 
-    public set fall(value:TSFall) {
+    public set fall(value: TSFall) {
         this._fall = value;
     }
 
-    public get gesuchsteller1():TSPerson {
+    public get gesuchsteller1(): TSPerson {
         return this._gesuchsteller1;
     }
 
-    public set gesuchsteller1(value:TSPerson) {
+    public set gesuchsteller1(value: TSPerson) {
         this._gesuchsteller1 = value;
     }
 
-    public get gesuchsteller2():TSPerson {
+    public get gesuchsteller2(): TSPerson {
         return this._gesuchsteller2;
     }
 
-    public set gesuchsteller2(value:TSPerson) {
+    public set gesuchsteller2(value: TSPerson) {
         this._gesuchsteller2 = value;
     }
 }

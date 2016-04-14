@@ -41,7 +41,7 @@ export class EbeguKinderState implements IState {
     url = '/kinder';
 }
 
-//PARAMS
+//PARAMS 
 export class IStammdatenStateParams implements IStateParamsService {
-    gesuchstellerNumber: number;
+    gesuchstellerNumber: string;
 }

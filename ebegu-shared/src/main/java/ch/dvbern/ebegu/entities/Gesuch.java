@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Gesuch extends AbstractEntity {
 
+	private static final long serialVersionUID = -8403487439884700618L;
 	@ManyToOne(optional = false)
 	private Fall fall;
 

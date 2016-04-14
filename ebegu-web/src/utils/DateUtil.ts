@@ -25,6 +25,11 @@ export default class DateUtil {
         return moment(aMoment).startOf('day').format('YYYY-MM-DD');
     }
 
+    public static jsDateToMoment(date: Date): Moment {
+        return moment(date);
+
+    }
+
     /**
      * @param {Moment} aMoment time instance
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
