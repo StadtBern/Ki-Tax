@@ -25,8 +25,6 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 	@NotNull(groups = Persisted.class)
 	private JaxId id = null;
 
-
-
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime timestampErstellt;

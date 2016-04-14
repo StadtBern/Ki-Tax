@@ -3,12 +3,11 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
 
 export default class PersonRS {
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
-
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'personen';
@@ -40,4 +39,6 @@ export default class PersonRS {
     public findPerson(personID: string): IHttpPromise<any> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(personID));
     }
+
 }
+

@@ -13,10 +13,11 @@ var DefinePlugin = require('webpack/lib/DefinePlugin');
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HMR = helpers.hasProcessFlag('hot');
+//* to allow everybody to access the server
 const METADATA = webpackMerge(commonConfig.metadata, {
     title: 'ebegu Webpack',
     baseUrl: '/',
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 3000,
     ENV: ENV,
     HMR: HMR

@@ -1,11 +1,11 @@
 import TSApplicationProperty from '../../../models/TSApplicationProperty';
-import ApplicationPropertyRS from '../../service/applicationPropertyRS.rest';
+import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg} from 'angular';
+import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
 import * as template from './adminView.html';
 import './adminView.less';
 
-export class AdminViewComponentConfig implements angular.IComponentOptions {
+export class AdminViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
     bindings: any = {
         applicationProperties: '<'
@@ -42,7 +42,7 @@ export class AdminViewController {
         //testen ob aktuelles property schon gespeichert ist
         if (this.applicationProperty.timestampErstellt) {
             this.applicationPropertyRS.update(this.applicationProperty.name, this.applicationProperty.value)
-                .then((response) => {
+                .then((response: any) => {
                     var index = this.getIndexOfElementwithID(response.data);
                     var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
@@ -52,11 +52,10 @@ export class AdminViewController {
 
         } else {
             this.applicationPropertyRS.create(this.applicationProperty.name, this.applicationProperty.value)
-                .then((response) => {
+                .then((response: any) => {
                     var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         //todo pruefen ob das item schon existiert hat wie oben
-                        console.log(this.applicationProperties);
                         this.applicationProperties =  this.applicationProperties.concat(items[0]);
                         //this.applicationProperties.push(items[0]);
                     }

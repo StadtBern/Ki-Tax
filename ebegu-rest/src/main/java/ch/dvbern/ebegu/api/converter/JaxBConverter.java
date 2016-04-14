@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.PersonService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -15,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,6 +27,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Dependent
 @SuppressWarnings({"PMD.NcssTypeCount", "unused"})
 public class JaxBConverter {
+
+	@Inject
+	private PersonService personService;
+
+	@Inject
+	private FallService fallService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -56,6 +65,7 @@ public class JaxBConverter {
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		if (jaxToConvert.getId() != null) {
 			abstEntityToConvertTo.setId(toEntityId(jaxToConvert));
+			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 
 		return abstEntityToConvertTo;
@@ -160,4 +170,81 @@ public class JaxBConverter {
 		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
 		return jaxPerson;
 	}
+
+	public Familiensituation familiensituationToEntity(@Nonnull JaxFamilienSituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
+		Validate.notNull(familiensituation);
+		Validate.notNull(familiensituationJAXP);
+		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
+		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
+		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
+		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
+		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
+		return familiensituation;
+	}
+
+	public JaxFamilienSituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
+		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
+		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
+		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
+		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
+		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
+		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
+		return jaxFamiliensituation;
+	}
+
+	public Fall fallToEntity(@Nonnull JaxFall fallJAXP, @Nonnull Fall fall) {
+		Validate.notNull(fall);
+		Validate.notNull(fallJAXP);
+		convertAbstractFieldsToEntity(fallJAXP, fall);
+		return fall;
+	}
+
+	public JaxFall fallToJAX(@Nonnull Fall persistedFall) {
+		JaxFall jaxFall = new JaxFall();
+		convertAbstractFieldsToJAX(persistedFall, jaxFall);
+		return jaxFall;
+	}
+
+	public Gesuch gesuchToEntity(@Nonnull JaxGesuch gesuchJAXP, @Nonnull Gesuch gesuch) {
+		Validate.notNull(gesuch);
+		Validate.notNull(gesuchJAXP);
+		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
+		Optional<Fall> fallFromDB =  fallService.findFall(toEntityId(gesuchJAXP.getFall()));
+		if(fallFromDB.isPresent()) {
+			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));  //todo homa review beim das ist glaub falsch fall kann schon existieren, dann sollte man den von db nehmen vergl person
+			if (gesuchJAXP.getGesuchsteller1() != null) {
+				//todo homa beim review das ist recht seltsam, so wird nie etwas vom client gespeichert oder?
+				//todo hier gibt es noch 2 groessere probleme: 1. es gibt NPE
+				// ausserdem wird hier nicht aktualisiert,
+				// moeglicherweise wollen wir hier auch gar keine ralationen transformieren, vergl. personen converter
+
+
+				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller1().getId().getId());
+				gesuch.setGesuchsteller1(person.get());
+//			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
+			}
+			if (gesuchJAXP.getGesuchsteller2() != null) {
+				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller2().getId().getId());
+				gesuch.setGesuchsteller2(person.get());
+//			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
+			}
+		} else {
+			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
+		}
+		return gesuch;
+	}
+
+	public JaxGesuch gesuchToJAX(@Nonnull Gesuch persistedGesuch) {
+		JaxGesuch jaxGesuch = new JaxGesuch();
+		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
+		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
+		if(persistedGesuch.getGesuchsteller1() != null) {
+			jaxGesuch.setGesuchsteller1(this.personToJAX(persistedGesuch.getGesuchsteller1()));
+		}
+		if(persistedGesuch.getGesuchsteller2() != null) {
+			jaxGesuch.setGesuchsteller2(this.personToJAX(persistedGesuch.getGesuchsteller2()));
+		}
+		return jaxGesuch;
+	}
+
 }

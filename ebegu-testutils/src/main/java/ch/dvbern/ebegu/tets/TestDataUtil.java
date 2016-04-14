@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.tets;
 
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
 
 import java.time.LocalDate;
@@ -42,4 +43,24 @@ public final class TestDataUtil {
 		person.setZpvNumber("0761234567897");
 		return person;
 	}
+
+	public static Familiensituation createDefaultFamiliensituation(){
+		Familiensituation familiensituation = new Familiensituation();
+		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		familiensituation.setBemerkungen("DVBern");
+		familiensituation.setGesuch(createDefaultGesuch());
+		return familiensituation;
+	}
+
+	public static Gesuch createDefaultGesuch() {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setFall(createDefaultFall());
+		return gesuch;
+	}
+
+	public static Fall createDefaultFall() {
+		return new Fall();
+	}
+
 }

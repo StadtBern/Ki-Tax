@@ -15,10 +15,10 @@ export class EnumEx {
             .filter(v => !isNaN(v));
     }
 
-    static getNamesAndValues(e: any) { // TODO return type
-        return EnumEx.getValues(e)
-            .map(v => {
-                return {name: e[v] as string, value: v};
-            });
-    }
+    //static getNamesAndValues(e: any) { // TODO return type
+    //    return EnumEx.getValues(e)
+    //        .map(v => {
+    //            return {name: e[v] as string, value: v};
+    //        });
+    //}
 }

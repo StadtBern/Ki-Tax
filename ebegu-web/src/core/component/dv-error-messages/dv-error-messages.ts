@@ -1,5 +1,7 @@
 import * as errTemplate from './dv-error-messages.html';
-export class DvErrorMessagesComponentConfig implements angular.IComponentOptions {
+import {IComponentOptions} from 'angular';
+
+export class DvErrorMessagesComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         errorObject: '<for'

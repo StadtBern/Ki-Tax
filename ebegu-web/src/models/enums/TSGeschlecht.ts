@@ -1,4 +1,4 @@
 export enum TSGeschlecht {
-    MAENNLICH,
-    WEIBLICH
+    WEIBLICH,
+    MAENNLICH
 }

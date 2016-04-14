@@ -4,8 +4,10 @@ import {EbeguWebCore} from '../core/core.module';
 import {gesuchRun} from './gesuch.route';
 import {StammdatenViewComponentConfig} from './component/stammdatenView/stammdatenView';
 import {FamiliensituationViewComponentConfig} from './component/familiensituationView/familiensituationView';
+import {KinderViewComponentConfig} from './component/kinderView/kinderView';
 
 export const EbeguWebGesuch = angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
     .run(gesuchRun)
     .component('familiensituationView', new FamiliensituationViewComponentConfig())
-    .component('stammdatenView', new StammdatenViewComponentConfig);
+    .component('stammdatenView', new StammdatenViewComponentConfig)
+    .component('kinderView', new KinderViewComponentConfig());

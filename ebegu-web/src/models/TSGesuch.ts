@@ -1,40 +1,34 @@
 import TSAbstractEntity from './TSAbstractEntity';
+import TSFall from './TSFall';
+import TSPerson from './TSPerson';
 
 export default class TSGesuch extends TSAbstractEntity {
+    private _fall: TSFall;
+    private _gesuchsteller1: TSPerson;
+    private _gesuchsteller2: TSPerson;
 
-    private _familiensituation: string;
-    private _beantragen: string;
-    private _bemerkungen: string;
 
-
-    constructor(familiensituation?: string, beantragen?: string, bemerkungen?: string) {
-        super();
-        this._familiensituation = familiensituation;
-        this._beantragen = beantragen;
-        this._bemerkungen = bemerkungen;
+    public get fall(): TSFall {
+        return this._fall;
     }
 
-    public get familiensituation(): string {
-        return this._familiensituation;
+    public set fall(value: TSFall) {
+        this._fall = value;
     }
 
-    public set familiensituation(familiensituation: string) {
-        this._familiensituation = familiensituation;
+    public get gesuchsteller1(): TSPerson {
+        return this._gesuchsteller1;
     }
 
-    public get beantragen(): string {
-        return this._beantragen;
+    public set gesuchsteller1(value: TSPerson) {
+        this._gesuchsteller1 = value;
     }
 
-    public set beantragen(beantragen: string) {
-        this._beantragen = beantragen;
+    public get gesuchsteller2(): TSPerson {
+        return this._gesuchsteller2;
     }
 
-    public get bemerkungen(): string {
-        return this._bemerkungen;
-    }
-
-    public set bemerkungen(bemerkungen: string) {
-        this._bemerkungen = bemerkungen;
+    public set gesuchsteller2(value: TSPerson) {
+        this._gesuchsteller2 = value;
     }
 }

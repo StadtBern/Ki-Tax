@@ -1,6 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
-import ListResourceRS from './service/listResourceRS';
+import ListResourceRS from './service/listResourceRS.rest';
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS'];
 

@@ -3,14 +3,16 @@ import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSAdresse from '../models/TSAdresse';
 import {TSAdressetyp} from '../models/enums/TSAdressetyp';
 import TSPerson from '../models/TSPerson';
+import TSGesuch from '../models/TSGesuch';
+import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {IFilterService} from 'angular';
 import TSLand from '../models/TSLand';
+import TSFamiliensituation from '../models/TSFamiliensituation';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
-
-    private filter: IFilterService;
+    public filter: any;
 
     /* @ngInject */
     constructor($filter: IFilterService) {
@@ -31,7 +33,6 @@ export default class EbeguRestUtil {
         } else {
             appProperties[0] = this.parseApplicationProperty(new TSApplicationProperty('', ''), data);
         }
-        console.log('parsed application properites', appProperties);
         return appProperties;
     }
 
@@ -46,6 +47,18 @@ export default class EbeguRestUtil {
         parsedAppProperty.value = receivedAppProperty.value;
         this.parseAbstractEntity(parsedAppProperty, receivedAppProperty);
         return parsedAppProperty;
+    }
+
+    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any) {
+        parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
+        parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
+        parsedAppProperty.id = receivedAppProperty.id;
+    }
+
+    private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
+        restObject.id = typescriptObject.id;
+        restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
+        restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -75,7 +88,7 @@ export default class EbeguRestUtil {
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
             adresseTS.plz = receivedAdresse.plz;
             adresseTS.ort = receivedAdresse.ort;
-            adresseTS.land = this.landCodeToTSLandCode(receivedAdresse.land); //this.landCodeToTSLand(receivedAdresse.land);
+            adresseTS.land = this.landCodeToTSLand(receivedAdresse.land).code;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.gueltigAb = DateUtil.localDateToMoment(receivedAdresse.gueltigAb);
             adresseTS.gueltigBis = DateUtil.localDateToMoment(receivedAdresse.gueltigBis);
@@ -89,12 +102,12 @@ export default class EbeguRestUtil {
      * Nimmt den eingegebenen Code und erzeugt ein TSLand Objekt mit dem Code und
      * seine Uebersetzung.
      * @param landCode
-     * @returns {TSLand}
+     * @returns {any}
      */
     public landCodeToTSLand(landCode: string): TSLand {
         if (landCode) {
-            let parsedLandCode = this.landCodeToTSLandCode(landCode);
-            return new TSLand(landCode, this.filter('translate')(parsedLandCode).toString());
+            let translationKey = this.landCodeToTSLandCode(landCode);
+            return new TSLand(landCode, this.filter('translate')(translationKey).toString());
         }
         return undefined;
     }
@@ -102,7 +115,7 @@ export default class EbeguRestUtil {
     /**
      * Fügt das 'Land_' dem eingegebenen Landcode hinzu.
      * @param landCode
-     * @returns {string}
+     * @returns {any}
      */
     public landCodeToTSLandCode(landCode: string): string {
         if (landCode) {
@@ -120,6 +133,7 @@ export default class EbeguRestUtil {
 
             restPerson.vorname = person.vorname;
             restPerson.nachname = person.nachname;
+            person.geburtsdatum = DateUtil.jsDateToMoment(person.gebDatumAsDate);  //todo homa remove me
             restPerson.geburtsdatum = DateUtil.momentToLocalDate(person.geburtsdatum);
             restPerson.mail = person.mail;
             restPerson.mobile = person.mobile;
@@ -127,7 +141,7 @@ export default class EbeguRestUtil {
             restPerson.telefonAusland = person.telefonAusland;
             restPerson.umzug = person.umzug;
             restPerson.geschlecht = person.geschlecht;
-            restPerson.wohnAdresse = this.adresseToRestObject({}, person.adresse);
+            restPerson.wohnAdresse = this.adresseToRestObject({}, person.adresse); //achtung heisst im jax wohnadresse nicht adresse
             restPerson.alternativeAdresse = this.adresseToRestObject({}, person.korrespondenzAdresse);
             restPerson.umzugAdresse = this.adresseToRestObject({}, person.umzugAdresse);
             return restPerson;
@@ -135,13 +149,15 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+
     public parsePerson(personTS: TSPerson, personFromServer: any): TSPerson {
         if (personFromServer) {
 
             this.parseAbstractEntity(personTS, personFromServer);
             personTS.vorname = personFromServer.vorname;
             personTS.nachname = personFromServer.nachname;
-            personTS.geburtsdatum = DateUtil.localDateTimeToMoment(personFromServer.geburtsdatum);
+            personTS.geburtsdatum = DateUtil.localDateToMoment(personFromServer.geburtsdatum);
+            personTS.gebDatumAsDate = personTS.geburtsdatum.toDate();   //todo homa remove me
             personTS.mail = personFromServer.mail;
             personTS.mobile = personFromServer.mobile;
             personTS.telefon = personFromServer.telefon;
@@ -154,17 +170,66 @@ export default class EbeguRestUtil {
             return personTS;
         }
         return undefined;
+
     }
 
-    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any) {
-        parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
-        parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
-        parsedAppProperty.id = receivedAppProperty.id;
+    public familiensituationToRestObject(restFamiliensituation: any, familiensituation: TSFamiliensituation): TSFamiliensituation {
+        restFamiliensituation.familienstatus = familiensituation.familienstatus;
+        restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
+        restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
+        restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
+        this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
+
+        return restFamiliensituation;
     }
 
-    private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
-        restObject.id = typescriptObject.id;
-        restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
-        restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
+    public parseFamiliensituation(familiensituation: TSFamiliensituation, familiensituationFromServer: any): TSFamiliensituation {
+
+        if (familiensituationFromServer) {
+            this.parseAbstractEntity(familiensituation, familiensituationFromServer);
+            familiensituation.bemerkungen = familiensituationFromServer.bemerkungen;
+            familiensituation.familienstatus = familiensituationFromServer.familienstatus;
+            familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
+            familiensituation.gesuch = this.parseGesuch(familiensituation.gesuch, familiensituationFromServer.gesuch);
+            return familiensituation;
+        }
+        return undefined;
     }
+
+    public fallToRestObject(restFall: any, fall: TSFall): TSFall {
+        this.abstractEntityToRestObject(restFall, fall);
+
+        return restFall;
+    }
+
+    public parseFall(fallTS: TSFall, fallFromServer: any): TSFall {
+        if (fallFromServer) {
+            this.parseAbstractEntity(fallTS, fallFromServer);
+            return fallTS;
+        }
+        return undefined;
+    }
+
+
+    public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
+        this.abstractEntityToRestObject(restGesuch, gesuch);
+        restGesuch.fall = this.fallToRestObject({}, gesuch.fall);         
+        restGesuch.gesuchsteller1 = this.personToRestObject({}, gesuch.gesuchsteller1);
+        restGesuch.gesuchsteller2 = this.personToRestObject({}, gesuch.gesuchsteller2);
+
+        return restGesuch;
+    }
+
+    public parseGesuch(gesuchTS: TSGesuch, gesuchFromServer: any): TSGesuch {
+        if (gesuchFromServer) {
+            this.parseAbstractEntity(gesuchTS, gesuchFromServer);
+            gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
+            gesuchTS.gesuchsteller1 = this.parsePerson(new TSPerson(), gesuchFromServer.gesuchsteller1);
+            gesuchTS.gesuchsteller2 = this.parsePerson(new TSPerson(), gesuchFromServer.gesuchsteller2);
+            return gesuchTS;
+        }
+        return undefined;
+    }
+
+
 }

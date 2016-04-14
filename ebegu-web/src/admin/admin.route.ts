@@ -1,7 +1,7 @@
 import TSApplicationProperty from '../models/TSApplicationProperty';
 import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import ApplicationPropertyRS from './service/applicationPropertyRS.rest';
+import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
 
 adminRun.$inject = ['RouterHelper'];
 

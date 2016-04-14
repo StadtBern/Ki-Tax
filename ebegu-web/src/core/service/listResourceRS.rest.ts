@@ -19,12 +19,8 @@ export default class ListResourceRS {
         ListResourceRS.laenderList = [];
     }
 
-    static instance($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil): ListResourceRS {
-        return new ListResourceRS($http, REST_API, ebeguRestUtil);
-    }
-
-    getLaenderList(): IPromise<TSLand[]> {
-        return this.http.get(this.serviceURL + '/laender', {cache: true}).then((response: any) => {
+    getLaenderList() {
+        return this.http.get(this.serviceURL + '/laender', { cache: true }).then((response: any) => {
             if (ListResourceRS.laenderList.length <= 0) { // wenn die Laenderliste schon ausgefuellt wurde, nichts machen
                 for (var i = 0; i < response.data.length; i++) {
                     ListResourceRS.laenderList.push(this.ebeguRestUtil.landCodeToTSLand(response.data[i]));
@@ -33,5 +29,6 @@ export default class ListResourceRS {
             return ListResourceRS.laenderList;
         });
     }
-}
+
+    }
 

@@ -1,15 +1,13 @@
-import TSPerson from '../../../models/TSPerson';
-import TSAdresse from '../../../models/TSAdresse';
-import PersonRS from '../../../core/service/personRS.rest';
-import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
 import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
+import {IStammdatenStateParams} from '../../gesuch.route';
 import * as template from './stammdatenView.html';
 import './stammdatenView.less';
+import GesuchForm from '../../service/gesuchForm';
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -19,100 +17,79 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class StammdatenViewController extends AbstractGesuchViewController {
-    static $inject = ['PersonRS', '$state', 'EbeguRestUtil'];
 
-    stammdaten: TSPerson;
-    geschlechter: string[];
+export class StammdatenViewController extends AbstractGesuchViewController {
+    gesuchForm: GesuchForm;
+    geschlechter: Array<string>;
     showUmzug: boolean;
     showKorrespondadr: boolean;
-    personRS: PersonRS;
     ebeguRestUtil: EbeguRestUtil;
 
+
+    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchForm'];
     /* @ngInject */
-    constructor(personRS: PersonRS, $state: IStateService, ebeguRestUtil: EbeguRestUtil) {
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
+                gesuchForm: GesuchForm) {
         super($state);
-        this.initViewmodel();
-        this.personRS = personRS;
+        this.gesuchForm = gesuchForm;
         this.ebeguRestUtil = ebeguRestUtil;
+        let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.gesuchForm.setGesuchstellerNumber(parsedNum);
+        this.initViewmodel();
     }
 
-    public submit(form: IFormController) {
+    private initViewmodel() {
+        this.gesuchForm.initStammdaten();
+        this.geschlechter = EnumEx.getNames(TSGeschlecht);
+        this.showUmzug = (this.gesuchForm.getStammdatenToWorkWith().umzugAdresse) ? true : false;
+        this.showKorrespondadr = (this.gesuchForm.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
+    }
+
+    submit(form: IFormController) {
         if (form.$valid) {
             //do all things
             //this.state.go("next.step"); //go to the next step
             if (!this.showUmzug) {
-                this.stammdaten.umzugAdresse = undefined;
+                this.gesuchForm.setUmzugAdresse(this.showUmzug);
             }
             if (!this.showKorrespondadr) {
-                this.stammdaten.korrespondenzAdresse = undefined;
+                this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
             }
-            if (!this.stammdaten.timestampErstellt) {
-                //es handel sich um eine neue Person
-                this.personRS.create(this.stammdaten).then((response) => {
-                        this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                    }
-                );
 
-            } else {
-                //update
-                this.personRS.update(this.stammdaten).then((response) => {
-                        this.stammdaten = this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
-                    }
-                );
-            }
+            this.gesuchForm.updateGesuch().then((gesuchResponse: any) => {
+                this.nextStep();
+            });
         }
     }
 
-    public umzugadreseClicked() {
-        if (this.showUmzug) {
-            this.stammdaten.umzugAdresse = this.initUmzugadresse();
-        } else {
-            this.stammdaten.umzugAdresse = undefined;
-        }
+    umzugadreseClicked() {
+        this.gesuchForm.setUmzugAdresse(this.showUmzug);
     }
 
-    public korrespondenzAdrClicked() {
-        if (this.showKorrespondadr) {
-            var korrAdr = this.initKorrespondenzAdresse();
-            this.stammdaten.korrespondenzAdresse = korrAdr;
-        } else {
-            this.stammdaten.korrespondenzAdresse = undefined;
-        }
+    korrespondenzAdrClicked() {
+        this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    public resetForm() {
-        this.stammdaten = undefined;
+    resetForm() {
+        this.gesuchForm.initStammdaten();
         this.initViewmodel();
     }
 
-    public previousStep() {
-        this.state.go('gesuch.familiensituation');
+    previousStep() {
+        if ((this.gesuchForm.gesuchstellerNumber === 2)) {
+            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
+        } else {
+            this.state.go('gesuch.familiensituation');
+        }
+
     }
 
-    private initViewmodel() {
-        this.stammdaten = new TSPerson();
-        let wohnAdr = new TSAdresse();
-        wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        this.stammdaten.adresse = wohnAdr;
-        this.stammdaten.umzugAdresse = undefined;
-        this.stammdaten.korrespondenzAdresse = undefined;
-        this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.showUmzug = false;
-        this.showKorrespondadr = false;
+    nextStep() {
+        if ((this.gesuchForm.gesuchstellerNumber === 1) && this.gesuchForm.isGesuchsteller2Required()) {
+            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
+        } else {
+            this.state.go('gesuch.kinder');
+        }
     }
 
-    private initUmzugadresse() {
-        let umzugAdr = new TSAdresse();
-        umzugAdr.showDatumVon = true;
-        umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return umzugAdr;
-    }
-
-    private  initKorrespondenzAdresse(): TSAdresse {
-        let korrAdr = new TSAdresse();
-        korrAdr.showDatumVon = false;
-        korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
-        return korrAdr;
-    }
 }

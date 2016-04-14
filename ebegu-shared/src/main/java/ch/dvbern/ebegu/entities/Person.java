@@ -4,10 +4,7 @@ import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -60,9 +57,9 @@ public class Person extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String telefonAusland;
 
-
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
+
 
 	public String getVorname() {
 

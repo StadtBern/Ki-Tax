@@ -3,12 +3,16 @@ import './core.module.less';
 import {appRun} from './core.route';
 import {configure} from './config';
 import router from '../dvbModules/router/router.module';
-import AdresseRS from './service/adresseRS';
-import ListResourceRS from './service/listResourceRS';
+import AdresseRS from './service/adresseRS.rest';
+import ListResourceRS from './service/listResourceRS.rest';
 import EbeguRestUtil from '../utils/EbeguRestUtil';
 import PersonRS from './service/personRS.rest';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
+import FallRS from '../gesuch/service/fallRS.rest';
+import GesuchForm from '../gesuch/service/gesuchForm';
+import GesuchRS from '../gesuch/service/gesuchRS.rest';
+import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 
 export const EbeguWebCore = angular
     .module('ebeguWeb.core', [
@@ -38,6 +42,10 @@ export const EbeguWebCore = angular
     .service('PersonRS', PersonRS)
     .service('AdresseRS', AdresseRS)
     .service('ListResourceRS', ListResourceRS)
+    .service('FallRS', FallRS)
+    .service('FamiliensituationRS', FamiliensituationRS)
+    .service('GesuchForm', GesuchForm)
+    .service('GesuchRS', GesuchRS)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig());
 

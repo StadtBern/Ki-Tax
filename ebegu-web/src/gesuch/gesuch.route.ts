@@ -1,32 +1,47 @@
-import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import * as gesuchTpl from './gesuch.html';
+import {IState, IStateParamsService} from 'angular-ui-router';
 
 gesuchRun.$inject = ['RouterHelper'];
-
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
 }
 
 function getStates(): IState[] {
-    return [
-        {
-            name: 'gesuch',
-            template: gesuchTpl,
-            url: '/gesuch',
-            abstract: true
-        },
-        {
-            name: 'gesuch.familiensituation',
-            template: '<familiensituation-view>',
-            url: '/familiensituation'
+    return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
+        new EbeguKinderState()];
+}
 
-        },
-        {
-            name: 'gesuch.stammdaten',
-            template: '<stammdaten-view>',
-            url: '/stammdaten'
-        }
-    ];
+
+//STATES
+
+export class EbeguGesuchState implements IState {
+    name = 'gesuch';
+    template = gesuchTpl;
+    url = '/gesuch';
+    abstract = true;
+}
+
+export class EbeguFamiliensituationState implements IState {
+    name = 'gesuch.familiensituation';
+    template = '<familiensituation-view>';
+    url = '/familiensituation';
+}
+
+export class EbeguStammdatenState implements IState {
+    name = 'gesuch.stammdaten';
+    template = '<stammdaten-view>';
+    url = '/stammdaten/:gesuchstellerNumber';
+}
+
+export class EbeguKinderState implements IState {
+    name = 'gesuch.kinder';
+    template = '<kinder-view>';
+    url = '/kinder';
+}
+
+//PARAMS 
+export class IStammdatenStateParams implements IStateParamsService {
+    gesuchstellerNumber: string;
 }
