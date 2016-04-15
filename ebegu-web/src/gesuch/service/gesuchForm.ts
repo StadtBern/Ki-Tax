@@ -8,6 +8,7 @@ import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
+import PersonRS from '../../core/service/personRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -19,15 +20,17 @@ export default class GesuchForm {
     familiensituation: TSFamiliensituation;
     fallRS: FallRS;
     gesuchRS: GesuchRS;
+    personRS: PersonRS;
     familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'PersonRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, ebeguRestUtil: EbeguRestUtil) {
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, personRS: PersonRS, ebeguRestUtil: EbeguRestUtil) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
+        this.personRS = personRS;
         this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -70,14 +73,29 @@ export default class GesuchForm {
         }
     }
 
+    ///**
+    // * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
+    // * automatisch gespeichert wenn Gesuch gespeichert wird.
+    // */
+    //public updateGesuch(): IPromise<TSGesuch> {
+    //    return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+    //        return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+    //    });
+    //}
+
     /**
-     * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
-     * automatisch gespeichert wenn Gesuch gespeichert wird.
+     * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuch(): IPromise<TSGesuch> {
-        return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-            return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-        });
+    public updateGesuchsteller(): IPromise<TSPerson> {
+        if (this.getStammdatenToWorkWith().timestampErstellt) {
+            return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse:any) => {
+                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+            });
+        } else {
+            return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse:any) => {
+                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+            });
+        }
     }
 
     public setGesuchstellerNumber(gsNumber: number) {
@@ -96,18 +114,20 @@ export default class GesuchForm {
         }
     }
 
+    public setStammdatenToWorkWith(person: TSPerson): TSPerson {
+        if (this.gesuchstellerNumber === 1) {
+            return this.gesuch.gesuchsteller1 = person;
+        } else {
+            return this.gesuch.gesuchsteller2 = person;
+        }
+    }
+
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            //todo imanol improve this e.g. try to load data from database and only if nothing is there create a new model
-            if (this.gesuchstellerNumber === 1) {
-                this.gesuch.gesuchsteller1 = new TSPerson();
-                this.gesuch.gesuchsteller1.adresse = this.initAdresse();
-            } else {
-                this.gesuch.gesuchsteller2 = new TSPerson();
-                this.gesuch.gesuchsteller2.adresse = this.initAdresse();
-            }
+            //todo imanol try to load data from database and only if nothing is there create a new model
+            this.setStammdatenToWorkWith(new TSPerson());
+            this.getStammdatenToWorkWith().adresse = this.initAdresse();
         }
-
     }
 
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
@@ -125,7 +145,6 @@ export default class GesuchForm {
             this.getStammdatenToWorkWith().umzugAdresse = undefined;
         }
     }
-
 
 
     private initAdresse(): TSAdresse {
