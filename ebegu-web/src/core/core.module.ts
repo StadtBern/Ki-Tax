@@ -13,8 +13,10 @@ import FallRS from '../gesuch/service/fallRS.rest';
 import GesuchForm from '../gesuch/service/gesuchForm';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
+import DVMaxLength from './directive/dv-max-length';
+import DVMomentDateConverter from './directive/dv-moment-date-converter';
 
-export const EbeguWebCore = angular
+export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', [
         /* Angular modules */
         'ngAnimate',
@@ -47,5 +49,10 @@ export const EbeguWebCore = angular
     .service('GesuchForm', GesuchForm)
     .service('GesuchRS', GesuchRS)
     .component('dvAdresse', new AdresseComponentConfig())
-    .component('dvErrorMessages', new DvErrorMessagesComponentConfig());
+    .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
+    .directive('dvMaxLength', DVMaxLength.factory())
+    .directive('dvMomentDateConverter', DVMomentDateConverter.factory());
+
+
+
 

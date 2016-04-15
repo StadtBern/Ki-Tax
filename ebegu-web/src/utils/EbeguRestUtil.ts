@@ -133,7 +133,6 @@ export default class EbeguRestUtil {
 
             restPerson.vorname = person.vorname;
             restPerson.nachname = person.nachname;
-            person.geburtsdatum = DateUtil.jsDateToMoment(person.gebDatumAsDate);  //todo homa remove me
             restPerson.geburtsdatum = DateUtil.momentToLocalDate(person.geburtsdatum);
             restPerson.mail = person.mail;
             restPerson.mobile = person.mobile;
@@ -157,7 +156,6 @@ export default class EbeguRestUtil {
             personTS.vorname = personFromServer.vorname;
             personTS.nachname = personFromServer.nachname;
             personTS.geburtsdatum = DateUtil.localDateToMoment(personFromServer.geburtsdatum);
-            personTS.gebDatumAsDate = personTS.geburtsdatum.toDate();   //todo homa remove me
             personTS.mail = personFromServer.mail;
             personTS.mobile = personFromServer.mobile;
             personTS.telefon = personFromServer.telefon;
@@ -213,7 +211,7 @@ export default class EbeguRestUtil {
 
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
         this.abstractEntityToRestObject(restGesuch, gesuch);
-        restGesuch.fall = this.fallToRestObject({}, gesuch.fall);         
+        restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
         restGesuch.gesuchsteller1 = this.personToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.personToRestObject({}, gesuch.gesuchsteller2);
 

@@ -1,6 +1,6 @@
 import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 
-class DVMaxLength implements IDirective {
+export default class DVMaxLength implements IDirective {
     static $inject = ['MAX_LENGTH'];
 
     restrict = 'A';
@@ -8,9 +8,18 @@ class DVMaxLength implements IDirective {
     length: number;
     link: IDirectiveLinkFn;
 
+    /* @ngInject */
     constructor(MAX_LENGTH: number) {
         this.length = MAX_LENGTH;
-        this.link = this.linkFunction;
+        this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
+            if (!ctrl) {
+                return;
+            }
+
+            ctrl.$validators.dvMaxLength = (modelValue: any, viewValue: any) => {
+                return ctrl.$isEmpty(viewValue) || (viewValue.length <= this.length);
+            };
+        };
     }
 
     static factory(): IDirectiveFactory {
@@ -19,15 +28,5 @@ class DVMaxLength implements IDirective {
         return directive;
     }
 
-    private linkFunction(scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) {
-        if (!ctrl) {
-            return;
-        }
-
-        ctrl.$validators.dvMaxLength = (modelValue: any, viewValue: any) => {
-            return ctrl.$isEmpty(viewValue) || (viewValue.length <= this.length);
-        };
-    }
 }
 
-angular.module('ebeguWeb.core').directive('dvMaxLength', DVMaxLength.factory());

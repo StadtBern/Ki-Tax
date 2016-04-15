@@ -49,8 +49,7 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public String toEntityId(@Nonnull final JaxAbstractDTO resource) {
-		return toEntityId(Objects.requireNonNull(resource.getId()));
+	public String toEntityId(@Nonnull final JaxAbstractDTO resource) { return toEntityId(Objects.requireNonNull(resource.getId()));
 	}
 
 	@Nonnull
