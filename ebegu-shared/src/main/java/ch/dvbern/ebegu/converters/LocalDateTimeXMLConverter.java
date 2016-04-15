@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Konvertiert ein LocalDateTime Java 8 Objekt in einen String fuer JSON
@@ -32,6 +33,6 @@ public class LocalDateTimeXMLConverter extends XmlAdapter<String, LocalDateTime>
 	@Nullable
 	@Override
 	public String marshal(LocalDateTime v) {
-		return v == null ? null : v.toString();
+		return v == null ? null : v.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 	}
 }

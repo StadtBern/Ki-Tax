@@ -98,6 +98,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxAdresse, adresse);
 		adresse.setStrasse(jaxAdresse.getStrasse());
 		adresse.setHausnummer(jaxAdresse.getHausnummer());
+		adresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
 		adresse.setPlz(jaxAdresse.getPlz());
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
@@ -115,6 +116,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(adresse, jaxAdresse);
 		jaxAdresse.setStrasse(adresse.getStrasse());
 		jaxAdresse.setHausnummer(adresse.getHausnummer());
+		jaxAdresse.setZusatzzeile(adresse.getZusatzzeile());
 		jaxAdresse.setPlz(adresse.getPlz());
 		jaxAdresse.setOrt(adresse.getOrt());
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
@@ -211,23 +213,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
 		Optional<Fall> fallFromDB =  fallService.findFall(toEntityId(gesuchJAXP.getFall()));
 		if(fallFromDB.isPresent()) {
-			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), new Fall()));  //todo homa review beim das ist glaub falsch fall kann schon existieren, dann sollte man den von db nehmen vergl person
-			if (gesuchJAXP.getGesuchsteller1() != null) {
-				//todo homa beim review das ist recht seltsam, so wird nie etwas vom client gespeichert oder?
-				//todo hier gibt es noch 2 groessere probleme: 1. es gibt NPE
-				// ausserdem wird hier nicht aktualisiert,
-				// moeglicherweise wollen wir hier auch gar keine ralationen transformieren, vergl. personen converter
-
-
-				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller1().getId().getId());
-				gesuch.setGesuchsteller1(person.get());
-//			gesuch.setGesuchsteller1(this.personToEntity(gesuchJAXP.getGesuchsteller1(), new Person()));
-			}
-			if (gesuchJAXP.getGesuchsteller2() != null) {
-				Optional<Person> person = personService.findPerson(gesuchJAXP.getGesuchsteller2().getId().getId());
-				gesuch.setGesuchsteller2(person.get());
-//			gesuch.setGesuchsteller2(this.personToEntity(gesuchJAXP.getGesuchsteller2(), new Person()));
-			}
+			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), fallFromDB.get()));
 		} else {
 			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
 		}
