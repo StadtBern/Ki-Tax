@@ -9,7 +9,7 @@ export default class DVMomentDateConverter implements IDirective {
     restrict = 'A';
     require = 'ngModel';
     link: IDirectiveLinkFn;
-    datepickerDate: Date;
+    priority = 10; // increment priority by 10 to ensure it runs first
 
     constructor() {
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
