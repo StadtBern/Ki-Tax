@@ -109,7 +109,7 @@
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.gesuchForm.getStammdatenToWorkWith().mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                               ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
+                               ng-pattern="vm.phonePattern">
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -120,7 +120,7 @@
                         </label>
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.gesuchForm.getStammdatenToWorkWith().telefon"
                                dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
-                               ng-pattern="/0|\+41|0041[ ]*74|75|76|77|78|79[ ]*[\d]{3}[ ]*[\d]{2}[ ]*[\d]{2}/">
+                               ng-pattern="vm.phonePattern">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
                                            class="error"></dv-error-messages>
                     </div>
