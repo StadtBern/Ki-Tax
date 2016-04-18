@@ -14,7 +14,7 @@ import GesuchForm from '../gesuch/service/gesuchForm';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
-import DVMomentDateConverter from './directive/dv-moment-date-converter';
+import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', [
@@ -51,7 +51,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .directive('dvMaxLength', DVMaxLength.factory())
-    .directive('dvMomentDateConverter', DVMomentDateConverter.factory());
+    .directive('dvDatepicker', DVDatepicker.factory());
 
 
 

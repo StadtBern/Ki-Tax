@@ -1,0 +1,26 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/imanol/.nvm/versions/node/v4.3.1/bin/node',
+1 verbose cli   '/home/imanol/.nvm/versions/node/v4.3.1/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'hotstart$' ]
+2 info using npm@2.14.12
+3 info using node@v4.3.1
+4 verbose stack Error: missing script: hotstart$
+4 verbose stack     at run (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/lib/run-script.js:142:19)
+4 verbose stack     at /home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/lib/run-script.js:58:5
+4 verbose stack     at /home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/read-package-json/read-json.js:345:5
+4 verbose stack     at checkBinReferences_ (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/read-package-json/read-json.js:309:45)
+4 verbose stack     at final (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/read-package-json/read-json.js:343:3)
+4 verbose stack     at then (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/read-package-json/read-json.js:113:5)
+4 verbose stack     at ReadFileContext.<anonymous> (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/read-package-json/read-json.js:284:20)
+4 verbose stack     at ReadFileContext.callback (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:76:16)
+4 verbose stack     at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:303:13)
+5 verbose cwd /home/imanol/projects/ebegu/ebegu-web
+6 error Linux 3.19.0-58-generic
+7 error argv "/home/imanol/.nvm/versions/node/v4.3.1/bin/node" "/home/imanol/.nvm/versions/node/v4.3.1/bin/npm" "run" "hotstart$"
+8 error node v4.3.1
+9 error npm  v2.14.12
+10 error missing script: hotstart$
+11 error If you need help, you may report this error at:
+11 error     <https://github.com/npm/npm/issues>
+12 verbose exit [ 1, true ]

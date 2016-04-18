@@ -96,12 +96,9 @@
                     <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb">
                     </label>
                     <p class="input-group">
-                        <input id="gueltigAb" type="text" placeholder="tt.MM.JJJJ" class="form-control"
-                               dv-moment-date-converter
-                               uib-datepicker-popup="dd.MM.yyyy"
-                               ng-model="vm.adresse.gueltigAb" is-open="vm.popup.opened" ng-required="true"
-                               close-text="Close"
-                               name="adresseGueltigAb" required/>
+                        <dv-datepicker id="gueltigAb" name="gueltigAb"
+                                       ng-model="vm.adresse.gueltigAb" required>
+                        </dv-datepicker>
                             <span class="input-group-btn">
                               <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
                                   <i class="fa fa-calendar"></i></button>
@@ -121,7 +118,6 @@
                     <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis">
                     </label>
                     <input id="gueltigBis" type="text" name="adresseGueltigBis" ng-model="vm.adresse.gueltigBis"
-                           dv-moment-date-converter
                            dv-max-length class="form-control" required>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigBis.$error"
                                        class="error"></dv-error-messages>
