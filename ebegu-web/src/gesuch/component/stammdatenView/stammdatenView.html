@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
-                        <dv-datepicker id="geburtsdatum_ID" name="geburtsdatum"
+                        <dv-datepicker input-id="geburtsdatum_ID" input-name="geburtsdatum"
                                        ng-model="vm.gesuchForm.getStammdatenToWorkWith().geburtsdatum" required>
                         </dv-datepicker>
                         <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
@@ -189,5 +189,7 @@
             </div>
         </form>
     </div>
+
+    <pre>{{vm.gesuchForm.getStammdatenToWorkWith() |json}}</pre>
 
 </div>

@@ -1,8 +1,8 @@
 import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
-import Moment = moment.Moment;
 import * as template from './dv-datepicker.html';
+import Moment = moment.Moment;
 
 export interface DatepickerScope extends IScope {
     updateModelValue: Function;
@@ -15,7 +15,9 @@ export class DVDatepicker implements IDirective {
     restrict = 'E';
     require = 'ngModel';
     scope = {
-        ngModel: '='
+        ngModel: '=',
+        inputName: '@',
+        inputId: '@'
     };
     link: IDirectiveLinkFn;
     template = template;
@@ -27,7 +29,7 @@ export class DVDatepicker implements IDirective {
     }
 
     unboundLink(scope: DatepickerScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
-    //link = function(scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
+        //link = function(scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
         if (!ngModelCtrl) {
             return;
         }
