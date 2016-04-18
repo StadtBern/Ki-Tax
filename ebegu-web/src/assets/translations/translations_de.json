@@ -20,6 +20,7 @@
     "ERROR_MAX_LENG": "Eingabe zu lang ",
     "ERROR_EMAIL": "Keine gültige Email ",
     "ERROR_FORMAT": "Falsches Format",
+    "ERROR_DATE": "Falsches Datums Format",
     "SAVE": "Speichern ",
     "PROPERTY_NAME": "Name",
     "PROPERTY_TEXT": "Text",
