@@ -58,7 +58,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
             }
 
-            this.gesuchForm.updateGesuch().then((gesuchResponse: any) => {
+            this.gesuchForm.updateGesuchsteller().then((personResponse: any) => {
                 this.nextStep();
             });
         }
