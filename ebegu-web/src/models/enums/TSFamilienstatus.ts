@@ -4,7 +4,6 @@ export enum TSFamilienstatus {
     KONKUBINAT = <any>"KONKUBINAT",
     LAENGER_FUENF_JAHRE = <any>"LAENGER_FUENF_JAHRE",
     WENIGER_FUENF_JAHRE = <any>"WENIGER_FUENF_JAHRE",
-    PARTNERSCHAFT = <any>"PARTNERSCHAFT"
 }
 
 export function getTSFamilienstatusValues(): Array<TSFamilienstatus> {
@@ -14,6 +13,5 @@ export function getTSFamilienstatusValues(): Array<TSFamilienstatus> {
         TSFamilienstatus.KONKUBINAT,
         TSFamilienstatus.LAENGER_FUENF_JAHRE,
         TSFamilienstatus.WENIGER_FUENF_JAHRE,
-        TSFamilienstatus.PARTNERSCHAFT
     ];
 }

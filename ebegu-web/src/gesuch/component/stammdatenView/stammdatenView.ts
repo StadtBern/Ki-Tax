@@ -24,6 +24,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     showUmzug: boolean;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
+    phonePattern: string;
 
    /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
     this.onUpdate({key: data})*/
@@ -38,6 +39,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchForm.setGesuchstellerNumber(parsedNum);
         this.initViewmodel();
+        this.phonePattern = '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
     }
 
     private initViewmodel() {

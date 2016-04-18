@@ -10,6 +10,6 @@ public enum EnumFamilienstatus {
 	KONKUBINAT,
 	LAENGER_FUENF_JAHRE,
 	WENIGER_FUENF_JAHRE,
-	PARTNERSCHAFT
+
 
 }

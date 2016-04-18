@@ -6,8 +6,6 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -34,10 +32,6 @@ public class FallResource {
 
 	@Inject
 	private FallService fallService;
-	@Inject
-	private PersonService personService;
-	@Inject
-	private GesuchService gesuchService;
 	@Inject
 	private JaxBConverter converter;
 

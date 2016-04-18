@@ -27,7 +27,7 @@
     "TIMEERSTELLT": "Erstellungsdatum",
     "STAMMDATEN": "Stammdaten",
     "GESUCHSTELLERIN": "Gesuchsteller/in",
-    "KORRESPONDENZADR": "alternative Adresse?",
+    "KORRESPONDENZADR": "alternative Postadresse?",
     "VORNAME": "Vorname",
     "NAME": "Name",
     "EMAIL": "E-Mail",
@@ -290,11 +290,10 @@
     "MAENNLICH": "männlich",
     "WEIBLICH": "weiblich",
     "ALLEINERZIEHEND": "alleinerziehend",
-    "VERHEIRATET": "verheiratet",
+    "VERHEIRATET": "verheiratet oder in eingetragener Partnerschaft",
     "KONKUBINAT": "im Konkubinat lebend",
     "LAENGER_FUENF_JAHRE": "länger als 5 Jahre in einer Beziehung",
     "WENIGER_FUENF_JAHRE": "weniger als 5 Jahre in einer Beziehung",
-    "PARTNERSCHAFT": "in eingetragener Partnerschaft",
     "FAMILIENSITUATION_FRAGE_1": "Wie sieht ihre Familiensituation aus?",
     "FAMILIENSITUATION_FRAGE_2": "Möchten Sie das Gesuch alleine oder mit einer anderen erziehungsberechtigen Person beantragen?",
     "ALLEINE": "alleine",
@@ -305,7 +304,16 @@
     "PFLICHTFELDER_HINT": "Pflichtfelder sind mit * gekennzeichnet",
     "ZURUECK_UPPER": "ZURÜCK",
     "KINDER_HINT1": "Bitte erfassen Sie sowohl die familienergänzend betreuten Kinder wie auch die weiteren Kinder, die in Ihrem Haushalt wohnen.",
-    "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden."
+    "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden.",
+    "MENU_FAMSITUATION" :"01 Familiensituation" ,
+    "MENU_GESUCHSTELLER" :"02 Gesuchsteller",
+    "MENU_KINDER" :"03 Kinder",
+    "MENU_BETREUUNG" :"04 Betreuung",
+    "MENU_ERWERBSPENSUM":"05 Erwerbspensum",
+    "MENU_FINANZIELLE":"06 Finanzielle Situation",
+    "MENU_EINKOMMENSVERSCHLECHTERUNG":"07 Einkommensverschlechterung",
+    "MENU_DOKUMENTE":"08 Dokumente",
+    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung"
 
 }
 

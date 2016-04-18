@@ -18,6 +18,8 @@ import javax.validation.constraints.Size;
 @Entity
 public class Familiensituation extends AbstractEntity {
 
+	private static final long serialVersionUID = -6534582356181164632L;
+
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	@Column(nullable = false)

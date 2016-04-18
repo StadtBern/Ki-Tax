@@ -24,9 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -62,11 +60,6 @@ public class PersonResource {
 		Person convertedPerson = converter.personToEntity(personJAXP, new Person());
 		Person persistedPerson = this.personService.createPerson(convertedPerson);
 
-		URI uri = uriInfo.getBaseUriBuilder()
-			.path(PersonResource.class)
-			.path("/" + persistedPerson.getId())
-			.build();
-
 		JaxPerson jaxPerson = converter.personToJAX(persistedPerson);
 
 		//Korrespondenzadr wird atm immer updated
@@ -96,10 +89,7 @@ public class PersonResource {
 			Adresse persistedwohnAdr = adresseService.createAdresse(wohnAdrToPersist);
 			jaxPerson.setWohnAdresse(converter.adresseToJAX(persistedwohnAdr));
 		}
-
-//		return Response.created(uri).entity(jaxPerson).build();
 		return jaxPerson;
-
 	}
 
 	@Nullable
