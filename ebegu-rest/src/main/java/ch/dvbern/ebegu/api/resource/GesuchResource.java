@@ -7,9 +7,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.PersonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -38,13 +36,7 @@ public class GesuchResource {
 
 	@Inject
 	private GesuchService gesuchService;
-	@Inject
-	private PersonService personService;
-	@Inject
-	private PersonResource personResource;
 
-	@Inject
-	private FamiliensituationService familiensituationService;
 	@Inject
 	private JaxBConverter converter;
 
@@ -88,10 +80,8 @@ public class GesuchResource {
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
-		JaxGesuch jaxGesuch = converter.gesuchToJAX(modifiedGesuch);
 
-		return jaxGesuch;
-
+		return converter.gesuchToJAX(modifiedGesuch);
 	}
 
 	@Nullable
