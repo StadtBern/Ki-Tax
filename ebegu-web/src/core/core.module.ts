@@ -50,7 +50,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchForm', GesuchForm)
     .service('GesuchRS', GesuchRS)
     .directive('dvMaxLength', DVMaxLength.factory())
-    .directive('dvDatepicker', DVDatepicker.factory());
+    .directive('dvDatepicker', DVDatepicker.factory())
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvContainer', new DvContainerComponentConfig());
