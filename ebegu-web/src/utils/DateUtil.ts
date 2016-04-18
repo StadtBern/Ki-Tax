@@ -3,14 +3,14 @@ import Moment = moment.Moment; // TODO kann das über ein anderes Import Format 
 
 export default class DateUtil {
 
-    static $inject = ['moment'];
+    // static $inject = ['moment'];
 
     /**
      * @param {string} localDateTimeString string with format YYYY-MM-DDTHH:mm:ss.SSS
      * @returns {?Moment}
      */
     public static localDateTimeToMoment(localDateTimeString: string): Moment {
-        var theMoment: Moment = moment(localDateTimeString, 'YYYY-MM-DDTHH:mm:ss.SSS', true);
+        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss'], true);
         return theMoment.isValid() ? theMoment : undefined;
     }
 

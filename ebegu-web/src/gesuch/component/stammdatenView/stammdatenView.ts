@@ -26,6 +26,8 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     ebeguRestUtil: EbeguRestUtil;
     phonePattern: string;
 
+   /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
+    this.onUpdate({key: data})*/
 
     static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchForm'];
     /* @ngInject */
@@ -58,7 +60,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchForm.setKorrespondenzAdresse(this.showKorrespondadr);
             }
 
-            this.gesuchForm.updateGesuch().then((gesuchResponse: any) => {
+            this.gesuchForm.updateGesuchsteller().then((personResponse: any) => {
                 this.nextStep();
             });
         }
