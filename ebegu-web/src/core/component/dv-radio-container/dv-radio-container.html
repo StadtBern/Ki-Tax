@@ -1,0 +1,7 @@
+<div class="dv-radio-container">
+    <md-radio-group class="radio" ng-model="vm.model" ng-required="{{vm.ngRequired}}">
+        <md-radio-button ng-repeat="current in vm.items" ng-value="current" aria-label="{{vm.name}}" >
+            <span data-translate="{{current}}"></span>
+        </md-radio-button>
+    </md-radio-group>
+</div>

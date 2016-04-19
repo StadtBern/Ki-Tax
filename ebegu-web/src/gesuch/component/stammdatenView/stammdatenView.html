@@ -12,44 +12,55 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Geschlecht</label>
-                        <div ng-repeat="current in vm.geschlechter" class="radio">
-                            <label><input type="radio" name="geschlecht" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht"
-                                          ng-value="current" required><span data-translate="{{current}}"></span></label>
-                        </div>
+                        <label data-translate="GESCHLECHT"></label>
+                        <dv-radio-container name="'geschlecht'" model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true" items="vm.geschlechter">
+                        </dv-radio-container>
+
+
+                        <!--<label>Geschlecht</label>-->
+                        <!--<div ng-repeat="current in vm.geschlechter" class="radio">-->
+                            <!--<label><input type="radio" name="geschlecht" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht"-->
+                                          <!--ng-value="current" required><span data-translate="{{current}}"></span></label>-->
+                        <!--</div>-->
+
+
+                        <!--<md-radio-group id="rree" class="radio" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true">-->
+                            <!--<md-radio-button ng-repeat="current in vm.geschlechter" ng-value="current" aria-label="geschlecht" >-->
+                                <!--<span data-translate="{{current}}"></span>-->
+                            <!--</md-radio-button>-->
+                        <!--</md-radio-group>-->
+
+
                         <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
                                            class="error"></dv-error-messages>
-
                     </div>
                 </div>
             </div>
             <!--Vorname/Name-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-container class="form-group">
-                        <label data-translate="VORNAME" for="vorname_ID">
-                        </label>
+                    <dv-input-container class="form-group">
+                        <label data-translate="VORNAME" for="vorname_ID"></label>
                         <input id="vorname_ID" type="text" name="vorname" ng-model="vm.gesuchForm.getStammdatenToWorkWith().vorname"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
                 <div class="col-md-6">
-                    <dv-container class="form-group secondColumn">
-                        <label data-translate="NAME" for="name_ID">
-                        </label>
+                    <dv-input-container class="form-group secondColumn">
+                        <label data-translate="NAME" for="name_ID"></label>
                         <input id="name_ID" type="text" name="name" ng-model="vm.gesuchForm.getStammdatenToWorkWith().nachname"
                                dv-max-length class="form-control" required>
                         <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
             </div>
             <!--Geburtsdatum-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-container class="form-group">
+                    <dv-input-container class="form-group">
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
                         <dv-datepicker input-id="geburtsdatum_ID" input-name="geburtsdatum"
@@ -57,7 +68,7 @@
                         </dv-datepicker>
                         <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
             </div>
 
@@ -87,14 +98,14 @@
             <!--Email-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-container class="form-group">
+                    <dv-input-container class="form-group">
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
                         <input id="email_ID" type="text" name="email" ng-model="vm.gesuchForm.getStammdatenToWorkWith().mail"
                                dv-max-length class="form-control" required placeholder="hans.muster@example.com">
                         <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
             </div>
 
@@ -102,7 +113,7 @@
             <!--Mobile /Telefon-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-container class="form-group">
+                    <dv-input-container class="form-group">
                         <label data-translate="MOBILE" for="mobile_ID">
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.gesuchForm.getStammdatenToWorkWith().mobile"
@@ -110,10 +121,10 @@
                                ng-pattern="vm.phonePattern">
                         <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
                 <div class="col-md-6">
-                    <dv-container class="form-group secondColumn">
+                    <dv-input-container class="form-group secondColumn">
                         <label data-translate="TELEFON" for="tel_ID">
                         </label>
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.gesuchForm.getStammdatenToWorkWith().telefon"
@@ -121,20 +132,20 @@
                                ng-pattern="vm.phonePattern">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
             </div>
             <!--auslaendische tel nummer-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-container class="form-group">
+                    <dv-input-container class="form-group">
                         <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
                         </label>
                         <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.gesuchForm.getStammdatenToWorkWith().telefonAusland"
                                dv-max-length class="form-control">
                         <dv-error-messages ng-if="form.$submitted" for="form.telefonAusland.$error"
                                            class="error"></dv-error-messages>
-                    </dv-container>
+                    </dv-input-container>
                 </div>
             </div>
 
@@ -180,6 +191,7 @@
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
 
                 </div>
+                valid={{form.$valid}}!!
                 <div class="col-md-4 text-right">
                     <button type="submit" class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>

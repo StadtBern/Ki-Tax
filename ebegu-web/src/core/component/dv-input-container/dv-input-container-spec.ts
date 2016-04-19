@@ -1,5 +1,5 @@
-/// <reference path="../../../typings/browser.d.ts" />
-describe('dvContainer', function () {
+/// <reference path="../../../../typings/browser.d.ts" />
+describe('dvInputContainer', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.core'));
 
@@ -18,7 +18,7 @@ describe('dvContainer', function () {
          pass them to $componentController.
          */
         var bindings: {};
-        component = $componentController('dvContainer', {$scope: scope}, bindings);
+        component = $componentController('dvInputContainer', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

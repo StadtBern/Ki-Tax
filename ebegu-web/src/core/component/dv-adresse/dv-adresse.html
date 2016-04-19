@@ -4,73 +4,73 @@
         <div class="dv-adresse row">
             <!--Strasse-->
             <div class="col-md-6">
-                <dv-container class="form-group">
+                <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_STRASSE" for="strasse">
                     </label>
                     <input id="strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
                            dv-max-length class="form-control" required>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseStrasse.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
             <div class="col-md-6">
-                <dv-container class="form-group secondColumn">
+                <dv-input-container class="form-group secondColumn">
                     <label data-translate="ADRESSE_HAUSNUMMER" for="hausnummer">
                     </label>
                     <input id="hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
                            dv-max-length class="form-control">
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
         </div>
         <!-- Adresse Zusatz-->
         <div class="row">
             <div class="col-md-6">
-                <dv-container class="form-group">
+                <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_ZUSATZZEILE" for="zusatzzeile">
                     </label>
                     <input id="zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
                            dv-max-length class="form-control">
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
         </div>
         <!-- PLZ ORT-->
         <div class="row">
             <div class="col-md-6">
-                <dv-container class="form-group">
+                <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_PLZ" for="plz">
                     </label>
                     <input id="plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
                            dv-max-length class="form-control" required>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adressePlz.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
             <div class="col-md-6">
-                <dv-container class="form-group secondColumn">
+                <dv-input-container class="form-group secondColumn">
                     <label data-translate="ADRESSE_ORT" for="ort">
                     </label>
                     <input id="ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
                            dv-max-length class="form-control" required>
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseOrt.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
         </div>
         <!-- Gemeinde-->
         <div class="row" ng-if="false">
             <div class="col-md-6">
-                <dv-container class="form-group">
+                <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_GEMEINDE" for="gemeinde">
                     </label>
                     <input id="gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
                            dv-max-length class="form-control">
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGemeinde.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
         </div>
         <!-- Land-->
@@ -91,7 +91,7 @@
         <!-- gueltig ab / gueltig bis -->
         <div class="row">
             <div class="col-md-6">
-                <dv-container class="form-group" ng-if="vm.adresse.showDatumVon">
+                <dv-input-container class="form-group" ng-if="vm.adresse.showDatumVon">
                     <label data-translate="ADRESSE_GUELTIGAB" for="gueltigAb">
                     </label>
                     <p class="input-group">
@@ -103,15 +103,15 @@
                               <i class="fa fa-calendar"></i></button>
                         </span>
                     </p>
-                        <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigAb.$error"
-                                           class="error"></dv-error-messages>
-                </dv-container>
+                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigAb.$error"
+                                       class="error"></dv-error-messages>
+                </dv-input-container>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
-                <dv-container class="form-group secondColumn" ng-if="false">
+                <dv-input-container class="form-group secondColumn" ng-if="false">
                     <label data-translate="ADRESSE_GUELTIGBIS" for="gueltigBis">
                     </label>
                     <dv-datepicker data-input-id="gueltigBis" data-input-name="gueltigAb"
@@ -120,7 +120,7 @@
 
                     <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigBis.$error"
                                        class="error"></dv-error-messages>
-                </dv-container>
+                </dv-input-container>
             </div>
         </div>
 
