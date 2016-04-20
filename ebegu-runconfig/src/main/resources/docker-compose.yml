@@ -1,0 +1,38 @@
+version: '2'
+services:
+  database:
+    image: mariadb
+    environment:
+      - MYSQL_DATABASE=ebegu
+      - MYSQL_USER=ebegu
+      - MYSQL_PASSWORD=ebegu
+      - MYSQL_ROOT_PASSWORD=ebegu
+    command: ['--character-set-server=utf8', '--collation-server=utf8_unicode_ci' ,'--verbose']
+    volumes:
+      # Just specify a path and let the Engine create a volume
+      - "/var/lib/mysql"
+
+  database-wait:
+    image: digit/wait-for-mysql
+    links:
+      - database:mysql
+
+  api:
+    image: docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly
+    depends_on:
+         - database-wait
+    links:
+      - database:EBEGU-MARIADB
+    ports:
+      - 8080:8080
+      - 8443:8443
+      - 9990:9990
+
+  web:
+    image: docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix
+    depends_on:
+         - api
+    links:
+    - api:BEGU-WILDFLY
+    ports:
+     - 80:80
