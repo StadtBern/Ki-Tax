@@ -61,10 +61,10 @@ export default class GesuchForm {
             //todo homa beim review das sollte nicht so verschachtelt sein imho ist aber nur temporaer so gedacht
             return this.fallRS.create(this.fall).then((fallResponse: any) => {
                 this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
-                this.gesuch.fall = this.fall;
+                this.gesuch.fall = angular.copy(this.fall);
                 return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    this.familiensituation.gesuch = this.gesuch;
+                    this.familiensituation.gesuch = angular.copy(this.gesuch);
                     return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
                         return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
                     });

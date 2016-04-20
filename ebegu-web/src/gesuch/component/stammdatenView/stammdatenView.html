@@ -15,22 +15,6 @@
                         <label data-translate="GESCHLECHT"></label>
                         <dv-radio-container name="'geschlecht'" model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true" items="vm.geschlechter">
                         </dv-radio-container>
-
-
-                        <!--<label>Geschlecht</label>-->
-                        <!--<div ng-repeat="current in vm.geschlechter" class="radio">-->
-                            <!--<label><input type="radio" name="geschlecht" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht"-->
-                                          <!--ng-value="current" required><span data-translate="{{current}}"></span></label>-->
-                        <!--</div>-->
-
-
-                        <!--<md-radio-group id="rree" class="radio" ng-model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true">-->
-                            <!--<md-radio-button ng-repeat="current in vm.geschlechter" ng-value="current" aria-label="geschlecht" >-->
-                                <!--<span data-translate="{{current}}"></span>-->
-                            <!--</md-radio-button>-->
-                        <!--</md-radio-group>-->
-
-
                         <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
                                            class="error"></dv-error-messages>
                     </div>

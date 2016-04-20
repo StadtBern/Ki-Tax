@@ -48,7 +48,7 @@
                 <div class="col-md-12" ng-show="vm.isAdminRole()">
                     <dv-input-container class="form-group">
                         <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                        <textarea class="form-control" rows="6" id="notes" ng-model="vm.getFamiliensituation().bemerkungen"
+                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getFamiliensituation().bemerkungen"
                                   placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                     </dv-input-container>
                 </div>

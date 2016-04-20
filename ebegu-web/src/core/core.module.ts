@@ -31,6 +31,8 @@ export const EbeguWebCore: angular.IModule = angular
         /* 3rd-party modules */
         'ui.bootstrap',
         'smart-table',
+        'ngMaterial',
+        'ngMessages',
         'pascalprecht.translate',
         'angularMoment'
     ])
