@@ -57,7 +57,7 @@
             </div>
 
             <!-- Adresse-->
-            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().adresse"></dv-adresse>
+            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().adresse" prefix="wohn"></dv-adresse>
 
             <!--Korrenspondenzadr Checkbox-->
             <div class="row">
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().korrespondenzAdresse" ng-if="vm.showKorrespondadr"></dv-adresse>
+            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().korrespondenzAdresse" ng-if="vm.showKorrespondadr" prefix="korrespondenz"></dv-adresse>
 
 
             <!--Email-->
@@ -145,9 +145,7 @@
 
 
             <!-- Umzugadresse -->
-            <div ng-if="vm.showUmzug">
-                <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().umzugAdresse"></dv-adresse>
-            </div>
+            <dv-adresse adresse="vm.gesuchForm.getStammdatenToWorkWith().umzugAdresse" ng-if="vm.showUmzug" prefix="umzug"></dv-adresse>
 
             <div class="row">
                 <div class="col-md-4 ">

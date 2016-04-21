@@ -11,11 +11,6 @@
                         <dv-radio-container name="'familienstatus'" model="vm.getFamiliensituation().familienstatus" ng-required="true"
                                             class="radio famStatus-{{$index}}" items="vm.familienstatusValues">
                         </dv-radio-container>
-
-                        <!--<div ng-repeat="current in vm.familienstatusValues" class="radio famStatus-{{$index}}">-->
-                            <!--<label><input type="radio" name="familienstatus" ng-model="vm.getFamiliensituation().familienstatus"-->
-                                          <!--ng-value="current" required><span data-translate="{{current}}"></span></label>-->
-                        <!--</div>-->
                         <dv-error-messages ng-if="form.$submitted" for="form.familienstatus.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -31,12 +26,6 @@
                         <dv-radio-container name="'gesuchstellerKardinalitaet'" model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="vm.showGesuchstellerKardinalitaet()"
                                             class="radio" items="vm.gesuchstellerKardinalitaetValues">
                         </dv-radio-container>
-
-                        <!--<div ng-repeat="current in vm.gesuchstellerKardinalitaetValues" class="radio">-->
-                            <!--<label><input type="radio" name="gesuchstellerKardinalitaet" ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet"-->
-                                          <!--ng-value="current" ng-required="vm.showGesuchstellerKardinalitaet()">-->
-                                <!--<span data-translate="{{current}}"></span></label>-->
-                        <!--</div>-->
                         <dv-error-messages ng-if="form.$submitted" for="form.gesuchstellerKardinalitaet.$error"
                                            class="error"></dv-error-messages>
                     </div>

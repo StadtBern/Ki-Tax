@@ -5,7 +5,7 @@ export class DvRadioContainerComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         model:'=',
-        name: '<',
+        name: '@',
         ngRequired: '<',
         items: '<'
     };
