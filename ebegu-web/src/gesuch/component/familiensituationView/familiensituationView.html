@@ -8,7 +8,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
-                        <dv-radio-container name="'familienstatus'" model="vm.getFamiliensituation().familienstatus" ng-required="true"
+                        <dv-radio-container name="familienstatus" model="vm.getFamiliensituation().familienstatus" ng-required="true"
                                             class="radio famStatus-{{$index}}" items="vm.familienstatusValues">
                         </dv-radio-container>
                         <dv-error-messages ng-if="form.$submitted" for="form.familienstatus.$error"
@@ -23,7 +23,7 @@
                 <div class="col-md-12" ng-show="vm.showGesuchstellerKardinalitaet()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
-                        <dv-radio-container name="'gesuchstellerKardinalitaet'" model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="vm.showGesuchstellerKardinalitaet()"
+                        <dv-radio-container name="gesuchstellerKardinalitaet" model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="vm.showGesuchstellerKardinalitaet()"
                                             class="radio" items="vm.gesuchstellerKardinalitaetValues">
                         </dv-radio-container>
                         <dv-error-messages ng-if="form.$submitted" for="form.gesuchstellerKardinalitaet.$error"

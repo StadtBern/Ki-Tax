@@ -13,7 +13,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label data-translate="GESCHLECHT"></label>
-                        <dv-radio-container name="'geschlecht'" model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true" items="vm.geschlechter">
+                        <dv-radio-container name="geschlecht" model="vm.gesuchForm.getStammdatenToWorkWith().geschlecht" ng-required="true" items="vm.geschlechter">
                         </dv-radio-container>
                         <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
                                            class="error"></dv-error-messages>
@@ -64,7 +64,7 @@
                 <div class="col-md-6">
                     <div class=" checkbox">
                         <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" aria-label="korrespondenzAdr"
-                                     ng-click="vm.korrespondenzAdrClicked()">
+                                     ng-change="vm.korrespondenzAdrClicked()">
                             <span data-translate="KORRESPONDENZADR"></span>
                         </md-checkbox>
                         <dv-error-messages ng-if="form.$submitted" for="form.korrespondenzAdr.$error"
@@ -134,7 +134,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="checkbox">
-                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug" ng-click="vm.umzugadreseClicked()">
+                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug" ng-change="vm.umzugadreseClicked()">
                             <span data-translate="UMZUG"></span>
                         </md-checkbox>
                         <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"

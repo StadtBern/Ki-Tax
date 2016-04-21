@@ -89,11 +89,17 @@ export default class GesuchForm {
     public updateGesuchsteller(): IPromise<TSPerson> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getStammdatenToWorkWith();
+                });
             });
         } else {
             return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getStammdatenToWorkWith();
+                });
             });
         }
     }
