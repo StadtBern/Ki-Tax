@@ -63,13 +63,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class=" checkbox">
-                        <label>
-
-                            <input id="korrespoAdrCheckbox_ID" type="checkbox" name="korrespondenzAdr"
-                                   ng-model="vm.showKorrespondadr"
-                                   ng-click="vm.korrespondenzAdrClicked()">
+                        <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" aria-label="korrespondenzAdr"
+                                     ng-click="vm.korrespondenzAdrClicked()">
                             <span data-translate="KORRESPONDENZADR"></span>
-                        </label>
+                        </md-checkbox>
                         <dv-error-messages ng-if="form.$submitted" for="form.korrespondenzAdr.$error"
                                            class="error"></dv-error-messages>
                     </div>
@@ -136,13 +133,10 @@
             <!--Umzug checkbox-->
             <div class="row">
                 <div class="col-md-6">
-                    <div class=" checkbox">
-                        <label>
-
-                            <input id="umzug_ID" type="checkbox" name="umzug" ng-model="vm.showUmzug"
-                                   ng-click="vm.umzugadreseClicked()">
+                    <div class="checkbox">
+                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug" ng-click="vm.umzugadreseClicked()">
                             <span data-translate="UMZUG"></span>
-                        </label>
+                        </md-checkbox>
                         <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
                                            class="error"></dv-error-messages>
                     </div>
