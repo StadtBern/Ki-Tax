@@ -121,6 +121,8 @@ export default class GesuchForm {
     }
 
     public setStammdatenToWorkWith(person: TSPerson): TSPerson {
+        // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
+        this.setShowDatumVonAdresse(person);
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = person;
         } else {
@@ -174,4 +176,15 @@ export default class GesuchForm {
         return umzugAdr;
     }
 
+    private setShowDatumVonAdresse(person: TSPerson): void {
+        if(person.adresse) {
+            person.adresse.showDatumVon = false;
+        }
+        if(person.korrespondenzAdresse) {
+            person.korrespondenzAdresse.showDatumVon = false;
+        }
+        if(person.umzugAdresse) {
+            person.umzugAdresse.showDatumVon = true;
+        }
+    }
 }
