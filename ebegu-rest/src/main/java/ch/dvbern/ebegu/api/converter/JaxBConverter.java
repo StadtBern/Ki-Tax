@@ -232,4 +232,22 @@ public class JaxBConverter {
 		return jaxGesuch;
 	}
 
+	public Fachstelle fachstelleToEntity(JaxFachstelle fachstelleJAXP, Fachstelle fachstelle) {
+		Validate.notNull(fachstelleJAXP);
+		Validate.notNull(fachstelle);
+		convertAbstractFieldsToEntity(fachstelleJAXP, fachstelle);
+		fachstelle.setName(fachstelleJAXP.getName());
+		fachstelle.setBeschreibung(fachstelleJAXP.getBeschreibung());
+		fachstelle.setBehinderungsbestaetigung(fachstelleJAXP.isBehinderungsbestaetigung());
+		return fachstelle;
+	}
+
+	public JaxFachstelle fachstelleToJAX(@Nonnull Fachstelle persistedFachstelle) {
+		JaxFachstelle jaxFachstelle = new JaxFachstelle();
+		convertAbstractFieldsToJAX(persistedFachstelle, jaxFachstelle);
+		jaxFachstelle.setName(persistedFachstelle.getName());
+		jaxFachstelle.setBeschreibung(persistedFachstelle.getBeschreibung());
+		jaxFachstelle.setBehinderungsbestaetigung(persistedFachstelle.isBehinderungsbestaetigung());
+		return jaxFachstelle;
+	}
 }
