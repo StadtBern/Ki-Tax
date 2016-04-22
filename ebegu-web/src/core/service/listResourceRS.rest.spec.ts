@@ -1,4 +1,4 @@
-import ListResourceRS from './listResourceRS';
+import ListResourceRS from './listResourceRS.rest';
 
 describe('ListResourceRS', function () {
 

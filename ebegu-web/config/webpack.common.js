@@ -44,7 +44,7 @@ module.exports = {
     entry: {
         // 'polyfills': './src/polyfills.ts',
         // 'vendor': './src/vendor.ts',
-        'main': './src/core/bootstrap.ts'
+        'main': './src/bootstrap.ts'
     },
 
     // Options affecting the resolving of modules.

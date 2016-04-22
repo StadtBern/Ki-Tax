@@ -1,6 +1,8 @@
-import {IHttpBackendService} from 'angular';
-import ApplicationPropertyRS from './applicationPropertyRS.rest';
+import 'angular-mocks/ngMock';
+import '../admin.module';
+import {ApplicationPropertyRS} from './applicationPropertyRS.rest';
 import TSApplicationProperty from '../../models/TSApplicationProperty';
+import {IPromise, IHttpPromise} from 'angular';
 
 describe('ApplicationPropertyRS', function () {
 
@@ -55,7 +57,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should fetch property with given name', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/' + testName);
-                let promise = applicationPropertyRS.getByName(testName);
+                let promise: IPromise<TSApplicationProperty> = applicationPropertyRS.getByName(testName);
                 let property: TSApplicationProperty = undefined;
 
                 promise.then(function (data) {
@@ -72,7 +74,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should create property with name and value', function () {
                 $httpBackend.expectPOST(REST_API + 'application-properties/' + testName, mockApplicationProperty.value);
-                let promise = applicationPropertyRS.create(mockApplicationProperty.name, mockApplicationProperty.value);
+                let promise: IHttpPromise<any> = applicationPropertyRS.create(mockApplicationProperty.name, mockApplicationProperty.value);
                 let property: TSApplicationProperty = undefined;
 
                 promise.then(function (response) {
@@ -88,7 +90,7 @@ describe('ApplicationPropertyRS', function () {
 
             it('should fetch a list of all properties', function () {
                 $httpBackend.expectGET(REST_API + 'application-properties/');
-                let promise = applicationPropertyRS.getAllApplicationProperties();
+                let promise: IPromise<TSApplicationProperty[]> = applicationPropertyRS.getAllApplicationProperties();
                 let list: TSApplicationProperty[] = undefined;
 
                 promise.then(function (data) {

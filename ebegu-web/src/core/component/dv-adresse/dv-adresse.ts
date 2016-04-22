@@ -2,8 +2,8 @@ import TSAdresse from '../../../models/TSAdresse';
 import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
-import * as adrTempl from './dv-adresse.html';
 import {IComponentOptions, IFormController} from 'angular';
+// import * as adrTempl from './dv-adresse.html';
 
 export class AdresseComponentConfig implements IComponentOptions {
     transclude = false;
@@ -11,7 +11,7 @@ export class AdresseComponentConfig implements IComponentOptions {
         adresse: '<',
         prefix: '@'
     };
-    template = adrTempl;
+    template = require('./dv-adresse.html');
     controller = DvAdresseController;
     controllerAs = 'vm';
     require: any = {parentForm: '?^form'};

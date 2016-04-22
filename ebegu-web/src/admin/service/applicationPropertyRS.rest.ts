@@ -16,9 +16,9 @@ export class ApplicationPropertyRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    getByName(name: string): IPromise<TSApplicationProperty[]> {
+    getByName(name: string): IPromise<TSApplicationProperty> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(name)).then(
-            (response: any) => this.ebeguRestUtil.parseApplicationProperties(response.data)
+            (response: any) => this.ebeguRestUtil.parseApplicationProperty(new TSApplicationProperty(), response.data)
         );
     }
 

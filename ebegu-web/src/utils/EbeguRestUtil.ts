@@ -134,8 +134,8 @@ export default class EbeguRestUtil {
     public personToRestObject(restPerson: any, person: TSPerson): any {
         if (person) {
             this.abstractEntityToRestObject(restPerson, person);
-
             restPerson.vorname = person.vorname;
+
             restPerson.nachname = person.nachname;
             restPerson.geburtsdatum = DateUtil.momentToLocalDate(person.geburtsdatum);
             restPerson.mail = person.mail;

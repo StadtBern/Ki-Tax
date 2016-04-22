@@ -8,7 +8,7 @@ appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS'];
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS) {
     routerHelper.configureStates(getStates());
     angularMomentConfig.format = 'DD.MM.YYYY';
-    listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
+   // auskommentiert fuer test listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird 
 }
 
 function getStates(): IState[] {

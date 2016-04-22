@@ -3,9 +3,12 @@
  loader zu ersetzten, der keine REST requests macht
  https://angular-translate.github.io/docs/#/guide/22_unit-testing-with-angular-translate
  */
-import IProvideService = angular.auto.IProvideService;
+import 'angular';
+import 'angular-mocks';
+import 'angular-translate';
+import {IProvideService, IQService} from 'angular';
 import {ITranslateProvider} from 'angular-translate';
-import {IQService} from 'angular';
+import IProvideService = angular.auto.IProvideService;
 
 beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideService, $translateProvider: ITranslateProvider) {
 
@@ -14,6 +17,5 @@ beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideServ
             return $q.resolve({});
         };
     });
-
     $translateProvider.useLoader('customLoader');
 }));

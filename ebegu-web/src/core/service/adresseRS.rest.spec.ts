@@ -1,4 +1,4 @@
-import AdresseRS from './adresseRS';
+import AdresseRS from './adresseRS.rest';
 
 describe('AdresseRS', function () {
 

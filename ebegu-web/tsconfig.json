@@ -14,7 +14,7 @@
 
     "files": [
         "typings/browser.d.ts",
-        "src/core/bootstrap.ts"
+        "src/bootstrap.ts"
     ],
     "compileOnSave": false,
     "buildOnSave": false
