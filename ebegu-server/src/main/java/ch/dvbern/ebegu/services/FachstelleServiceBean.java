@@ -58,10 +58,10 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	}
 
 	@Override
-	public void removeFachstelle(@Nonnull Fachstelle fachstelle) {
-		Validate.notNull(fachstelle);
-		Optional<Fachstelle> familiensituationToRemove = findFachstelle(fachstelle.getId());
-		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fachstelle));
+	public void removeFachstelle(@Nonnull String fachstelleId) {
+		Objects.requireNonNull(fachstelleId);
+		Optional<Fachstelle> familiensituationToRemove = findFachstelle(fachstelleId);
+		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fachstelleId));
 		persistence.remove(familiensituationToRemove.get());
 	}
 

@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFachstelle;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Fachstelle;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -15,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -92,18 +92,14 @@ public class FachstelleResource {
 
 	@Nullable
 	@DELETE
+	@Path("/{fachstelleJAXP}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response remove(
-		@Nonnull @NotNull JaxFachstelle fachstelleJAXP,
-		@Context UriInfo uriInfo,
+		@Nonnull @PathParam("fachstelleJAXP") String fachstelleJAXP,
+		@Context HttpServletRequest request,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Validate.notNull(fachstelleJAXP.getId());
-		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(converter.toEntityId(fachstelleJAXP.getId()));
-		fachstelleFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, converter.toEntityId(fachstelleJAXP.getId())));
-		Fachstelle fachstelleToDelete = converter.fachstelleToEntity(fachstelleJAXP, fachstelleFromDB.get());
-
-		fachstelleService.removeFachstelle(fachstelleToDelete);
+		fachstelleService.removeFachstelle(fachstelleJAXP);
 		return Response.ok().build();
 	}
 

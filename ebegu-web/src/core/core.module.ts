@@ -15,6 +15,7 @@ import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
+import {FachstelleRS} from "./service/fachstelleRS.rest";
 
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', [
@@ -48,6 +49,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchForm', GesuchForm)
     .service('GesuchRS', GesuchRS)
+    .service('FachstelleRS', FachstelleRS)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .directive('dvMaxLength', DVMaxLength.factory())

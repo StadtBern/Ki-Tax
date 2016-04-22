@@ -70,7 +70,7 @@ public class FachstelleServiceTest extends AbstractEbeguTest {
 		Fachstelle insertedFachstelle = insertNewEntity();
 		Assert.assertEquals(1, fachstelleService.getAllFachstellen().size());
 
-		fachstelleService.removeFachstelle(insertedFachstelle);
+		fachstelleService.removeFachstelle(insertedFachstelle.getId());
 		Assert.assertEquals(0, fachstelleService.getAllFachstellen().size());
 	}
 

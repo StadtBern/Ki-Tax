@@ -29,11 +29,11 @@ public interface FachstelleService {
 
 	/**
 	 *
-	 * @param key PK (id) der Fachstelle
+	 * @param fachstelleId PK (id) der Fachstelle
 	 * @return Fachstelle mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Fachstelle> findFachstelle(@Nonnull String key);
+	Optional<Fachstelle> findFachstelle(@Nonnull String fachstelleId);
 
 	/**
 	 * Gibt alle existierenden Fachstellen zurueck.
@@ -44,8 +44,8 @@ public interface FachstelleService {
 
 	/**
 	 * entfernt die Fachstelle aus der Database
-	 * @param fachstelle die Fachstelle als DTO
+	 * @param fachstelleId die Fachstelle als DTO
 	 */
-	void removeFachstelle(@Nonnull Fachstelle fachstelle);
+	void removeFachstelle(@Nonnull String fachstelleId);
 
 }
