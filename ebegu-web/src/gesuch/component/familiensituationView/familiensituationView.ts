@@ -3,13 +3,13 @@ import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import GesuchForm from '../../service/gesuchForm';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
-import * as template from './familiensituationView.html';
 import './familiensituationView.less';
 import {TSFamilienstatus, getTSFamilienstatusValues} from '../../../models/enums/TSFamilienstatus';
 import {
     TSGesuchstellerKardinalitaet,
     getTSGesuchstellerKardinalitaetValues
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
+let template = require('./familiensituationView.html');
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;

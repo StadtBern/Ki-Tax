@@ -1,5 +1,5 @@
-import * as errTemplate from './dv-error-messages.html';
 import {IComponentOptions} from 'angular';
+let errTemplate =  require('./dv-error-messages.html');
 
 export class DvErrorMessagesComponentConfig implements IComponentOptions {
     transclude = false;

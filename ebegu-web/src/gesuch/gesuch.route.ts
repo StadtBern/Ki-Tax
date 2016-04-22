@@ -1,6 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
-import * as gesuchTpl from './gesuch.html';
 import {IState, IStateParamsService} from 'angular-ui-router';
+let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
 /* @ngInject */
@@ -41,7 +41,7 @@ export class EbeguKinderState implements IState {
     url = '/kinder';
 }
 
-//PARAMS 
+//PARAMS
 export class IStammdatenStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
 }

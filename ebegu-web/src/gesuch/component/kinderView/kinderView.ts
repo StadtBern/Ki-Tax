@@ -1,7 +1,7 @@
 import {IComponentOptions} from 'angular';
-import * as template from './kinderView.html';
 import GesuchForm from '../../service/gesuchForm';
 import {IStateService} from 'angular-ui-router';
+let template = require('./kinderView.html');
 
 export class KinderViewComponentConfig implements IComponentOptions {
     transclude = false;

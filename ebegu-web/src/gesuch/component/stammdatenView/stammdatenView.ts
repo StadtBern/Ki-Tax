@@ -5,9 +5,9 @@ import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
-import * as template from './stammdatenView.html';
 import './stammdatenView.less';
 import GesuchForm from '../../service/gesuchForm';
+let template = require('./stammdatenView.html');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;

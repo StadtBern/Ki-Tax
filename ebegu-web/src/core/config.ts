@@ -1,14 +1,19 @@
+import 'angular';
 import 'angular-translate';
 import {ITranslateProvider} from 'angular-translate';
-import * as translations from '../assets/translations/translations_de.json';
 
 configure.$inject = ['$translateProvider'];
 /* @ngInject */
 export function configure($translateProvider: ITranslateProvider) {
+    let translProp = require('../assets/translations/translations_de.json')
 
     $translateProvider.useSanitizeValueStrategy('escapeParameters');
     $translateProvider
-        .translations('de', translations)
+    // .useStaticFilesLoader({
+    //     prefix: 'src/assets/translations/translations_',
+    //     suffix: '.json'
+    // })
+        .translations('de', translProp)
         .fallbackLanguage('de')
         .preferredLanguage('de');
 }

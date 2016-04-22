@@ -1,8 +1,8 @@
 import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
-import * as template from './dv-datepicker.html';
 import Moment = moment.Moment;
+let template = require('./dv-datepicker.html');
 
 export interface DatepickerScope extends IScope {
     updateModelValue: Function;
