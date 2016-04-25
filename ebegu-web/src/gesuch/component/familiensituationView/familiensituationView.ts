@@ -47,7 +47,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
             || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
     }
-
+    
     public getFamiliensituation(): TSFamiliensituation {
         return this.gesuchForm.familiensituation;
     }

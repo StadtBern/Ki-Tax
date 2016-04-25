@@ -70,6 +70,7 @@
     "angular-animate": "~1.5.3",
     "angular-aria": "~1.5.3",
     "angular-cookies": "~1.5.3",
+    "angular-material": "~1.0.7",
     "angular-messages": "~1.5.3",
     "angular-moment": "~1.0.0-beta.5",
     "angular-resource": "~1.5.3",
