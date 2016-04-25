@@ -8,7 +8,7 @@ CREATE TABLE fachstelle (
   behinderungsbestaetigung BIT          NOT NULL,
   beschreibung             VARCHAR(255),
   name                     VARCHAR(100) NOT NULL,
-  PRIMARY KEY (id)
+  CONSTRAINT PK_fachstelle PRIMARY KEY (id)
 );
 
 CREATE TABLE fachstelle_aud (
@@ -22,7 +22,7 @@ CREATE TABLE fachstelle_aud (
   behinderungsbestaetigung BIT,
   beschreibung             VARCHAR(255),
   name                     VARCHAR(100),
-  PRIMARY KEY (id, rev)
+CONSTRAINT fachstelle_aud PRIMARY KEY (id, rev)
 );
 
 ALTER TABLE fachstelle_aud

@@ -9,7 +9,7 @@ import DateUtil from './DateUtil';
 import {IFilterService} from 'angular';
 import TSLand from '../models/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
-import {TSFachstelle} from "../models/TSFachstelle";
+import {TSFachstelle} from '../models/TSFachstelle';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -257,10 +257,10 @@ export default class EbeguRestUtil {
     }
 
     public parseFachstelle(parsedFachstelle: TSFachstelle, receivedFachstelle: any): TSFachstelle {
+        this.parseAbstractEntity(parsedFachstelle, receivedFachstelle);
         parsedFachstelle.name = receivedFachstelle.name;
         parsedFachstelle.beschreibung = receivedFachstelle.beschreibung;
         parsedFachstelle.behinderungsbestaetigung = receivedFachstelle.behinderungsbestaetigung;
-        this.parseAbstractEntity(parsedFachstelle, receivedFachstelle);
         return parsedFachstelle;
     }
     
