@@ -61,10 +61,10 @@ export default class GesuchForm {
             //todo homa beim review das sollte nicht so verschachtelt sein imho ist aber nur temporaer so gedacht
             return this.fallRS.create(this.fall).then((fallResponse: any) => {
                 this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
-                this.gesuch.fall = this.fall;
+                this.gesuch.fall = angular.copy(this.fall);
                 return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    this.familiensituation.gesuch = this.gesuch;
+                    this.familiensituation.gesuch = angular.copy(this.gesuch);
                     return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
                         return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
                     });
@@ -89,11 +89,17 @@ export default class GesuchForm {
     public updateGesuchsteller(): IPromise<TSPerson> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getStammdatenToWorkWith();
+                });
             });
         } else {
             return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                return this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getStammdatenToWorkWith();
+                });
             });
         }
     }
@@ -115,6 +121,8 @@ export default class GesuchForm {
     }
 
     public setStammdatenToWorkWith(person: TSPerson): TSPerson {
+        // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
+        this.calculateShowDatumFlags(person);
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = person;
         } else {
@@ -168,4 +176,15 @@ export default class GesuchForm {
         return umzugAdr;
     }
 
+    private calculateShowDatumFlags(person: TSPerson): void {
+        if (person.adresse) {
+            person.adresse.showDatumVon = false;
+        }
+        if (person.korrespondenzAdresse) {
+            person.korrespondenzAdresse.showDatumVon = false;
+        }
+        if (person.umzugAdresse) {
+            person.umzugAdresse.showDatumVon = true;
+        }
+    }
 }
