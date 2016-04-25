@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,31 +18,33 @@ import javax.inject.Inject;
 import java.util.Optional;
 
 /**
- * Tests fuer die Klasse MandantService
+ * Tests fuer die Klasse TraegerschaftService
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class MandantServiceTest extends AbstractEbeguTest {
+public class TraegerschaftServiceTest extends AbstractEbeguTest {
 
 	@Inject
-	private MandantService mandantService;
+	private TraegerschaftService traegerschaftService;
 
 	@Inject
-	private Persistence<Mandant> persistence;
+	private Persistence<Traegerschaft> persistence;
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
 		return createTestArchive();
 	}
 
-
 	@Test
-	public void findMandantTest() {
-		Mandant mandant = TestDataUtil.createDefaultMandant();
-		persistence.persist(mandant);
-		Optional<Mandant> mandantOpt = mandantService.findMandant(mandant.getId());
-		Assert.assertTrue(mandantOpt.isPresent());
-		Assert.assertEquals("Mandant1", mandantOpt.get().getName());
+	public void createTraegerschaft() {
+		Assert.assertNotNull(traegerschaftService);
+		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+
+		traegerschaftService.createTraegerschaft(traegerschaft);
+		Optional<Traegerschaft> traegerschaftOpt = traegerschaftService.findTraegerschaft(traegerschaft.getId());
+		Assert.assertTrue(traegerschaftOpt.isPresent());
+		Assert.assertEquals("Traegerschaft1", traegerschaftOpt.get().getName());
 	}
+
 }

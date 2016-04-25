@@ -255,6 +255,21 @@ public class JaxBConverter {
 		return jaxMandant;
 	}
 
+	public JaxTraegerschaft traegerschaftToJAX(Traegerschaft persistedTraegerschaft) {
+		JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
+		convertAbstractFieldsToJAX(persistedTraegerschaft, jaxTraegerschaft);
+		jaxTraegerschaft.setName(persistedTraegerschaft.getName());
+		return jaxTraegerschaft;
+	}
+
+	public Traegerschaft traegerschaftToEntity(@Nonnull JaxTraegerschaft traegerschaftJAXP, @Nonnull Traegerschaft traegerschaft) {
+		Validate.notNull(traegerschaft);
+		Validate.notNull(traegerschaftJAXP);
+		convertAbstractFieldsToEntity(traegerschaftJAXP, traegerschaft);
+		traegerschaft.setName(traegerschaftJAXP.getName());
+		return traegerschaft;
+	}
+
 	public Fachstelle fachstelleToEntity(JaxFachstelle fachstelleJAXP, Fachstelle fachstelle) {
 		Validate.notNull(fachstelleJAXP);
 		Validate.notNull(fachstelle);

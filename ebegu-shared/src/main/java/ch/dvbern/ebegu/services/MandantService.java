@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface MandantService {
 
 	/**
-	 * @param key PK (id) des Mandanten
+	 * @param id PK (id) des Mandanten
 	 * @return Mandant mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull

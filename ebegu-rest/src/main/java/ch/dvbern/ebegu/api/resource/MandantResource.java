@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
 /**
- * REST Resource fuer Personen
+ * REST Resource fuer Mandanten
  */
 @Path("mandanten")
 @Stateless
@@ -42,8 +42,8 @@ public class MandantResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxMandant findMandant(@Nonnull @NotNull JaxId mandantJAXPId) throws EbeguException {
 		Validate.notNull(mandantJAXPId.getId());
-		String personID = converter.toEntityId(mandantJAXPId);
-		Optional<Mandant> optional = mandantService.findMandant(personID);
+		String mandantID = converter.toEntityId(mandantJAXPId);
+		Optional<Mandant> optional = mandantService.findMandant(mandantID);
 
 		if (!optional.isPresent()) {
 			return null;
