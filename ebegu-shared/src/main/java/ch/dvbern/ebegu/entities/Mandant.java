@@ -23,4 +23,14 @@ public class Mandant extends AbstractEntity {
 	@NotNull
 	private String name;
 
+	public Mandant() {
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

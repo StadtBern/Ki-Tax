@@ -23,4 +23,14 @@ public class Traegerschaft extends AbstractEntity {
 	@NotNull
 	private String name;
 
+	public Traegerschaft() {
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

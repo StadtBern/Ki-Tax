@@ -1,63 +1,43 @@
-package ch.dvbern.ebegu.entities;
+package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-import static ch.dvbern.ebegu.util.Constants.DB_IBAN_LENGTH;
-
 /**
- * Entitaet zum Speichern von InstitutionStammdaten in der Datenbank.
+ * Created by imanol on 17.03.16.
+ * DTO fuer InstitutionStammdaten
  */
-@Audited
-@Entity
-public class InstitutionStammdaten extends AbstractEntity {
+@XmlRootElement(name = "InstitutionStammdaten")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class JaxInstitutionStammdaten extends JaxAbstractDTO {
 
-	private static final long serialVersionUID = -8403411439882700618L;
+	private static final long serialVersionUID = -1893677808323618626L;
 
-	@Size(min = 1, max = DB_IBAN_LENGTH)
-	@Column(nullable = false)
 	@NotNull
 	private String iban;
-
 	@NotNull
-	@DecimalMin("0.00")
-	@DecimalMax("365.00")
-	@Column(nullable = false)
 	private BigDecimal oeffnungstage;
-
 	@NotNull
-	@DecimalMin("0.00")
-	@DecimalMax("8760.00")
-	@Column(nullable = false)
 	private BigDecimal oeffnungsstunden;
-
-	@Enumerated(value = EnumType.STRING)
 	@Nullable
 	private BetreuungsangebotTyp betreuungsangebotTyp;
-
 	@NotNull
-	@Column(nullable = false)
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumVon;
-
 	@NotNull
-	@Column(nullable = false)
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate datumBis;
-
-	@ManyToOne(optional = false)
-	private Institution institution;
-
-	public InstitutionStammdaten() {
-	}
+	@NotNull
+	private JaxInstitution institution;
 
 	public String getIban() {
 		return iban;
@@ -108,11 +88,11 @@ public class InstitutionStammdaten extends AbstractEntity {
 		this.datumBis = datumBis;
 	}
 
-	public Institution getInstitution() {
+	public JaxInstitution getInstitution() {
 		return institution;
 	}
 
-	public void setInstitution(Institution institution) {
+	public void setInstitution(JaxInstitution institution) {
 		this.institution = institution;
 	}
 }
