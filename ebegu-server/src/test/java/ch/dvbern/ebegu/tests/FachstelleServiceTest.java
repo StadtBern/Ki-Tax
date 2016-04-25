@@ -41,7 +41,8 @@ public class FachstelleServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createFachstelle() {
 		Assert.assertNotNull(fachstelleService);
-		insertNewEntity();
+		Fachstelle fachstelle = TestDataUtil.createDefaultFachstelle();
+		fachstelleService.saveFachstelle(fachstelle);
 
 		Collection<Fachstelle> allFachstellen = fachstelleService.getAllFachstellen();
 		Assert.assertEquals(1, allFachstellen.size());
@@ -59,7 +60,7 @@ public class FachstelleServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals("Fachstelle1", fachstelle.get().getName());
 
 		fachstelle.get().setName("Fachstelle2");
-		Fachstelle updatedFachstelle = fachstelleService.updateFachstelle(fachstelle.get());
+		Fachstelle updatedFachstelle = fachstelleService.saveFachstelle(fachstelle.get());
 		Assert.assertEquals("Fachstelle2", updatedFachstelle.getName());
 		Assert.assertEquals("Fachstelle2", fachstelleService.findFachstelle(updatedFachstelle.getId()).get().getName());
 	}
@@ -79,7 +80,7 @@ public class FachstelleServiceTest extends AbstractEbeguTest {
 	@Nonnull
 	private Fachstelle insertNewEntity() {
 		Fachstelle fachstelle = TestDataUtil.createDefaultFachstelle();
-		fachstelleService.createFachstelle(fachstelle);
+		persistence.persist(fachstelle);
 		return fachstelle;
 	}
 

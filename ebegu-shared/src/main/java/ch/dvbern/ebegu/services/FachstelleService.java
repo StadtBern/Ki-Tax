@@ -11,13 +11,6 @@ import java.util.Optional;
  */
 public interface FachstelleService {
 
-	/**
-	 * Erstellt eine neue Fachstelle in der DB, falls der key noch nicht existiert
-	 * @param fachstelle die Fachstelle als DTO
-	 * @return die gespeicherte Fachstelle
-	 */
-	@Nonnull
-	Fachstelle createFachstelle(@Nonnull Fachstelle fachstelle);
 
 	/**
 	 * Aktualisiert die Fachstelle in der DB
@@ -25,7 +18,7 @@ public interface FachstelleService {
 	 * @return Die aktualisierte Fachstelle
 	 */
 	@Nonnull
-	Fachstelle updateFachstelle(@Nonnull Fachstelle fachstelle);
+	Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle);
 
 	/**
 	 *

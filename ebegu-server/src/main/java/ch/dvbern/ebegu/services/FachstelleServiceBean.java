@@ -28,16 +28,11 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
-	@Nonnull
-	@Override
-	public Fachstelle createFachstelle(@Nonnull Fachstelle fachstelle) {
-		Objects.requireNonNull(fachstelle);
-		return persistence.persist(fachstelle);
-	}
+
 
 	@Nonnull
 	@Override
-	public Fachstelle updateFachstelle(@Nonnull Fachstelle fachstelle) {
+	public Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle) {
 		Objects.requireNonNull(fachstelle);
 		return persistence.merge(fachstelle);
 	}

@@ -51,7 +51,7 @@ public class FachstelleResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Fachstelle convertedFachstelle = converter.fachstelleToEntity(fachstelleJAXP, new Fachstelle());
-		Fachstelle persistedFachstelle = this.fachstelleService.createFachstelle(convertedFachstelle);
+		Fachstelle persistedFachstelle = this.fachstelleService.saveFachstelle(convertedFachstelle);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(FachstelleResource.class)
@@ -75,7 +75,7 @@ public class FachstelleResource {
 		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(converter.toEntityId(fachstelleJAXP.getId()));
 		fachstelleFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, converter.toEntityId(fachstelleJAXP.getId())));
 		Fachstelle fachstelleToMerge = converter.fachstelleToEntity(fachstelleJAXP, fachstelleFromDB.get());
-		Fachstelle modifiedFachstelle = this.fachstelleService.updateFachstelle(fachstelleToMerge);
+		Fachstelle modifiedFachstelle = this.fachstelleService.saveFachstelle(fachstelleToMerge);
 
 		return converter.fachstelleToJAX(modifiedFachstelle);
 	}
