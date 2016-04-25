@@ -63,4 +63,11 @@ public final class TestDataUtil {
 		return new Fall();
 	}
 
+	public static Fachstelle createDefaultFachstelle() {
+		Fachstelle fachstelle = new Fachstelle();
+		fachstelle.setName("Fachstelle1");
+		fachstelle.setBeschreibung("Kinder Fachstelle");
+		fachstelle.setBehinderungsbestaetigung(true);
+		return fachstelle;
+	}
 }

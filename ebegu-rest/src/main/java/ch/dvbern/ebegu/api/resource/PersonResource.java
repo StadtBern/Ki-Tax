@@ -115,6 +115,7 @@ public class PersonResource {
 		if (personJAXP.getAlternativeAdresse() != null) {
 			Adresse currentKorrespAdrToUpdate = adresseService.getKorrespondenzAdr(modifiedPerson.getId()).orElse(new Adresse());
 			currentKorrespAdrToUpdate = converter.adresseToEntity(personJAXP.getAlternativeAdresse(), currentKorrespAdrToUpdate);
+			currentKorrespAdrToUpdate.setPerson(modifiedPerson);
 			jaxPerson.setAlternativeAdresse(converter.adresseToJAX(adresseService.updateAdresse(currentKorrespAdrToUpdate)));
 		}
 

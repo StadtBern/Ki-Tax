@@ -27,7 +27,6 @@ export default class DateUtil {
 
     public static jsDateToMoment(date: Date): Moment {
         return moment(date);
-
     }
 
     /**

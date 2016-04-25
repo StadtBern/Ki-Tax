@@ -1,4 +1,5 @@
 import 'angular';
+import 'angular-material';
 import 'angular-animate';
 import 'angular-sanitize';
 import 'angular-messages';

@@ -216,6 +216,22 @@ public class JaxBConverter {
 		} else {
 			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
 		}
+		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
+			Optional<Person> gesuchsteller1 = personService.findPerson(toEntityId(gesuchJAXP.getGesuchsteller1()));
+			if (gesuchsteller1.isPresent()) {
+				gesuch.setGesuchsteller1(personToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller1()));
+			}
+		}
+		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
+			Optional<Person> gesuchsteller2 = personService.findPerson(toEntityId(gesuchJAXP.getGesuchsteller2()));
+			if (gesuchsteller2.isPresent()){
+				gesuch.setGesuchsteller2(personToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller2()));
+			}
+		}
 		return gesuch;
 	}
 
@@ -232,4 +248,22 @@ public class JaxBConverter {
 		return jaxGesuch;
 	}
 
+	public Fachstelle fachstelleToEntity(JaxFachstelle fachstelleJAXP, Fachstelle fachstelle) {
+		Validate.notNull(fachstelleJAXP);
+		Validate.notNull(fachstelle);
+		convertAbstractFieldsToEntity(fachstelleJAXP, fachstelle);
+		fachstelle.setName(fachstelleJAXP.getName());
+		fachstelle.setBeschreibung(fachstelleJAXP.getBeschreibung());
+		fachstelle.setBehinderungsbestaetigung(fachstelleJAXP.isBehinderungsbestaetigung());
+		return fachstelle;
+	}
+
+	public JaxFachstelle fachstelleToJAX(@Nonnull Fachstelle persistedFachstelle) {
+		JaxFachstelle jaxFachstelle = new JaxFachstelle();
+		convertAbstractFieldsToJAX(persistedFachstelle, jaxFachstelle);
+		jaxFachstelle.setName(persistedFachstelle.getName());
+		jaxFachstelle.setBeschreibung(persistedFachstelle.getBeschreibung());
+		jaxFachstelle.setBehinderungsbestaetigung(persistedFachstelle.isBehinderungsbestaetigung());
+		return jaxFachstelle;
+	}
 }

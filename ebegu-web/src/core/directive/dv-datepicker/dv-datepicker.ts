@@ -29,7 +29,6 @@ export class DVDatepicker implements IDirective {
     }
 
     unboundLink(scope: DatepickerScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
-        //link = function(scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
         if (!ngModelCtrl) {
             return;
         }

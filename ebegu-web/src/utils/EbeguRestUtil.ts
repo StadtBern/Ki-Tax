@@ -9,6 +9,7 @@ import DateUtil from './DateUtil';
 import {IFilterService} from 'angular';
 import TSLand from '../models/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
+import {TSFachstelle} from '../models/TSFachstelle';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -234,4 +235,33 @@ export default class EbeguRestUtil {
     }
 
 
+    public fachstelleToRestObject(restFachstelle: any, fachstelle: TSFachstelle) {
+        restFachstelle.name = fachstelle.name;
+        restFachstelle.beschreibung = fachstelle.beschreibung;
+        restFachstelle.behinderungsbestaetigung = fachstelle.behinderungsbestaetigung;
+        this.abstractEntityToRestObject(restFachstelle, fachstelle);
+
+        return restFachstelle;
+    }
+
+    public parseFachstellen(data: any): TSFachstelle[] {
+        var fachstellen: TSFachstelle[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                fachstellen[i] = this.parseFachstelle(new TSFachstelle(), data[i]);
+            }
+        } else {
+            fachstellen[0] = this.parseFachstelle(new TSFachstelle(), data);
+        }
+        return fachstellen;
+    }
+
+    public parseFachstelle(parsedFachstelle: TSFachstelle, receivedFachstelle: any): TSFachstelle {
+        this.parseAbstractEntity(parsedFachstelle, receivedFachstelle);
+        parsedFachstelle.name = receivedFachstelle.name;
+        parsedFachstelle.beschreibung = receivedFachstelle.beschreibung;
+        parsedFachstelle.behinderungsbestaetigung = receivedFachstelle.behinderungsbestaetigung;
+        return parsedFachstelle;
+    }
+    
 }
