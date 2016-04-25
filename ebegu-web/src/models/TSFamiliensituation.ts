@@ -11,42 +11,42 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     private _gesuch: TSGesuch;
 
 
-    constructor(familienstatus?:TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet, bemerkungen?: string) {
+    constructor(familienstatus?: TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet, bemerkungen?: string) {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
         this._bemerkungen = bemerkungen;
     }
 
-    public get familienstatus():TSFamilienstatus {
+    public get familienstatus(): TSFamilienstatus {
         return this._familienstatus;
     }
 
-    public set familienstatus(familienstatus:TSFamilienstatus) {
+    public set familienstatus(familienstatus: TSFamilienstatus) {
         this._familienstatus = familienstatus;
     }
 
-    public get gesuchstellerKardinalitaet():TSGesuchstellerKardinalitaet {
+    public get gesuchstellerKardinalitaet(): TSGesuchstellerKardinalitaet {
         return this._gesuchstellerKardinalitaet;
     }
 
-    public set gesuchstellerKardinalitaet(gesuchstellerKardinalitaet:TSGesuchstellerKardinalitaet) {
+    public set gesuchstellerKardinalitaet(gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet) {
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
     }
 
-    public get bemerkungen():string {
+    public get bemerkungen(): string {
         return this._bemerkungen;
     }
 
-    public set bemerkungen(bemerkungen:string) {
+    public set bemerkungen(bemerkungen: string) {
         this._bemerkungen = bemerkungen;
     }
 
-    public get gesuch():TSGesuch {
+    public get gesuch(): TSGesuch {
         return this._gesuch;
     }
 
-    public set gesuch(value:TSGesuch) {
+    public set gesuch(value: TSGesuch) {
         this._gesuch = value;
     }
 }

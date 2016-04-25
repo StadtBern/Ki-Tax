@@ -131,5 +131,5 @@ export default class TSPerson extends TSAbstractEntity {
     public set korrespondenzAdresse(value: TSAdresse) {
         this._korrespondenzAdresse = value;
     }
-    
+
 }

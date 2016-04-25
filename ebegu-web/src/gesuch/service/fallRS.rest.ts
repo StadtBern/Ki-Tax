@@ -3,13 +3,13 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFall from '../../models/TSFall';
 
 export default class FallRS {
-    serviceURL:string;
-    http:IHttpService;
-    ebeguRestUtil:EbeguRestUtil;
+    serviceURL: string;
+    http: IHttpService;
+    ebeguRestUtil: EbeguRestUtil;
 
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor($http:IHttpService, REST_API:string, ebeguRestUtil:EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
         this.serviceURL = REST_API + 'falle';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -17,7 +17,7 @@ export default class FallRS {
 
     public create(fall: TSFall): IHttpPromise<any> {
         let returnedFall = {};
-        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall,fall);
+        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
         return this.http.post(this.serviceURL, returnedFall, {
             headers: {
                 'Content-Type': 'application/json'
@@ -27,16 +27,16 @@ export default class FallRS {
 
     public update(fall: TSFall): IHttpPromise<any> {
         let returnedFall = {};
-        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall,fall);
-        return this.http.put(this.serviceURL,  returnedFall, {
+        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
+        return this.http.put(this.serviceURL, returnedFall, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
     }
 
-    public findFall(fallID:string): IHttpPromise<any> {
-        return this.http.get( this.serviceURL + '/' + encodeURIComponent(fallID));
+    public findFall(fallID: string): IHttpPromise<any> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fallID));
     }
 
 }

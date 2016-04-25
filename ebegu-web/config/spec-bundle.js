@@ -7,6 +7,6 @@ var testsContext;
 // require('../src/core/bootstrap');
 //homa note the duble cc
 
-testsContext = require.context('../src', true, /\.specc\.ts/);
+testsContext = require.context('../src', true, /\.spec\.ts/);
 console.log('specbundle output', testsContext.keys());
 testsContext.keys().forEach(testsContext);

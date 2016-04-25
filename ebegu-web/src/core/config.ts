@@ -5,7 +5,7 @@ import {ITranslateProvider} from 'angular-translate';
 configure.$inject = ['$translateProvider'];
 /* @ngInject */
 export function configure($translateProvider: ITranslateProvider) {
-    let translProp = require('../assets/translations/translations_de.json')
+    let translProp = require('../assets/translations/translations_de.json');
 
     $translateProvider.useSanitizeValueStrategy('escapeParameters');
     $translateProvider
