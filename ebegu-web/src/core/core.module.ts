@@ -15,8 +15,8 @@ import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
-import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container'
-import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container'
+import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
+import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
 
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', [
