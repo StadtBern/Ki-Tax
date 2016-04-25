@@ -63,6 +63,12 @@ public final class TestDataUtil {
 		return new Fall();
 	}
 
+	public static Mandant createDefaultMandant() {
+		Mandant mandant = new Mandant();
+		mandant.setName("Mandant1");
+		return mandant;
+	}
+
 	public static Fachstelle createDefaultFachstelle() {
 		Fachstelle fachstelle = new Fachstelle();
 		fachstelle.setName("Fachstelle1");

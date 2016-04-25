@@ -248,6 +248,13 @@ public class JaxBConverter {
 		return jaxGesuch;
 	}
 
+	public JaxMandant mandantToJAX(@Nonnull Mandant persistedMandant) {
+		JaxMandant jaxMandant = new JaxMandant();
+		convertAbstractFieldsToJAX(persistedMandant, jaxMandant);
+		jaxMandant.setName(persistedMandant.getName());
+		return jaxMandant;
+	}
+
 	public Fachstelle fachstelleToEntity(JaxFachstelle fachstelleJAXP, Fachstelle fachstelle) {
 		Validate.notNull(fachstelleJAXP);
 		Validate.notNull(fachstelle);
@@ -266,4 +273,5 @@ public class JaxBConverter {
 		jaxFachstelle.setBehinderungsbestaetigung(persistedFachstelle.isBehinderungsbestaetigung());
 		return jaxFachstelle;
 	}
+
 }
