@@ -3,7 +3,7 @@ import Moment = moment.Moment; // TODO kann das über ein anderes Import Format 
 
 export default class DateUtil {
 
-    // static $inject = ['moment'];
+
 
     /**
      * @param {string} localDateTimeString string with format YYYY-MM-DDTHH:mm:ss.SSS

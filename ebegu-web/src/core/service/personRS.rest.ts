@@ -44,7 +44,7 @@ export default class PersonRS {
         });
     }
 
-    public findPerson(personID: string): IHttpPromise<TSPerson> {
+    public findPerson(personID: string): IPromise<TSPerson> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(personID))
             .then((response: any) => {
                 this.log.debug('PARSING person REST object ', response.data);

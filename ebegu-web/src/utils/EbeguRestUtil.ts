@@ -92,7 +92,7 @@ export default class EbeguRestUtil {
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
             adresseTS.plz = receivedAdresse.plz;
             adresseTS.ort = receivedAdresse.ort;
-            adresseTS.land = this.landCodeToTSLand(receivedAdresse.land).code;
+            adresseTS.land =  (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.gueltigAb = DateUtil.localDateToMoment(receivedAdresse.gueltigAb);
             adresseTS.gueltigBis = DateUtil.localDateToMoment(receivedAdresse.gueltigBis);

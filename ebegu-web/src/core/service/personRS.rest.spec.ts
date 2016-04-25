@@ -6,7 +6,7 @@ import TSPerson from '../../models/TSPerson';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
-// import {IHttpBackendService} from 'angular-mocks'
+
 
 describe('PersonRS', function () {
 

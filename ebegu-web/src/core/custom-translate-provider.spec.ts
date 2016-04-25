@@ -6,7 +6,7 @@
 import 'angular';
 import 'angular-mocks';
 import 'angular-translate';
-import {IProvideService, IQService} from 'angular';
+import {IQService} from 'angular';
 import {ITranslateProvider} from 'angular-translate';
 import IProvideService = angular.auto.IProvideService;
 

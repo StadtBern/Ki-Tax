@@ -1,15 +1,22 @@
-import {IScope, IRootScopeService} from 'angular';
+import '../../../bootstrap.ts';
+import 'angular-mocks';
+import {EbeguWebCore} from '../../core.module';
+import IInjectorService = angular.auto.IInjectorService;
+import IRootScopeService = angular.IRootScopeService;
+import IScope = angular.IScope;
 
 describe('dvAdresse', function () {
 
-    beforeEach(angular.mock.module('ebeguWeb.core'));
+    beforeEach(angular.mock.module(EbeguWebCore.name));
 
     let component: any;
     let scope: IScope;
     let $componentController: any;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: any, $rootScope: IRootScopeService) {
-        $componentController = _$componentController_;
+
+    beforeEach(angular.mock.inject(function ($injector: any) {
+        $componentController = $injector.get('$componentController');
+        let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
 

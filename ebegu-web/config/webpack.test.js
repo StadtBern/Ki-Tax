@@ -22,8 +22,9 @@ module.exports = {
   //
   // See: http://webpack.github.io/docs/configuration.html#devtool
   // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
+  // devtool: 'cheap-module-source-map',
   devtool: 'inline-source-map',
-    
+
     output: {
            filename: 'myspecbundle.js'
          },
@@ -153,7 +154,7 @@ module.exports = {
 
     ]
   },
-    
+
 
   // Add additional plugins to the compiler.
   //

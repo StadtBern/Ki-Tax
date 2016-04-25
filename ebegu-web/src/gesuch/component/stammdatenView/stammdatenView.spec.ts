@@ -1,4 +1,8 @@
-import {IScope, IRootScopeService} from 'angular';
+import '../../../bootstrap.ts';
+import 'angular-mocks';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
+import IScope = angular.IScope;
 
 describe('stammdatenView', function () {
 
@@ -8,8 +12,9 @@ describe('stammdatenView', function () {
     let scope: IScope;
     let $componentController: any;
 
-    beforeEach(angular.mock.inject(function (_$componentController_: any, $rootScope: IRootScopeService) {
-        $componentController = _$componentController_;
+    beforeEach(angular.mock.inject(function ($injector: any) {
+        $componentController = $injector.get('$componentController');
+        let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
 
