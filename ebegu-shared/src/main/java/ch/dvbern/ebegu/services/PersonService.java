@@ -26,7 +26,6 @@ public interface PersonService {
 	Person updatePerson(@Nonnull Person person);
 
 	/**
-
 	 * @param key PK (id) der Person
 	 * @return Person mit dem gegebenen key oder null falls nicht vorhanden
 	 */

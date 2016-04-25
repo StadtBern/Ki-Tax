@@ -4,10 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.MandantService;
-import ch.dvbern.ebegu.services.PersonService;
-import ch.dvbern.ebegu.services.TraegerschaftService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -39,6 +36,8 @@ public class JaxBConverter {
 	private MandantService mandantService;
 	@Inject
 	private TraegerschaftService traegerschaftService;
+	@Inject
+	private InstitutionService institutionService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -77,7 +76,7 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public JaxApplicationProperties applicationPropertieToJAX(@Nonnull final ApplicationProperty applicationProperty) {
+	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
 		jaxProperty.setName(applicationProperty.getName());
@@ -138,7 +137,7 @@ public class JaxBConverter {
 
 		JaxEnversRevision jaxEnversRevision = new JaxEnversRevision();
 		if (abstractEntity instanceof ApplicationProperty) {
-			jaxEnversRevision.setEntity(applicationPropertieToJAX((ApplicationProperty) abstractEntity));
+			jaxEnversRevision.setEntity(applicationPropertyToJAX((ApplicationProperty) abstractEntity));
 		}
 		jaxEnversRevision.setRev(revisionEntity.getId());
 		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
@@ -334,4 +333,41 @@ public class JaxBConverter {
 		}
 		return institution;
 	}
+
+	public JaxInstitutionStammdaten institutionStammdatenToJAX(InstitutionStammdaten persistedInstStammdaten) {
+		JaxInstitutionStammdaten jaxInstStammdaten = new JaxInstitutionStammdaten();
+		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
+		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
+		jaxInstStammdaten.setOeffnungsstunden(persistedInstStammdaten.getOeffnungsstunden());
+		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban());
+		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
+		jaxInstStammdaten.setDatumVon(persistedInstStammdaten.getDatumVon());
+		jaxInstStammdaten.setDatumBis(persistedInstStammdaten.getDatumBis());
+		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
+		return jaxInstStammdaten;
+	}
+
+	public InstitutionStammdaten institutionStammdatenToEntity(JaxInstitutionStammdaten institutionStammdatenJAXP, InstitutionStammdaten institutionStammdaten) {
+		Validate.notNull(institutionStammdatenJAXP);
+		Validate.notNull(institutionStammdaten);
+
+		convertAbstractFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
+		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
+		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
+		institutionStammdaten.setIban(institutionStammdatenJAXP.getIban());
+		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
+		institutionStammdaten.setDatumVon(institutionStammdatenJAXP.getDatumVon());
+		institutionStammdaten.setDatumBis(institutionStammdatenJAXP.getDatumBis());
+
+		Optional<Institution> institutionFromDB = institutionService.findInstitution(toEntityId(institutionStammdatenJAXP.getInstitution()));
+		if(institutionFromDB.isPresent()) {
+			institutionStammdaten.setInstitution(institutionToEntity(institutionStammdatenJAXP.getInstitution(), institutionFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionStammdatenJAXP.getInstitution()));
+		}
+
+		return institutionStammdaten;
+
+	}
+
 }

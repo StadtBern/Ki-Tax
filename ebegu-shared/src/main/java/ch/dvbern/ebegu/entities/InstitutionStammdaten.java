@@ -37,7 +37,7 @@ public class InstitutionStammdaten extends AbstractEntity {
 
 	@NotNull
 	@DecimalMin("0.00")
-	@DecimalMax("8760.00")
+	@DecimalMax("24.00")
 	@Column(nullable = false)
 	private BigDecimal oeffnungsstunden;
 

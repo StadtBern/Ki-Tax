@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * comments homa
@@ -86,6 +89,20 @@ public final class TestDataUtil {
 	public static Institution createDefaultInstitution() {
 		Institution institution = new Institution();
 		institution.setName("Institution1");
+		institution.setMandant(createDefaultMandant());
+		institution.setTraegerschaft(createDefaultTraegerschaft());
 		return institution;
+	}
+
+	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
+		InstitutionStammdaten institutionStammdaten = new InstitutionStammdaten();
+		institutionStammdaten.setIban("CH123456789");
+		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		institutionStammdaten.setDatumBis(LocalDate.of(2010,01,01));
+		institutionStammdaten.setDatumVon(LocalDate.of(2010,01,01));
+		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		institutionStammdaten.setInstitution(createDefaultInstitution());
+		return institutionStammdaten;
 	}
 }
