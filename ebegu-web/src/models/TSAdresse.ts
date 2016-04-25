@@ -76,7 +76,7 @@ export default class TSAdresse extends TSAbstractEntity {
         return this._land;
     }
 
-    public set land(value: any) {
+    public set land(value: string) {
         this._land = value;
     }
 
