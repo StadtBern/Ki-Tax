@@ -82,4 +82,10 @@ public final class TestDataUtil {
 		traegerschaft.setName("Traegerschaft1");
 		return traegerschaft;
 	}
+
+	public static Institution createDefaultInstitution() {
+		Institution institution = new Institution();
+		institution.setName("Institution1");
+		return institution;
+	}
 }

@@ -5,7 +5,9 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.MandantService;
 import ch.dvbern.ebegu.services.PersonService;
+import ch.dvbern.ebegu.services.TraegerschaftService;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -33,6 +35,10 @@ public class JaxBConverter {
 
 	@Inject
 	private FallService fallService;
+	@Inject
+	private MandantService mandantService;
+	@Inject
+	private TraegerschaftService traegerschaftService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -262,6 +268,14 @@ public class JaxBConverter {
 		return jaxTraegerschaft;
 	}
 
+	public Mandant mandantToEntity(JaxMandant mandantJAXP, Mandant mandant) {
+		Validate.notNull(mandant);
+		Validate.notNull(mandantJAXP);
+		convertAbstractFieldsToEntity(mandantJAXP, mandant);
+		mandant.setName(mandantJAXP.getName());
+		return mandant;
+	}
+
 	public Traegerschaft traegerschaftToEntity(@Nonnull JaxTraegerschaft traegerschaftJAXP, @Nonnull Traegerschaft traegerschaft) {
 		Validate.notNull(traegerschaft);
 		Validate.notNull(traegerschaftJAXP);
@@ -289,4 +303,35 @@ public class JaxBConverter {
 		return jaxFachstelle;
 	}
 
+
+	public JaxInstitution institutionToJAX(Institution persistedInstitution) {
+		JaxInstitution jaxInstitution = new JaxInstitution();
+		convertAbstractFieldsToJAX(persistedInstitution, jaxInstitution);
+		jaxInstitution.setName(persistedInstitution.getName());
+		jaxInstitution.setMandant(mandantToJAX(persistedInstitution.getMandant()));
+		jaxInstitution.setTraegerschaft(traegerschaftToJAX(persistedInstitution.getTraegerschaft()));
+		return jaxInstitution;
+	}
+
+	public Institution institutionToEntity(JaxInstitution institutionJAXP, Institution institution) {
+		Validate.notNull(institutionJAXP);
+		Validate.notNull(institution);
+		convertAbstractFieldsToEntity(institutionJAXP, institution);
+		institution.setName(institutionJAXP.getName());
+
+		Optional<Mandant> mandantFromDB = mandantService.findMandant(toEntityId(institutionJAXP.getMandant()));
+		if(mandantFromDB.isPresent()) {
+			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("institutionToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionJAXP.getMandant()));
+		}
+
+		Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(toEntityId(institutionJAXP.getTraegerschaft()));
+		if(traegerschaftFromDB.isPresent()) {
+			institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("institutionToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionJAXP.getTraegerschaft()));
+		}
+		return institution;
+	}
 }
