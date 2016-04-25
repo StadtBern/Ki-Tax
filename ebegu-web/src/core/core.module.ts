@@ -15,7 +15,7 @@ import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
-import {FachstelleRS} from "./service/fachstelleRS.rest";
+import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
 

@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise, IPromise} from 'angular';
-import {TSFachstelle} from '../../models/TSFachstelle'
+import {TSFachstelle} from '../../models/TSFachstelle';
 
 export class FachstelleRS {
     serviceURL: string;
