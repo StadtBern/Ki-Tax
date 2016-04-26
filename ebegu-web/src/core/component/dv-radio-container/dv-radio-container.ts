@@ -4,7 +4,7 @@ let template = require('./dv-radio-container.html');
 export class DvRadioContainerComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        model:'=',
+        model: '=',
         name: '@',
         ngRequired: '<',
         items: '<'
@@ -15,7 +15,7 @@ export class DvRadioContainerComponentConfig implements IComponentOptions {
 
 }
 
-export class DvRadioContainerController  {
+export class DvRadioContainerController {
 
     static $inject: any[] = [];
     /* @ngInject */

@@ -1,50 +1,61 @@
-import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
+import {IDirective, IDirectiveFactory, IScope} from 'angular';
 import * as moment from 'moment';
 import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
+import INgModelController = angular.INgModelController;
 let template = require('./dv-datepicker.html');
-
-export interface DatepickerScope extends IScope {
-    updateModelValue: Function;
-    date: Date;
+export interface DatepickerScope extends IScope { updateModelValue: Function; date: Date;
 }
-
 export class DVDatepicker implements IDirective {
-    static $inject: string[] = [];
-
     restrict = 'E';
-    require = 'ngModel';
+    require: any = {ngModelCtrl: 'ngModel'};
     scope = {
         ngModel: '=',
-        inputName: '@',
         inputId: '@'
     };
-    link: IDirectiveLinkFn;
+    controller = DatepickerController;
+    controllerAs = 'vm';
+    bindToController = true;
     template = template;
-
-
+    /* constructor() { this.link = this.unboundLink.bind(this); }*/
+    static factory(): IDirectiveFactory {
+        const directive = () => new DVDatepicker();
+        directive.$inject = [];
+        return directive;
+    }
+}
+export class DatepickerController {
+    static $inject: string[] = [];
+    date: Date;
+    ngModelCtrl: INgModelController;
 
     constructor() {
-        this.link = this.unboundLink.bind(this);
     }
+    // beispiel wie man auf changes eines attributes von aussen reagieren kann
+    // $onChanges(changes) {
+    //     if (changes.required&& !changes.inputName.isFirstChange()) {
+    //         this.isRequired == changes.require.currentValue;
+    //         // changes.inputName.currentValue;
+    //         // changes.inputName.currentValue;
+    //     }
+    //
+    // }
 
-    unboundLink(scope: DatepickerScope, element: IAugmentedJQuery, attrs: IAttributes, ngModelCtrl: any) {
-        if (!ngModelCtrl) {
+    //wird von angular aufgerufen
+    $onInit() {
+        if (!this.ngModelCtrl) {
             return;
         }
 
-        scope.updateModelValue = () => {
-            ngModelCtrl.$setViewValue(scope.date);
-        };
 
-        ngModelCtrl.$render = () => {
-            scope.date = ngModelCtrl.$viewValue;
+        this.ngModelCtrl.$render = () => {
+            this.date = this.ngModelCtrl.$viewValue;
         };
-        ngModelCtrl.$formatters.unshift(DVDatepicker.momentToDate);
-        ngModelCtrl.$parsers.push(DVDatepicker.dateToMoment);
+        this.ngModelCtrl.$formatters.unshift(DatepickerController.momentToDate);
+        this.ngModelCtrl.$parsers.push(DatepickerController.dateToMoment);
         //datum validieren (reihenfolge scheint so zu sein das dieser validator vor dem Datumsfeldvalidator der komponente laeuft)
-        ngModelCtrl.$validators.moment = (modelValue: any, viewValue: any) => {
-            let value = modelValue || DVDatepicker.dateToMoment(viewValue);
+        this.ngModelCtrl.$validators['moment'] = (modelValue: any, viewValue: any) => {
+            let value = modelValue || DatepickerController.dateToMoment(viewValue);
             if (!value) {
                 return true;
             }
@@ -53,11 +64,15 @@ export class DVDatepicker implements IDirective {
         };
     }
 
-    static factory(): IDirectiveFactory {
-        const directive = () => new DVDatepicker();
-        directive.$inject = [];
-        return directive;
+    onBlur() {
+        this.ngModelCtrl.$setTouched();
+
     }
+
+    updateModelValue() {
+        this.ngModelCtrl.$setViewValue(this.date);
+    };
+
 
     private static momentToDate(mom: Moment): any {
         if (mom && mom.isValid()) {
@@ -67,7 +82,13 @@ export class DVDatepicker implements IDirective {
     }
 
     private static dateToMoment(date: Date): any {
-        return DateUtil.jsDateToMoment(date);
+        //nur versuchen das datum als moment zu parsen wenn es kein string ist
+        if (date && !(typeof date === 'string' )) {
+            let dateString = date.toISOString().substring(0, 10);
+            return DateUtil.localDateToMoment(dateString);
+        }
+
+        return date;
     }
 
 

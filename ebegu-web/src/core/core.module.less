@@ -21,7 +21,7 @@
 
     }
 
-    .next, .previous  {
+    .next, .previous {
         font-size: 16px;
         font-weight: bold;
         color: black;
@@ -42,36 +42,28 @@
 
     //    error styling
     form {
-/*        .ng-invalid-required:after, .ng-required:after {
-            content: '***';
-
-        }
-        .ng-invalid:after {
-            content: '***';
-        }*/
-
         input[type="text"] {
             border: 0;
             border-bottom: 1px solid lightgray;
-            box-shadow: 0 0  0 @input-boder-focus;
-            outline:0;
+            box-shadow: 0 0 0 @input-boder-focus;
+            outline: 0;
             border-radius: 0px;
-            font-size:20px;
+            font-size: 20px;
             font-weight: 600;
             color: black;
             padding: 2px 2px 1px;
         }
 
         input[type="text"]:placeholder-shown {
-            font-size:16px;
+            font-size: 16px;
 
         }
 
         input[type="text"]:focus {
             border-color: @input-boder-focus;
             //this simulates the outline that chrome places around focused fields using css
-            outline:none; /*or outline-color:#FFFFFF; if the first doesn't work*/
-            border:1px solid @input-boder-focus;
+            outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
+            border: 1px solid @input-boder-focus;
             -webkit-box-shadow: 0px 0px 4px 0px @input-boder-focus;
             box-shadow: 0px 0px 4px 0px @input-boder-focus;
         }
@@ -80,12 +72,22 @@
             font-weight: normal;
         }
     }
-    .marginLeft10{
-       margin-left: 10px;
+    .marginLeft10 {
+        margin-left: 10px;
 
     }
-    .marginTop10{
-        margin-top:10px;
+    .marginTop10 {
+        margin-top: 10px;
+    }
+
+    //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
+    form:not(.ng-submitted) .form-group {
+        //geschwisterelement von .formcontrol feldern oder .input-element feldern sollen Fehlermeldung noch nicht anzeigen wenn input untouched ist
+        .form-control.ng-untouched ~ .error,
+        .input-element.ng-untouched ~ .error {
+            display: none;
+        }
+
     }
 
 }
