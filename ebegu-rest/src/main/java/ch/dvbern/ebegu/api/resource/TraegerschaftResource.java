@@ -19,8 +19,11 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST Resource fuer Traegerschaft
@@ -37,16 +40,24 @@ public class TraegerschaftResource {
 	private JaxBConverter converter;
 
 	@Nullable
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxTraegerschaft create(
+	public JaxTraegerschaft saveTraegerschaft(
 		@Nonnull @NotNull @Valid JaxTraegerschaft traegerschaftJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Traegerschaft convertedTraegerschaft = converter.traegerschaftToEntity(traegerschaftJAXP, new Traegerschaft());
-		Traegerschaft persistedTraegerschaft = this.traegerschaftService.createTraegerschaft(convertedTraegerschaft);
+		Traegerschaft traegerschaft;
+		if (traegerschaftJAXP.getId() != null) {
+			Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(converter.toEntityId(traegerschaftJAXP.getId()));
+			traegerschaft = optional.isPresent() ? optional.get() : new Traegerschaft();
+		} else {
+			traegerschaft = new Traegerschaft();
+		}
+		Traegerschaft convertedTraegerschaft = converter.traegerschaftToEntity(traegerschaftJAXP, traegerschaft);
+
+		Traegerschaft persistedTraegerschaft = this.traegerschaftService.saveTraegerschaft(convertedTraegerschaft);
 
 		return converter.traegerschaftToJAX(persistedTraegerschaft);
 	}
@@ -56,7 +67,9 @@ public class TraegerschaftResource {
 	@Path("/{traegerschaftId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxTraegerschaft findTraegerschaft(@Nonnull @NotNull JaxId traegerschaftJAXPId) throws EbeguException {
+	public JaxTraegerschaft findTraegerschaft(
+		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId) throws EbeguException {
+
 		Validate.notNull(traegerschaftJAXPId.getId());
 		String traegerschaftID = converter.toEntityId(traegerschaftJAXPId);
 		Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(traegerschaftID);
@@ -65,6 +78,29 @@ public class TraegerschaftResource {
 			return null;
 		}
 		return converter.traegerschaftToJAX(optional.get());
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{traegerschaftId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeTraegerschaft(
+		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(traegerschaftJAXPId.getId());
+		traegerschaftService.removeTraegerschaft(converter.toEntityId(traegerschaftJAXPId));
+		return Response.ok().build();
+	}
+
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxTraegerschaft> getAllTraegerschaften() {
+		return traegerschaftService.getAllTraegerschaften().stream()
+			.map(traegerschaft -> converter.traegerschaftToJAX(traegerschaft))
+			.collect(Collectors.toList());
 	}
 
 }

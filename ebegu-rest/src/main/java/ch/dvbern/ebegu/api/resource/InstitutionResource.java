@@ -19,8 +19,11 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST Resource fuer Institution
@@ -37,16 +40,24 @@ public class InstitutionResource {
 	private JaxBConverter converter;
 
 	@Nullable
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitution create(
+	public JaxInstitution saveInstitution(
 		@Nonnull @NotNull @Valid JaxInstitution institutionJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, new Institution());
-		Institution persistedInstitution = this.institutionService.createInstitution(convertedInstitution);
+		Institution institution;
+		if (institutionJAXP.getId() != null) {
+			Optional<Institution> optional = institutionService.findInstitution(converter.toEntityId(institutionJAXP.getId()));
+			institution = optional.isPresent() ? optional.get() : new Institution();
+		} else {
+			institution = new Institution();
+		}
+
+		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, institution);
+		Institution persistedInstitution = this.institutionService.saveInstitution(convertedInstitution);
 
 		return converter.institutionToJAX(persistedInstitution);
 
@@ -57,7 +68,9 @@ public class InstitutionResource {
 	@Path("/{institutionId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitution findInstitution(@Nonnull @NotNull JaxId institutionJAXPId) throws EbeguException {
+	public JaxInstitution findInstitution(
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId) throws EbeguException {
+
 		Validate.notNull(institutionJAXPId.getId());
 		String institutionID = converter.toEntityId(institutionJAXPId);
 		Optional<Institution> optional = institutionService.findInstitution(institutionID);
@@ -66,6 +79,34 @@ public class InstitutionResource {
 			return null;
 		}
 		return converter.institutionToJAX(optional.get());
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{institutionId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeInstitution(
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(institutionJAXPId.getId());
+		institutionService.removeInstitution(converter.toEntityId(institutionJAXPId));
+		return Response.ok().build();
+	}
+
+	@Nonnull
+	@GET
+	@Path("/traegerschaft/{traegerschaftId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitution> getAllInstitutionenFromTraegerschaft(
+		@Nonnull @NotNull @PathParam("traegerschaftId") JaxId traegerschaftJAXPId) {
+
+		Validate.notNull(traegerschaftJAXPId.getId());
+		String traegerschaftId = converter.toEntityId(traegerschaftJAXPId);
+		return institutionService.getAllInstitutionenFromTraegerschaft(traegerschaftId).stream()
+			.map(institution -> converter.institutionToJAX(institution))
+			.collect(Collectors.toList());
 	}
 
 }

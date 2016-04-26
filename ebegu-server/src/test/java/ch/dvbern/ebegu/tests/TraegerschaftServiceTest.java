@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -41,10 +42,23 @@ public class TraegerschaftServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(traegerschaftService);
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 
-		traegerschaftService.createTraegerschaft(traegerschaft);
+		traegerschaftService.saveTraegerschaft(traegerschaft);
 		Optional<Traegerschaft> traegerschaftOpt = traegerschaftService.findTraegerschaft(traegerschaft.getId());
 		Assert.assertTrue(traegerschaftOpt.isPresent());
 		Assert.assertEquals("Traegerschaft1", traegerschaftOpt.get().getName());
+	}
+
+	@Test
+	public void removeTraegerschaft() {
+		Assert.assertNotNull(traegerschaftService);
+		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+
+		traegerschaftService.saveTraegerschaft(traegerschaft);
+		Collection<Traegerschaft> allTraegerschaften = traegerschaftService.getAllTraegerschaften();
+		Assert.assertEquals(1, allTraegerschaften.size());
+		traegerschaftService.removeTraegerschaft(allTraegerschaften.iterator().next().getId());
+		allTraegerschaften = traegerschaftService.getAllTraegerschaften();
+		Assert.assertEquals(0, allTraegerschaften.size());
 	}
 
 }

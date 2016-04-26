@@ -14,10 +14,7 @@ import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
@@ -40,7 +37,7 @@ public class MandantResource {
 	@Path("/{mandantId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxMandant findMandant(@Nonnull @NotNull JaxId mandantJAXPId) throws EbeguException {
+	public JaxMandant findMandant(@Nonnull @NotNull @PathParam("mandantId") JaxId mandantJAXPId) throws EbeguException {
 		Validate.notNull(mandantJAXPId.getId());
 		String mandantID = converter.toEntityId(mandantJAXPId);
 		Optional<Mandant> optional = mandantService.findMandant(mandantID);

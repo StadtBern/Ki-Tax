@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Institution;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -15,7 +16,7 @@ public interface InstitutionService {
 	 * @param institution Die Institution als DTO
 	 */
 	@Nonnull
-	Institution createInstitution(@Nonnull Institution institution);
+	Institution saveInstitution(@Nonnull Institution institution);
 
 	/**
 	 * @param key PK (id) der Institution
@@ -24,4 +25,17 @@ public interface InstitutionService {
 	@Nonnull
 	Optional<Institution> findInstitution(@Nonnull String key);
 
+	/**
+	 * removes an Institution from the Database.
+	 * @param InstitutionId
+	 */
+	void removeInstitution(@Nonnull String InstitutionId);
+
+	/**
+	 *
+	 * @param traegerschaftId Der ID der Traegerschaft, fuer welche die Institutionen gesucht werden muessen
+	 * @return Liste mit allen Institutionen der gegebenen Traegerschaft
+     */
+	@Nonnull
+	Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId);
 }

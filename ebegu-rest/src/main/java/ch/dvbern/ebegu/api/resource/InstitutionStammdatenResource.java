@@ -4,8 +4,6 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import io.swagger.annotations.Api;
@@ -42,10 +40,10 @@ public class InstitutionStammdatenResource {
 
 
 	@Nullable
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitutionStammdaten create(
+	public JaxInstitutionStammdaten saveInstitutionStammdaten(
 		@Nonnull @NotNull @Valid JaxInstitutionStammdaten institutionStammdatenJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -54,26 +52,6 @@ public class InstitutionStammdatenResource {
 		InstitutionStammdaten persistedInstitutionStammdaten = this.institutionStammdatenService.saveInstitutionStammdaten(convertedInstitutionStammdaten);
 
 		return converter.institutionStammdatenToJAX(persistedInstitutionStammdaten);
-	}
-
-	@Nullable
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitutionStammdaten update(
-		@Nonnull @NotNull @Valid JaxInstitutionStammdaten institutionStammdatenJAXP,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
-
-		Validate.notNull(institutionStammdatenJAXP.getId());
-		String institutionStammdatenID = converter.toEntityId(institutionStammdatenJAXP);
-		Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(institutionStammdatenID);
-		InstitutionStammdaten institutionStammdatenFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenID));
-		InstitutionStammdaten institutionStammdatenToMerge = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, institutionStammdatenFromDB);
-
-
-		InstitutionStammdaten modifiedInstitutionStammdaten = this.institutionStammdatenService.saveInstitutionStammdaten(institutionStammdatenToMerge);
-		return converter.institutionStammdatenToJAX(modifiedInstitutionStammdaten);
 	}
 
 	@Nullable

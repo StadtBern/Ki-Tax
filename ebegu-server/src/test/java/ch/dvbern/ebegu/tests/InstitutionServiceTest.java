@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Optional;
 
@@ -40,6 +41,31 @@ public class InstitutionServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createInstitution() {
 		Assert.assertNotNull(institutionService);
+		Institution institution = insertInstitution();
+
+		Optional<Institution> institutionOpt = institutionService.findInstitution(institution.getId());
+		Assert.assertTrue(institutionOpt.isPresent());
+		Assert.assertEquals("Institution1", institutionOpt.get().getName());
+		Assert.assertEquals(institutionOpt.get().getMandant().getId(), institution.getMandant().getId());
+		Assert.assertEquals(institutionOpt.get().getTraegerschaft().getId(), institution.getTraegerschaft().getId());
+	}
+
+	@Test
+	public void removeInstitution(){
+		Assert.assertNotNull(institutionService);
+		Institution institution = insertInstitution();
+
+		Optional<Institution> institutionOpt = institutionService.findInstitution(institution.getId());
+		Assert.assertTrue(institutionOpt.isPresent());
+		institutionService.removeInstitution(institutionOpt.get().getId());
+		Optional<Institution> institutionOpt2 = institutionService.findInstitution(institution.getId());
+		Assert.assertFalse(institutionOpt2.isPresent());
+	}
+
+
+	// HELP METHODS
+
+	private Institution insertInstitution() {
 		Institution institution = TestDataUtil.createDefaultInstitution();
 
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
@@ -50,13 +76,8 @@ public class InstitutionServiceTest extends AbstractEbeguTest {
 		persistence.persist(mandant);
 		institution.setMandant(mandant);
 
-		institutionService.createInstitution(institution);
-
-		Optional<Institution> institutionOpt = institutionService.findInstitution(institution.getId());
-		Assert.assertTrue(institutionOpt.isPresent());
-		Assert.assertEquals("Institution1", institutionOpt.get().getName());
-		Assert.assertEquals(institutionOpt.get().getMandant().getId(), institution.getMandant().getId());
-		Assert.assertEquals(institutionOpt.get().getTraegerschaft().getId(), institution.getTraegerschaft().getId());
+		institutionService.saveInstitution(institution);
+		return institution;
 	}
 
 }
