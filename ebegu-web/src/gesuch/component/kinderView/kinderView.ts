@@ -1,5 +1,5 @@
 import {IComponentOptions} from 'angular';
-import GesuchForm from '../../service/gesuchForm';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 let template = require('./kinderView.html');
 
@@ -12,15 +12,15 @@ export class KinderViewComponentConfig implements IComponentOptions {
 
 export class KinderViewController {
 
-    static $inject: string[] = ['$state', 'GesuchForm'];
+    static $inject: string[] = ['$state', 'GesuchModelManager'];
     /* @ngInject */
-    constructor(private state: IStateService, private gesuchForm: GesuchForm) {
+    constructor(private state: IStateService, private gesuchModelManager: GesuchModelManager) {
 
     }
 
 
     previousStep() {
-        if ((this.gesuchForm.gesuchstellerNumber === 2)) {
+        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
         } else {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});

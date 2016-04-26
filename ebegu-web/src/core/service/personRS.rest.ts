@@ -28,20 +28,24 @@ export default class PersonRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-             this.log.debug('PARSING person REST object ', response.data);
+                this.log.debug('PARSING person REST object ', response.data);
                 return this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
             }
         );
     }
 
-    public create(person: TSPerson): IHttpPromise<TSPerson> {
+    public create(person:TSPerson):IPromise<TSPerson> {
         let pers = {};
         pers = this.ebeguRestUtil.personToRestObject(pers, person);
         return this.http.post(this.serviceURL, pers, {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }).then((response:any) => {
+            this.log.debug('PARSING person REST object ', response.data);
+            return this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
         });
+
     }
 
     public findPerson(personID: string): IPromise<TSPerson> {

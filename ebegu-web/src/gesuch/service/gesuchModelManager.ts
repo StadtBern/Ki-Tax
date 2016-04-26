@@ -14,7 +14,7 @@ import {IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 
-export default class GesuchForm {
+export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
@@ -89,14 +89,14 @@ export default class GesuchForm {
     public updateGesuchsteller(): IPromise<TSPerson> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(personResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
         } else {
             return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith( personResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });

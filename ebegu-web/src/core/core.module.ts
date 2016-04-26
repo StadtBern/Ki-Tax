@@ -10,7 +10,7 @@ import PersonRS from './service/personRS.rest';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
 import FallRS from '../gesuch/service/fallRS.rest';
-import GesuchForm from '../gesuch/service/gesuchForm';
+import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
@@ -51,7 +51,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('ListResourceRS', ListResourceRS)
     .service('FallRS', FallRS)
     .service('FamiliensituationRS', FamiliensituationRS)
-    .service('GesuchForm', GesuchForm)
+    .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
