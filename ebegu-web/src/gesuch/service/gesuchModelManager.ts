@@ -14,7 +14,7 @@ import {IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
 
-export default class GesuchForm {
+export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;

@@ -1,7 +1,7 @@
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import GesuchForm from '../../service/gesuchForm';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import './familiensituationView.less';
 import {TSFamilienstatus, getTSFamilienstatusValues} from '../../../models/enums/TSFamilienstatus';
@@ -21,23 +21,23 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 
 
 export class FamiliensituationViewController extends AbstractGesuchViewController {
-    gesuchForm: GesuchForm;
+    gesuchModelManager: GesuchModelManager;
 
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
-    static $inject = ['$state', 'GesuchForm'];
+    static $inject = ['$state', 'GesuchModelManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchForm: GesuchForm) {
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager) {
         super($state);
-        this.gesuchForm = gesuchForm;
+        this.gesuchModelManager = gesuchModelManager;
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
     }
 
     submit($form: IFormController) {
         if ($form.$valid) {
-            this.gesuchForm.updateFamiliensituation().then((response: any) => {
+            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
                 this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
             });
         }
@@ -47,9 +47,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
             || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
     }
-    
+
     public getFamiliensituation(): TSFamiliensituation {
-        return this.gesuchForm.familiensituation;
+        return this.gesuchModelManager.familiensituation;
     }
+
 
 }
