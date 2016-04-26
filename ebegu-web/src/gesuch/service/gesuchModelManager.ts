@@ -89,14 +89,14 @@ export default class GesuchModelManager {
     public updateGesuchsteller(): IPromise<TSPerson> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith(personResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
         } else {
             return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith(this.ebeguRestUtil.parsePerson(this.getStammdatenToWorkWith(), personResponse.data));
+                this.setStammdatenToWorkWith( personResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });

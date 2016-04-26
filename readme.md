@@ -8,6 +8,8 @@ NVM dient der Verwaltung der benutzten node (npm) Version
 ## Node installieren
 ebegu benoetigt ca Version 4.4 von Node. Kann mit nvm install v4.4.3 installiert werden
  - nvm install v4.4.3
+ - sicherstellen das npm -v grösser als 3.8.1 ist
+ 
  
 ## Projektdependencies installieren (einmalig, bzw. nach Änderung)
 - hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm install
