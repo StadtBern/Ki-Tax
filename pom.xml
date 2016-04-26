@@ -437,6 +437,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.17</version>
                         <configuration>
+                            <!--Port offset um auf jenkins zu funktionieren (port 8080 ist schon besetzt)-->
+                            <argLine>-Djboss.socket.binding.port-offset=200</argLine>
                             <!-- Fork every test because it will launch a separate AS instance -->
                             <forkMode>always</forkMode>
                             <systemPropertyVariables>
