@@ -13,8 +13,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label data-translate="GESCHLECHT"></label>
-                        <dv-radio-container name="geschlecht" model="vm.getModel().geschlecht"
-                                            ng-required="true" items="vm.geschlechter">
+                        <dv-radio-container name="geschlecht" class="input-element"
+                                            ng-required="true" items="vm.geschlechter" ng-model="vm.getModel().geschlecht">
                         </dv-radio-container>
                         <dv-error-messages for="form.geschlecht.$error"
                                            class="error"></dv-error-messages>
@@ -83,7 +83,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
-                        <input id="email_ID" type="text" name="email" ng-model="vm.getModel().mail"
+                        <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
                                dv-max-length class="form-control" required placeholder="hans.muster@example.com">
                         <dv-error-messages  for="form.email.$error"
                                            class="error"></dv-error-messages>

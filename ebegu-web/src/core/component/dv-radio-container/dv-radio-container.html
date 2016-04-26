@@ -1,5 +1,5 @@
 <div class="dv-radio-container">
-    <md-radio-group class="radio " ng-model="vm.model" ng-required="{{vm.ngRequired}}" name="{{vm.name}}">
+    <md-radio-group class="radio" ng-model="vm.modelToPassOn" ng-blur="vm.onBlur()" ng-change="vm.onChange()" ng-required="{{vm.ngRequired}}">
         <md-radio-button ng-repeat="current in vm.items" ng-value="current"  aria-label="{{current | translate}}" class="element-{{$index}}">
             <span data-translate="{{current}}"></span>
         </md-radio-button>

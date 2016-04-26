@@ -66,7 +66,6 @@ export class DatepickerController {
 
     onBlur() {
         this.ngModelCtrl.$setTouched();
-
     }
 
     updateModelValue() {
