@@ -105,6 +105,13 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>push docker image to repo</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <id>build web-client docker image</id>
                                 <phase>package</phase>
                                 <goals>

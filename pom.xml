@@ -732,7 +732,7 @@
         <module>ebegu-server</module>
         <module>ebegu-testutils</module>
         <module>ebegu-rest</module>
-        <module>ebegu-runconfig</module>
         <module>ebegu-web</module>
+        <module>ebegu-runconfig</module>
     </modules>
 </project>
