@@ -154,8 +154,7 @@
     "webpack": "~1.13.0",
     "webpack-dev-server": "~1.14.1",
     "webpack-md5-hash": "~0.0.5",
-    "webpack-merge": "~0.8.4",
-    "zone.js": "0.6.10"
+    "webpack-merge": "~0.8.4"
   },
   "engines": {
     "node": ">= 4.4.0",

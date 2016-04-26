@@ -8,6 +8,7 @@ appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS'];
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS) {
     routerHelper.configureStates(getStates());
     angularMomentConfig.format = 'DD.MM.YYYY';
+    //todo homa dieser call macht mit tests problemen
    // auskommentiert fuer test listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird 
 }
 

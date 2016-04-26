@@ -72,7 +72,7 @@ export default class TSAdresse extends TSAbstractEntity {
         this._ort = value;
     }
 
-    public get land(): any {
+    public get land(): string {
         return this._land;
     }
 

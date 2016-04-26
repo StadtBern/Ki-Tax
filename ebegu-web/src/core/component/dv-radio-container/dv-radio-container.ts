@@ -1,5 +1,5 @@
 import {IComponentOptions} from 'angular';
-import * as template from './dv-radio-container.html';
+let template = require('./dv-radio-container.html');
 
 export class DvRadioContainerComponentConfig implements IComponentOptions {
     transclude = false;

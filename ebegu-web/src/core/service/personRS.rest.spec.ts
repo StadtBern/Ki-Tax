@@ -19,9 +19,6 @@ describe('PersonRS', function () {
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
-    // beforeEach(angular.mock.module(EbeguWebCore.name, ($provide: any) => {
-    // }));
-
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         personRS = $injector.get('PersonRS');
@@ -35,16 +32,10 @@ describe('PersonRS', function () {
         mockPerson = new TSPerson('Tim', 'Tester');
         mockPerson.id = '2afc9d9a-957e-4550-9a22-97624a1d8feb';
         mockPersonRest = ebeguRestUtil.personToRestObject({}, mockPerson);
-        // $httpBackend.whenPUT(personRS.serviceURL, mockPersonRest)
-        //     .respond(mockPersonRest);
+
         $httpBackend.whenGET(personRS.serviceURL + '/' + encodeURIComponent(mockPerson.id)).respond(mockPersonRest);
     });
-
-
-    //
-    // beforeEach(angular.mock.inject(function (_$controller_: any) {
-    //     $controller = _$controller_;
-    // }));
+    
 
     describe('Public API', function () {
         it('check Service name', function () {

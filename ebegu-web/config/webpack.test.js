@@ -25,9 +25,7 @@ module.exports = {
   // devtool: 'cheap-module-source-map',
   devtool: 'inline-source-map',
 
-    output: {
-           filename: 'myspecbundle.js'
-         },
+
 
   // Options affecting the resolving of modules.
   //

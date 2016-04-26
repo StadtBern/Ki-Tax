@@ -39,7 +39,7 @@ describe('EbeguRestUtil', function () {
                 addresse.land = 'CH';
                 addresse.ort = 'Testort';
                 addresse.strasse = 'Teststrasse';
-                addresse.hausnummer = 1;
+                addresse.hausnummer = '1';
                 addresse.zusatzzeile = 'co test';
                 addresse.plz = '3014';
                 addresse.id = '1234567';
@@ -64,12 +64,17 @@ describe('EbeguRestUtil', function () {
                 myPerson.mobile = '+41 76 300 12 34';
                 myPerson.umzug = false;
                 myPerson.mail = 'Til.Testperson@example.com';
+                myPerson.korrespondenzAdresse = undefined;
+                myPerson.umzugAdresse = undefined;
+                myPerson.adresse = undefined;
+                myPerson.timestampErstellt = undefined;
+                myPerson.timestampMutiert = undefined;
                 let restPerson =  ebeguRestUtil.personToRestObject({}, myPerson);
                 expect(restPerson).toBeDefined();
                 let transformedPers: TSPerson = ebeguRestUtil.parsePerson(new TSPerson(), restPerson);
                 expect(transformedPers).toBeDefined();
                 expect(myPerson.nachname).toEqual(transformedPers.nachname);
-                expect(myPerson, transformedPers);
+                expect(myPerson).toEqual(transformedPers);
 
             });
 

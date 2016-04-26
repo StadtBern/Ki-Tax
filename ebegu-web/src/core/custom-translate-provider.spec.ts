@@ -10,6 +10,7 @@ import {IQService} from 'angular';
 import {ITranslateProvider} from 'angular-translate';
 import IProvideService = angular.auto.IProvideService;
 
+/*
 beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideService, $translateProvider: ITranslateProvider) {
 
     $provide.factory('customLoader', function ($q: IQService) {
@@ -19,3 +20,4 @@ beforeEach(angular.mock.module('ebeguWeb.core', function ($provide: IProvideServ
     });
     $translateProvider.useLoader('customLoader');
 }));
+*/

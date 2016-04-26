@@ -1,5 +1,5 @@
 import {IComponentOptions} from 'angular';
-import * as template from './dv-input-container.html';
+let template = require('./dv-input-container.html'); 
 
 export class DvInputContainerComponentConfig implements IComponentOptions {
     transclude = true;

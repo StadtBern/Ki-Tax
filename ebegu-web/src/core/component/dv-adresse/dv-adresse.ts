@@ -3,7 +3,7 @@ import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import {IComponentOptions, IFormController} from 'angular';
-// import * as adrTempl from './dv-adresse.html';
+
 
 export class AdresseComponentConfig implements IComponentOptions {
     transclude = false;
