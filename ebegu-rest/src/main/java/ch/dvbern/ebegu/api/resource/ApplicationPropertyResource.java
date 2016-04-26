@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,13 +22,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Resource fuer ApplicationProperties
  */
 @Path("application-properties")
 @Stateless
+@Api
 public class ApplicationPropertyResource {
 
 	@Inject
@@ -36,6 +41,7 @@ public class ApplicationPropertyResource {
 	private JaxBConverter converter;
 
 
+	@ApiOperation(value = "Find a property by its unique name (called key)", response = JaxApplicationProperties.class)
 	@Nullable
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -50,26 +56,26 @@ public class ApplicationPropertyResource {
 		return converter.applicationPropertieToJAX(propertyFromDB.get());
 	}
 
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxApplicationProperties> getAllApplicationProperties() {
+		return applicationPropertyService.getAllApplicationProperties().stream()
+			.map(ap -> converter.applicationPropertieToJAX(ap))
+			.collect(Collectors.toList());
+	}
+
+
+	@ApiOperation(value = "Create a new ApplicationProperty with the given key and value",
+		response = JaxApplicationProperties.class,
+		consumes = MediaType.TEXT_PLAIN)
 	@Nullable
 	@POST
 	@Path("/{key}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public Response create(
 		@Nonnull @NotNull @PathParam("key") String key,
-		@Nonnull @NotNull String value,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
-
-		return update(key, value, uriInfo, response);
-
-	}
-
-	@Nullable
-	@PUT
-	@Path("/{key}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update(
-		@Nonnull @PathParam("key") String key,
 		@Nonnull @NotNull String value,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -81,7 +87,27 @@ public class ApplicationPropertyResource {
 			.path("/" + modifiedProperty.getName())
 			.build();
 
-		return Response.created(uri).build();
+		return Response.created(uri).entity(converter.applicationPropertieToJAX(modifiedProperty)).build();
+
+
+	}
+
+	@ApiOperation(value = "Aktualisiert ein bestehendes ApplicationProperty",
+			response = JaxApplicationProperties.class,
+			consumes = MediaType.TEXT_PLAIN)
+	@Nullable
+	@PUT
+	@Path("/{key}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	public JaxApplicationProperties update(
+		@Nonnull @PathParam("key") String key,
+		@Nonnull @NotNull String value,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
+
+		return converter.applicationPropertieToJAX(modifiedProperty);
 	}
 
 

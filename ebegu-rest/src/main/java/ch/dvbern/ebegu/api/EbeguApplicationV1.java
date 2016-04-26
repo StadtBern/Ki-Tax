@@ -9,6 +9,8 @@
  */
 package ch.dvbern.ebegu.api;
 
+import io.swagger.jaxrs.config.BeanConfig;
+
 import javax.servlet.annotation.MultipartConfig;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -39,16 +41,33 @@ public class EbeguApplicationV1 extends Application {
 	public static final String PATH_SEPARATOR = "/";
 	public static final String API_ROOT_PATH = "/api/v1";
 
+	public EbeguApplicationV1() {
+		configureSwagger();
+	}
 
-	private static final Set<Class<?>> ALL_CLASSES = new HashSet<>(Arrays.asList(new Class<?>[] {
-		/* hier koennten die gewuenschten "richtigen" services eingefuegt werden
-			AufgabeResourceDummyImpl.class,
-			QuizResourceDummyImpl.class
+	private void configureSwagger() {
+		BeanConfig beanConfig = new BeanConfig();
+		beanConfig.setTitle("eBEGU REST Interface");
+		beanConfig.setVersion("1.0");
+		beanConfig.setSchemes(new String[]{"http"}); //later also add https
+		beanConfig.setHost("localhost:8080");
+		beanConfig.setBasePath("/ebegu" + API_ROOT_PATH); //context ist hier auch wichtig
+		beanConfig.setResourcePackage("ch.dvbern.ebegu.api.resource");
+		beanConfig.setScan(true);
+		beanConfig.setPrettyPrint(true);
+	}
+
+	private static final Set<Class<?>> ALL_CLASSES = new HashSet<>(Arrays.asList(new Class<?>[]{
+		/* hier koennten die gewuenschten "richtigen" services eingefuegt werden, wenn leer wird gescannt
+//		HistorizationResource.class,
+//		ApplicationPropertyResource.class,
+//		io.swagger.jaxrs.listing.ApiListingResource.class,
+//      io.swagger.jaxrs.listing.SwaggerSerializers.class
 		 */
 	}));
 
 	private static final Set<Object> ALL_SINGLETONS = new HashSet<>(Arrays.asList(
-		new Object[] {
+		new Object[]{
 		/* hier koennten exceptionmapper eingefuegt werden
 			new BenutzerAlreadyExistsExceptionMapper(),
 			new ForbiddenExceptionMapper(),

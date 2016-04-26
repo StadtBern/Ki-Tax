@@ -1,0 +1,4 @@
+export enum TSAdressetyp {
+    KORRESPONDENZADRESSE = <any>'KORRESPONDENZADRESSE',
+    WOHNADRESSE = <any>'WOHNADRESSE'
+}

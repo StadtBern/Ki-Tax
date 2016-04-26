@@ -5,5 +5,5 @@ package ch.dvbern.ebegu.enums;
  */
 public enum ErrorCodeEnum {
 
-	ERROR_ENTITY_NOT_FOUND,
+	ERROR_ENTITY_NOT_FOUND, ERROR_TOO_MANY_RESULTS,
 }

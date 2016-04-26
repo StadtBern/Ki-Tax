@@ -3,64 +3,13 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ebegu-rest</artifactId>
     <packaging>war</packaging>
 
-
-    <!-- todo team wenn wir das wadl generieren muessen waere das hier evtl eine Moeglichkeit-->
-    <!--<build>-->
-    <!--<plugins>-->
-    <!--<plugin>-->
-    <!--<groupId>com.sun.jersey.contribs</groupId>-->
-    <!--<artifactId>maven-wadl-plugin</artifactId>-->
-    <!--<version>1.17</version>-->
-    <!--<executions>-->
-    <!--<execution>-->
-    <!--<id>generate</id>-->
-    <!--<goals>-->
-    <!--<goal>generate</goal>-->
-    <!--</goals>-->
-    <!--<phase>install</phase>-->
-    <!--</execution>-->
-    <!--</executions>-->
-    <!--<configuration>-->
-    <!--<wadlFile>${project.build.outputDirectory}/application.wadl-->
-    <!--</wadlFile>-->
-    <!--<formatWadlFile>true</formatWadlFile>-->
-    <!--<baseUri>http://localhost.com:8080/ebegu/api/v1</baseUri>-->
-    <!--<packagesResourceConfig>-->
-    <!--<param>ch.dvbern.ebegu.api.resource</param>-->
-    <!--</packagesResourceConfig>-->
-    <!--<wadlGenerators>-->
-    <!--<wadlGeneratorDescription>-->
-    <!--<className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc-->
-    <!--</className>-->
-    <!--<properties>-->
-    <!--<property>-->
-    <!--<name>applicationDocsFile</name>-->
-    <!--<value>${basedir}/src/main/doc/application-doc.xml</value>-->
-    <!--</property>-->
-    <!--</properties>-->
-    <!--</wadlGeneratorDescription>-->
-    <!--<wadlGeneratorDescription>-->
-    <!--<className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport-->
-    <!--</className>-->
-    <!--<properties>-->
-    <!--<property>-->
-    <!--<name>grammarsFile</name>-->
-    <!--<value>${basedir}/src/main/doc/application-grammars.xml</value>-->
-    <!--</property>-->
-    <!--</properties>-->
-    <!--</wadlGeneratorDescription>-->
-    <!--</wadlGenerators>-->
-    <!--</configuration>-->
-    <!--</plugin>-->
-    <!--</plugins>-->
-    <!--</build>-->
 
 
     <build>
@@ -178,8 +127,11 @@
             <artifactId>resteasy-validator-provider-11</artifactId>
             <scope>provided</scope>
         </dependency>
-
-
+        <!--SWAGGER-API-->
+        <dependency>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-jaxrs</artifactId>
+        </dependency>
     </dependencies>
 
 

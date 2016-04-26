@@ -1,0 +1,43 @@
+{
+  "generator-dvb-angular": {
+    "partialDirectory": "partial/",
+    "modalDirectory": "partial/",
+    "directiveDirectory": "directive/",
+    "componentDirectory": "component/",
+    "filterDirectory": "filter/",
+    "serviceDirectory": "service/",
+    "inject": {
+      "js": {
+        "file": "index.html",
+        "marker": "<!-- Add New Component JS Above -->",
+        "template": "<script src=\"<%= filename %>\"></script>"
+      },
+      "less": {
+        "relativeToModule": true,
+        "file": "<%= module %>.less",
+        "marker": "/* Add Component LESS Above */",
+        "template": "@import \"<%= filename %>\";"
+      }
+    },
+    "primaryModule": "ebeguWeb",
+    "fileType": "ts",
+    "modules": [
+      {
+        "name": "ebeguWeb",
+        "file": "src/app.module.ts"
+      },
+      {
+        "name": "ebeguWeb.core",
+        "file": "src/core/core.module.ts"
+      },
+      {
+        "name": "ebeguWeb.admin",
+        "file": "src/admin/admin.module.ts"
+      },
+      {
+        "name": "ebeguWeb.gesuch",
+        "file": "src/gesuch/gesuch.module.ts"
+      }
+    ]
+  }
+}

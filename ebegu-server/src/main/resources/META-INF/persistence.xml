@@ -10,7 +10,7 @@
 		<!--<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>-->
 
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
 			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
 
 			<!-- SQL Logging bitte via Logger konfigurieren -->

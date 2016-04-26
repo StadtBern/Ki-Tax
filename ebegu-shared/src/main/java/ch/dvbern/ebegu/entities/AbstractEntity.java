@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.converters.LocalDateTimePersistenceConverter;
 import ch.dvbern.ebegu.util.AbstractEntityListener;
 import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,12 +36,10 @@ public abstract class AbstractEntity implements Serializable {
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
 	@Column(nullable = false)
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	private LocalDateTime timestampErstellt;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
 	@Column(nullable = false)
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	private LocalDateTime timestampMutiert;
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
@@ -57,12 +54,9 @@ public abstract class AbstractEntity implements Serializable {
 
 	public AbstractEntity() {
 		//da wir teilweise schon eine id brauchen bevor die Entities gespeichert werden initialisieren wir die uuid hier
-		if (id == null) {
-			id = UUID.randomUUID().toString();
-		}
+		id = UUID.randomUUID().toString();
 	}
 
-	@Nullable // Nullable, da erst im PrePersist gesetzt
 	public String getId() {
 		return id;
 	}
@@ -153,13 +147,13 @@ public abstract class AbstractEntity implements Serializable {
 	 * Diese Methode faengt die Exception ab und gibt einen fixen Text zurueck.
 	 * <pre>
 	 * {@code
-	 *	public String toString() {
-	 *		return MoreObjects.toStringHelper(this)
-	 *			.add("id", getId())
-	 *			.add("kontaktperson", getSilent(() -> kontaktperson))
-	 *			.add("kind", getSilent(() -> kind))
-	 *			.toString();
-	 *	}
+	 * 	public String toString() {
+	 * 		return MoreObjects.toStringHelper(this)
+	 * 			.add("id", getId())
+	 * 			.add("kontaktperson", getSilent(() -> kontaktperson))
+	 * 			.add("kind", getSilent(() -> kind))
+	 * 			.toString();
+	 * 	}
 	 * }
 	 * </pre>
 	 */

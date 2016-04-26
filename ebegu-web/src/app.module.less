@@ -1,0 +1,113 @@
+@nodeModules: ~"../node_modules";
+@import '~angular-material/angular-material.css';
+@import '~bootstrap/less/bootstrap';
+@import '~font-awesome/less/font-awesome';
+
+//@import '@{nodeModules}/bootstrap/less/bootstrap.less';
+//@import '@{nodeModules}/bootstrap/less/theme.less';
+//@import '@{nodeModules}/font-awesome/less/font-awesome.less';
+//@fa-font-path: "@{nodeModules}/font-awesome/fonts";
+@fa-font-path: "~font-awesome/fonts/";
+//
+/* Component LESS */
+@import 'core/core.module.less';
+@import 'gesuch/gesuch.module.less';
+@import 'admin/admin.module.less';
+
+@import 'variables.less';
+@import 'navbar.less';
+/* Add Component LESS Above */
+
+/* Required for Angular UI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
+
+body {
+    //navbar paddingtodo remove me just testing
+    padding-top: 80px;
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    .starter-template {
+        padding: 40px 15px;
+        text-align: center;
+    }
+}
+//logobar
+.navbar-fixed-top {
+    top: 30px;
+}
+
+#Intro {
+    top: 0;
+    position: fixed;
+    background-color: white;
+    height: 40px;
+    width: 100%;
+    display: block;
+    z-index: 1040;
+}
+
+.logo-bern {
+    background-image: url('/src/assets/images/logo1-bern.png');
+    background-repeat: no-repeat;
+    background-size: Auto 40px;
+    background-position: left 10px center;
+}
+
+.logo-text {
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    width: 150px;
+    margin: 0 auto;
+    font-weight: bolder;
+}
+
+@background-error-color:  #ffe6e6;
+
+.ErrorInput {
+    border-color: @state-danger-text;
+    background-color: @background-error-color;
+}
+
+//todo das braucht es wohl gar nicht mehr
+.form-horizontal {
+    dv-error-messages {
+        padding-left: 1px;
+    }
+}
+
+form {
+    &.ng-submitted {
+        input {
+            &.ng-invalid {
+                .ErrorInput
+            }
+        }
+        .ng-invalid.highlight-input-fields-when-invalid {
+            input {
+                .ErrorInput
+            }
+        }
+        .error-message {
+            display: inherit;
+            line-height: @floating-text-line-height;
+            color: @color-contrast-hover;
+        }
+    }
+    .error-message {
+        display: none;
+    }
+}
+
+/* Personal preference for BS modal.  The LESS below makes the backdrop white and
+   causes the modal to fade in rather than slide in. */
+//@modal-backdrop-bg: white;
+//.modal {
+//	&.fade {
+//		.transition(opacity .3s);
+//	}
+//	&.fade .modal-dialog {
+//		.translate(0,0);
+//	}
+//}

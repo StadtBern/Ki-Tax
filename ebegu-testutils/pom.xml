@@ -3,10 +3,18 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ebegu-testutils</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-shared</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>

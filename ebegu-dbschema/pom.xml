@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -34,9 +34,10 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${version.postgresql}</version>
+                        <groupId>org.mariadb.jdbc</groupId>
+                           <artifactId>mariadb-java-client</artifactId>
+
+                        <version>${version.mysqldriver}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

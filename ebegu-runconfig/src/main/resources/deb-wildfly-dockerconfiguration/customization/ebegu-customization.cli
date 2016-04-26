@@ -1,0 +1,61 @@
+embed-server --std-out=echo
+
+batch
+
+
+# Add ebegu Datasource
+#FIXME: in dev/test/prod ist die url als xa-datasource-properties gesetzt, ist das auch gut als --url-property?
+xa-data-source add \
+	--jndi-name = java:/jdbc/ebegu \
+	--name = ebegu \
+	--use-ccm = true \
+	--xa-datasource-class = org.mariadb.jdbc.MariaDbDataSource \
+	--driver-name = mariadb \
+	--transaction-isolation = TRANSACTION_READ_COMMITTED \
+	--min-pool-size = 5 \
+	--initial-pool-size = 1 \
+	--max-pool-size = 50 \
+	--pool-prefill = true \
+	--pool-use-strict-min = true \
+	--user-name = ${ebegu.db.username} \
+	--password = ${ebegu.db.password} \
+	--valid-connection-checker-class-name = org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker \
+	--validate-on-match = false \
+	--background-validation = true \
+	--background-validation-millis = 10000 \
+	--exception-sorter-class-name = org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter \
+	--set-tx-query-timeout = true \
+	--idle-timeout-minutes = 5 \
+	--xa-resource-timeout = 60 \
+	--track-statements = true \
+	--prepared-statements-cache-size = 500 \
+	--share-prepared-statements = true \
+	--xa-datasource-properties = url=${ebegu.db.jdbcurl}
+
+# 	--url-property = ${ebegu.db.jdbcurl} \
+# needed? --blocking-timeout-wait-millis=5000
+
+#/subsystem=datasources/xa-data-source=ebegu/xa-datasource-properties=\
+#	ServerName:add(value=localhost)
+
+
+# security-domain wird atm noch nicht gabreucht
+#/subsystem=security/security-domain=ebegu/:add( \
+#	cache-type=default \
+#)
+#
+#/subsystem=security/security-domain=ebegu/authentication=classic:add( \
+#	login-modules=[ \
+#		{ \
+#			"code" => "Database", \
+#			"flag" => "required", \
+#			 "module-options" => [ \
+#			 	("dsJndiName" => "java:/jdbc/ebegu"), \
+#			 	("principalsQuery" => "select password_encrypted from benutzer where username=?"), \
+#			 	("rolesQuery" => "select gruppe, 'Roles' from user_groups_v where username=?") \
+#			] \
+#		} \
+#	] \
+#)
+
+run-batch

@@ -34,7 +34,8 @@ public interface ApplicationPropertyService {
 	 *
 	 * @return Liste aller ApplicationProperties aus der DB
 	 */
-	Collection<ApplicationProperty> listApplicationProperties();
+	@Nonnull
+	Collection<ApplicationProperty> getAllApplicationProperties();
 
 	/**
 	 * removs an Application Property From the Databse

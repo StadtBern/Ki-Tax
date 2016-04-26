@@ -1,0 +1,179 @@
+<div class="stammdatenView row">
+    <div class="col-md-12">
+        <h4 class="mainTitle">
+            <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
+        </h4>
+        <hr class="header"/>
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+            <br />
+
+            <!--Geschlecht-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="GESCHLECHT"></label>
+                        <dv-radio-container name="geschlecht" model="vm.getModel().geschlecht" ng-required="true" items="vm.geschlechter">
+                        </dv-radio-container>
+                        <dv-error-messages ng-if="form.$submitted" for="form.geschlecht.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--Vorname/Name-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="VORNAME" for="vorname_ID"></label>
+                        <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.vorname.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+                <div class="col-md-6">
+                    <dv-input-container class="form-group secondColumn">
+                        <label data-translate="NAME" for="name_ID"></label>
+                        <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages ng-if="form.$submitted" for="form.name.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+            <!--Geburtsdatum-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                        </label>
+                        <dv-datepicker input-id="geburtsdatum_ID" input-name="geburtsdatum"
+                                       ng-model="vm.getModel().geburtsdatum" required>
+                        </dv-datepicker>
+                        <dv-error-messages ng-if="form.$submitted" for="form.geburtsdatum.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!-- Adresse-->
+            <dv-adresse adresse="vm.getModel().adresse" prefix="wohn"></dv-adresse>
+
+            <!--Korrenspondenzadr Checkbox-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class=" checkbox">
+                        <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" aria-label="korrespondenzAdr"
+                                     ng-change="vm.korrespondenzAdrClicked()">
+                            <span data-translate="KORRESPONDENZADR"></span>
+                        </md-checkbox>
+                        <dv-error-messages ng-if="form.$submitted" for="form.korrespondenzAdr.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr" prefix="korrespondenz"></dv-adresse>
+
+
+            <!--Email-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="EMAIL" for="email_ID">
+                        </label>
+                        <input id="email_ID" type="text" name="email" ng-model="vm.getModel().mail"
+                               dv-max-length class="form-control" required placeholder="hans.muster@example.com">
+                        <dv-error-messages ng-if="form.$submitted" for="form.email.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
+
+            <!--Mobile /Telefon-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="MOBILE" for="mobile_ID">
+                        </label>
+                        <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
+                               dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
+                               ng-pattern="vm.phonePattern">
+                        <dv-error-messages ng-if="form.$submitted" for="form.mobile.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+                <div class="col-md-6">
+                    <dv-input-container class="form-group secondColumn">
+                        <label data-translate="TELEFON" for="tel_ID">
+                        </label>
+                        <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
+                               dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
+                               ng-pattern="vm.phonePattern">
+                        <dv-error-messages ng-if="form.$submitted" for="form.telefon.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+            <!--auslaendische tel nummer-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
+                        </label>
+                        <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.getModel().telefonAusland"
+                               dv-max-length class="form-control">
+                        <dv-error-messages ng-if="form.$submitted" for="form.telefonAusland.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!--Umzug checkbox-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="checkbox">
+                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug" ng-change="vm.umzugadreseClicked()">
+                            <span data-translate="UMZUG"></span>
+                        </md-checkbox>
+                        <dv-error-messages ng-if="form.$submitted" for="form.umzug.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Umzugadresse -->
+            <dv-adresse adresse="vm.getModel().umzugAdresse" ng-if="vm.showUmzug" prefix="umzug"></dv-adresse>
+
+            <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
+                            ng-if="vm.getModel().timestampErstellt === undefined">
+                    </button>
+                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
+                            ng-if="vm.getModel().timestampErstellt">
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

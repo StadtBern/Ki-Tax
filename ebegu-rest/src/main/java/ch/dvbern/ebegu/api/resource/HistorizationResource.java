@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.ApplicationProperty;
 import ch.dvbern.ebegu.services.HistorizationService;
+import io.swagger.annotations.Api;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Path("historization")
 @Stateless
+@Api
 public class HistorizationResource {
 
 	@Inject

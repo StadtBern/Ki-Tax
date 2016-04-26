@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +13,10 @@
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-testutils</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -25,18 +29,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
-            <version>${version.hibernate}</version>
-            <exclusions>
-                <exclusion>
-                    <!-- mit dom4j kann orm.xml nicht geparst werden -->
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--todo team ich kommentiere das mal aus weil ich glaube das es im shared schon drin ist-->
+        <!--<dependency>-->
+            <!--<groupId>org.hibernate</groupId>-->
+            <!--<artifactId>hibernate-envers</artifactId>-->
+            <!--<version>${version.hibernate}</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--&lt;!&ndash; mit dom4j kann orm.xml nicht geparst werden &ndash;&gt;-->
+                    <!--<groupId>dom4j</groupId>-->
+                    <!--<artifactId>dom4j</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>

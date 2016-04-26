@@ -61,7 +61,7 @@ public class EbeguRuntimeException extends RuntimeException {
 	}
 
 	public EbeguRuntimeException(@Nullable String methodName, @Nullable ErrorCodeEnum errorCodeEnum, @Nonnull Serializable... args) {
-		super();
+		super(errorCodeEnum != null ? errorCodeEnum.name() : null);
 		this.methodName = methodName;
 		this.errorCodeEnum = errorCodeEnum;
 		this.args = Collections.unmodifiableList(Arrays.asList(args));

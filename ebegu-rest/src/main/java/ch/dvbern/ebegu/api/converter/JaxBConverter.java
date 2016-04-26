@@ -1,10 +1,12 @@
 package ch.dvbern.ebegu.api.converter;
 
-import ch.dvbern.ebegu.api.dtos.JaxAbstractDTO;
-import ch.dvbern.ebegu.api.dtos.JaxApplicationProperties;
-import ch.dvbern.ebegu.api.dtos.JaxEnversRevision;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.FallService;
+import ch.dvbern.ebegu.services.PersonService;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.DefaultRevisionEntity;
@@ -14,14 +16,23 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
 @Dependent
-@SuppressWarnings({"PMD.NcssTypeCount","unused"})
+@SuppressWarnings({"PMD.NcssTypeCount", "unused"})
 public class JaxBConverter {
+
+	@Inject
+	private PersonService personService;
+
+	@Inject
+	private FallService fallService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -32,30 +43,28 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public Long toEntityId(@Nonnull final String resourceId) {
+	public String toEntityId(@Nonnull final JaxId resourceId) {
 		// TODO wahrscheinlich besser manuell auf NULL pruefen und gegebenenfalls eine IllegalArgumentException werfen
-		return Long.valueOf(Objects.requireNonNull(resourceId));
+		return Objects.requireNonNull(resourceId.getId());
 	}
 
 	@Nonnull
-	public Long toEntityId(@Nonnull final JaxAbstractDTO resource) {
-		return toEntityId(Objects.requireNonNull(resource.getId()));
+	public String toEntityId(@Nonnull final JaxAbstractDTO resource) { return toEntityId(Objects.requireNonNull(resource.getId()));
 	}
 
 	@Nonnull
-	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX (@Nonnull final AbstractEntity abstEntity, T jaxDTOToConvertTo) {
+	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX(@Nonnull final AbstractEntity abstEntity, T jaxDTOToConvertTo) {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
-		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));
+		jaxDTOToConvertTo.setId(checkNotNull(new JaxId(abstEntity.getId())));
 		return jaxDTOToConvertTo;
 	}
 
 	@Nonnull
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
-		abstEntityToConvertTo.setTimestampErstellt(jaxToConvert.getTimestampErstellt());
-		abstEntityToConvertTo.setTimestampMutiert(jaxToConvert.getTimestampMutiert());
 		if (jaxToConvert.getId() != null) {
-			abstEntityToConvertTo.setId(jaxToConvert.getId());
+			abstEntityToConvertTo.setId(toEntityId(jaxToConvert));
+			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 
 		return abstEntityToConvertTo;
@@ -82,6 +91,42 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
+	public Adresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final Adresse adresse) {
+		Validate.notNull(adresse);
+		Validate.notNull(jaxAdresse);
+		convertAbstractFieldsToEntity(jaxAdresse, adresse);
+		adresse.setStrasse(jaxAdresse.getStrasse());
+		adresse.setHausnummer(jaxAdresse.getHausnummer());
+		adresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
+		adresse.setPlz(jaxAdresse.getPlz());
+		adresse.setOrt(jaxAdresse.getOrt());
+		adresse.setGemeinde(jaxAdresse.getGemeinde());
+		adresse.setLand(jaxAdresse.getLand());
+		adresse.setGueltigAb(jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb());
+		adresse.setGueltigBis(jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis());
+		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
+
+		return adresse;
+	}
+
+	@Nonnull
+	public JaxAdresse adresseToJAX(@Nonnull final Adresse adresse) {
+		JaxAdresse jaxAdresse = new JaxAdresse();
+		convertAbstractFieldsToJAX(adresse, jaxAdresse);
+		jaxAdresse.setStrasse(adresse.getStrasse());
+		jaxAdresse.setHausnummer(adresse.getHausnummer());
+		jaxAdresse.setZusatzzeile(adresse.getZusatzzeile());
+		jaxAdresse.setPlz(adresse.getPlz());
+		jaxAdresse.setOrt(adresse.getOrt());
+		jaxAdresse.setGemeinde(adresse.getGemeinde());
+		jaxAdresse.setLand(adresse.getLand());
+		jaxAdresse.setGueltigAb(adresse.getGueltigAb());
+		jaxAdresse.setGueltigBis(adresse.getGueltigBis());
+		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());
+		return jaxAdresse;
+	}
+
+	@Nonnull
 	public JaxEnversRevision enversRevisionToJAX(@Nonnull final DefaultRevisionEntity revisionEntity,
 												 @Nonnull final AbstractEntity abstractEntity, RevisionType accessType) {
 
@@ -93,5 +138,132 @@ public class JaxBConverter {
 		jaxEnversRevision.setRevTimeStamp(DateConvertUtils.asLocalDateTime(revisionEntity.getRevisionDate()));
 		jaxEnversRevision.setAccessType(accessType);
 		return jaxEnversRevision;
+	}
+
+	public Person personToEntity(@Nonnull JaxPerson personJAXP, @Nonnull Person person) {
+		Validate.notNull(person);
+		Validate.notNull(personJAXP);
+		convertAbstractFieldsToEntity(personJAXP, person);
+		person.setNachname(personJAXP.getNachname());
+		person.setVorname(personJAXP.getVorname());
+		person.setGeburtsdatum(personJAXP.getGeburtsdatum());
+		person.setGeschlecht(personJAXP.getGeschlecht());
+		person.setMail(personJAXP.getMail());
+		person.setTelefon(personJAXP.getTelefon());
+		person.setMobile(personJAXP.getMobile());
+		person.setTelefonAusland(personJAXP.getTelefonAusland());
+		person.setZpvNumber(personJAXP.getZpvNumber());
+
+		return person;
+	}
+
+	public JaxPerson personToJAX(@Nonnull Person persistedPerson) {
+		JaxPerson jaxPerson = new JaxPerson();
+		convertAbstractFieldsToJAX(persistedPerson, jaxPerson);
+		jaxPerson.setNachname(persistedPerson.getNachname());
+		jaxPerson.setVorname(persistedPerson.getVorname());
+		jaxPerson.setGeburtsdatum(persistedPerson.getGeburtsdatum());
+		jaxPerson.setGeschlecht(persistedPerson.getGeschlecht());
+		jaxPerson.setMail(persistedPerson.getMail());
+		jaxPerson.setTelefon(persistedPerson.getTelefon());
+		jaxPerson.setMobile(persistedPerson.getMobile());
+		jaxPerson.setTelefonAusland(persistedPerson.getTelefonAusland());
+		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
+		return jaxPerson;
+	}
+
+	public Familiensituation familiensituationToEntity(@Nonnull JaxFamilienSituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
+		Validate.notNull(familiensituation);
+		Validate.notNull(familiensituationJAXP);
+		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
+		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
+		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
+		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
+		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
+		return familiensituation;
+	}
+
+	public JaxFamilienSituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
+		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
+		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
+		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
+		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
+		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
+		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
+		return jaxFamiliensituation;
+	}
+
+	public Fall fallToEntity(@Nonnull JaxFall fallJAXP, @Nonnull Fall fall) {
+		Validate.notNull(fall);
+		Validate.notNull(fallJAXP);
+		convertAbstractFieldsToEntity(fallJAXP, fall);
+		return fall;
+	}
+
+	public JaxFall fallToJAX(@Nonnull Fall persistedFall) {
+		JaxFall jaxFall = new JaxFall();
+		convertAbstractFieldsToJAX(persistedFall, jaxFall);
+		return jaxFall;
+	}
+
+	public Gesuch gesuchToEntity(@Nonnull JaxGesuch gesuchJAXP, @Nonnull Gesuch gesuch) {
+		Validate.notNull(gesuch);
+		Validate.notNull(gesuchJAXP);
+		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
+		Optional<Fall> fallFromDB =  fallService.findFall(toEntityId(gesuchJAXP.getFall()));
+		if(fallFromDB.isPresent()) {
+			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), fallFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
+		}
+		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
+			Optional<Person> gesuchsteller1 = personService.findPerson(toEntityId(gesuchJAXP.getGesuchsteller1()));
+			if (gesuchsteller1.isPresent()) {
+				gesuch.setGesuchsteller1(personToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller1()));
+			}
+		}
+		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
+			Optional<Person> gesuchsteller2 = personService.findPerson(toEntityId(gesuchJAXP.getGesuchsteller2()));
+			if (gesuchsteller2.isPresent()){
+				gesuch.setGesuchsteller2(personToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller2()));
+			}
+		}
+		return gesuch;
+	}
+
+	public JaxGesuch gesuchToJAX(@Nonnull Gesuch persistedGesuch) {
+		JaxGesuch jaxGesuch = new JaxGesuch();
+		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
+		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
+		if(persistedGesuch.getGesuchsteller1() != null) {
+			jaxGesuch.setGesuchsteller1(this.personToJAX(persistedGesuch.getGesuchsteller1()));
+		}
+		if(persistedGesuch.getGesuchsteller2() != null) {
+			jaxGesuch.setGesuchsteller2(this.personToJAX(persistedGesuch.getGesuchsteller2()));
+		}
+		return jaxGesuch;
+	}
+
+	public Fachstelle fachstelleToEntity(JaxFachstelle fachstelleJAXP, Fachstelle fachstelle) {
+		Validate.notNull(fachstelleJAXP);
+		Validate.notNull(fachstelle);
+		convertAbstractFieldsToEntity(fachstelleJAXP, fachstelle);
+		fachstelle.setName(fachstelleJAXP.getName());
+		fachstelle.setBeschreibung(fachstelleJAXP.getBeschreibung());
+		fachstelle.setBehinderungsbestaetigung(fachstelleJAXP.isBehinderungsbestaetigung());
+		return fachstelle;
+	}
+
+	public JaxFachstelle fachstelleToJAX(@Nonnull Fachstelle persistedFachstelle) {
+		JaxFachstelle jaxFachstelle = new JaxFachstelle();
+		convertAbstractFieldsToJAX(persistedFachstelle, jaxFachstelle);
+		jaxFachstelle.setName(persistedFachstelle.getName());
+		jaxFachstelle.setBeschreibung(persistedFachstelle.getBeschreibung());
+		jaxFachstelle.setBehinderungsbestaetigung(persistedFachstelle.isBehinderungsbestaetigung());
+		return jaxFachstelle;
 	}
 }

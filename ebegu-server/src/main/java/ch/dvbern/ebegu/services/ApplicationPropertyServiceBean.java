@@ -63,8 +63,9 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 		return criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, key, ApplicationProperty_.name);
 	}
 
+	@Nonnull
 	@Override
-	public List<ApplicationProperty> listApplicationProperties() {
+	public List<ApplicationProperty> getAllApplicationProperties() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(ApplicationProperty.class));
 	}
 

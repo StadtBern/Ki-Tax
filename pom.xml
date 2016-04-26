@@ -10,8 +10,11 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
+
+    <name>eBEGU - Multimodule Project</name>
+
 
     <properties>
         <!--<ear.name>kita-scheduler</ear.name>-->
@@ -20,12 +23,12 @@
         <skip-code-validation>false</skip-code-validation>
 
         <!-- local database properties -->
-        <database.jdbc.driver>org.postgresql.Driver</database.jdbc.driver>
-        <database.jdbc.url>jdbc:postgresql:ebegu</database.jdbc.url>
+        <database.jdbc.driver>org.mariadb.jdbc.Driver</database.jdbc.driver>
+        <database.jdbc.url>jdbc:mysql://localhost/ebegu</database.jdbc.url>
         <database.jdbc.usr>ebegu</database.jdbc.usr>
         <database.jdbc.pwd>ebegu</database.jdbc.pwd>
 
-        <version.postgresql>9.4-1201-jdbc41</version.postgresql>
+        <version.mysqldriver>1.3.7</version.mysqldriver>
         <version.hibernate>5.1.0.Final</version.hibernate>
 
         <version.flyway>3.2.1</version.flyway>
@@ -33,9 +36,6 @@
         <version.wildfly-arquillian-containers>1.0.2.Final</version.wildfly-arquillian-containers>
 
     </properties>
-
-    <name>eBEGU - Multimodule Project</name>
-
 
     <dependencyManagement>
         <dependencies>
@@ -47,9 +47,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-            	<groupId>org.jboss.resteasy</groupId>
-            	<artifactId>resteasy-bom</artifactId>
-            	<version>3.0.14.Final</version>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-bom</artifactId>
+                <version>3.0.14.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -115,9 +115,10 @@
             <!--<version>4.0.5.Final</version>-->
             <!--</dependency>-->
             <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${version.postgresql}</version>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+
+                <version>${version.mysqldriver}</version>
             </dependency>
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -233,6 +234,18 @@
                 <version>1.1.11.Final</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <!--SWAGGER-API-->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-jaxrs</artifactId>
+                <version>1.5.7</version>
+            </dependency>
+            <!--hibernate 5 mit java 8 support-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-java8</artifactId>
+                <version>${version.hibernate}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -534,46 +547,47 @@
             <!--todo team remove: hack: das ist ein workaround bis die pmd rules ueber sonar geladen werden koennen-->
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>groovy-maven-plugin</artifactId>
-                    <version>2.0</version>
-                      <executions>
-                          <!-- set absolute base path from super pom -->
-                          <execution>
-                              <id>find-basepath</id>
-                              <phase>validate</phase>
-                              <goals>
-                                  <goal>execute</goal>
-                              </goals>
-                              <configuration>
-                                  <source>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <!-- set absolute base path from super pom -->
+                    <execution>
+                        <id>find-basepath</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
                                       <![CDATA[
-                                          import java.io.File;
-                                          log.info('## define projects super pom absolute path through basepath_marker')
-                                          String p = "basepath_marker";
-                                          File f = null;
-                                          if( p != null ) {
-                                              def _max_child_poms = 0
-                                              while( _max_child_poms++ < 5 ) { f = new File( p ); if( f.exists() ) {
-                                                      break;
-                                                  }
-                                                  p = "../" + p;
-                                              }
-                                          }
-                                          if( f != null ) {
-                                              String basePath = f.getCanonicalPath();
-                                              basePath = basePath.substring( 0, basePath.lastIndexOf( File.separator ) );
-                                              project.properties['base-path'] = basePath.replace( '\\' , '/');
-                                              log.info(' - used base path = ' + project.properties['base-path'] );
-                                          } else {
-                                              log.error( 'Could not find basepath_marker marker file!' );
-                                              System.stop( 0 );
-                                          }
-                                      ]]>
-                                  </source>
-                              </configuration>
-                          </execution>
-                      </executions>
-                  </plugin>
+                                import java.io.File;
+
+                                log.info('## define projects super pom absolute path through basepath_marker')
+                                String p = "basepath_marker";
+                                File f = null;
+                                if (p != null) {
+                                    def _max_child_poms = 0
+                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) {
+                                            break;
+                                        }
+                                        p = "../" + p;
+                                    }
+                                }
+                                if (f != null) {
+                                    String basePath = f.getCanonicalPath();
+                                    basePath = basePath.substring(0, basePath.lastIndexOf(File.separator));
+                                    project.properties['base-path'] = basePath.replace('\\', '/');
+                                    log.info(' - used base path = ' + project.properties['base-path']);
+                                } else {
+                                    log.error('Could not find basepath_marker marker file!');
+                                    System.stop(0);
+                                }
+                                ]]>
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -672,9 +686,10 @@
                 </plugin>
                 <plugin>
                     <groupId>de.juplo</groupId>
-                    <artifactId>hibernate4-maven-plugin</artifactId>
-                    <version>1.1.0</version>
+                    <artifactId>hibernate-maven-plugin</artifactId>
+                    <version>2.0.0</version>
                 </plugin>
+
                 <!-- todo fabio fragen ob man nicht das vom parent-pom verwenden kann-->
                 <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -717,5 +732,6 @@
         <module>ebegu-testutils</module>
         <module>ebegu-rest</module>
         <module>ebegu-runconfig</module>
+        <module>ebegu-web</module>
     </modules>
 </project>

@@ -1,0 +1,56 @@
+<div class="familiensituationView row">
+
+    <div class="col-md-12">
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate>
+
+            <!--familienstatus-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
+                        <dv-radio-container name="familienstatus" model="vm.getFamiliensituation().familienstatus" ng-required="true"
+                                            class="radio" items="vm.familienstatusValues">
+                        </dv-radio-container>
+                        <dv-error-messages ng-if="form.$submitted" for="form.familienstatus.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <br/>
+
+            <!--gesuchstellerKardinalitaet-->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.showGesuchstellerKardinalitaet()">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
+                        <dv-radio-container name="gesuchstellerKardinalitaet" model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="true"
+                                            class="radio" items="vm.gesuchstellerKardinalitaetValues">
+                        </dv-radio-container>
+                        <dv-error-messages ng-if="form.$submitted" for="form.gesuchstellerKardinalitaet.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!--bemerkungen-->
+            <div class="row">
+                <div class="col-md-12" ng-show="vm.isAdminRole()">
+                    <dv-input-container class="form-group">
+                        <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
+                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getFamiliensituation().bemerkungen"
+                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-6">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
