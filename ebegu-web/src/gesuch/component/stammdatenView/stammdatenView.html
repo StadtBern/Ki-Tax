@@ -42,6 +42,7 @@
                     </dv-input-container>
                 </div>
             </div>
+
             <!--Geburtsdatum-->
             <div class="row">
                 <div class="col-md-6">
@@ -49,7 +50,7 @@
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
                         <dv-datepicker input-id="geburtsdatum_ID"  name="geburtsdatum"
-                                       ng-model="vm.getModel().geburtsdatum" required class="input-element">
+                                       ng-model="vm.getModel().geburtsdatum" ng-required="true" class="input-element">
                         </dv-datepicker>
                         <dv-error-messages  for="form.geburtsdatum.$error"
                                            class="error"></dv-error-messages>

@@ -11,7 +11,8 @@ export class DVDatepicker implements IDirective {
     require: any = {ngModelCtrl: 'ngModel'};
     scope = {
         ngModel: '=',
-        inputId: '@'
+        inputId: '@',
+        ngRequired: '<'
     };
     controller = DatepickerController;
     controllerAs = 'vm';
@@ -28,18 +29,18 @@ export class DatepickerController {
     static $inject: string[] = [];
     date: Date;
     ngModelCtrl: INgModelController;
+    dateRequired: boolean;
+    ngRequired: boolean;
 
     constructor() {
     }
     // beispiel wie man auf changes eines attributes von aussen reagieren kann
-    // $onChanges(changes) {
-    //     if (changes.required&& !changes.inputName.isFirstChange()) {
-    //         this.isRequired == changes.require.currentValue;
-    //         // changes.inputName.currentValue;
-    //         // changes.inputName.currentValue;
-    //     }
-    //
-    // }
+    $onChanges(changes : any) {
+        if (changes.ngRequired && !changes.ngRequired.isFirstChange()) {
+            this.dateRequired = changes.ngRequired.currentValue;
+        }
+
+    }
 
     //wird von angular aufgerufen
     $onInit() {
@@ -47,6 +48,9 @@ export class DatepickerController {
             return;
         }
 
+        if(this.ngRequired){
+            this.dateRequired = this.ngRequired;
+        }
 
         this.ngModelCtrl.$render = () => {
             this.date = this.ngModelCtrl.$viewValue;
@@ -83,8 +87,8 @@ export class DatepickerController {
     private static dateToMoment(date: Date): any {
         //nur versuchen das datum als moment zu parsen wenn es kein string ist
         if (date && !(typeof date === 'string' )) {
-            let dateString = date.toISOString().substring(0, 10);
-            return DateUtil.localDateToMoment(dateString);
+            let dateString = date.toISOString();
+            return  DateUtil.localDateTimeToMoment(dateString);
         }
 
         return date;

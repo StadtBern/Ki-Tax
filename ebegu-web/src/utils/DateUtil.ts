@@ -10,7 +10,7 @@ export default class DateUtil {
      * @returns {?Moment}
      */
     public static localDateTimeToMoment(localDateTimeString: string): Moment {
-        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss'], true);
+        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.SSSZ'], true);
         return theMoment.isValid() ? theMoment : undefined;
     }
 
