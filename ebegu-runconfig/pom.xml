@@ -105,7 +105,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>push docker image to repo</id>
+                                <id>push docker wildfly image to repo</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>push</goal>
@@ -138,7 +138,7 @@
                             <!--stellt sich die Frage wann wir neue build in unser dvbern repo pushen, mal bei deploy?
                             koennte auch mit -DpushImage aausgeloest werden-->
                             <execution>
-                                <id>push docker image to repo</id>
+                                <id>push docker ngnix image to repo</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>push</goal>
