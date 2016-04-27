@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -106,10 +107,13 @@
                             </execution>
                             <execution>
                                 <id>push docker wildfly image to repo</id>
-                                <phase>deploy</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>push</goal>
                                 </goals>
+                                <configuration>
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly</imageName>
+                                </configuration>
                             </execution>
                             <execution>
                                 <id>build web-client docker image</id>
@@ -139,10 +143,13 @@
                             koennte auch mit -DpushImage aausgeloest werden-->
                             <execution>
                                 <id>push docker ngnix image to repo</id>
-                                <phase>deploy</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>push</goal>
                                 </goals>
+                                <configuration>
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix</imageName>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
