@@ -16,21 +16,18 @@ export class FachstelleRS {
     }
 
     public update(fachstelle: TSFachstelle): IHttpPromise<any> {
+        return this.saveFachstelle(fachstelle);
+    }
+
+    public create(fachstelle: TSFachstelle): IHttpPromise<any> {
+        return this.saveFachstelle(fachstelle);
+    }
+
+    private saveFachstelle(fachstelle: TSFachstelle) {
         let fachstelleObject = {};
         fachstelleObject = this.ebeguRestUtil.fachstelleToRestObject(fachstelleObject, fachstelle);
 
         return this.http.put(this.serviceURL, fachstelleObject, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    }
-
-    public create(fachstelle: TSFachstelle): IHttpPromise<any> {
-        let fachstelleObject = {};
-        fachstelleObject = this.ebeguRestUtil.fachstelleToRestObject(fachstelleObject, fachstelle);
-
-        return this.http.post(this.serviceURL, fachstelleObject, {
             headers: {
                 'Content-Type': 'application/json'
             }

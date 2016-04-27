@@ -34,6 +34,7 @@ public abstract class AbstractEbeguTest {
 			.addPackages(true, "ch/dvbern/ebegu/errors")
 			.addPackages(true, "ch/dvbern/ebegu/entities")
 			.addPackages(true, "ch/dvbern/ebegu/tests")
+			.addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguTest.class, Persistence.class,
 				ISessionContextService.class, AbstractEntity.class)
 

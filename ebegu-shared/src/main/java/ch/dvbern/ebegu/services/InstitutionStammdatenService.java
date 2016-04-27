@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 
+import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -28,4 +30,17 @@ public interface InstitutionStammdatenService {
 	 * @return Aller InstitutionStammdaten aus der DB.
      */
 	Collection<InstitutionStammdaten> getAllInstitutionStammdaten();
+
+	/**
+	 * removes a InstitutionStammdaten from the Database.
+	 * @param institutionStammdatenId  PK (id) der InstitutionStammdaten
+	 */
+	void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId);
+
+	/**
+	 *
+	 * @param date Das Datum fuer welches die InstitutionStammdaten gesucht werden muessen
+	 * @return Alle InstitutionStammdaten, bei denen das gegebene Datum zwischen datumVon und datumBis liegt
+     */
+	Collection<InstitutionStammdaten> getAllInstitutionStammdatenByDate(LocalDate date);
 }

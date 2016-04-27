@@ -19,7 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,10 +51,19 @@ public class InstitutionStammdatenResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		InstitutionStammdaten convertedInstitutionStammdaten = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, new InstitutionStammdaten());
-		InstitutionStammdaten persistedInstitutionStammdaten = this.institutionStammdatenService.saveInstitutionStammdaten(convertedInstitutionStammdaten);
+		InstitutionStammdaten institutionStammdaten;
+		if (institutionStammdatenJAXP.getId() != null) {
+			Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXP.getId()));
+			institutionStammdaten = optional.isPresent() ? optional.get() : new InstitutionStammdaten();
+		} else {
+			institutionStammdaten = new InstitutionStammdaten();
+		}
+		InstitutionStammdaten convertedInstitutionStammdaten = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, institutionStammdaten);
+
+		InstitutionStammdaten persistedInstitutionStammdaten = institutionStammdatenService.saveInstitutionStammdaten(convertedInstitutionStammdaten);
 
 		return converter.institutionStammdatenToJAX(persistedInstitutionStammdaten);
+
 	}
 
 	@Nullable
@@ -59,7 +71,9 @@ public class InstitutionStammdatenResource {
 	@Path("/{institutionStammdatenId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitutionStammdaten findInstitutionStammdaten(@Nonnull @NotNull JaxId institutionStammdatenJAXPId) throws EbeguException {
+	public JaxInstitutionStammdaten findInstitutionStammdaten(
+		@Nonnull @NotNull @PathParam("institutionStammdatenId") JaxId institutionStammdatenJAXPId) throws EbeguException {
+
 		Validate.notNull(institutionStammdatenJAXPId.getId());
 		String institutionStammdatenID = converter.toEntityId(institutionStammdatenJAXPId);
 		Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(institutionStammdatenID);
@@ -77,6 +91,44 @@ public class InstitutionStammdatenResource {
 	public List<JaxInstitutionStammdaten> getAllInstitutionStammdaten() {
 		return institutionStammdatenService.getAllInstitutionStammdaten().stream()
 			.map(instStammdaten -> converter.institutionStammdatenToJAX(instStammdaten))
+			.collect(Collectors.toList());
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{institutionStammdatenId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeInstitutionStammdaten(
+		@Nonnull @NotNull @PathParam("institutionStammdatenId") JaxId institutionStammdatenJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(institutionStammdatenJAXPId.getId());
+		institutionStammdatenService.removeInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXPId));
+		return Response.ok().build();
+	}
+
+	/**
+	 * Sucht in der DB alle InstitutionStammdaten, bei welchen das gegebene Datum zwischen DatumVon und DatumBis liegt
+	 * Wenn das Datum null ist, wird dieses automatisch als heutiges Datum gesetzt.
+	 *
+	 * @param stringDate Date als String mit Format "dd-MM-yyyy". Wenn null, ehutiges Datum gesetzt
+	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
+     */
+	@Nonnull
+	@GET
+	@Path("/date")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitutionStammdaten> getAllInstitutionStammdatenByDate(
+		@Nullable @QueryParam("date") String stringDate
+		) {
+
+		LocalDate date = LocalDate.now();
+		if(stringDate != null && !stringDate.isEmpty()) {
+			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		}
+		return institutionStammdatenService.getAllInstitutionStammdatenByDate(date).stream()
+			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))
 			.collect(Collectors.toList());
 	}
 

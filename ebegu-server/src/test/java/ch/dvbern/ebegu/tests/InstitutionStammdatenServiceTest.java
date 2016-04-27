@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -16,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -40,9 +40,9 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 
 
 	@Test
-	public void createPerson() {
+	public void createPersonInstitutionStammdatenTest() {
 		Assert.assertNotNull(institutionStammdatenService);
-		InstitutionStammdaten insertedInstitutionStammdaten = getInstitutionStammdaten();
+		InstitutionStammdaten insertedInstitutionStammdaten = insertInstitutionStammdaten();
 
 		Collection<InstitutionStammdaten> allInstitutionStammdaten = institutionStammdatenService.getAllInstitutionStammdaten();
 		Assert.assertEquals(1, allInstitutionStammdaten.size());
@@ -54,7 +54,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 	@Test
 	public void updateInstitutionStammdatenTest() {
 		Assert.assertNotNull(institutionStammdatenService);
-		InstitutionStammdaten insertedInstitutionStammdaten = getInstitutionStammdaten();
+		InstitutionStammdaten insertedInstitutionStammdaten = insertInstitutionStammdaten();
 
 		Optional<InstitutionStammdaten> institutionStammdatenOptional = institutionStammdatenService.findInstitutionStammdaten(insertedInstitutionStammdaten.getId());
 		Assert.assertTrue(institutionStammdatenOptional.isPresent());
@@ -66,9 +66,24 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(persistedInstStammdaten.getIban(), updatedInstitutionStammdaten.getIban());
 	}
 
+	@Test
+	public void getAllInstitutionStammdatenByDateTest() {
+		Assert.assertNotNull(institutionStammdatenService);
+		InstitutionStammdaten insertedInstitutionStammdaten = insertInstitutionStammdaten();
+
+		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
+		Assert.assertEquals(0, allInstitutionStammdatenByDate.size());
+
+		insertedInstitutionStammdaten.setDatumBis(LocalDate.of(2999,12,31));
+		institutionStammdatenService.saveInstitutionStammdaten(insertedInstitutionStammdaten);
+		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate2 = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
+		Assert.assertEquals(1, allInstitutionStammdatenByDate2.size());
+	}
+
+
 	// HELP METHODS
 
-	private InstitutionStammdaten getInstitutionStammdaten() {
+	private InstitutionStammdaten insertInstitutionStammdaten() {
 		InstitutionStammdaten institutionStammdaten = TestDataUtil.createDefaultInstitutionStammdaten();
 		persistence.persist(institutionStammdaten.getInstitution().getMandant());
 		persistence.persist(institutionStammdaten.getInstitution().getTraegerschaft());

@@ -99,8 +99,8 @@ public final class TestDataUtil {
 		institutionStammdaten.setIban("CH123456789");
 		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		institutionStammdaten.setDatumBis(LocalDate.of(2010,01,01));
-		institutionStammdaten.setDatumVon(LocalDate.of(2010,01,01));
+		institutionStammdaten.setDatumBis(LocalDate.of(2010,1,1));
+		institutionStammdaten.setDatumVon(LocalDate.of(2010,12,31));
 		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		institutionStammdaten.setInstitution(createDefaultInstitution());
 		return institutionStammdaten;

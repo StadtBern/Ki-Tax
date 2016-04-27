@@ -8,13 +8,12 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -110,6 +109,30 @@ public class CriteriaQueryHelper {
 	@Nullable
 	public static Expression<Boolean> concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull Expression<Boolean>... predicatesToUse) {
 		return concatenateExpressions(builder, Arrays.asList(predicatesToUse));
+	}
+
+	/**
+	 * Gibt alle Datensaetze vom Typ clazz zurück, bei welchen das gegebene Datum zwischen den Werten
+	 * von datumVon und DatumBis liegt.
+	 * @param clazz Entity class
+	 * @param date Datum fuer die Suche
+	 * @param <T> Entity Class
+     * @return Liste mit Datensaetzen
+     */
+	public <T> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<T> query = cb.createQuery(clazz);
+		Root<T> root = query.from(clazz);
+		query.select(root);
+
+		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
+		//todo beim root.get() muss die Felder von Entity_ holen
+		Predicate intervalPredicate = cb.between(dateParam, root.get("datumVon"), root.get("datumBis"));
+
+		query.where(intervalPredicate);
+		TypedQuery<T> q = persistence.getEntityManager().createQuery(query).setParameter(dateParam, date);
+		List<T> resultList = q.getResultList();
+		return resultList;
 	}
 }
 

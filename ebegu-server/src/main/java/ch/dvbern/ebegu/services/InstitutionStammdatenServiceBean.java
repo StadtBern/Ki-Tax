@@ -1,13 +1,17 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -46,5 +50,18 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Nonnull
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdaten() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(InstitutionStammdaten.class));
+	}
+
+	@Override
+	public void removeInstitutionStammdaten(@Nonnull String institutionStammdatenId) {
+		Validate.notNull(institutionStammdatenId);
+		Optional<InstitutionStammdaten> institutionStammdatenToRemove = findInstitutionStammdaten(institutionStammdatenId);
+		institutionStammdatenToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitutionStammdaten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenId));
+		persistence.remove(institutionStammdatenToRemove.get());
+	}
+
+	@Override
+	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByDate(@Nonnull LocalDate date) {
+		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(InstitutionStammdaten.class, date));
 	}
 }
