@@ -1,6 +1,9 @@
 package ch.dvbern.ebegu.persistence;
 
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -119,7 +122,7 @@ public class CriteriaQueryHelper {
 	 * @param <T> Entity Class
      * @return Liste mit Datensaetzen
      */
-	public <T> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {
+	public <T extends AbstractDateRangedEntity> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<T> query = cb.createQuery(clazz);
 		Root<T> root = query.from(clazz);
@@ -127,7 +130,9 @@ public class CriteriaQueryHelper {
 
 		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
 		//todo beim root.get() muss die Felder von Entity_ holen
-		Predicate intervalPredicate = cb.between(dateParam, root.get("datumVon"), root.get("datumBis"));
+		Predicate intervalPredicate = cb.between(dateParam,
+			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
 
 		query.where(intervalPredicate);
 		TypedQuery<T> q = persistence.getEntityManager().createQuery(query).setParameter(dateParam, date);

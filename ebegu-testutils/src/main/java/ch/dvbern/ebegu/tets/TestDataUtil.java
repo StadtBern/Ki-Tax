@@ -5,10 +5,10 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.types.DateRange;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * comments homa
@@ -99,8 +99,7 @@ public final class TestDataUtil {
 		institutionStammdaten.setIban("CH123456789");
 		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		institutionStammdaten.setDatumBis(LocalDate.of(2010,1,1));
-		institutionStammdaten.setDatumVon(LocalDate.of(2010,12,31));
+		institutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
 		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		institutionStammdaten.setInstitution(createDefaultInstitution());
 		return institutionStammdaten;

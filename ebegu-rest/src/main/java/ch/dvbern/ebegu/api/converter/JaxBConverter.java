@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -341,8 +342,8 @@ public class JaxBConverter {
 		jaxInstStammdaten.setOeffnungsstunden(persistedInstStammdaten.getOeffnungsstunden());
 		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban());
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
-		jaxInstStammdaten.setDatumVon(persistedInstStammdaten.getDatumVon());
-		jaxInstStammdaten.setDatumBis(persistedInstStammdaten.getDatumBis());
+		jaxInstStammdaten.setGueltigAb(persistedInstStammdaten.getGueltigkeit().getGueltigAb());
+		jaxInstStammdaten.setGueltigBis(persistedInstStammdaten.getGueltigkeit().getGueltigBis());
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		return jaxInstStammdaten;
 	}
@@ -356,8 +357,7 @@ public class JaxBConverter {
 		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
 		institutionStammdaten.setIban(institutionStammdatenJAXP.getIban());
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-		institutionStammdaten.setDatumVon(institutionStammdatenJAXP.getDatumVon());
-		institutionStammdaten.setDatumBis(institutionStammdatenJAXP.getDatumBis());
+		institutionStammdaten.setGueltigkeit(new DateRange(institutionStammdatenJAXP.getGueltigAb(), institutionStammdatenJAXP.getGueltigBis()));
 
 		Optional<Institution> institutionFromDB = institutionService.findInstitution(toEntityId(institutionStammdatenJAXP.getInstitution()));
 		if(institutionFromDB.isPresent()) {

@@ -12,15 +12,29 @@ package ch.dvbern.ebegu.converters;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import javax.persistence.AttributeConverter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.sql.Date;
 import java.time.LocalDate;
 
 /**
  * Konvertiert ein LocalDate Java 8 Objekt in einen String fuer JSON
  */
 @XmlJavaTypeAdapter(value = LocalDateXMLConverter.class, type = LocalDate.class)
-public class LocalDateXMLConverter extends XmlAdapter<String, LocalDate>  {
+public class LocalDateXMLConverter extends XmlAdapter<String, LocalDate> implements AttributeConverter<LocalDate, Date> {
+
+	@Override
+	@Nullable
+	public Date convertToDatabaseColumn(@Nullable LocalDate attribute) {
+		return attribute == null ? null : Date.valueOf(attribute);
+	}
+
+	@Override
+	@Nullable
+	public LocalDate convertToEntityAttribute(@Nullable Date dbData) {
+		return dbData == null ? null : dbData.toLocalDate();
+	}
 
 	@Nullable
 	@Override

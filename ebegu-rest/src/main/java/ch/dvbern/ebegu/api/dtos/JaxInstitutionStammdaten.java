@@ -18,7 +18,7 @@ import java.time.LocalDate;
  */
 @XmlRootElement(name = "InstitutionStammdaten")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxInstitutionStammdaten extends JaxAbstractDTO {
+public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 
 	private static final long serialVersionUID = -1893677808323618626L;
 
@@ -30,12 +30,6 @@ public class JaxInstitutionStammdaten extends JaxAbstractDTO {
 	private BigDecimal oeffnungsstunden;
 	@Nullable
 	private BetreuungsangebotTyp betreuungsangebotTyp;
-	@NotNull
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate datumVon;
-	@NotNull
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate datumBis;
 	@NotNull
 	private JaxInstitution institution;
 
@@ -70,22 +64,6 @@ public class JaxInstitutionStammdaten extends JaxAbstractDTO {
 
 	public void setBetreuungsangebotTyp(@Nullable BetreuungsangebotTyp betreuungsangebotTyp) {
 		this.betreuungsangebotTyp = betreuungsangebotTyp;
-	}
-
-	public LocalDate getDatumVon() {
-		return datumVon;
-	}
-
-	public void setDatumVon(LocalDate datumVon) {
-		this.datumVon = datumVon;
-	}
-
-	public LocalDate getDatumBis() {
-		return datumBis;
-	}
-
-	public void setDatumBis(LocalDate datumBis) {
-		this.datumBis = datumBis;
 	}
 
 	public JaxInstitution getInstitution() {

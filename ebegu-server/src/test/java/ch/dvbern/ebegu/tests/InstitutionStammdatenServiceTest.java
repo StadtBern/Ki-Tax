@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -74,7 +75,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(0, allInstitutionStammdatenByDate.size());
 
-		insertedInstitutionStammdaten.setDatumBis(LocalDate.of(2999,12,31));
+		insertedInstitutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2999,12,31)));
 		institutionStammdatenService.saveInstitutionStammdaten(insertedInstitutionStammdaten);
 		Collection<InstitutionStammdaten> allInstitutionStammdatenByDate2 = institutionStammdatenService.getAllInstitutionStammdatenByDate(LocalDate.now());
 		Assert.assertEquals(1, allInstitutionStammdatenByDate2.size());

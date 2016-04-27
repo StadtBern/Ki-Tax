@@ -10,7 +10,6 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 
 import static ch.dvbern.ebegu.util.Constants.DB_IBAN_LENGTH;
@@ -20,7 +19,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_IBAN_LENGTH;
  */
 @Audited
 @Entity
-public class InstitutionStammdaten extends AbstractEntity {
+public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -8403411439882700618L;
 
@@ -44,14 +43,6 @@ public class InstitutionStammdaten extends AbstractEntity {
 	@Enumerated(value = EnumType.STRING)
 	@Nullable
 	private BetreuungsangebotTyp betreuungsangebotTyp;
-
-	@NotNull
-	@Column(nullable = false)
-	private LocalDate datumVon;
-
-	@NotNull
-	@Column(nullable = false)
-	private LocalDate datumBis;
 
 	@ManyToOne(optional = false)
 	private Institution institution;
@@ -90,22 +81,6 @@ public class InstitutionStammdaten extends AbstractEntity {
 
 	public void setBetreuungsangebotTyp(@Nullable BetreuungsangebotTyp betreuungsangebotTyp) {
 		this.betreuungsangebotTyp = betreuungsangebotTyp;
-	}
-
-	public LocalDate getDatumVon() {
-		return datumVon;
-	}
-
-	public void setDatumVon(LocalDate datumVon) {
-		this.datumVon = datumVon;
-	}
-
-	public LocalDate getDatumBis() {
-		return datumBis;
-	}
-
-	public void setDatumBis(LocalDate datumBis) {
-		this.datumBis = datumBis;
 	}
 
 	public Institution getInstitution() {
