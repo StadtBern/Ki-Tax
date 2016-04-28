@@ -182,16 +182,16 @@ public class JaxBConverter {
 
 	@Nonnull
 	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
-		Adresse adrToMerge = null;
-		Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
-		//wenn schon vorhanden updaten
-		if (altAdr.isPresent()) {
-			 adrToMerge = adresseToEntity(adresseToPrepareForSaving, altAdr.get());
-		} else {
-			adrToMerge = adresseToEntity(adresseToPrepareForSaving, new Adresse());
+		Adresse adrToMergeWith = new Adresse();
+		if (adresseToPrepareForSaving.getId() != null ) {
 
+			Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
+			//wenn schon vorhanden updaten
+			if (altAdr.isPresent()) {
+				adrToMergeWith = altAdr.get();
+			}
 		}
-		return adrToMerge;
+		return  adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
 	public JaxPerson personToJAX(@Nonnull Person persistedPerson) {
@@ -206,6 +206,7 @@ public class JaxBConverter {
 		jaxPerson.setMobile(persistedPerson.getMobile());
 		jaxPerson.setTelefonAusland(persistedPerson.getTelefonAusland());
 		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
+		//relationen laden
 		Optional<Adresse> altAdr = adresseService.getKorrespondenzAdr(persistedPerson.getId());
 		altAdr.ifPresent(adresse -> jaxPerson.setAlternativeAdresse(adresseToJAX(adresse)));
 		Adresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedPerson.getId());

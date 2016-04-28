@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.tests;
+package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.Person;
@@ -18,13 +18,15 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.rest.test.AbstractEbeguRestTest.createTestArchive;
+
 /**
  * Tests fuer die Klasse AdresseService
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class AdresseServiceBeanTest extends AbstractEbeguTest {
+public class PersonConverterTest extends AbstractEbeguRestTest {
 
 	@Inject
 	private AdresseService adresseService;

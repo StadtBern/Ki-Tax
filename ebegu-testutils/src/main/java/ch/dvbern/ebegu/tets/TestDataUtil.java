@@ -27,7 +27,6 @@ public final class TestDataUtil {
 		LocalDate now = LocalDate.now();
 		adresse.setGueltigAb(now);
 		adresse.setGueltigBis(now);
-		adresse.setPerson(createDefaultPerson());
 		return adresse;
 	}
 
@@ -41,6 +40,7 @@ public final class TestDataUtil {
 		person.setMobile("076 309 30 58");
 		person.setTelefon("031 378 24 24");
 		person.setZpvNumber("0761234567897");
+		person.addAdresse(createDefaultAdresse());
 		return person;
 	}
 

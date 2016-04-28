@@ -18,19 +18,22 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.util.Optional;
 
+import static javafx.scene.input.KeyCode.J;
+
 /**
- * Tests fuer die Klasse AdresseService
+ * Tests fuer die Klasse Convertierung von Personen und ihren Adressen
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class AdresseServiceBeanTest extends AbstractEbeguTest {
+public class PersonAndAdrConverterTest extends AbstractEbeguTest {
 
 	@Inject
 	private AdresseService adresseService;
 
 	@Inject
-	private Persistence<Adresse> persistence;
+	private Persistence<Person> persistence;
+
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -48,32 +51,10 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateAdresseTest() {
-		Assert.assertNotNull(adresseService);
-		Adresse insertedAdresses = insertNewEntity();
-		Optional<Adresse> adresse = adresseService.findAdresse(insertedAdresses.getId());
-		Assert.assertEquals("21", adresse.get().getHausnummer());
+	public void convertJaxPerson() {
 
-		adresse.get().setHausnummer("99");
-		Adresse updatedAdr = adresseService.updateAdresse(adresse.get());
-		Assert.assertEquals("99", updatedAdr.getHausnummer());
-		Assert.assertEquals("99", adresseService.findAdresse(updatedAdr.getId()).get().getHausnummer());
 	}
 
-	@Test
-	public void removeAdresseTest() {
-		Assert.assertNotNull(adresseService);
-		Adresse insertedAdresses = insertNewEntity();
-		Assert.assertEquals(1, adresseService.getAllAdressen().size());
-		adresseService.removeAdresse(insertedAdresses);
-		Assert.assertEquals(0, adresseService.getAllAdressen().size());
-	}
 
-	// Help Methods
-	private Adresse insertNewEntity() {
-		Person pers = TestDataUtil.createDefaultPerson();
-		Person storedPers =  persistence.persist(pers);
-		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
-	}
 
 }
