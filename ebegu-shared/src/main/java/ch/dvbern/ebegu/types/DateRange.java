@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.types;
 
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckDateRange;
 import com.google.common.base.MoreObjects;
 
@@ -47,7 +48,7 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	 * Von jetzt bis zur Unendlichkeit
 	 */
 	public DateRange() {
-		this(LocalDate.now(), LocalDate.of(1999, 12, 31));
+		this(LocalDate.now(), Constants.END_OF_TIME);
 	}
 
 	/**

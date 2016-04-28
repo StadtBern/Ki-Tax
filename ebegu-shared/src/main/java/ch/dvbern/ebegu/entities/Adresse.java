@@ -9,14 +9,13 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 
 /**
  * Entitaet zum Speichern von Adressen in der Datenbank.
  */
 @Audited
 @Entity
-public class Adresse extends AbstractEntity {
+public class Adresse extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -7687645920281069260L;
 
@@ -60,14 +59,6 @@ public class Adresse extends AbstractEntity {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private AdresseTyp adresseTyp = AdresseTyp.WOHNADRESSE;
-
-	@NotNull
-	@Column(nullable = false)
-	private LocalDate gueltigAb;
-
-	@NotNull
-	@Column(nullable = false)
-	private LocalDate gueltigBis;
 
 	@ManyToOne(optional = false)
 	private Person person;
@@ -120,14 +111,6 @@ public class Adresse extends AbstractEntity {
 	public void setOrt(@Nonnull String ort) {
 		this.ort = ort;
 	}
-
-	public LocalDate getGueltigAb() { return gueltigAb; }
-
-	public void setGueltigAb(LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
-
-	public LocalDate getGueltigBis() { return gueltigBis; }
-
-	public void setGueltigBis(LocalDate gueltigBis) { this.gueltigBis = gueltigBis; }
 
 	@Nullable
 	public String getZusatzzeile() {

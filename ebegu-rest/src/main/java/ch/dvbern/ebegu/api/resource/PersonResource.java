@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.services.PersonService;
+import ch.dvbern.ebegu.types.DateRange;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -78,7 +79,9 @@ public class PersonResource {
 			Adresse persistedUmzugAdr = adresseService.createAdresse(umzugAdrToPersist);
 			jaxPerson.setUmzugAdresse(converter.adresseToJAX(persistedUmzugAdr));
 			Adresse wohnAdrToPersist = converter.adresseToEntity(personJAXP.getWohnAdresse(), new Adresse());
-			wohnAdrToPersist.setGueltigBis(persistedUmzugAdr.getGueltigAb().minusDays(1));
+			DateRange gueltigkeit = wohnAdrToPersist.getGueltigkeit();
+			gueltigkeit.setGueltigBis(persistedUmzugAdr.getGueltigkeit().getGueltigAb().minusDays(1));
+			wohnAdrToPersist.setGueltigkeit(gueltigkeit);
 			wohnAdrToPersist.setPerson(persistedPerson);
 			jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.createAdresse(wohnAdrToPersist)));
 
@@ -126,8 +129,10 @@ public class PersonResource {
 		if (personJAXP.getUmzugAdresse() != null) {
 			Adresse umzugAdresseFromDB = adresseService.getNewestWohnadresse(personID).orElse(new Adresse());
 			Adresse updateAdresseToMerge = converter.adresseToEntity(personJAXP.getUmzugAdresse(), umzugAdresseFromDB);
-			Validate.notNull(updateAdresseToMerge.getGueltigAb(), "gueltigAb muss fuer Umzugadresse gesetzt sein");
-			wohnadresseToMerge.setGueltigBis(updateAdresseToMerge.getGueltigAb().minusDays(1));
+			Validate.notNull(updateAdresseToMerge.getGueltigkeit().getGueltigAb(), "gueltigAb muss fuer Umzugadresse gesetzt sein");
+			DateRange gueltigkeit = wohnadresseToMerge.getGueltigkeit();
+			gueltigkeit.setGueltigBis(updateAdresseToMerge.getGueltigkeit().getGueltigAb().minusDays(1));
+			wohnadresseToMerge.setGueltigkeit(gueltigkeit);
 			jaxPerson.setUmzugAdresse(converter.adresseToJAX(adresseService.updateAdresse(updateAdresseToMerge)));
 		}
 

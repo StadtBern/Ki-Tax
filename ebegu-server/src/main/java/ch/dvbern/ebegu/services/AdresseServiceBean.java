@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
@@ -21,9 +22,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.util.*;
-
-import static ch.dvbern.ebegu.entities.Adresse_.gueltigAb;
-import static ch.dvbern.ebegu.entities.Adresse_.gueltigBis;
 
 /**
  * Service fuer Adresse
@@ -133,19 +131,19 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 		predicatesToUse.add(typePredicate);
 		//noinspection VariableNotUsedInsideIf
 		if (maximalDatumVon != null) {
-			Predicate datumVonLessThanPred = cb.lessThanOrEqualTo(root.get(gueltigAb), gueltigVonParam);
+			Predicate datumVonLessThanPred = cb.lessThanOrEqualTo(root.get(Adresse_.gueltigkeit).get(DateRange_.gueltigAb), gueltigVonParam);
 			predicatesToUse.add(datumVonLessThanPred);
 
 		}
 		//noinspection VariableNotUsedInsideIf
 		if (minimalDatumBis != null) {
-			Predicate datumBisGreaterThanPRed = cb.greaterThanOrEqualTo(root.get(gueltigBis), gueltigBisParam);
+			Predicate datumBisGreaterThanPRed = cb.greaterThanOrEqualTo(root.get(Adresse_.gueltigkeit).get(DateRange_.gueltigBis), gueltigBisParam);
 			predicatesToUse.add(datumBisGreaterThanPRed);
 
 		}
 
 
-		query.where(criteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicatesToUse));
 
 		TypedQuery<Adresse> typedQuery = persistence.getEntityManager().createQuery(query);
 

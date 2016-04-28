@@ -108,11 +108,23 @@ public class JaxBConverter {
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
 		adresse.setLand(jaxAdresse.getLand());
-		adresse.setGueltigAb(jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb());
-		adresse.setGueltigBis(jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis());
+		adresse.setGueltigkeit(getGueltigkeit(jaxAdresse));
 		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
 		return adresse;
+	}
+
+	/**
+	 * Checks fieds gueltigAb and gueltigBis from given object and returns the corresponding DateRange object
+	 * If gueltigAb is null then current date is set instead
+	 * If gueltigBis is null then end_of_time is set instead
+	 * @param jaxAdresse JaxObject extending abstract class JaxAbstractDateRangedDTO
+	 * @return DateRange object created with the given data
+     */
+	private DateRange getGueltigkeit(JaxAbstractDateRangedDTO jaxAdresse) {
+		LocalDate dateAb = jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb();
+		LocalDate dateBis = jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis();
+		return new DateRange(dateAb, dateBis);
 	}
 
 	@Nonnull
@@ -126,8 +138,8 @@ public class JaxBConverter {
 		jaxAdresse.setOrt(adresse.getOrt());
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
 		jaxAdresse.setLand(adresse.getLand());
-		jaxAdresse.setGueltigAb(adresse.getGueltigAb());
-		jaxAdresse.setGueltigBis(adresse.getGueltigBis());
+		jaxAdresse.setGueltigAb(adresse.getGueltigkeit().getGueltigAb());
+		jaxAdresse.setGueltigBis(adresse.getGueltigkeit().getGueltigBis());
 		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());
 		return jaxAdresse;
 	}

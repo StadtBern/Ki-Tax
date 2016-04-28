@@ -25,11 +25,7 @@ public final class TestDataUtil {
 		adresse.setZusatzzeile("c/o Uwe Untermieter");
 		adresse.setPlz("3014");
 		adresse.setOrt("Bern");
-		adresse.setGueltigAb(LocalDate.now());
-		adresse.setGueltigAb(LocalDate.now().plusMonths(1));
-		LocalDate now = LocalDate.now();
-		adresse.setGueltigAb(now);
-		adresse.setGueltigBis(now);
+		adresse.setGueltigkeit(new DateRange(LocalDate.now(), LocalDate.now().plusMonths(1)));
 		adresse.setPerson(createDefaultPerson());
 		return adresse;
 	}
