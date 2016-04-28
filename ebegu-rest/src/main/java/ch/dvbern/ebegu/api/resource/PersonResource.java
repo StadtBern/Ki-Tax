@@ -60,9 +60,7 @@ public class PersonResource {
 		Person convertedPerson = converter.personToEntity(personJAXP, new Person());
 		Person persistedPerson = this.personService.updatePerson(convertedPerson); //immer update
 
-		JaxPerson jaxPerson = converter.personToJAX(persistedPerson);
-
-		return jaxPerson;
+		return converter.personToJAX(persistedPerson);
 	}
 
 	@Nullable
@@ -76,14 +74,13 @@ public class PersonResource {
 
 		Validate.notNull(personJAXP.getId());
 		String personID = converter.toEntityId(personJAXP);
-		Optional<Person> optional = personService.findPerson(converter.toEntityId(personJAXP));
+		Optional<Person> optional = personService.findPerson(personID);
 		Person personFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personJAXP.getId().toString()));
 		Person personToMerge = converter.personToEntity(personJAXP, personFromDB);
 
 
 		Person modifiedPerson = this.personService.updatePerson(personToMerge);
-		JaxPerson jaxPerson = converter.personToJAX(modifiedPerson);
-		return jaxPerson;
+		return converter.personToJAX(modifiedPerson);
 
 	}
 
