@@ -1,10 +1,11 @@
 import TSAbstractEntity from './TSAbstractEntity';
 
 export class TSTraegerschaft extends TSAbstractEntity {
-    
+
     private _name: string;
-    
+
     constructor(name?: string) {
+        super();
         this._name = name;
     }
 

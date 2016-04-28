@@ -10,6 +10,10 @@ import {IFilterService} from 'angular';
 import TSLand from '../models/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
+import {TSMandant} from '../models/TSMandant';
+import {TSTraegerschaft} from '../models/TSTraegerschaft';
+import {TSInstitution} from '../models/TSInstitution';
+import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -263,5 +267,124 @@ export default class EbeguRestUtil {
         parsedFachstelle.behinderungsbestaetigung = receivedFachstelle.behinderungsbestaetigung;
         return parsedFachstelle;
     }
-    
+
+    public mandantToRestObject(restMandant: any, mandant: TSMandant) {
+        if (mandant) {
+            this.abstractEntityToRestObject(restMandant, mandant);
+            restMandant.name = mandant.name;
+            return restMandant;
+        }
+        return undefined;
+    }
+
+    public parseMandant(mandantTS: TSMandant, mandantFromServer: any) {
+        if (mandantFromServer) {
+            this.parseAbstractEntity(mandantTS, mandantFromServer);
+            mandantTS.name = mandantFromServer.name;
+            return mandantTS;
+        }
+        return undefined;
+    }
+
+    public traegerschaftToRestObject(restTragerschaft: any, traegerschaft: TSTraegerschaft) {
+        if (traegerschaft) {
+            this.abstractEntityToRestObject(restTragerschaft, traegerschaft);
+            restTragerschaft.name = traegerschaft.name;
+            return restTragerschaft;
+        }
+        return undefined;
+    }
+
+    public parseTraegerschaften(data: Array<any>): TSTraegerschaft[] {
+        var traegerschaftenen: TSTraegerschaft[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                traegerschaftenen[i] = this.parseTraegerschaft(new TSTraegerschaft(), data[i]);
+            }
+        } else {
+            traegerschaftenen[0] = this.parseTraegerschaft(new TSTraegerschaft(), data);
+        }
+        return traegerschaftenen;
+    }
+
+    public parseTraegerschaft(traegerschaftTS: TSTraegerschaft, traegerschaftFromServer: any) {
+        if (traegerschaftFromServer) {
+            this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
+            traegerschaftTS.name = traegerschaftFromServer.name;
+            return traegerschaftTS;
+        }
+        return undefined;
+    }
+
+    public institutionToRestObject(restInstitution: any, institution: TSInstitution) {
+        if (institution) {
+            this.abstractEntityToRestObject(restInstitution, institution);
+            restInstitution.name = institution.name;
+            restInstitution.mandant = this.mandantToRestObject(new TSMandant(), institution.mandant);
+            restInstitution.traegerschaft = this.traegerschaftToRestObject(new TSTraegerschaft(), institution.traegerschaft);
+            return restInstitution;
+        }
+        return undefined;
+    }
+
+    public parseInstitution(institutionTS: TSInstitution, institutionFromServer: any) {
+        if (institutionFromServer) {
+            this.parseAbstractEntity(institutionTS, institutionFromServer);
+            institutionTS.name = institutionFromServer.name;
+            institutionTS.mandant = this.parseMandant(new TSMandant(), institutionFromServer.mandant);
+            institutionTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), institutionFromServer.traegerschaft);
+            return institutionTS;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionen(data: Array<any>): TSInstitution[] {
+        var institutionen: TSInstitution[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                institutionen[i] = this.parseInstitution(new TSInstitution(), data[i]);
+            }
+        } else {
+            institutionen[0] = this.parseInstitution(new TSInstitution(), data);
+        }
+        return institutionen;
+    }
+
+    public institutionStammdatenToRestObject(restInstitutionStammdaten: any, institutionStammdaten: TSInstitutionStammdaten) {
+        if (institutionStammdaten) {
+            this.abstractEntityToRestObject(restInstitutionStammdaten, institutionStammdaten);
+            restInstitutionStammdaten.iban = institutionStammdaten.iban;
+            restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
+            restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
+            restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
+            restInstitutionStammdaten.institution = this.institutionToRestObject(new TSInstitution(), institutionStammdaten.institution);
+            return restInstitutionStammdaten;
+        }
+        return undefined;
+    }
+
+    parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any) {
+        if (institutionStammdatenFromServer) {
+            this.parseAbstractEntity(institutionStammdatenTS, institutionStammdatenFromServer);
+            institutionStammdatenTS.iban = institutionStammdatenFromServer.iban;
+            institutionStammdatenTS.oeffnungsstunden = institutionStammdatenFromServer.oeffnungsstunden;
+            institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
+            institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
+            institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
+            return institutionStammdatenTS;
+        }
+        return undefined;
+    }
+
+    parseInstitutionStammdatenArray(data: Array<any>): TSInstitutionStammdaten[] {
+        var institutionStammdaten: TSInstitutionStammdaten[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                institutionStammdaten[i] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data[i]);
+            }
+        } else {
+            institutionStammdaten[0] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data);
+        }
+        return institutionStammdaten;
+    }
 }

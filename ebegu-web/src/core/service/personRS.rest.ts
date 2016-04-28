@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IHttpPromise, IPromise} from 'angular';
+import {IHttpService, IPromise} from 'angular';
 import TSPerson from '../../models/TSPerson';
 import ILogService = angular.ILogService;
 
@@ -34,14 +34,14 @@ export default class PersonRS {
         );
     }
 
-    public create(person:TSPerson):IPromise<TSPerson> {
+    public create(person: TSPerson): IPromise<TSPerson> {
         let pers = {};
         pers = this.ebeguRestUtil.personToRestObject(pers, person);
         return this.http.post(this.serviceURL, pers, {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then((response:any) => {
+        }).then((response: any) => {
             this.log.debug('PARSING person REST object ', response.data);
             return this.ebeguRestUtil.parsePerson(new TSPerson(), response.data);
         });

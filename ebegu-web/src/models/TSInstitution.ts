@@ -1,6 +1,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
-import {TSTraegerschaft} from "./TSTraegerschaft";
-import {TSMandant} from "./TSMandant";
+import {TSTraegerschaft} from './TSTraegerschaft';
+import {TSMandant} from './TSMandant';
 
 export class TSInstitution extends TSAbstractEntity {
 
@@ -9,6 +9,7 @@ export class TSInstitution extends TSAbstractEntity {
     private _mandant: TSMandant;
 
     constructor(name?: string, tragerschaft?: TSTraegerschaft, mandant?: TSMandant) {
+        super();
         this._name = name;
         this._traegerschaft = tragerschaft;
         this._mandant = mandant;
