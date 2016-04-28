@@ -58,37 +58,10 @@ public class PersonResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Person convertedPerson = converter.personToEntity(personJAXP, new Person());
-		Person persistedPerson = this.personService.createPerson(convertedPerson);
+		Person persistedPerson = this.personService.updatePerson(convertedPerson); //immer update
 
 		JaxPerson jaxPerson = converter.personToJAX(persistedPerson);
 
-		//Korrespondenzadr wird atm immer updated
-		if (personJAXP.getAlternativeAdresse() != null) {
-
-			Adresse korrespondenzAdresseToPersist = converter.adresseToEntity(personJAXP.getAlternativeAdresse(), new Adresse());
-			korrespondenzAdresseToPersist.setPerson(persistedPerson);
-			Adresse persistedKorrespondenzadr = adresseService.createAdresse(korrespondenzAdresseToPersist);
-			jaxPerson.setAlternativeAdresse(converter.adresseToJAX(persistedKorrespondenzadr));
-		}
-
-		//Umzug
-		if (personJAXP.getUmzugAdresse() != null) {
-			Adresse umzugAdrToPersist = converter.adresseToEntity(personJAXP.getUmzugAdresse(), new Adresse());
-			umzugAdrToPersist.setPerson(persistedPerson);
-			Adresse persistedUmzugAdr = adresseService.createAdresse(umzugAdrToPersist);
-			jaxPerson.setUmzugAdresse(converter.adresseToJAX(persistedUmzugAdr));
-			Adresse wohnAdrToPersist = converter.adresseToEntity(personJAXP.getWohnAdresse(), new Adresse());
-			wohnAdrToPersist.setGueltigBis(persistedUmzugAdr.getGueltigAb().minusDays(1));
-			wohnAdrToPersist.setPerson(persistedPerson);
-			jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.createAdresse(wohnAdrToPersist)));
-
-		} else {
-			//Wohnadresse konvertieren und speichern
-			Adresse wohnAdrToPersist = converter.adresseToEntity(personJAXP.getWohnAdresse(), new Adresse());
-			wohnAdrToPersist.setPerson(persistedPerson);
-			Adresse persistedwohnAdr = adresseService.createAdresse(wohnAdrToPersist);
-			jaxPerson.setWohnAdresse(converter.adresseToJAX(persistedwohnAdr));
-		}
 		return jaxPerson;
 	}
 
@@ -110,30 +83,8 @@ public class PersonResource {
 
 		Person modifiedPerson = this.personService.updatePerson(personToMerge);
 		JaxPerson jaxPerson = converter.personToJAX(modifiedPerson);
-
-		//Korrespondenzadr wird atm immer updated
-		if (personJAXP.getAlternativeAdresse() != null) {
-			Adresse currentKorrespAdrToUpdate = adresseService.getKorrespondenzAdr(modifiedPerson.getId()).orElse(new Adresse());
-			currentKorrespAdrToUpdate = converter.adresseToEntity(personJAXP.getAlternativeAdresse(), currentKorrespAdrToUpdate);
-			currentKorrespAdrToUpdate.setPerson(modifiedPerson);
-			jaxPerson.setAlternativeAdresse(converter.adresseToJAX(adresseService.updateAdresse(currentKorrespAdrToUpdate)));
-		}
-
-		Adresse currentWohnadresseFromDB = adresseService.getCurrentWohnadresse(modifiedPerson.getId());
-		Adresse wohnadresseToMerge = converter.adresseToEntity(personJAXP.getWohnAdresse(), currentWohnadresseFromDB);
-
-		//Wenn ein Umzug angegeben wurde
-		if (personJAXP.getUmzugAdresse() != null) {
-			Adresse umzugAdresseFromDB = adresseService.getNewestWohnadresse(personID).orElse(new Adresse());
-			Adresse updateAdresseToMerge = converter.adresseToEntity(personJAXP.getUmzugAdresse(), umzugAdresseFromDB);
-			Validate.notNull(updateAdresseToMerge.getGueltigAb(), "gueltigAb muss fuer Umzugadresse gesetzt sein");
-			wohnadresseToMerge.setGueltigBis(updateAdresseToMerge.getGueltigAb().minusDays(1));
-			jaxPerson.setUmzugAdresse(converter.adresseToJAX(adresseService.updateAdresse(updateAdresseToMerge)));
-		}
-
-		jaxPerson.setWohnAdresse(converter.adresseToJAX(adresseService.updateAdresse(wohnadresseToMerge)));
-
 		return jaxPerson;
+
 	}
 
 

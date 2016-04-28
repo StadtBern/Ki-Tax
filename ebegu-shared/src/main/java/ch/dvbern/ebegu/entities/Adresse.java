@@ -69,7 +69,9 @@ public class Adresse extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDate gueltigBis;
 
+	@NotNull
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_person_id"))
 	private Person person;
 
 

@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.PersonService;
 import ch.dvbern.ebegu.util.Constants;
@@ -30,6 +31,9 @@ public class JaxBConverter {
 
 	@Inject
 	private PersonService personService;
+
+	@Inject
+	private AdresseService adresseService;
 
 	@Inject
 	private FallService fallService;
@@ -154,7 +158,40 @@ public class JaxBConverter {
 		person.setTelefonAusland(personJAXP.getTelefonAusland());
 		person.setZpvNumber(personJAXP.getZpvNumber());
 
+		//Relationen
+		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
+		if (personJAXP.getAlternativeAdresse() != null) {
+			Adresse currentAltAdr = adresseService.getKorrespondenzAdr(person.getId()).orElse(new Adresse());
+			Adresse altAddrToMerge = adresseToEntity(personJAXP.getAlternativeAdresse(), currentAltAdr);
+			person.addAdresse(altAddrToMerge);
+		}
+		// Umzug und Wohnadresse
+		Adresse umzugAddr = null;
+		if (personJAXP.getUmzugAdresse() != null) {
+			umzugAddr = toStoreableAddresse(personJAXP.getUmzugAdresse());
+			person.addAdresse(umzugAddr);
+		}
+		//Wohnadresse (abh von Umzug noch datum setzten)
+		Adresse wohnAddrToMerge = toStoreableAddresse(personJAXP.getWohnAdresse());
+		if (umzugAddr != null) {
+			wohnAddrToMerge.setGueltigBis(umzugAddr.getGueltigAb().minusDays(1));
+		}
+		person.addAdresse(wohnAddrToMerge);
 		return person;
+	}
+
+	@Nonnull
+	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
+		Adresse adrToMerge = null;
+		Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
+		//wenn schon vorhanden updaten
+		if (altAdr.isPresent()) {
+			 adrToMerge = adresseToEntity(adresseToPrepareForSaving, altAdr.get());
+		} else {
+			adrToMerge = adresseToEntity(adresseToPrepareForSaving, new Adresse());
+
+		}
+		return adrToMerge;
 	}
 
 	public JaxPerson personToJAX(@Nonnull Person persistedPerson) {
@@ -169,6 +206,15 @@ public class JaxBConverter {
 		jaxPerson.setMobile(persistedPerson.getMobile());
 		jaxPerson.setTelefonAusland(persistedPerson.getTelefonAusland());
 		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
+		Optional<Adresse> altAdr = adresseService.getKorrespondenzAdr(persistedPerson.getId());
+		altAdr.ifPresent(adresse -> jaxPerson.setAlternativeAdresse(adresseToJAX(adresse)));
+		Adresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedPerson.getId());
+		jaxPerson.setWohnAdresse(adresseToJAX(currentWohnadr));
+
+		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
+		Optional<Adresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedPerson.getId());
+		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
+			.ifPresent(umzugAdr -> jaxPerson.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		return jaxPerson;
 	}
 

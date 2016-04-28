@@ -59,6 +59,9 @@ public interface AdresseService {
 	@Nonnull
 	Optional<Adresse> getKorrespondenzAdr(String personID);
 
+	/**
+	 * Laedt die Wohnadresse die Stichtag heute gueltig ist
+	 */
 	@Nonnull
 	Adresse getCurrentWohnadresse(String personID);
 }
