@@ -314,7 +314,11 @@
     "MENU_FINANZIELLE":"06 Finanzielle Situation",
     "MENU_EINKOMMENSVERSCHLECHTERUNG":"07 Einkommensverschlechterung",
     "MENU_DOKUMENTE":"08 Dokumente",
-    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung"
+    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung",
+    "KITA": "Tagesstätte für Kleinkinder",
+    "TAGESELTERN": "Tageseltern",
+    "TAGI": "Tagesstätte für Schulkinder",
+    "TAGESSCHULE": "Tagesschule"
 
 }
 
