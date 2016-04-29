@@ -91,7 +91,7 @@ public class PersonAndAdresseConverterTest extends AbstractEbeguRestTest {
 		adr.setGueltigAb(null);
 		adr.setGueltigBis(null);
 		Adresse adrEntity = converter.adresseToEntity(adr, new Adresse());
-		Assert.assertEquals(LocalDate.now(),adrEntity.getGueltigAb());
+		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigBis());
 	}
 
