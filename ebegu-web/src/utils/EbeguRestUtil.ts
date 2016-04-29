@@ -55,9 +55,9 @@ export default class EbeguRestUtil {
     }
 
     private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any) {
+        parsedAppProperty.id = receivedAppProperty.id;
         parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
         parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
-        parsedAppProperty.id = receivedAppProperty.id;
     }
 
     private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
@@ -357,26 +357,30 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
             restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
             restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
+            restInstitutionStammdaten.gueltigAb = DateUtil.momentToLocalDate(institutionStammdaten.gueltigAb);
+            restInstitutionStammdaten.gueltigBis = DateUtil.momentToLocalDate(institutionStammdaten.gueltigBis);
             restInstitutionStammdaten.institution = this.institutionToRestObject(new TSInstitution(), institutionStammdaten.institution);
             return restInstitutionStammdaten;
         }
         return undefined;
     }
 
-    parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any) {
+    public parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any) {
         if (institutionStammdatenFromServer) {
             this.parseAbstractEntity(institutionStammdatenTS, institutionStammdatenFromServer);
             institutionStammdatenTS.iban = institutionStammdatenFromServer.iban;
             institutionStammdatenTS.oeffnungsstunden = institutionStammdatenFromServer.oeffnungsstunden;
             institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
             institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
+            institutionStammdatenTS.gueltigAb = DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigAb);
+            institutionStammdatenTS.gueltigBis = DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigBis);
             institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
             return institutionStammdatenTS;
         }
         return undefined;
     }
 
-    parseInstitutionStammdatenArray(data: Array<any>): TSInstitutionStammdaten[] {
+    public parseInstitutionStammdatenArray(data: Array<any>): TSInstitutionStammdaten[] {
         var institutionStammdaten: TSInstitutionStammdaten[] = [];
         if (data !== null && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
