@@ -1,13 +1,13 @@
 //Hier fuegen wir unsere custom types ein
 
-declare function require(string: string): string;
+declare function require(string: string): any;
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
 declare var ENV: string;
 declare var HMR: boolean;
 interface GlobalEnvironment {
-  ENV;
-  HMR;
+  ENV: any;
+  HMR: any;
 }
 
 interface WebpackModule {

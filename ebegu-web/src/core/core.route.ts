@@ -9,7 +9,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
     routerHelper.configureStates(getStates());
     angularMomentConfig.format = 'DD.MM.YYYY';
     //todo homa dieser call macht mit tests problemen
-    if (ENV === 'production') {
+    if (ENV !== 'test') {
         listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
     }
 

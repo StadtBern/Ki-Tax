@@ -35,7 +35,7 @@ describe('PersonRS', function () {
 
         $httpBackend.whenGET(personRS.serviceURL + '/' + encodeURIComponent(mockPerson.id)).respond(mockPersonRest);
     });
-    
+
 
     describe('Public API', function () {
         it('check Service name', function () {

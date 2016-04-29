@@ -2,10 +2,11 @@ import 'angular';
 import 'angular-translate';
 import 'angular-unsavedchanges';
 import {ITranslateProvider} from 'angular-translate';
+import IInjectorService = angular.auto.IInjectorService;
 
-configure.$inject = ['$translateProvider', 'unsavedWarningsConfigProvider'];
+configure.$inject = ['$translateProvider', '$injector'];
 /* @ngInject */
-export function configure($translateProvider: ITranslateProvider, unsavedWarningsConfigProvider: any) {
+export function configure($translateProvider: ITranslateProvider, $injector: IInjectorService) {
     //Translation Provider configuration
     let translProp = require('../assets/translations/translations_de.json');
 
@@ -15,14 +16,13 @@ export function configure($translateProvider: ITranslateProvider, unsavedWarning
         .fallbackLanguage('de')
         .preferredLanguage('de');
 
-    //Dirty Check configuration
-    unsavedWarningsConfigProvider.useTranslateService = true;
-    unsavedWarningsConfigProvider.logEnabled = true;
-    unsavedWarningsConfigProvider.navigateMessage = 'UNSAVED_WARNING';
-    unsavedWarningsConfigProvider.reloadMessage = 'UNSAVED_WARNING_RELOAD';
-
-        console.log(process.env);
-
-
+    //Dirty Check configuration (nur wenn plugin vorhanden)
+    if ($injector.has('unsavedWarningsConfigProvider')) {
+        let unsavedWarningsConfigProvider : any = $injector.get('unsavedWarningsConfigProvider');
+        unsavedWarningsConfigProvider.useTranslateService = true;
+        unsavedWarningsConfigProvider.logEnabled = false;
+        unsavedWarningsConfigProvider.navigateMessage = 'UNSAVED_WARNING';
+        unsavedWarningsConfigProvider.reloadMessage = 'UNSAVED_WARNING_RELOAD';
+    }
 
 }
