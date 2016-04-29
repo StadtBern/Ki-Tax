@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.enums.Land;
+import ch.dvbern.ebegu.entities.Person;
 import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -38,19 +37,14 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 		return createTestArchive();
 	}
 
-	@Test
-	public void createAdresseTest() {
-		Assert.assertNotNull(adresseService);
-		Adresse adresse = TestDataUtil.createDefaultAdresse();
-		adresse.setPerson(persistence.persist(adresse.getPerson()));
 
-		adresseService.createAdresse(adresse);
-		Collection<Adresse> allAdressen = adresseService.getAllAdressen();
-		Assert.assertEquals(1, allAdressen.size());
-		Adresse nextAdresse = allAdressen.iterator().next();
-		Assert.assertEquals("Nussbaumstrasse", nextAdresse.getStrasse());
-		Assert.assertEquals("21", nextAdresse.getHausnummer());
-		Assert.assertEquals(Land.CH, nextAdresse.getLand());
+	@Test
+	public void createAdresseTogetherWithPersonTest() {
+		Person pers  = TestDataUtil.createDefaultPerson();
+		Person storedPerson = persistence.persist(pers);
+		Assert.assertNotNull(storedPerson.getAdressen());
+		Assert.assertTrue(storedPerson.getAdressen().stream().findAny().isPresent());
+
 	}
 
 	@Test
@@ -71,20 +65,15 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(adresseService);
 		Adresse insertedAdresses = insertNewEntity();
 		Assert.assertEquals(1, adresseService.getAllAdressen().size());
-
 		adresseService.removeAdresse(insertedAdresses);
 		Assert.assertEquals(0, adresseService.getAllAdressen().size());
 	}
 
 	// Help Methods
-
 	private Adresse insertNewEntity() {
-		Adresse adresse = TestDataUtil.createDefaultAdresse();
-		persistence.persist(adresse.getPerson());
-		persistence.persist(adresse);
-		return adresse;
+		Person pers = TestDataUtil.createDefaultPerson();
+		Person storedPers =  persistence.persist(pers);
+		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
 	}
-
-
 
 }

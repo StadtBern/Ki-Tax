@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.util.Constants;
 
 import java.time.LocalDate;
 
@@ -22,12 +23,10 @@ public final class TestDataUtil {
 		adresse.setZusatzzeile("c/o Uwe Untermieter");
 		adresse.setPlz("3014");
 		adresse.setOrt("Bern");
+		adresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		adresse.setGueltigAb(LocalDate.now());
-		adresse.setGueltigAb(LocalDate.now().plusMonths(1));
-		LocalDate now = LocalDate.now();
-		adresse.setGueltigAb(now);
-		adresse.setGueltigBis(now);
-		adresse.setPerson(createDefaultPerson());
+		adresse.setGueltigBis(Constants.END_OF_TIME);
+
 		return adresse;
 	}
 
@@ -41,6 +40,7 @@ public final class TestDataUtil {
 		person.setMobile("076 309 30 58");
 		person.setTelefon("031 378 24 24");
 		person.setZpvNumber("0761234567897");
+		person.addAdresse(createDefaultAdresse());
 		return person;
 	}
 
@@ -70,4 +70,5 @@ public final class TestDataUtil {
 		fachstelle.setBehinderungsbestaetigung(true);
 		return fachstelle;
 	}
+
 }

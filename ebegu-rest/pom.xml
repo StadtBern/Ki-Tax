@@ -32,6 +32,10 @@
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-dbschema</artifactId>
         </dependency>
+        <dependency>
+            <groupId>ch.dvbern.ebegu</groupId>
+            <artifactId>ebegu-testutils</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.validation</groupId>
