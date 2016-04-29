@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Adressen in der Datenbank.
@@ -163,4 +164,30 @@ public class Adresse extends AbstractEntity {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
+
+
+	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
+	public boolean isSame(Adresse otherAdr) {
+		if (this == otherAdr) {
+			return true;
+		}
+		if (otherAdr == null || getClass() != otherAdr.getClass()) {
+			return false;
+		}
+
+
+		return Objects.equals(strasse, otherAdr.strasse) &&
+			Objects.equals(hausnummer, otherAdr.hausnummer) &&
+			Objects.equals(zusatzzeile, otherAdr.zusatzzeile) &&
+			Objects.equals(plz, otherAdr.plz) &&
+			Objects.equals(ort, otherAdr.ort) &&
+			land == otherAdr.land &&
+			Objects.equals(gemeinde, otherAdr.gemeinde) &&
+			adresseTyp == otherAdr.adresseTyp &&
+			Objects.equals(gueltigAb, otherAdr.gueltigAb) &&
+			Objects.equals(gueltigBis, otherAdr.gueltigBis);
+
+	}
+
+
 }

@@ -55,7 +55,7 @@ public class PersonResource {
 	public JaxPerson create(
 		@Nonnull @NotNull @Valid JaxPerson personJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Person convertedPerson = converter.personToEntity(personJAXP, new Person());
 		Person persistedPerson = this.personService.updatePerson(convertedPerson); //immer update

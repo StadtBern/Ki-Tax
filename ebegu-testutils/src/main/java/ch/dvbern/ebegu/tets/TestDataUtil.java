@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.util.Constants;
 
 import java.time.LocalDate;
 
@@ -22,11 +23,10 @@ public final class TestDataUtil {
 		adresse.setZusatzzeile("c/o Uwe Untermieter");
 		adresse.setPlz("3014");
 		adresse.setOrt("Bern");
+		adresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		adresse.setGueltigAb(LocalDate.now());
-		adresse.setGueltigAb(LocalDate.now().plusMonths(1));
-		LocalDate now = LocalDate.now();
-		adresse.setGueltigAb(now);
-		adresse.setGueltigBis(now);
+		adresse.setGueltigBis(Constants.END_OF_TIME);
+
 		return adresse;
 	}
 

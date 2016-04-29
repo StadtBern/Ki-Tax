@@ -147,6 +147,7 @@ public class JaxBConverter {
 	public Person personToEntity(@Nonnull JaxPerson personJAXP, @Nonnull Person person) {
 		Validate.notNull(person);
 		Validate.notNull(personJAXP);
+		Validate.notNull(personJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
 		convertAbstractFieldsToEntity(personJAXP, person);
 		person.setNachname(personJAXP.getNachname());
 		person.setVorname(personJAXP.getVorname());
@@ -195,6 +196,8 @@ public class JaxBConverter {
 	}
 
 	public JaxPerson personToJAX(@Nonnull Person persistedPerson) {
+		Validate.isTrue(!persistedPerson.isNew(), "Person kann nicht nach REST transformiert werden weil sie noch " +
+			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		JaxPerson jaxPerson = new JaxPerson();
 		convertAbstractFieldsToJAX(persistedPerson, jaxPerson);
 		jaxPerson.setNachname(persistedPerson.getNachname());
