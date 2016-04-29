@@ -7,13 +7,14 @@ import TSGesuch from '../models/TSGesuch';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {IFilterService} from 'angular';
-import TSLand from '../models/TSLand';
+import TSLand from '../models/types/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
 import {TSMandant} from '../models/TSMandant';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import {TSInstitution} from '../models/TSInstitution';
 import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
+import {TSDateRange} from '../models/types/TSDateRange';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -54,7 +55,7 @@ export default class EbeguRestUtil {
         return parsedAppProperty;
     }
 
-    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any) {
+    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any): void {
         parsedAppProperty.id = receivedAppProperty.id;
         parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
         parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
@@ -80,8 +81,10 @@ export default class EbeguRestUtil {
             restAdresse.ort = adresse.ort;
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
-            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
-            restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigBis);
+            if (adresse.gueltigkeit) {
+                restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigkeit.gueltigAb);
+                restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigkeit.gueltigBis);
+            }
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
             return restAdresse;
         }
@@ -99,8 +102,7 @@ export default class EbeguRestUtil {
             adresseTS.ort = receivedAdresse.ort;
             adresseTS.land =  (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
-            adresseTS.gueltigAb = DateUtil.localDateToMoment(receivedAdresse.gueltigAb);
-            adresseTS.gueltigBis = DateUtil.localDateToMoment(receivedAdresse.gueltigBis);
+            adresseTS.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAdresse.gueltigAb), DateUtil.localDateToMoment(receivedAdresse.gueltigBis));
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
             return adresseTS;
         }
@@ -239,7 +241,7 @@ export default class EbeguRestUtil {
     }
 
 
-    public fachstelleToRestObject(restFachstelle: any, fachstelle: TSFachstelle) {
+    public fachstelleToRestObject(restFachstelle: any, fachstelle: TSFachstelle): any {
         restFachstelle.name = fachstelle.name;
         restFachstelle.beschreibung = fachstelle.beschreibung;
         restFachstelle.behinderungsbestaetigung = fachstelle.behinderungsbestaetigung;
@@ -268,7 +270,7 @@ export default class EbeguRestUtil {
         return parsedFachstelle;
     }
 
-    public mandantToRestObject(restMandant: any, mandant: TSMandant) {
+    public mandantToRestObject(restMandant: any, mandant: TSMandant): any {
         if (mandant) {
             this.abstractEntityToRestObject(restMandant, mandant);
             restMandant.name = mandant.name;
@@ -277,7 +279,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseMandant(mandantTS: TSMandant, mandantFromServer: any) {
+    public parseMandant(mandantTS: TSMandant, mandantFromServer: any): TSMandant {
         if (mandantFromServer) {
             this.parseAbstractEntity(mandantTS, mandantFromServer);
             mandantTS.name = mandantFromServer.name;
@@ -286,7 +288,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public traegerschaftToRestObject(restTragerschaft: any, traegerschaft: TSTraegerschaft) {
+    public traegerschaftToRestObject(restTragerschaft: any, traegerschaft: TSTraegerschaft): any {
         if (traegerschaft) {
             this.abstractEntityToRestObject(restTragerschaft, traegerschaft);
             restTragerschaft.name = traegerschaft.name;
@@ -307,7 +309,7 @@ export default class EbeguRestUtil {
         return traegerschaftenen;
     }
 
-    public parseTraegerschaft(traegerschaftTS: TSTraegerschaft, traegerschaftFromServer: any) {
+    public parseTraegerschaft(traegerschaftTS: TSTraegerschaft, traegerschaftFromServer: any): TSTraegerschaft {
         if (traegerschaftFromServer) {
             this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
             traegerschaftTS.name = traegerschaftFromServer.name;
@@ -316,7 +318,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public institutionToRestObject(restInstitution: any, institution: TSInstitution) {
+    public institutionToRestObject(restInstitution: any, institution: TSInstitution): any {
         if (institution) {
             this.abstractEntityToRestObject(restInstitution, institution);
             restInstitution.name = institution.name;
@@ -327,7 +329,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    public parseInstitution(institutionTS: TSInstitution, institutionFromServer: any) {
+    public parseInstitution(institutionTS: TSInstitution, institutionFromServer: any): TSInstitution {
         if (institutionFromServer) {
             this.parseAbstractEntity(institutionTS, institutionFromServer);
             institutionTS.name = institutionFromServer.name;
@@ -350,30 +352,30 @@ export default class EbeguRestUtil {
         return institutionen;
     }
 
-    public institutionStammdatenToRestObject(restInstitutionStammdaten: any, institutionStammdaten: TSInstitutionStammdaten) {
+    public institutionStammdatenToRestObject(restInstitutionStammdaten: any, institutionStammdaten: TSInstitutionStammdaten): any {
         if (institutionStammdaten) {
             this.abstractEntityToRestObject(restInstitutionStammdaten, institutionStammdaten);
             restInstitutionStammdaten.iban = institutionStammdaten.iban;
             restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
             restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
             restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
-            restInstitutionStammdaten.gueltigAb = DateUtil.momentToLocalDate(institutionStammdaten.gueltigAb);
-            restInstitutionStammdaten.gueltigBis = DateUtil.momentToLocalDate(institutionStammdaten.gueltigBis);
+            restInstitutionStammdaten.gueltigAb = DateUtil.momentToLocalDate(institutionStammdaten.gueltigkeit.gueltigAb);
+            restInstitutionStammdaten.gueltigBis = DateUtil.momentToLocalDate(institutionStammdaten.gueltigkeit.gueltigBis);
             restInstitutionStammdaten.institution = this.institutionToRestObject(new TSInstitution(), institutionStammdaten.institution);
             return restInstitutionStammdaten;
         }
         return undefined;
     }
 
-    public parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any) {
+    public parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any): TSInstitutionStammdaten {
         if (institutionStammdatenFromServer) {
             this.parseAbstractEntity(institutionStammdatenTS, institutionStammdatenFromServer);
             institutionStammdatenTS.iban = institutionStammdatenFromServer.iban;
             institutionStammdatenTS.oeffnungsstunden = institutionStammdatenFromServer.oeffnungsstunden;
             institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
             institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
-            institutionStammdatenTS.gueltigAb = DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigAb);
-            institutionStammdatenTS.gueltigBis = DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigBis);
+            institutionStammdatenTS.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigAb),
+                DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigBis));
             institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
             return institutionStammdatenTS;
         }

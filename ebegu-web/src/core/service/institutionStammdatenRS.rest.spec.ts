@@ -6,6 +6,7 @@ import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp'
 import {TSInstitution} from '../../models/TSInstitution';
 import {InstitutionStammdatenRS} from './institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
+import {TSDateRange} from '../../models/types/TSDateRange';
 
 describe('institutionStammdatenRS', function () {
 
@@ -15,6 +16,7 @@ describe('institutionStammdatenRS', function () {
     let mockInstitutionStammdaten: TSInstitutionStammdaten;
     let mockInstitutionStammdatenRest: any;
     let mockInstitution: TSInstitution;
+    let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -25,9 +27,10 @@ describe('institutionStammdatenRS', function () {
     }));
 
     beforeEach(() => {
+        today = DateUtil.today();
         mockInstitution = new TSInstitution('Institution_Test');
         mockInstitutionStammdaten = new TSInstitutionStammdaten('InstStammDaten_Test', 250, 12,
-            TSBetreuungsangebotTyp.KITA, mockInstitution, DateUtil.today(), DateUtil.today());
+            TSBetreuungsangebotTyp.KITA, mockInstitution, new TSDateRange(today, today));
         mockInstitutionStammdaten.id = '2afc9d9a-957e-4550-9a22-97624a1d8f05';
         mockInstitutionStammdatenRest = ebeguRestUtil.institutionStammdatenToRestObject({}, mockInstitutionStammdaten);
     });
@@ -138,11 +141,12 @@ describe('institutionStammdatenRS', function () {
         describe('getAllInstitutionStammdatenByDate', () => {
             it('should return all InstitutionStammdaten im gegebenen Datum', () => {
                 let institutionStammdatenRestArray: Array<any> = [mockInstitutionStammdatenRest, mockInstitutionStammdatenRest];
-                $httpBackend.expectGET(institutionStammdatenRS.serviceURL + '/date?date=' + DateUtil.momentToLocalDate(mockInstitutionStammdaten.gueltigAb))
+                $httpBackend.expectGET(institutionStammdatenRS.serviceURL + '/date?date='
+                    + DateUtil.momentToLocalDate(today))
                     .respond(institutionStammdatenRestArray);
 
                 let returnedInstitutionStammdaten: Array<TSInstitutionStammdaten>;
-                institutionStammdatenRS.getAllInstitutionStammdatenByDate(mockInstitutionStammdaten.gueltigAb).then((result) => {
+                institutionStammdatenRS.getAllInstitutionStammdatenByDate(today).then((result) => {
                     returnedInstitutionStammdaten = result;
                 });
                 $httpBackend.flush();

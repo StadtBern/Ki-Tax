@@ -16,15 +16,18 @@ import {TSInstitution} from '../models/TSInstitution';
 import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../models/enums/TSBetreuungsangebotTyp';
 import DateUtil from './DateUtil';
+import {TSDateRange} from '../models/types/TSDateRange';
 
 describe('EbeguRestUtil', function () {
 
     let ebeguRestUtil: EbeguRestUtil;
+    let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        today = DateUtil.today();
     }));
 
     describe('publicAPI', () => {
@@ -69,23 +72,27 @@ describe('EbeguRestUtil', function () {
     describe('API Usage', function () {
         describe('parseAdresse()', () => {
             it('should transfrom Adresse Rest Objects', () => {
-                let addresse = new TSAdresse();
-                addresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
-                addresse.gemeinde = 'Testingen';
-                addresse.land = 'CH';
-                addresse.ort = 'Testort';
-                addresse.strasse = 'Teststrasse';
-                addresse.hausnummer = '1';
-                addresse.zusatzzeile = 'co test';
-                addresse.plz = '3014';
-                addresse.id = '1234567';
+                let adresse = new TSAdresse();
+                adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+                adresse.gemeinde = 'Testingen';
+                adresse.land = 'CH';
+                adresse.ort = 'Testort';
+                adresse.strasse = 'Teststrasse';
+                adresse.hausnummer = '1';
+                adresse.zusatzzeile = 'co test';
+                adresse.plz = '3014';
+                adresse.id = '1234567';
+                adresse.gueltigkeit = new TSDateRange(today, today);
 
-                let restAdresse: any =  ebeguRestUtil.adresseToRestObject({}, addresse);
+                let restAdresse: any =  ebeguRestUtil.adresseToRestObject({}, adresse);
                 expect(restAdresse).toBeDefined();
                 let adr: TSAdresse = ebeguRestUtil.parseAdresse(new TSAdresse(), restAdresse);
                 expect(adr).toBeDefined();
-                expect(addresse.gemeinde).toEqual(adr.gemeinde);
-                expect(addresse).toEqual(adr);
+                expect(adresse.gemeinde).toEqual(adr.gemeinde);
+                expect(adr.gueltigkeit.gueltigAb.isSame(adresse.gueltigkeit.gueltigAb)).toBe(true);
+                expect(adr.gueltigkeit.gueltigBis.isSame(adresse.gueltigkeit.gueltigBis)).toBe(true);
+                adr.gueltigkeit = adresse.gueltigkeit;
+                expect(adresse).toEqual(adr);
 
             });
         });
@@ -177,7 +184,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
                 var myInstitution = createInstitution();
                 let myInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, myInstitution,
-                    DateUtil.today(), DateUtil.today());
+                    new TSDateRange(DateUtil.today(), DateUtil.today()));
                 setAbstractFieldsUndefined(myInstitutionStammdaten);
 
                 let restInstitutionStammdaten = ebeguRestUtil.institutionStammdatenToRestObject({}, myInstitutionStammdaten);
@@ -185,19 +192,18 @@ describe('EbeguRestUtil', function () {
                 expect(restInstitutionStammdaten.iban).toEqual(myInstitutionStammdaten.iban);
                 expect(restInstitutionStammdaten.oeffnungsstunden).toEqual(myInstitutionStammdaten.oeffnungsstunden);
                 expect(restInstitutionStammdaten.oeffnungstage).toEqual(myInstitutionStammdaten.oeffnungstage);
-                expect(restInstitutionStammdaten.gueltigAb).toEqual(DateUtil.momentToLocalDate(myInstitutionStammdaten.gueltigAb));
-                expect(restInstitutionStammdaten.gueltigBis).toEqual(DateUtil.momentToLocalDate(myInstitutionStammdaten.gueltigBis));
+                expect(restInstitutionStammdaten.gueltigAb).toEqual(DateUtil.momentToLocalDate(myInstitutionStammdaten.gueltigkeit.gueltigAb));
+                expect(restInstitutionStammdaten.gueltigBis).toEqual(DateUtil.momentToLocalDate(myInstitutionStammdaten.gueltigkeit.gueltigBis));
                 expect(restInstitutionStammdaten.betreuungsangebotTyp).toEqual(myInstitutionStammdaten.betreuungsangebotTyp);
                 expect(restInstitutionStammdaten.institution.name).toEqual(myInstitutionStammdaten.institution.name);
 
                 let transformedInstitutionStammdaten = ebeguRestUtil.parseInstitutionStammdaten(new TSInstitutionStammdaten(), restInstitutionStammdaten);
-                expect(transformedInstitutionStammdaten.gueltigAb).toBeDefined();
 
                 // Dieses hack wird gebraucht weil um 2 Moment zu vergleichen kann man nicht einfach equal() benutzen sondern isSame
-                expect(myInstitutionStammdaten.gueltigAb.isSame(transformedInstitutionStammdaten.gueltigAb)).toBe(true);
-                expect(myInstitutionStammdaten.gueltigBis.isSame(transformedInstitutionStammdaten.gueltigBis)).toBe(true);
-                myInstitutionStammdaten.gueltigAb = transformedInstitutionStammdaten.gueltigAb;
-                myInstitutionStammdaten.gueltigBis = transformedInstitutionStammdaten.gueltigBis;
+                expect(myInstitutionStammdaten.gueltigkeit.gueltigAb.isSame(transformedInstitutionStammdaten.gueltigkeit.gueltigAb)).toBe(true);
+                expect(myInstitutionStammdaten.gueltigkeit.gueltigBis.isSame(transformedInstitutionStammdaten.gueltigkeit.gueltigBis)).toBe(true);
+                myInstitutionStammdaten.gueltigkeit.gueltigAb = transformedInstitutionStammdaten.gueltigkeit.gueltigAb;
+                myInstitutionStammdaten.gueltigkeit.gueltigBis = transformedInstitutionStammdaten.gueltigkeit.gueltigBis;
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
             });
         });

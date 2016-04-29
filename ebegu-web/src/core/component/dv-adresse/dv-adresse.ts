@@ -1,6 +1,6 @@
 import TSAdresse from '../../../models/TSAdresse';
 import AdresseRS from '../../service/adresseRS.rest';
-import TSLand from '../../../models/TSLand';
+import TSLand from '../../../models/types/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import {IComponentOptions, IFormController} from 'angular';
 
@@ -47,7 +47,7 @@ export  class DvAdresseController {
     }
 
     createItem() {
-        this.adresse = new TSAdresse('', '', '', '', '', undefined, '', undefined, undefined, undefined);
+        this.adresse = new TSAdresse('', '', '', '', '', undefined, '', undefined, undefined);
     }
 
     resetForm() {

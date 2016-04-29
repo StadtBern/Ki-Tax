@@ -1,11 +1,8 @@
-import TSAbstractEntity from './TSAbstractEntity';
-
-export default class TSLand extends TSAbstractEntity {
+export default class TSLand {
     private _name: string;
     private _code: string;
 
     constructor(code: string, name: string) {
-        super();
         this._name = name;
         this._code = code;
     }
