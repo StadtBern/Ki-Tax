@@ -102,9 +102,8 @@ public class PersonResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(personJAXP.getId());
-		String personID = converter.toEntityId(personJAXP);
-		Optional<Person> optional = personService.findPerson(converter.toEntityId(personJAXP));
-		Person personFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personJAXP.getId().toString()));
+		Optional<Person> optional = personService.findPerson(personJAXP.getId());
+		Person personFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personJAXP.getId()));
 		Person personToMerge = converter.personToEntity(personJAXP, personFromDB);
 
 
@@ -124,7 +123,7 @@ public class PersonResource {
 
 		//Wenn ein Umzug angegeben wurde
 		if (personJAXP.getUmzugAdresse() != null) {
-			Adresse umzugAdresseFromDB = adresseService.getNewestWohnadresse(personID).orElse(new Adresse());
+			Adresse umzugAdresseFromDB = adresseService.getNewestWohnadresse(personJAXP.getId()).orElse(new Adresse());
 			Adresse updateAdresseToMerge = converter.adresseToEntity(personJAXP.getUmzugAdresse(), umzugAdresseFromDB);
 			Validate.notNull(updateAdresseToMerge.getGueltigAb(), "gueltigAb muss fuer Umzugadresse gesetzt sein");
 			wohnadresseToMerge.setGueltigBis(updateAdresseToMerge.getGueltigAb().minusDays(1));

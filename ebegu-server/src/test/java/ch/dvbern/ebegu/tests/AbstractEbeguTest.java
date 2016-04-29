@@ -23,7 +23,7 @@ public abstract class AbstractEbeguTest {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
 		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
-		File[] testDeps = pom.importTestDependencies().resolve().withTransitivity().asFile();
+		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
 
 
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden

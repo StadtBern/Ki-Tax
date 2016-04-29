@@ -18,12 +18,16 @@ export class KinderViewController {
 
     }
 
-
     previousStep() {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
         } else {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
         }
+    }
+
+    // TODO (team) vorübergehend direkt auf FinanzSit navigieren
+    nextStep()  {
+        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
     }
 }

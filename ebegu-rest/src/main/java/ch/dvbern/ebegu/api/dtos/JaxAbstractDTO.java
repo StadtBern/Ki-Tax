@@ -23,7 +23,7 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 
 	@Nullable
 	@NotNull(groups = Persisted.class)
-	private JaxId id = null;
+	private String id = null;
 
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
@@ -38,16 +38,16 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 		// nop
 	}
 
-	protected JaxAbstractDTO(@Nonnull JaxId id) {
+	protected JaxAbstractDTO(@Nonnull String id) {
 		this.id = Objects.requireNonNull(id);
 	}
 
 	@Nullable
-	public JaxId getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(@Nonnull JaxId id) {
+	public void setId(@Nonnull String id) {
 		this.id = Objects.requireNonNull(id);
 	}
 

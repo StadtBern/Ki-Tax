@@ -13,11 +13,13 @@ import FallRS from '../gesuch/service/fallRS.rest';
 import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
+import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
+import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', [
@@ -41,9 +43,12 @@ export const EbeguWebCore: angular.IModule = angular
     .config(configure)
     .constant('REST_API', '/ebegu/api/v1/')
     .constant('MAX_LENGTH', 255)
-    .constant('CONFIG', {
+    .constant('CONSTANTS', {
         name: 'EBEGU',
-        REST_API: '/ebegu/api/v1/'
+        REST_API: '/ebegu/api/v1/',
+        MAX_LENGTH: 255,
+        PATTERN_BETRAG: '([0-9]{0,12})'
+
     })
     .service('EbeguRestUtil', EbeguRestUtil)
     .service('PersonRS', PersonRS)
@@ -53,10 +58,13 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
+    .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvInputContainer', new DvInputContainerComponentConfig())
-    .component('dvRadioContainer', new DvRadioContainerComponentConfig());
+    .component('dvRadioContainer', new DvRadioContainerComponentConfig())
+    .component('dvBisher', new DvBisherComponentConfig());
+

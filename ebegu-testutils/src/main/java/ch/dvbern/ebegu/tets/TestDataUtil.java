@@ -3,8 +3,12 @@ package ch.dvbern.ebegu.tets;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.Person;
 import ch.dvbern.ebegu.enums.Geschlecht;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -69,5 +73,19 @@ public final class TestDataUtil {
 		fachstelle.setBeschreibung("Kinder Fachstelle");
 		fachstelle.setBehinderungsbestaetigung(true);
 		return fachstelle;
+	}
+
+	public static FinanzielleSituationContainer createFinanzielleSituationContainer() {
+		FinanzielleSituationContainer container = new FinanzielleSituationContainer();
+		container.setJahr(2015);
+		return container;
+	}
+
+	public static FinanzielleSituation createDefaultFinanzielleSituation() {
+		FinanzielleSituation finanzielleSituation = new FinanzielleSituation();
+		finanzielleSituation.setSteuerveranlagungErhalten(Boolean.FALSE);
+		finanzielleSituation.setSteuererklaerungAusgefuellt(Boolean.TRUE);
+		finanzielleSituation.setNettolohn(new BigDecimal(100000));
+		return finanzielleSituation;
 	}
 }

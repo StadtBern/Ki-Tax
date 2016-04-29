@@ -60,6 +60,9 @@ public class Person extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
+	private FinanzielleSituationContainer finanzielleSituationContainer;
+
 
 	public String getVorname() {
 
@@ -126,12 +129,23 @@ public class Person extends AbstractEntity {
 		this.telefonAusland = telefonAusland;
 	}
 
-
 	public String getZpvNumber() {
 		return zpvNumber;
 	}
 
 	public void setZpvNumber(String zpvNumber) {
 		this.zpvNumber = zpvNumber;
+	}
+
+	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
+		return finanzielleSituationContainer;
+	}
+
+	public void setFinanzielleSituationContainer(FinanzielleSituationContainer finanzielleSituationContainer) {
+		this.finanzielleSituationContainer = finanzielleSituationContainer;
+		if (finanzielleSituationContainer != null &&
+				(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			finanzielleSituationContainer.setGesuchsteller(this);
+		}
 	}
 }

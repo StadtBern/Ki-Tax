@@ -10,6 +10,8 @@ import {IFilterService} from 'angular';
 import TSLand from '../models/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
+import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
+import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -148,6 +150,9 @@ export default class EbeguRestUtil {
             restPerson.wohnAdresse = this.adresseToRestObject({}, person.adresse); //achtung heisst im jax wohnadresse nicht adresse
             restPerson.alternativeAdresse = this.adresseToRestObject({}, person.korrespondenzAdresse);
             restPerson.umzugAdresse = this.adresseToRestObject({}, person.umzugAdresse);
+            if (person.finanzielleSituationContainer) {
+                restPerson.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, person.finanzielleSituationContainer);
+            }
             return restPerson;
         }
         return undefined;
@@ -170,6 +175,7 @@ export default class EbeguRestUtil {
             personTS.adresse = this.parseAdresse(new TSAdresse(), personFromServer.wohnAdresse);
             personTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), personFromServer.alternativeAdresse);
             personTS.umzugAdresse = this.parseAdresse(new TSAdresse(), personFromServer.umzugAdresse);
+            personTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), personFromServer.finanzielleSituationContainer);
             return personTS;
         }
         return undefined;
@@ -263,5 +269,70 @@ export default class EbeguRestUtil {
         parsedFachstelle.behinderungsbestaetigung = receivedFachstelle.behinderungsbestaetigung;
         return parsedFachstelle;
     }
-    
+
+    public finanzielleSituationContainerToRestObject(restFinanzielleSituationContainer: any, finanzielleSituationContainer: TSFinanzielleSituationContainer): TSFinanzielleSituationContainer {
+        this.abstractEntityToRestObject(restFinanzielleSituationContainer, finanzielleSituationContainer);
+        restFinanzielleSituationContainer.jahr = finanzielleSituationContainer.jahr;
+        if (finanzielleSituationContainer.finanzielleSituationGS) {
+            restFinanzielleSituationContainer.finanzielleSituationGS = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationGS);
+        }
+        if (finanzielleSituationContainer.finanzielleSituationJA) {
+            restFinanzielleSituationContainer.finanzielleSituationJA = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationJA);
+        }
+        if (finanzielleSituationContainer.finanzielleSituationSV) {
+            restFinanzielleSituationContainer.finanzielleSituationSV = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationSV);
+        }
+        return restFinanzielleSituationContainer;
+    }
+
+    public parseFinanzielleSituationContainer(containerTS: TSFinanzielleSituationContainer, containerFromServer: any): TSFinanzielleSituationContainer {
+        if (containerFromServer) {
+            this.parseAbstractEntity(containerTS, containerFromServer);
+            containerTS.jahr = containerFromServer.jahr;
+            containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
+            containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
+            containerTS.finanzielleSituationSV = this.parseFinanzielleSituation(containerTS.finanzielleSituationSV || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationSV);
+            return containerTS;
+        }
+        return undefined;
+    }
+
+    public finanzielleSituationToRestObject(restFinanzielleSituation: any, finanzielleSituation: TSFinanzielleSituation): TSFinanzielleSituation {
+        this.abstractEntityToRestObject(restFinanzielleSituation, finanzielleSituation);
+        restFinanzielleSituation.steuerveranlagungErhalten = finanzielleSituation.steuerveranlagungErhalten;
+        restFinanzielleSituation.steuererklaerungAusgefuellt = finanzielleSituation.steuererklaerungAusgefuellt;
+        restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
+        restFinanzielleSituation.familienzulage = finanzielleSituation.familienzulage;
+        restFinanzielleSituation.ersatzeinkommen = finanzielleSituation.ersatzeinkommen;
+        restFinanzielleSituation.erhalteneAlimente = finanzielleSituation.erhalteneAlimente;
+        restFinanzielleSituation.bruttovermoegen = finanzielleSituation.bruttovermoegen;
+        restFinanzielleSituation.schulden = finanzielleSituation.schulden;
+        restFinanzielleSituation.selbstaendig = finanzielleSituation.selbstaendig;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahr = finanzielleSituation.geschaeftsgewinnBasisjahr;
+        restFinanzielleSituation.geleisteteAlimente = finanzielleSituation.geleisteteAlimente;
+        return restFinanzielleSituation;
+    }
+
+    public parseFinanzielleSituation(finanzielleSituationTS: TSFinanzielleSituation, finanzielleSituationFromServer: any): TSFinanzielleSituation {
+        if (finanzielleSituationFromServer) {
+            this.parseAbstractEntity(finanzielleSituationTS, finanzielleSituationFromServer);
+            finanzielleSituationTS.steuerveranlagungErhalten = finanzielleSituationFromServer.steuerveranlagungErhalten;
+            finanzielleSituationTS.steuererklaerungAusgefuellt = finanzielleSituationFromServer.steuererklaerungAusgefuellt;
+            finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
+            finanzielleSituationTS.familienzulage = finanzielleSituationFromServer.familienzulage;
+            finanzielleSituationTS.ersatzeinkommen = finanzielleSituationFromServer.ersatzeinkommen;
+            finanzielleSituationTS.erhalteneAlimente = finanzielleSituationFromServer.erhalteneAlimente;
+            finanzielleSituationTS.bruttovermoegen = finanzielleSituationFromServer.bruttovermoegen;
+            finanzielleSituationTS.schulden = finanzielleSituationFromServer.schulden;
+            finanzielleSituationTS.selbstaendig = finanzielleSituationFromServer.selbstaendig;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahr = finanzielleSituationFromServer.geschaeftsgewinnBasisjahr;
+            finanzielleSituationTS.geleisteteAlimente = finanzielleSituationFromServer.geleisteteAlimente;
+            return finanzielleSituationTS;
+        }
+        return undefined;
+    }
 }

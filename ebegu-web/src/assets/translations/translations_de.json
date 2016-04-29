@@ -3,6 +3,8 @@
     "AKTUALISIEREN": "Aktualisieren",
     "APP_TITLE": "ebegu",
     "ADMIN": "Administration",
+    "BISHER_GS": "Eingabe Gesuchsteller: ",
+    "BISHER_JA": "Eingabe Jugendamt: ",
     "CANCEL": "Abbrechen",
     "ERROR_LENGTH": "Text ist zu lang",
     "PROPERTY_Name": "Property-Name",
@@ -21,6 +23,12 @@
     "ERROR_EMAIL": "Keine gültige Email ",
     "ERROR_FORMAT": "Falsches Format",
     "ERROR_DATE": "Falsches Datums Format",
+    "FINANZIELLE_SITUATION": "Finanzielle Situation",
+    "FINANZIELLE_SITUATION_STEUERVERANLAGUNG": "Haben Sie Ihre Steuerveranlagung {{basisjahr}} erhalten?",
+    "FINANZIELLE_SITUATION_STEUERERKLAERUNG": "Haben Sie die Steuererklärung für das Jahr {{basisjahr}} ausgefüllt?",
+    "FINANZIELLE_SITUATION_HINT1": "Es sind die Einkommens- und Vermögensverhältnisse des Jahres {{basisjahr}} massgebend.",
+    "FINANZIELLE_SITUATION_HINT2": "Alle Angaben können der Steuererklärung oder der Veranlagungsverfügung des Jahres {{basisjahr}} entnommen werden.",
+    "FINANZIELLE_SITUATION_NETTOLOHN": "Nettolohn",
     "SAVE": "Speichern ",
     "PROPERTY_NAME": "Name",
     "PROPERTY_TEXT": "Text",
@@ -311,10 +319,12 @@
     "MENU_KINDER" :"03 Kinder",
     "MENU_BETREUUNG" :"04 Betreuung",
     "MENU_ERWERBSPENSUM":"05 Erwerbspensum",
-    "MENU_FINANZIELLE":"06 Finanzielle Situation",
+    "MENU_FINANZIELLE_SITUATION":"06 Finanzielle Situation",
     "MENU_EINKOMMENSVERSCHLECHTERUNG":"07 Einkommensverschlechterung",
     "MENU_DOKUMENTE":"08 Dokumente",
-    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung"
+    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung",
+    "LABEL_JA": "Ja",
+    "LABEL_NEIN": "Nein"
 
 }
 

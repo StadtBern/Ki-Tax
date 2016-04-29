@@ -72,8 +72,8 @@ public class FachstelleResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(fachstelleJAXP.getId());
-		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(converter.toEntityId(fachstelleJAXP.getId()));
-		fachstelleFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, converter.toEntityId(fachstelleJAXP.getId())));
+		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(fachstelleJAXP.getId());
+		fachstelleFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fachstelleJAXP.getId()));
 		Fachstelle fachstelleToMerge = converter.fachstelleToEntity(fachstelleJAXP, fachstelleFromDB.get());
 		Fachstelle modifiedFachstelle = this.fachstelleService.saveFachstelle(fachstelleToMerge);
 
