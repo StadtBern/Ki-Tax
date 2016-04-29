@@ -66,17 +66,22 @@ describe('institutionRS', function () {
                     foundInstitution = result;
                 });
                 $httpBackend.flush();
-                expect(foundInstitution).toBeDefined();
-                expect(foundInstitution.name).toEqual(mockInstitution.name);
-                expect(foundInstitution.mandant.name).toEqual(mockInstitution.mandant.name);
-                expect(foundInstitution.traegerschaft.name).toEqual(mockInstitution.traegerschaft.name);
+                checkFieldValues(foundInstitution, mockInstitution);
             });
 
         });
 
         describe('createInstitution', () => {
             it('should create an institution', () => {
-                saveInstitution();
+                let createdInstitution: TSInstitution;
+                $httpBackend.expectPUT(institutionRS.serviceURL, mockInstitutionRest).respond(mockInstitutionRest);
+
+                institutionRS.createInstitution(mockInstitution)
+                    .then((result) => {
+                        createdInstitution = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(createdInstitution, mockInstitution);
             });
         });
 
@@ -84,7 +89,15 @@ describe('institutionRS', function () {
             it('should update an institution', () => {
                 mockInstitution.name = 'changedname';
                 mockInstitutionRest = ebeguRestUtil.institutionToRestObject({}, mockInstitution);
-                saveInstitution();
+                let updatedInstitution: TSInstitution;
+                $httpBackend.expectPUT(institutionRS.serviceURL, mockInstitutionRest).respond(mockInstitutionRest);
+
+                institutionRS.updateInstitution(mockInstitution)
+                    .then((result) => {
+                        updatedInstitution = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(updatedInstitution, mockInstitution);
             });
         });
 
@@ -116,30 +129,19 @@ describe('institutionRS', function () {
                 $httpBackend.flush();
                 expect(returnedInstitution).toBeDefined();
                 expect(returnedInstitution.length).toEqual(2);
-                expect(returnedInstitution[0].name).toEqual(institutionenRestArray[0].name);
-                expect(returnedInstitution[1].name).toEqual(institutionenRestArray[1].name);
-                expect(returnedInstitution[0].mandant.name).toEqual(institutionenRestArray[0].mandant.name);
-                expect(returnedInstitution[1].mandant.name).toEqual(institutionenRestArray[1].mandant.name);
-                expect(returnedInstitution[0].traegerschaft.name).toEqual(institutionenRestArray[0].traegerschaft.name);
-                expect(returnedInstitution[1].traegerschaft.name).toEqual(institutionenRestArray[1].traegerschaft.name);
+                checkFieldValues(returnedInstitution[0], institutionenRestArray[0]);
+                checkFieldValues(returnedInstitution[1], institutionenRestArray[1]);
             });
         });
 
     });
 
-    function saveInstitution() {
-        let updatedInstitution: TSInstitution;
-        $httpBackend.expectPUT(institutionRS.serviceURL, mockInstitutionRest).respond(mockInstitutionRest);
-
-        institutionRS.updateInstitution(mockInstitution)
-            .then((result) => {
-                updatedInstitution = result;
-            });
-        $httpBackend.flush();
-        expect(updatedInstitution).toBeDefined();
-        expect(updatedInstitution.name).toEqual(mockInstitution.name);
-        expect(updatedInstitution.id).toEqual(mockInstitution.id);
-        expect(updatedInstitution.mandant.name).toEqual(mockInstitution.mandant.name);
-        expect(updatedInstitution.traegerschaft.name).toEqual(mockInstitution.traegerschaft.name);
+    function checkFieldValues(institution1: TSInstitution, institution2: TSInstitution) {
+        expect(institution1).toBeDefined();
+        expect(institution1.name).toEqual(institution2.name);
+        expect(institution1.id).toEqual(institution2.id);
+        expect(institution1.mandant.name).toEqual(institution2.mandant.name);
+        expect(institution1.traegerschaft.name).toEqual(institution2.traegerschaft.name);
     }
+
 });

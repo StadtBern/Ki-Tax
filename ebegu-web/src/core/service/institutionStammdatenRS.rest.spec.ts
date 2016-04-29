@@ -67,17 +67,22 @@ describe('institutionStammdatenRS', function () {
                     foundInstitutionStammdaten = result;
                 });
                 $httpBackend.flush();
-                expect(foundInstitutionStammdaten).toBeDefined();
-                expect(foundInstitutionStammdaten.iban).toEqual(mockInstitutionStammdaten.iban);
-                expect(foundInstitutionStammdaten.institution.name).toEqual(mockInstitutionStammdaten.institution.name);
+                checkFieldValues(foundInstitutionStammdaten, mockInstitutionStammdaten);
             });
 
         });
 
         describe('createInstitutionStammdaten', () => {
             it('should create a InstitutionStammdaten', () => {
-                saveInstitutionStammdaten();
+                let createdInstitutionStammdaten: TSInstitutionStammdaten;
+                $httpBackend.expectPUT(institutionStammdatenRS.serviceURL, mockInstitutionStammdatenRest).respond(mockInstitutionStammdatenRest);
 
+                institutionStammdatenRS.createInstitutionStammdaten(mockInstitutionStammdaten)
+                    .then((result) => {
+                        createdInstitutionStammdaten = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(createdInstitutionStammdaten, mockInstitutionStammdaten);
             });
         });
 
@@ -85,7 +90,15 @@ describe('institutionStammdatenRS', function () {
             it('should update a InstitutionStammdaten', () => {
                 mockInstitutionStammdaten.iban = 'CH123456';
                 mockInstitutionStammdatenRest = ebeguRestUtil.institutionStammdatenToRestObject({}, mockInstitutionStammdaten);
-                saveInstitutionStammdaten();
+                let updatedInstitutionStammdaten: TSInstitutionStammdaten;
+                $httpBackend.expectPUT(institutionStammdatenRS.serviceURL, mockInstitutionStammdatenRest).respond(mockInstitutionStammdatenRest);
+
+                institutionStammdatenRS.updateInstitutionStammdaten(mockInstitutionStammdaten)
+                    .then((result) => {
+                        updatedInstitutionStammdaten = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(updatedInstitutionStammdaten, mockInstitutionStammdaten);
             });
         });
 
@@ -117,10 +130,8 @@ describe('institutionStammdatenRS', function () {
                 $httpBackend.flush();
                 expect(returnedInstitutionStammdaten).toBeDefined();
                 expect(returnedInstitutionStammdaten.length).toEqual(2);
-                expect(returnedInstitutionStammdaten[0].iban).toEqual(institutionStammdatenRestArray[0].iban);
-                expect(returnedInstitutionStammdaten[1].iban).toEqual(institutionStammdatenRestArray[1].iban);
-                expect(returnedInstitutionStammdaten[0].institution.name).toEqual(institutionStammdatenRestArray[0].institution.name);
-                expect(returnedInstitutionStammdaten[1].institution.name).toEqual(institutionStammdatenRestArray[1].institution.name);
+                checkFieldValues(returnedInstitutionStammdaten[0], institutionStammdatenRestArray[0]);
+                checkFieldValues(returnedInstitutionStammdaten[1], institutionStammdatenRestArray[1]);
             });
         });
 
@@ -137,27 +148,17 @@ describe('institutionStammdatenRS', function () {
                 $httpBackend.flush();
                 expect(returnedInstitutionStammdaten).toBeDefined();
                 expect(returnedInstitutionStammdaten.length).toEqual(2);
-                expect(returnedInstitutionStammdaten[0].iban).toEqual(institutionStammdatenRestArray[0].iban);
-                expect(returnedInstitutionStammdaten[1].iban).toEqual(institutionStammdatenRestArray[1].iban);
-                expect(returnedInstitutionStammdaten[0].institution.name).toEqual(institutionStammdatenRestArray[0].institution.name);
-                expect(returnedInstitutionStammdaten[1].institution.name).toEqual(institutionStammdatenRestArray[1].institution.name);
+                checkFieldValues(returnedInstitutionStammdaten[0], institutionStammdatenRestArray[0]);
+                checkFieldValues(returnedInstitutionStammdaten[1], institutionStammdatenRestArray[1]);
             });
         });
     });
 
-    function saveInstitutionStammdaten() {
-        let updatedInstitutionStammdaten: TSInstitutionStammdaten;
-        $httpBackend.expectPUT(institutionStammdatenRS.serviceURL, mockInstitutionStammdatenRest).respond(mockInstitutionStammdatenRest);
-
-        institutionStammdatenRS.updateInstitutionStammdaten(mockInstitutionStammdaten)
-            .then((result) => {
-                updatedInstitutionStammdaten = result;
-            });
-        $httpBackend.flush();
-        expect(updatedInstitutionStammdaten).toBeDefined();
-        expect(updatedInstitutionStammdaten.iban).toEqual(mockInstitutionStammdaten.iban);
-        expect(updatedInstitutionStammdaten.id).toEqual(mockInstitutionStammdaten.id);
-        expect(updatedInstitutionStammdaten.institution.name).toEqual(mockInstitutionStammdaten.institution.name);
+    function checkFieldValues(institutionStammdaten1: TSInstitutionStammdaten, institutionStammdaten2: TSInstitutionStammdaten) {
+        expect(institutionStammdaten1).toBeDefined();
+        expect(institutionStammdaten1.iban).toEqual(institutionStammdaten2.iban);
+        expect(institutionStammdaten1.id).toEqual(institutionStammdaten2.id);
+        expect(institutionStammdaten1.institution.name).toEqual(institutionStammdaten2.institution.name);
     }
 
 });

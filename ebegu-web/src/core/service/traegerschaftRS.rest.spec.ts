@@ -57,15 +57,22 @@ describe('institutionStammdatenRS', function () {
                     foundTraegerschaft = result;
                 });
                 $httpBackend.flush();
-                expect(foundTraegerschaft).toBeDefined();
-                expect(foundTraegerschaft.name).toEqual(mockTraegerschaft.name);
+                checkFieldValues(foundTraegerschaft, mockTraegerschaft);
             });
 
         });
 
         describe('createTraegerschaft', () => {
             it('should create a traegerschaft', () => {
-                saveTraegerschaft();
+                let createdTraegerschaft: TSTraegerschaft;
+                $httpBackend.expectPUT(traegerschaftRS.serviceURL, mockTraegerschaftRest).respond(mockTraegerschaftRest);
+
+                traegerschaftRS.createTraegerschaft(mockTraegerschaft)
+                    .then((result) => {
+                        createdTraegerschaft = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(createdTraegerschaft, mockTraegerschaft);
             });
         });
 
@@ -73,7 +80,15 @@ describe('institutionStammdatenRS', function () {
             it('should update a traegerschaft', () => {
                 mockTraegerschaft.name = 'changedname';
                 mockTraegerschaftRest = ebeguRestUtil.traegerschaftToRestObject({}, mockTraegerschaft);
-                saveTraegerschaft();
+                let updatedTraegerschaft: TSTraegerschaft;
+                $httpBackend.expectPUT(traegerschaftRS.serviceURL, mockTraegerschaftRest).respond(mockTraegerschaftRest);
+
+                traegerschaftRS.updateTraegerschaft(mockTraegerschaft)
+                    .then((result) => {
+                        updatedTraegerschaft = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(updatedTraegerschaft, mockTraegerschaft);
             });
         });
 
@@ -105,23 +120,16 @@ describe('institutionStammdatenRS', function () {
                 $httpBackend.flush();
                 expect(returnedTraegerschaften).toBeDefined();
                 expect(returnedTraegerschaften.length).toEqual(2);
-                expect(returnedTraegerschaften[0].name).toEqual(traegerschaftenRestArray[0].name);
-                expect(returnedTraegerschaften[1].name).toEqual(traegerschaftenRestArray[1].name);
+                checkFieldValues(returnedTraegerschaften[0], traegerschaftenRestArray[0]);
+                checkFieldValues(returnedTraegerschaften[1], traegerschaftenRestArray[1]);
             });
         });
     });
 
-    function saveTraegerschaft() {
-        let updatedTraegerschaft: TSTraegerschaft;
-        $httpBackend.expectPUT(traegerschaftRS.serviceURL, mockTraegerschaftRest).respond(mockTraegerschaftRest);
-
-        traegerschaftRS.updateTraegerschaft(mockTraegerschaft)
-            .then((result) => {
-                updatedTraegerschaft = result;
-            });
-        $httpBackend.flush();
-        expect(updatedTraegerschaft).toBeDefined();
-        expect(updatedTraegerschaft.name).toEqual(mockTraegerschaft.name);
-        expect(updatedTraegerschaft.id).toEqual(mockTraegerschaft.id);
+    function checkFieldValues(traegerschaft1: TSTraegerschaft, traegerschaft2: TSTraegerschaft) {
+        expect(traegerschaft1).toBeDefined();
+        expect(traegerschaft1.name).toEqual(traegerschaft2.name);
+        expect(traegerschaft1.id).toEqual(traegerschaft2.id);
     }
+
 });

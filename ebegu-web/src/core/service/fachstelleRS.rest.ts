@@ -1,29 +1,31 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IHttpPromise, IPromise} from 'angular';
+import {IHttpService, IHttpPromise, IPromise, ILogService} from 'angular';
 import {TSFachstelle} from '../../models/TSFachstelle';
 
 export class FachstelleRS {
     serviceURL: string;
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
+    log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
         this.serviceURL = REST_API + 'fachstellen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
+        this.log = $log;
     }
 
-    public update(fachstelle: TSFachstelle): IHttpPromise<any> {
+    public updateFachstelle(fachstelle: TSFachstelle): IPromise<TSFachstelle> {
         return this.saveFachstelle(fachstelle);
     }
 
-    public create(fachstelle: TSFachstelle): IHttpPromise<any> {
+    public createFachstelle(fachstelle: TSFachstelle): IPromise<TSFachstelle> {
         return this.saveFachstelle(fachstelle);
     }
 
-    private saveFachstelle(fachstelle: TSFachstelle) {
+    private saveFachstelle(fachstelle: TSFachstelle): IPromise<TSFachstelle> {
         let fachstelleObject = {};
         fachstelleObject = this.ebeguRestUtil.fachstelleToRestObject(fachstelleObject, fachstelle);
 
@@ -31,21 +33,32 @@ export class FachstelleRS {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }).then((response: any) => {
+            this.log.debug('PARSING fachstelle REST object ', response.data);
+            return this.ebeguRestUtil.parseFachstelle(new TSFachstelle(), response.data);
         });
     }
 
-    public remove(fachstelleID: string): IHttpPromise<any> {
+    public removeFachstelle(fachstelleID: string): IHttpPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(fachstelleID));
     }
 
-    public findFachstelle(fachstelleID: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fachstelleID));
+    public findFachstelle(fachstelleID: string): IPromise<TSFachstelle> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fachstelleID))
+            .then((response: any) => {
+                this.log.debug('PARSING fachstelle REST object ', response.data);
+                return this.ebeguRestUtil.parseFachstelle(new TSFachstelle(), response.data);
+            });
     }
 
     public getAllFachstellen(): IPromise<TSFachstelle[]> {
-        return this.http.get(this.serviceURL + '/').then(
+        return this.http.get(this.serviceURL).then(
             (response: any) => this.ebeguRestUtil.parseFachstellen(response.data)
         );
+    }
+
+    public getServiceName(): string {
+        return 'FachstelleRS';
     }
 
 }
