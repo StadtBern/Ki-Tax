@@ -35,7 +35,8 @@ export const EbeguWebCore: angular.IModule = angular
         'ngMaterial',
         'ngMessages',
         'pascalprecht.translate',
-        'angularMoment'
+        'angularMoment',
+        'unsavedChanges'
     ])
     .run(appRun)
     .config(configure)

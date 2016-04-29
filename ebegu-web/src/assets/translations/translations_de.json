@@ -314,7 +314,9 @@
     "MENU_FINANZIELLE":"06 Finanzielle Situation",
     "MENU_EINKOMMENSVERSCHLECHTERUNG":"07 Einkommensverschlechterung",
     "MENU_DOKUMENTE":"08 Dokumente",
-    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung"
+    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung",
+    "UNSAVED_WARNING":"Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite verlassen.",
+    "UNSAVED_WARNING_RELOAD": "Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite neu laden."
 
 }
 
