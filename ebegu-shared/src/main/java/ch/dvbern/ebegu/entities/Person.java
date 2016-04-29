@@ -4,11 +4,15 @@ import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -60,6 +64,19 @@ public class Person extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
+
+
+	@Valid
+	@Size(min = 1)
+	@Nonnull
+	// es handelt sich um eine "private" Relation, das heisst Adressen koennen nie einer anderen Person zugeordnet werden
+	@OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Adresse> adressen = new ArrayList<>();
+
+	public boolean addAdresse(@Nonnull Adresse adresse) {
+		adresse.setPerson(this);
+		return !adressen.contains(adresse) && adressen.add(adresse);
+	}
 
 	public String getVorname() {
 
@@ -126,12 +143,21 @@ public class Person extends AbstractEntity {
 		this.telefonAusland = telefonAusland;
 	}
 
-
 	public String getZpvNumber() {
 		return zpvNumber;
 	}
 
 	public void setZpvNumber(String zpvNumber) {
 		this.zpvNumber = zpvNumber;
+	}
+
+
+	@Nonnull
+	public List<Adresse> getAdressen() {
+		return adressen;
+	}
+
+	public void setAdressen(@Nonnull List<Adresse> adressen) {
+		this.adressen = adressen;
 	}
 }

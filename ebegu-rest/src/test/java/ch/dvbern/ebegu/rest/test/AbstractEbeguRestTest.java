@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.tests;
+package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
@@ -9,35 +9,35 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
+import org.jboss.shrinkwrap.resolver.api.maven.strategy.RejectDependenciesStrategy;
 
 import javax.annotation.Nullable;
 import java.io.File;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss
- * von allen Testklassen erweitert werden.
+ * von allen Testklassen in REST modul erweitert werden. Es verhaelt sich leicht anders als die Basisklasse in
+ * AbstractEbeguTest
  */
-public abstract class AbstractEbeguTest {
+public abstract class AbstractEbeguRestTest {
 
 	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
-		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
+		File[] runtimeDeps = pom.importRuntimeDependencies().resolve()
+			.using(new RejectDependenciesStrategy(false,"ch.dvbern.ebegu:ebegu-dbschema")) //wir wollen flyway nicht im test
+			.asFile();
 		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
 
 
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
-		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
-			.addPackages(true, "ch/dvbern/ebegu/persistence")
-			.addPackages(true, "ch/dvbern/ebegu/services")
-			.addPackages(true, "ch/dvbern/ebegu/validation")
-			.addPackages(true, "ch/dvbern/ebegu/errors")
-			.addPackages(true, "ch/dvbern/ebegu/entities")
-			.addPackages(true, "ch/dvbern/ebegu/tests")
-			.addPackages(true, "ch/dvbern/ebegu/enums")
-			.addClasses(AbstractEbeguTest.class, Persistence.class,
+		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "rest-test.war")
+
+			.addClasses(AbstractEbeguRestTest.class, Persistence.class,
 				ISessionContextService.class, AbstractEntity.class )
 
+			.addPackages(true, "ch/dvbern/ebegu/api")
+			.addPackages(true, "ch/dvbern/ebegu/rest/test/util")
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)
 

@@ -9,13 +9,15 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Entitaet zum Speichern von Adressen in der Datenbank.
  */
 @Audited
 @Entity
-public class Adresse extends AbstractDateRangedEntity {
+public class Adresse extends AbstractEntity {
 
 	private static final long serialVersionUID = -7687645920281069260L;
 
@@ -60,7 +62,9 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Enumerated(EnumType.STRING)
 	private AdresseTyp adresseTyp = AdresseTyp.WOHNADRESSE;
 
+	@NotNull
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_person_id"))
 	private Person person;
 
 
@@ -112,6 +116,14 @@ public class Adresse extends AbstractDateRangedEntity {
 		this.ort = ort;
 	}
 
+	public LocalDate getGueltigAb() { return gueltigAb; }
+
+	public void setGueltigAb(LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
+
+	public LocalDate getGueltigBis() { return gueltigBis; }
+
+	public void setGueltigBis(LocalDate gueltigBis) { this.gueltigBis = gueltigBis; }
+
 	@Nullable
 	public String getZusatzzeile() {
 		return zusatzzeile;
@@ -144,4 +156,30 @@ public class Adresse extends AbstractDateRangedEntity {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
+
+
+	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
+	public boolean isSame(Adresse otherAdr) {
+		if (this == otherAdr) {
+			return true;
+		}
+		if (otherAdr == null || getClass() != otherAdr.getClass()) {
+			return false;
+		}
+
+
+		return Objects.equals(strasse, otherAdr.strasse) &&
+			Objects.equals(hausnummer, otherAdr.hausnummer) &&
+			Objects.equals(zusatzzeile, otherAdr.zusatzzeile) &&
+			Objects.equals(plz, otherAdr.plz) &&
+			Objects.equals(ort, otherAdr.ort) &&
+			land == otherAdr.land &&
+			Objects.equals(gemeinde, otherAdr.gemeinde) &&
+			adresseTyp == otherAdr.adresseTyp &&
+			Objects.equals(gueltigAb, otherAdr.gueltigAb) &&
+			Objects.equals(gueltigBis, otherAdr.gueltigBis);
+
+	}
+
+
 }

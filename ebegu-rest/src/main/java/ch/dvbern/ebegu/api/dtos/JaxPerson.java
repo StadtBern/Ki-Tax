@@ -53,7 +53,6 @@ public class JaxPerson extends JaxAbstractDTO {
 	private String telefon;
 
 
-	@Pattern(regexp = Constants.REGEX_TELEFON, message = "{error_invalid_mobilenummer}")
 	private String telefonAusland;
 
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist

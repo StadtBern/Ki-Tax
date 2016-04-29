@@ -39,4 +39,5 @@ public interface Constants {
 	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
 
 	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
+	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
 }

@@ -9,3 +9,4 @@ derby.log
 .access^
 ~\$*
 ebegu-runconfig/wildfly_9.0.2/build.properties
+ebegu-runconfig/wildfly_10.0.0.Final/build.properties
