@@ -1,17 +1,14 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LandConverter;
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Land;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
 
 /**
  * Created by imanol on 17.03.16.
@@ -19,7 +16,7 @@ import java.time.LocalDate;
  */
 @XmlRootElement(name = "adresse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxAdresse extends JaxAbstractDTO {
+public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
 
 	private static final long serialVersionUID = -1093677998323618626L;
@@ -39,12 +36,7 @@ public class JaxAdresse extends JaxAbstractDTO {
 	private Land land = Land.CH;
 
 	private String gemeinde;
-	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate gueltigAb;
-	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate gueltigBis;
+
 	private AdresseTyp adresseTyp;
 
 
@@ -87,16 +79,6 @@ public class JaxAdresse extends JaxAbstractDTO {
 	public void setOrt(String ort) {
 		this.ort = ort;
 	}
-
-	@Nullable
-	public LocalDate getGueltigAb() { return gueltigAb; }
-
-	public void setGueltigAb(@Nullable LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
-
-	@Nullable
-	public LocalDate getGueltigBis() { return gueltigBis; }
-
-	public void setGueltigBis(@Nullable LocalDate gueltigBis) {	this.gueltigBis = gueltigBis; }
 
 	public String getZusatzzeile() {
 		return zusatzzeile;

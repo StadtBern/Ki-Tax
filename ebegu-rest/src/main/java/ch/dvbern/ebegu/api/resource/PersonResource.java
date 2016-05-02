@@ -84,7 +84,7 @@ public class PersonResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxPerson findPerson(
-		@Nonnull @NotNull JaxId personJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("personId") JaxId personJAXPId) throws EbeguException {
 
 		Validate.notNull(personJAXPId.getId());
 		String personID = converter.toEntityId(personJAXPId);

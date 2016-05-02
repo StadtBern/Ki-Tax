@@ -53,7 +53,7 @@ public class ApplicationPropertyResource {
 
 		Optional<ApplicationProperty> propertyFromDB = this.applicationPropertyService.readApplicationProperty(keyParam);
 		propertyFromDB.orElseThrow(() -> new EbeguEntityNotFoundException("getByKey", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, keyParam));
-		return converter.applicationPropertieToJAX(propertyFromDB.get());
+		return converter.applicationPropertyToJAX(propertyFromDB.get());
 	}
 
 	@Nonnull
@@ -62,7 +62,7 @@ public class ApplicationPropertyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxApplicationProperties> getAllApplicationProperties() {
 		return applicationPropertyService.getAllApplicationProperties().stream()
-			.map(ap -> converter.applicationPropertieToJAX(ap))
+			.map(ap -> converter.applicationPropertyToJAX(ap))
 			.collect(Collectors.toList());
 	}
 
@@ -87,7 +87,7 @@ public class ApplicationPropertyResource {
 			.path("/" + modifiedProperty.getName())
 			.build();
 
-		return Response.created(uri).entity(converter.applicationPropertieToJAX(modifiedProperty)).build();
+		return Response.created(uri).entity(converter.applicationPropertyToJAX(modifiedProperty)).build();
 
 
 	}
@@ -107,7 +107,7 @@ public class ApplicationPropertyResource {
 
 		ApplicationProperty modifiedProperty = this.applicationPropertyService.saveOrUpdateApplicationProperty(key, value);
 
-		return converter.applicationPropertieToJAX(modifiedProperty);
+		return converter.applicationPropertyToJAX(modifiedProperty);
 	}
 
 

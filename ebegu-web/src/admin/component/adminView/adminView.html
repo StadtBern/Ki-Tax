@@ -50,7 +50,8 @@
 
         </div>
 
-        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty">
+        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty"
+        unsaved-warning-form>
             <div class="row" style="margin-top: 20px">
                 <div class="col-md-6">
                     <div class="form-group top5">
@@ -82,9 +83,11 @@
                     </button>
                 </div>
                 <div class="col-md-4 ">
-                    <a href="#" id="cancelLink" data-translate="CANCEL"
-                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-                </div>
+                                  <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
+                                     ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                                      <span data-translate="CANCEL"></span>
+                                  </a>
+                              </div>
             </div>
         </form>
     </div>

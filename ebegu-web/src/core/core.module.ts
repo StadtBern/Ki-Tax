@@ -19,26 +19,44 @@ import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
+import {MandantRS} from './service/mandantRS.rest';
+import {TraegerschaftRS} from './service/traegerschaftRS.rest';
+import {InstitutionRS} from './service/institutionRS.rest';
+import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 
+let dynamicDependencies = function (): string[] {
+
+    let dynDep: string [] = ['unsavedChanges'];
+    //deaktiviere unsavedChanges plugin fuer development
+    if (ENV === 'development') {
+        return [];
+    }
+    return dynDep;
+};
+
+const dependencies: string[] = [
+    /* Angular modules */
+    'ngAnimate',
+    'ngSanitize',
+    'ngMessages',
+    'ngAria',
+    'ngCookies',
+    /* shared DVBern modules */
+    router.name,
+    /* 3rd-party modules */
+    'ui.bootstrap',
+    'smart-table',
+    'ngMaterial',
+    'ngMessages',
+    'pascalprecht.translate',
+    'angularMoment'
+];
+
+
+console.log(dependencies.concat(dynamicDependencies()));
 export const EbeguWebCore: angular.IModule = angular
-    .module('ebeguWeb.core', [
-        /* Angular modules */
-        'ngAnimate',
-        'ngSanitize',
-        'ngMessages',
-        'ngAria',
-        'ngCookies',
-        /* shared DVBern modules */
-        router.name,
-        /* 3rd-party modules */
-        'ui.bootstrap',
-        'smart-table',
-        'ngMaterial',
-        'ngMessages',
-        'pascalprecht.translate',
-        'angularMoment'
-    ])
+    .module('ebeguWeb.core', dependencies.concat(dynamicDependencies()))
     .run(appRun)
     .config(configure)
     .constant('REST_API', '/ebegu/api/v1/')
@@ -59,6 +77,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
+    .service('MandantRS', MandantRS)
+    .service('TraegerschaftRS', TraegerschaftRS)
+    .service('InstitutionRS', InstitutionRS)
+    .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)

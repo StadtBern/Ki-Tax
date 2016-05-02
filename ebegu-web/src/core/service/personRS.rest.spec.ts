@@ -13,7 +13,6 @@ describe('PersonRS', function () {
     let personRS: PersonRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
-    let REST_API: string;
     let mockPerson: TSPerson;
     let mockPersonRest: any;
 
@@ -35,7 +34,7 @@ describe('PersonRS', function () {
 
         $httpBackend.whenGET(personRS.serviceURL + '/' + encodeURIComponent(mockPerson.id)).respond(mockPersonRest);
     });
-    
+
 
     describe('Public API', function () {
         it('check Service name', function () {
@@ -49,13 +48,13 @@ describe('PersonRS', function () {
             expect(personRS.update).toBeDefined();
         });
     });
+
     describe('API Usage', function () {
         describe('update', () => {
             it('should update a person and her adresses', () => {
                     mockPerson.nachname = 'changedname';
                     let updatedPerson: TSPerson;
                     $httpBackend.expectPUT(personRS.serviceURL, ebeguRestUtil.personToRestObject({}, mockPerson)).respond(ebeguRestUtil.personToRestObject({}, mockPerson));
-
 
                     personRS.update(mockPerson).then((result) => {
                         updatedPerson = result;
@@ -64,10 +63,8 @@ describe('PersonRS', function () {
                     expect(updatedPerson).toBeDefined();
                     expect(updatedPerson.nachname).toEqual(mockPerson.nachname);
                     expect(updatedPerson.id).toEqual(mockPerson.id);
-
                 }
             );
-
         });
 
         describe('findPerson', () => {
@@ -75,20 +72,15 @@ describe('PersonRS', function () {
                     let foundPerson: TSPerson;
                     $httpBackend.expectGET(personRS.serviceURL + '/' + mockPerson.id);
 
-
                     personRS.findPerson(mockPerson.id).then((result) => {
                         foundPerson = result;
                     });
                     $httpBackend.flush();
                     expect(foundPerson).toBeDefined();
                     expect(foundPerson.nachname).toEqual(mockPerson.nachname);
-
-
                 }
             );
-
         });
     });
-
 
 });

@@ -4,7 +4,7 @@
             <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
         </h4>
         <hr class="header"/>
-        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate>
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
             <br />
 
@@ -166,7 +166,7 @@
                     </button>
                 </div>
                 <div class="col-md-2">
-                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                    <a href="javascript:;" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
 
                 </div>
