@@ -13,6 +13,7 @@
     <properties>
         <nexus.repo.id>dvb.snapshots</nexus.repo.id>
         <nexus.url>${maven.nexus.snapshot.url}</nexus.url>
+        <npm.arguments>run --no-color build:dev</npm.arguments>
     </properties>
 
     <profiles>
@@ -23,6 +24,7 @@
             <properties>
                 <nexus.repo.id>dvb</nexus.repo.id>
                 <nexus.url>${maven.nexus.url}</nexus.url>
+                <npm.arguments>run --no-color build:prod</npm.arguments>
             </properties>
         </profile>
 
@@ -76,7 +78,7 @@
                         </goals>
                         <!-- Optional configuration which provides for running any npm command -->
                         <configuration>
-                            <arguments>run --no-color build:prod </arguments>
+                            <arguments>${npm.arguments}</arguments>
                         </configuration>
                     </execution>
 
