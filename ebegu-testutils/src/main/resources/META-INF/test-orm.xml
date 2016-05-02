@@ -9,9 +9,13 @@
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
 	<entity class="ch.dvbern.ebegu.entities.Person"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
-	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
+	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>
 	<entity class="ch.dvbern.ebegu.entities.Fall"/>
+	<entity class="ch.dvbern.ebegu.entities.Mandant"/>
+	<entity class="ch.dvbern.ebegu.entities.Traegerschaft"/>
+	<entity class="ch.dvbern.ebegu.entities.Institution"/>
+	<entity class="ch.dvbern.ebegu.entities.InstitutionStammdaten"/>
 
 
 </entity-mappings>
