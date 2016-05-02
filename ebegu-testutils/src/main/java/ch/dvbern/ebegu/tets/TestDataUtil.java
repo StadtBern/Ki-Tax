@@ -16,7 +16,7 @@ public final class TestDataUtil {
 	private TestDataUtil(){
 	}
 
-	public  static Adresse createDefaultAdresse() {
+	public static Adresse createDefaultAdresse() {
 		Adresse adresse = new Adresse();
 		adresse.setStrasse("Nussbaumstrasse");
 		adresse.setHausnummer("21");
@@ -30,18 +30,18 @@ public final class TestDataUtil {
 		return adresse;
 	}
 
-	public static Person createDefaultPerson(){
-		Person person = new Person();
-		person.setGeburtsdatum(LocalDate.of(1984,12,12));
-		person.setVorname("Tim");
-		person.setNachname("Tester");
-		person.setGeschlecht(Geschlecht.MAENNLICH);
-		person.setMail("tim.tester@example.com");
-		person.setMobile("076 309 30 58");
-		person.setTelefon("031 378 24 24");
-		person.setZpvNumber("0761234567897");
-		person.addAdresse(createDefaultAdresse());
-		return person;
+	public static Gesuchsteller createDefaultGesuchsteller(){
+		Gesuchsteller gesuchsteller = new Gesuchsteller();
+		gesuchsteller.setGeburtsdatum(LocalDate.of(1984,12,12));
+		gesuchsteller.setVorname("Tim");
+		gesuchsteller.setNachname("Tester");
+		gesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
+		gesuchsteller.setMail("tim.tester@example.com");
+		gesuchsteller.setMobile("076 309 30 58");
+		gesuchsteller.setTelefon("031 378 24 24");
+		gesuchsteller.setZpvNumber("0761234567897");
+		gesuchsteller.addAdresse(createDefaultAdresse());
+		return gesuchsteller;
 	}
 
 	public static Familiensituation createDefaultFamiliensituation(){

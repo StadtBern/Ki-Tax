@@ -20,11 +20,11 @@ public class Gesuch extends AbstractEntity {
 
 	@Nullable
 	@OneToOne(optional = true)
-	private Person gesuchsteller1;
+	private Gesuchsteller gesuchsteller1;
 
 	@Nullable
 	@OneToOne(optional = true)
-	private Person gesuchsteller2;
+	private Gesuchsteller gesuchsteller2;
 
 
 	public Fall getFall() {
@@ -36,20 +36,20 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Person getGesuchsteller1() {
+	public Gesuchsteller getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable Person gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable Gesuchsteller gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public Person getGesuchsteller2() {
+	public Gesuchsteller getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable Person gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable Gesuchsteller gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 }

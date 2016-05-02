@@ -6,7 +6,7 @@ import router from '../dvbModules/router/router.module';
 import AdresseRS from './service/adresseRS.rest';
 import ListResourceRS from './service/listResourceRS.rest';
 import EbeguRestUtil from '../utils/EbeguRestUtil';
-import PersonRS from './service/personRS.rest';
+import GesuchstellerRS from './service/gesuchstellerRS.rest.ts';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
 import FallRS from '../gesuch/service/fallRS.rest';
@@ -60,7 +60,7 @@ export const EbeguWebCore: angular.IModule = angular
         REST_API: '/ebegu/api/v1/'
     })
     .service('EbeguRestUtil', EbeguRestUtil)
-    .service('PersonRS', PersonRS)
+    .service('GesuchstellerRS', GesuchstellerRS)
     .service('AdresseRS', AdresseRS)
     .service('ListResourceRS', ListResourceRS)
     .service('FallRS', FallRS)

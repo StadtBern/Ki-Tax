@@ -17,11 +17,11 @@ import java.time.LocalDate;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
- * DTO fuer Stammdaten der Person (kennt adresse)
+ * DTO fuer Stammdaten der Gesuchsteller (kennt adresse)
  */
-@XmlRootElement(name = "person")
+@XmlRootElement(name = "gesuchsteller")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxPerson extends JaxAbstractDTO {
+public class JaxGesuchsteller extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297026901664130397L;
 

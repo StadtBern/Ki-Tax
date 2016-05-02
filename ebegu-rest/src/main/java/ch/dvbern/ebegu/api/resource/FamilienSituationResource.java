@@ -59,9 +59,9 @@ public class FamilienSituationResource {
 			.path("/" + persistedFamiliensituation.getId())
 			.build();
 
-		JaxFamilienSituation jaxPerson = converter.familiensituationToJAX(persistedFamiliensituation);
+		JaxFamilienSituation jaxGesuchsteller = converter.familiensituationToJAX(persistedFamiliensituation);
 
-		return Response.created(uri).entity(jaxPerson).build();
+		return Response.created(uri).entity(jaxGesuchsteller).build();
 	}
 
 	@Nullable
@@ -80,9 +80,8 @@ public class FamilienSituationResource {
 		Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, loadedFamiliensituation.get());
 		Familiensituation persistedFamiliensituation = this.familiensituationService.updateFamiliensituation(convertedFamiliensituation);
 
-		JaxFamilienSituation jaxPerson = converter.familiensituationToJAX(persistedFamiliensituation);
+		return converter.familiensituationToJAX(persistedFamiliensituation);
 
-		return jaxPerson;
 	}
 
 	@Nullable

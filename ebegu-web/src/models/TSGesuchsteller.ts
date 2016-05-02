@@ -1,58 +1,26 @@
-import TSAbstractEntity from './TSAbstractEntity';
 import TSAdresse from './TSAdresse';
+import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 
-export default class TSPerson extends TSAbstractEntity {
+export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
-    private _vorname: string;
-    private _nachname: string;
-    private _geburtsdatum: moment.Moment;
     private _mail: string;
     private _mobile: string;
     private _telefon: string;
     private _telefonAusland: string;
     private _umzug: boolean;
-    private _geschlecht: TSGeschlecht;
     private _adresse: TSAdresse;
     private _korrespondenzAdresse: TSAdresse;
     private _umzugAdresse: TSAdresse;
 
-    constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, email?: string, mobile?: string,
-                telefon?: string, telefonAusland?: string, umzug?: boolean) {
-        super();
-        this._vorname = vorname;
-        this._nachname = nachname;
-        this._geburtsdatum = geburtsdatum;
+    constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
+                email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean) {
+        super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
         this._umzug = umzug;
-    }
-
-
-    public get vorname(): string {
-        return this._vorname;
-    }
-
-    public set vorname(value: string) {
-        this._vorname = value;
-    }
-
-    public get nachname(): string {
-        return this._nachname;
-    }
-
-    public set nachname(value: string) {
-        this._nachname = value;
-    }
-
-    public get geburtsdatum(): moment.Moment {
-        return this._geburtsdatum;
-    }
-
-    public set geburtsdatum(value: moment.Moment) {
-        this._geburtsdatum = value;
     }
 
     public get mail(): string {
@@ -95,16 +63,6 @@ export default class TSPerson extends TSAbstractEntity {
     public set adresse(adr: TSAdresse) {
         this._adresse = adr;
     }
-
-
-    public get geschlecht(): TSGeschlecht {
-        return this._geschlecht;
-    }
-
-    public set geschlecht(value: TSGeschlecht) {
-        this._geschlecht = value;
-    }
-
 
     public get umzugAdresse(): TSAdresse {
         return this._umzugAdresse;

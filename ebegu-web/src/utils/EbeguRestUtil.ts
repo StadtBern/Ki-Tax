@@ -2,7 +2,7 @@ import TSApplicationProperty from '../models/TSApplicationProperty';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSAdresse from '../models/TSAdresse';
 import {TSAdressetyp} from '../models/enums/TSAdressetyp';
-import TSPerson from '../models/TSPerson';
+import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSGesuch from '../models/TSGesuch';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
@@ -132,45 +132,45 @@ export default class EbeguRestUtil {
     }
 
 
-    public personToRestObject(restPerson: any, person: TSPerson): any {
-        if (person) {
-            this.abstractEntityToRestObject(restPerson, person);
-            restPerson.vorname = person.vorname;
+    public gesuchstellerToRestObject(restGesuchsteller: any, gesuchsteller: TSGesuchsteller): any {
+        if (gesuchsteller) {
+            this.abstractEntityToRestObject(restGesuchsteller, gesuchsteller);
+            restGesuchsteller.vorname = gesuchsteller.vorname;
 
-            restPerson.nachname = person.nachname;
-            restPerson.geburtsdatum = DateUtil.momentToLocalDate(person.geburtsdatum);
-            restPerson.mail = person.mail;
-            restPerson.mobile = person.mobile;
-            restPerson.telefon = person.telefon;
-            restPerson.telefonAusland = person.telefonAusland;
-            restPerson.umzug = person.umzug;
-            restPerson.geschlecht = person.geschlecht;
-            restPerson.wohnAdresse = this.adresseToRestObject({}, person.adresse); //achtung heisst im jax wohnadresse nicht adresse
-            restPerson.alternativeAdresse = this.adresseToRestObject({}, person.korrespondenzAdresse);
-            restPerson.umzugAdresse = this.adresseToRestObject({}, person.umzugAdresse);
-            return restPerson;
+            restGesuchsteller.nachname = gesuchsteller.nachname;
+            restGesuchsteller.geburtsdatum = DateUtil.momentToLocalDate(gesuchsteller.geburtsdatum);
+            restGesuchsteller.mail = gesuchsteller.mail;
+            restGesuchsteller.mobile = gesuchsteller.mobile;
+            restGesuchsteller.telefon = gesuchsteller.telefon;
+            restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland;
+            restGesuchsteller.umzug = gesuchsteller.umzug;
+            restGesuchsteller.geschlecht = gesuchsteller.geschlecht;
+            restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
+            restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
+            restGesuchsteller.umzugAdresse = this.adresseToRestObject({}, gesuchsteller.umzugAdresse);
+            return restGesuchsteller;
         }
         return undefined;
     }
 
 
-    public parsePerson(personTS: TSPerson, personFromServer: any): TSPerson {
-        if (personFromServer) {
+    public parseGesuchsteller(gesuchstellerTS: TSGesuchsteller, gesuchstellerFromServer: any): TSGesuchsteller {
+        if (gesuchstellerFromServer) {
 
-            this.parseAbstractEntity(personTS, personFromServer);
-            personTS.vorname = personFromServer.vorname;
-            personTS.nachname = personFromServer.nachname;
-            personTS.geburtsdatum = DateUtil.localDateToMoment(personFromServer.geburtsdatum);
-            personTS.mail = personFromServer.mail;
-            personTS.mobile = personFromServer.mobile;
-            personTS.telefon = personFromServer.telefon;
-            personTS.telefonAusland = personFromServer.telefonAusland;
-            personTS.umzug = personFromServer.umzug;
-            personTS.geschlecht = personFromServer.geschlecht;
-            personTS.adresse = this.parseAdresse(new TSAdresse(), personFromServer.wohnAdresse);
-            personTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), personFromServer.alternativeAdresse);
-            personTS.umzugAdresse = this.parseAdresse(new TSAdresse(), personFromServer.umzugAdresse);
-            return personTS;
+            this.parseAbstractEntity(gesuchstellerTS, gesuchstellerFromServer);
+            gesuchstellerTS.vorname = gesuchstellerFromServer.vorname;
+            gesuchstellerTS.nachname = gesuchstellerFromServer.nachname;
+            gesuchstellerTS.geburtsdatum = DateUtil.localDateToMoment(gesuchstellerFromServer.geburtsdatum);
+            gesuchstellerTS.mail = gesuchstellerFromServer.mail;
+            gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
+            gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
+            gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
+            gesuchstellerTS.umzug = gesuchstellerFromServer.umzug;
+            gesuchstellerTS.geschlecht = gesuchstellerFromServer.geschlecht;
+            gesuchstellerTS.adresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.wohnAdresse);
+            gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
+            gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
+            return gesuchstellerTS;
         }
         return undefined;
 
@@ -217,8 +217,8 @@ export default class EbeguRestUtil {
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
         this.abstractEntityToRestObject(restGesuch, gesuch);
         restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
-        restGesuch.gesuchsteller1 = this.personToRestObject({}, gesuch.gesuchsteller1);
-        restGesuch.gesuchsteller2 = this.personToRestObject({}, gesuch.gesuchsteller2);
+        restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
+        restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
 
         return restGesuch;
     }
@@ -227,8 +227,8 @@ export default class EbeguRestUtil {
         if (gesuchFromServer) {
             this.parseAbstractEntity(gesuchTS, gesuchFromServer);
             gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
-            gesuchTS.gesuchsteller1 = this.parsePerson(new TSPerson(), gesuchFromServer.gesuchsteller1);
-            gesuchTS.gesuchsteller2 = this.parsePerson(new TSPerson(), gesuchFromServer.gesuchsteller2);
+            gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
+            gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             return gesuchTS;
         }
         return undefined;
@@ -263,5 +263,5 @@ export default class EbeguRestUtil {
         parsedFachstelle.behinderungsbestaetigung = receivedFachstelle.behinderungsbestaetigung;
         return parsedFachstelle;
     }
-    
+
 }

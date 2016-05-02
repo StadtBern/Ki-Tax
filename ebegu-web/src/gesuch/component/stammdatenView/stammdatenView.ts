@@ -7,7 +7,7 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSPerson from '../../../models/TSPerson';
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
 let template = require('./stammdatenView.html');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
@@ -60,7 +60,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
 
-            this.gesuchModelManager.updateGesuchsteller().then((personResponse: any) => {
+            this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
                 this.nextStep();
             });
         }
@@ -96,7 +96,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         }
     }
 
-    public getModel(): TSPerson {
+    public getModel(): TSGesuchsteller {
         return this.gesuchModelManager.getStammdatenToWorkWith();
     }
 

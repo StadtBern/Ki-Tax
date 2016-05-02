@@ -98,12 +98,12 @@ REFERENCES fall (id);
 ALTER TABLE gesuch
 ADD CONSTRAINT FK_gesuch_gesuchsteller1_id
 FOREIGN KEY (gesuchsteller1_id)
-REFERENCES person (id);
+REFERENCES gesuchsteller (id);
 
 ALTER TABLE gesuch
 ADD CONSTRAINT FK_gesuch_gesuchsteller2_id
 FOREIGN KEY (gesuchsteller2_id)
-REFERENCES person (id);
+REFERENCES gesuchsteller (id);
 
 ALTER TABLE gesuch_aud
 ADD CONSTRAINT FK_gesuch_aud_revinfo

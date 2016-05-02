@@ -1,6 +1,6 @@
 import TSFall from '../../models/TSFall';
 import TSGesuch from '../../models/TSGesuch';
-import TSPerson from '../../models/TSPerson';
+import TSGesuchsteller from '../../models/TSGesuchsteller';
 import TSAdresse from '../../models/TSAdresse';
 import {TSAdressetyp} from '../../models/enums/TSAdressetyp';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
@@ -8,7 +8,7 @@ import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
-import PersonRS from '../../core/service/personRS.rest';
+import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest.ts';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -20,17 +20,17 @@ export default class GesuchModelManager {
     familiensituation: TSFamiliensituation;
     fallRS: FallRS;
     gesuchRS: GesuchRS;
-    personRS: PersonRS;
+    gesuchstellerRS: GesuchstellerRS;
     familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'PersonRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, personRS: PersonRS, ebeguRestUtil: EbeguRestUtil) {
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, gesuchstellerRS: GesuchstellerRS, ebeguRestUtil: EbeguRestUtil) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
-        this.personRS = personRS;
+        this.gesuchstellerRS = gesuchstellerRS;
         this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -86,17 +86,17 @@ export default class GesuchModelManager {
     /**
      * Speichert den StammdatenToWorkWith.
      */
-    public updateGesuchsteller(): IPromise<TSPerson> {
+    public updateGesuchsteller(): IPromise<TSGesuchsteller> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
-            return this.personRS.update(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith(personResponse);
+            return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
+                this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
         } else {
-            return this.personRS.create(this.getStammdatenToWorkWith()).then((personResponse: any) => {
-                this.setStammdatenToWorkWith( personResponse);
+            return this.gesuchstellerRS.create(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
+                this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.update(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
@@ -112,7 +112,7 @@ export default class GesuchModelManager {
         }
     }
 
-    public getStammdatenToWorkWith(): TSPerson {
+    public getStammdatenToWorkWith(): TSGesuchsteller {
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1;
         } else {
@@ -120,20 +120,20 @@ export default class GesuchModelManager {
         }
     }
 
-    public setStammdatenToWorkWith(person: TSPerson): TSPerson {
+    public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
         // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
-        this.calculateShowDatumFlags(person);
+        this.calculateShowDatumFlags(gesuchsteller);
         if (this.gesuchstellerNumber === 1) {
-            return this.gesuch.gesuchsteller1 = person;
+            return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
-            return this.gesuch.gesuchsteller2 = person;
+            return this.gesuch.gesuchsteller2 = gesuchsteller;
         }
     }
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
             //todo imanol try to load data from database and only if nothing is there create a new model
-            this.setStammdatenToWorkWith(new TSPerson());
+            this.setStammdatenToWorkWith(new TSGesuchsteller());
             this.getStammdatenToWorkWith().adresse = this.initAdresse();
         }
     }
@@ -176,15 +176,15 @@ export default class GesuchModelManager {
         return umzugAdr;
     }
 
-    private calculateShowDatumFlags(person: TSPerson): void {
-        if (person.adresse) {
-            person.adresse.showDatumVon = false;
+    private calculateShowDatumFlags(gesuchsteller: TSGesuchsteller): void {
+        if (gesuchsteller.adresse) {
+            gesuchsteller.adresse.showDatumVon = false;
         }
-        if (person.korrespondenzAdresse) {
-            person.korrespondenzAdresse.showDatumVon = false;
+        if (gesuchsteller.korrespondenzAdresse) {
+            gesuchsteller.korrespondenzAdresse.showDatumVon = false;
         }
-        if (person.umzugAdresse) {
-            person.umzugAdresse.showDatumVon = true;
+        if (gesuchsteller.umzugAdresse) {
+            gesuchsteller.umzugAdresse.showDatumVon = true;
         }
     }
 }
