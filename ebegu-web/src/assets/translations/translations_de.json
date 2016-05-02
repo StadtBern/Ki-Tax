@@ -318,7 +318,10 @@
     "KITA": "Tagesstätte für Kleinkinder",
     "TAGESELTERN": "Tageseltern",
     "TAGI": "Tagesstätte für Schulkinder",
-    "TAGESSCHULE": "Tagesschule"
+    "TAGESSCHULE": "Tagesschule",
+    "MENU_FREIGABEQUITTUNG":"09 Freigabequittung",
+    "UNSAVED_WARNING":"Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite verlassen.",
+    "UNSAVED_WARNING_RELOAD": "Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite neu laden."
 
 }
 

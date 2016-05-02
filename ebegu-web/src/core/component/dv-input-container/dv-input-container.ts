@@ -1,5 +1,5 @@
 import {IComponentOptions} from 'angular';
-let template = require('./dv-input-container.html'); 
+let template = require('./dv-input-container.html');
 
 export class DvInputContainerComponentConfig implements IComponentOptions {
     transclude = true;
@@ -9,7 +9,7 @@ export class DvInputContainerComponentConfig implements IComponentOptions {
 
 }
 
-export class DvInputContainerController  {
+export class DvInputContainerController {
 
     static $inject: any[] = [];
     /* @ngInject */

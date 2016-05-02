@@ -34,8 +34,9 @@ export class DatepickerController {
 
     constructor() {
     }
+
     // beispiel wie man auf changes eines attributes von aussen reagieren kann
-    $onChanges(changes : any) {
+    $onChanges(changes: any) {
         if (changes.ngRequired && !changes.ngRequired.isFirstChange()) {
             this.dateRequired = changes.ngRequired.currentValue;
         }
@@ -48,7 +49,7 @@ export class DatepickerController {
             return;
         }
 
-        if(this.ngRequired){
+        if (this.ngRequired) {
             this.dateRequired = this.ngRequired;
         }
 
@@ -88,7 +89,7 @@ export class DatepickerController {
         //nur versuchen das datum als moment zu parsen wenn es kein string ist
         if (date && !(typeof date === 'string' )) {
             let dateString = date.toISOString();
-            return  DateUtil.localDateTimeToMoment(dateString);
+            return DateUtil.localDateTimeToMoment(dateString);
         }
 
         return date;

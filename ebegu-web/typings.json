@@ -10,7 +10,6 @@
     "jasmine": "registry:dt/jasmine#2.2.0+20160412134438",
       "jquery": "registry:dt/jquery#2.0.0+20160303223636",
     "moment": "registry:dt/moment#2.8.0+20160316155526",
-    "moment-node": "registry:dt/moment-node#2.11.1+20160417135035",
-    "node": "registry:dt/node#4.0.0+20160412142033"
+    "moment-node": "registry:dt/moment-node#2.11.1+20160417135035"
   }
 }
