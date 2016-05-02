@@ -108,6 +108,15 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	/**
+	 * setzt das gueltig bis einer Range auf den Tag vor dem datum von der "other" range
+	 * @param other
+	 */
+	public void endOnDayBefore(@Nonnull DateRange other){
+		this.setGueltigBis(other.gueltigAb.minusDays(1));
+
+	}
+
+	/**
 	 * Neue DateRange, mit gueltigAb auf den vorherigen Montag und gueltigBis auf den naechsten Sonntag setzt.
 	 * Use-Case z.B.: einen Stichtag auf die ganze Woche ausdehnen.
 	 */

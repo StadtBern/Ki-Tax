@@ -114,20 +114,22 @@ public class JaxBConverter {
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
 		adresse.setLand(jaxAdresse.getLand());
-		adresse.setGueltigkeit(getGueltigkeit(jaxAdresse));
+		adresse.setGueltigkeit(convertDateRange(jaxAdresse));
+		//adresse gilt per default von start of time an
+		adresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
 		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
 		return adresse;
 	}
 
 	/**
-	 * Checks fieds gueltigAb and gueltigBis from given object and returns the corresponding DateRange object
+	 * Checks fields gueltigAb and gueltigBis from given object and returns the corresponding DateRange object
 	 * If gueltigAb is null then current date is set instead
 	 * If gueltigBis is null then end_of_time is set instead
 	 * @param jaxAdresse JaxObject extending abstract class JaxAbstractDateRangedDTO
 	 * @return DateRange object created with the given data
      */
-	private DateRange getGueltigkeit(JaxAbstractDateRangedDTO jaxAdresse) {
+	private DateRange convertDateRange(JaxAbstractDateRangedDTO jaxAdresse) {
 		LocalDate dateAb = jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb();
 		LocalDate dateBis = jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis();
 		return new DateRange(dateAb, dateBis);
@@ -195,7 +197,7 @@ public class JaxBConverter {
 		//Wohnadresse (abh von Umzug noch datum setzten)
 		Adresse wohnAddrToMerge = toStoreableAddresse(personJAXP.getWohnAdresse());
 		if (umzugAddr != null) {
-			wohnAddrToMerge.setGueltigBis(umzugAddr.getGueltigAb().minusDays(1));
+			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
 		}
 		person.addAdresse(wohnAddrToMerge);
 		return person;

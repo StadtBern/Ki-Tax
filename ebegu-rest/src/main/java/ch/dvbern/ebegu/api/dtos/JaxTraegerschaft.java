@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Created by imanol on 17.03.16.
- * DTO fuer Adresse
+ * DTO fuer Traegerschaft
  */
 @XmlRootElement(name = "traegerschaft")
 @XmlAccessorType(XmlAccessType.FIELD)

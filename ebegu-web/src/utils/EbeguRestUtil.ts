@@ -15,6 +15,7 @@ import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import {TSInstitution} from '../models/TSInstitution';
 import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSDateRange} from '../models/types/TSDateRange';
+import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -71,9 +72,20 @@ export default class EbeguRestUtil {
         }
     }
 
+    private dateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
+        if (dateRangedEntity && dateRangedEntity.gueltigkeit) {
+            restObj.gueltigAb = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigAb);
+            restObj.gueltigBis = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigBis);
+        }
+    }
+    private parseDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
+            parsedObject.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAppProperty.gueltigAb), DateUtil.localDateToMoment(receivedAppProperty.gueltigBis));
+    }
+
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
         if (adresse) {
             this.abstractEntityToRestObject(restAdresse, adresse);
+            this.dateRangeEntityToRestObject(adresse, restAdresse);
             restAdresse.strasse = adresse.strasse;
             restAdresse.hausnummer = adresse.hausnummer;
             restAdresse.zusatzzeile = adresse.zusatzzeile;
@@ -81,10 +93,6 @@ export default class EbeguRestUtil {
             restAdresse.ort = adresse.ort;
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
-            if (adresse.gueltigkeit) {
-                restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigkeit.gueltigAb);
-                restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigkeit.gueltigBis);
-            }
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
             return restAdresse;
         }
@@ -95,6 +103,7 @@ export default class EbeguRestUtil {
     public parseAdresse(adresseTS: TSAdresse, receivedAdresse: any): TSAdresse {
         if (receivedAdresse) {
             this.abstractEntityToRestObject(adresseTS, receivedAdresse);
+            this.parseDateRangeEntity(adresseTS, receivedAdresse);
             adresseTS.strasse = receivedAdresse.strasse;
             adresseTS.hausnummer = receivedAdresse.hausnummer;
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
@@ -102,7 +111,6 @@ export default class EbeguRestUtil {
             adresseTS.ort = receivedAdresse.ort;
             adresseTS.land =  (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
-            adresseTS.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAdresse.gueltigAb), DateUtil.localDateToMoment(receivedAdresse.gueltigBis));
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
             return adresseTS;
         }

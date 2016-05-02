@@ -51,18 +51,17 @@ public class InstitutionStammdatenResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		InstitutionStammdaten institutionStammdaten;
+		InstitutionStammdaten instDaten;
 		if (institutionStammdatenJAXP.getId() != null) {
 			Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXP.getId()));
-			institutionStammdaten = optional.isPresent() ? optional.get() : new InstitutionStammdaten();
+			instDaten = optional.orElse(new InstitutionStammdaten());
 		} else {
-			institutionStammdaten = new InstitutionStammdaten();
+			instDaten = new InstitutionStammdaten();
 		}
-		InstitutionStammdaten convertedInstitutionStammdaten = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, institutionStammdaten);
+		InstitutionStammdaten convertedInstData = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, instDaten);
+		InstitutionStammdaten persistedInstData = institutionStammdatenService.saveInstitutionStammdaten(convertedInstData);
 
-		InstitutionStammdaten persistedInstitutionStammdaten = institutionStammdatenService.saveInstitutionStammdaten(convertedInstitutionStammdaten);
-
-		return converter.institutionStammdatenToJAX(persistedInstitutionStammdaten);
+		return converter.institutionStammdatenToJAX(persistedInstData);
 
 	}
 
@@ -111,7 +110,7 @@ public class InstitutionStammdatenResource {
 	 * Sucht in der DB alle InstitutionStammdaten, bei welchen das gegebene Datum zwischen DatumVon und DatumBis liegt
 	 * Wenn das Datum null ist, wird dieses automatisch als heutiges Datum gesetzt.
 	 *
-	 * @param stringDate Date als String mit Format "dd-MM-yyyy". Wenn null, ehutiges Datum gesetzt
+	 * @param stringDate Date als String mit Format "dd-MM-yyyy". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
      */
 	@Nonnull
@@ -120,11 +119,10 @@ public class InstitutionStammdatenResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxInstitutionStammdaten> getAllInstitutionStammdatenByDate(
-		@Nullable @QueryParam("date") String stringDate
-		) {
+		@Nullable @QueryParam("date") String stringDate) {
 
 		LocalDate date = LocalDate.now();
-		if(stringDate != null && !stringDate.isEmpty()) {
+		if (stringDate != null && !stringDate.isEmpty()) {
 			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		}
 		return institutionStammdatenService.getAllInstitutionStammdatenByDate(date).stream()

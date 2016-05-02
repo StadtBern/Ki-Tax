@@ -51,17 +51,14 @@ public class FachstelleResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Fachstelle fachstelle;
+		Fachstelle  fachstelle = new Fachstelle();
 		if (fachstelleJAXP.getId() != null) {
 			Optional<Fachstelle> optional = fachstelleService.findFachstelle(converter.toEntityId(fachstelleJAXP.getId()));
-			fachstelle = optional.isPresent() ? optional.get() : new Fachstelle();
-		} else {
-			fachstelle = new Fachstelle();
+			fachstelle = optional.orElse(new Fachstelle());
 		}
 		Fachstelle convertedFachstelle = converter.fachstelleToEntity(fachstelleJAXP, fachstelle);
 
 		Fachstelle persistedFachstelle = this.fachstelleService.saveFachstelle(convertedFachstelle);
-
 		return converter.fachstelleToJAX(persistedFachstelle);
 	}
 

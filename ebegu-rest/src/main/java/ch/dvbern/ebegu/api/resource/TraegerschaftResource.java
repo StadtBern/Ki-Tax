@@ -48,12 +48,10 @@ public class TraegerschaftResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Traegerschaft traegerschaft;
+		Traegerschaft traegerschaft = new Traegerschaft();;
 		if (traegerschaftJAXP.getId() != null) {
 			Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(converter.toEntityId(traegerschaftJAXP.getId()));
-			traegerschaft = optional.isPresent() ? optional.get() : new Traegerschaft();
-		} else {
-			traegerschaft = new Traegerschaft();
+			traegerschaft = optional.orElse(new Traegerschaft());
 		}
 		Traegerschaft convertedTraegerschaft = converter.traegerschaftToEntity(traegerschaftJAXP, traegerschaft);
 

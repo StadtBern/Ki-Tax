@@ -26,7 +26,7 @@ public final class TestDataUtil {
 		adresse.setZusatzzeile("c/o Uwe Untermieter");
 		adresse.setPlz("3014");
 		adresse.setOrt("Bern");
-		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME);
+		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
 		return adresse;
 	}
 

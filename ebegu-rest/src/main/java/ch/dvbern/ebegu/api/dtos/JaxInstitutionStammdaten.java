@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 import javax.annotation.Nullable;
@@ -8,9 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * Created by imanol on 17.03.16.

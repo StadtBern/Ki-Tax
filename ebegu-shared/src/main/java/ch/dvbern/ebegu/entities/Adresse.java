@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -17,7 +16,7 @@ import java.util.Objects;
  */
 @Audited
 @Entity
-public class Adresse extends AbstractEntity {
+public class Adresse extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -7687645920281069260L;
 
@@ -116,14 +115,6 @@ public class Adresse extends AbstractEntity {
 		this.ort = ort;
 	}
 
-	public LocalDate getGueltigAb() { return gueltigAb; }
-
-	public void setGueltigAb(LocalDate gueltigAb) { this.gueltigAb = gueltigAb; }
-
-	public LocalDate getGueltigBis() { return gueltigBis; }
-
-	public void setGueltigBis(LocalDate gueltigBis) { this.gueltigBis = gueltigBis; }
-
 	@Nullable
 	public String getZusatzzeile() {
 		return zusatzzeile;
@@ -176,8 +167,7 @@ public class Adresse extends AbstractEntity {
 			land == otherAdr.land &&
 			Objects.equals(gemeinde, otherAdr.gemeinde) &&
 			adresseTyp == otherAdr.adresseTyp &&
-			Objects.equals(gueltigAb, otherAdr.gueltigAb) &&
-			Objects.equals(gueltigBis, otherAdr.gueltigBis);
+			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
 
 	}
 
