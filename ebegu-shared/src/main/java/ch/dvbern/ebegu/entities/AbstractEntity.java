@@ -135,7 +135,7 @@ public abstract class AbstractEntity implements Serializable {
 	}
 
 	/**
-	 * @return true wenn das entity noch nicht in der DB gespeichert wurde (i.e. keine ID gesetzt hat)
+	 * @return true wenn das entity noch nicht in der DB gespeichert wurde (i.e. keinen timestamp gesetzt hat)
 	 */
 	public boolean isNew() {
 		return timestampErstellt == null;

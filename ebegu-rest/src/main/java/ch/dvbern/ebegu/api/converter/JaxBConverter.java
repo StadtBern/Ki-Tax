@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.PersonService;
@@ -32,6 +33,9 @@ public class JaxBConverter {
 
 	@Inject
 	private PersonService personService;
+
+	@Inject
+	private AdresseService adresseService;
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
@@ -103,7 +107,7 @@ public class JaxBConverter {
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
 		adresse.setLand(jaxAdresse.getLand());
-		adresse.setGueltigAb(jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb());
+		adresse.setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
 		adresse.setGueltigBis(jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis());
 		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
@@ -144,6 +148,7 @@ public class JaxBConverter {
 	public Person personToEntity(@Nonnull JaxPerson personJAXP, @Nonnull Person person) {
 		Validate.notNull(person);
 		Validate.notNull(personJAXP);
+		Validate.notNull(personJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
 		convertAbstractFieldsToEntity(personJAXP, person);
 		person.setNachname(personJAXP.getNachname());
 		person.setVorname(personJAXP.getVorname());
@@ -154,13 +159,50 @@ public class JaxBConverter {
 		person.setMobile(personJAXP.getMobile());
 		person.setTelefonAusland(personJAXP.getTelefonAusland());
 		person.setZpvNumber(personJAXP.getZpvNumber());
+
+		//Relationen
+		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
+		if (personJAXP.getAlternativeAdresse() != null) {
+			Adresse currentAltAdr = adresseService.getKorrespondenzAdr(person.getId()).orElse(new Adresse());
+			Adresse altAddrToMerge = adresseToEntity(personJAXP.getAlternativeAdresse(), currentAltAdr);
+			person.addAdresse(altAddrToMerge);
+		}
+		// Umzug und Wohnadresse
+		Adresse umzugAddr = null;
+		if (personJAXP.getUmzugAdresse() != null) {
+			umzugAddr = toStoreableAddresse(personJAXP.getUmzugAdresse());
+			person.addAdresse(umzugAddr);
+		}
+		//Wohnadresse (abh von Umzug noch datum setzten)
+		Adresse wohnAddrToMerge = toStoreableAddresse(personJAXP.getWohnAdresse());
+		if (umzugAddr != null) {
+			wohnAddrToMerge.setGueltigBis(umzugAddr.getGueltigAb().minusDays(1));
+		}
+		// Finanzielle Situation
+		person.addAdresse(wohnAddrToMerge);
 		if (personJAXP.getFinanzielleSituationContainer() != null) {
 			person.setFinanzielleSituationContainer(finanzielleSituationContainerToEntity(personJAXP.getFinanzielleSituationContainer(), new FinanzielleSituationContainer()));
 		}
 		return person;
 	}
 
+	@Nonnull
+	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
+		Adresse adrToMergeWith = new Adresse();
+		if (adresseToPrepareForSaving.getId() != null ) {
+
+			Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
+			//wenn schon vorhanden updaten
+			if (altAdr.isPresent()) {
+				adrToMergeWith = altAdr.get();
+			}
+		}
+		return  adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
+	}
+
 	public JaxPerson personToJAX(@Nonnull Person persistedPerson) {
+		Validate.isTrue(!persistedPerson.isNew(), "Person kann nicht nach REST transformiert werden weil sie noch " +
+			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		JaxPerson jaxPerson = new JaxPerson();
 		convertAbstractFieldsToJAX(persistedPerson, jaxPerson);
 		jaxPerson.setNachname(persistedPerson.getNachname());
@@ -172,6 +214,17 @@ public class JaxBConverter {
 		jaxPerson.setMobile(persistedPerson.getMobile());
 		jaxPerson.setTelefonAusland(persistedPerson.getTelefonAusland());
 		jaxPerson.setZpvNumber(persistedPerson.getZpvNumber());
+		//relationen laden
+		Optional<Adresse> altAdr = adresseService.getKorrespondenzAdr(persistedPerson.getId());
+		altAdr.ifPresent(adresse -> jaxPerson.setAlternativeAdresse(adresseToJAX(adresse)));
+		Adresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedPerson.getId());
+		jaxPerson.setWohnAdresse(adresseToJAX(currentWohnadr));
+
+		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
+		Optional<Adresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedPerson.getId());
+		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
+			.ifPresent(umzugAdr -> jaxPerson.setUmzugAdresse(adresseToJAX(umzugAdr)));
+		// Finanzielle Situation
 		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedPerson);
 		if (finanzielleSituationForGesuchsteller.isPresent()) {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
