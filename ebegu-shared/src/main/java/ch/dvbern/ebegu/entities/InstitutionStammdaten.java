@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -8,11 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-
-import static ch.dvbern.ebegu.util.Constants.DB_IBAN_LENGTH;
 
 /**
  * Entitaet zum Speichern von InstitutionStammdaten in der Datenbank.
@@ -23,10 +21,9 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -8403411439882700618L;
 
-	@Size(min = 1, max = DB_IBAN_LENGTH)
 	@Column(nullable = false)
 	@NotNull
-	private String iban;
+	private IBAN iban;
 
 	@NotNull
 	@DecimalMin("0.00")
@@ -50,11 +47,11 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	public InstitutionStammdaten() {
 	}
 
-	public String getIban() {
+	public IBAN getIban() {
 		return iban;
 	}
 
-	public void setIban(String iban) {
+	public void setIban(IBAN iban) {
 		this.iban = iban;
 	}
 

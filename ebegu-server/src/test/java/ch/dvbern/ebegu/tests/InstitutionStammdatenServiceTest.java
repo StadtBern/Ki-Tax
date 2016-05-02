@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -63,7 +64,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 		InstitutionStammdaten persistedInstStammdaten= institutionStammdatenOptional.get();
 		Assert.assertEquals(insertedInstitutionStammdaten.getIban(), persistedInstStammdaten.getIban());
 
-		persistedInstStammdaten.setIban("CH987654321");
+		persistedInstStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
 		InstitutionStammdaten updatedInstitutionStammdaten = institutionStammdatenService.saveInstitutionStammdaten(persistedInstStammdaten);
 		Assert.assertEquals(persistedInstStammdaten.getIban(), updatedInstitutionStammdaten.getIban());
 	}

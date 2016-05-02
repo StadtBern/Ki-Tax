@@ -47,6 +47,11 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ch.dvbern.lib.beanvalidation</groupId>
+            <artifactId>dvbern-lib-beanvalidation</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>

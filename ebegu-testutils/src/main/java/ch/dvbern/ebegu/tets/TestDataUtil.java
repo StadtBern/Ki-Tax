@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -93,7 +94,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
 		InstitutionStammdaten institutionStammdaten = new InstitutionStammdaten();
-		institutionStammdaten.setIban("CH123456789");
+		institutionStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
 		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
 		institutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
