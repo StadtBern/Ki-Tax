@@ -10,6 +10,7 @@ import 'angular-translate-loader-static-files';
 import 'angular-ui-bootstrap';
 import 'angular-smart-table';
 import 'angular-moment';
+import 'angular-unsavedchanges';
 import appModule from './app.module';
 
 angular.element(document).ready(function () {

@@ -32,7 +32,7 @@ describe('gesuch', function () {
         it('should include a update() function', function () {
             expect(gesuchRS.update).toBeDefined();
         });
-        
+
 
     });
 
