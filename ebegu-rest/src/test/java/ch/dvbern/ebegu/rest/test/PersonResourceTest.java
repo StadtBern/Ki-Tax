@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxPerson;
 import ch.dvbern.ebegu.api.resource.PersonResource;
@@ -32,6 +33,9 @@ public class PersonResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private PersonResource personResource;
 
+	@Inject
+	private JaxBConverter converter;
+
 
 	@Test
 	public void createPersonTest() throws EbeguException {
@@ -51,10 +55,9 @@ public class PersonResourceTest extends AbstractEbeguRestTest {
 		Assert.assertNotNull(jaxPerson.getAlternativeAdresse());
 		Assert.assertNotNull(jaxPerson.getWohnAdresse());
 
-		JaxPerson foundPerson = personResource.findPerson(jaxPerson.getId());
-
-		Assert.assertEquals(foundPerson.getId().getId(), jaxPerson.getId().getId());
-
+		JaxPerson foundPerson = personResource.findPerson(converter.toJaxId(jaxPerson));
+		Assert.assertNotNull(foundPerson);
+		Assert.assertEquals(foundPerson.getId(), jaxPerson.getId());
 	}
 
 	@Test
@@ -94,13 +97,13 @@ public class PersonResourceTest extends AbstractEbeguRestTest {
 	public void findPersonTest() throws EbeguException {
 		JaxPerson testPerson = TestJaxDataUtil.createTestJaxPersonWithUmzug();
 		JaxPerson jaxPerson = personResource.create(testPerson, null, null);
-		JaxPerson foundPers = personResource.findPerson(jaxPerson.getId());
+		JaxPerson foundPers = personResource.findPerson(converter.toJaxId(jaxPerson));
 		Assert.assertNotNull(foundPers);
 		Assert.assertEquals(testPerson.getNachname(), foundPers.getNachname());
 		foundPers.setNachname("changednachname");
 
 		personResource.update(foundPers, null, null);
-		JaxPerson reloadedPerson = personResource.findPerson(jaxPerson.getId());
+		JaxPerson reloadedPerson = personResource.findPerson(converter.toJaxId(jaxPerson));
 		Assert.assertEquals(foundPers.getNachname(), reloadedPerson.getNachname());
 		Assert.assertEquals("changednachname", reloadedPerson.getNachname());
 

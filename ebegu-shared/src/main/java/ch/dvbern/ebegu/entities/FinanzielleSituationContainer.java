@@ -16,7 +16,7 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	private static final long serialVersionUID = -6504985266190035840L;
 
 	@NotNull
-	@OneToOne(optional = false)
+	@OneToOne(optional = false, cascade = CascadeType.MERGE)
 	private Person gesuchsteller;
 
 	@NotNull

@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -55,6 +54,16 @@ public class JaxBConverter {
 	public String toEntityId(@Nonnull final JaxId resourceId) {
 		// TODO wahrscheinlich besser manuell auf NULL pruefen und gegebenenfalls eine IllegalArgumentException werfen
 		return Objects.requireNonNull(resourceId.getId());
+	}
+
+	@Nonnull
+	public JaxId toJaxId(@Nonnull final AbstractEntity entity) {
+		return new JaxId(entity.getId());
+	}
+
+	@Nonnull
+	public JaxId toJaxId(@Nonnull final JaxAbstractDTO entity) {
+		return new JaxId(entity.getId());
 	}
 
 	@Nonnull
@@ -191,7 +200,7 @@ public class JaxBConverter {
 		Adresse adrToMergeWith = new Adresse();
 		if (adresseToPrepareForSaving.getId() != null ) {
 
-			Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
+			Optional<Adresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
 			//wenn schon vorhanden updaten
 			if (altAdr.isPresent()) {
 				adrToMergeWith = altAdr.get();

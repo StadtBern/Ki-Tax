@@ -68,9 +68,8 @@ public class PersonResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(personJAXP.getId());
-		String personID = converter.toEntityId(personJAXP.getId());
-		Optional<Person> optional = personService.findPerson(personID);
-		Person personFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personJAXP.getId().toString()));
+		Optional<Person> optional = personService.findPerson(personJAXP.getId());
+		Person personFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personJAXP.getId()));
 		Person personToMerge = converter.personToEntity(personJAXP, personFromDB);
 
 		Person modifiedPerson = this.personService.updatePerson(personToMerge);
