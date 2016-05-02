@@ -12,7 +12,6 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
     if (ENV !== 'test') {
         listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
     }
-
 }
 
 function getStates(): IState[] {

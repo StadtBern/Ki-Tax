@@ -24,5 +24,4 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
         unsavedWarningsConfigProvider.navigateMessage = 'UNSAVED_WARNING';
         unsavedWarningsConfigProvider.reloadMessage = 'UNSAVED_WARNING_RELOAD';
     }
-
 }

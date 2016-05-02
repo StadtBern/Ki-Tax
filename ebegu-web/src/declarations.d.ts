@@ -3,8 +3,8 @@
 declare function require(string: string): any;
 
 // Extra variables that live on Global that will be replaced by webpack DefinePlugin
-declare var ENV: string;
-declare var HMR: boolean;
+declare let ENV: string;
+declare let HMR: boolean;
 interface GlobalEnvironment {
   ENV: any;
   HMR: any;
@@ -30,10 +30,6 @@ interface WebpackRequire {
   context(file: string, flag?: boolean, exp?: RegExp): any;
 }
 
-
 interface ErrorStackTraceLimit {
   stackTraceLimit: number;
 }
-
-
-

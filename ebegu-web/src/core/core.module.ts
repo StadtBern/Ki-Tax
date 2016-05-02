@@ -27,9 +27,8 @@ let dynamicDependencies = function (): string[] {
         return [];
     }
     return dynDep;
-
-
 };
+
 const dependencies: string[] = [
     /* Angular modules */
     'ngAnimate',
