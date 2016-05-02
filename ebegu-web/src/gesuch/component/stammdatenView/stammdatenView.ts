@@ -7,7 +7,7 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSPerson from "../../../models/TSPerson";
+import TSPerson from '../../../models/TSPerson';
 let template = require('./stammdatenView.html');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {

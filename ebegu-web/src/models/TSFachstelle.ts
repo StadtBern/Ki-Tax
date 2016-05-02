@@ -5,7 +5,7 @@ export class TSFachstelle extends TSAbstractEntity {
     private _name: string;
     private _beschreibung: string;
     private _behinderungsbestaetigung: boolean;
-    
+
     constructor(name?: string, beschreibung?: string, behinderungsbestaetigung?: boolean) {
         super();
         this._name = name;
