@@ -30,13 +30,11 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	@Nonnull
 	@NotNull
 	@Column(nullable = false)
-	@Convert(converter = LocalDateXMLConverter.class)
 	private LocalDate gueltigAb;
 
 	@Nonnull
 	@NotNull
 	@Column(nullable = false)
-	@Convert(converter = LocalDateXMLConverter.class)
 	private LocalDate gueltigBis;
 
 	public DateRange(@Nonnull LocalDate gueltigAb, @Nonnull LocalDate gueltigBis) {
