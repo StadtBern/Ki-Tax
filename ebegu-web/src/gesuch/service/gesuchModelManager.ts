@@ -12,6 +12,9 @@ import PersonRS from '../../core/service/personRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
+import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
+import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 
 
 export default class GesuchModelManager {
@@ -20,17 +23,19 @@ export default class GesuchModelManager {
     familiensituation: TSFamiliensituation;
     fallRS: FallRS;
     gesuchRS: GesuchRS;
+    finanzielleSituationRS: FinanzielleSituationRS;
     personRS: PersonRS;
     familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'PersonRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'PersonRS', 'FinanzielleSituationRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, personRS: PersonRS, ebeguRestUtil: EbeguRestUtil) {
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, personRS: PersonRS, finanzielleSituationRS: FinanzielleSituationRS, ebeguRestUtil: EbeguRestUtil) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
         this.personRS = personRS;
+        this.finanzielleSituationRS = finanzielleSituationRS;
         this.familiensituationRS = familiensituationRS;
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -104,6 +109,15 @@ export default class GesuchModelManager {
         }
     }
 
+    public saveFinanzielleSituation(): IPromise<TSFinanzielleSituationContainer> {
+        return this.finanzielleSituationRS.saveFinanzielleSituation(
+            this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith())
+            .then((finSitContRespo: TSFinanzielleSituationContainer) => {
+            this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
+                return finSitContRespo;
+        });
+    }
+
     public setGesuchstellerNumber(gsNumber: number) {
         if (gsNumber === 1 || gsNumber === 2) {
             this.gesuchstellerNumber = gsNumber;
@@ -138,6 +152,20 @@ export default class GesuchModelManager {
         }
     }
 
+    public initFinanzielleSituation(): void {
+        if (!this.getStammdatenToWorkWith()) {
+            this.setStammdatenToWorkWith(new TSPerson());
+            this.getStammdatenToWorkWith().adresse = this.initAdresse();
+        }
+        if (!this.getStammdatenToWorkWith().finanzielleSituationContainer) {
+            //TODO (hefr) Dummy Daten!
+            this.getStammdatenToWorkWith().finanzielleSituationContainer = new TSFinanzielleSituationContainer();
+            this.getStammdatenToWorkWith().finanzielleSituationContainer.jahr = 2015;
+            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+        }
+    }
+
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
         if (showKorrespondadr) {
             this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
@@ -152,6 +180,11 @@ export default class GesuchModelManager {
         } else {
             this.getStammdatenToWorkWith().umzugAdresse = undefined;
         }
+    }
+
+    public getBasisjahr(): string {
+        //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
+        return '2015';
     }
 
 

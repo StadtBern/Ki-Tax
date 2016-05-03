@@ -1,0 +1,103 @@
+<div class="finanzielleSituation row">
+    <div class="col-md-12">
+
+        <h4 class="mainTitle">
+            <span data-translate="FINANZIELLE_SITUATION"></span>
+        </h4>
+        <hr class="header"/>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+
+            <!--Steuerveranlagung -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
+                        <dv-radio-container name="steuerveranlagung"    class="input-element"
+                                            ng-model="vm.getModel().finanzielleSituationSV.steuerveranlagungErhalten"
+                                            ng-required="true" class="radio">
+                        </dv-radio-container>
+                        <dv-error-messages  for="form.steuerveranlagung.$error" class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!--Steuererklärung -->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.showSteuererklaerung()">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
+                        <dv-radio-container name="steuererklaerung"   class="input-element"
+                                            ng-model="vm.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt"
+                                            ng-required="true" class="radio">
+                        </dv-radio-container>
+                        <dv-error-messages  for="form.steuererklaerung.$error" class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infotext -->
+            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT1" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></p>
+            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT2" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></p>
+
+            <!-- Gesuchsteller -->
+            <h5 class="subTitle">
+                <span>{{vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}}</span><!--{{vm.gesuchModelManager.gesuchstellerNumber}}-->
+            </h5>
+
+            <!-- Nettolohn -->
+            <div class="row">
+                <div class="col-md-12">
+                    <dv-input-container class="form-group">
+                        <label data-translate="FINANZIELLE_SITUATION_NETTOLOHN" for="nettolohn"></label>
+                        <input id="nettolohn" type="text" name="nettolohn"
+                               ng-model="vm.getModel().finanzielleSituationSV.nettolohn"
+                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_BETRAG">
+                        <dv-error-messages  for="form.nettolohn.$error" class="error"></dv-error-messages>
+                        <dv-bisher gs="vm.getModel().finanzielleSituationGS.nettolohn"
+                                   ja="vm.getModel().finanzielleSituationJA.nettolohn"
+                                   sv="vm.getModel().finanzielleSituationSV.nettolohn"></dv-bisher>
+                    </dv-input-container>
+                </div>
+            </div>
+
+
+            <!-- TODO (hefr) Weitere Felder -->
+
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
+                            ng-if="vm.getModel().timestampErstellt === undefined">
+                    </button>
+                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
+                            ng-if="vm.getModel().timestampErstellt">
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <pre>{{ vm.getModel() |json}}</pre>
+
+    </div>
+
+</div>

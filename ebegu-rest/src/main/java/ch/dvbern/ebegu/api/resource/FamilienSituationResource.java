@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
-import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -24,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -73,16 +73,16 @@ public class FamilienSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId().getId());
+		Objects.requireNonNull(familiensituationJAXP.getId());
+
+		Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
 		if (!loadedFamiliensituation.isPresent()) {
-			throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituationJAXP.getId().getId());
+			throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituationJAXP.getId());
 		}
 		Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, loadedFamiliensituation.get());
 		Familiensituation persistedFamiliensituation = this.familiensituationService.updateFamiliensituation(convertedFamiliensituation);
 
-		JaxFamilienSituation jaxPerson = converter.familiensituationToJAX(persistedFamiliensituation);
-
-		return jaxPerson;
+		return converter.familiensituationToJAX(persistedFamiliensituation);
 	}
 
 	@Nullable

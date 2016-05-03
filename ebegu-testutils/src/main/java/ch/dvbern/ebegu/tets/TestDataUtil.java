@@ -4,6 +4,9 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
+import ch.dvbern.ebegu.entities.Person;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -78,6 +81,19 @@ public final class TestDataUtil {
 		return fachstelle;
 	}
 
+	public static FinanzielleSituationContainer createFinanzielleSituationContainer() {
+		FinanzielleSituationContainer container = new FinanzielleSituationContainer();
+		container.setJahr(LocalDate.now().minusYears(1).getYear());
+		return container;
+	}
+
+	public static FinanzielleSituation createDefaultFinanzielleSituation() {
+		FinanzielleSituation finanzielleSituation = new FinanzielleSituation();
+		finanzielleSituation.setSteuerveranlagungErhalten(Boolean.FALSE);
+		finanzielleSituation.setSteuererklaerungAusgefuellt(Boolean.TRUE);
+		finanzielleSituation.setNettolohn(new BigDecimal(100000));
+		return finanzielleSituation;
+	}
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
@@ -93,13 +109,13 @@ public final class TestDataUtil {
 	}
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
-		InstitutionStammdaten institutionStammdaten = new InstitutionStammdaten();
-		institutionStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
-		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
-		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		institutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
-		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
-		institutionStammdaten.setInstitution(createDefaultInstitution());
-		return institutionStammdaten;
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		return instStammdaten;
 	}
 }
