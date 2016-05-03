@@ -49,7 +49,7 @@ public class FinanzielleSituationResource {
 
 
 	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
-		"these are stored in the database as well.")
+		"it is stored in the database as well.")
 	@Nullable
 	@PUT
 	@Path("/{personId}")
@@ -63,9 +63,15 @@ public class FinanzielleSituationResource {
 
 		Optional<Person> person = personService.findPerson(personId.getId());
 		if (person.isPresent()) {
-			FinanzielleSituationContainer convertedFinanzielleSituation = converter.finanzielleSituationContainerToEntity(finanzielleSituationJAXP, new FinanzielleSituationContainer());
-			convertedFinanzielleSituation.setGesuchsteller(person.get());
-			FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinanzielleSituation);
+			//hier muss bei einem update die FS aus der DB geladen werden
+
+			//todo homa ebegu 82 review sollten wir das laden im converter machen? so wie bei adresse toStorableAdresse
+			Optional<FinanzielleSituationContainer> existingFSC = finanzielleSituationService.findFinanzielleSituation(finanzielleSituationJAXP.getId());
+			FinanzielleSituationContainer fscToMergeWith = existingFSC.orElse(new FinanzielleSituationContainer());
+
+			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToEntity(finanzielleSituationJAXP, fscToMergeWith);
+			convertedFinSitCont.setGesuchsteller(person.get());
+			FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
 
 			URI uri = uriInfo.getBaseUriBuilder()
 				.path(FinanzielleSituationResource.class)
@@ -75,7 +81,7 @@ public class FinanzielleSituationResource {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 			return Response.created(uri).entity(jaxFinanzielleSituation).build();
 		}
-		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "PersonId invalid: " + personId);
+		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "PersonId invalid: " + personId.getId());
 	}
 
 	@Nullable

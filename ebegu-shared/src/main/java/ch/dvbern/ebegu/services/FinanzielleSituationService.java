@@ -32,7 +32,7 @@ public interface FinanzielleSituationService {
 	Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Person gesuchsteller);
 
 	/**
-	 * @return Liste aller FinanzielleSituationn aus der DB
+	 * @return Liste aller FinanzielleSituationContainer aus der DB
 	 */
 	@Nonnull
 	Collection<FinanzielleSituationContainer> getAllFinanzielleSituationen();

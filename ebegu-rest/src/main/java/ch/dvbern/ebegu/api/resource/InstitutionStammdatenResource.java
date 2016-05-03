@@ -53,7 +53,7 @@ public class InstitutionStammdatenResource {
 
 		InstitutionStammdaten instDaten;
 		if (institutionStammdatenJAXP.getId() != null) {
-			Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(converter.toEntityId(institutionStammdatenJAXP.getId()));
+			Optional<InstitutionStammdaten> optional = institutionStammdatenService.findInstitutionStammdaten(institutionStammdatenJAXP.getId());
 			instDaten = optional.orElse(new InstitutionStammdaten());
 		} else {
 			instDaten = new InstitutionStammdaten();

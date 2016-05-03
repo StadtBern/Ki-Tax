@@ -427,6 +427,7 @@ export default class EbeguRestUtil {
         if (containerFromServer) {
             this.parseAbstractEntity(containerTS, containerFromServer);
             containerTS.jahr = containerFromServer.jahr;
+            //todo hefr nur initialisieren wenn noetig?
             containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
             containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
             containerTS.finanzielleSituationSV = this.parseFinanzielleSituation(containerTS.finanzielleSituationSV || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationSV);
@@ -438,7 +439,7 @@ export default class EbeguRestUtil {
     public finanzielleSituationToRestObject(restFinanzielleSituation: any, finanzielleSituation: TSFinanzielleSituation): TSFinanzielleSituation {
         this.abstractEntityToRestObject(restFinanzielleSituation, finanzielleSituation);
         restFinanzielleSituation.steuerveranlagungErhalten = finanzielleSituation.steuerveranlagungErhalten;
-        restFinanzielleSituation.steuererklaerungAusgefuellt = finanzielleSituation.steuererklaerungAusgefuellt;
+        restFinanzielleSituation.steuererklaerungAusgefuellt = finanzielleSituation.steuererklaerungAusgefuellt || false;
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
         restFinanzielleSituation.familienzulage = finanzielleSituation.familienzulage;
         restFinanzielleSituation.ersatzeinkommen = finanzielleSituation.ersatzeinkommen;

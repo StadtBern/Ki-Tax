@@ -66,11 +66,13 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
 		Optional<FinanzielleSituationContainer> finanzielleSituationOptional = finanzielleSituationService.findFinanzielleSituation(insertedFinanzielleSituations.getId());
 		Assert.assertTrue(finanzielleSituationOptional.isPresent());
 		FinanzielleSituationContainer finanzielleSituation = finanzielleSituationOptional.get();
-		Assert.assertEquals(100000L, finanzielleSituation.getFinanzielleSituationGS().getNettolohn().longValue());
+		finanzielleSituation.setFinanzielleSituationGS(TestDataUtil.createDefaultFinanzielleSituation());
+		FinanzielleSituationContainer updatedCont = finanzielleSituationService.saveFinanzielleSituation(finanzielleSituation);
+		Assert.assertEquals(100000L, updatedCont.getFinanzielleSituationGS().getNettolohn().longValue());
 
-		finanzielleSituation.getFinanzielleSituationGS().setNettolohn(new BigDecimal(200000));
-		FinanzielleSituationContainer updatedFinanzielleSituation = finanzielleSituationService.saveFinanzielleSituation(finanzielleSituation);
-		Assert.assertEquals(200000L, updatedFinanzielleSituation.getFinanzielleSituationGS().getNettolohn().longValue());
+		updatedCont.getFinanzielleSituationGS().setNettolohn(new BigDecimal(200000));
+		FinanzielleSituationContainer contUpdTwice = finanzielleSituationService.saveFinanzielleSituation(updatedCont);
+		Assert.assertEquals(200000L, contUpdTwice.getFinanzielleSituationGS().getNettolohn().longValue());
 	}
 
 	@Test

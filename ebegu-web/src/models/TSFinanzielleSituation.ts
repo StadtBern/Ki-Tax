@@ -3,7 +3,7 @@ import TSAbstractEntity from './TSAbstractEntity';
 export default class TSFinanzielleSituation extends TSAbstractEntity {
 
     private _steuerveranlagungErhalten: boolean;
-    private _steuererklaerungAusgefuellt: boolean;
+    private _steuererklaerungAusgefuellt: boolean = false;
     private _nettolohn: number;
     private _familienzulage: number;
     private _ersatzeinkommen: number;

@@ -34,7 +34,10 @@ export default class FinanzielleSituationRS {
         });
     }
 
-    public findFinanzielleSituation(finanzielleSituationID: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(finanzielleSituationID));
+    public findFinanzielleSituation(finanzielleSituationID: string): IPromise<TSFinanzielleSituationContainer> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(finanzielleSituationID)).then((httpresponse: any) => {
+            this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), httpresponse.data);
+        });
     }
 }

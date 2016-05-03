@@ -83,7 +83,7 @@ public final class TestDataUtil {
 
 	public static FinanzielleSituationContainer createFinanzielleSituationContainer() {
 		FinanzielleSituationContainer container = new FinanzielleSituationContainer();
-		container.setJahr(2015);
+		container.setJahr(LocalDate.now().minusYears(1).getYear());
 		return container;
 	}
 
@@ -109,13 +109,13 @@ public final class TestDataUtil {
 	}
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
-		InstitutionStammdaten institutionStammdaten = new InstitutionStammdaten();
-		institutionStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
-		institutionStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
-		institutionStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		institutionStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
-		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
-		institutionStammdaten.setInstitution(createDefaultInstitution());
-		return institutionStammdaten;
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
+		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		return instStammdaten;
 	}
 }

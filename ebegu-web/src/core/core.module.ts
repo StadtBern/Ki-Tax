@@ -54,7 +54,6 @@ const dependencies: string[] = [
 ];
 
 
-console.log(dependencies.concat(dynamicDependencies()));
 export const EbeguWebCore: angular.IModule = angular
     .module('ebeguWeb.core', dependencies.concat(dynamicDependencies()))
     .run(appRun)
