@@ -54,7 +54,7 @@ public class HistorizationResource {
 		List<JaxAbstractDTO> resultList = new ArrayList<>();
 		if (entityList != null) {
 			resultList = entityList.stream().filter(entity -> entity instanceof ApplicationProperty)
-				.map(entity -> converter.applicationPropertieToJAX((ApplicationProperty) entity)).collect(Collectors.toList());
+				.map(entity -> converter.applicationPropertyToJAX((ApplicationProperty) entity)).collect(Collectors.toList());
 		}
 		return Response.ok(resultList).build();
 

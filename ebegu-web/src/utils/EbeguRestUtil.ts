@@ -7,9 +7,15 @@ import TSGesuch from '../models/TSGesuch';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
 import {IFilterService} from 'angular';
-import TSLand from '../models/TSLand';
+import TSLand from '../models/types/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
+import {TSMandant} from '../models/TSMandant';
+import {TSTraegerschaft} from '../models/TSTraegerschaft';
+import {TSInstitution} from '../models/TSInstitution';
+import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
+import {TSDateRange} from '../models/types/TSDateRange';
+import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -50,10 +56,10 @@ export default class EbeguRestUtil {
         return parsedAppProperty;
     }
 
-    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any) {
+    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any): void {
+        parsedAppProperty.id = receivedAppProperty.id;
         parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
         parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
-        parsedAppProperty.id = receivedAppProperty.id;
     }
 
     private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
@@ -66,9 +72,20 @@ export default class EbeguRestUtil {
         }
     }
 
+    private dateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
+        if (dateRangedEntity && dateRangedEntity.gueltigkeit) {
+            restObj.gueltigAb = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigAb);
+            restObj.gueltigBis = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigBis);
+        }
+    }
+    private parseDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
+            parsedObject.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAppProperty.gueltigAb), DateUtil.localDateToMoment(receivedAppProperty.gueltigBis));
+    }
+
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
         if (adresse) {
             this.abstractEntityToRestObject(restAdresse, adresse);
+            this.dateRangeEntityToRestObject(adresse, restAdresse);
             restAdresse.strasse = adresse.strasse;
             restAdresse.hausnummer = adresse.hausnummer;
             restAdresse.zusatzzeile = adresse.zusatzzeile;
@@ -76,8 +93,6 @@ export default class EbeguRestUtil {
             restAdresse.ort = adresse.ort;
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
-            restAdresse.gueltigAb = DateUtil.momentToLocalDate(adresse.gueltigAb);
-            restAdresse.gueltigBis = DateUtil.momentToLocalDate(adresse.gueltigBis);
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
             return restAdresse;
         }
@@ -88,6 +103,7 @@ export default class EbeguRestUtil {
     public parseAdresse(adresseTS: TSAdresse, receivedAdresse: any): TSAdresse {
         if (receivedAdresse) {
             this.abstractEntityToRestObject(adresseTS, receivedAdresse);
+            this.parseDateRangeEntity(adresseTS, receivedAdresse);
             adresseTS.strasse = receivedAdresse.strasse;
             adresseTS.hausnummer = receivedAdresse.hausnummer;
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
@@ -95,8 +111,6 @@ export default class EbeguRestUtil {
             adresseTS.ort = receivedAdresse.ort;
             adresseTS.land =  (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
-            adresseTS.gueltigAb = DateUtil.localDateToMoment(receivedAdresse.gueltigAb);
-            adresseTS.gueltigBis = DateUtil.localDateToMoment(receivedAdresse.gueltigBis);
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
             return adresseTS;
         }
@@ -235,7 +249,7 @@ export default class EbeguRestUtil {
     }
 
 
-    public fachstelleToRestObject(restFachstelle: any, fachstelle: TSFachstelle) {
+    public fachstelleToRestObject(restFachstelle: any, fachstelle: TSFachstelle): any {
         restFachstelle.name = fachstelle.name;
         restFachstelle.beschreibung = fachstelle.beschreibung;
         restFachstelle.behinderungsbestaetigung = fachstelle.behinderungsbestaetigung;
@@ -264,4 +278,127 @@ export default class EbeguRestUtil {
         return parsedFachstelle;
     }
 
+    public mandantToRestObject(restMandant: any, mandant: TSMandant): any {
+        if (mandant) {
+            this.abstractEntityToRestObject(restMandant, mandant);
+            restMandant.name = mandant.name;
+            return restMandant;
+        }
+        return undefined;
+    }
+
+    public parseMandant(mandantTS: TSMandant, mandantFromServer: any): TSMandant {
+        if (mandantFromServer) {
+            this.parseAbstractEntity(mandantTS, mandantFromServer);
+            mandantTS.name = mandantFromServer.name;
+            return mandantTS;
+        }
+        return undefined;
+    }
+
+    public traegerschaftToRestObject(restTragerschaft: any, traegerschaft: TSTraegerschaft): any {
+        if (traegerschaft) {
+            this.abstractEntityToRestObject(restTragerschaft, traegerschaft);
+            restTragerschaft.name = traegerschaft.name;
+            return restTragerschaft;
+        }
+        return undefined;
+    }
+
+    public parseTraegerschaften(data: Array<any>): TSTraegerschaft[] {
+        var traegerschaftenen: TSTraegerschaft[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                traegerschaftenen[i] = this.parseTraegerschaft(new TSTraegerschaft(), data[i]);
+            }
+        } else {
+            traegerschaftenen[0] = this.parseTraegerschaft(new TSTraegerschaft(), data);
+        }
+        return traegerschaftenen;
+    }
+
+    public parseTraegerschaft(traegerschaftTS: TSTraegerschaft, traegerschaftFromServer: any): TSTraegerschaft {
+        if (traegerschaftFromServer) {
+            this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
+            traegerschaftTS.name = traegerschaftFromServer.name;
+            return traegerschaftTS;
+        }
+        return undefined;
+    }
+
+    public institutionToRestObject(restInstitution: any, institution: TSInstitution): any {
+        if (institution) {
+            this.abstractEntityToRestObject(restInstitution, institution);
+            restInstitution.name = institution.name;
+            restInstitution.mandant = this.mandantToRestObject(new TSMandant(), institution.mandant);
+            restInstitution.traegerschaft = this.traegerschaftToRestObject(new TSTraegerschaft(), institution.traegerschaft);
+            return restInstitution;
+        }
+        return undefined;
+    }
+
+    public parseInstitution(institutionTS: TSInstitution, institutionFromServer: any): TSInstitution {
+        if (institutionFromServer) {
+            this.parseAbstractEntity(institutionTS, institutionFromServer);
+            institutionTS.name = institutionFromServer.name;
+            institutionTS.mandant = this.parseMandant(new TSMandant(), institutionFromServer.mandant);
+            institutionTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), institutionFromServer.traegerschaft);
+            return institutionTS;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionen(data: Array<any>): TSInstitution[] {
+        var institutionen: TSInstitution[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                institutionen[i] = this.parseInstitution(new TSInstitution(), data[i]);
+            }
+        } else {
+            institutionen[0] = this.parseInstitution(new TSInstitution(), data);
+        }
+        return institutionen;
+    }
+
+    public institutionStammdatenToRestObject(restInstitutionStammdaten: any, institutionStammdaten: TSInstitutionStammdaten): any {
+        if (institutionStammdaten) {
+            this.abstractEntityToRestObject(restInstitutionStammdaten, institutionStammdaten);
+            restInstitutionStammdaten.iban = institutionStammdaten.iban;
+            restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
+            restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
+            restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
+            restInstitutionStammdaten.gueltigAb = DateUtil.momentToLocalDate(institutionStammdaten.gueltigkeit.gueltigAb);
+            restInstitutionStammdaten.gueltigBis = DateUtil.momentToLocalDate(institutionStammdaten.gueltigkeit.gueltigBis);
+            restInstitutionStammdaten.institution = this.institutionToRestObject(new TSInstitution(), institutionStammdaten.institution);
+            return restInstitutionStammdaten;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any): TSInstitutionStammdaten {
+        if (institutionStammdatenFromServer) {
+            this.parseAbstractEntity(institutionStammdatenTS, institutionStammdatenFromServer);
+            institutionStammdatenTS.iban = institutionStammdatenFromServer.iban;
+            institutionStammdatenTS.oeffnungsstunden = institutionStammdatenFromServer.oeffnungsstunden;
+            institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
+            institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
+            institutionStammdatenTS.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigAb),
+                DateUtil.localDateToMoment(institutionStammdatenFromServer.gueltigBis));
+            institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
+            return institutionStammdatenTS;
+        }
+        return undefined;
+    }
+
+    public parseInstitutionStammdatenArray(data: Array<any>): TSInstitutionStammdaten[] {
+        var institutionStammdaten: TSInstitutionStammdaten[] = [];
+        if (data !== null && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                institutionStammdaten[i] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data[i]);
+            }
+        } else {
+            institutionStammdaten[0] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data);
+        }
+        return institutionStammdaten;
+    }
 }

@@ -18,6 +18,10 @@ import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
 import {DvInputContainerComponentConfig} from './component/dv-input-container/dv-input-container';
 import {DvRadioContainerComponentConfig} from './component/dv-radio-container/dv-radio-container';
+import {MandantRS} from './service/mandantRS.rest';
+import {TraegerschaftRS} from './service/traegerschaftRS.rest';
+import {InstitutionRS} from './service/institutionRS.rest';
+import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -67,6 +71,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FamiliensituationRS', FamiliensituationRS)
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
+    .service('MandantRS', MandantRS)
+    .service('TraegerschaftRS', TraegerschaftRS)
+    .service('InstitutionRS', InstitutionRS)
+    .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
