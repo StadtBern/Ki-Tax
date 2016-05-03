@@ -4,9 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.AdresseService;
-import ch.dvbern.ebegu.services.FallService;
-import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -33,7 +31,10 @@ public class JaxBConverter {
 
 	@Inject
 	private AdresseService adresseService;
-
+	@Inject
+	private FachstelleService fachstelleService;
+	@Inject
+	private GesuchService gesuchService;
 	@Inject
 	private FallService fallService;
 
@@ -314,5 +315,80 @@ public class JaxBConverter {
 		jaxFachstelle.setBeschreibung(persistedFachstelle.getBeschreibung());
 		jaxFachstelle.setBehinderungsbestaetigung(persistedFachstelle.isBehinderungsbestaetigung());
 		return jaxFachstelle;
+	}
+
+	public JaxKind kindToJAX(Kind persistedKind) {
+		JaxKind jaxKind = new JaxKind();
+		convertAbstractFieldsToJAX(persistedKind, jaxKind);
+		jaxKind.setNachname(persistedKind.getNachname());
+		jaxKind.setVorname(persistedKind.getVorname());
+		jaxKind.setGeburtsdatum(persistedKind.getGeburtsdatum());
+		jaxKind.setGeschlecht(persistedKind.getGeschlecht());
+		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
+		jaxKind.setUnterstuetzungspflicht(persistedKind.getUnterstuetzungspflicht());
+		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
+		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
+		jaxKind.setBetreuungspensumFachstelle(persistedKind.getBetreuungspensumFachstelle());
+		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
+		jaxKind.setFachstelle(fachstelleToJAX(persistedKind.getFachstelle()));
+		jaxKind.setGesuch(gesuchToJAX(persistedKind.getGesuch()));
+		return jaxKind;
+	}
+
+	public Kind kindToEntity(JaxKind kindJAXP, Kind kind) {
+		Validate.notNull(kindJAXP);
+		Validate.notNull(kind);
+		convertAbstractFieldsToEntity(kindJAXP, kind);
+		kind.setNachname(kindJAXP.getNachname());
+		kind.setVorname(kindJAXP.getVorname());
+		kind.setGeburtsdatum(kindJAXP.getGeburtsdatum());
+		kind.setGeschlecht(kindJAXP.getGeschlecht());
+		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
+		kind.setUnterstuetzungspflicht(kindJAXP.getUnterstuetzungspflicht());
+		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
+		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
+		kind.setBetreuungspensumFachstelle(kindJAXP.getBetreuungspensumFachstelle());
+		kind.setBemerkungen(kindJAXP.getBemerkungen());
+		kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
+		kind.setGesuch(findGesuchToEntity(kindJAXP.getGesuch()));
+		return kind;
+	}
+
+	/**
+	 * Sucht die Fachstelle in der DB und fuegt sie mit der als Parameter gegebenen Fachstelle zusammen.
+	 * Sollte sie in der DB nicht existieren, gibt die Methode eine neue Fachstelle mit den gegebenen Daten zurueck
+	 * @param fachstelleToFind die Fachstelle als JAX
+	 * @return die Fachstelle als Entity
+     */
+	@Nonnull
+	private Fachstelle findFachstelleToEntity(JaxFachstelle fachstelleToFind) {
+		Validate.notNull(fachstelleToFind);
+		Fachstelle fachstelleToMergeWith = new Fachstelle();
+		if (fachstelleToFind.getId() != null ) {
+			Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(toEntityId(fachstelleToFind));
+			if (altFachstelle.isPresent()) {
+				fachstelleToMergeWith = altFachstelle.get();
+			}
+		}
+		return fachstelleToEntity(fachstelleToFind, fachstelleToMergeWith);
+	}
+
+	/**
+	 * Sucht das Gesuch in der DB und fuegt es mit dem als Parameter gegebenen Gesuch zusammen.
+	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
+	 * @param gesuchToFind das Gesuch als JAX
+	 * @return das Gesuch als Entity
+     */
+	@Nonnull
+	private Gesuch findGesuchToEntity(JaxGesuch gesuchToFind) {
+		Validate.notNull(gesuchToFind);
+		Gesuch gesuchToMergeWith = new Gesuch();
+		if (gesuchToFind.getId() != null ) {
+			Optional<Gesuch> altGesuch = gesuchService.findGesuch(toEntityId(gesuchToFind));
+			if (altGesuch.isPresent()) {
+				gesuchToMergeWith = altGesuch.get();
+			}
+		}
+		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 }

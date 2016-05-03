@@ -1,55 +1,49 @@
-package ch.dvbern.ebegu.entities;
+package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.util.Constants;
-import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Entity fuer Kinder.
+ * DTO fuer Stammdaten der Kinder
  */
-@Audited
-@Entity
-public class Kind extends AbstractPersonEntity {
+@XmlRootElement(name = "kind")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class JaxKind extends JaxAbstractPersonDTO {
 
-	private static final long serialVersionUID = -9032257320578372570L;
+	private static final long serialVersionUID = -1297026881674137397L;
 
-	@Max(100)
-	@Min(0)
 	@NotNull
 	private Integer wohnhaftImGleichenHaushalt;
 
 	@Nullable
-	private Boolean unterstuetzungspflicht = false;
+	private Boolean unterstuetzungspflicht;
 
 	@NotNull
-	private Boolean familienErgaenzendeBetreuung = false;
+	private Boolean familienErgaenzendeBetreuung;
 
 	@Nullable
 	private Boolean mutterspracheDeutsch;
 
-	@ManyToOne(optional = true)
-	private Fachstelle fachstelle;
+	private JaxFachstelle fachstelle;
 
-	@Max(100)
-	@Min(0)
 	@Nullable
 	private Integer betreuungspensumFachstelle;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
-	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
-	@ManyToOne(optional = false)
-	private Gesuch gesuch;
+	@NotNull
+	@Valid
+	private JaxGesuch gesuch;
+
 
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
@@ -85,11 +79,11 @@ public class Kind extends AbstractPersonEntity {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
 	}
 
-	public Fachstelle getFachstelle() {
+	public JaxFachstelle getFachstelle() {
 		return fachstelle;
 	}
 
-	public void setFachstelle(Fachstelle fachstelle) {
+	public void setFachstelle(JaxFachstelle fachstelle) {
 		this.fachstelle = fachstelle;
 	}
 
@@ -111,11 +105,11 @@ public class Kind extends AbstractPersonEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public Gesuch getGesuch() {
+	public JaxGesuch getGesuch() {
 		return gesuch;
 	}
 
-	public void setGesuch(Gesuch gesuch) {
+	public void setGesuch(JaxGesuch gesuch) {
 		this.gesuch = gesuch;
 	}
 }

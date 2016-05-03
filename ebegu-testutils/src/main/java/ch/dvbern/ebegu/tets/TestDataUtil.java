@@ -71,4 +71,20 @@ public final class TestDataUtil {
 		return fachstelle;
 	}
 
+	public static Kind createDefaultKind() {
+		Kind kind = new Kind();
+		kind.setNachname("Kind_Mustermann");
+		kind.setVorname("Kind_Max");
+		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
+		kind.setGeschlecht(Geschlecht.WEIBLICH);
+		kind.setWohnhaftImGleichenHaushalt(50);
+		kind.setBemerkungen("notizen");
+		kind.setBetreuungspensumFachstelle(50);
+		kind.setFamilienErgaenzendeBetreuung(true);
+		kind.setUnterstuetzungspflicht(true);
+		kind.setMutterspracheDeutsch(true);
+		kind.setGesuch(createDefaultGesuch());
+		kind.setFachstelle(createDefaultFachstelle());
+		return kind;
+	}
 }
