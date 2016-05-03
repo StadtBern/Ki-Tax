@@ -1,0 +1,12 @@
+<div ng-form="bisherForm">
+    <div class="dv-bisher row">
+        <span class="bisher" ng-if="vm.ja && ((vm.gs != vm.ja )&&(vm.ja != vm.sv))">
+            <span data-translate="BISHER_JA"></span>
+            {{vm.ja}}
+        </span>
+        <span class="bisher" ng-if="vm.gs && (vm.sv != vm.gs)">
+            <span data-translate="BISHER_GS"></span>
+            {{vm.gs}}
+        </span>
+    </div>
+</div>

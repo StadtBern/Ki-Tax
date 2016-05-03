@@ -43,6 +43,9 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
+	private FinanzielleSituationContainer finanzielleSituationContainer;
+
 
 	@Valid
 	@Size(min = 1)
@@ -97,7 +100,6 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.zpvNumber = zpvNumber;
 	}
 
-
 	@Nonnull
 	public List<Adresse> getAdressen() {
 		return adressen;
@@ -105,5 +107,17 @@ public class Gesuchsteller extends AbstractPersonEntity {
 
 	public void setAdressen(@Nonnull List<Adresse> adressen) {
 		this.adressen = adressen;
+	}
+
+	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
+		return finanzielleSituationContainer;
+	}
+
+	public void setFinanzielleSituationContainer(FinanzielleSituationContainer finanzielleSituationContainer) {
+		this.finanzielleSituationContainer = finanzielleSituationContainer;
+		if (finanzielleSituationContainer != null &&
+				(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			finanzielleSituationContainer.setGesuchsteller(this);
+		}
 	}
 }

@@ -16,6 +16,7 @@ ebegu benoetigt ca Version 4.4 von Node. Kann mit nvm install v4.4.3 installiert
 
 ## Starten
 - hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm run hotstart
+- hefr@PDVB:~/workspaces/ebegu/ebegu-web$ npm run server:dev
 
 
 ## Formularstruktur

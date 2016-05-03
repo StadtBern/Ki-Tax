@@ -68,6 +68,9 @@ public class JaxGesuchsteller extends JaxAbstractDTO {
 	@Valid
 	private JaxAdresse umzugAdresse;
 
+	@Valid
+	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
+
 
 	public String getVorname() {
 		return vorname;
@@ -163,5 +166,13 @@ public class JaxGesuchsteller extends JaxAbstractDTO {
 
 	public void setUmzugAdresse(JaxAdresse umzugAdresse) {
 		this.umzugAdresse = umzugAdresse;
+	}
+
+	public JaxFinanzielleSituationContainer getFinanzielleSituationContainer() {
+		return finanzielleSituationContainer;
+	}
+
+	public void setFinanzielleSituationContainer(JaxFinanzielleSituationContainer finanzielleSituationContainer) {
+		this.finanzielleSituationContainer = finanzielleSituationContainer;
 	}
 }
