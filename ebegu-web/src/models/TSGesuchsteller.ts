@@ -1,6 +1,7 @@
 import TSAdresse from './TSAdresse';
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
+import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -12,6 +13,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _adresse: TSAdresse;
     private _korrespondenzAdresse: TSAdresse;
     private _umzugAdresse: TSAdresse;
+    private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean) {
@@ -55,7 +57,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._umzug = value;
     }
 
-
     public get adresse(): TSAdresse {
         return this._adresse;
     }
@@ -72,7 +73,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._umzugAdresse = value;
     }
 
-
     public get telefonAusland(): string {
         return this._telefonAusland;
     }
@@ -80,7 +80,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     public set telefonAusland(value: string) {
         this._telefonAusland = value;
     }
-
 
     public get korrespondenzAdresse(): TSAdresse {
         return this._korrespondenzAdresse;
@@ -90,4 +89,15 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._korrespondenzAdresse = value;
     }
 
+    public get finanzielleSituationContainer(): TSFinanzielleSituationContainer {
+        return this._finanzielleSituationContainer;
+    }
+
+    public set finanzielleSituationContainer(value: TSFinanzielleSituationContainer) {
+        this._finanzielleSituationContainer = value;
+    }
+
+    public getFullName(): string {
+        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
+    }
 }

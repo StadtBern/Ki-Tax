@@ -53,7 +53,7 @@ public class FachstelleResource {
 
 		Fachstelle  fachstelle = new Fachstelle();
 		if (fachstelleJAXP.getId() != null) {
-			Optional<Fachstelle> optional = fachstelleService.findFachstelle(converter.toEntityId(fachstelleJAXP.getId()));
+			Optional<Fachstelle> optional = fachstelleService.findFachstelle(fachstelleJAXP.getId());
 			fachstelle = optional.orElse(new Fachstelle());
 		}
 		Fachstelle convertedFachstelle = converter.fachstelleToEntity(fachstelleJAXP, fachstelle);

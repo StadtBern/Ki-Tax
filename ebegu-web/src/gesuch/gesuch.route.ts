@@ -8,9 +8,10 @@ export function gesuchRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
 }
 
+//array mit allen States
 function getStates(): IState[] {
     return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
-        new EbeguKinderState()];
+        new EbeguKinderState(), new EbeguFinanzielleSituationState()];
 }
 
 
@@ -39,6 +40,12 @@ export class EbeguKinderState implements IState {
     name = 'gesuch.kinder';
     template = '<kinder-view>';
     url = '/kinder';
+}
+
+export class EbeguFinanzielleSituationState implements IState {
+    name = 'gesuch.finanzielleSituation';
+    template = '<finanzielle-situation-view>';
+    url = '/finanzielleSituation/:gesuchstellerNumber';
 }
 
 //PARAMS

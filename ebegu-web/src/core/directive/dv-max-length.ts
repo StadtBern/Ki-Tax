@@ -1,7 +1,7 @@
 import {IDirective, IDirectiveFactory, IDirectiveLinkFn, IScope, IAugmentedJQuery, IAttributes} from 'angular';
 
 export default class DVMaxLength implements IDirective {
-    static $inject = ['MAX_LENGTH'];
+    static $inject = ['CONSTANTS'];
 
     restrict = 'A';
     require = 'ngModel';
@@ -9,8 +9,8 @@ export default class DVMaxLength implements IDirective {
     link: IDirectiveLinkFn;
 
     /* @ngInject */
-    constructor(MAX_LENGTH: number) {
-        this.length = MAX_LENGTH;
+    constructor(CONSTANTS: any) {
+        this.length = CONSTANTS.MAX_LENGTH;
         this.link = (scope: IScope, element: IAugmentedJQuery, attrs: IAttributes, ctrl: any) => {
             if (!ctrl) {
                 return;
@@ -23,10 +23,9 @@ export default class DVMaxLength implements IDirective {
     }
 
     static factory(): IDirectiveFactory {
-        const directive = (MAX_LENGTH: number) => new DVMaxLength(MAX_LENGTH);
-        directive.$inject = ['MAX_LENGTH'];
+        const directive = (CONSTANTS: any) => new DVMaxLength(CONSTANTS);
+        directive.$inject = ['CONSTANTS'];
         return directive;
     }
-
 }
 

@@ -4,11 +4,10 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.AdresseService;
-import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.DefaultRevisionEntity;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -39,6 +39,8 @@ public class JaxBConverter {
 	private FachstelleService fachstelleService;
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
 	@Inject
 	private FallService fallService;
 	@Inject
@@ -63,21 +65,27 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public String toEntityId(@Nonnull final JaxAbstractDTO resource) { return toEntityId(Objects.requireNonNull(resource.getId()));
+	public JaxId toJaxId(@Nonnull final AbstractEntity entity) {
+		return new JaxId(entity.getId());
+	}
+
+	@Nonnull
+	public JaxId toJaxId(@Nonnull final JaxAbstractDTO entity) {
+		return new JaxId(entity.getId());
 	}
 
 	@Nonnull
 	private <T extends JaxAbstractDTO> T convertAbstractFieldsToJAX(@Nonnull final AbstractEntity abstEntity, T jaxDTOToConvertTo) {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
-		jaxDTOToConvertTo.setId(checkNotNull(new JaxId(abstEntity.getId())));
+		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));
 		return jaxDTOToConvertTo;
 	}
 
 	@Nonnull
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		if (jaxToConvert.getId() != null) {
-			abstEntityToConvertTo.setId(toEntityId(jaxToConvert));
+			abstEntityToConvertTo.setId(jaxToConvert.getId());
 			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 
@@ -128,12 +136,13 @@ public class JaxBConverter {
 	 * Checks fields gueltigAb and gueltigBis from given object and returns the corresponding DateRange object
 	 * If gueltigAb is null then current date is set instead
 	 * If gueltigBis is null then end_of_time is set instead
-	 * @param jaxAdresse JaxObject extending abstract class JaxAbstractDateRangedDTO
+	 *
+	 * @param jaxAbstractDateRangedDTO JaxObject extending abstract class JaxAbstractDateRangedDTO
 	 * @return DateRange object created with the given data
-     */
-	private DateRange convertDateRange(JaxAbstractDateRangedDTO jaxAdresse) {
-		LocalDate dateAb = jaxAdresse.getGueltigAb() == null ? LocalDate.now() : jaxAdresse.getGueltigAb();
-		LocalDate dateBis = jaxAdresse.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAdresse.getGueltigBis();
+	 */
+	private DateRange convertDateRange(JaxAbstractDateRangedDTO jaxAbstractDateRangedDTO) {
+		LocalDate dateAb = jaxAbstractDateRangedDTO.getGueltigAb() == null ? LocalDate.now() : jaxAbstractDateRangedDTO.getGueltigAb();
+		LocalDate dateBis = jaxAbstractDateRangedDTO.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAbstractDateRangedDTO.getGueltigBis();
 		return new DateRange(dateAb, dateBis);
 	}
 
@@ -201,22 +210,26 @@ public class JaxBConverter {
 		if (umzugAddr != null) {
 			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
 		}
+		// Finanzielle Situation
 		gesuchsteller.addAdresse(wohnAddrToMerge);
+		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
+			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToEntity(gesuchstellerJAXP.getFinanzielleSituationContainer(), new FinanzielleSituationContainer()));
+		}
 		return gesuchsteller;
 	}
 
 	@Nonnull
 	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
 		Adresse adrToMergeWith = new Adresse();
-		if (adresseToPrepareForSaving.getId() != null ) {
+		if (adresseToPrepareForSaving.getId() != null) {
 
-			Optional<Adresse> altAdr = adresseService.findAdresse(toEntityId(adresseToPrepareForSaving));
+			Optional<Adresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
 			//wenn schon vorhanden updaten
 			if (altAdr.isPresent()) {
 				adrToMergeWith = altAdr.get();
 			}
 		}
-		return  adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
+		return adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull Gesuchsteller persistedGesuchsteller) {
@@ -243,6 +256,12 @@ public class JaxBConverter {
 		Optional<Adresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
+		// Finanzielle Situation
+		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
+		if (finanzielleSituationForGesuchsteller.isPresent()) {
+			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
+			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
+		}
 		return jaxGesuchsteller;
 	}
 
@@ -284,26 +303,27 @@ public class JaxBConverter {
 		Validate.notNull(gesuch);
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
-		Optional<Fall> fallFromDB =  fallService.findFall(toEntityId(gesuchJAXP.getFall()));
-		if(fallFromDB.isPresent()) {
+
+		Optional<Fall> fallFromDB = fallService.findFall(gesuchJAXP.getFall().getId());
+		if (fallFromDB.isPresent()) {
 			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), fallFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getFall()));
+			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFall());
 		}
 		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
-			Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(toEntityId(gesuchJAXP.getGesuchsteller1()));
+			Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
 				gesuch.setGesuchsteller1(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller1()));
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
 			}
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
-			Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(toEntityId(gesuchJAXP.getGesuchsteller2()));
+			Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()){
 				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(gesuchJAXP.getGesuchsteller2()));
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
 		return gesuch;
@@ -387,18 +407,31 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(institutionJAXP, institution);
 		institution.setName(institutionJAXP.getName());
 
-		Optional<Mandant> mandantFromDB = mandantService.findMandant(toEntityId(institutionJAXP.getMandant()));
-		if(mandantFromDB.isPresent()) {
-			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
+		if (institutionJAXP.getMandant().getId() != null) {
+			Optional<Mandant> mandantFromDB = mandantService.findMandant(institutionJAXP.getMandant().getId());
+			if (mandantFromDB.isPresent()) {
+				institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getMandant().getId());
+			}
+
 		} else {
-			throw new EbeguEntityNotFoundException("institutionToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionJAXP.getMandant()));
+			//todo homa ebegu 82 review wie reagieren wir hier
+			throw new EbeguEntityNotFoundException("institutionToEntity -> mandant", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+//			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), new Mandant()));
 		}
 
-		Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(toEntityId(institutionJAXP.getTraegerschaft()));
-		if(traegerschaftFromDB.isPresent()) {
-			institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+		if (institutionJAXP.getTraegerschaft().getId() != null) {
+			Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
+			if (traegerschaftFromDB.isPresent()) {
+				institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getTraegerschaft().getId());
+			}
 		} else {
-			throw new EbeguEntityNotFoundException("institutionToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionJAXP.getTraegerschaft()));
+			//todo homa ebegu 82 review wie reagieren wir hier
+			throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+//			institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), new Traegerschaft()));
 		}
 		return institution;
 	}
@@ -408,7 +441,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
 		jaxInstStammdaten.setOeffnungsstunden(persistedInstStammdaten.getOeffnungsstunden());
-		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban());
+		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
 		jaxInstStammdaten.setGueltigAb(persistedInstStammdaten.getGueltigkeit().getGueltigAb());
 		jaxInstStammdaten.setGueltigBis(persistedInstStammdaten.getGueltigkeit().getGueltigBis());
@@ -423,15 +456,15 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
 		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
 		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
-		institutionStammdaten.setIban(institutionStammdatenJAXP.getIban());
+		institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-		institutionStammdaten.setGueltigkeit(new DateRange(institutionStammdatenJAXP.getGueltigAb(), institutionStammdatenJAXP.getGueltigBis()));
+		institutionStammdaten.setGueltigkeit(convertDateRange(institutionStammdatenJAXP));
 
-		Optional<Institution> institutionFromDB = institutionService.findInstitution(toEntityId(institutionStammdatenJAXP.getInstitution()));
-		if(institutionFromDB.isPresent()) {
+		Optional<Institution> institutionFromDB = institutionService.findInstitution(institutionStammdatenJAXP.getInstitution().getId());
+		if (institutionFromDB.isPresent()) {
 			institutionStammdaten.setInstitution(institutionToEntity(institutionStammdatenJAXP.getInstitution(), institutionFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, toEntityId(institutionStammdatenJAXP.getInstitution()));
+			throw new EbeguEntityNotFoundException("institutionStammdatenToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionStammdatenJAXP.getInstitution().getId());
 		}
 
 		return institutionStammdaten;
@@ -487,7 +520,7 @@ public class JaxBConverter {
 		Validate.notNull(fachstelleToFind);
 		Fachstelle fachstelleToMergeWith = new Fachstelle();
 		if (fachstelleToFind.getId() != null ) {
-			Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(toEntityId(fachstelleToFind));
+			Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(fachstelleToFind.getId());
 			if (altFachstelle.isPresent()) {
 				fachstelleToMergeWith = altFachstelle.get();
 			}
@@ -506,11 +539,81 @@ public class JaxBConverter {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null ) {
-			Optional<Gesuch> altGesuch = gesuchService.findGesuch(toEntityId(gesuchToFind));
+			Optional<Gesuch> altGesuch = gesuchService.findGesuch(gesuchToFind.getId());
 			if (altGesuch.isPresent()) {
 				gesuchToMergeWith = altGesuch.get();
 			}
 		}
 		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
+	}
+
+	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX,
+																			   @Nonnull FinanzielleSituationContainer container) {
+		Validate.notNull(container);
+		Validate.notNull(containerJAX);
+		convertAbstractFieldsToEntity(containerJAX, container);
+		container.setJahr(containerJAX.getJahr());
+		if (containerJAX.getFinanzielleSituationGS() != null) {
+			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), new FinanzielleSituation()));
+		}
+		if (containerJAX.getFinanzielleSituationJA() != null) {
+			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), new FinanzielleSituation()));
+		}
+		if (containerJAX.getFinanzielleSituationSV() != null) {
+			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), new FinanzielleSituation()));
+		}
+		return container;
+	}
+
+	public JaxFinanzielleSituationContainer finanzielleSituationContainerToJAX(FinanzielleSituationContainer persistedFinanzielleSituation) {
+		JaxFinanzielleSituationContainer jaxPerson = new JaxFinanzielleSituationContainer();
+		convertAbstractFieldsToJAX(persistedFinanzielleSituation, jaxPerson);
+		jaxPerson.setJahr(persistedFinanzielleSituation.getJahr());
+		jaxPerson.setFinanzielleSituationGS(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationGS()));
+		jaxPerson.setFinanzielleSituationJA(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationJA()));
+		jaxPerson.setFinanzielleSituationSV(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationSV()));
+		return jaxPerson;
+	}
+
+	public FinanzielleSituation finanzielleSituationToEntity(@Nonnull JaxFinanzielleSituation finanzielleSituationJAXP, @Nonnull FinanzielleSituation finanzielleSituation) {
+		Validate.notNull(finanzielleSituation);
+		Validate.notNull(finanzielleSituationJAXP);
+		convertAbstractFieldsToEntity(finanzielleSituationJAXP, finanzielleSituation);
+		finanzielleSituation.setSteuerveranlagungErhalten(finanzielleSituationJAXP.getSteuerveranlagungErhalten());
+		finanzielleSituation.setSteuererklaerungAusgefuellt(finanzielleSituationJAXP.getSteuererklaerungAusgefuellt());
+		finanzielleSituation.setNettolohn(finanzielleSituationJAXP.getNettolohn());
+		finanzielleSituation.setFamilienzulage(finanzielleSituationJAXP.getFamilienzulage());
+		finanzielleSituation.setErsatzeinkommen(finanzielleSituationJAXP.getErsatzeinkommen());
+		finanzielleSituation.setErhalteneAlimente(finanzielleSituationJAXP.getErhalteneAlimente());
+		finanzielleSituation.setBruttovermoegen(finanzielleSituationJAXP.getBruttovermoegen());
+		finanzielleSituation.setSchulden(finanzielleSituationJAXP.getSchulden());
+		finanzielleSituation.setSelbstaendig(finanzielleSituationJAXP.getSelbstaendig());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahr(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahr());
+		finanzielleSituation.setGeleisteteAlimente(finanzielleSituationJAXP.getGeleisteteAlimente());
+		return finanzielleSituation;
+	}
+
+	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable FinanzielleSituation persistedFinanzielleSituation) {
+		if (persistedFinanzielleSituation != null) {
+			JaxFinanzielleSituation jaxPerson = new JaxFinanzielleSituation();
+			convertAbstractFieldsToJAX(persistedFinanzielleSituation, jaxPerson);
+			jaxPerson.setSteuerveranlagungErhalten(persistedFinanzielleSituation.getSteuerveranlagungErhalten());
+			jaxPerson.setSteuererklaerungAusgefuellt(persistedFinanzielleSituation.getSteuererklaerungAusgefuellt());
+			jaxPerson.setNettolohn(persistedFinanzielleSituation.getNettolohn());
+			jaxPerson.setFamilienzulage(persistedFinanzielleSituation.getFamilienzulage());
+			jaxPerson.setErsatzeinkommen(persistedFinanzielleSituation.getErsatzeinkommen());
+			jaxPerson.setErhalteneAlimente(persistedFinanzielleSituation.getErhalteneAlimente());
+			jaxPerson.setBruttovermoegen(persistedFinanzielleSituation.getBruttovermoegen());
+			jaxPerson.setSchulden(persistedFinanzielleSituation.getSchulden());
+			jaxPerson.setSelbstaendig(persistedFinanzielleSituation.getSelbstaendig());
+			jaxPerson.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
+			jaxPerson.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
+			jaxPerson.setGeschaeftsgewinnBasisjahr(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
+			jaxPerson.setGeleisteteAlimente(persistedFinanzielleSituation.getGeleisteteAlimente());
+			return jaxPerson;
+		}
+		return null;
 	}
 }

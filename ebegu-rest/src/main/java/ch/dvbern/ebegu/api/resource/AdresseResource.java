@@ -70,7 +70,7 @@ public class AdresseResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(adresseJAXP.getId());
-		Optional<Adresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId().getId());
+		Optional<Adresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
 		Adresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
 		Adresse modifiedAdresse = this.adresseService.updateAdresse(adrToMerge);
 

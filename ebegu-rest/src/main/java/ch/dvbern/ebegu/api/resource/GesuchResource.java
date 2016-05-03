@@ -74,9 +74,8 @@ public class GesuchResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(gesuchJAXP.getId());
-		String gesuchsID = converter.toEntityId(gesuchJAXP);
-		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchsID);
-		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId().toString()));
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);

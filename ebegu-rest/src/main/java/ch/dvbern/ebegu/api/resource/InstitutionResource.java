@@ -50,7 +50,7 @@ public class InstitutionResource {
 
 		Institution institution;
 		if (institutionJAXP.getId() != null) {
-			Optional<Institution> optional = institutionService.findInstitution(converter.toEntityId(institutionJAXP.getId()));
+			Optional<Institution> optional = institutionService.findInstitution(institutionJAXP.getId());
 			institution = optional.isPresent() ? optional.get() : new Institution();
 		} else {
 			institution = new Institution();

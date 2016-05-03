@@ -50,7 +50,7 @@ public class TraegerschaftResource {
 
 		Traegerschaft traegerschaft = new Traegerschaft();;
 		if (traegerschaftJAXP.getId() != null) {
-			Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(converter.toEntityId(traegerschaftJAXP.getId()));
+			Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(traegerschaftJAXP.getId());
 			traegerschaft = optional.orElse(new Traegerschaft());
 		}
 		Traegerschaft convertedTraegerschaft = converter.traegerschaftToEntity(traegerschaftJAXP, traegerschaft);

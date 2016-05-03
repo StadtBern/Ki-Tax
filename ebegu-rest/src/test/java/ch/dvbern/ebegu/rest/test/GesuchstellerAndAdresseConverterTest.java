@@ -90,8 +90,8 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		adr.setGueltigAb(null);
 		adr.setGueltigBis(null);
 		Adresse adrEntity = converter.adresseToEntity(adr, new Adresse());
-		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigAb());
-		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigBis());
+		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
 	}
 
 
