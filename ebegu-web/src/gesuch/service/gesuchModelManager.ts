@@ -29,9 +29,10 @@ export default class GesuchModelManager {
     gesuchstellerNumber: number;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'PersonRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, gesuchstellerRS: GesuchstellerRS, finanzielleSituationRS: FinanzielleSituationRS, ebeguRestUtil: EbeguRestUtil) {
+    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, gesuchstellerRS: GesuchstellerRS,
+                finanzielleSituationRS: FinanzielleSituationRS, ebeguRestUtil: EbeguRestUtil) {
         this.fallRS = fallRS;
         this.gesuchRS = gesuchRS;
         this.gesuchstellerRS = gesuchstellerRS;

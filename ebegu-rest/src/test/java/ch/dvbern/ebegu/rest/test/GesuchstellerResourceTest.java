@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
@@ -32,6 +33,8 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 
+	@Inject
+	private JaxBConverter converter;
 
 	@Test
 	public void createGesuchstellerTest() throws EbeguException {
@@ -51,9 +54,9 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		Assert.assertNotNull(jaxGesuchsteller.getAlternativeAdresse());
 		Assert.assertNotNull(jaxGesuchsteller.getWohnAdresse());
 
-		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(jaxGesuchsteller.getId());
-
-		Assert.assertEquals(foundGesuchsteller.getId().getId(), jaxGesuchsteller.getId().getId());
+		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
+		Assert.assertNotNull(foundGesuchsteller);
+		Assert.assertEquals(foundGesuchsteller.getId(), jaxGesuchsteller.getId());
 
 	}
 
@@ -94,13 +97,13 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 	public void findGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller testGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.createGesuchsteller(testGesuchsteller, null, null);
-		JaxGesuchsteller foundPers = gesuchstellerResource.findGesuchsteller(jaxGesuchsteller.getId());
+		JaxGesuchsteller foundPers = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertNotNull(foundPers);
 		Assert.assertEquals(testGesuchsteller.getNachname(), foundPers.getNachname());
 		foundPers.setNachname("changednachname");
 
 		gesuchstellerResource.updateGesuchsteller(foundPers, null, null);
-		JaxGesuchsteller reloadedGesuchsteller = gesuchstellerResource.findGesuchsteller(jaxGesuchsteller.getId());
+		JaxGesuchsteller reloadedGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertEquals(foundPers.getNachname(), reloadedGesuchsteller.getNachname());
 		Assert.assertEquals("changednachname", reloadedGesuchsteller.getNachname());
 

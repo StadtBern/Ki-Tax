@@ -68,8 +68,7 @@ public class GesuchstellerResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(gesuchstellerJAXP.getId());
-		String gesuchstellerID = converter.toEntityId(gesuchstellerJAXP);
-		Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerID);
+		Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
 		Gesuchsteller gesuchstellerFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("updateGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchstellerJAXP.getId().toString()));
 		Gesuchsteller gesuchstellerToMerge = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerFromDB);
 

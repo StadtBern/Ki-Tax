@@ -112,6 +112,7 @@ describe('EbeguRestUtil', function () {
                 myGesuchsteller.adresse = undefined;
                 myGesuchsteller.timestampErstellt = undefined;
                 myGesuchsteller.timestampMutiert = undefined;
+                myGesuchsteller.finanzielleSituationContainer = undefined;
                 let restGesuchsteller =  ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
                 let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
