@@ -27,11 +27,6 @@ public interface FinanzielleSituationService {
 	Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String key);
 
 	/**
-	 * Sucht die Finanzielle Situation des übergebenen Gesuchstellers.
-     */
-	Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
-
-	/**
 	 * @return Liste aller FinanzielleSituationContainer aus der DB
 	 */
 	@Nonnull

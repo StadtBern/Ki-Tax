@@ -2,9 +2,13 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxKind;
-import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
@@ -21,9 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * REST Resource fuer Kinder
@@ -35,77 +37,70 @@ public class KindResource {
 
 	@Inject
 	private KindService kindService;
-
+	@Inject
+	private GesuchService gesuchService;
 	@Inject
 	private JaxBConverter converter;
 
 	@Nullable
 	@PUT
+	@Path("/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxKind saveKind(
-		@Nonnull @NotNull @Valid JaxKind kindJAXP,
+	public JaxKindContainer saveKind(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @Valid JaxKindContainer kindContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Kind kind;
-		if (kindJAXP.getId() != null) {
-			Optional<Kind> optional = kindService.findKind(converter.toEntityId(kindJAXP.getId()));
-			kind = optional.isPresent() ? optional.get() : new Kind();
-		} else {
-			kind = new Kind();
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+			KindContainer kindToMerge = new KindContainer();
+			if (kindContainerJAXP.getId() != null) {
+				// todo beim verwenden wir JaxID????????? dann auskommentierte Zeile verwenden
+//				Optional<KindContainer> optional = kindService.findKind(converter.toEntityId(kindContainerJAXP.getId()));
+				Optional<KindContainer> optional = kindService.findKind(kindContainerJAXP.getId());
+				kindToMerge = optional.orElse(new KindContainer());
+			}
+			KindContainer convertedKind = converter.kindContainerToEntity(kindContainerJAXP, kindToMerge);
+			convertedKind.setGesuch(gesuch.get());
+			KindContainer persistedKind = this.kindService.saveKind(convertedKind);
+			return converter.kindContainerToJAX(persistedKind);
 		}
-		Kind convertedKind = converter.kindToEntity(kindJAXP, kind);
-
-		Kind persistedKind = this.kindService.saveKind(convertedKind);
-		return converter.kindToJAX(persistedKind);
+		throw new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
+
 
 	@Nullable
 	@GET
-	@Path("/{kindId}")
+	@Path("/{kindContainerId}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxKind findKind(
-		@Nonnull @NotNull JaxId kindJAXPId) throws EbeguException {
+	public JaxKindContainer findKind(
+		@Nonnull @NotNull @PathParam ("kindContainerId") JaxId kindJAXPId) throws EbeguException {
 
 		Validate.notNull(kindJAXPId.getId());
 		String kindID = converter.toEntityId(kindJAXPId);
-		Optional<Kind> optional = kindService.findKind(kindID);
+		Optional<KindContainer> optional = kindService.findKind(kindID);
 
 		if (!optional.isPresent()) {
 			return null;
 		}
-		Kind kindToReturn = optional.get();
+		return converter.kindContainerToJAX(optional.get());
 
-		return converter.kindToJAX(kindToReturn);
 	}
 
 	@Nullable
 	@DELETE
-	@Path("/{kindId}")
+	@Path("/{kindContainerId}")
 	@Consumes(MediaType.WILDCARD)
 	public Response removeKind(
-		@Nonnull @NotNull @PathParam("kindId") JaxId kindJAXPId,
+		@Nonnull @NotNull @PathParam("kindContainerId") JaxId kindJAXPId,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(kindJAXPId.getId());
 		kindService.removeKind(converter.toEntityId(kindJAXPId));
 		return Response.ok().build();
-	}
-
-	@Nonnull
-	@GET
-	@Path("/gesuch/{gesuchId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxKind> getAllKinderFromGesuch(
-		@Nullable @QueryParam("gesuchId") JaxId gesuchJAXPId) {
-
-		Validate.notNull(gesuchJAXPId.getId());
-		return kindService.getAllKinderFromGesuch(converter.toEntityId(gesuchJAXPId)).stream()
-			.map(kinder -> converter.kindToJAX(kinder))
-			.collect(Collectors.toList());
 	}
 
 }

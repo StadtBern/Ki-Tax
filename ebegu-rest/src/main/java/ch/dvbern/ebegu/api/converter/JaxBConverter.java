@@ -257,11 +257,11 @@ public class JaxBConverter {
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		// Finanzielle Situation
-		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
-		if (finanzielleSituationForGesuchsteller.isPresent()) {
-			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
+		if (persistedGesuchsteller.getFinanzielleSituationContainer() != null) {
+			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
+
 		return jaxGesuchsteller;
 	}
 
@@ -471,7 +471,6 @@ public class JaxBConverter {
 
 	}
 
-
 	public JaxKind kindToJAX(Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
 		convertAbstractFieldsToJAX(persistedKind, jaxKind);
@@ -486,8 +485,15 @@ public class JaxBConverter {
 		jaxKind.setBetreuungspensumFachstelle(persistedKind.getBetreuungspensumFachstelle());
 		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
 		jaxKind.setFachstelle(fachstelleToJAX(persistedKind.getFachstelle()));
-		jaxKind.setGesuch(gesuchToJAX(persistedKind.getGesuch()));
 		return jaxKind;
+	}
+
+	public JaxKindContainer kindContainerToJAX(KindContainer persistedKind) {
+		JaxKindContainer jaxKindContainer = new JaxKindContainer();
+		convertAbstractFieldsToJAX(persistedKind, jaxKindContainer);
+		jaxKindContainer.setKindGS(kindToJAX(persistedKind.getKindGS()));
+		jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
+		return jaxKindContainer;
 	}
 
 	public Kind kindToEntity(JaxKind kindJAXP, Kind kind) {
@@ -505,8 +511,29 @@ public class JaxBConverter {
 		kind.setBetreuungspensumFachstelle(kindJAXP.getBetreuungspensumFachstelle());
 		kind.setBemerkungen(kindJAXP.getBemerkungen());
 		kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
-		kind.setGesuch(findGesuchToEntity(kindJAXP.getGesuch()));
 		return kind;
+	}
+
+
+	public KindContainer kindContainerToEntity(JaxKindContainer kindContainerJAXP, KindContainer kindContainer) {
+		Validate.notNull(kindContainer);
+		Validate.notNull(kindContainerJAXP);
+		convertAbstractFieldsToEntity(kindContainerJAXP, kindContainer);
+		if (kindContainerJAXP.getKindGS() != null) {
+			Kind kindGS = new Kind();
+			if (kindContainer.getKindGS() != null) {
+				kindGS = kindContainer.getKindGS();
+			}
+			kindContainer.setKindGS(kindToEntity(kindContainerJAXP.getKindGS(), kindGS));
+		}
+		if (kindContainerJAXP.getKindJA() != null) {
+			Kind kindJA = new Kind();
+			if (kindContainer.getKindJA() != null) {
+				kindJA = kindContainer.getKindJA();
+			}
+			kindContainer.setKindJA(kindToEntity(kindContainerJAXP.getKindJA(), kindJA));
+		}
+		return kindContainer;
 	}
 
 	/**
@@ -616,4 +643,5 @@ public class JaxBConverter {
 		}
 		return null;
 	}
+
 }

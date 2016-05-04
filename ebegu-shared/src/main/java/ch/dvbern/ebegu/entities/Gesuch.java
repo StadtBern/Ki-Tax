@@ -3,9 +3,10 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -25,6 +26,9 @@ public class Gesuch extends AbstractEntity {
 	@Nullable
 	@OneToOne(optional = true)
 	private Gesuchsteller gesuchsteller2;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	private Set<KindContainer> kindContainer = new HashSet<>();
 
 
 	public Fall getFall() {
@@ -51,5 +55,17 @@ public class Gesuch extends AbstractEntity {
 
 	public void setGesuchsteller2(@Nullable Gesuchsteller gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
+	}
+
+	public Set<KindContainer> getKindContainer() {
+		return kindContainer;
+	}
+
+	public void setKindContainer(Set<KindContainer> kindContainer) {
+		this.kindContainer = kindContainer;
+	}
+
+	public void addKindContainer(@NotNull KindContainer kindContainer) {
+		this.kindContainer.add(kindContainer);
 	}
 }

@@ -101,7 +101,6 @@ public class TestJaxDataUtil {
 		jaxKind.setUnterstuetzungspflicht(true);
 		jaxKind.setWohnhaftImGleichenHaushalt(75);
 		jaxKind.setFachstelle(createTestJaxFachstelle());
-		jaxKind.setGesuch(createTestJaxGesuch());
 		return jaxKind;
 	}
 

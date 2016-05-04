@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -16,7 +18,6 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -41,55 +42,53 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void createAndUpdatekindTest() {
 		Assert.assertNotNull(kindService);
-		Kind persitedKind = persistKind();
-		Optional<Kind> kind = kindService.findKind(persitedKind.getId());
+		KindContainer persitedKind = persistKind();
+		Optional<KindContainer> kind = kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(kind.isPresent());
-		Kind savedKind = kind.get();
-		Assert.assertEquals(persitedKind.getNachname(), savedKind.getNachname());
+		KindContainer savedKind = kind.get();
+		Assert.assertEquals(persitedKind.getKindGS().getNachname(), savedKind.getKindGS().getNachname());
+		Assert.assertEquals(persitedKind.getKindJA().getNachname(), savedKind.getKindJA().getNachname());
 
-		Assert.assertNotEquals("Neuer Name", savedKind.getNachname());
-		savedKind.setNachname("Neuer Name");
+		Assert.assertNotEquals("Neuer Name", savedKind.getKindGS().getNachname());
+		savedKind.getKindGS().setNachname("Neuer Name");
 		kindService.saveKind(savedKind);
-		Optional<Kind> updatedKind= kindService.findKind(persitedKind.getId());
+		Optional<KindContainer> updatedKind= kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(updatedKind.isPresent());
-		Assert.assertEquals("Neuer Name", updatedKind.get().getNachname());
+		Assert.assertEquals("Neuer Name", updatedKind.get().getKindGS().getNachname());
 
 	}
 
 	@Test
 	public void removekindTest() {
 		Assert.assertNotNull(kindService);
-		Kind persitedKind = persistKind();
-		Optional<Kind> kind = kindService.findKind(persitedKind.getId());
+		KindContainer persitedKind = persistKind();
+		Optional<KindContainer> kind = kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(kind.isPresent());
 		kindService.removeKind(kind.get().getId());
-		Optional<Kind> kindAfterRemove = kindService.findKind(persitedKind.getId());
+		Optional<KindContainer> kindAfterRemove = kindService.findKind(persitedKind.getId());
 		Assert.assertFalse(kindAfterRemove.isPresent());
 	}
 
-	@Test
-	public void getAllKinderFromGesuchTest() {
-		Assert.assertNotNull(kindService);
-		Kind kind = persistKind();
-		Collection<Kind> allKinderFromGesuch = kindService.getAllKinderFromGesuch(kind.getGesuch().getId());
-		Assert.assertEquals(1, allKinderFromGesuch.size());
-		Kind nextKind = allKinderFromGesuch.iterator().next();
-		Assert.assertEquals("Kind_Mustermann", nextKind.getNachname());
-
-		allKinderFromGesuch = kindService.getAllKinderFromGesuch("andereGesuchID");
-		Assert.assertEquals(0, allKinderFromGesuch.size());
-	}
 
 	// HELP METHODS
 
 	@Nonnull
-	private Kind persistKind() {
-		Kind kind = TestDataUtil.createDefaultKind();
-		persistence.persist(kind.getFachstelle());
-		persistence.persist(kind.getGesuch().getFall());
-		persistence.persist(kind.getGesuch());
+	private KindContainer persistKind() {
+		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch);
 
-		kindService.saveKind(kind);
-		return kind;
+		KindContainer kindContainer = TestDataUtil.createDefaultKindContainer();
+		kindContainer.setGesuch(gesuch);
+		kindContainer.getKindGS().setGesuch(gesuch);
+		kindContainer.getKindJA().setGesuch(gesuch);
+		persistence.persist(kindContainer.getKindGS().getFachstelle());
+		persistence.persist(kindContainer.getKindJA().getFachstelle());
+		persistence.persist(kindContainer.getKindGS());
+		persistence.persist(kindContainer.getKindJA());
+
+		kindService.saveKind(kindContainer);
+
+		return kindContainer;
 	}
 }

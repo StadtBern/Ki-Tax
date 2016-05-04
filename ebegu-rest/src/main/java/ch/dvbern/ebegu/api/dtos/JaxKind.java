@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * DTO fuer Stammdaten der Kinder
  */
-@XmlRootElement(name = "kind")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxKind extends JaxAbstractPersonDTO {
 
@@ -40,9 +39,6 @@ public class JaxKind extends JaxAbstractPersonDTO {
 	@Nullable
 	private String bemerkungen;
 
-	@NotNull
-	@Valid
-	private JaxGesuch gesuch;
 
 
 	public Integer getWohnhaftImGleichenHaushalt() {
@@ -105,11 +101,4 @@ public class JaxKind extends JaxAbstractPersonDTO {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public JaxGesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(JaxGesuch gesuch) {
-		this.gesuch = gesuch;
-	}
 }

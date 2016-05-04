@@ -24,6 +24,7 @@ import {TraegerschaftRS} from './service/traegerschaftRS.rest';
 import {InstitutionRS} from './service/institutionRS.rest';
 import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
+import KindRS from './service/kindRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -80,6 +81,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
+    .service('KindRS', KindRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
@@ -88,4 +90,3 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());
-

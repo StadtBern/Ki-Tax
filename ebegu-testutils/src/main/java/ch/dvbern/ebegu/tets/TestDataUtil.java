@@ -134,4 +134,15 @@ public final class TestDataUtil {
 		kind.setFachstelle(createDefaultFachstelle());
 		return kind;
 	}
+
+	public static KindContainer createDefaultKindContainer() {
+		KindContainer kindContainer = new KindContainer();
+		Kind defaultKindGS = createDefaultKind();
+		defaultKindGS.setNachname("GS_Kind");
+		kindContainer.setKindGS(defaultKindGS);
+		Kind defaultKindJA = createDefaultKind();
+		defaultKindJA.setNachname("JA_Kind");
+		kindContainer.setKindJA(defaultKindJA);
+		return kindContainer;
+	}
 }

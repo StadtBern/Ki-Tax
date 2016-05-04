@@ -57,7 +57,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 
 		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertNotNull(foundGesuchsteller);
-		Assert.assertEquals(foundGesuchsteller.getId(), converter.toJaxId(jaxGesuchsteller));
+		Assert.assertEquals(foundGesuchsteller.getId(), converter.toJaxId(jaxGesuchsteller).getId());
 
 	}
 

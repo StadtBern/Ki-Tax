@@ -18,6 +18,8 @@ import {TSInstitution} from '../models/TSInstitution';
 import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSDateRange} from '../models/types/TSDateRange';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
+import TSKindContainer from '../models/TSKindContainer';
+import TSKind from '../models/TSKind';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -471,6 +473,62 @@ export default class EbeguRestUtil {
             finanzielleSituationTS.geschaeftsgewinnBasisjahr = finanzielleSituationFromServer.geschaeftsgewinnBasisjahr;
             finanzielleSituationTS.geleisteteAlimente = finanzielleSituationFromServer.geleisteteAlimente;
             return finanzielleSituationTS;
+        }
+        return undefined;
+    }
+
+    public kindContainerToRestObject(restKindContainer: any, kindContainer: TSKindContainer): any {
+        this.abstractEntityToRestObject(restKindContainer, kindContainer);
+        if (kindContainer.kindGS) {
+            restKindContainer.kindGS = this.kindToRestObject({}, kindContainer.kindGS);
+        }
+        if (kindContainer.kindJA) {
+            restKindContainer.kindJA = this.kindToRestObject({}, kindContainer.kindJA);
+        }
+        return restKindContainer;
+    }
+
+    private kindToRestObject(restKind: any, kind: TSKind): any {
+        this.abstractEntityToRestObject(restKind, kind);
+        restKind.vorname = kind.vorname;
+        restKind.nachname = kind.nachname;
+        restKind.geburtsdatum = kind.geburtsdatum;
+        restKind.geschlecht = kind.geschlecht;
+        restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
+        restKind.unterstuetzungspflicht = kind.unterstuetzungspflicht;
+        restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
+        restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
+        restKind.fachstelle = kind.fachstelle;
+        restKind.betreuungspensumFachstelle = kind.betreuungspensumFachstelle;
+        restKind.bemerkungen = kind.bemerkungen;
+        return restKind;
+    }
+
+    public parseKindContainer(kindContainerTS: TSKindContainer, kindContainerFromServer: any): TSKindContainer {
+        if (kindContainerFromServer) {
+            this.parseAbstractEntity(kindContainerTS, kindContainerFromServer);
+            kindContainerTS.kindGS = this.parseKind(new TSKind(), kindContainerFromServer.kindGS);
+            kindContainerTS.kindJA = this.parseKind(new TSKind(), kindContainerFromServer.kindJA);
+            return kindContainerTS;
+        }
+        return undefined;
+    }
+
+    private parseKind(kindTS: TSKind, kindFromServer: any): TSKind {
+        if (kindFromServer) {
+            this.parseAbstractEntity(kindTS, kindFromServer);
+            kindTS.vorname = kindFromServer.vorname;
+            kindTS.nachname = kindFromServer.nachname;
+            kindTS.geburtsdatum = kindFromServer.geburtsdatum;
+            kindTS.geschlecht = kindFromServer.geschlecht;
+            kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
+            kindTS.unterstuetzungspflicht = kindFromServer.unterstuetzungspflicht;
+            kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
+            kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
+            kindTS.fachstelle = kindFromServer.fachstelle;
+            kindTS.betreuungspensumFachstelle = kindFromServer.betreuungspensumFachstelle;
+            kindTS.bemerkungen = kindFromServer.bemerkungen;
+            return kindTS;
         }
         return undefined;
     }

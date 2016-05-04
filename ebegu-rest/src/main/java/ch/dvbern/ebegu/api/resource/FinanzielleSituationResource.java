@@ -52,16 +52,16 @@ public class FinanzielleSituationResource {
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{personId}")
+	@Path("/{gesuchstellerId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveFinanzielleSituation (
-		@Nonnull @NotNull @PathParam ("personId") JaxId personId,
+		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(personId.getId());
+		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 		if (gesuchsteller.isPresent()) {
 			//hier muss bei einem update die FS aus der DB geladen werden
 
@@ -81,7 +81,7 @@ public class FinanzielleSituationResource {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 			return Response.created(uri).entity(jaxFinanzielleSituation).build();
 		}
-		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "PersonId invalid: " + personId.getId());
+		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}
 
 	@Nullable
