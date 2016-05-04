@@ -130,7 +130,6 @@ public final class TestDataUtil {
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setUnterstuetzungspflicht(true);
 		kind.setMutterspracheDeutsch(true);
-		kind.setGesuch(createDefaultGesuch());
 		kind.setFachstelle(createDefaultFachstelle());
 		return kind;
 	}

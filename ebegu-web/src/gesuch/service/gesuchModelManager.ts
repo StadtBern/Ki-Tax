@@ -15,6 +15,8 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
+import TSKindContainer from '../../models/TSKindContainer';
+import TSKind from '../../models/TSKind';
 
 
 export default class GesuchModelManager {
@@ -154,16 +156,19 @@ export default class GesuchModelManager {
     }
 
     public initFinanzielleSituation(): void {
-        if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
-            this.getStammdatenToWorkWith().adresse = this.initAdresse();
-        }
+        this.initStammdaten();
         if (!this.getStammdatenToWorkWith().finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
             this.getStammdatenToWorkWith().finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.getStammdatenToWorkWith().finanzielleSituationContainer.jahr = 2015;
             this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
             this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+        }
+    }
+
+    public initKinder(): void {
+        if (!this.gesuch.kindContainer) {
+            this.gesuch.kindContainer = new Array<TSKindContainer>();
         }
     }
 
@@ -220,5 +225,16 @@ export default class GesuchModelManager {
         if (gesuchsteller.umzugAdresse) {
             gesuchsteller.umzugAdresse.showDatumVon = true;
         }
+    }
+
+    public getKinderList(): Array<TSKindContainer> {
+        if (this.gesuch) {
+            return this.gesuch.kindContainer;
+        }
+        return [];
+    }
+
+    public createKind(): void {
+        this.gesuch.kindContainer.push(new TSKindContainer(new TSKind(), new TSKind()));
     }
 }

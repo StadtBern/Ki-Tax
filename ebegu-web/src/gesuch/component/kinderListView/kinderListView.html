@@ -5,6 +5,55 @@
         </h4>
         <p class="inlineHint" data-translate="KINDER_HINT1"></p>
         <p class="inlineHint" data-translate="KINDER_HINT2"></p>
+
+
+
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+
+                <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
+                       class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th st-sort="vorname" data-translate="VORNAME"></th>
+                        <th st-sort="nachname" data-translate="NAME"></th>
+                        <th st-sort="geburtssdatum" data-translate="GEBURTSDATUM"></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                        ng-click="vm.editRow(row)">
+                        <td ng-bind="row.vorname"></td>
+                        <td ng-bind="row.nachname"></td>
+                        <td ng-bind="row.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td>
+                            <button type="button" ng-click="vm.removeKind(row)" class="btn btn-sm">
+                                <i class="fa fa-minus">
+                                </i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr ng-if="vm.getKinderList().length === 0">
+                        <td colspan="4" data-translate="KINDER_NOCH_KEINE"> hola</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-md-12" style="margin-bottom: 20px">
+                <button type="button" ng-click="vm.createKind()" class="btn btn-sm btn-success">
+                    <i class="glyphicon glyphicon-plus">
+                    </i> add item
+                </button>
+            </div>
+
+        </div>
+
+
+
+
+
         <div class="row">
             <div class="col-md-4 ">
                 <button ng-click="vm.previousStep()" class="btn btn-link previous">

@@ -48,9 +48,6 @@ public class Kind extends AbstractPersonEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
-	@ManyToOne(optional = false)
-	private Gesuch gesuch;
-
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
 	}
@@ -111,11 +108,4 @@ public class Kind extends AbstractPersonEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
-	}
 }

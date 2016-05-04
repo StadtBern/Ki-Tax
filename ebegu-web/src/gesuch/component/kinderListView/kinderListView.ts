@@ -1,21 +1,34 @@
 import {IComponentOptions} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
-let template = require('./kinderView.html');
+import TSKindContainer from '../../../models/TSKindContainer';
+let template = require('./kinderListView.html');
 
-export class KinderViewComponentConfig implements IComponentOptions {
+export class KinderListViewComponentConfig implements IComponentOptions {
     transclude = false;
     template = template;
-    controller = KinderViewController;
+    controller = KinderListViewController;
     controllerAs = 'vm';
 }
 
-export class KinderViewController {
+export class KinderListViewController {
 
     static $inject: string[] = ['$state', 'GesuchModelManager'];
     /* @ngInject */
     constructor(private state: IStateService, private gesuchModelManager: GesuchModelManager) {
+        this.initViewModel();
+    }
 
+    private initViewModel() {
+        this.gesuchModelManager.initKinder();
+    }
+
+    getKinderList(): Array<TSKindContainer> {
+        return this.gesuchModelManager.getKinderList();
+    }
+
+    createKind(): void {
+        this.gesuchModelManager.createKind();
     }
 
     previousStep() {
