@@ -5,7 +5,7 @@ export default class AbstractGesuchViewController {
 
     state: IStateService;
 
-    constructor($state: IStateService) {
+    constructor(private $state: IStateService) {
         this.state = $state;
     }
 

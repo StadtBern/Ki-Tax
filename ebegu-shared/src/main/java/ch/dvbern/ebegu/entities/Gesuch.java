@@ -28,7 +28,7 @@ public class Gesuch extends AbstractEntity {
 	private Gesuchsteller gesuchsteller2;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
-	private Set<KindContainer> kindContainer = new HashSet<>();
+	private Set<KindContainer> kindContainers = new HashSet<>();
 
 
 	public Fall getFall() {
@@ -57,15 +57,16 @@ public class Gesuch extends AbstractEntity {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
-	public Set<KindContainer> getKindContainer() {
-		return kindContainer;
+	public Set<KindContainer> getKindContainers() {
+		return kindContainers;
 	}
 
-	public void setKindContainer(Set<KindContainer> kindContainer) {
-		this.kindContainer = kindContainer;
+	public void setKindContainers(Set<KindContainer> kindContainers) {
+		this.kindContainers = kindContainers;
 	}
 
-	public void addKindContainer(@NotNull KindContainer kindContainer) {
-		this.kindContainer.add(kindContainer);
+	public boolean addKindContainer(@NotNull KindContainer kindContainer) {
+		kindContainer.setGesuch(this);
+		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
 }

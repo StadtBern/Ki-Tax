@@ -104,4 +104,10 @@ public class TestJaxDataUtil {
 		return jaxKind;
 	}
 
+	public static JaxKindContainer createTestJaxKindContainer() {
+		JaxKindContainer jaxKindContainer = new JaxKindContainer();
+		jaxKindContainer.setKindGS(createTestJaxKind());
+		jaxKindContainer.setKindJA(createTestJaxKind());
+		return jaxKindContainer;
+	}
 }

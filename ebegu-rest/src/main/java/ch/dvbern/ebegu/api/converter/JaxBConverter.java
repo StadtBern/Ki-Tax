@@ -339,6 +339,10 @@ public class JaxBConverter {
 		if(persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
+		for (KindContainer kind : persistedGesuch.getKindContainers()) {
+			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
+		}
+
 		return jaxGesuch;
 	}
 
@@ -484,15 +488,21 @@ public class JaxBConverter {
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
 		jaxKind.setBetreuungspensumFachstelle(persistedKind.getBetreuungspensumFachstelle());
 		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
-		jaxKind.setFachstelle(fachstelleToJAX(persistedKind.getFachstelle()));
+		if (persistedKind.getFachstelle() != null) {
+			jaxKind.setFachstelle(fachstelleToJAX(persistedKind.getFachstelle()));
+		}
 		return jaxKind;
 	}
 
 	public JaxKindContainer kindContainerToJAX(KindContainer persistedKind) {
 		JaxKindContainer jaxKindContainer = new JaxKindContainer();
 		convertAbstractFieldsToJAX(persistedKind, jaxKindContainer);
-		jaxKindContainer.setKindGS(kindToJAX(persistedKind.getKindGS()));
-		jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
+		if (persistedKind.getKindGS() != null) {
+			jaxKindContainer.setKindGS(kindToJAX(persistedKind.getKindGS()));
+		}
+		if (persistedKind.getKindJA() != null) {
+			jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
+		}
 		return jaxKindContainer;
 	}
 
@@ -510,7 +520,9 @@ public class JaxBConverter {
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
 		kind.setBetreuungspensumFachstelle(kindJAXP.getBetreuungspensumFachstelle());
 		kind.setBemerkungen(kindJAXP.getBemerkungen());
-		kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
+		if (kindJAXP.getFachstelle() != null) {
+			kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
+		}
 		return kind;
 	}
 

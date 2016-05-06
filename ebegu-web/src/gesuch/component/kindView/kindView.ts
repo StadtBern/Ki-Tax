@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKind from '../../../models/TSKind';
 import {EnumEx} from '../../../utils/EnumEx';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
+import AbstractGesuchViewController from '../abstractGesuchView';
 let template = require('./kindView.html');
 
 export class KindViewComponentConfig implements IComponentOptions {
@@ -14,20 +15,23 @@ export class KindViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KindViewController {
+export class KindViewController extends AbstractGesuchViewController {
 
     geschlechter: Array<string>;
+    showFachstelle: boolean;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager'];
     /* @ngInject */
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, private state: IStateService, private gesuchModelManager: GesuchModelManager) {
+    constructor($stateParams: IKindStateParams, state: IStateService, private gesuchModelManager: GesuchModelManager) {
+        super(state);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
+        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindGS.fachstelle) ? true : false;
     }
 
     submit(form: IFormController) {
@@ -44,6 +48,9 @@ export class KindViewController {
             this.gesuchModelManager.removeKindFromList();
         }
         this.state.go('gesuch.kinder');
+    }
+
+    public showFachstelleClicked() {
     }
 
     public getModel(): TSKind {

@@ -29,7 +29,7 @@ public class JaxGesuch extends JaxAbstractDTO {
 	private JaxGesuchsteller gesuchsteller2;
 
 	@NotNull
-	private Set<KindContainer> kinder = new HashSet<>();
+	private Set<JaxKindContainer> kinder = new HashSet<>();
 
 
 	public static long getSerialVersionUID() {
@@ -62,11 +62,11 @@ public class JaxGesuch extends JaxAbstractDTO {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
-	public Set<KindContainer> getKinder() {
+	public Set<JaxKindContainer> getKinder() {
 		return kinder;
 	}
 
-	public void setKinder(Set<KindContainer> kinder) {
+	public void setKinder(Set<JaxKindContainer> kinder) {
 		this.kinder = kinder;
 	}
 }

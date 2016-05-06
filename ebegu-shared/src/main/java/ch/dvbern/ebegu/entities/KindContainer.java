@@ -35,9 +35,9 @@ public class KindContainer extends AbstractEntity {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
-		if (gesuch != null && (gesuch.getKindContainer() == null || !gesuch.getKindContainer().contains(this))) {
-			gesuch.addKindContainer(this);
-		}
+//		if (gesuch != null && (gesuch.getKindContainers() == null || !gesuch.getKindContainers().contains(this))) {
+//			gesuch.addKindContainer(this);
+//		}
 	}
 
 	public Kind getKindGS() {
