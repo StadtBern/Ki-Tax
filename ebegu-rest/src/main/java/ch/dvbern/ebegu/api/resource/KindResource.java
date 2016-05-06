@@ -57,8 +57,6 @@ public class KindResource {
 		if (gesuch.isPresent()) {
 			KindContainer kindToMerge = new KindContainer();
 			if (kindContainerJAXP.getId() != null) {
-				// todo beim verwenden wir JaxID????????? dann auskommentierte Zeile verwenden
-//				Optional<KindContainer> optional = kindService.findKind(converter.toEntityId(kindContainerJAXP.getId()));
 				Optional<KindContainer> optional = kindService.findKind(kindContainerJAXP.getId());
 				kindToMerge = optional.orElse(new KindContainer());
 			}

@@ -6,11 +6,13 @@ import {StammdatenViewComponentConfig} from './component/stammdatenView/stammdat
 import {FamiliensituationViewComponentConfig} from './component/familiensituationView/familiensituationView';
 import {KinderListViewComponentConfig} from './component/kinderListView/kinderListView';
 import {FinanzielleSituationViewComponentConfig} from './component/finanzielleSituationView/finanzielleSituationView';
+import {KindViewComponentConfig} from './component/kindView/kindView';
 
-export const EbeguWebGesuch = angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
+export const EbeguWebGesuch =
+    angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
     .run(gesuchRun)
     .component('familiensituationView', new FamiliensituationViewComponentConfig())
     .component('stammdatenView', new StammdatenViewComponentConfig)
     .component('kinderListView', new KinderListViewComponentConfig())
-    .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig());
-
+    .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
+    .component('kindView', new KindViewComponentConfig());

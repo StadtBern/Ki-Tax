@@ -20,6 +20,7 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 import TSKindContainer from '../models/TSKindContainer';
 import TSKind from '../models/TSKind';
+import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -60,10 +61,10 @@ export default class EbeguRestUtil {
         return parsedAppProperty;
     }
 
-    private parseAbstractEntity(parsedAppProperty: TSAbstractEntity, receivedAppProperty: any): void {
-        parsedAppProperty.id = receivedAppProperty.id;
-        parsedAppProperty.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampErstellt);
-        parsedAppProperty.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAppProperty.timestampMutiert);
+    private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
+        parsedAbstractEntity.id = receivedAbstractEntity.id;
+        parsedAbstractEntity.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAbstractEntity.timestampErstellt);
+        parsedAbstractEntity.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAbstractEntity.timestampMutiert);
     }
 
     private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
@@ -74,6 +75,20 @@ export default class EbeguRestUtil {
         if (typescriptObject.timestampMutiert) {
             restObject.timestampMutiert = DateUtil.momentToLocalDateTime(typescriptObject.timestampMutiert);
         }
+    }
+
+    private parseAbstractPersonEntity(personObjectTS: TSAbstractPersonEntity, receivedPersonObject: any): void {
+        personObjectTS.vorname = receivedPersonObject.vorname;
+        personObjectTS.nachname = receivedPersonObject.nachname;
+        personObjectTS.geburtsdatum = DateUtil.localDateToMoment(receivedPersonObject.geburtsdatum);
+        personObjectTS.geschlecht = receivedPersonObject.geschlecht;
+    }
+
+    private abstractPersonEntitytoRestObject(restPersonObject: any, personObject: TSAbstractPersonEntity): void {
+        restPersonObject.vorname = personObject.vorname;
+        restPersonObject.nachname = personObject.nachname;
+        restPersonObject.geburtsdatum = DateUtil.momentToLocalDate(personObject.geburtsdatum);
+        restPersonObject.geschlecht = personObject.geschlecht;
     }
 
     private dateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
@@ -153,16 +168,12 @@ export default class EbeguRestUtil {
     public gesuchstellerToRestObject(restGesuchsteller: any, gesuchsteller: TSGesuchsteller): any {
         if (gesuchsteller) {
             this.abstractEntityToRestObject(restGesuchsteller, gesuchsteller);
-            restGesuchsteller.vorname = gesuchsteller.vorname;
-
-            restGesuchsteller.nachname = gesuchsteller.nachname;
-            restGesuchsteller.geburtsdatum = DateUtil.momentToLocalDate(gesuchsteller.geburtsdatum);
+            this.abstractPersonEntitytoRestObject(restGesuchsteller, gesuchsteller);
             restGesuchsteller.mail = gesuchsteller.mail;
             restGesuchsteller.mobile = gesuchsteller.mobile;
             restGesuchsteller.telefon = gesuchsteller.telefon;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland;
             restGesuchsteller.umzug = gesuchsteller.umzug;
-            restGesuchsteller.geschlecht = gesuchsteller.geschlecht;
             restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
             restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
             restGesuchsteller.umzugAdresse = this.adresseToRestObject({}, gesuchsteller.umzugAdresse);
@@ -174,20 +185,16 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-
     public parseGesuchsteller(gesuchstellerTS: TSGesuchsteller, gesuchstellerFromServer: any): TSGesuchsteller {
         if (gesuchstellerFromServer) {
 
             this.parseAbstractEntity(gesuchstellerTS, gesuchstellerFromServer);
-            gesuchstellerTS.vorname = gesuchstellerFromServer.vorname;
-            gesuchstellerTS.nachname = gesuchstellerFromServer.nachname;
-            gesuchstellerTS.geburtsdatum = DateUtil.localDateToMoment(gesuchstellerFromServer.geburtsdatum);
+            this.parseAbstractPersonEntity(gesuchstellerTS, gesuchstellerFromServer);
             gesuchstellerTS.mail = gesuchstellerFromServer.mail;
             gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.umzug = gesuchstellerFromServer.umzug;
-            gesuchstellerTS.geschlecht = gesuchstellerFromServer.geschlecht;
             gesuchstellerTS.adresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.wohnAdresse);
             gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
             gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
@@ -490,10 +497,7 @@ export default class EbeguRestUtil {
 
     private kindToRestObject(restKind: any, kind: TSKind): any {
         this.abstractEntityToRestObject(restKind, kind);
-        restKind.vorname = kind.vorname;
-        restKind.nachname = kind.nachname;
-        restKind.geburtsdatum = kind.geburtsdatum;
-        restKind.geschlecht = kind.geschlecht;
+        this.abstractPersonEntitytoRestObject(restKind, kind);
         restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
         restKind.unterstuetzungspflicht = kind.unterstuetzungspflicht;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
@@ -517,10 +521,7 @@ export default class EbeguRestUtil {
     private parseKind(kindTS: TSKind, kindFromServer: any): TSKind {
         if (kindFromServer) {
             this.parseAbstractEntity(kindTS, kindFromServer);
-            kindTS.vorname = kindFromServer.vorname;
-            kindTS.nachname = kindFromServer.nachname;
-            kindTS.geburtsdatum = kindFromServer.geburtsdatum;
-            kindTS.geschlecht = kindFromServer.geschlecht;
+            this.parseAbstractPersonEntity(kindTS, kindFromServer);
             kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
             kindTS.unterstuetzungspflicht = kindFromServer.unterstuetzungspflicht;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;

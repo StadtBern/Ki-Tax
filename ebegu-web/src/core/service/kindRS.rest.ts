@@ -29,18 +29,18 @@ export default class KindRS {
             });
     }
 
-    public createKind(kindContainer: TSKindContainer): IPromise<TSKindContainer> {
-        return this.saveKind(kindContainer);
+    public createKind(kindContainer: TSKindContainer, gesuchId: string): IPromise<TSKindContainer> {
+        return this.saveKind(kindContainer, gesuchId);
     }
 
-    public updateKind(kindContainer: TSKindContainer): IPromise<TSKindContainer> {
-        return this.saveKind(kindContainer);
+    public updateKind(kindContainer: TSKindContainer, gesuchId: string): IPromise<TSKindContainer> {
+        return this.saveKind(kindContainer, gesuchId);
     }
 
-    private saveKind(kindContainer: TSKindContainer): IPromise<TSKindContainer> {
+    private saveKind(kindContainer: TSKindContainer, gesuchId: string): IPromise<TSKindContainer> {
         let restKind = {};
         restKind = this.ebeguRestUtil.kindContainerToRestObject(restKind, kindContainer);
-        return this.http.put(this.serviceURL, restKind, {
+        return this.http.put(this.serviceURL + '/' + gesuchId, restKind, {
             headers: {
                 'Content-Type': 'application/json'
             }

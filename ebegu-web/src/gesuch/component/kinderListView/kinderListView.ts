@@ -29,6 +29,11 @@ export class KinderListViewController {
 
     createKind(): void {
         this.gesuchModelManager.createKind();
+        this.openKindView(this.gesuchModelManager.getKindNumber());
+    }
+
+    private openKindView(kindNumber: number) {
+        this.state.go('gesuch.kind', {kindNumber: kindNumber});
     }
 
     previousStep() {

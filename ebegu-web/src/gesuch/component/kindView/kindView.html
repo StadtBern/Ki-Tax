@@ -1,0 +1,77 @@
+<div class="kindView row">
+    <div class="col-md-12">
+        <h4 class="mainTitle">
+            <span data-translate="KIND"></span> {{vm.gesuchModelManager.kindNumber}}
+        </h4>
+        <hr class="header"/>
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
+            <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+            <br />
+
+            <!--Geschlecht-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="GESCHLECHT"></label>
+                        <dv-radio-container name="geschlecht" class="input-element"
+                                            ng-required="true" items="vm.geschlechter" ng-model="vm.getModel().geschlecht">
+                        </dv-radio-container>
+                        <dv-error-messages for="form.geschlecht.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--Vorname/Name-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="VORNAME" for="vorname_ID"></label>
+                        <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages  for="form.vorname.$error"
+                                            class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+                <div class="col-md-6">
+                    <dv-input-container class="form-group secondColumn">
+                        <label data-translate="NAME" for="name_ID"></label>
+                        <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
+                               dv-max-length class="form-control" required>
+                        <dv-error-messages  for="form.name.$error"
+                                            class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!--Geburtsdatum-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                        </label>
+                        <dv-datepicker input-id="geburtsdatum_ID"  name="geburtsdatum"
+                                       ng-model="vm.getModel().geburtsdatum" ng-required="true" class="input-element">
+                        </dv-datepicker>
+                        <dv-error-messages  for="form.geburtsdatum.$error"
+                                            class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-6">
+                    <button ng-click="vm.cancel()" class="btn btn-link previous">
+                        <span data-translate="ABBRECHEN_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

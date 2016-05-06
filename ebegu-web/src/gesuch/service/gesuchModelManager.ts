@@ -17,33 +17,24 @@ import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituation
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
+import KindRS from '../../core/service/kindRS.rest';
 
 
 export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
-    fallRS: FallRS;
-    gesuchRS: GesuchRS;
-    finanzielleSituationRS: FinanzielleSituationRS;
-    gesuchstellerRS: GesuchstellerRS;
-    familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
-    ebeguRestUtil: EbeguRestUtil;
+    kindNumber: number;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, gesuchstellerRS: GesuchstellerRS,
-                finanzielleSituationRS: FinanzielleSituationRS, ebeguRestUtil: EbeguRestUtil) {
-        this.fallRS = fallRS;
-        this.gesuchRS = gesuchRS;
-        this.gesuchstellerRS = gesuchstellerRS;
-        this.finanzielleSituationRS = finanzielleSituationRS;
-        this.familiensituationRS = familiensituationRS;
+    constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private ebeguRestUtil: EbeguRestUtil) {
+
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
-        this.ebeguRestUtil = ebeguRestUtil;
     }
 
     /**
@@ -121,11 +112,27 @@ export default class GesuchModelManager {
         });
     }
 
+    /**
+     * Gesuchsteller nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
+     * @param gsNumber
+     */
     public setGesuchstellerNumber(gsNumber: number) {
         if (gsNumber === 1 || gsNumber === 2) {
             this.gesuchstellerNumber = gsNumber;
         } else {
             this.gesuchstellerNumber = 1;
+        }
+    }
+
+    /**
+     * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummern wird kindNumber als 1 gesetzt.
+     * @param kindNumber
+     */
+    public setKindNumber(kindNumber: number) {
+        if (kindNumber > 0) {
+            this.kindNumber = kindNumber;
+        } else {
+            this.kindNumber = 1;
         }
     }
 
@@ -168,7 +175,7 @@ export default class GesuchModelManager {
 
     public initKinder(): void {
         if (!this.gesuch.kindContainer) {
-            this.gesuch.kindContainer = new Array<TSKindContainer>();
+            this.gesuch.kindContainer = [];
         }
     }
 
@@ -236,5 +243,48 @@ export default class GesuchModelManager {
 
     public createKind(): void {
         this.gesuch.kindContainer.push(new TSKindContainer(new TSKind(), new TSKind()));
+        this.kindNumber = this.gesuch.kindContainer.length;
+    }
+
+    public updateKind(): IPromise<TSKindContainer> {
+        if (this.getKindToWorkWith().timestampErstellt) {
+            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
+                this.setKindToWorkWith(kindResponse);
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getKindToWorkWith();
+                });
+            });
+        } else {
+            return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
+                this.setKindToWorkWith(kindResponse);
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getKindToWorkWith();
+                });
+            });
+        }
+    }
+
+    public getKindToWorkWith(): TSKindContainer {
+        if (this.gesuch) {
+            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt in 1 an
+        }
+        return undefined;
+    }
+
+    public setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
+        return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
+    }
+
+    /**
+     * Entfernt das aktuelle Kind von der Liste.
+     */
+    public removeKindFromList() {
+        this.gesuch.kindContainer.splice(this.kindNumber - 1, 1);
+        this.setKindNumber(undefined); //by default auf undefined setzen
+        //todo beim Auch KindRS.removeKind aufrufen???????
+    }
+
+    public getKindNumber(): number {
+        return this.kindNumber;
     }
 }
