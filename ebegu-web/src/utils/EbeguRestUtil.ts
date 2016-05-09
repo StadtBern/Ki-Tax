@@ -502,7 +502,7 @@ export default class EbeguRestUtil {
         restKind.unterstuetzungspflicht = kind.unterstuetzungspflicht;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
-        restKind.fachstelle = kind.fachstelle;
+        restKind.fachstelle = this.fachstelleToRestObject({}, kind.fachstelle);
         restKind.betreuungspensumFachstelle = kind.betreuungspensumFachstelle;
         restKind.bemerkungen = kind.bemerkungen;
         return restKind;
@@ -526,7 +526,7 @@ export default class EbeguRestUtil {
             kindTS.unterstuetzungspflicht = kindFromServer.unterstuetzungspflicht;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
-            kindTS.fachstelle = kindFromServer.fachstelle;
+            kindTS.fachstelle = this.parseFachstelle(new TSFachstelle(), kindFromServer.fachstelle);
             kindTS.betreuungspensumFachstelle = kindFromServer.betreuungspensumFachstelle;
             kindTS.bemerkungen = kindFromServer.bemerkungen;
             return kindTS;

@@ -132,8 +132,10 @@
                     <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
                         <label data-translate="FACHSTELLE" for="fachstelle">
                         </label>
-                        <select name="fachstelle" id="fachstelle" ng-model="vm.getModel().fachstelle" class="form-control"
-                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'">
+                        <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId" class="form-control"
+                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                            ng-required="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle"
+                            ng-change="vm.setSelectedFachsstelle()">
                         </select>
                         <dv-error-messages  for="form.fachstelle.$error"
                                             class="error"></dv-error-messages>
@@ -148,7 +150,8 @@
                         <label data-translate="BETREUUNGSPENSUM_FACHSTELLE" for="betreuungspensumFachstelle"></label>
                         <input id="betreuungspensumFachstelle" type="text" name="betreuungspensumFachstelle"
                                ng-model="vm.getModel().betreuungspensumFachstelle"
-                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_BETRAG">
+                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                               ng-required="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
                         <dv-error-messages  for="form.betreuungspensumFachstelle.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.getModel().betreuungspensumFachstelle"></dv-bisher>
                     </dv-input-container>

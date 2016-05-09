@@ -18,6 +18,7 @@ export class KindViewComponentConfig implements IComponentOptions {
 export class KindViewController extends AbstractGesuchViewController {
     geschlechter: Array<string>;
     showFachstelle: boolean;
+    fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
     /* @ngInject */
@@ -31,6 +32,9 @@ export class KindViewController extends AbstractGesuchViewController {
     private initViewModel(): void {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindGS.fachstelle) ? true : false;
+        if (this.getModel().fachstelle) {
+            this.fachstelleId = this.getModel().fachstelle.id;
+        }
     }
 
     submit(form: IFormController) {
@@ -49,7 +53,20 @@ export class KindViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.kinder');
     }
 
+    public setSelectedFachsstelle() {
+        let fachstellenList = this.getFachstellenList();
+        for (let i: number = 0; i < fachstellenList.length; i++) {
+            if (fachstellenList[i].id === this.fachstelleId) {
+                this.getModel().fachstelle = fachstellenList[i];
+            }
+        }
+    }
+
     public showFachstelleClicked() {
+        if (!this.showFachstelle) {
+            this.getModel().fachstelle = undefined;
+            this.getModel().betreuungspensumFachstelle = undefined;
+        }
     }
 
     public getFachstellenList() {
