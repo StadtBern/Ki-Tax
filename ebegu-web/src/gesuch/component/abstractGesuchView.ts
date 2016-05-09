@@ -1,12 +1,15 @@
 import {IStateService} from 'angular-ui-router';
 import {IFormController} from 'angular';
+import GesuchModelManager from '../service/gesuchModelManager';
 
 export default class AbstractGesuchViewController {
 
     state: IStateService;
+    gesuchModelManager: GesuchModelManager;
 
-    constructor(private $state: IStateService) {
+    constructor($state: IStateService, $gesuchModelManager: GesuchModelManager) {
         this.state = $state;
+        this.gesuchModelManager = $gesuchModelManager;
     }
 
     submit(form: IFormController): void {

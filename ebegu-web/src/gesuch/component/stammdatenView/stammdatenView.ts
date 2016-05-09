@@ -20,7 +20,6 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 
 
 export class StammdatenViewController extends AbstractGesuchViewController {
-    gesuchModelManager: GesuchModelManager;
     geschlechter: Array<string>;
     showUmzug: boolean;
     showKorrespondadr: boolean;
@@ -34,8 +33,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
                 gesuchModelManager: GesuchModelManager) {
-        super($state);
-        this.gesuchModelManager = gesuchModelManager;
+        super($state, gesuchModelManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);

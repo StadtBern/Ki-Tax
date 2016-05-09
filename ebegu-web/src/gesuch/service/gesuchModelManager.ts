@@ -18,6 +18,8 @@ import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
+import {TSFachstelle} from '../../models/TSFachstelle';
+import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 
 
 export default class GesuchModelManager {
@@ -26,15 +28,19 @@ export default class GesuchModelManager {
     familiensituation: TSFamiliensituation;
     gesuchstellerNumber: number;
     kindNumber: number;
+    fachstellenList: Array<TSFachstelle>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
-                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private ebeguRestUtil: EbeguRestUtil) {
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private ebeguRestUtil: EbeguRestUtil) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
+        this.fachstellenList = [];
+        this.updateFachstellenList();
     }
 
     /**
@@ -47,6 +53,12 @@ export default class GesuchModelManager {
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         }
         return false;
+    }
+
+    public updateFachstellenList(): void {
+        this.fachstelleRS.getAllFachstellen().then((response: any) => {
+            this.fachstellenList = angular.copy(response);
+        });
     }
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
@@ -288,4 +300,5 @@ export default class GesuchModelManager {
     public getKindNumber(): number {
         return this.kindNumber;
     }
+
 }

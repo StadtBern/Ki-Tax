@@ -15,14 +15,12 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 }
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
-    gesuchModelManager: GesuchModelManager;
     CONSTANTS : any;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, CONSTANTS: any) {
-        super($state);
-        this.gesuchModelManager = gesuchModelManager;
+        super($state, gesuchModelManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();

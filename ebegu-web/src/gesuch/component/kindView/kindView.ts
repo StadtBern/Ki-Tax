@@ -16,15 +16,14 @@ export class KindViewComponentConfig implements IComponentOptions {
 }
 
 export class KindViewController extends AbstractGesuchViewController {
-
     geschlechter: Array<string>;
     showFachstelle: boolean;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager'];
     /* @ngInject */
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, private gesuchModelManager: GesuchModelManager) {
-        super(state);
+    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager) {
+        super(state, gesuchModelManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
     }
@@ -51,6 +50,10 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public showFachstelleClicked() {
+    }
+
+    public getFachstellenList() {
+        return this.gesuchModelManager.fachstellenList;
     }
 
     public getModel(): TSKind {

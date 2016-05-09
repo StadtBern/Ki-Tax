@@ -132,9 +132,8 @@
                     <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
                         <label data-translate="FACHSTELLE" for="fachstelle">
                         </label>
-                        <select name="fachstelle" id="fachstelle" ng-model="vm.getModel().fachstelle" class="form-control" >
-                            <option ng-repeat="fachstelle in vm.fachstellenList | orderBy: 'name'" ng-value="fachstelle.name"
-                                    ng-bind="fachstelle.name" ></option>
+                        <select name="fachstelle" id="fachstelle" ng-model="vm.getModel().fachstelle" class="form-control"
+                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'">
                         </select>
                         <dv-error-messages  for="form.fachstelle.$error"
                                             class="error"></dv-error-messages>

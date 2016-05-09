@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSKindContainer from '../../../models/TSKindContainer';
+import AbstractGesuchViewController from '../abstractGesuchView';
 let template = require('./kinderListView.html');
 
 export class KinderListViewComponentConfig implements IComponentOptions {
@@ -11,11 +12,12 @@ export class KinderListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-export class KinderListViewController {
+export class KinderListViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$state', 'GesuchModelManager'];
     /* @ngInject */
-    constructor(private state: IStateService, private gesuchModelManager: GesuchModelManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
+        super(state, gesuchModelManager);
         this.initViewModel();
     }
 
@@ -34,6 +36,10 @@ export class KinderListViewController {
 
     private openKindView(kindNumber: number) {
         this.state.go('gesuch.kind', {kindNumber: kindNumber});
+    }
+
+    submit() {
+        this.nextStep();
     }
 
     previousStep() {
