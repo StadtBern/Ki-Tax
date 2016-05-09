@@ -7,7 +7,7 @@
 
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
-	<entity class="ch.dvbern.ebegu.entities.Person"/>
+	<entity class="ch.dvbern.ebegu.entities.Gesuchsteller"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>

@@ -3,7 +3,7 @@ import 'angular-mocks';
 import EbeguRestUtil from './EbeguRestUtil';
 import TSAdresse from '../models/TSAdresse';
 import {EbeguWebCore} from '../core/core.module';
-import TSPerson from '../models/TSPerson';
+import TSGesuchsteller from '../models/TSGesuchsteller';
 import {TSGeschlecht} from '../models/enums/TSGeschlecht';
 import {TSAdressetyp} from '../models/enums/TSAdressetyp';
 import IInjectorService = angular.auto.IInjectorService;
@@ -34,8 +34,8 @@ describe('EbeguRestUtil', function () {
         it('should include a parseAdresse() function', function () {
             expect(ebeguRestUtil.parseAdresse).toBeDefined();
         });
-        it('should include a parsePerson() function', function () {
-            expect(ebeguRestUtil.parsePerson).toBeDefined();
+        it('should include a parseGesuchsteller() function', function () {
+            expect(ebeguRestUtil.parseGesuchsteller).toBeDefined();
         });
         it('should include a fachstelleToRestObject() function', function () {
             expect(ebeguRestUtil.fachstelleToRestObject).toBeDefined();
@@ -96,28 +96,29 @@ describe('EbeguRestUtil', function () {
 
             });
         });
-        describe('parsePerson()', () => {
-            it('should transfrom TSPerson to REST Obj and back', () => {
-                let myPerson =  new TSPerson();
-                myPerson.vorname = 'Til';
-                myPerson.nachname = 'Testperson';
-                myPerson.id = 'mytestid';
-                myPerson.geschlecht = TSGeschlecht.MAENNLICH;
-                myPerson.telefon = '+41 76 300 12 34';
-                myPerson.mobile = '+41 76 300 12 34';
-                myPerson.umzug = false;
-                myPerson.mail = 'Til.Testperson@example.com';
-                myPerson.korrespondenzAdresse = undefined;
-                myPerson.umzugAdresse = undefined;
-                myPerson.adresse = undefined;
-                myPerson.timestampErstellt = undefined;
-                myPerson.timestampMutiert = undefined;
-                let restPerson =  ebeguRestUtil.personToRestObject({}, myPerson);
-                expect(restPerson).toBeDefined();
-                let transformedPers: TSPerson = ebeguRestUtil.parsePerson(new TSPerson(), restPerson);
+        describe('parseGesuchsteller()', () => {
+            it('should transfrom TSGesuchsteller to REST Obj and back', () => {
+                let myGesuchsteller =  new TSGesuchsteller();
+                myGesuchsteller.vorname = 'Til';
+                myGesuchsteller.nachname = 'TestGesuchsteller';
+                myGesuchsteller.id = 'mytestid';
+                myGesuchsteller.geschlecht = TSGeschlecht.MAENNLICH;
+                myGesuchsteller.telefon = '+41 76 300 12 34';
+                myGesuchsteller.mobile = '+41 76 300 12 34';
+                myGesuchsteller.umzug = false;
+                myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
+                myGesuchsteller.korrespondenzAdresse = undefined;
+                myGesuchsteller.umzugAdresse = undefined;
+                myGesuchsteller.adresse = undefined;
+                myGesuchsteller.timestampErstellt = undefined;
+                myGesuchsteller.timestampMutiert = undefined;
+                myGesuchsteller.finanzielleSituationContainer = undefined;
+                let restGesuchsteller =  ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
+                expect(restGesuchsteller).toBeDefined();
+                let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
                 expect(transformedPers).toBeDefined();
-                expect(myPerson.nachname).toEqual(transformedPers.nachname);
-                expect(myPerson).toEqual(transformedPers);
+                expect(myGesuchsteller.nachname).toEqual(transformedPers.nachname);
+                expect(myGesuchsteller).toEqual(transformedPers);
 
             });
         });

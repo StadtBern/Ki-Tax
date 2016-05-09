@@ -24,7 +24,7 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Nonnull
 	@NotNull
 	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
-	private String strasse ;
+	private String strasse;
 
 	@Size(max = Constants.DB_DEFAULT_SHORT_LENGTH)
 	@Nullable
@@ -63,8 +63,8 @@ public class Adresse extends AbstractDateRangedEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_person_id"))
-	private Person person;
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_gesuchsteller_id"))
+	private Gesuchsteller gesuchsteller;
 
 
 	public Adresse() {
@@ -140,12 +140,12 @@ public class Adresse extends AbstractDateRangedEntity {
 		this.adresseTyp = adresseTyp;
 	}
 
-	public Person getPerson() {
-		return person;
+	public Gesuchsteller getGesuchsteller() {
+		return gesuchsteller;
 	}
 
-	public void setPerson(Person person) {
-		this.person = person;
+	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
+		this.gesuchsteller = gesuchsteller;
 	}
 
 

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.services.AdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -39,11 +39,11 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 
 
 	@Test
-	public void createAdresseTogetherWithPersonTest() {
-		Person pers  = TestDataUtil.createDefaultPerson();
-		Person storedPerson = persistence.persist(pers);
-		Assert.assertNotNull(storedPerson.getAdressen());
-		Assert.assertTrue(storedPerson.getAdressen().stream().findAny().isPresent());
+	public void createAdresseTogetherWithGesuchstellerTest() {
+		Gesuchsteller gesuchsteller  = TestDataUtil.createDefaultGesuchsteller();
+		Gesuchsteller storedGesuchsteller = persistence.persist(gesuchsteller);
+		Assert.assertNotNull(storedGesuchsteller.getAdressen());
+		Assert.assertTrue(storedGesuchsteller.getAdressen().stream().findAny().isPresent());
 
 	}
 
@@ -71,8 +71,8 @@ public class AdresseServiceBeanTest extends AbstractEbeguTest {
 
 	// Help Methods
 	private Adresse insertNewEntity() {
-		Person pers = TestDataUtil.createDefaultPerson();
-		Person storedPers =  persistence.persist(pers);
+		Gesuchsteller pers = TestDataUtil.createDefaultGesuchsteller();
+		Gesuchsteller storedPers =  persistence.persist(pers);
 		return storedPers.getAdressen().stream().findAny().orElseThrow(() -> new IllegalStateException("Testdaten nicht korrekt aufgesetzt"));
 	}
 

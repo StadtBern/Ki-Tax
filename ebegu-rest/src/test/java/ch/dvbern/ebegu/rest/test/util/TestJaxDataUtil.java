@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rest.test.util;
 
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.api.dtos.JaxPerson;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Land;
@@ -14,25 +14,25 @@ import java.time.LocalDate;
  * Generiert Testdaten fuer JAX DTOs
  */
 public class TestJaxDataUtil {
-	public static JaxPerson createTestJaxPerson(){
+	public static JaxGesuchsteller createTestJaxGesuchsteller(){
 
-		JaxPerson jaxPerson = new JaxPerson();
-		 jaxPerson.setNachname("Jaxter");
-		jaxPerson.setVorname("Jack");
-		jaxPerson.setWohnAdresse(createTestJaxAdr(null));
-		jaxPerson.setGeburtsdatum(LocalDate.now().minusYears(18));
-		jaxPerson.setMail("jax.jaxter@example.com");
-		jaxPerson.setGeschlecht(Geschlecht.MAENNLICH);
-		jaxPerson.setMobile("+41 78 987 65 54");
-		jaxPerson.setTelefonAusland("+49 12 123 42 12");
-		jaxPerson.setZpvNumber("1234");
+		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
+		 jaxGesuchsteller.setNachname("Jaxter");
+		jaxGesuchsteller.setVorname("Jack");
+		jaxGesuchsteller.setWohnAdresse(createTestJaxAdr(null));
+		jaxGesuchsteller.setGeburtsdatum(LocalDate.now().minusYears(18));
+		jaxGesuchsteller.setMail("jax.jaxter@example.com");
+		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
+		jaxGesuchsteller.setMobile("+41 78 987 65 54");
+		jaxGesuchsteller.setTelefonAusland("+49 12 123 42 12");
+		jaxGesuchsteller.setZpvNumber("1234");
 
-		return jaxPerson;
+		return jaxGesuchsteller;
 
 	}
 
-	public static JaxPerson createTestJaxPersonWithUmzug(){
-		JaxPerson jaxPerson = createTestJaxPerson();
+	public static JaxGesuchsteller createTestJaxGesuchstellerWithUmzug(){
+		JaxGesuchsteller jaxGesuchsteller = createTestJaxGesuchsteller();
 		JaxAdresse umzugAdr = new JaxAdresse();
 		umzugAdr.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		umzugAdr.setGemeinde("neue gemeinde");
@@ -44,11 +44,11 @@ public class TestJaxDataUtil {
 		umzugAdr.setStrasse("neue Strasse");
 		umzugAdr.setGueltigAb(LocalDate.now().plusMonths(1));  //gueltig 1 monat in zukunft
 
-		jaxPerson.setUmzugAdresse(umzugAdr);
+		jaxGesuchsteller.setUmzugAdresse(umzugAdr);
 		JaxAdresse altAdr = createTestJaxAdr("alternativ");
 		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
-		jaxPerson.setAlternativeAdresse(altAdr);
-		return jaxPerson;
+		jaxGesuchsteller.setAlternativeAdresse(altAdr);
+		return jaxGesuchsteller;
 
 	}
 

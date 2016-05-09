@@ -2,7 +2,10 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -17,7 +20,7 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	@NotNull
 	@OneToOne(optional = false, cascade = CascadeType.MERGE)   //todo hefr fragen: rueckwaerts auch cascade?
-	private Person gesuchsteller;
+	private Gesuchsteller gesuchsteller;
 
 	@NotNull
 	@Column(nullable = false)
@@ -33,11 +36,11 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	private FinanzielleSituation finanzielleSituationSV;
 
 
-	public Person getGesuchsteller() {
+	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;
 	}
 
-	public void setGesuchsteller(Person gesuchsteller) {
+	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
 		this.gesuchsteller = gesuchsteller;
 		if (gesuchsteller != null &&
 				(gesuchsteller.getFinanzielleSituationContainer() == null || !gesuchsteller.getFinanzielleSituationContainer().equals(this))) {

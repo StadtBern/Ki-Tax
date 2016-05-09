@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -45,7 +45,7 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(finanzielleSituationService);
 
 		FinanzielleSituation finanzielleSituation = TestDataUtil.createDefaultFinanzielleSituation();
-		Person gesuchsteller = TestDataUtil.createDefaultPerson();
+		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		gesuchsteller = persistence.persist(gesuchsteller);
 
 		FinanzielleSituationContainer container = TestDataUtil.createFinanzielleSituationContainer();
@@ -88,7 +88,7 @@ public class FinanzielleSituationServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	private FinanzielleSituationContainer insertNewEntity() {
-		Person gesuchsteller = TestDataUtil.createDefaultPerson();
+		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		FinanzielleSituationContainer container = TestDataUtil.createFinanzielleSituationContainer();
 		gesuchsteller.setFinanzielleSituationContainer(container);
 		gesuchsteller = persistence.persist(gesuchsteller);
