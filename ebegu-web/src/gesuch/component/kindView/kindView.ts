@@ -19,10 +19,10 @@ export class KindViewController extends AbstractGesuchViewController {
     geschlechter: Array<string>;
     showFachstelle: boolean;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
     /* @ngInject */
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager) {
+    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
         super(state, gesuchModelManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();

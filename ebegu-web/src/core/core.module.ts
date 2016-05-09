@@ -65,8 +65,8 @@ export const EbeguWebCore: angular.IModule = angular
         name: 'EBEGU',
         REST_API: '/ebegu/api/v1/',
         MAX_LENGTH: 255,
-        PATTERN_BETRAG: '([0-9]{0,12})'
-
+        PATTERN_BETRAG: '([0-9]{0,12})',
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'
     })
     .service('EbeguRestUtil', EbeguRestUtil)
     .service('GesuchstellerRS', GesuchstellerRS)

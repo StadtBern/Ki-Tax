@@ -284,7 +284,13 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    public setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
+    /**
+     * Ersetzt das Kind in der aktuelle Position "kindNumber" durch das gegebene Kind. Aus diesem Grund muss diese Methode
+     * nur aufgerufen werden, wenn die Position "kindNumber" schon richtig gesetzt wurde.
+     * @param kind
+     * @returns {TSKindContainer}
+     */
+    private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
         return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
     }
 
@@ -301,4 +307,15 @@ export default class GesuchModelManager {
         return this.kindNumber;
     }
 
+    /**
+     * Sucht das gegebene KindContainer in der List von KindContainer, erstellt es als KindToWorkWith
+     * und gibt die Position in der Array zurueck. Gibt -1 zurueck wenn das Kind nicht gefunden wurde.
+     * @param kind
+     */
+    public findKind(kind: TSKindContainer): number {
+        if (this.gesuch.kindContainer.indexOf(kind) >= 0) {
+            return this.kindNumber = this.gesuch.kindContainer.indexOf(kind) + 1;
+        }
+        return -1;
+    }
 }

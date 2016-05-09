@@ -21,7 +21,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
         this.initViewModel();
     }
 
-    private initViewModel() {
+    private initViewModel(): void {
         this.gesuchModelManager.initKinder();
     }
 
@@ -34,15 +34,22 @@ export class KinderListViewController extends AbstractGesuchViewController {
         this.openKindView(this.gesuchModelManager.getKindNumber());
     }
 
-    private openKindView(kindNumber: number) {
+    editKind(kind: TSKindContainer): void {
+        let kindNumber: number = this.gesuchModelManager.findKind(kind);
+        if (kindNumber > 0) {
+            this.openKindView(kindNumber);
+        }
+    }
+
+    private openKindView(kindNumber: number): void {
         this.state.go('gesuch.kind', {kindNumber: kindNumber});
     }
 
-    submit() {
+    submit(): void {
         this.nextStep();
     }
 
-    previousStep() {
+    previousStep(): void {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
         } else {
