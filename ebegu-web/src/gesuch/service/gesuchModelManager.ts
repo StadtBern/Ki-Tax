@@ -318,4 +318,11 @@ export default class GesuchModelManager {
         }
         return -1;
     }
+
+    public removeKind(): IPromise<TSKindContainer> {
+        return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
+            this.removeKindFromList();
+            return this.gesuchRS.update(this.gesuch);
+        });
+    }
 }

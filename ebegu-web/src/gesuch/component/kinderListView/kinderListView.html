@@ -22,7 +22,7 @@
                         <td ng-bind="row.kindGS.vorname"></td>
                         <td ng-bind="row.kindGS.nachname"></td>
                         <td ng-bind="row.kindGS.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>
+                        <td ng-click="$event.stopPropagation()">
                             <button type="button" ng-click="vm.removeKind(row)" class="btn btn-sm">
                                 <i class="fa fa-minus">
                                 </i>
@@ -55,7 +55,7 @@
             </div>
             <div class="col-md-6 text-right">
                 <button type="submit" class="btn btn-link next">
-                    <span data-translate="SPEICHERN_UPPER"></span>
+                    <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </button>
             </div>

@@ -91,7 +91,8 @@
                     <div class="form-group">
                         <label data-translate="FAM_ERGAENZENDE_BETREUUNG"></label>
                         <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
-                                            ng-required="true" ng-model="vm.getModel().familienErgaenzendeBetreuung">
+                                            ng-required="true" ng-model="vm.getModel().familienErgaenzendeBetreuung"
+                                            ng-change="vm.familienErgaenzendeBetreuungClicked()">
                         </dv-radio-container>
                         <dv-error-messages for="form.familienErgaenzendeBetreuung.$error"
                                            class="error"></dv-error-messages>
@@ -129,7 +130,7 @@
             <!--fachstelle-->
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
+                    <div class="form-group" ng-if="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
                         <label data-translate="FACHSTELLE" for="fachstelle">
                         </label>
                         <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId" class="form-control"
@@ -146,7 +147,7 @@
             <!--betreuungspensumFachstelle-->
             <div class="row">
                 <div class="col-md-12">
-                    <dv-input-container class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
+                    <dv-input-container class="form-group" ng-if="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
                         <label data-translate="BETREUUNGSPENSUM_FACHSTELLE" for="betreuungspensumFachstelle"></label>
                         <input id="betreuungspensumFachstelle" type="text" name="betreuungspensumFachstelle"
                                ng-model="vm.getModel().betreuungspensumFachstelle"

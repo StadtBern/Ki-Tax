@@ -46,6 +46,14 @@ export class KinderListViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.kind', {kindNumber: kindNumber});
     }
 
+    removeKind(kind: any): void {
+        let kindNumber: number = this.gesuchModelManager.findKind(kind);
+        if (kindNumber > 0) {
+            this.gesuchModelManager.kindNumber = kindNumber;
+            this.gesuchModelManager.removeKind();
+        }
+    }
+
     submit(): void {
         this.nextStep();
     }
@@ -59,7 +67,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     // TODO (team) vorübergehend direkt auf FinanzSit navigieren
-    nextStep()  {
+    nextStep(): void  {
         this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
     }
 }

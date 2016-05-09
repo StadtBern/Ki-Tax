@@ -64,9 +64,21 @@ export class KindViewController extends AbstractGesuchViewController {
 
     public showFachstelleClicked() {
         if (!this.showFachstelle) {
-            this.getModel().fachstelle = undefined;
-            this.getModel().betreuungspensumFachstelle = undefined;
+            this.resetFachstelleFields();
         }
+    }
+
+    public familienErgaenzendeBetreuungClicked() {
+        if (!this.getModel().familienErgaenzendeBetreuung) {
+            this.showFachstelle = false;
+            this.resetFachstelleFields();
+        }
+    }
+
+    private resetFachstelleFields() {
+        this.fachstelleId = undefined;
+        this.getModel().fachstelle = undefined;
+        this.getModel().betreuungspensumFachstelle = undefined;
     }
 
     public getFachstellenList() {

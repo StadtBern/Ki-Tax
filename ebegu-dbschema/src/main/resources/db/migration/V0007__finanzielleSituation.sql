@@ -102,6 +102,10 @@ FOREIGN KEY (finanzielle_situationsv_id)
 REFERENCES finanzielle_situation (id);
 
 ALTER TABLE finanzielle_situation_container
-  ADD CONSTRAINT fk_finanzielle_situation_container_person
+  ADD CONSTRAINT fk_finanzielle_situation_container_gesuchsteller
 FOREIGN KEY (gesuchsteller_id)
 REFERENCES gesuchsteller (id);
+
+ALTER TABLE finanzielle_situation_container
+  ADD CONSTRAINT UK_finanzielle_situation_container_gesuchsteller
+UNIQUE (gesuchsteller_id);

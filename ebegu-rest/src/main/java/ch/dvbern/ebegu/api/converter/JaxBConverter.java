@@ -522,6 +522,8 @@ public class JaxBConverter {
 		kind.setBemerkungen(kindJAXP.getBemerkungen());
 		if (kindJAXP.getFachstelle() != null) {
 			kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
+		} else {
+			kind.setFachstelle(null);
 		}
 		return kind;
 	}
