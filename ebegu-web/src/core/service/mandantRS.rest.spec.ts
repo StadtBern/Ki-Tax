@@ -32,7 +32,7 @@ describe('mandantRS', function () {
             expect(mandantRS.getServiceName()).toBe('MandantRS');
 
         });
-        it('should include a findPerson() function', function () {
+        it('should include a findMandant() function', function () {
             expect(mandantRS.findMandant).toBeDefined();
         });
     });

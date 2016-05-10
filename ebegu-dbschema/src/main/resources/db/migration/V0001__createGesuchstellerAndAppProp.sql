@@ -15,7 +15,7 @@ CREATE TABLE adresse (
   plz                VARCHAR(100) NOT NULL,
   strasse            VARCHAR(255) NOT NULL,
   zusatzzeile        VARCHAR(255),
-  person_id          VARCHAR(36)  NOT NULL,
+  gesuchsteller_id   VARCHAR(36)  NOT NULL,
   CONSTRAINT PK_adresse PRIMARY KEY (id)
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE adresse_aud (
   plz                VARCHAR(100),
   strasse            VARCHAR(255),
   zusatzzeile        VARCHAR(255),
-  person_id          VARCHAR(36) NOT NULL,
+  gesuchsteller_id   VARCHAR(36) NOT NULL,
   CONSTRAINT PK_adresse_aud PRIMARY KEY (id, rev)
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE application_property (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE person (
+CREATE TABLE gesuchsteller (
   id                 VARCHAR(36)  NOT NULL,
   timestamp_erstellt DATETIME     NOT NULL,
   timestamp_mutiert  DATETIME     NOT NULL,
@@ -82,10 +82,10 @@ CREATE TABLE person (
   telefon_ausland    VARCHAR(255),
   vorname            VARCHAR(255) NOT NULL,
   zpv_number         VARCHAR(255),
-  CONSTRAINT PK_person PRIMARY KEY (id)
+  CONSTRAINT PK_gesuchsteller PRIMARY KEY (id)
 );
 
-CREATE TABLE person_aud (
+CREATE TABLE gesuchsteller_aud (
   id                 VARCHAR(36) NOT NULL,
   rev                INTEGER     NOT NULL,
   revtype            TINYINT,
@@ -102,7 +102,7 @@ CREATE TABLE person_aud (
   telefon_ausland    VARCHAR(255),
   vorname            VARCHAR(255),
   zpv_number         VARCHAR(255),
-  CONSTRAINT PK_person_aud PRIMARY KEY (id, rev)
+  CONSTRAINT PK_gesuchsteller_aud PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE revinfo (
@@ -112,9 +112,9 @@ CREATE TABLE revinfo (
 );
 
 ALTER TABLE adresse
-  ADD CONSTRAINT FK_adresse_person_id
-FOREIGN KEY (person_id)
-REFERENCES person (id);
+  ADD CONSTRAINT FK_adresse_gesuchsteller_id
+FOREIGN KEY (gesuchsteller_id)
+REFERENCES gesuchsteller (id);
 
 ALTER TABLE adresse_aud
   ADD CONSTRAINT FK_adresse_aud_revinfo
@@ -129,7 +129,7 @@ REFERENCES revinfo (rev);
 ALTER TABLE application_property
   ADD CONSTRAINT UK_application_property_name UNIQUE (name);
 
-ALTER TABLE person_aud
-  ADD CONSTRAINT FK_person_aud_revinfo
+ALTER TABLE gesuchsteller_aud
+  ADD CONSTRAINT FK_gesuchsteller_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);

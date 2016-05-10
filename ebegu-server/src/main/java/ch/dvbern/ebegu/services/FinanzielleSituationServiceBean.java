@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer_;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -48,7 +48,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	public Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Person gesuchsteller) {
+	public Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
 		return criteriaQueryHelper.getEntityByUniqueAttribute(FinanzielleSituationContainer.class, gesuchsteller, FinanzielleSituationContainer_.gesuchsteller);
 	}
 

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -29,7 +29,7 @@ public interface FinanzielleSituationService {
 	/**
 	 * Sucht die Finanzielle Situation des übergebenen Gesuchstellers.
      */
-	Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Person gesuchsteller);
+	Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
 
 	/**
 	 * @return Liste aller FinanzielleSituationContainer aus der DB

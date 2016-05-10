@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Adresse_;
-import ch.dvbern.ebegu.entities.Person_;
+import ch.dvbern.ebegu.entities.Gesuchsteller_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -75,15 +75,15 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 	@Nonnull
 	@Override
-	public Optional<Adresse> getNewestWohnadresse(String personID) {
-		TypedQuery<Adresse> query = getAdresseQuery(personID, AdresseTyp.WOHNADRESSE, null, Constants.END_OF_TIME);
+	public Optional<Adresse> getNewestWohnadresse(String gesuchstellerID) {
+		TypedQuery<Adresse> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, null, Constants.END_OF_TIME);
 		List<Adresse> results = query.getResultList();
-		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Person mit guelitBis EndOfTime
+		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit guelitBis EndOfTime
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}
 		if (results.size() > 1) {
-			throw new EbeguRuntimeException("getNewestWohnadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, personID);
+			throw new EbeguRuntimeException("getNewestWohnadresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchstellerID);
 		}
 		return Optional.of(results.get(0));
 
@@ -91,16 +91,16 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 	@Nonnull
 	@Override
-	public Adresse getCurrentWohnadresse(String personID) {
+	public Adresse getCurrentWohnadresse(String gesuchstellerID) {
 		LocalDate today = LocalDate.now();
-		TypedQuery<Adresse> query = getAdresseQuery(personID, AdresseTyp.WOHNADRESSE, today, today);
+		TypedQuery<Adresse> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, today, today);
 		List<Adresse> results = query.getResultList();
-		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Person mit guelitBis EndOfTime
+		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit guelitBis EndOfTime
 		if (results.isEmpty()) {
-			throw new EbeguEntityNotFoundException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, personID);
+			throw new EbeguEntityNotFoundException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchstellerID);
 		}
 		if (results.size() > 1) {
-			throw new EbeguRuntimeException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, personID);
+			throw new EbeguRuntimeException("getCurrentWohnaddresse", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchstellerID);
 		}
 		return results.get(0);
 
@@ -108,26 +108,26 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 	/**
 	 * Erstellt ein query gegen die Adresse mit den gegebenen parametern
-	 * @param personID person fuer die Adressen gesucht werden
+	 * @param gesuchstellerID gesuchsteller fuer die Adressen gesucht werden
 	 * @param typ typ der Adresse der gesucht wird
 	 * @param maximalDatumVon datum ab dem gesucht wird (incl)
 	 * @param minimalDatumBis datum bis zu dem gesucht wird (incl)
 	 * @return
 	 */
-	private TypedQuery<Adresse> getAdresseQuery(@Nonnull String personID, @Nonnull AdresseTyp typ, @Nullable LocalDate maximalDatumVon, @Nullable LocalDate minimalDatumBis) {
+	private TypedQuery<Adresse> getAdresseQuery(@Nonnull String gesuchstellerID, @Nonnull AdresseTyp typ, @Nullable LocalDate maximalDatumVon, @Nullable LocalDate minimalDatumBis) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		ParameterExpression<String> personIdParam = cb.parameter(String.class, "personID");
+		ParameterExpression<String> gesuchstellerIdParam = cb.parameter(String.class, "gesuchstellerID");
 		ParameterExpression<AdresseTyp> typParam = cb.parameter(AdresseTyp.class, "adresseTyp");
 		ParameterExpression<LocalDate> gueltigVonParam = cb.parameter(LocalDate.class, "gueltigVon");
 		ParameterExpression<LocalDate> gueltigBisParam = cb.parameter(LocalDate.class, "gueltigBis");
 
 		CriteriaQuery<Adresse> query = cb.createQuery(Adresse.class);
 		Root<Adresse> root = query.from(Adresse.class);
-		Predicate personPredicate = cb.equal(root.get(Adresse_.person).get(Person_.id), personIdParam);
+		Predicate gesuchstellerPredicate = cb.equal(root.get(Adresse_.gesuchsteller).get(Gesuchsteller_.id), gesuchstellerIdParam);
 		Predicate typePredicate = cb.equal(root.get(Adresse_.adresseTyp), typParam);
 		List<Expression<Boolean>> predicatesToUse = new ArrayList<>();
 
-		predicatesToUse.add(personPredicate);
+		predicatesToUse.add(gesuchstellerPredicate);
 		predicatesToUse.add(typePredicate);
 		//noinspection VariableNotUsedInsideIf
 		if (maximalDatumVon != null) {
@@ -147,7 +147,7 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 		TypedQuery<Adresse> typedQuery = persistence.getEntityManager().createQuery(query);
 
-		typedQuery.setParameter("personID", personID);
+		typedQuery.setParameter("gesuchstellerID", gesuchstellerID);
 		typedQuery.setParameter("adresseTyp", typ);
 		if (maximalDatumVon != null) {
 			typedQuery.setParameter("gueltigVon", maximalDatumVon);
@@ -160,14 +160,14 @@ public class AdresseServiceBean extends AbstractBaseService implements AdresseSe
 
 	@Nonnull
 	@Override
-	public Optional<Adresse> getKorrespondenzAdr(String personID) {
+	public Optional<Adresse> getKorrespondenzAdr(String gesuchstellerID) {
 
-		List<Adresse> results = getAdresseQuery(personID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
+		List<Adresse> results = getAdresseQuery(gesuchstellerID, AdresseTyp.KORRESPONDENZADRESSE, null, null).getResultList();
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}
 		if (results.size() > 1) {
-			throw new EbeguRuntimeException("getKorrespondenzAdr", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, personID);
+			throw new EbeguRuntimeException("getKorrespondenzAdr", ErrorCodeEnum.ERROR_TOO_MANY_RESULTS, gesuchstellerID);
 		}
 		return Optional.of(results.get(0));
 	}

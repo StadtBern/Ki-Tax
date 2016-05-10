@@ -4,12 +4,12 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Person;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
-import ch.dvbern.ebegu.services.PersonService;
+import ch.dvbern.ebegu.services.GesuchstellerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -41,7 +41,7 @@ public class FinanzielleSituationResource {
 	private FinanzielleSituationService finanzielleSituationService;
 
 	@Inject
-	private PersonService personService;
+	private GesuchstellerService gesuchstellerService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -52,25 +52,19 @@ public class FinanzielleSituationResource {
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{personId}")
+	@Path("/{gesuchstellerId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveFinanzielleSituation (
-		@Nonnull @NotNull @PathParam ("personId") JaxId personId,
+		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Person> person = personService.findPerson(personId.getId());
-		if (person.isPresent()) {
-			//hier muss bei einem update die FS aus der DB geladen werden
-
-			//todo homa ebegu 82 review sollten wir das laden im converter machen? so wie bei adresse toStorableAdresse
-			Optional<FinanzielleSituationContainer> existingFSC = finanzielleSituationService.findFinanzielleSituation(finanzielleSituationJAXP.getId());
-			FinanzielleSituationContainer fscToMergeWith = existingFSC.orElse(new FinanzielleSituationContainer());
-
-			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToEntity(finanzielleSituationJAXP, fscToMergeWith);
-			convertedFinSitCont.setGesuchsteller(person.get());
+		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+		if (gesuchsteller.isPresent()) {
+			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
+			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
 			FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
 
 			URI uri = uriInfo.getBaseUriBuilder()
@@ -81,7 +75,7 @@ public class FinanzielleSituationResource {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 			return Response.created(uri).entity(jaxFinanzielleSituation).build();
 		}
-		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "PersonId invalid: " + personId.getId());
+		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}
 
 	@Nullable

@@ -1,7 +1,7 @@
 import {IHttpPromise, IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
-import TSPerson from '../../models/TSPerson';
+import TSGesuchsteller from '../../models/TSGesuchsteller';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
 
@@ -21,7 +21,7 @@ export default class FinanzielleSituationRS {
         this.log = $log;
     }
 
-    public saveFinanzielleSituation(finanzielleSituationContainer: TSFinanzielleSituationContainer, gesuchsteller: TSPerson): IPromise<TSFinanzielleSituationContainer> {
+    public saveFinanzielleSituation(finanzielleSituationContainer: TSFinanzielleSituationContainer, gesuchsteller: TSGesuchsteller): IPromise<TSFinanzielleSituationContainer> {
         let returnedFinanzielleSituation = {};
         returnedFinanzielleSituation = this.ebeguRestUtil.finanzielleSituationContainerToRestObject(returnedFinanzielleSituation, finanzielleSituationContainer);
         return this.http.put(this.serviceURL + '/' + gesuchsteller.id, returnedFinanzielleSituation, {

@@ -48,20 +48,20 @@ public interface AdresseService {
 	void removeAdresse(@Nonnull Adresse adresse);
 
 	/**
-	 * Laedt die aktuellste Adresse mit gueltigBis EndOfTime fuer die Person mit personID
+	 * Laedt die aktuellste Adresse mit gueltigBis EndOfTime fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<Adresse> getNewestWohnadresse(String personID);
+	Optional<Adresse> getNewestWohnadresse(String gesuchstellerID);
 
 	/**
-	 * Laedt die Korrespondenzadresse (aktuell gibt es immer nur 1) fuer die Person mit personID
+	 * Laedt die Korrespondenzadresse (aktuell gibt es immer nur 1) fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<Adresse> getKorrespondenzAdr(String personID);
+	Optional<Adresse> getKorrespondenzAdr(String gesuchstellerID);
 
 	/**
 	 * Laedt die Wohnadresse die Stichtag heute gueltig ist
 	 */
 	@Nonnull
-	Adresse getCurrentWohnadresse(String personID);
+	Adresse getCurrentWohnadresse(String gesuchstellerID);
 }
