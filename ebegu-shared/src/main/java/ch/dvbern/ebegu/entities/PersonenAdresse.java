@@ -21,6 +21,7 @@ public class PersonenAdresse extends AbstractDateRangedEntity {
 
 	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pers_adresse_adresse_id"))
 	private Adresse adresse = new Adresse();
 
 
@@ -30,7 +31,7 @@ public class PersonenAdresse extends AbstractDateRangedEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_gesuchsteller_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pers_adresse_gesuchsteller_id"))
 	private Gesuchsteller gesuchsteller;
 
 
