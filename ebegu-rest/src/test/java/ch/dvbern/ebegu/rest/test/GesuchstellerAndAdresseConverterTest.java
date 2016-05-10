@@ -80,6 +80,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
 		ImmutableListMultimap<AdresseTyp, PersonenAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), PersonenAdresse::getAdresseTyp);
 		PersonenAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
+		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
 		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new PersonenAdresse())));
 
 	}

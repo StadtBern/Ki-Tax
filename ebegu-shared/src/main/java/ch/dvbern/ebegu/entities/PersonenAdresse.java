@@ -137,7 +137,7 @@ public class PersonenAdresse extends AbstractDateRangedEntity {
 		}
 
 
-		return Objects.equals(adresse, otherAdr.getAdresse()) &&
+		return adresse.isSame(otherAdr.getAdresse()) &&
 			adresseTyp == otherAdr.getAdresseTyp() &&
 			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
 

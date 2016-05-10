@@ -1,9 +1,9 @@
+ALTER TABLE adresse DROP FOREIGN KEY FK_adresse_gesuchsteller_id;
 ALTER TABLE adresse DROP adresse_typ;
 ALTER TABLE adresse DROP gesuchsteller_id;
 ALTER TABLE adresse_aud DROP adresse_typ;
 ALTER TABLE adresse_aud DROP gesuchsteller_id;
 
-ALTER TABLE adresse DROP FOREIGN KEY FK_adresse_gesuchsteller_id;
 
 CREATE TABLE personen_adresse_aud (
   id                 VARCHAR(36) NOT NULL,
