@@ -1,67 +1,67 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.PersonenAdresse;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Service zum Verwalten von Adresen
+ * Service zum Verwalten von Personen Adressen
  */
 public interface AdresseService {
 
 	/**
 	 * Speichert die Adresse neu in der DB falls der Key noch nicht existiert.
 	 *
-	 * @param adresse Die Adresse als DTO
+	 * @param personenAdresse Die Adresse als DTO
 	 */
 	@Nonnull
-	Adresse createAdresse(@Nonnull Adresse adresse);
+	PersonenAdresse createAdresse(@Nonnull PersonenAdresse personenAdresse);
 
 	/**
 	 * Aktualisiert die Adresse in der DB.
 	 *
-	 * @param adresse Die Adresse als DTO
+	 * @param personenAdresse Die Adresse als DTO
 	 */
 	@Nonnull
-	Adresse updateAdresse(@Nonnull Adresse adresse);
+	PersonenAdresse updateAdresse(@Nonnull PersonenAdresse personenAdresse);
 
 	/**
 	 * @param key PK (id) der Adresse
 	 * @return Adresse mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Adresse> findAdresse(@Nonnull String key);
+	Optional<PersonenAdresse> findAdresse(@Nonnull String key);
 
 	/**
 	 * @return Liste aller Adressen aus der DB
 	 */
 	@Nonnull
-	Collection<Adresse> getAllAdressen();
+	Collection<PersonenAdresse> getAllAdressen();
 
 	/**
 	 * entfernt eine Adresse aus der Databse
 	 *
-	 * @param adresse Adresse zu entfernen
+	 * @param personenAdresse Adresse zu entfernen
 	 */
-	void removeAdresse(@Nonnull Adresse adresse);
+	void removeAdresse(@Nonnull PersonenAdresse personenAdresse);
 
 	/**
 	 * Laedt die aktuellste Adresse mit gueltigBis EndOfTime fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<Adresse> getNewestWohnadresse(String gesuchstellerID);
+	Optional<PersonenAdresse> getNewestWohnadresse(String gesuchstellerID);
 
 	/**
 	 * Laedt die Korrespondenzadresse (aktuell gibt es immer nur 1) fuer die Gesuchsteller mit gesuchstellerID
 	 */
 	@Nonnull
-	Optional<Adresse> getKorrespondenzAdr(String gesuchstellerID);
+	Optional<PersonenAdresse> getKorrespondenzAdr(String gesuchstellerID);
 
 	/**
 	 * Laedt die Wohnadresse die Stichtag heute gueltig ist
 	 */
 	@Nonnull
-	Adresse getCurrentWohnadresse(String gesuchstellerID);
+	PersonenAdresse getCurrentWohnadresse(String gesuchstellerID);
 }

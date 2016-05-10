@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.PersonenAdresse;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AdresseService;
 import io.swagger.annotations.Api;
@@ -48,15 +48,15 @@ public class AdresseResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Adresse convertedAdresse = converter.adresseToEntity(adresseJAXP, new Adresse());
-		Adresse persistedAdresse = this.adresseService.createAdresse(convertedAdresse);
+		PersonenAdresse convertedPersonenAdresse = converter.adresseToEntity(adresseJAXP, new PersonenAdresse());
+		PersonenAdresse persistedPersonenAdresse = this.adresseService.createAdresse(convertedPersonenAdresse);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(AdresseResource.class)
-			.path("/" + persistedAdresse.getId())
+			.path("/" + persistedPersonenAdresse.getId())
 			.build();
 
-		return Response.created(uri).entity(converter.adresseToJAX(persistedAdresse)).build();
+		return Response.created(uri).entity(converter.adresseToJAX(persistedPersonenAdresse)).build();
 
 	}
 
@@ -70,11 +70,11 @@ public class AdresseResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(adresseJAXP.getId());
-		Optional<Adresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
-		Adresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
-		Adresse modifiedAdresse = this.adresseService.updateAdresse(adrToMerge);
+		Optional<PersonenAdresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
+		PersonenAdresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
+		PersonenAdresse modifiedPersonenAdresse = this.adresseService.updateAdresse(adrToMerge);
 
-		return converter.adresseToJAX(modifiedAdresse);
+		return converter.adresseToJAX(modifiedPersonenAdresse);
 	}
 
 }

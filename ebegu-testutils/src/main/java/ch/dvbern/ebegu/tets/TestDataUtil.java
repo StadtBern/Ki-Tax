@@ -4,7 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.entities.Adresse;
+import ch.dvbern.ebegu.entities.PersonenAdresse;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
@@ -22,15 +22,15 @@ public final class TestDataUtil {
 	private TestDataUtil(){
 	}
 
-	public static Adresse createDefaultAdresse() {
-		Adresse adresse = new Adresse();
-		adresse.setStrasse("Nussbaumstrasse");
-		adresse.setHausnummer("21");
-		adresse.setZusatzzeile("c/o Uwe Untermieter");
-		adresse.setPlz("3014");
-		adresse.setOrt("Bern");
-		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
-		return adresse;
+	public  static PersonenAdresse createDefaultAdresse() {
+		PersonenAdresse personenAdresse = new PersonenAdresse();
+		personenAdresse.setStrasse("Nussbaumstrasse");
+		personenAdresse.setHausnummer("21");
+		personenAdresse.setZusatzzeile("c/o Uwe Untermieter");
+		personenAdresse.setPlz("3014");
+		personenAdresse.setOrt("Bern");
+		personenAdresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		return personenAdresse;
 	}
 
 	public static Gesuchsteller createDefaultGesuchsteller(){

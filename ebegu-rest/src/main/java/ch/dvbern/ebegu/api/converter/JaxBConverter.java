@@ -108,23 +108,23 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public Adresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final Adresse adresse) {
-		Validate.notNull(adresse);
+	public PersonenAdresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final PersonenAdresse personenAdresse) {
+		Validate.notNull(personenAdresse);
 		Validate.notNull(jaxAdresse);
-		convertAbstractFieldsToEntity(jaxAdresse, adresse);
-		adresse.setStrasse(jaxAdresse.getStrasse());
-		adresse.setHausnummer(jaxAdresse.getHausnummer());
-		adresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
-		adresse.setPlz(jaxAdresse.getPlz());
-		adresse.setOrt(jaxAdresse.getOrt());
-		adresse.setGemeinde(jaxAdresse.getGemeinde());
-		adresse.setLand(jaxAdresse.getLand());
-		adresse.setGueltigkeit(convertDateRange(jaxAdresse));
+		convertAbstractFieldsToEntity(jaxAdresse, personenAdresse);
+		personenAdresse.setStrasse(jaxAdresse.getStrasse());
+		personenAdresse.setHausnummer(jaxAdresse.getHausnummer());
+		personenAdresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
+		personenAdresse.setPlz(jaxAdresse.getPlz());
+		personenAdresse.setOrt(jaxAdresse.getOrt());
+		personenAdresse.setGemeinde(jaxAdresse.getGemeinde());
+		personenAdresse.setLand(jaxAdresse.getLand());
+		personenAdresse.setGueltigkeit(convertDateRange(jaxAdresse));
 		//adresse gilt per default von start of time an
-		adresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
-		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
+		personenAdresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
+		personenAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
-		return adresse;
+		return personenAdresse;
 	}
 
 	/**
@@ -142,19 +142,19 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public JaxAdresse adresseToJAX(@Nonnull final Adresse adresse) {
+	public JaxAdresse adresseToJAX(@Nonnull final PersonenAdresse personenAdresse) {
 		JaxAdresse jaxAdresse = new JaxAdresse();
-		convertAbstractFieldsToJAX(adresse, jaxAdresse);
-		jaxAdresse.setStrasse(adresse.getStrasse());
-		jaxAdresse.setHausnummer(adresse.getHausnummer());
-		jaxAdresse.setZusatzzeile(adresse.getZusatzzeile());
-		jaxAdresse.setPlz(adresse.getPlz());
-		jaxAdresse.setOrt(adresse.getOrt());
-		jaxAdresse.setGemeinde(adresse.getGemeinde());
-		jaxAdresse.setLand(adresse.getLand());
-		jaxAdresse.setGueltigAb(adresse.getGueltigkeit().getGueltigAb());
-		jaxAdresse.setGueltigBis(adresse.getGueltigkeit().getGueltigBis());
-		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());
+		convertAbstractFieldsToJAX(personenAdresse, jaxAdresse);
+		jaxAdresse.setStrasse(personenAdresse.getStrasse());
+		jaxAdresse.setHausnummer(personenAdresse.getHausnummer());
+		jaxAdresse.setZusatzzeile(personenAdresse.getZusatzzeile());
+		jaxAdresse.setPlz(personenAdresse.getPlz());
+		jaxAdresse.setOrt(personenAdresse.getOrt());
+		jaxAdresse.setGemeinde(personenAdresse.getGemeinde());
+		jaxAdresse.setLand(personenAdresse.getLand());
+		jaxAdresse.setGueltigAb(personenAdresse.getGueltigkeit().getGueltigAb());
+		jaxAdresse.setGueltigBis(personenAdresse.getGueltigkeit().getGueltigBis());
+		jaxAdresse.setAdresseTyp(personenAdresse.getAdresseTyp());
 		return jaxAdresse;
 	}
 
@@ -190,18 +190,18 @@ public class JaxBConverter {
 		//Relationen
 		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
 		if (gesuchstellerJAXP.getAlternativeAdresse() != null) {
-			Adresse currentAltAdr = adresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new Adresse());
-			Adresse altAddrToMerge = adresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
+			PersonenAdresse currentAltAdr = adresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new PersonenAdresse());
+			PersonenAdresse altAddrToMerge = adresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
 		}
 		// Umzug und Wohnadresse
-		Adresse umzugAddr = null;
+		PersonenAdresse umzugAddr = null;
 		if (gesuchstellerJAXP.getUmzugAdresse() != null) {
 			umzugAddr = toStoreableAddresse(gesuchstellerJAXP.getUmzugAdresse());
 			gesuchsteller.addAdresse(umzugAddr);
 		}
 		//Wohnadresse (abh von Umzug noch datum setzten)
-		Adresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
+		PersonenAdresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
 		if (umzugAddr != null) {
 			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
 		}
@@ -214,11 +214,11 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
-		Adresse adrToMergeWith = new Adresse();
+	private PersonenAdresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
+		PersonenAdresse adrToMergeWith = new PersonenAdresse();
 		if (adresseToPrepareForSaving.getId() != null) {
 
-			Optional<Adresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
+			Optional<PersonenAdresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
 			//wenn schon vorhanden updaten
 			if (altAdr.isPresent()) {
 				adrToMergeWith = altAdr.get();
@@ -242,13 +242,13 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
 		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
 		//relationen laden
-		Optional<Adresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+		Optional<PersonenAdresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
 		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(adresseToJAX(adresse)));
-		Adresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
+		PersonenAdresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
 		jaxGesuchsteller.setWohnAdresse(adresseToJAX(currentWohnadr));
 
 		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-		Optional<Adresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
+		Optional<PersonenAdresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		// Finanzielle Situation
