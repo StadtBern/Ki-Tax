@@ -51,7 +51,7 @@
                 <div class="col-md-12">
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_NETTOLOHN" for="nettolohn"></label>
-                        <input id="nettolohn" type="text" name="nettolohn"
+                        <input id="nettolohn" type="text" name="nettolohn" ui-number-mask="0"
                                ng-model="vm.getModel().finanzielleSituationSV.nettolohn"
                                dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_BETRAG">
                         <dv-error-messages  for="form.nettolohn.$error" class="error"></dv-error-messages>
