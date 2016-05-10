@@ -1,6 +1,6 @@
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
-import {TSFachstelle} from './TSFachstelle';
 import {TSGeschlecht} from './enums/TSGeschlecht';
+import {TSPensumFachstelle} from './TSPensumFachstelle';
 
 export default class TSKind extends TSAbstractPersonEntity {
 
@@ -8,22 +8,20 @@ export default class TSKind extends TSAbstractPersonEntity {
     private _unterstuetzungspflicht: boolean;
     private _familienErgaenzendeBetreuung: boolean;
     private _mutterspracheDeutsch: boolean;
-    private _fachstelle: TSFachstelle;
-    private _betreuungspensumFachstelle: number;
+    private _pensumFachstelle: TSPensumFachstelle;
     private _bemerkungen: string;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 wohnhaftImGleichenHaushalt?: number, unterstuetzungspflicht?: boolean, familienErgaenzendeBetreuung?: boolean,
-                mutterspracheDeutsch?: boolean, fachstelle?: TSFachstelle, betreuungspensumFachstelle?: number, bemerkungen?: string) {
+                mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
 
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
         this._unterstuetzungspflicht = unterstuetzungspflicht;
         this._familienErgaenzendeBetreuung = familienErgaenzendeBetreuung;
         this._mutterspracheDeutsch = mutterspracheDeutsch;
-        this._fachstelle = fachstelle;
-        this._betreuungspensumFachstelle = betreuungspensumFachstelle;
-        this.bemerkungen = bemerkungen;
+        this._pensumFachstelle = pensumFachstelle;
+        this._bemerkungen = bemerkungen;
     }
 
 
@@ -59,20 +57,12 @@ export default class TSKind extends TSAbstractPersonEntity {
         this._mutterspracheDeutsch = value;
     }
 
-    get fachstelle(): TSFachstelle {
-        return this._fachstelle;
+    get pensumFachstelle(): TSPensumFachstelle {
+        return this._pensumFachstelle;
     }
 
-    set fachstelle(value: TSFachstelle) {
-        this._fachstelle = value;
-    }
-
-    get betreuungspensumFachstelle(): number {
-        return this._betreuungspensumFachstelle;
-    }
-
-    set betreuungspensumFachstelle(value: number) {
-        this._betreuungspensumFachstelle = value;
+    set pensumFachstelle(value: TSPensumFachstelle) {
+        this._pensumFachstelle = value;
     }
 
     get bemerkungen(): string {

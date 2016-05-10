@@ -21,6 +21,7 @@ import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 import TSKindContainer from '../models/TSKindContainer';
 import TSKind from '../models/TSKind';
 import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
+import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -502,10 +503,9 @@ export default class EbeguRestUtil {
         restKind.unterstuetzungspflicht = kind.unterstuetzungspflicht;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
-        if (kind.fachstelle) {
-            restKind.fachstelle = this.fachstelleToRestObject({}, kind.fachstelle);
+        if (kind.pensumFachstelle) {
+            restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
         }
-        restKind.betreuungspensumFachstelle = kind.betreuungspensumFachstelle;
         restKind.bemerkungen = kind.bemerkungen;
         return restKind;
     }
@@ -528,12 +528,34 @@ export default class EbeguRestUtil {
             kindTS.unterstuetzungspflicht = kindFromServer.unterstuetzungspflicht;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
-            if (kindFromServer.fachstelle) {
-                kindTS.fachstelle = this.parseFachstelle(new TSFachstelle(), kindFromServer.fachstelle);
+            if (kindFromServer.pensumFachstelle) {
+                kindTS.pensumFachstelle = this.parsePensumFachstelle(new TSPensumFachstelle(), kindFromServer.pensumFachstelle);
             }
-            kindTS.betreuungspensumFachstelle = kindFromServer.betreuungspensumFachstelle;
             kindTS.bemerkungen = kindFromServer.bemerkungen;
             return kindTS;
+        }
+        return undefined;
+    }
+
+    private pensumFachstelleToRestObject(restPensumFachstelle: any, pensumFachstelle: TSPensumFachstelle): any {
+        this.abstractEntityToRestObject(restPensumFachstelle, pensumFachstelle);
+        this.dateRangeEntityToRestObject(pensumFachstelle, restPensumFachstelle);
+        restPensumFachstelle.pensum = pensumFachstelle.pensum;
+        if (pensumFachstelle.fachstelle) {
+            restPensumFachstelle.fachstelle = this.fachstelleToRestObject({}, pensumFachstelle.fachstelle);
+        }
+        return restPensumFachstelle;
+    }
+
+    private parsePensumFachstelle(pensumFachstelleTS: TSPensumFachstelle, pensumFachstelleFromServer: any): TSPensumFachstelle {
+        if (pensumFachstelleFromServer) {
+            this.parseAbstractEntity(pensumFachstelleTS, pensumFachstelleFromServer);
+            this.parseDateRangeEntity(pensumFachstelleTS, pensumFachstelleFromServer);
+            pensumFachstelleTS.pensum = pensumFachstelleFromServer.pensum;
+            if (pensumFachstelleFromServer.fachstelle) {
+                pensumFachstelleTS.fachstelle = this.parseFachstelle(new TSFachstelle(), pensumFachstelleFromServer.fachstelle);
+            }
+            return pensumFachstelleTS;
         }
         return undefined;
     }

@@ -278,8 +278,8 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch) {
-            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt in 1 an
+        if (this.gesuch && this.gesuch.kindContainer.length >= this.kindNumber) {
+            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt mit 1 an
         }
         return undefined;
     }

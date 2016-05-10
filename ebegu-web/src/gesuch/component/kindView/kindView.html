@@ -128,36 +128,80 @@
                 </div>
             </div>
             <!--fachstelle-->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group" ng-if="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
-                        <label data-translate="FACHSTELLE" for="fachstelle">
-                        </label>
-                        <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId" class="form-control"
-                            ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
-                            ng-required="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle"
-                            ng-change="vm.setSelectedFachsstelle()">
-                        </select>
-                        <dv-error-messages  for="form.fachstelle.$error"
-                                            class="error"></dv-error-messages>
+            <div ng-if="vm.isFachstelleRequired()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label data-translate="FACHSTELLE" for="fachstelle">
+                            </label>
+                            <select name="fachstelle" id="fachstelle" ng-model="vm.fachstelleId" class="form-control"
+                                    ng-options="fachstelle.id as fachstelle.name for fachstelle in vm.getFachstellenList() | orderBy: 'name'"
+                                    ng-required="vm.isFachstelleRequired()"
+                                    ng-change="vm.setSelectedFachsstelle()">
+                            </select>
+                            <dv-error-messages  for="form.fachstelle.$error"
+                                                class="error"></dv-error-messages>
+                        </div>
+                    </div>
+                </div>
+
+                <!--betreuungspensumFachstelle-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-input-container class="form-group">
+                            <label data-translate="BETREUUNGSPENSUM_FACHSTELLE" for="betreuungspensumFachstelle"></label>
+                            <input id="betreuungspensumFachstelle" type="text" name="betreuungspensumFachstelle"
+                                   ng-model="vm.getPensumFachstelle().pensum"
+                                   dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                   ng-required="vm.isFachstelleRequired()">
+                            <dv-error-messages  for="form.betreuungspensumFachstelle.$error" class="error"></dv-error-messages>
+                            <dv-bisher gs="vm.getPensumFachstelle().pensum"></dv-bisher>
+                        </dv-input-container>
+                    </div>
+                </div>
+
+                <!-- gueltig ab / gueltig bis -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="VON" for="datumAb">
+                            </label>
+                            <p class="input-group">
+                                <dv-datepicker input-id="datumAb" input-name="datumAb"
+                                               ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigAb"
+                                               ng-required="vm.isFachstelleRequired()">
+                                </dv-datepicker>
+                                <span class="input-group-btn">
+                                  <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
+                                      <i class="fa fa-calendar"></i></button>
+                                </span>
+                            </p>
+                            <dv-error-messages  for="form.datumAb.$error"
+                                                class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
+
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="BIS" for="datumBis">
+                            </label>
+                            <p class="input-group">
+                                <dv-datepicker input-id="datumBis" input-name="datumBis"
+                                               ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigBis"
+                                               ng-required="vm.isFachstelleRequired()">
+                                </dv-datepicker>
+                                <span class="input-group-btn">
+                                  <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
+                                      <i class="fa fa-calendar"></i></button>
+                                </span>
+                            </p>
+                            <dv-error-messages  for="form.datumBis.$error"
+                                                class="error"></dv-error-messages>
+                        </dv-input-container>
                     </div>
                 </div>
             </div>
 
-            <!--betreuungspensumFachstelle-->
-            <div class="row">
-                <div class="col-md-12">
-                    <dv-input-container class="form-group" ng-if="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
-                        <label data-translate="BETREUUNGSPENSUM_FACHSTELLE" for="betreuungspensumFachstelle"></label>
-                        <input id="betreuungspensumFachstelle" type="text" name="betreuungspensumFachstelle"
-                               ng-model="vm.getModel().betreuungspensumFachstelle"
-                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                               ng-required="vm.getModel().familienErgaenzendeBetreuung && vm.showFachstelle">
-                        <dv-error-messages  for="form.betreuungspensumFachstelle.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getModel().betreuungspensumFachstelle"></dv-bisher>
-                    </dv-input-container>
-                </div>
-            </div>
 
             <!--bemerkungen-->
             <div class="row">

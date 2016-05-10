@@ -10,12 +10,11 @@ CREATE TABLE kind (
   nachname                       VARCHAR(255) NOT NULL,
   vorname                        VARCHAR(255) NOT NULL,
   bemerkungen                    VARCHAR(1000),
-  betreuungspensum_fachstelle    INTEGER,
   familien_ergaenzende_betreuung BIT,
   muttersprache_deutsch          BIT,
   unterstuetzungspflicht         BIT,
   wohnhaft_im_gleichen_haushalt  INTEGER,
-  fachstelle_id                  VARCHAR(36),
+  pensum_fachstelle_id           VARCHAR(36),
   CONSTRAINT PK_kind PRIMARY KEY (id)
 );
 
@@ -32,12 +31,11 @@ CREATE TABLE kind_aud (
   nachname                       VARCHAR(255),
   vorname                        VARCHAR(255),
   bemerkungen                    VARCHAR(1000),
-  betreuungspensum_fachstelle    INTEGER,
   familien_ergaenzende_betreuung BIT,
   muttersprache_deutsch          BIT,
   unterstuetzungspflicht         BIT,
   wohnhaft_im_gleichen_haushalt  INTEGER,
-  fachstelle_id                  VARCHAR(36),
+  pensum_fachstelle_id           VARCHAR(36),
   CONSTRAINT PK_kind_aud PRIMARY KEY (id, rev)
 );
 
@@ -67,11 +65,6 @@ CREATE TABLE kind_container_aud (
   kindja_id          VARCHAR(36),
   CONSTRAINT PK_kind_container_aud PRIMARY KEY (id, rev)
 );
-
-ALTER TABLE kind
-  ADD CONSTRAINT FK_kind_fachstelle_id
-FOREIGN KEY (fachstelle_id)
-REFERENCES fachstelle (id);
 
 ALTER TABLE kind_aud
   ADD CONSTRAINT FK_kind_aud_revinfo

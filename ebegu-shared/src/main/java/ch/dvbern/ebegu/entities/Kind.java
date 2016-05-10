@@ -4,9 +4,7 @@ import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,18 +33,15 @@ public class Kind extends AbstractPersonEntity {
 	@Nullable
 	private Boolean mutterspracheDeutsch;
 
-	@ManyToOne(optional = true)
-	private Fachstelle fachstelle;
-
-	@Max(100)
-	@Min(0)
-	@Nullable
-	private Integer betreuungspensumFachstelle;
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	private PensumFachstelle pensumFachstelle;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
+
+
 
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
@@ -82,23 +77,6 @@ public class Kind extends AbstractPersonEntity {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
 	}
 
-	public Fachstelle getFachstelle() {
-		return fachstelle;
-	}
-
-	public void setFachstelle(Fachstelle fachstelle) {
-		this.fachstelle = fachstelle;
-	}
-
-	@Nullable
-	public Integer getBetreuungspensumFachstelle() {
-		return betreuungspensumFachstelle;
-	}
-
-	public void setBetreuungspensumFachstelle(@Nullable Integer betreuungspensumFachstelle) {
-		this.betreuungspensumFachstelle = betreuungspensumFachstelle;
-	}
-
 	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
@@ -108,4 +86,11 @@ public class Kind extends AbstractPersonEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
+	public PensumFachstelle getPensumFachstelle() {
+		return pensumFachstelle;
+	}
+
+	public void setPensumFachstelle(PensumFachstelle pensumFachstelle) {
+		this.pensumFachstelle = pensumFachstelle;
+	}
 }

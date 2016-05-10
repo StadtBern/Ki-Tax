@@ -80,8 +80,8 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 
 		KindContainer kindContainer = TestDataUtil.createDefaultKindContainer();
 		kindContainer.setGesuch(gesuch);
-		persistence.persist(kindContainer.getKindGS().getFachstelle());
-		persistence.persist(kindContainer.getKindJA().getFachstelle());
+		persistence.persist(kindContainer.getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(kindContainer.getKindJA().getPensumFachstelle().getFachstelle());
 		persistence.persist(kindContainer.getKindGS());
 		persistence.persist(kindContainer.getKindJA());
 

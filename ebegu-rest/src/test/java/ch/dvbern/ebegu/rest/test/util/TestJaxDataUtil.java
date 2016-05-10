@@ -94,14 +94,22 @@ public class TestJaxDataUtil {
 		jaxKind.setVorname("Kind_Max");
 		jaxKind.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxKind.setGeschlecht(Geschlecht.WEIBLICH);
-		jaxKind.setBetreuungspensumFachstelle(50);
+		jaxKind.setPensumFachstelle(createTestJaxPensumFachstelle());
 		jaxKind.setBemerkungen("Notizen");
 		jaxKind.setMutterspracheDeutsch(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
 		jaxKind.setUnterstuetzungspflicht(true);
 		jaxKind.setWohnhaftImGleichenHaushalt(75);
-		jaxKind.setFachstelle(createTestJaxFachstelle());
 		return jaxKind;
+	}
+
+	private static JaxPensumFachstelle createTestJaxPensumFachstelle() {
+		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
+		jaxPensumFachstelle.setGueltigBis(LocalDate.now().plusMonths(1));
+		jaxPensumFachstelle.setGueltigAb(LocalDate.now());
+		jaxPensumFachstelle.setPensum(50);
+		jaxPensumFachstelle.setFachstelle(createTestJaxFachstelle());
+		return jaxPensumFachstelle;
 	}
 
 	public static JaxKindContainer createTestJaxKindContainer() {

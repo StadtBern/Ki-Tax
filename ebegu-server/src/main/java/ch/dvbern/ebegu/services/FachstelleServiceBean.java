@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Service fuer familiensituation
+ * Service fuer fachstelle
  */
 @Stateless
 @Local(FachstelleService.class)

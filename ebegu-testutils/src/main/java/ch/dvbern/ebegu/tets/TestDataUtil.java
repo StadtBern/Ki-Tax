@@ -4,8 +4,6 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -126,12 +124,19 @@ public final class TestDataUtil {
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setWohnhaftImGleichenHaushalt(50);
 		kind.setBemerkungen("notizen");
-		kind.setBetreuungspensumFachstelle(50);
+		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setUnterstuetzungspflicht(true);
 		kind.setMutterspracheDeutsch(true);
-		kind.setFachstelle(createDefaultFachstelle());
 		return kind;
+	}
+
+	private static PensumFachstelle createDefaultPensumFachstelle() {
+		PensumFachstelle pensumFachstelle = new PensumFachstelle();
+		pensumFachstelle.setPensum(50);
+		pensumFachstelle.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		pensumFachstelle.setFachstelle(createDefaultFachstelle());
+		return pensumFachstelle;
 	}
 
 	public static KindContainer createDefaultKindContainer() {

@@ -36,6 +36,8 @@ public class JaxBConverter {
 	@Inject
 	private AdresseService adresseService;
 	@Inject
+	private PensumFachstelleService pensumFachstelleService;
+	@Inject
 	private FachstelleService fachstelleService;
 	@Inject
 	private GesuchService gesuchService;
@@ -90,6 +92,30 @@ public class JaxBConverter {
 		}
 
 		return abstEntityToConvertTo;
+	}
+
+	/**
+	 * Converts all person related fields from Jax to Entity
+	 * @param personEntityJAXP das objekt als Jax
+	 * @param personEntity das object als Entity
+	 */
+	private void convertAbstractPersonFieldsToEntity(JaxAbstractPersonDTO personEntityJAXP, AbstractPersonEntity personEntity) {
+		personEntity.setNachname(personEntityJAXP.getNachname());
+		personEntity.setVorname(personEntityJAXP.getVorname());
+		personEntity.setGeburtsdatum(personEntityJAXP.getGeburtsdatum());
+		personEntity.setGeschlecht(personEntityJAXP.getGeschlecht());
+	}
+
+	/**
+	 * Converts all person related fields from Entity to Jax
+	 * @param personEntity das object als Entity
+	 * @param personEntityJAXP das objekt als Jax
+	 */
+	private void convertAbstractPersonFieldsToJax(AbstractPersonEntity personEntity, JaxAbstractPersonDTO personEntityJAXP) {
+		personEntityJAXP.setNachname(personEntity.getNachname());
+		personEntityJAXP.setVorname(personEntity.getVorname());
+		personEntityJAXP.setGeburtsdatum(personEntity.getGeburtsdatum());
+		personEntityJAXP.setGeschlecht(personEntity.getGeschlecht());
 	}
 
 	@Nonnull
@@ -182,10 +208,7 @@ public class JaxBConverter {
 		Validate.notNull(gesuchstellerJAXP);
 		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
 		convertAbstractFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
-		gesuchsteller.setNachname(gesuchstellerJAXP.getNachname());
-		gesuchsteller.setVorname(gesuchstellerJAXP.getVorname());
-		gesuchsteller.setGeburtsdatum(gesuchstellerJAXP.getGeburtsdatum());
-		gesuchsteller.setGeschlecht(gesuchstellerJAXP.getGeschlecht());
+		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
@@ -237,10 +260,7 @@ public class JaxBConverter {
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		convertAbstractFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
-		jaxGesuchsteller.setNachname(persistedGesuchsteller.getNachname());
-		jaxGesuchsteller.setVorname(persistedGesuchsteller.getVorname());
-		jaxGesuchsteller.setGeburtsdatum(persistedGesuchsteller.getGeburtsdatum());
-		jaxGesuchsteller.setGeschlecht(persistedGesuchsteller.getGeschlecht());
+		convertAbstractPersonFieldsToJax(persistedGesuchsteller, jaxGesuchsteller);
 		jaxGesuchsteller.setMail(persistedGesuchsteller.getMail());
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
@@ -478,20 +498,41 @@ public class JaxBConverter {
 	public JaxKind kindToJAX(Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
 		convertAbstractFieldsToJAX(persistedKind, jaxKind);
-		jaxKind.setNachname(persistedKind.getNachname());
-		jaxKind.setVorname(persistedKind.getVorname());
-		jaxKind.setGeburtsdatum(persistedKind.getGeburtsdatum());
-		jaxKind.setGeschlecht(persistedKind.getGeschlecht());
+		convertAbstractPersonFieldsToJax(persistedKind, jaxKind);
 		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
 		jaxKind.setUnterstuetzungspflicht(persistedKind.getUnterstuetzungspflicht());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
-		jaxKind.setBetreuungspensumFachstelle(persistedKind.getBetreuungspensumFachstelle());
+		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
 		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
-		if (persistedKind.getFachstelle() != null) {
-			jaxKind.setFachstelle(fachstelleToJAX(persistedKind.getFachstelle()));
-		}
 		return jaxKind;
+	}
+
+	public JaxPensumFachstelle pensumFachstelleToJax(PensumFachstelle persistedPensumFachstelle) {
+		if (persistedPensumFachstelle == null) {
+			return null;
+		}
+		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
+		convertAbstractFieldsToJAX(persistedPensumFachstelle, jaxPensumFachstelle);
+		jaxPensumFachstelle.setPensum(persistedPensumFachstelle.getPensum());
+		jaxPensumFachstelle.setGueltigAb(persistedPensumFachstelle.getGueltigkeit().getGueltigAb());
+		jaxPensumFachstelle.setGueltigBis(persistedPensumFachstelle.getGueltigkeit().getGueltigBis());
+		jaxPensumFachstelle.setFachstelle(fachstelleToJAX(persistedPensumFachstelle.getFachstelle()));
+		return jaxPensumFachstelle;
+	}
+
+	public PensumFachstelle pensumFachstelletoEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
+		pensumFachstelle.setGueltigkeit(convertDateRange(pensumFachstelleJAXP));
+		pensumFachstelle.setPensum(pensumFachstelleJAXP.getPensum());
+
+		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
+		if (fachstelleFromDB.isPresent()) {
+			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("pensumFachstelletoEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle().getId());
+		}
+
+		return pensumFachstelle;
 	}
 
 	public JaxKindContainer kindContainerToJAX(KindContainer persistedKind) {
@@ -510,24 +551,27 @@ public class JaxBConverter {
 		Validate.notNull(kindJAXP);
 		Validate.notNull(kind);
 		convertAbstractFieldsToEntity(kindJAXP, kind);
-		kind.setNachname(kindJAXP.getNachname());
-		kind.setVorname(kindJAXP.getVorname());
-		kind.setGeburtsdatum(kindJAXP.getGeburtsdatum());
-		kind.setGeschlecht(kindJAXP.getGeschlecht());
+		convertAbstractPersonFieldsToEntity(kindJAXP, kind);
 		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
 		kind.setUnterstuetzungspflicht(kindJAXP.getUnterstuetzungspflicht());
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
-		kind.setBetreuungspensumFachstelle(kindJAXP.getBetreuungspensumFachstelle());
-		kind.setBemerkungen(kindJAXP.getBemerkungen());
-		if (kindJAXP.getFachstelle() != null) {
-			kind.setFachstelle(findFachstelleToEntity(kindJAXP.getFachstelle()));
-		} else {
-			kind.setFachstelle(null);
+
+		PensumFachstelle updatedPensumFachstelle = null;
+		if (kindJAXP.getPensumFachstelle() != null && kindJAXP.getPensumFachstelle().getId() == null) {
+			updatedPensumFachstelle = pensumFachstelletoEntity(kindJAXP.getPensumFachstelle(), new PensumFachstelle());
 		}
+		else if (kindJAXP.getPensumFachstelle() != null) {
+			PensumFachstelle pensumFachstelleFromDB = pensumFachstelleService.findPensumFachstelle(kindJAXP.getPensumFachstelle().getId())
+				.orElseThrow(() -> new EbeguEntityNotFoundException("kindToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, kindJAXP.getPensumFachstelle().getId()));
+			updatedPensumFachstelle = pensumFachstelletoEntity(kindJAXP.getPensumFachstelle(), pensumFachstelleFromDB);
+		}
+
+		kind.setPensumFachstelle(updatedPensumFachstelle);
+
+		kind.setBemerkungen(kindJAXP.getBemerkungen());
 		return kind;
 	}
-
 
 	public KindContainer kindContainerToEntity(JaxKindContainer kindContainerJAXP, KindContainer kindContainer) {
 		Validate.notNull(kindContainer);

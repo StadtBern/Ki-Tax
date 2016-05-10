@@ -6,6 +6,7 @@ import TSKind from '../../../models/TSKind';
 import {EnumEx} from '../../../utils/EnumEx';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import AbstractGesuchViewController from '../abstractGesuchView';
+import {TSPensumFachstelle} from '../../../models/TSPensumFachstelle';
 let template = require('./kindView.html');
 
 export class KindViewComponentConfig implements IComponentOptions {
@@ -31,9 +32,9 @@ export class KindViewController extends AbstractGesuchViewController {
 
     private initViewModel(): void {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindGS.fachstelle) ? true : false;
-        if (this.getModel().fachstelle) {
-            this.fachstelleId = this.getModel().fachstelle.id;
+        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindGS.pensumFachstelle) ? true : false;
+        if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
+            this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
     }
 
@@ -57,7 +58,7 @@ export class KindViewController extends AbstractGesuchViewController {
         let fachstellenList = this.getFachstellenList();
         for (let i: number = 0; i < fachstellenList.length; i++) {
             if (fachstellenList[i].id === this.fachstelleId) {
-                this.getModel().fachstelle = fachstellenList[i];
+                this.getModel().pensumFachstelle.fachstelle = fachstellenList[i];
             }
         }
     }
@@ -65,6 +66,8 @@ export class KindViewController extends AbstractGesuchViewController {
     public showFachstelleClicked() {
         if (!this.showFachstelle) {
             this.resetFachstelleFields();
+        } else {
+            this.getModel().pensumFachstelle = new TSPensumFachstelle();
         }
     }
 
@@ -77,8 +80,7 @@ export class KindViewController extends AbstractGesuchViewController {
 
     private resetFachstelleFields() {
         this.fachstelleId = undefined;
-        this.getModel().fachstelle = undefined;
-        this.getModel().betreuungspensumFachstelle = undefined;
+        this.getModel().pensumFachstelle = undefined;
     }
 
     public getFachstellenList() {
@@ -91,6 +93,17 @@ export class KindViewController extends AbstractGesuchViewController {
             return this.gesuchModelManager.getKindToWorkWith().kindGS;
         }
         return undefined;
+    }
+
+    public getPensumFachstelle(): TSPensumFachstelle {
+        if (this.getModel()) {
+            return this.getModel().pensumFachstelle;
+        }
+        return undefined;
+    }
+
+    public isFachstelleRequired(): boolean {
+        return this.getModel().familienErgaenzendeBetreuung && this.showFachstelle;
     }
 }
 

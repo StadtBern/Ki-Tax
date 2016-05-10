@@ -30,10 +30,8 @@ public class JaxKind extends JaxAbstractPersonDTO {
 	@Nullable
 	private Boolean mutterspracheDeutsch;
 
-	private JaxFachstelle fachstelle;
-
 	@Nullable
-	private Integer betreuungspensumFachstelle;
+	private JaxPensumFachstelle pensumFachstelle;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -75,23 +73,6 @@ public class JaxKind extends JaxAbstractPersonDTO {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
 	}
 
-	public JaxFachstelle getFachstelle() {
-		return fachstelle;
-	}
-
-	public void setFachstelle(JaxFachstelle fachstelle) {
-		this.fachstelle = fachstelle;
-	}
-
-	@Nullable
-	public Integer getBetreuungspensumFachstelle() {
-		return betreuungspensumFachstelle;
-	}
-
-	public void setBetreuungspensumFachstelle(@Nullable Integer betreuungspensumFachstelle) {
-		this.betreuungspensumFachstelle = betreuungspensumFachstelle;
-	}
-
 	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
@@ -101,4 +82,12 @@ public class JaxKind extends JaxAbstractPersonDTO {
 		this.bemerkungen = bemerkungen;
 	}
 
+	@Nullable
+	public JaxPensumFachstelle getPensumFachstelle() {
+		return pensumFachstelle;
+	}
+
+	public void setPensumFachstelle(@Nullable JaxPensumFachstelle pensumFachstelle) {
+		this.pensumFachstelle = pensumFachstelle;
+	}
 }

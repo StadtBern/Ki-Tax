@@ -14,6 +14,7 @@ describe('KindRS', function () {
     let ebeguRestUtil: EbeguRestUtil;
     let mockKind: TSKindContainer;
     let mockKindRest: any;
+    let gesuchId: string;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -25,6 +26,7 @@ describe('KindRS', function () {
     }));
 
     beforeEach(() => {
+        gesuchId = '2afc9d9a-957e-4550-9a22-97624a000feb';
         let kindGS: TSKind = new TSKind('Pedro', 'Bern');
         setAbstractFieldsUndefined(kindGS);
         let kindJA: TSKind = new TSKind('Johan', 'Basel');
@@ -73,9 +75,9 @@ describe('KindRS', function () {
     describe('createKind', () => {
         it('should create a Kind', () => {
             let createdKind: TSKindContainer;
-            $httpBackend.expectPUT(kindRS.serviceURL, mockKindRest).respond(mockKindRest);
+            $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
 
-            kindRS.createKind(mockKind)
+            kindRS.createKind(mockKind, gesuchId)
                 .then((result) => {
                     createdKind = result;
                 });
@@ -91,9 +93,9 @@ describe('KindRS', function () {
             mockKind.kindJA = kindJA2;
             mockKindRest = ebeguRestUtil.kindContainerToRestObject({}, mockKind);
             let updatedKindContainer: TSKindContainer;
-            $httpBackend.expectPUT(kindRS.serviceURL, mockKindRest).respond(mockKindRest);
+            $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
 
-            kindRS.updateKind(mockKind)
+            kindRS.updateKind(mockKind, gesuchId)
                 .then((result) => {
                     updatedKindContainer = result;
                 });
