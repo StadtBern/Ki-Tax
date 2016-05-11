@@ -34,7 +34,6 @@ describe('EbeguRestUtil', function () {
         it('should include a parseAdresse() function', function () {
             expect(ebeguRestUtil.parseAdresse).toBeDefined();
         });
-
         it('should include a parseGesuchsteller() function', function () {
             expect(ebeguRestUtil.parseGesuchsteller).toBeDefined();
         });

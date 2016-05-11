@@ -22,14 +22,18 @@ public class Kind extends AbstractPersonEntity {
 	@Max(100)
 	@Min(0)
 	@NotNull
+	@Column(nullable = false)
 	private Integer wohnhaftImGleichenHaushalt;
 
+	@Column(nullable = true)
 	@Nullable
 	private Boolean unterstuetzungspflicht = false;
 
+	@Column(nullable = false)
 	@NotNull
 	private Boolean familienErgaenzendeBetreuung = false;
 
+	@Column(nullable = true)
 	@Nullable
 	private Boolean mutterspracheDeutsch;
 

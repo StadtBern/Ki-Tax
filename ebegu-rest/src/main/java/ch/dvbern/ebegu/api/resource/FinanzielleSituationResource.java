@@ -63,13 +63,7 @@ public class FinanzielleSituationResource {
 
 		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 		if (gesuchsteller.isPresent()) {
-			//hier muss bei einem update die FS aus der DB geladen werden
-
-			//todo homa ebegu 82 review sollten wir das laden im converter machen? so wie bei adresse toStorableAdresse
-			Optional<FinanzielleSituationContainer> existingFSC = finanzielleSituationService.findFinanzielleSituation(finanzielleSituationJAXP.getId());
-			FinanzielleSituationContainer fscToMergeWith = existingFSC.orElse(new FinanzielleSituationContainer());
-
-			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToEntity(finanzielleSituationJAXP, fscToMergeWith);
+			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
 			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
 			FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
 

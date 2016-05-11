@@ -32,7 +32,6 @@ public class JaxBConverter {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
-
 	@Inject
 	private AdresseService adresseService;
 	@Inject
@@ -277,11 +276,11 @@ public class JaxBConverter {
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		// Finanzielle Situation
-		if (persistedGesuchsteller.getFinanzielleSituationContainer() != null) {
-			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
+		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
+		if (finanzielleSituationForGesuchsteller.isPresent()) {
+			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
-
 		return jaxGesuchsteller;
 	}
 
@@ -495,6 +494,18 @@ public class JaxBConverter {
 
 	}
 
+	public FinanzielleSituationContainer finanzielleSituationContainerToStorableEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX) {
+		Validate.notNull(containerJAX);
+		FinanzielleSituationContainer containerToMergeWith = new FinanzielleSituationContainer();
+		if (containerJAX.getId() != null) {
+			Optional<FinanzielleSituationContainer> existingFSC = finanzielleSituationService.findFinanzielleSituation(containerJAX.getId());
+			if (existingFSC.isPresent()) {
+				containerToMergeWith = existingFSC.get();
+			}
+		}
+		FinanzielleSituationContainer mergedContainer = finanzielleSituationContainerToEntity(containerJAX, containerToMergeWith);
+		return mergedContainer;
+	}
 	public JaxKind kindToJAX(Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
 		convertAbstractFieldsToJAX(persistedKind, jaxKind);
@@ -632,20 +643,20 @@ public class JaxBConverter {
 		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 
-	public FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX,
+	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX,
 																			   @Nonnull FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
 		container.setJahr(containerJAX.getJahr());
-		if (containerJAX.getFinanzielleSituationGS() != null) {
-			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), new FinanzielleSituation()));
+		if (containerJAX.getFinanzielleSituationGS() != null && container.getFinanzielleSituationGS() != null) {
+			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), container.getFinanzielleSituationGS()));
 		}
-		if (containerJAX.getFinanzielleSituationJA() != null) {
-			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), new FinanzielleSituation()));
+		if (containerJAX.getFinanzielleSituationJA() != null && container.getFinanzielleSituationJA() != null) {
+			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), container.getFinanzielleSituationJA()));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null) {
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), new FinanzielleSituation()));
+		if (containerJAX.getFinanzielleSituationSV() != null && container.getFinanzielleSituationSV() != null) {
+			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), container.getFinanzielleSituationSV()));
 		}
 		return container;
 	}
@@ -660,7 +671,7 @@ public class JaxBConverter {
 		return jaxPerson;
 	}
 
-	public FinanzielleSituation finanzielleSituationToEntity(@Nonnull JaxFinanzielleSituation finanzielleSituationJAXP, @Nonnull FinanzielleSituation finanzielleSituation) {
+	private FinanzielleSituation finanzielleSituationToEntity(@Nonnull JaxFinanzielleSituation finanzielleSituationJAXP, @Nonnull FinanzielleSituation finanzielleSituation) {
 		Validate.notNull(finanzielleSituation);
 		Validate.notNull(finanzielleSituationJAXP);
 		convertAbstractFieldsToEntity(finanzielleSituationJAXP, finanzielleSituation);

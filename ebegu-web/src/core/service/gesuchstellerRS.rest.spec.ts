@@ -62,10 +62,8 @@ describe('GesuchstellerRS', function () {
                     expect(updatedGesuchsteller).toBeDefined();
                     expect(updatedGesuchsteller.nachname).toEqual(mockGesuchsteller.nachname);
                     expect(updatedGesuchsteller.id).toEqual(mockGesuchsteller.id);
-
                 }
             );
-
         });
 
         describe('findGesuchsteller', () => {
@@ -80,13 +78,9 @@ describe('GesuchstellerRS', function () {
                     $httpBackend.flush();
                     expect(foundGesuchsteller).toBeDefined();
                     expect(foundGesuchsteller.nachname).toEqual(mockGesuchsteller.nachname);
-
-
                 }
             );
-
         });
     });
-
 
 });
