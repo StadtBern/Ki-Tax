@@ -21,13 +21,19 @@ export class KindViewController extends AbstractGesuchViewController {
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS', '$scope'];
     /* @ngInject */
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
+    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any, private $scope: any) {
         super(state, gesuchModelManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
+
+        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
+        $scope.$on('$stateChangeStart', () => {
+            console.log('stateChangeStart');
+            this.removeKindFromList();
+        });
     }
 
     private initViewModel(): void {
@@ -47,11 +53,15 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     cancel() {
+        this.removeKindFromList();
+        this.state.go('gesuch.kinder');
+    }
+
+    private removeKindFromList() {
         if (!this.gesuchModelManager.getKindToWorkWith().timestampErstellt) {
             //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
             this.gesuchModelManager.removeKindFromList();
         }
-        this.state.go('gesuch.kinder');
     }
 
     public setSelectedFachsstelle() {
@@ -103,7 +113,7 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public isFachstelleRequired(): boolean {
-        return this.getModel().familienErgaenzendeBetreuung && this.showFachstelle;
+        return this.getModel() && this.getModel().familienErgaenzendeBetreuung && this.showFachstelle;
     }
 }
 

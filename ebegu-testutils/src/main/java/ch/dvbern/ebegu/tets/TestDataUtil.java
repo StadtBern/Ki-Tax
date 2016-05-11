@@ -133,7 +133,7 @@ public final class TestDataUtil {
 		return kind;
 	}
 
-	private static PensumFachstelle createDefaultPensumFachstelle() {
+	public static PensumFachstelle createDefaultPensumFachstelle() {
 		PensumFachstelle pensumFachstelle = new PensumFachstelle();
 		pensumFachstelle.setPensum(50);
 		pensumFachstelle.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
