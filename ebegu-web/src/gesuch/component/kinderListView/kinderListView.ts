@@ -3,7 +3,12 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSKindContainer from '../../../models/TSKindContainer';
 import AbstractGesuchViewController from '../abstractGesuchView';
+import IDialogService = angular.material.IDialogService;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
 let template = require('./kinderListView.html');
+let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
+
 
 export class KinderListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -14,9 +19,10 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $mdDialog: IDialogService,
+                private DvDialog: DvDialog) {
         super(state, gesuchModelManager);
         this.initViewModel();
     }
@@ -47,11 +53,14 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     removeKind(kind: any): void {
-        let kindNumber: number = this.gesuchModelManager.findKind(kind);
-        if (kindNumber > 0) {
-            this.gesuchModelManager.kindNumber = kindNumber;
-            this.gesuchModelManager.removeKind();
-        }
+        this.DvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: kind.kindGS.getFullName()})
+            .then(() => {
+                let kindNumber: number = this.gesuchModelManager.findKind(kind);
+                if (kindNumber > 0) {
+                    this.gesuchModelManager.kindNumber = kindNumber;
+                    this.gesuchModelManager.removeKind();
+                }
+        });
     }
 
     submit(): void {

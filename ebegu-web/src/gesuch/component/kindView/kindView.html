@@ -171,10 +171,6 @@
                                                ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigAb"
                                                ng-required="vm.isFachstelleRequired()">
                                 </dv-datepicker>
-                                <span class="input-group-btn">
-                                  <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
-                                      <i class="fa fa-calendar"></i></button>
-                                </span>
                             </p>
                             <dv-error-messages  for="form.datumAb.$error"
                                                 class="error"></dv-error-messages>
@@ -190,10 +186,6 @@
                                                ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigBis"
                                                ng-required="vm.isFachstelleRequired()">
                                 </dv-datepicker>
-                                <span class="input-group-btn">
-                                  <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
-                                      <i class="fa fa-calendar"></i></button>
-                                </span>
                             </p>
                             <dv-error-messages  for="form.datumBis.$error"
                                                 class="error"></dv-error-messages>

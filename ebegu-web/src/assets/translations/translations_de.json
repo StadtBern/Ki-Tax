@@ -321,6 +321,8 @@
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
     "KINDER_GLEICHEM_HAUSHALT" : "Wohnt das Kind im gleichen Haushalt?",
     "KIND": "Kind",
+    "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
+    "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
     "UNTERSTUETZUNGSPFLICHT": "Unterstützungspflicht",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
