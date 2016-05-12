@@ -9,6 +9,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity fuer Kinder.
@@ -39,6 +41,10 @@ public class Kind extends AbstractPersonEntity {
 
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private PensumFachstelle pensumFachstelle;
+
+	@Nullable
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
+	private Set<Betreuung> betreuungen = new HashSet<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -96,5 +102,13 @@ public class Kind extends AbstractPersonEntity {
 
 	public void setPensumFachstelle(PensumFachstelle pensumFachstelle) {
 		this.pensumFachstelle = pensumFachstelle;
+	}
+
+	public Set<Betreuung> getBetreuungen() {
+		return betreuungen;
+	}
+
+	public void setBetreuungen(Set<Betreuung> betreuungen) {
+		this.betreuungen = betreuungen;
 	}
 }

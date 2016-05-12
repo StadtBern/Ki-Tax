@@ -35,7 +35,6 @@ public class KindContainer extends AbstractEntity {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
-
 	}
 
 	public Kind getKindGS() {
