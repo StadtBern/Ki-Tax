@@ -1,4 +1,3 @@
-/// <reference path="../../../../typings/browser.d.ts" />
 describe('kindView', function () {
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));

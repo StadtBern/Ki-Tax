@@ -254,8 +254,8 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        //todo team KindJA setzen
-        this.gesuch.kindContainer.push(new TSKindContainer(new TSKind(), undefined));
+        //todo team KindJA setzen  todo homa was
+        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
         this.kindNumber = this.gesuch.kindContainer.length;
     }
 

@@ -235,7 +235,7 @@ public class JaxBConverter {
 		// Finanzielle Situation
 		gesuchsteller.addAdresse(wohnAddrToMerge);
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
-			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToEntity(gesuchstellerJAXP.getFinanzielleSituationContainer(), new FinanzielleSituationContainer()));
+			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
 		return gesuchsteller;
 	}
@@ -506,7 +506,8 @@ public class JaxBConverter {
 		FinanzielleSituationContainer mergedContainer = finanzielleSituationContainerToEntity(containerJAX, containerToMergeWith);
 		return mergedContainer;
 	}
-	public JaxKind kindToJAX(Kind persistedKind) {
+	@Nonnull
+	public JaxKind kindToJAX(@Nonnull Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
 		convertAbstractFieldsToJAX(persistedKind, jaxKind);
 		convertAbstractPersonFieldsToJax(persistedKind, jaxKind);
@@ -519,7 +520,8 @@ public class JaxBConverter {
 		return jaxKind;
 	}
 
-	public JaxPensumFachstelle pensumFachstelleToJax(PensumFachstelle persistedPensumFachstelle) {
+	@Nullable
+	public JaxPensumFachstelle pensumFachstelleToJax(@Nullable PensumFachstelle persistedPensumFachstelle) {
 		if (persistedPensumFachstelle == null) {
 			return null;
 		}
@@ -535,7 +537,7 @@ public class JaxBConverter {
 	public PensumFachstelle pensumFachstelletoEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
 		pensumFachstelle.setGueltigkeit(convertDateRange(pensumFachstelleJAXP));
 		pensumFachstelle.setPensum(pensumFachstelleJAXP.getPensum());
-
+		//Die Fachstelle fuer die das Pensum erstellt wird muss existieren
 		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
 		if (fachstelleFromDB.isPresent()) {
 			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
@@ -569,6 +571,7 @@ public class JaxBConverter {
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
 
 		PensumFachstelle updatedPensumFachstelle = null;
+		//todo homa evtl to storable entity einbauen?
 		if (kindJAXP.getPensumFachstelle() != null && kindJAXP.getPensumFachstelle().getId() == null) {
 			updatedPensumFachstelle = pensumFachstelletoEntity(kindJAXP.getPensumFachstelle(), new PensumFachstelle());
 		}
@@ -584,10 +587,11 @@ public class JaxBConverter {
 		return kind;
 	}
 
-	public KindContainer kindContainerToEntity(JaxKindContainer kindContainerJAXP, KindContainer kindContainer) {
+	public KindContainer kindContainerToEntity(@Nonnull JaxKindContainer kindContainerJAXP, @Nonnull KindContainer kindContainer) {
 		Validate.notNull(kindContainer);
 		Validate.notNull(kindContainerJAXP);
 		convertAbstractFieldsToEntity(kindContainerJAXP, kindContainer);
+		//kind daten koennen nicht verschwinden
 		if (kindContainerJAXP.getKindGS() != null) {
 			Kind kindGS = new Kind();
 			if (kindContainer.getKindGS() != null) {
@@ -612,7 +616,7 @@ public class JaxBConverter {
 	 * @return die Fachstelle als Entity
      */
 	@Nonnull
-	private Fachstelle findFachstelleToEntity(JaxFachstelle fachstelleToFind) {
+	private Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
 		Validate.notNull(fachstelleToFind);
 		Fachstelle fachstelleToMergeWith = new Fachstelle();
 		if (fachstelleToFind.getId() != null ) {
@@ -631,7 +635,7 @@ public class JaxBConverter {
 	 * @return das Gesuch als Entity
      */
 	@Nonnull
-	private Gesuch findGesuchToEntity(JaxGesuch gesuchToFind) {
+	private Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null ) {

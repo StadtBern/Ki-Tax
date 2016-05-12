@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 @Path("kinder")
 @Stateless
-@Api
+@Api(description = "Resource zum verwalten von Kindern eines Gesuchstellers")
 public class KindResource {
 
 	@Inject

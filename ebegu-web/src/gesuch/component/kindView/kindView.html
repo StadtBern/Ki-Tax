@@ -103,7 +103,7 @@
             <!--mutterspracheDeutsch-->
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group">
+                    <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                         <label data-translate="MUTTERSPRACHE_DEUTSCH"></label>
                         <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                             ng-required="vm.getModel().familienErgaenzendeBetreuung" ng-model="vm.getModel().mutterspracheDeutsch">

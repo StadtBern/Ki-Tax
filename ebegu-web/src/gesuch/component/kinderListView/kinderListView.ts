@@ -53,8 +53,8 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     removeKind(kind: any): void {
-        this.DvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: kind.kindGS.getFullName()})
-            .then(() => {
+        this.DvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: kind.kindJA.getFullName()})
+            .then(() => {   //User confirmed removal
                 let kindNumber: number = this.gesuchModelManager.findKind(kind);
                 if (kindNumber > 0) {
                     this.gesuchModelManager.kindNumber = kindNumber;

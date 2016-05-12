@@ -23,7 +23,6 @@ export class KindViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS', '$scope'];
     /* @ngInject */
-    /* @ngInject */
     constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any, private $scope: any) {
         super(state, gesuchModelManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
@@ -31,14 +30,13 @@ export class KindViewController extends AbstractGesuchViewController {
 
         //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
         $scope.$on('$stateChangeStart', () => {
-            console.log('stateChangeStart');
             this.removeKindFromList();
         });
     }
 
     private initViewModel(): void {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindGS.pensumFachstelle) ? true : false;
+        this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
@@ -98,9 +96,8 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public getModel(): TSKind {
-        //todo beim richtiges Kind zurueckliefern
         if (this.gesuchModelManager.getKindToWorkWith()) {
-            return this.gesuchModelManager.getKindToWorkWith().kindGS;
+            return this.gesuchModelManager.getKindToWorkWith().kindJA;
         }
         return undefined;
     }

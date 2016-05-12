@@ -67,7 +67,7 @@ export const EbeguWebCore: angular.IModule = angular
         REST_API: '/ebegu/api/v1/',
         MAX_LENGTH: 255,
         PATTERN_BETRAG: '([0-9]{0,12})',
-        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
     })
     .service('EbeguRestUtil', EbeguRestUtil)
     .service('GesuchstellerRS', GesuchstellerRS)

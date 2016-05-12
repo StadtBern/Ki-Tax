@@ -9,7 +9,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 /**
- * Container-Entity für die Kinder: Diese muss für jeden Benutzertyp (GS, JA, SV) einzeln geführt werden,
+ * Container-Entity für die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln geführt werden,
  * damit die Veränderungen / Korrekturen angezeigt werden können.
  */
 @Audited
@@ -35,9 +35,7 @@ public class KindContainer extends AbstractEntity {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
-//		if (gesuch != null && (gesuch.getKindContainers() == null || !gesuch.getKindContainers().contains(this))) {
-//			gesuch.addKindContainer(this);
-//		}
+
 	}
 
 	public Kind getKindGS() {

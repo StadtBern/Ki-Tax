@@ -5,7 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * DTO fuer Stammdaten der PensumFachstelle
+ * DTO fuer Stammdaten der PensumFachstelle. Definiert ein bestimmtes Pensum und eine bestimmte Fachstelle und wird einem
+ * Kind zugewiesen
  */
 @XmlRootElement(name = "pensumFachstelle")
 @XmlAccessorType(XmlAccessType.FIELD)

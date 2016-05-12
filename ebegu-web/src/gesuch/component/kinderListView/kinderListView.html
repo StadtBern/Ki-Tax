@@ -19,9 +19,9 @@
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editKind(row)">
-                        <td ng-bind="row.kindGS.vorname"></td>
-                        <td ng-bind="row.kindGS.nachname"></td>
-                        <td ng-bind="row.kindGS.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td ng-bind="row.kindJA.vorname"></td>
+                        <td ng-bind="row.kindJA.nachname"></td>
+                        <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-click="$event.stopPropagation()">
                             <button type="button" ng-click="vm.removeKind(row)" class="btn btn-sm">
                                 <i class="fa fa-minus">

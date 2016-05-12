@@ -73,5 +73,6 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 
 		JaxGesuch updatedGesuch = gesuchResource.findGesuch(converter.toJaxId(returnedGesuch));
 		Assert.assertEquals(1, updatedGesuch.getKinder().size());
+		Assert.assertEquals(testJaxKindContainer.getKindGS().getPensumFachstelle().getPensum(), jaxKindContainer.getKindGS().getPensumFachstelle().getPensum());
 	}
 }
