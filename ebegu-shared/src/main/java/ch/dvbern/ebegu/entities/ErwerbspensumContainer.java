@@ -21,9 +21,11 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	private Gesuchsteller gesuchsteller;
 
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumgs_id"))
 	private Erwerbspensum erwerbspensumGS;
 
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
 
 	public Gesuchsteller getGesuchsteller() {
