@@ -10,7 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -45,6 +47,9 @@ public class Gesuchsteller extends AbstractPersonEntity {
 
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private FinanzielleSituationContainer finanzielleSituationContainer;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
+	private Set<ErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
 
 	@Valid
@@ -113,11 +118,25 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return finanzielleSituationContainer;
 	}
 
+	public Set<ErwerbspensumContainer> getErwerbspensenContainers() {
+		return erwerbspensenContainers;
+	}
+
+	public void setErwerbspensenContainers(Set<ErwerbspensumContainer> erwerbspensenContainers) {
+		this.erwerbspensenContainers = erwerbspensenContainers;
+	}
+
 	public void setFinanzielleSituationContainer(FinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 		if (finanzielleSituationContainer != null &&
-				(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
 			finanzielleSituationContainer.setGesuchsteller(this);
 		}
+	}
+
+	public boolean addErwerbspensumContainer(ErwerbspensumContainer erwerbspensumToAdd) {
+		erwerbspensumToAdd.setGesuchsteller(this);
+		return !erwerbspensenContainers.contains(erwerbspensumToAdd) &&
+			erwerbspensenContainers.add(erwerbspensumToAdd);
 	}
 }

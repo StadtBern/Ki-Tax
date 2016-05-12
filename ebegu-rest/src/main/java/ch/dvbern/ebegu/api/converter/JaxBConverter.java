@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,6 +37,8 @@ public class JaxBConverter {
 	private AdresseService adresseService;
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
+	@Inject
+	private ErwerbspensumService erwerbspensumService;
 	@Inject
 	private FallService fallService;
 	@Inject
@@ -175,7 +178,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
 		convertAbstractFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setNachname(gesuchstellerJAXP.getNachname());
 		gesuchsteller.setVorname(gesuchstellerJAXP.getVorname());
@@ -252,11 +255,15 @@ public class JaxBConverter {
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		// Finanzielle Situation
-		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
-		if (finanzielleSituationForGesuchsteller.isPresent()) {
-			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
+		Optional<FinanzielleSituationContainer> finSitGesuchst = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
+		if (finSitGesuchst.isPresent()) {
+			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finSitGesuchst.get());
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
+		// Erwerbspensen
+		Collection<ErwerbspensumContainer> erwerbspensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
+		jaxGesuchsteller.setErwerbspensenContainers(erwerbspensen);
+
 		return jaxGesuchsteller;
 	}
 
@@ -315,7 +322,7 @@ public class JaxBConverter {
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
 			Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller2().getId());
-			if (gesuchsteller2.isPresent()){
+			if (gesuchsteller2.isPresent()) {
 				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
 				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
@@ -328,10 +335,10 @@ public class JaxBConverter {
 		JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
-		if(persistedGesuch.getGesuchsteller1() != null) {
+		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
-		if(persistedGesuch.getGesuchsteller2() != null) {
+		if (persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
 		return jaxGesuch;
@@ -431,7 +438,7 @@ public class JaxBConverter {
 		return institution;
 	}
 
-	public JaxInstitutionStammdaten institutionStammdatenToJAX(InstitutionStammdaten persistedInstStammdaten) {
+	public JaxInstitutionStammdaten institutionStammdatenToJAX(@Nonnull InstitutionStammdaten persistedInstStammdaten) {
 		JaxInstitutionStammdaten jaxInstStammdaten = new JaxInstitutionStammdaten();
 		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
@@ -481,19 +488,24 @@ public class JaxBConverter {
 	}
 
 	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX,
-																			   @Nonnull FinanzielleSituationContainer container) {
+																				@Nonnull FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
 		container.setJahr(containerJAX.getJahr());
-		if (containerJAX.getFinanzielleSituationGS() != null && container.getFinanzielleSituationGS() != null) {
-			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), container.getFinanzielleSituationGS()));
+		FinanzielleSituation finSitToMergeWith;
+		//Im moment kann eine einmal gespeicherte Finanzielle Situation nicht mehr entfernt werden.
+		if (containerJAX.getFinanzielleSituationGS() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationGS()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationJA() != null && container.getFinanzielleSituationJA() != null) {
-			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), container.getFinanzielleSituationJA()));
+		if (containerJAX.getFinanzielleSituationJA() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationJA()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null && container.getFinanzielleSituationSV() != null) {
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), container.getFinanzielleSituationSV()));
+		if (containerJAX.getFinanzielleSituationSV() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationSV()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), finSitToMergeWith));
 		}
 		return container;
 	}
@@ -546,6 +558,74 @@ public class JaxBConverter {
 			jaxPerson.setGeschaeftsgewinnBasisjahr(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
 			jaxPerson.setGeleisteteAlimente(persistedFinanzielleSituation.getGeleisteteAlimente());
 			return jaxPerson;
+		}
+		return null;
+	}
+
+	public ErwerbspensumContainer erwerbspensumContToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
+		Validate.notNull(jaxEwpCont);
+		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
+		if (jaxEwpCont.getId() != null) {
+			Optional<ErwerbspensumContainer> existingEwpCont = erwerbspensumService.findErwerbspensum(jaxEwpCont.getId());
+			if (existingEwpCont.isPresent()) {
+				containerToMergeWith = existingEwpCont.get();
+			}
+		}
+		return erwerbspensumContainerToEntity(jaxEwpCont, containerToMergeWith);
+
+	}
+
+	public ErwerbspensumContainer erwerbspensumContainerToEntity(@Nonnull JaxErwerbspensumContainer jaxEwpCont, @Nonnull ErwerbspensumContainer erwerbspensumCont) {
+		Validate.notNull(jaxEwpCont);
+		Validate.notNull(erwerbspensumCont);
+		convertAbstractFieldsToEntity(jaxEwpCont, erwerbspensumCont);
+		Erwerbspensum pensumToMergeWith;
+		if (jaxEwpCont.getErwerbspensumGS() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumGS()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumGS(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumGS(), pensumToMergeWith));
+		}
+		if (jaxEwpCont.getErwerbspensumJA() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumJA()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumJA(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumJA(), pensumToMergeWith));
+		}
+
+		return erwerbspensumCont;
+	}
+
+	public JaxErwerbspensumContainer erwerbspensumContainerToJAX(@Nonnull ErwerbspensumContainer storedErwerbspensumCont) {
+		Validate.notNull(storedErwerbspensumCont);
+		JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
+		convertAbstractFieldsToJAX(storedErwerbspensumCont, jaxEwpCont);
+		jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
+		jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
+		return jaxEwpCont;
+	}
+
+	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum pensum) {
+		Validate.notNull(jaxErwerbspensum);
+		Validate.notNull(pensum);
+		pensum = convertAbstractFieldsToEntity(jaxErwerbspensum, pensum);
+		pensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
+		pensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
+		pensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
+		pensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
+		pensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
+		pensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
+		return pensum;
+	}
+
+	private JaxErwerbspensum erbwerbspensumToJax(@Nullable Erwerbspensum pensum) {
+		if (pensum != null) {
+			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
+			jaxErwerbspensum = convertAbstractFieldsToJAX(pensum, jaxErwerbspensum);
+			jaxErwerbspensum.setGueltigAb(pensum.getGueltigkeit().getGueltigAb());
+			jaxErwerbspensum.setGueltigBis(pensum.getGueltigkeit().getGueltigBis());
+			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
+			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
+			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
+			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
+			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
+			return jaxErwerbspensum;
 		}
 		return null;
 	}

@@ -1,12 +1,9 @@
 package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
-import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -116,5 +113,24 @@ public final class TestDataUtil {
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		return instStammdaten;
+	}
+
+	public static ErwerbspensumContainer createErwerbspensumContainer() {
+		ErwerbspensumContainer epCont = new ErwerbspensumContainer();
+		epCont.setErwerbspensumGS(createErwerbspensumData());
+		Erwerbspensum epKorrigiertJA = createErwerbspensumData();
+		epKorrigiertJA.setTaetigkeit(Taetigkeit.RAV);
+		epCont.setErwerbspensumJA(epKorrigiertJA);
+		return epCont;
+	}
+
+	public static Erwerbspensum createErwerbspensumData() {
+		Erwerbspensum ep = new Erwerbspensum();
+		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		ep.setZuschlagZuErwerbspensum(true);
+		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
+		ep.setZuschlagsprozent(10);
+		ep.setGesundheitlicheEinschraenkungen(false);
+		return ep;
 	}
 }
