@@ -631,7 +631,7 @@ public class JaxBConverter {
 	 * @return die Fachstelle als Entity
      */
 	@Nonnull
-	private Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
+	public Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
 		Validate.notNull(fachstelleToFind);
 		Fachstelle fachstelleToMergeWith = new Fachstelle();
 		if (fachstelleToFind.getId() != null ) {
@@ -650,7 +650,7 @@ public class JaxBConverter {
 	 * @return das Gesuch als Entity
      */
 	@Nonnull
-	private Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
+	public Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null ) {
@@ -776,17 +776,18 @@ public class JaxBConverter {
 		return jaxEwpCont;
 	}
 
-	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum pensum) {
+	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum erwerbspensum) {
 		Validate.notNull(jaxErwerbspensum);
-		Validate.notNull(pensum);
-		pensum = convertAbstractFieldsToEntity(jaxErwerbspensum, pensum);
-		pensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
-		pensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
-		pensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
-		pensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
-		pensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
-		pensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
-		return pensum;
+		Validate.notNull(erwerbspensum);
+		erwerbspensum = convertAbstractFieldsToEntity(jaxErwerbspensum, erwerbspensum);
+		erwerbspensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
+		erwerbspensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
+		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
+		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
+		erwerbspensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
+		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
+		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
+		return erwerbspensum;
 	}
 
 	private JaxErwerbspensum erbwerbspensumToJax(@Nullable Erwerbspensum pensum) {
@@ -800,6 +801,7 @@ public class JaxBConverter {
 			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
 			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
 			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
+			jaxErwerbspensum.setPensum(pensum.getPensum());
 			return jaxErwerbspensum;
 		}
 		return null;

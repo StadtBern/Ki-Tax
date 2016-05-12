@@ -88,9 +88,10 @@ public class TestJaxDataUtil {
 		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
 		jaxErwerbspensum.setGesundheitlicheEinschraenkungen(true);
 		jaxErwerbspensum.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
-		jaxErwerbspensum.setZuschlagZuErwerbspensum(true); //todo homa wahrscheinlich redundant
+		jaxErwerbspensum.setZuschlagZuErwerbspensum(true);
 		jaxErwerbspensum.setZuschlagsprozent(15);
 		jaxErwerbspensum.setGueltigAb(LocalDate.now().minusYears(1));
+		jaxErwerbspensum.setPensum(70);
 		return jaxErwerbspensum;
 
 	}

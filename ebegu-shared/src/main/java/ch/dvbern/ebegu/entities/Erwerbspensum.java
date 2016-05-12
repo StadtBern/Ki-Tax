@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @Entity
 @Audited
-public class Erwerbspensum extends AbstractDateRangedEntity {
+public class Erwerbspensum extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = 4649639217797690323L;
 
@@ -101,7 +101,8 @@ public class Erwerbspensum extends AbstractDateRangedEntity {
 		boolean gueltigkeitSame = Objects.equals(this.getGueltigkeit(), otherErwerbspensum.getGueltigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
 		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		return taetigkeitSame && gueltigkeitSame && zuschlagSame && gesundhSame;
+		boolean pensumSame =  Objects.equals(this.getPensum(), otherErwerbspensum.getPensum());
+		return taetigkeitSame && gueltigkeitSame && zuschlagSame && gesundhSame && pensumSame;
 
 
 	}

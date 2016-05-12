@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * DTO fuer Erwerbspensum
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxErwerbspensum extends JaxAbstractDateRangedDTO {
+public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 
 	private static final long serialVersionUID = -2495737706808699744L;
 
