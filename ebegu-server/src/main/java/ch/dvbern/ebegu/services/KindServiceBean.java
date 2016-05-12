@@ -22,8 +22,6 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 
 	@Inject
 	private Persistence<KindContainer> persistence;
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Nonnull
 	@Override
