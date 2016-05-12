@@ -2,9 +2,11 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -45,47 +47,35 @@ public class ErwerbspensumConverterTest extends AbstractEbeguRestTest {
 		ErwerbspensumContainer erwerbspensumContainer = insertNewEntity();
 		JaxErwerbspensumContainer jaxErwerbspensum = this.converter.erwerbspensumContainerToJAX(erwerbspensumContainer);
 		ErwerbspensumContainer ewbContEntity = this.converter.erwerbspensumContainerToEntity(jaxErwerbspensum, new ErwerbspensumContainer());
-
 		Assert.assertTrue(erwerbspensumContainer.isSame(ewbContEntity));
 
 	}
 
-//	/**
-//	 * Testet das Umzugadresse konvertiert wird
-//	 */
-//	@Test
-//	public void convertJaxGesuchstellerWithUmzgTest(){
-//		JaxGesuchsteller gesuchstellerWith3Adr = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
-//		Gesuchsteller gesuchsteller = converter.gesuchstellerToEntity(gesuchstellerWith3Adr, new Gesuchsteller());
-//		Assert.assertEquals(gesuchstellerWith3Adr.getGeburtsdatum(), gesuchsteller.getGeburtsdatum());
-//		Assert.assertEquals(gesuchstellerWith3Adr.getVorname(), gesuchsteller.getVorname());
-//		Assert.assertEquals(gesuchstellerWith3Adr.getNachname(), gesuchsteller.getNachname());
-//		//id wird serverseitig gesetzt
-//		Assert.assertNull(gesuchstellerWith3Adr.getId());
-//		Assert.assertNotNull(gesuchsteller.getId());
-//		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
-//		ImmutableListMultimap<AdresseTyp, Adresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), Adresse::getAdresseTyp);
-//		Adresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
-//		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new Adresse())));
-//
-//	}
-//
-//	@Test
-//	public void datesRangeAddedOnEntityTest() {
-//		JaxAdresse adr = TestJaxDataUtil.createTestJaxAdr(null);
-//		adr.setGueltigAb(null);
-//		adr.setGueltigBis(null);
-//		Adresse adrEntity = converter.adresseToEntity(adr, new Adresse());
-//		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigkeit().getGueltigAb());
-//		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
-//	}
-//
-//
+	/**
+	 * Testet konviertiert einen gesuchsteller mit Erwerbspensen
+	 */
+	@Test
+	public void convertJaxGesuchstellerErwerbspensen(){
+		JaxGesuchsteller gesuchstellerWithErwerbspensen = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
+		Gesuchsteller gesuchsteller = converter.gesuchstellerToEntity(gesuchstellerWithErwerbspensen, new Gesuchsteller());
+		Assert.assertEquals(gesuchstellerWithErwerbspensen.getGeburtsdatum(), gesuchsteller.getGeburtsdatum());
+		Assert.assertEquals(gesuchstellerWithErwerbspensen.getVorname(), gesuchsteller.getVorname());
+		Assert.assertEquals(gesuchstellerWithErwerbspensen.getNachname(), gesuchsteller.getNachname());
+		//id wird serverseitig gesetzt
+		Assert.assertNull(gesuchstellerWithErwerbspensen.getId());
+		Assert.assertNotNull(gesuchsteller.getId());
+		Assert.assertEquals(2, gesuchsteller.getErwerbspensenContainers().size());
+		gesuchsteller = persistence.persist(gesuchsteller);
+		JaxGesuchsteller reconvertedJaxGesuchsteller = converter.gesuchstellerToJAX(gesuchsteller);
+		Assert.assertEquals(2,reconvertedJaxGesuchsteller.getErwerbspensenContainers().size());
+	}
+
+
 	private ErwerbspensumContainer insertNewEntity() {
-		ErwerbspensumContainer erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
+		ErwerbspensumContainer ewpContainer = TestDataUtil.createErwerbspensumContainer();
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
-		erwerbspensumContainer.setGesuchsteller(persistence.persist(gesuchsteller));
-		return persistence.persist(erwerbspensumContainer);
+		ewpContainer.setGesuchsteller(persistence.persist(gesuchsteller));
+		return persistence.persist(ewpContainer);
 	}
 
 }

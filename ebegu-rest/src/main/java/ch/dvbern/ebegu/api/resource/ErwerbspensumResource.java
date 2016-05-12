@@ -66,14 +66,17 @@ public class ErwerbspensumResource {
 
 		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
 		if (gesuchsteller.isPresent()) {
-			ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContToStoreableEntity(jaxErwerbspensumContainer);
+			ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
 			convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
 			ErwerbspensumContainer storedEwpCont = this.erwerbspensumService.saveErwerbspensum(convertedEwpContainer);
 
-			URI uri = uriInfo.getBaseUriBuilder()
-				.path(ErwerbspensumResource.class)
-				.path("/" + storedEwpCont.getId())
-				.build();
+			URI uri = null;
+			if (uriInfo != null) {
+				uri = uriInfo.getBaseUriBuilder()
+					.path(ErwerbspensumResource.class)
+					.path("/" + storedEwpCont.getId())
+					.build();
+			}
 			JaxErwerbspensumContainer jaxEwpCont = converter.erwerbspensumContainerToJAX(storedEwpCont);
 			return Response.created(uri).entity(jaxEwpCont).build();
 		}

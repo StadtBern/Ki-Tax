@@ -21,8 +21,10 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -213,6 +215,12 @@ public class JaxBConverter {
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
+
+		//Erwerbspensum
+		gesuchstellerJAXP.getErwerbspensenContainers()
+			.stream()
+			.map(this::erwerbspensumContainerToStoreableEntity)
+			.forEach(gesuchsteller::addErwerbspensumContainer);
 		return gesuchsteller;
 	}
 
@@ -230,6 +238,7 @@ public class JaxBConverter {
 		return adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
+	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull Gesuchsteller persistedGesuchsteller) {
 		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
@@ -261,9 +270,9 @@ public class JaxBConverter {
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
 		// Erwerbspensen
-		Collection<ErwerbspensumContainer> erwerbspensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
-		jaxGesuchsteller.setErwerbspensenContainers(erwerbspensen);
-
+		Collection<ErwerbspensumContainer> persistedPensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
+		List<JaxErwerbspensumContainer> listOfPensen = persistedPensen.stream().map(this::erwerbspensumContainerToJAX).collect(Collectors.toList());
+		jaxGesuchsteller.setErwerbspensenContainers(listOfPensen);
 		return jaxGesuchsteller;
 	}
 
@@ -562,7 +571,7 @@ public class JaxBConverter {
 		return null;
 	}
 
-	public ErwerbspensumContainer erwerbspensumContToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
+	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
 		Validate.notNull(jaxEwpCont);
 		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
 		if (jaxEwpCont.getId() != null) {

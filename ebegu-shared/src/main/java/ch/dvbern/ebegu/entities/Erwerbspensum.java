@@ -14,8 +14,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-import static ch.dvbern.ebegu.entities.Adresse_.gueltigkeit;
-
 /**
  * Erwerbspensum eines Gesuchstellers  todo homa erbe von pensum
  */
@@ -100,7 +98,7 @@ public class Erwerbspensum extends AbstractDateRangedEntity {
 			return false;
 		}
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
-		boolean gueltigkeitSame = gueltigkeit.equals(otherErwerbspensum.getGueltigkeit());
+		boolean gueltigkeitSame = Objects.equals(this.getGueltigkeit(), otherErwerbspensum.getGueltigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
 		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
 		return taetigkeitSame && gueltigkeitSame && zuschlagSame && gesundhSame;

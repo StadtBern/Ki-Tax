@@ -3,13 +3,7 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
-
-import static ch.dvbern.ebegu.entities.AbstractDateRangedEntity_.gueltigkeit;
-import static ch.dvbern.ebegu.entities.Erwerbspensum_.gesundheitlicheEinschraenkungen;
-import static ch.dvbern.ebegu.entities.Erwerbspensum_.taetigkeit;
-import static ch.dvbern.ebegu.entities.Erwerbspensum_.zuschlagZuErwerbspensum;
+import javax.validation.Valid;
 
 /**
  * Container-Entity für das Erwerbspensum: Diese muss für die  Benutzertypen (GS, JA) einzeln geführt werden,

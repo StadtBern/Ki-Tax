@@ -76,7 +76,7 @@ public class JaxGesuchsteller extends JaxAbstractDTO {
 	@Valid
 	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
 
-	private Collection<ErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
+	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
 
 	public String getVorname() {
@@ -183,11 +183,11 @@ public class JaxGesuchsteller extends JaxAbstractDTO {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 	}
 
-	public Collection<ErwerbspensumContainer> getErwerbspensenContainers() {
+	public Collection<JaxErwerbspensumContainer> getErwerbspensenContainers() {
 		return erwerbspensenContainers;
 	}
 
-	public void setErwerbspensenContainers(Collection<ErwerbspensumContainer> erwerbspensenContainers) {
+	public void setErwerbspensenContainers(Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 }
