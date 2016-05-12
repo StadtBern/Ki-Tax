@@ -2,10 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -19,7 +16,7 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	private static final long serialVersionUID = -6504985266190035840L;
 
 	@NotNull
-	@OneToOne(optional = false, cascade = CascadeType.MERGE)   //todo hefr fragen: rueckwaerts auch cascade?
+	@OneToOne(optional = false)
 	private Gesuchsteller gesuchsteller;
 
 	@NotNull

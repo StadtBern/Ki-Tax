@@ -26,37 +26,20 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @XmlRootElement(name = "gesuchsteller")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxGesuchsteller extends JaxAbstractDTO {
+public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	private static final long serialVersionUID = -1297026901664130397L;
-
-	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@NotNull
-	private String vorname;
-
-	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@NotNull
-	private String nachname;
-
-	@NotNull
-	private Geschlecht geschlecht;
 
 	@Pattern(regexp = Constants.REGEX_EMAIL, message = "{validator.constraints.Email.message}")
 	@Size(min = 5, max = DB_DEFAULT_MAX_LENGTH)
 	@NotNull
 	private String mail;
 
-	@NotNull
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
-	private LocalDate geburtsdatum;
-
 	@Pattern(regexp = Constants.REGEX_TELEFON_MOBILE, message = "{error_invalid_mobilenummer}")
 	private String mobile;
 
-
 	@Pattern(regexp = Constants.REGEX_TELEFON, message = "{error_invalid_mobilenummer}")
 	private String telefon;
-
 
 	private String telefonAusland;
 
@@ -79,44 +62,12 @@ public class JaxGesuchsteller extends JaxAbstractDTO {
 	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
 
-	public String getVorname() {
-		return vorname;
-	}
-
-	public void setVorname(String vorname) {
-		this.vorname = vorname;
-	}
-
-	public String getNachname() {
-		return nachname;
-	}
-
-	public void setNachname(String nachname) {
-		this.nachname = nachname;
-	}
-
-	public Geschlecht getGeschlecht() {
-		return geschlecht;
-	}
-
-	public void setGeschlecht(Geschlecht geschlecht) {
-		this.geschlecht = geschlecht;
-	}
-
 	public String getMail() {
 		return mail;
 	}
 
 	public void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	public LocalDate getGeburtsdatum() {
-		return geburtsdatum;
-	}
-
-	public void setGeburtsdatum(LocalDate geburtsdatum) {
-		this.geburtsdatum = geburtsdatum;
 	}
 
 	public String getMobile() {

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * Created by imanol on 17.03.16.
  * DTO fuer InstitutionStammdaten
  */
-@XmlRootElement(name = "InstitutionStammdaten")
+@XmlRootElement(name = "institutionStammdaten")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 

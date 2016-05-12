@@ -31,6 +31,7 @@ public final class TestDataUtil {
 		gesuchstellerAdresse.setPlz("3014");
 		gesuchstellerAdresse.setOrt("Bern");
 		gesuchstellerAdresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		gesuchstellerAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		return gesuchstellerAdresse;
 	}
 
@@ -117,6 +118,39 @@ public final class TestDataUtil {
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		return instStammdaten;
+	}
+	public static Kind createDefaultKind() {
+		Kind kind = new Kind();
+		kind.setNachname("Kind_Mustermann");
+		kind.setVorname("Kind_Max");
+		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
+		kind.setGeschlecht(Geschlecht.WEIBLICH);
+		kind.setWohnhaftImGleichenHaushalt(50);
+		kind.setBemerkungen("notizen");
+		kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		kind.setFamilienErgaenzendeBetreuung(true);
+		kind.setUnterstuetzungspflicht(true);
+		kind.setMutterspracheDeutsch(true);
+		return kind;
+	}
+
+	public static PensumFachstelle createDefaultPensumFachstelle() {
+		PensumFachstelle pensumFachstelle = new PensumFachstelle();
+		pensumFachstelle.setPensum(50);
+		pensumFachstelle.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		pensumFachstelle.setFachstelle(createDefaultFachstelle());
+		return pensumFachstelle;
+	}
+
+	public static KindContainer createDefaultKindContainer() {
+		KindContainer kindContainer = new KindContainer();
+		Kind defaultKindGS = createDefaultKind();
+		defaultKindGS.setNachname("GS_Kind");
+		kindContainer.setKindGS(defaultKindGS);
+		Kind defaultKindJA = createDefaultKind();
+		defaultKindJA.setNachname("JA_Kind");
+		kindContainer.setKindJA(defaultKindJA);
+		return kindContainer;
 	}
 
 	public static ErwerbspensumContainer createErwerbspensumContainer() {

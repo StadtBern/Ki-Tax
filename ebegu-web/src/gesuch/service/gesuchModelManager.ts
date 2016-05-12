@@ -15,33 +15,32 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
+import TSKindContainer from '../../models/TSKindContainer';
+import TSKind from '../../models/TSKind';
+import KindRS from '../../core/service/kindRS.rest';
+import {TSFachstelle} from '../../models/TSFachstelle';
+import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 
 
 export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
-    fallRS: FallRS;
-    gesuchRS: GesuchRS;
-    finanzielleSituationRS: FinanzielleSituationRS;
-    gesuchstellerRS: GesuchstellerRS;
-    familiensituationRS: FamiliensituationRS;
     gesuchstellerNumber: number;
-    ebeguRestUtil: EbeguRestUtil;
+    kindNumber: number;
+    fachstellenList: Array<TSFachstelle>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(familiensituationRS: FamiliensituationRS, fallRS: FallRS, gesuchRS: GesuchRS, gesuchstellerRS: GesuchstellerRS,
-                finanzielleSituationRS: FinanzielleSituationRS, ebeguRestUtil: EbeguRestUtil) {
-        this.fallRS = fallRS;
-        this.gesuchRS = gesuchRS;
-        this.gesuchstellerRS = gesuchstellerRS;
-        this.finanzielleSituationRS = finanzielleSituationRS;
-        this.familiensituationRS = familiensituationRS;
+    constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private ebeguRestUtil: EbeguRestUtil) {
+
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
-        this.ebeguRestUtil = ebeguRestUtil;
+        this.fachstellenList = [];
+        this.updateFachstellenList();
     }
 
     /**
@@ -54,6 +53,12 @@ export default class GesuchModelManager {
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         }
         return false;
+    }
+
+    public updateFachstellenList(): void {
+        this.fachstelleRS.getAllFachstellen().then((response: any) => {
+            this.fachstellenList = angular.copy(response);
+        });
     }
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
@@ -119,11 +124,27 @@ export default class GesuchModelManager {
         });
     }
 
+    /**
+     * Gesuchsteller nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
+     * @param gsNumber
+     */
     public setGesuchstellerNumber(gsNumber: number) {
         if (gsNumber === 1 || gsNumber === 2) {
             this.gesuchstellerNumber = gsNumber;
         } else {
             this.gesuchstellerNumber = 1;
+        }
+    }
+
+    /**
+     * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummern wird kindNumber als 1 gesetzt.
+     * @param kindNumber
+     */
+    public setKindNumber(kindNumber: number) {
+        if (kindNumber > 0) {
+            this.kindNumber = kindNumber;
+        } else {
+            this.kindNumber = 1;
         }
     }
 
@@ -154,16 +175,19 @@ export default class GesuchModelManager {
     }
 
     public initFinanzielleSituation(): void {
-        if (!this.getStammdatenToWorkWith()) {
-            this.setStammdatenToWorkWith(new TSGesuchsteller());
-            this.getStammdatenToWorkWith().adresse = this.initAdresse();
-        }
+        this.initStammdaten();
         if (!this.getStammdatenToWorkWith().finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
             this.getStammdatenToWorkWith().finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.getStammdatenToWorkWith().finanzielleSituationContainer.jahr = 2015;
             this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
             this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+        }
+    }
+
+    public initKinder(): void {
+        if (!this.gesuch.kindContainer) {
+            this.gesuch.kindContainer = [];
         }
     }
 
@@ -220,5 +244,85 @@ export default class GesuchModelManager {
         if (gesuchsteller.umzugAdresse) {
             gesuchsteller.umzugAdresse.showDatumVon = true;
         }
+    }
+
+    public getKinderList(): Array<TSKindContainer> {
+        if (this.gesuch) {
+            return this.gesuch.kindContainer;
+        }
+        return [];
+    }
+
+    public createKind(): void {
+        //todo team KindJA setzen  todo homa was
+        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
+        this.kindNumber = this.gesuch.kindContainer.length;
+    }
+
+    public updateKind(): IPromise<TSKindContainer> {
+        if (this.getKindToWorkWith().timestampErstellt) {
+            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
+                this.setKindToWorkWith(kindResponse);
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getKindToWorkWith();
+                });
+            });
+        } else {
+            return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
+                this.setKindToWorkWith(kindResponse);
+                return this.gesuchRS.update(this.gesuch).then(() => {
+                    return this.getKindToWorkWith();
+                });
+            });
+        }
+    }
+
+    public getKindToWorkWith(): TSKindContainer {
+        if (this.gesuch && this.gesuch.kindContainer.length >= this.kindNumber) {
+            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt mit 1 an
+        }
+        return undefined;
+    }
+
+    /**
+     * Ersetzt das Kind in der aktuelle Position "kindNumber" durch das gegebene Kind. Aus diesem Grund muss diese Methode
+     * nur aufgerufen werden, wenn die Position "kindNumber" schon richtig gesetzt wurde.
+     * @param kind
+     * @returns {TSKindContainer}
+     */
+    private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
+        return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
+    }
+
+    /**
+     * Entfernt das aktuelle Kind von der Liste.
+     */
+    public removeKindFromList() {
+        this.gesuch.kindContainer.splice(this.kindNumber - 1, 1);
+        this.setKindNumber(undefined); //by default auf undefined setzen
+        //todo beim Auch KindRS.removeKind aufrufen???????
+    }
+
+    public getKindNumber(): number {
+        return this.kindNumber;
+    }
+
+    /**
+     * Sucht das gegebene KindContainer in der List von KindContainer, erstellt es als KindToWorkWith
+     * und gibt die Position in der Array zurueck. Gibt -1 zurueck wenn das Kind nicht gefunden wurde.
+     * @param kind
+     */
+    public findKind(kind: TSKindContainer): number {
+        if (this.gesuch.kindContainer.indexOf(kind) >= 0) {
+            return this.kindNumber = this.gesuch.kindContainer.indexOf(kind) + 1;
+        }
+        return -1;
+    }
+
+    public removeKind(): IPromise<TSKindContainer> {
+        return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
+            this.removeKindFromList();
+            return this.gesuchRS.update(this.gesuch);
+        });
     }
 }
