@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+
 import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
@@ -12,13 +13,15 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
- * Entitaet zum Speichern von Adressen in der Datenbank.
+ * Entitaet zum Speichern von Adressen  in der Datenbank.
  */
 @Audited
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Adresse extends AbstractDateRangedEntity {
 
-	private static final long serialVersionUID = -7687645920281069260L;
+
+	private static final long serialVersionUID = 4637260017314382780L;
 
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nonnull
@@ -57,14 +60,7 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String gemeinde;
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private AdresseTyp adresseTyp = AdresseTyp.WOHNADRESSE;
 
-	@NotNull
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_adresse_gesuchsteller_id"))
-	private Gesuchsteller gesuchsteller;
 
 
 	public Adresse() {
@@ -132,21 +128,6 @@ public class Adresse extends AbstractDateRangedEntity {
 		this.land = land;
 	}
 
-	public AdresseTyp getAdresseTyp() {
-		return adresseTyp;
-	}
-
-	public void setAdresseTyp(AdresseTyp adresseTyp) {
-		this.adresseTyp = adresseTyp;
-	}
-
-	public Gesuchsteller getGesuchsteller() {
-		return gesuchsteller;
-	}
-
-	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
-		this.gesuchsteller = gesuchsteller;
-	}
 
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
@@ -164,10 +145,8 @@ public class Adresse extends AbstractDateRangedEntity {
 			Objects.equals(ort, otherAdr.ort) &&
 			land == otherAdr.land &&
 			Objects.equals(gemeinde, otherAdr.gemeinde) &&
-			adresseTyp == otherAdr.adresseTyp &&
 			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
 
 	}
-
 
 }

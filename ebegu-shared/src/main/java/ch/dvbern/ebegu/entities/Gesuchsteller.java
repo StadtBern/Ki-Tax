@@ -57,12 +57,11 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@Nonnull
 	// es handelt sich um eine "private" Relation, das heisst Adressen koennen nie einer anderen Gesuchsteller zugeordnet werden
 	@OneToMany(mappedBy = "gesuchsteller", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Adresse> adressen = new ArrayList<>();
+	private List<GesuchstellerAdresse> adressen = new ArrayList<>();
 
-
-	public boolean addAdresse(@Nonnull Adresse adresse) {
-		adresse.setGesuchsteller(this);
-		return !adressen.contains(adresse) && adressen.add(adresse);
+	public boolean addAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+		gesuchstellerAdresse.setGesuchsteller(this);
+		return !adressen.contains(gesuchstellerAdresse) && adressen.add(gesuchstellerAdresse);
 	}
 
 	public String getMail() {
@@ -106,11 +105,11 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	}
 
 	@Nonnull
-	public List<Adresse> getAdressen() {
+	public List<GesuchstellerAdresse> getAdressen() {
 		return adressen;
 	}
 
-	public void setAdressen(@Nonnull List<Adresse> adressen) {
+	public void setAdressen(@Nonnull List<GesuchstellerAdresse> adressen) {
 		this.adressen = adressen;
 	}
 
