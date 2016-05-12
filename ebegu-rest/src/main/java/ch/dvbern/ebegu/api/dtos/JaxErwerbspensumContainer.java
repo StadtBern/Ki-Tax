@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxErwerbspensumContainer extends JaxAbstractDTO {
 
+	private static final long serialVersionUID = 4879926292956257345L;
+
 	@Valid
 	private JaxErwerbspensum erwerbspensumGS;
 
