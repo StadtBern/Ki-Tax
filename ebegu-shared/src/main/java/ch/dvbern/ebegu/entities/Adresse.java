@@ -17,6 +17,7 @@ import java.util.Objects;
  */
 @Audited
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Adresse extends AbstractDateRangedEntity {
 
 

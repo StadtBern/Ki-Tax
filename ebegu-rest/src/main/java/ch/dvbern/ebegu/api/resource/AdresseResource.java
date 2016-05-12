@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.entities.PersonenAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AdresseService;
 import io.swagger.annotations.Api;
@@ -48,15 +48,15 @@ public class AdresseResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		PersonenAdresse convertedPersonenAdresse = converter.adresseToEntity(adresseJAXP, new PersonenAdresse());
-		PersonenAdresse persistedPersonenAdresse = this.adresseService.createAdresse(convertedPersonenAdresse);
+		GesuchstellerAdresse convertedGesuchstellerAdresse = converter.adresseToEntity(adresseJAXP, new GesuchstellerAdresse());
+		GesuchstellerAdresse persistedGesuchstellerAdresse = this.adresseService.createAdresse(convertedGesuchstellerAdresse);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(AdresseResource.class)
-			.path("/" + persistedPersonenAdresse.getId())
+			.path("/" + persistedGesuchstellerAdresse.getId())
 			.build();
 
-		return Response.created(uri).entity(converter.adresseToJAX(persistedPersonenAdresse)).build();
+		return Response.created(uri).entity(converter.adresseToJAX(persistedGesuchstellerAdresse)).build();
 
 	}
 
@@ -70,11 +70,11 @@ public class AdresseResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(adresseJAXP.getId());
-		Optional<PersonenAdresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
-		PersonenAdresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
-		PersonenAdresse modifiedPersonenAdresse = this.adresseService.updateAdresse(adrToMerge);
+		Optional<GesuchstellerAdresse> adrFromDB = adresseService.findAdresse(adresseJAXP.getId());
+		GesuchstellerAdresse adrToMerge = converter.adresseToEntity(adresseJAXP, adrFromDB.get());
+		GesuchstellerAdresse modifiedGesuchstellerAdresse = this.adresseService.updateAdresse(adrToMerge);
 
-		return converter.adresseToJAX(modifiedPersonenAdresse);
+		return converter.adresseToJAX(modifiedGesuchstellerAdresse);
 	}
 
 }

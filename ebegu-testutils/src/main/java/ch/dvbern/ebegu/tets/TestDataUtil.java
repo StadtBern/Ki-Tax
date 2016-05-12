@@ -4,7 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.entities.PersonenAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.types.DateRange;
@@ -22,15 +22,15 @@ public final class TestDataUtil {
 	private TestDataUtil(){
 	}
 
-	public  static PersonenAdresse createDefaultAdresse() {
-		PersonenAdresse personenAdresse = new PersonenAdresse();
-		personenAdresse.setStrasse("Nussbaumstrasse");
-		personenAdresse.setHausnummer("21");
-		personenAdresse.setZusatzzeile("c/o Uwe Untermieter");
-		personenAdresse.setPlz("3014");
-		personenAdresse.setOrt("Bern");
-		personenAdresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
-		return personenAdresse;
+	public  static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
+		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
+		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
+		gesuchstellerAdresse.setHausnummer("21");
+		gesuchstellerAdresse.setZusatzzeile("c/o Uwe Untermieter");
+		gesuchstellerAdresse.setPlz("3014");
+		gesuchstellerAdresse.setOrt("Bern");
+		gesuchstellerAdresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		return gesuchstellerAdresse;
 	}
 
 	public static Gesuchsteller createDefaultGesuchsteller(){
@@ -43,7 +43,7 @@ public final class TestDataUtil {
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
-		gesuchsteller.addAdresse(createDefaultAdresse());
+		gesuchsteller.addAdresse(createDefaultGesuchstellerAdresse());
 		return gesuchsteller;
 	}
 

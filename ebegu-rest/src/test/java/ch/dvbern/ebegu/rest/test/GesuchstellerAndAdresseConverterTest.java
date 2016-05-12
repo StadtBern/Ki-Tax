@@ -5,7 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.PersonenAdresse;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
@@ -78,10 +78,10 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		Assert.assertNull(gesuchstellerWith3Adr.getId());
 		Assert.assertNotNull(gesuchsteller.getId());
 		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
-		ImmutableListMultimap<AdresseTyp, PersonenAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), PersonenAdresse::getAdresseTyp);
-		PersonenAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
+		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresse::getAdresseTyp);
+		GesuchstellerAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
-		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new PersonenAdresse())));
+		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
 
 	}
 
@@ -90,7 +90,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		JaxAdresse adr = TestJaxDataUtil.createTestJaxAdr(null);
 		adr.setGueltigAb(null);
 		adr.setGueltigBis(null);
-		PersonenAdresse adrEntity = converter.adresseToEntity(adr, new PersonenAdresse());
+		GesuchstellerAdresse adrEntity = converter.adresseToEntity(adr, new GesuchstellerAdresse());
 		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
 	}
