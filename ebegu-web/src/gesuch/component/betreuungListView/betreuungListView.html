@@ -1,0 +1,72 @@
+<div class="betreuungListView">
+    <div class="col-md-12">
+        <h4 class="mainTitle">
+            <span data-translate="KINDER_MIT_BETREUUNG"></span>
+        </h4>
+        <hr class="header"/>
+
+        <div ng-repeat="kind in vm.getKinderWithBetreuungList()">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="mainTitle">
+                        <span>{{kind.getFullName()}}</span>
+                    </h4>
+                </div>
+            </div>
+            <hr class="header"/>
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table st-table="displayedCollection" st-safe-src="vm.getBetreuungListFromKind(kind)"
+                           class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th st-sort="betreuung" data-translate="BETREUUNG"></th>
+                            <th st-sort="status" data-translate="STATUS"></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                            ng-click="vm.editKind(row)">
+                            <td ng-bind="row.kindGS.vorname"></td>
+                            <td ng-bind="row.kindGS.nachname"></td>
+                            <td ng-click="$event.stopPropagation()">
+                                <button type="button" ng-click="vm.removeBetreuung(row)" class="btn btn-sm">
+                                    <i class="fa fa-minus">
+                                    </i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="vm.getKinderList().length === 0">
+                            <td colspan="4" data-translate="KINDER_NOCH_KEINE"> hola</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12" style="margin-bottom: 20px">
+                    <button type="button" ng-click="vm.createBetreuung()" class="btn btn-sm btn-success">
+                        <i class="glyphicon glyphicon-plus">
+                        </i> add item
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <!--Buttons-->
+        <div class="row">
+            <div class="col-md-6">
+                <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                    <span class="fa fa-chevron-left"></span>
+                    <span data-translate="ZURUECK_UPPER"></span>
+                </button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button ng-click="vm.nextStep()" class="btn btn-link next">
+                    <span data-translate="WEITER_UPPER"></span>
+                    <span class="fa fa-chevron-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

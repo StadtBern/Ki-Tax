@@ -77,6 +77,6 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     // TODO (team) vorübergehend direkt auf FinanzSit navigieren
     nextStep(): void  {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+        this.state.go('gesuch.betreuung');
     }
 }
