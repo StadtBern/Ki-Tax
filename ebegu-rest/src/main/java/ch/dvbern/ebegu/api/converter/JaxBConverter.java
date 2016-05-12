@@ -616,7 +616,7 @@ public class JaxBConverter {
 	 * @return die Fachstelle als Entity
      */
 	@Nonnull
-	private Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
+	public Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
 		Validate.notNull(fachstelleToFind);
 		Fachstelle fachstelleToMergeWith = new Fachstelle();
 		if (fachstelleToFind.getId() != null ) {
@@ -635,7 +635,7 @@ public class JaxBConverter {
 	 * @return das Gesuch als Entity
      */
 	@Nonnull
-	private Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
+	public Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null ) {
