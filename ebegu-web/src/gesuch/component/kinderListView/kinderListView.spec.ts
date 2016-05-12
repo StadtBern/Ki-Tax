@@ -4,7 +4,7 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
-describe('kinderView', function () {
+describe('kinderListView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
@@ -24,7 +24,7 @@ describe('kinderView', function () {
          pass them to $componentController.
          */
         var bindings: {};
-        component = $componentController('kinderView', {$scope: scope}, bindings);
+        component = $componentController('kinderListView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

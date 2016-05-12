@@ -24,6 +24,8 @@ import {TraegerschaftRS} from './service/traegerschaftRS.rest';
 import {InstitutionRS} from './service/institutionRS.rest';
 import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
+import KindRS from './service/kindRS.rest';
+import {DvDialog} from './directive/dv-dialog/dv-dialog';
 
 let dynamicDependencies = function (): string[] {
 
@@ -64,8 +66,8 @@ export const EbeguWebCore: angular.IModule = angular
         name: 'EBEGU',
         REST_API: '/ebegu/api/v1/',
         MAX_LENGTH: 255,
-        PATTERN_BETRAG: '([0-9]{0,12})'
-
+        PATTERN_BETRAG: '([0-9]{0,12})',
+        PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
     })
     .service('EbeguRestUtil', EbeguRestUtil)
     .service('GesuchstellerRS', GesuchstellerRS)
@@ -80,6 +82,8 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
+    .service('KindRS', KindRS)
+    .service('DvDialog', DvDialog)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
@@ -88,4 +92,3 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());
-

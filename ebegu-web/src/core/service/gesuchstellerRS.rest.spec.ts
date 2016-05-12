@@ -5,7 +5,7 @@ import {EbeguWebCore} from '../core.module';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
+import {IHttpBackendService} from 'angular';
 
 
 describe('GesuchstellerRS', function () {
@@ -38,7 +38,6 @@ describe('GesuchstellerRS', function () {
     describe('Public API', function () {
         it('check Service name', function () {
             expect(gesuchstellerRS.getServiceName()).toBe('GesuchstellerRS');
-
         });
         it('should include a findGesuchsteller() function', function () {
             expect(gesuchstellerRS.findGesuchsteller).toBeDefined();

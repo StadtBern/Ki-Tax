@@ -36,6 +36,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private JaxBConverter converter;
 
+
 	@Test
 	public void createGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
@@ -56,7 +57,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 
 		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertNotNull(foundGesuchsteller);
-		Assert.assertEquals(foundGesuchsteller.getId(), jaxGesuchsteller.getId());
+		Assert.assertEquals(foundGesuchsteller.getId(), converter.toJaxId(jaxGesuchsteller).getId());
 
 	}
 
@@ -97,14 +98,14 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 	public void findGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller testGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.createGesuchsteller(testGesuchsteller, null, null);
-		JaxGesuchsteller foundPers = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
-		Assert.assertNotNull(foundPers);
-		Assert.assertEquals(testGesuchsteller.getNachname(), foundPers.getNachname());
-		foundPers.setNachname("changednachname");
+		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
+		Assert.assertNotNull(foundGesuchsteller);
+		Assert.assertEquals(testGesuchsteller.getNachname(), foundGesuchsteller.getNachname());
+		foundGesuchsteller.setNachname("changednachname");
 
-		gesuchstellerResource.updateGesuchsteller(foundPers, null, null);
+		gesuchstellerResource.updateGesuchsteller(foundGesuchsteller, null, null);
 		JaxGesuchsteller reloadedGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
-		Assert.assertEquals(foundPers.getNachname(), reloadedGesuchsteller.getNachname());
+		Assert.assertEquals(foundGesuchsteller.getNachname(), reloadedGesuchsteller.getNachname());
 		Assert.assertEquals("changednachname", reloadedGesuchsteller.getNachname());
 
 	}

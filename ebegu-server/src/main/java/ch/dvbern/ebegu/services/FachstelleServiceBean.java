@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Service fuer familiensituation
+ * Service fuer fachstelle
  */
 @Stateless
 @Local(FachstelleService.class)
@@ -54,9 +54,9 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	@Override
 	public void removeFachstelle(@Nonnull String fachstelleId) {
 		Objects.requireNonNull(fachstelleId);
-		Optional<Fachstelle> familiensituationToRemove = findFachstelle(fachstelleId);
-		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fachstelleId));
-		persistence.remove(familiensituationToRemove.get());
+		Optional<Fachstelle> fachstelleToRemove = findFachstelle(fachstelleId);
+		fachstelleToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFachstelle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fachstelleId));
+		persistence.remove(fachstelleToRemove.get());
 	}
 
 }

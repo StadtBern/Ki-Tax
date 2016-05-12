@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.rest.test.util;
 
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Land;
@@ -14,10 +13,11 @@ import java.time.LocalDate;
  * Generiert Testdaten fuer JAX DTOs
  */
 public class TestJaxDataUtil {
+
 	public static JaxGesuchsteller createTestJaxGesuchsteller(){
 
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
-		 jaxGesuchsteller.setNachname("Jaxter");
+		jaxGesuchsteller.setNachname("Jaxter");
 		jaxGesuchsteller.setVorname("Jack");
 		jaxGesuchsteller.setWohnAdresse(createTestJaxAdr(null));
 		jaxGesuchsteller.setGeburtsdatum(LocalDate.now().minusYears(18));
@@ -64,8 +64,58 @@ public class TestJaxDataUtil {
 		jaxAdresse.setZusatzzeile("Test"+postfix);
 		jaxAdresse.setStrasse("Nussbaumstrasse"+postfix);
 		return jaxAdresse;
-
 	}
 
+	public static JaxFall createTestJaxFall() {
+		return new JaxFall();
+	}
 
+	public static JaxGesuch createTestJaxGesuch() {
+		JaxGesuch jaxGesuch = new JaxGesuch();
+		jaxGesuch.setFall(createTestJaxFall());
+		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
+		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
+		testJaxGesuchsteller.setNachname("Gesuchsteller2");
+		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
+		return jaxGesuch;
+	}
+
+	public static JaxFachstelle createTestJaxFachstelle() {
+		JaxFachstelle jaxFachstelle = new JaxFachstelle();
+		jaxFachstelle.setName("Fachstelle_Test");
+		jaxFachstelle.setBehinderungsbestaetigung(false);
+		jaxFachstelle.setBeschreibung("Notizen der Fachstelle");
+		return jaxFachstelle;
+	}
+
+	public static JaxKind createTestJaxKind() {
+		JaxKind jaxKind = new JaxKind();
+		jaxKind.setNachname("Kind_Mustermann");
+		jaxKind.setVorname("Kind_Max");
+		jaxKind.setGeburtsdatum(LocalDate.now().minusYears(18));
+		jaxKind.setGeschlecht(Geschlecht.WEIBLICH);
+		jaxKind.setPensumFachstelle(createTestJaxPensumFachstelle());
+		jaxKind.setBemerkungen("Notizen");
+		jaxKind.setMutterspracheDeutsch(false);
+		jaxKind.setFamilienErgaenzendeBetreuung(true);
+		jaxKind.setUnterstuetzungspflicht(true);
+		jaxKind.setWohnhaftImGleichenHaushalt(75);
+		return jaxKind;
+	}
+
+	private static JaxPensumFachstelle createTestJaxPensumFachstelle() {
+		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
+		jaxPensumFachstelle.setGueltigBis(LocalDate.now().plusMonths(1));
+		jaxPensumFachstelle.setGueltigAb(LocalDate.now());
+		jaxPensumFachstelle.setPensum(50);
+		jaxPensumFachstelle.setFachstelle(createTestJaxFachstelle());
+		return jaxPensumFachstelle;
+	}
+
+	public static JaxKindContainer createTestJaxKindContainer() {
+		JaxKindContainer jaxKindContainer = new JaxKindContainer();
+		jaxKindContainer.setKindGS(createTestJaxKind());
+		jaxKindContainer.setKindJA(createTestJaxKind());
+		return jaxKindContainer;
+	}
 }

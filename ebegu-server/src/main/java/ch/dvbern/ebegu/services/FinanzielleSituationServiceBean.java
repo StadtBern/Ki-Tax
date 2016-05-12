@@ -48,12 +48,6 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Nonnull
 	@Override
-	public Optional<FinanzielleSituationContainer> findFinanzielleSituationForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
-		return criteriaQueryHelper.getEntityByUniqueAttribute(FinanzielleSituationContainer.class, gesuchsteller, FinanzielleSituationContainer_.gesuchsteller);
-	}
-
-	@Nonnull
-	@Override
 	public Collection<FinanzielleSituationContainer> getAllFinanzielleSituationen() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(FinanzielleSituationContainer.class));
 	}

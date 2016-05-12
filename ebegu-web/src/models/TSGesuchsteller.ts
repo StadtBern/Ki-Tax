@@ -97,7 +97,4 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._finanzielleSituationContainer = value;
     }
 
-    public getFullName(): string {
-        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
-    }
 }
