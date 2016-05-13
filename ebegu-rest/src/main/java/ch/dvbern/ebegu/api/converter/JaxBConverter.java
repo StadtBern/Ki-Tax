@@ -100,8 +100,9 @@ public class JaxBConverter {
 
 	/**
 	 * Converts all person related fields from Jax to Entity
+	 *
 	 * @param personEntityJAXP das objekt als Jax
-	 * @param personEntity das object als Entity
+	 * @param personEntity     das object als Entity
 	 */
 	private void convertAbstractPersonFieldsToEntity(JaxAbstractPersonDTO personEntityJAXP, AbstractPersonEntity personEntity) {
 		personEntity.setNachname(personEntityJAXP.getNachname());
@@ -112,7 +113,8 @@ public class JaxBConverter {
 
 	/**
 	 * Converts all person related fields from Entity to Jax
-	 * @param personEntity das object als Entity
+	 *
+	 * @param personEntity     das object als Entity
 	 * @param personEntityJAXP das objekt als Jax
 	 */
 	private void convertAbstractPersonFieldsToJax(AbstractPersonEntity personEntity, JaxAbstractPersonDTO personEntityJAXP) {
@@ -521,6 +523,7 @@ public class JaxBConverter {
 		FinanzielleSituationContainer mergedContainer = finanzielleSituationContainerToEntity(containerJAX, containerToMergeWith);
 		return mergedContainer;
 	}
+
 	@Nonnull
 	public JaxKind kindToJAX(@Nonnull Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
@@ -549,19 +552,34 @@ public class JaxBConverter {
 		return jaxPensumFachstelle;
 	}
 
-	public PensumFachstelle pensumFachstelletoEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
+	public PensumFachstelle pensumFachstelleToEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
+		Validate.notNull(pensumFachstelleJAXP.getFachstelle(), "Fachstelle muss existieren");
+		Validate.notNull(pensumFachstelleJAXP.getFachstelle().getId(), "Fachstelle muss bereits gespeichert sein");
 		pensumFachstelle.setGueltigkeit(convertDateRange(pensumFachstelleJAXP));
 		pensumFachstelle.setPensum(pensumFachstelleJAXP.getPensum());
-		//Die Fachstelle fuer die das Pensum erstellt wird muss existieren
 		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
 		if (fachstelleFromDB.isPresent()) {
 			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("pensumFachstelletoEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle().getId());
+			throw new EbeguEntityNotFoundException("pensumFachstelleToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle().getId());
 		}
 
 		return pensumFachstelle;
 	}
+
+	private PensumFachstelle toStorablePensumFachstelle(@Nonnull JaxPensumFachstelle pensumFsToSave) {
+		PensumFachstelle pensumToMergeWith = new PensumFachstelle();
+		if (pensumFsToSave.getId() != null) {
+			Optional<PensumFachstelle> pensumFachstelleOpt = pensumFachstelleService.findPensumFachstelle(pensumFsToSave.getId());
+			if (pensumFachstelleOpt.isPresent()) {
+				pensumToMergeWith = pensumFachstelleOpt.get();
+			} else {
+				throw new EbeguEntityNotFoundException("toStorablePensumFachstelle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFsToSave.getId());
+			}
+		}
+		return pensumFachstelleToEntity(pensumFsToSave, pensumToMergeWith);
+	}
+
 
 	public JaxKindContainer kindContainerToJAX(KindContainer persistedKind) {
 		JaxKindContainer jaxKindContainer = new JaxKindContainer();
@@ -585,18 +603,11 @@ public class JaxBConverter {
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
 
-		PensumFachstelle updatedPensumFachstelle = null;
-		//todo homa evtl to storable entity einbauen?
-		if (kindJAXP.getPensumFachstelle() != null && kindJAXP.getPensumFachstelle().getId() == null) {
-			updatedPensumFachstelle = pensumFachstelletoEntity(kindJAXP.getPensumFachstelle(), new PensumFachstelle());
+		PensumFachstelle updtPensumFachstelle = null;
+		if(kindJAXP.getPensumFachstelle() != null) {
+			updtPensumFachstelle =  toStorablePensumFachstelle(kindJAXP.getPensumFachstelle());
 		}
-		else if (kindJAXP.getPensumFachstelle() != null) {
-			PensumFachstelle pensumFachstelleFromDB = pensumFachstelleService.findPensumFachstelle(kindJAXP.getPensumFachstelle().getId())
-				.orElseThrow(() -> new EbeguEntityNotFoundException("kindToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, kindJAXP.getPensumFachstelle().getId()));
-			updatedPensumFachstelle = pensumFachstelletoEntity(kindJAXP.getPensumFachstelle(), pensumFachstelleFromDB);
-		}
-
-		kind.setPensumFachstelle(updatedPensumFachstelle);
+		kind.setPensumFachstelle(updtPensumFachstelle);
 
 		kind.setBemerkungen(kindJAXP.getBemerkungen());
 		return kind;
@@ -627,14 +638,15 @@ public class JaxBConverter {
 	/**
 	 * Sucht die Fachstelle in der DB und fuegt sie mit der als Parameter gegebenen Fachstelle zusammen.
 	 * Sollte sie in der DB nicht existieren, gibt die Methode eine neue Fachstelle mit den gegebenen Daten zurueck
+	 *
 	 * @param fachstelleToFind die Fachstelle als JAX
 	 * @return die Fachstelle als Entity
-     */
+	 */
 	@Nonnull
 	public Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
 		Validate.notNull(fachstelleToFind);
 		Fachstelle fachstelleToMergeWith = new Fachstelle();
-		if (fachstelleToFind.getId() != null ) {
+		if (fachstelleToFind.getId() != null) {
 			Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(fachstelleToFind.getId());
 			if (altFachstelle.isPresent()) {
 				fachstelleToMergeWith = altFachstelle.get();
@@ -646,14 +658,15 @@ public class JaxBConverter {
 	/**
 	 * Sucht das Gesuch in der DB und fuegt es mit dem als Parameter gegebenen Gesuch zusammen.
 	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
+	 *
 	 * @param gesuchToFind das Gesuch als JAX
 	 * @return das Gesuch als Entity
-     */
+	 */
 	@Nonnull
 	public Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
-		if (gesuchToFind.getId() != null ) {
+		if (gesuchToFind.getId() != null) {
 			Optional<Gesuch> altGesuch = gesuchService.findGesuch(gesuchToFind.getId());
 			if (altGesuch.isPresent()) {
 				gesuchToMergeWith = altGesuch.get();
