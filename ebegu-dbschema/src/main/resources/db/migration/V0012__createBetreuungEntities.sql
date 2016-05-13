@@ -1,29 +1,29 @@
 CREATE TABLE betreuung (
-  id                 VARCHAR(36)  NOT NULL,
-  timestamp_erstellt DATETIME     NOT NULL,
-  timestamp_mutiert  DATETIME     NOT NULL,
-  user_erstellt      VARCHAR(36)  NOT NULL,
-  user_mutiert       VARCHAR(36)  NOT NULL,
-  version            BIGINT       NOT NULL,
-  bemerkungen        VARCHAR(1000),
-  betreuungsstatus   VARCHAR(255) NOT NULL,
-  institution_id     VARCHAR(36)  NOT NULL,
-  kind_id            VARCHAR(36)  NOT NULL,
+  id                        VARCHAR(36)  NOT NULL,
+  timestamp_erstellt        DATETIME     NOT NULL,
+  timestamp_mutiert         DATETIME     NOT NULL,
+  user_erstellt             VARCHAR(36)  NOT NULL,
+  user_mutiert              VARCHAR(36)  NOT NULL,
+  version                   BIGINT       NOT NULL,
+  bemerkungen               VARCHAR(1000),
+  betreuungsstatus          VARCHAR(255) NOT NULL,
+  institution_stammdaten_id VARCHAR(36)  NOT NULL,
+  kind_id                   VARCHAR(36)  NOT NULL,
   CONSTRAINT PK_betreuung PRIMARY KEY (id)
 );
 
 CREATE TABLE betreuung_aud (
-  id                 VARCHAR(36) NOT NULL,
-  rev                INTEGER     NOT NULL,
-  revtype            TINYINT,
-  timestamp_erstellt DATETIME,
-  timestamp_mutiert  DATETIME,
-  user_erstellt      VARCHAR(36),
-  user_mutiert       VARCHAR(36),
-  bemerkungen        VARCHAR(1000),
-  betreuungsstatus   VARCHAR(255),
-  institution_id     VARCHAR(36),
-  kind_id            VARCHAR(36),
+  id                        VARCHAR(36) NOT NULL,
+  rev                       INTEGER     NOT NULL,
+  revtype                   TINYINT,
+  timestamp_erstellt        DATETIME,
+  timestamp_mutiert         DATETIME,
+  user_erstellt             VARCHAR(36),
+  user_mutiert              VARCHAR(36),
+  bemerkungen               VARCHAR(1000),
+  betreuungsstatus          VARCHAR(255),
+  institution_stammdaten_id VARCHAR(36),
+  kind_id                   VARCHAR(36),
   CONSTRAINT PK_betreuung_aud PRIMARY KEY (id, rev)
 );
 
@@ -82,9 +82,9 @@ CREATE TABLE betreuungspensum_container (
 );
 
 ALTER TABLE betreuung
-  ADD CONSTRAINT FK_betreuung_institution_id
-FOREIGN KEY (institution_id)
-REFERENCES institution (id);
+  ADD CONSTRAINT FK_betreuung_institution_stammdaten_id
+FOREIGN KEY (institution_stammdaten_id)
+REFERENCES institution_stammdaten (id);
 
 ALTER TABLE betreuung
   ADD CONSTRAINT FK_betreuung_kind_id

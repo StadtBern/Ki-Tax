@@ -22,8 +22,10 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -55,6 +57,8 @@ public class JaxBConverter {
 	private TraegerschaftService traegerschaftService;
 	@Inject
 	private InstitutionService institutionService;
+	@Inject
+	private InstitutionStammdatenService institutionStammdatenService;
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -105,6 +109,7 @@ public class JaxBConverter {
 	 * @param personEntity     das object als Entity
 	 */
 	private void convertAbstractPersonFieldsToEntity(JaxAbstractPersonDTO personEntityJAXP, AbstractPersonEntity personEntity) {
+		convertAbstractFieldsToEntity(personEntityJAXP, personEntity);
 		personEntity.setNachname(personEntityJAXP.getNachname());
 		personEntity.setVorname(personEntityJAXP.getVorname());
 		personEntity.setGeburtsdatum(personEntityJAXP.getGeburtsdatum());
@@ -117,11 +122,42 @@ public class JaxBConverter {
 	 * @param personEntity     das object als Entity
 	 * @param personEntityJAXP das objekt als Jax
 	 */
-	private void convertAbstractPersonFieldsToJax(AbstractPersonEntity personEntity, JaxAbstractPersonDTO personEntityJAXP) {
+	private void convertAbstractPersonFieldsToJAX(AbstractPersonEntity personEntity, JaxAbstractPersonDTO personEntityJAXP) {
+		convertAbstractFieldsToJAX(personEntity, personEntityJAXP);
 		personEntityJAXP.setNachname(personEntity.getNachname());
 		personEntityJAXP.setVorname(personEntity.getVorname());
 		personEntityJAXP.setGeburtsdatum(personEntity.getGeburtsdatum());
 		personEntityJAXP.setGeschlecht(personEntity.getGeschlecht());
+	}
+
+	/**
+	 * Checks fields gueltigAb and gueltigBis from given object and stores the corresponding DateRange object in the given Jax Object
+	 * If gueltigAb is null then current date is set instead
+	 * If gueltigBis is null then end_of_time is set instead
+	 * @param dateRangedJAXP AbstractDateRanged jax where to take the date from
+	 * @param dateRangedEntity AbstractDateRanged entity where to store the date into
+     */
+	private void convertAbstractDateRangedFieldsToEntity(JaxAbstractDateRangedDTO dateRangedJAXP, AbstractDateRangedEntity dateRangedEntity) {
+		convertAbstractFieldsToEntity(dateRangedJAXP, dateRangedEntity);
+		LocalDate dateAb = dateRangedJAXP.getGueltigAb() == null ? LocalDate.now() : dateRangedJAXP.getGueltigAb();
+		LocalDate dateBis = dateRangedJAXP.getGueltigBis() == null ? Constants.END_OF_TIME : dateRangedJAXP.getGueltigBis();
+		dateRangedEntity.setGueltigkeit(new DateRange(dateAb, dateBis));
+	}
+
+	private void convertAbstractDateRangedFieldsToJAX(AbstractDateRangedEntity dateRangedEntity, JaxAbstractDateRangedDTO jaxDateRanged) {
+		convertAbstractFieldsToJAX(dateRangedEntity, jaxDateRanged);
+		jaxDateRanged.setGueltigAb(dateRangedEntity.getGueltigkeit().getGueltigAb());
+		jaxDateRanged.setGueltigBis(dateRangedEntity.getGueltigkeit().getGueltigBis());
+	}
+
+	private void convertAbstractPensumFieldsToEntity(JaxAbstractPensumDTO jaxPensum, AbstractPensumEntity pensumEntity) {
+		convertAbstractDateRangedFieldsToEntity(jaxPensum, pensumEntity);
+		pensumEntity.setPensum(jaxPensum.getPensum());
+	}
+
+	private void convertAbstractPensumFieldsToJAX(AbstractPensumEntity pensum, JaxAbstractPensumDTO jaxPensum) {
+		convertAbstractDateRangedFieldsToJAX(pensum, jaxPensum);
+		jaxPensum.setPensum(pensum.getPensum());
 	}
 
 	@Nonnull
@@ -148,7 +184,7 @@ public class JaxBConverter {
 	public GesuchstellerAdresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		Validate.notNull(gesuchstellerAdresse);
 		Validate.notNull(jaxAdresse);
-		convertAbstractFieldsToEntity(jaxAdresse, gesuchstellerAdresse);
+		convertAbstractDateRangedFieldsToEntity(jaxAdresse, gesuchstellerAdresse);
 		gesuchstellerAdresse.setStrasse(jaxAdresse.getStrasse());
 		gesuchstellerAdresse.setHausnummer(jaxAdresse.getHausnummer());
 		gesuchstellerAdresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
@@ -156,7 +192,6 @@ public class JaxBConverter {
 		gesuchstellerAdresse.setOrt(jaxAdresse.getOrt());
 		gesuchstellerAdresse.setGemeinde(jaxAdresse.getGemeinde());
 		gesuchstellerAdresse.setLand(jaxAdresse.getLand());
-		gesuchstellerAdresse.setGueltigkeit(convertDateRange(jaxAdresse));
 		//adresse gilt per default von start of time an
 		gesuchstellerAdresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
 		gesuchstellerAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
@@ -164,24 +199,10 @@ public class JaxBConverter {
 		return gesuchstellerAdresse;
 	}
 
-	/**
-	 * Checks fields gueltigAb and gueltigBis from given object and returns the corresponding DateRange object
-	 * If gueltigAb is null then current date is set instead
-	 * If gueltigBis is null then end_of_time is set instead
-	 *
-	 * @param jaxAbstractDateRangedDTO JaxObject extending abstract class JaxAbstractDateRangedDTO
-	 * @return DateRange object created with the given data
-	 */
-	private DateRange convertDateRange(JaxAbstractDateRangedDTO jaxAbstractDateRangedDTO) {
-		LocalDate dateAb = jaxAbstractDateRangedDTO.getGueltigAb() == null ? LocalDate.now() : jaxAbstractDateRangedDTO.getGueltigAb();
-		LocalDate dateBis = jaxAbstractDateRangedDTO.getGueltigBis() == null ? Constants.END_OF_TIME : jaxAbstractDateRangedDTO.getGueltigBis();
-		return new DateRange(dateAb, dateBis);
-	}
-
 	@Nonnull
 	public JaxAdresse adresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		JaxAdresse jaxAdresse = new JaxAdresse();
-		convertAbstractFieldsToJAX(gesuchstellerAdresse, jaxAdresse);
+		convertAbstractDateRangedFieldsToJAX(gesuchstellerAdresse, jaxAdresse);
 		jaxAdresse.setStrasse(gesuchstellerAdresse.getStrasse());
 		jaxAdresse.setHausnummer(gesuchstellerAdresse.getHausnummer());
 		jaxAdresse.setZusatzzeile(gesuchstellerAdresse.getZusatzzeile());
@@ -189,8 +210,6 @@ public class JaxBConverter {
 		jaxAdresse.setOrt(gesuchstellerAdresse.getOrt());
 		jaxAdresse.setGemeinde(gesuchstellerAdresse.getGemeinde());
 		jaxAdresse.setLand(gesuchstellerAdresse.getLand());
-		jaxAdresse.setGueltigAb(gesuchstellerAdresse.getGueltigkeit().getGueltigAb());
-		jaxAdresse.setGueltigBis(gesuchstellerAdresse.getGueltigkeit().getGueltigBis());
 		jaxAdresse.setAdresseTyp(gesuchstellerAdresse.getAdresseTyp());
 		return jaxAdresse;
 	}
@@ -212,8 +231,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
-		convertAbstractFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
+		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
 		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
@@ -272,8 +290,7 @@ public class JaxBConverter {
 		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
-		convertAbstractFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
-		convertAbstractPersonFieldsToJax(persistedGesuchsteller, jaxGesuchsteller);
+		convertAbstractPersonFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
 		jaxGesuchsteller.setMail(persistedGesuchsteller.getMail());
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
@@ -478,13 +495,11 @@ public class JaxBConverter {
 
 	public JaxInstitutionStammdaten institutionStammdatenToJAX(@Nonnull InstitutionStammdaten persistedInstStammdaten) {
 		JaxInstitutionStammdaten jaxInstStammdaten = new JaxInstitutionStammdaten();
-		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
+		convertAbstractDateRangedFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
 		jaxInstStammdaten.setOeffnungsstunden(persistedInstStammdaten.getOeffnungsstunden());
 		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
-		jaxInstStammdaten.setGueltigAb(persistedInstStammdaten.getGueltigkeit().getGueltigAb());
-		jaxInstStammdaten.setGueltigBis(persistedInstStammdaten.getGueltigkeit().getGueltigBis());
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
 		return jaxInstStammdaten;
 	}
@@ -493,12 +508,11 @@ public class JaxBConverter {
 		Validate.notNull(institutionStammdatenJAXP);
 		Validate.notNull(institutionStammdaten);
 
-		convertAbstractFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
+		convertAbstractDateRangedFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
 		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
 		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
 		institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
-		institutionStammdaten.setGueltigkeit(convertDateRange(institutionStammdatenJAXP));
 
 		Optional<Institution> institutionFromDB = institutionService.findInstitution(institutionStammdatenJAXP.getInstitution().getId());
 		if (institutionFromDB.isPresent()) {
@@ -527,8 +541,7 @@ public class JaxBConverter {
 	@Nonnull
 	public JaxKind kindToJAX(@Nonnull Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
-		convertAbstractFieldsToJAX(persistedKind, jaxKind);
-		convertAbstractPersonFieldsToJax(persistedKind, jaxKind);
+		convertAbstractPersonFieldsToJAX(persistedKind, jaxKind);
 		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
 		jaxKind.setUnterstuetzungspflicht(persistedKind.getUnterstuetzungspflicht());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
@@ -544,10 +557,7 @@ public class JaxBConverter {
 			return null;
 		}
 		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
-		convertAbstractFieldsToJAX(persistedPensumFachstelle, jaxPensumFachstelle);
-		jaxPensumFachstelle.setPensum(persistedPensumFachstelle.getPensum());
-		jaxPensumFachstelle.setGueltigAb(persistedPensumFachstelle.getGueltigkeit().getGueltigAb());
-		jaxPensumFachstelle.setGueltigBis(persistedPensumFachstelle.getGueltigkeit().getGueltigBis());
+		convertAbstractPensumFieldsToJAX(persistedPensumFachstelle, jaxPensumFachstelle);
 		jaxPensumFachstelle.setFachstelle(fachstelleToJAX(persistedPensumFachstelle.getFachstelle()));
 		return jaxPensumFachstelle;
 	}
@@ -555,8 +565,8 @@ public class JaxBConverter {
 	public PensumFachstelle pensumFachstelleToEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
 		Validate.notNull(pensumFachstelleJAXP.getFachstelle(), "Fachstelle muss existieren");
 		Validate.notNull(pensumFachstelleJAXP.getFachstelle().getId(), "Fachstelle muss bereits gespeichert sein");
-		pensumFachstelle.setGueltigkeit(convertDateRange(pensumFachstelleJAXP));
-		pensumFachstelle.setPensum(pensumFachstelleJAXP.getPensum());
+		convertAbstractPensumFieldsToEntity(pensumFachstelleJAXP, pensumFachstelle);
+
 		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
 		if (fachstelleFromDB.isPresent()) {
 			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
@@ -596,7 +606,6 @@ public class JaxBConverter {
 	public Kind kindToEntity(JaxKind kindJAXP, Kind kind) {
 		Validate.notNull(kindJAXP);
 		Validate.notNull(kind);
-		convertAbstractFieldsToEntity(kindJAXP, kind);
 		convertAbstractPersonFieldsToEntity(kindJAXP, kind);
 		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
 		kind.setUnterstuetzungspflicht(kindJAXP.getUnterstuetzungspflicht());
@@ -792,8 +801,7 @@ public class JaxBConverter {
 	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum erwerbspensum) {
 		Validate.notNull(jaxErwerbspensum);
 		Validate.notNull(erwerbspensum);
-		erwerbspensum = convertAbstractFieldsToEntity(jaxErwerbspensum, erwerbspensum);
-		erwerbspensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
+		convertAbstractPensumFieldsToEntity(jaxErwerbspensum, erwerbspensum);
 		erwerbspensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
 		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
 		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
@@ -819,4 +827,125 @@ public class JaxBConverter {
 		}
 		return null;
 	}
+	public Betreuung betreuungToEntity(@Nullable JaxBetreuung betreuungJAXP, @Nullable Betreuung betreuung) {
+		Validate.notNull(betreuung);
+		Validate.notNull(betreuungJAXP);
+		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
+		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
+		betreuung.setBetreuungspensumContainers(betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers()));
+		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
+		if (betreuungJAXP.getInstitutionStammdaten() != null) {
+			Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(betreuungJAXP.getInstitutionStammdaten().getId());
+			InstitutionStammdaten instStammdatenToMerge = optInstStammdaten.orElse(new InstitutionStammdaten());
+			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
+		}
+		return betreuung;
+	}
+
+	/**
+	 * Goes through the whole list of jaxBetPenContainers. For each (jax)Container that already exists as Entity it merges both and adds the resulting
+	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
+	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
+	 * @param jaxBetPenContainers
+	 * @param betPenContainers
+     * @return
+     */
+	private Set<BetreuungspensumContainer> betreuungsPensumContainersToEntity(Set<JaxBetreuungspensumContainer> jaxBetPenContainers, Set<BetreuungspensumContainer> betPenContainers) {
+		Set<BetreuungspensumContainer> resultBetPensContainer = new HashSet<>();
+		for (JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
+			BetreuungspensumContainer bpContainer = new BetreuungspensumContainer();
+			BetreuungspensumContainer retrievedBPContainer = betPenContainerExists(betPenContainers, jaxBetPensContainer);
+			if (retrievedBPContainer != null) {
+				bpContainer = retrievedBPContainer;
+			}
+			resultBetPensContainer.add(betreuungspensumContainerToEntity(jaxBetPensContainer, bpContainer));
+		}
+		return  resultBetPensContainer;
+	}
+
+	/**
+	 * Checks whether the given jaxBetPensContainer exists in the given list of {@link BetreuungspensumContainer} by comparing their ID parameter.
+	 * @param betPenContainers list of {@link BetreuungspensumContainer}
+	 * @param jaxBetPensContainer Jax object to look for
+     * @return the {@link BetreuungspensumContainer} if it exists or null if it doesn't
+     */
+	private BetreuungspensumContainer betPenContainerExists(Set<BetreuungspensumContainer> betPenContainers, JaxBetreuungspensumContainer jaxBetPensContainer) {
+		for (BetreuungspensumContainer betPensContainer : betPenContainers) {
+			if (betPensContainer.getId().equals(jaxBetPensContainer.getId())) {
+				return betPensContainer;
+			}
+		}
+		return null;
+	}
+
+	private BetreuungspensumContainer betreuungspensumContainerToEntity(JaxBetreuungspensumContainer jaxBetPenContainers, BetreuungspensumContainer bpContainer) {
+		Validate.notNull(jaxBetPenContainers);
+		Validate.notNull(bpContainer);
+		convertAbstractFieldsToEntity(jaxBetPenContainers, bpContainer);
+		if (jaxBetPenContainers.getBetreuungspensumGS() != null) {
+			Betreuungspensum betPensGS = new Betreuungspensum();
+			if (bpContainer.getBetreuungspensumGS() != null) {
+				betPensGS = bpContainer.getBetreuungspensumGS();
+			}
+			bpContainer.setBetreuungspensumGS(betreuungspensumToEntity(jaxBetPenContainers.getBetreuungspensumGS(), betPensGS));
+		}
+		if (jaxBetPenContainers.getBetreuungspensumJA() != null) {
+			Betreuungspensum betPensJA = new Betreuungspensum();
+			if (bpContainer.getBetreuungspensumJA() != null) {
+				betPensJA = bpContainer.getBetreuungspensumJA();
+			}
+			bpContainer.setBetreuungspensumJA(betreuungspensumToEntity(jaxBetPenContainers.getBetreuungspensumJA(), betPensJA));
+		}
+		return bpContainer;
+	}
+
+	private Betreuungspensum betreuungspensumToEntity(JaxBetreuungspensum jaxBetreuungspensum, Betreuungspensum betreuungspensum) {
+		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
+		return betreuungspensum;
+	}
+
+	public JaxBetreuung betreuungToJAX(Betreuung persistedBetreuung) {
+		if (persistedBetreuung != null) {
+			JaxBetreuung jaxBetreuung = new JaxBetreuung();
+			convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
+			jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
+			jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
+			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
+			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+		}
+		return null;
+	}
+
+	/**
+	 * calls betreuungsPensumContainerToJax for each betreuungspensumContainer found in given the list
+	 * @param betreuungspensumContainers
+	 * @return
+     */
+	private Set<JaxBetreuungspensumContainer> betreuungsPensumContainersToJax(Set<BetreuungspensumContainer> betreuungspensumContainers) {
+		Set<JaxBetreuungspensumContainer> jaxContainers = new HashSet<>();
+		if (betreuungspensumContainers != null) {
+			for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
+				jaxContainers.add(betreuungsPensumContainerToJax(betreuungspensumContainer));
+			}
+		}
+		return jaxContainers;
+	}
+
+	private JaxBetreuungspensumContainer betreuungsPensumContainerToJax(BetreuungspensumContainer betreuungspensumContainer) {
+		if (betreuungspensumContainer != null) {
+			JaxBetreuungspensumContainer jaxBetreuungspensumContainer = new JaxBetreuungspensumContainer();
+			convertAbstractFieldsToJAX(betreuungspensumContainer, jaxBetreuungspensumContainer);
+			jaxBetreuungspensumContainer.setBetreuungspensumGS(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumGS()));
+			jaxBetreuungspensumContainer.setBetreuungspensumJA(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumJA()));
+		}
+		return null;
+	}
+
+	private JaxBetreuungspensum betreuungspensumToJax(Betreuungspensum betreuungspensumGS) {
+		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
+		convertAbstractPensumFieldsToJAX(betreuungspensumGS, jaxBetreuungspensum);
+		return jaxBetreuungspensum;
+	}
+
+
 }

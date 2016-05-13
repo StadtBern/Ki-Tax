@@ -2,11 +2,11 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.annotation.Nullable;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Container-Entity für die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln geführt werden,
@@ -27,6 +27,10 @@ public class KindContainer extends AbstractEntity {
 
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Kind kindJA;
+
+	@Nullable
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
+	private Set<Betreuung> betreuungen = new HashSet<>();
 
 
 	public Gesuch getGesuch() {
@@ -51,6 +55,14 @@ public class KindContainer extends AbstractEntity {
 
 	public void setKindJA(Kind kindJA) {
 		this.kindJA = kindJA;
+	}
+
+	public Set<Betreuung> getBetreuungen() {
+		return betreuungen;
+	}
+
+	public void setBetreuungen(Set<Betreuung> betreuungen) {
+		this.betreuungen = betreuungen;
 	}
 
 }

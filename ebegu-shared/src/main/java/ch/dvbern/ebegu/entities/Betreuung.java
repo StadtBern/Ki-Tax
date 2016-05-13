@@ -22,11 +22,11 @@ public class Betreuung extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	private Kind kind;
+	private KindContainer kind;
 
 	@NotNull
 	@ManyToOne(optional = false)
-	private Institution institution;
+	private InstitutionStammdaten institutionStammdaten;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
@@ -34,7 +34,7 @@ public class Betreuung extends AbstractEntity {
 	private Betreuungsstatus betreuungsstatus;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
-	private Set<BetreuungspensumContainer> betreuungspensumContainer = new HashSet<>();
+	private Set<BetreuungspensumContainer> betreuungspensumContainers = new HashSet<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -42,20 +42,20 @@ public class Betreuung extends AbstractEntity {
 	private String bemerkungen;
 
 
-	public Kind getKind() {
+	public KindContainer getKind() {
 		return kind;
 	}
 
-	public void setKind(Kind kind) {
+	public void setKind(KindContainer kind) {
 		this.kind = kind;
 	}
 
-	public Institution getInstitution() {
-		return institution;
+	public InstitutionStammdaten getInstitutionStammdaten() {
+		return institutionStammdaten;
 	}
 
-	public void setInstitution(Institution institution) {
-		this.institution = institution;
+	public void setInstitutionStammdaten(InstitutionStammdaten institutionStammdaten) {
+		this.institutionStammdaten = institutionStammdaten;
 	}
 
 	public Betreuungsstatus getBetreuungsstatus() {
@@ -66,12 +66,12 @@ public class Betreuung extends AbstractEntity {
 		this.betreuungsstatus = betreuungsstatus;
 	}
 
-	public Set<BetreuungspensumContainer> getBetreuungspensumContainer() {
-		return betreuungspensumContainer;
+	public Set<BetreuungspensumContainer> getBetreuungspensumContainers() {
+		return betreuungspensumContainers;
 	}
 
-	public void setBetreuungspensumContainer(Set<BetreuungspensumContainer> betreuungspensumContainer) {
-		this.betreuungspensumContainer = betreuungspensumContainer;
+	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
+		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 
 	@Nullable

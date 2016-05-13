@@ -18,7 +18,6 @@ public interface KindService {
 	KindContainer saveKind(@Nonnull KindContainer kind);
 
 	/**
-
 	 * @param key PK (id) des Kindes
 	 * @return Kind mit dem gegebenen key oder null falls nicht vorhanden
 	 */

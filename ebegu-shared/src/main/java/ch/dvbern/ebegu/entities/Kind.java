@@ -42,10 +42,6 @@ public class Kind extends AbstractPersonEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private PensumFachstelle pensumFachstelle;
 
-	@Nullable
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
-	private Set<Betreuung> betreuungen = new HashSet<>();
-
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -104,11 +100,4 @@ public class Kind extends AbstractPersonEntity {
 		this.pensumFachstelle = pensumFachstelle;
 	}
 
-	public Set<Betreuung> getBetreuungen() {
-		return betreuungen;
-	}
-
-	public void setBetreuungen(Set<Betreuung> betreuungen) {
-		this.betreuungen = betreuungen;
-	}
 }
