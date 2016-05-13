@@ -62,7 +62,7 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 		JaxPensumFachstelle jaxPensumFachstelle = testJaxKindContainer.getKindGS().getPensumFachstelle();
 		jaxPensumFachstelle.setFachstelle(fachstelleResource.saveFachstelle(jaxPensumFachstelle.getFachstelle(), null, null));
 		PensumFachstelle returnedPensumFachstelle = pensumFachstelleService.savePensumFachstelle(
-			converter.pensumFachstelletoEntity(jaxPensumFachstelle, new PensumFachstelle()));
+			converter.pensumFachstelleToEntity(jaxPensumFachstelle, new PensumFachstelle()));
 		JaxPensumFachstelle convertedPensumFachstelle = converter.pensumFachstelleToJax(returnedPensumFachstelle);
 		testJaxKindContainer.getKindGS().setPensumFachstelle(convertedPensumFachstelle);
 		testJaxKindContainer.getKindJA().setPensumFachstelle(convertedPensumFachstelle);
