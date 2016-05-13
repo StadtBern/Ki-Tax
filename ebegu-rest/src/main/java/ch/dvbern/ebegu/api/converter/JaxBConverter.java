@@ -912,6 +912,7 @@ public class JaxBConverter {
 			jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
 			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
 			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+			return jaxBetreuung;
 		}
 		return null;
 	}

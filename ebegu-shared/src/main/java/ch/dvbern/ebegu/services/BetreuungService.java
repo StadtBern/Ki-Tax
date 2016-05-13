@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface BetreuungService {
 
 	/**
-	 * Speichert die Betreuung neu in der DB falls der Key noch nicht existiert. Sonst wird das existierende Kind aktualisiert
+	 * Speichert die Betreuung neu in der DB falls der Key noch nicht existiert. Sonst wird die existierende Betreuung aktualisiert
 	 * @param betreuung Die Betreuung als DTO
 	 */
 	@Nonnull
@@ -24,4 +24,10 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key);
+
+	/**
+	 * entfernt eine Betreuung aus der Databse
+	 * @param betreuungId Id der Betreuung zu entfernen
+	 */
+	void removeBetreuung(@Nonnull String betreuungId);
 }
