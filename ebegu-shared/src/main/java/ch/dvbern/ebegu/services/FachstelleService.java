@@ -11,7 +11,6 @@ import java.util.Optional;
  */
 public interface FachstelleService {
 
-
 	/**
 	 * Aktualisiert die Fachstelle in der DB
 	 * @param fachstelle die Fachstelle als DTO

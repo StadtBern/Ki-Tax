@@ -1,13 +1,21 @@
 package ch.dvbern.ebegu.rest.test.util;
 
+import ch.dvbern.ebegu.api.dtos.JaxAdresse;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensum;
+import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Land;
+import ch.dvbern.ebegu.enums.Taetigkeit;
+import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Generiert Testdaten fuer JAX DTOs
@@ -49,6 +57,42 @@ public class TestJaxDataUtil {
 		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		jaxGesuchsteller.setAlternativeAdresse(altAdr);
 		return jaxGesuchsteller;
+
+	}
+
+	public static JaxGesuchsteller createTestJaxGesuchstellerWithErwerbsbensum() {
+		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
+		JaxErwerbspensumContainer container = createTestJaxErwerbspensumContainer();
+		JaxErwerbspensumContainer container2 = createTestJaxErwerbspensumContainer();
+		container2.getErwerbspensumGS().setGueltigAb(LocalDate.now().plusYears(1));
+		container2.getErwerbspensumGS().setGueltigBis(null);
+
+		Collection<JaxErwerbspensumContainer> list = new ArrayList<>();
+		list.add(container);
+		list.add(container2);
+		testJaxGesuchsteller.setErwerbspensenContainers(list);
+		return testJaxGesuchsteller;
+
+	}
+
+	public static JaxErwerbspensumContainer createTestJaxErwerbspensumContainer(){
+		JaxErwerbspensum testJaxErwerbspensum = createTestJaxErwerbspensum();
+		JaxErwerbspensumContainer container = new JaxErwerbspensumContainer();
+		container.setErwerbspensumGS(testJaxErwerbspensum);
+		return container;
+	}
+
+
+	public static JaxErwerbspensum createTestJaxErwerbspensum(){
+		JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
+		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		jaxErwerbspensum.setGesundheitlicheEinschraenkungen(true);
+		jaxErwerbspensum.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
+		jaxErwerbspensum.setZuschlagZuErwerbspensum(true);
+		jaxErwerbspensum.setZuschlagsprozent(15);
+		jaxErwerbspensum.setGueltigAb(LocalDate.now().minusYears(1));
+		jaxErwerbspensum.setPensum(70);
+		return jaxErwerbspensum;
 
 	}
 

@@ -20,8 +20,11 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -42,6 +45,8 @@ public class JaxBConverter {
 	private GesuchService gesuchService;
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
+	@Inject
+	private ErwerbspensumService erwerbspensumService;
 	@Inject
 	private FallService fallService;
 	@Inject
@@ -239,6 +244,12 @@ public class JaxBConverter {
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
+
+		//Erwerbspensum
+		gesuchstellerJAXP.getErwerbspensenContainers()
+			.stream()
+			.map(this::erwerbspensumContainerToStoreableEntity)
+			.forEach(gesuchsteller::addErwerbspensumContainer);
 		return gesuchsteller;
 	}
 
@@ -256,6 +267,7 @@ public class JaxBConverter {
 		return adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
+	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull Gesuchsteller persistedGesuchsteller) {
 		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
@@ -282,7 +294,10 @@ public class JaxBConverter {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
-
+		// Erwerbspensen
+		Collection<ErwerbspensumContainer> persistedPensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
+		List<JaxErwerbspensumContainer> listOfPensen = persistedPensen.stream().map(this::erwerbspensumContainerToJAX).collect(Collectors.toList());
+		jaxGesuchsteller.setErwerbspensenContainers(listOfPensen);
 		return jaxGesuchsteller;
 	}
 
@@ -461,7 +476,7 @@ public class JaxBConverter {
 		return institution;
 	}
 
-	public JaxInstitutionStammdaten institutionStammdatenToJAX(InstitutionStammdaten persistedInstStammdaten) {
+	public JaxInstitutionStammdaten institutionStammdatenToJAX(@Nonnull InstitutionStammdaten persistedInstStammdaten) {
 		JaxInstitutionStammdaten jaxInstStammdaten = new JaxInstitutionStammdaten();
 		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
@@ -666,14 +681,19 @@ public class JaxBConverter {
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
 		container.setJahr(containerJAX.getJahr());
-		if (containerJAX.getFinanzielleSituationGS() != null && container.getFinanzielleSituationGS() != null) {
-			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), container.getFinanzielleSituationGS()));
+		FinanzielleSituation finSitToMergeWith;
+		//Im moment kann eine einmal gespeicherte Finanzielle Situation nicht mehr entfernt werden.
+		if (containerJAX.getFinanzielleSituationGS() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationGS()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationJA() != null && container.getFinanzielleSituationJA() != null) {
-			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), container.getFinanzielleSituationJA()));
+		if (containerJAX.getFinanzielleSituationJA() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationJA()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null && container.getFinanzielleSituationSV() != null) {
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), container.getFinanzielleSituationSV()));
+		if (containerJAX.getFinanzielleSituationSV() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationSV()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), finSitToMergeWith));
 		}
 		return container;
 	}
@@ -730,4 +750,73 @@ public class JaxBConverter {
 		return null;
 	}
 
+	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
+		Validate.notNull(jaxEwpCont);
+		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
+		if (jaxEwpCont.getId() != null) {
+			Optional<ErwerbspensumContainer> existingEwpCont = erwerbspensumService.findErwerbspensum(jaxEwpCont.getId());
+			if (existingEwpCont.isPresent()) {
+				containerToMergeWith = existingEwpCont.get();
+			}
+		}
+		return erwerbspensumContainerToEntity(jaxEwpCont, containerToMergeWith);
+
+	}
+
+	public ErwerbspensumContainer erwerbspensumContainerToEntity(@Nonnull JaxErwerbspensumContainer jaxEwpCont, @Nonnull ErwerbspensumContainer erwerbspensumCont) {
+		Validate.notNull(jaxEwpCont);
+		Validate.notNull(erwerbspensumCont);
+		convertAbstractFieldsToEntity(jaxEwpCont, erwerbspensumCont);
+		Erwerbspensum pensumToMergeWith;
+		if (jaxEwpCont.getErwerbspensumGS() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumGS()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumGS(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumGS(), pensumToMergeWith));
+		}
+		if (jaxEwpCont.getErwerbspensumJA() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumJA()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumJA(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumJA(), pensumToMergeWith));
+		}
+
+		return erwerbspensumCont;
+	}
+
+	public JaxErwerbspensumContainer erwerbspensumContainerToJAX(@Nonnull ErwerbspensumContainer storedErwerbspensumCont) {
+		Validate.notNull(storedErwerbspensumCont);
+		JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
+		convertAbstractFieldsToJAX(storedErwerbspensumCont, jaxEwpCont);
+		jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
+		jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
+		return jaxEwpCont;
+	}
+
+	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum erwerbspensum) {
+		Validate.notNull(jaxErwerbspensum);
+		Validate.notNull(erwerbspensum);
+		erwerbspensum = convertAbstractFieldsToEntity(jaxErwerbspensum, erwerbspensum);
+		erwerbspensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
+		erwerbspensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
+		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
+		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
+		erwerbspensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
+		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
+		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
+		return erwerbspensum;
+	}
+
+	private JaxErwerbspensum erbwerbspensumToJax(@Nullable Erwerbspensum pensum) {
+		if (pensum != null) {
+			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
+			jaxErwerbspensum = convertAbstractFieldsToJAX(pensum, jaxErwerbspensum);
+			jaxErwerbspensum.setGueltigAb(pensum.getGueltigkeit().getGueltigAb());
+			jaxErwerbspensum.setGueltigBis(pensum.getGueltigkeit().getGueltigBis());
+			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
+			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
+			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
+			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
+			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
+			jaxErwerbspensum.setPensum(pensum.getPensum());
+			return jaxErwerbspensum;
+		}
+		return null;
+	}
 }

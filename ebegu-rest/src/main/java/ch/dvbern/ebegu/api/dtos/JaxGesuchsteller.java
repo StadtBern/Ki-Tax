@@ -9,6 +9,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collection;
+import java.util.HashSet;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -49,6 +51,8 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	@Valid
 	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
+
+	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
 
 	public String getMail() {
@@ -121,5 +125,13 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setFinanzielleSituationContainer(JaxFinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
+	}
+
+	public Collection<JaxErwerbspensumContainer> getErwerbspensenContainers() {
+		return erwerbspensenContainers;
+	}
+
+	public void setErwerbspensenContainers(Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
+		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 }

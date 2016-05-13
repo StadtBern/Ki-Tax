@@ -74,7 +74,6 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		Assert.assertNotNull(umgezogeneGesuchsteller.getUmzugAdresse());
 		Assert.assertEquals(umgezogeneGesuchsteller.getUmzugAdresse().getStrasse(), umzugAdr.getStrasse());
 
-
 	}
 
 	@Test

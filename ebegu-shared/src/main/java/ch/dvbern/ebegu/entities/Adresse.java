@@ -138,8 +138,6 @@ public class Adresse extends AbstractDateRangedEntity {
 		if (otherAdr == null || getClass() != otherAdr.getClass()) {
 			return false;
 		}
-
-
 		return Objects.equals(strasse, otherAdr.strasse) &&
 			Objects.equals(hausnummer, otherAdr.hausnummer) &&
 			Objects.equals(zusatzzeile, otherAdr.zusatzzeile) &&
