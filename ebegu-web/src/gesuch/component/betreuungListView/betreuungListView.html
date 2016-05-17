@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h4 class="mainTitle">
-                        <span>{{kind.getFullName()}}</span>
+                        <span>{{kind.kindJA.getFullName()}}</span>
                     </h4>
                 </div>
             </div>
@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-12 table-responsive">
 
-                    <table st-table="displayedCollection" st-safe-src="vm.getBetreuungListFromKind(kind)"
+                    <table st-table="displayedCollection" st-safe-src="kind.betreuungen"
                            class="table table-striped">
                         <thead>
                         <tr>
@@ -38,14 +38,14 @@
                                 </button>
                             </td>
                         </tr>
-                        <tr ng-if="vm.getKinderList().length === 0">
-                            <td colspan="4" data-translate="KINDER_NOCH_KEINE"> hola</td>
+                        <tr ng-if="(!kind.betreuungen) || (kind.betreuungen.length === 0)">
+                            <td colspan="4" data-translate="BETREUUNGEN_NOCH_KEINE"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-12" style="margin-bottom: 20px">
-                    <button type="button" ng-click="vm.createBetreuung()" class="btn btn-sm btn-success">
+                    <button type="button" ng-click="vm.createBetreuung(kind)" class="btn btn-sm btn-success">
                         <i class="glyphicon glyphicon-plus">
                         </i> add item
                     </button>

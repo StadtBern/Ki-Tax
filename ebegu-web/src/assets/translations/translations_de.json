@@ -320,6 +320,7 @@
     "KINDER_HINT1": "Bitte erfassen Sie sowohl die familienergänzend betreuten Kinder wie auch die weiteren Kinder, die in Ihrem Haushalt wohnen.",
     "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden.",
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
+    "BETREUUNGEN_NOCH_KEINE": "noch keine Betreuung für dieses Kind erfasst",
     "KINDER_GLEICHEM_HAUSHALT" : "Wohnt das Kind im gleichen Haushalt?",
     "KINDER_MIT_BETREUUNG": "Kinder mit familienergänzender Betreuung",
     "KIND": "Kind",

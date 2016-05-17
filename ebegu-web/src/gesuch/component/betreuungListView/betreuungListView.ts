@@ -3,6 +3,7 @@ import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import IDialogService = angular.material.IDialogService;
 import GesuchModelManager from '../../service/gesuchModelManager';
+import TSKindContainer from '../../../models/TSKindContainer';
 let template = require('./betreuungListView.html');
 
 
@@ -34,4 +35,20 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
     }
 
+    public getKinderWithBetreuungList(): Array<TSKindContainer> {
+        return this.gesuchModelManager.getKinderWithBetreuungList();
+    }
+
+    public createBetreuung(kind: TSKindContainer): void {
+        let kindNumber: number = this.gesuchModelManager.findKind(kind);
+        if (kindNumber > 0) {
+            this.gesuchModelManager.setKindNumber(kindNumber);
+            this.gesuchModelManager.createBetreuung();
+            this.openBetreuungView();
+        }
+    }
+
+    private openBetreuungView(): void {
+        this.state.go('gesuch.betreuung');
+    }
 }

@@ -12,7 +12,7 @@ export function gesuchRun(routerHelper: RouterHelper) {
 function getStates(): IState[] {
     return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
         new EbeguKinderListState(), new EbeguFinanzielleSituationState(), new EbeguKindState(),
-        new EbeguBetreuungListState()];
+        new EbeguBetreuungListState(), new EbeguBetreuungState()];
 }
 
 
@@ -50,9 +50,15 @@ export class EbeguKindState implements IState {
 }
 
 export class EbeguBetreuungListState implements IState {
-    name = 'gesuch.betreuung';
+    name = 'gesuch.betreuungen';
     template = '<betreuung-list-view>';
-    url = '/betreuung';
+    url = '/betreuungen';
+}
+
+export class EbeguBetreuungState implements IState {
+    name = 'gesuch.betreuung';
+    template = '<betreuung-view>';
+    url = '/betreuungen/betreuung';
 }
 
 export class EbeguFinanzielleSituationState implements IState {

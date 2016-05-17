@@ -34,7 +34,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     previousStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
         } else {
             this.state.go('gesuch.kinder');
@@ -42,7 +42,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     nextStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
         } else {
             alert('go to next page');

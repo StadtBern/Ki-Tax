@@ -20,14 +20,16 @@ import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
+import TSBetreuung from '../../models/TSBetreuung';
 
 
 export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
-    gesuchstellerNumber: number;
-    kindNumber: number;
+    private gesuchstellerNumber: number;
+    private kindNumber: number;
+    private betreuungNumber: number;
     fachstellenList: Array<TSFachstelle>;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
@@ -137,7 +139,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummern wird kindNumber als 1 gesetzt.
+     * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummer wird kindNumber als 1 gesetzt.
      * @param kindNumber
      */
     public setKindNumber(kindNumber: number) {
@@ -145,6 +147,18 @@ export default class GesuchModelManager {
             this.kindNumber = kindNumber;
         } else {
             this.kindNumber = 1;
+        }
+    }
+
+    /**
+     * Betreuung nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummer wird betreuungNumber als 1 gesetzt.
+     * @param betreuungNumber
+     */
+    public setBetreuungNumber(betreuungNumber: number) {
+        if (betreuungNumber > 0) {
+            this.betreuungNumber = betreuungNumber;
+        } else {
+            this.betreuungNumber = 1;
         }
     }
 
@@ -188,6 +202,12 @@ export default class GesuchModelManager {
     public initKinder(): void {
         if (!this.gesuch.kindContainer) {
             this.gesuch.kindContainer = [];
+        }
+    }
+
+    public initBetreuung(): void {
+        if (!this.getKindToWorkWith().betreuungen) {
+            this.getKindToWorkWith().betreuungen = [];
         }
     }
 
@@ -253,10 +273,38 @@ export default class GesuchModelManager {
         return [];
     }
 
+    /**
+     *
+     * @returns {any} Alle KindContainer in denen das Kind Betreuung benoetigt
+     */
+    public getKinderWithBetreuungList(): Array<TSKindContainer> {
+        let listResult: Array<TSKindContainer> = [];
+        if (this.gesuch && this.gesuch.kindContainer) {
+            this.gesuch.kindContainer.forEach((kind) => {
+                if (kind.kindJA.familienErgaenzendeBetreuung) {
+                    listResult.push(kind);
+                }
+            });
+        }
+        return listResult;
+    }
+
     public createKind(): void {
         //todo team KindJA setzen  todo homa was
-        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
+        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind(), []));
         this.kindNumber = this.gesuch.kindContainer.length;
+    }
+
+    /**
+     * Creates a Betreuung for the kind given by the kindNumber attribute of the class.
+     * Thus the kindnumber must be set before this method is called.
+     */
+    public createBetreuung(): void {
+        if (this.getKindToWorkWith()) {
+            this.initBetreuung();
+            this.getKindToWorkWith().betreuungen.push(new TSBetreuung());
+            this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+        }
     }
 
     public updateKind(): IPromise<TSKindContainer> {
@@ -285,6 +333,18 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Sucht im ausgewaehlten Kind (kindNumber) nach der aktuellen Betreuung. Deshalb muessen sowohl 
+     * kindNumber als auch betreuungNumber bereits gesetzt sein.
+     * @returns {any}
+     */
+    public getBetreuungToWorkWith(): TSBetreuung {
+        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen.length >= this.betreuungNumber) {
+            return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1];
+        }
+        return undefined;
+    }
+
+    /**
      * Ersetzt das Kind in der aktuelle Position "kindNumber" durch das gegebene Kind. Aus diesem Grund muss diese Methode
      * nur aufgerufen werden, wenn die Position "kindNumber" schon richtig gesetzt wurde.
      * @param kind
@@ -295,7 +355,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Entfernt das aktuelle Kind von der Liste.
+     * Entfernt das aktuelle Kind von der Liste aber nicht von der DB.
      */
     public removeKindFromList() {
         this.gesuch.kindContainer.splice(this.kindNumber - 1, 1);
@@ -303,8 +363,24 @@ export default class GesuchModelManager {
         //todo beim Auch KindRS.removeKind aufrufen???????
     }
 
+    /**
+     * Entfernt die aktuelle Betreuung des aktuellen Kindes von der Liste aber nicht von der DB.
+     */
+    public removeBetreuungFromKind() {
+        this.getKindToWorkWith().betreuungen.splice(this.betreuungNumber - 1, 1);
+        this.setBetreuungNumber(undefined); //by default auf undefined setzen
+    }
+
     public getKindNumber(): number {
         return this.kindNumber;
+    }
+
+    public getBetreuungNumber(): number {
+        return this.betreuungNumber;
+    }
+
+    public getGesuchstellerNumber(): number {
+        return this.gesuchstellerNumber;
     }
 
     /**
@@ -325,4 +401,5 @@ export default class GesuchModelManager {
             return this.gesuchRS.update(this.gesuch);
         });
     }
+
 }

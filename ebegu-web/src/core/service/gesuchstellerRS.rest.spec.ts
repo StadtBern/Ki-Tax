@@ -46,6 +46,7 @@ describe('GesuchstellerRS', function () {
             expect(gesuchstellerRS.updateGesuchsteller).toBeDefined();
         });
     });
+
     describe('API Usage', function () {
         describe('updateGesuchsteller', () => {
             it('should updateGesuchsteller a gesuchsteller and her adresses', () => {
