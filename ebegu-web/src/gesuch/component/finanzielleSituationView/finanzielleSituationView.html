@@ -53,7 +53,7 @@
                         <label data-translate="FINANZIELLE_SITUATION_NETTOLOHN" for="nettolohn"></label>
                         <input id="nettolohn" type="text" name="nettolohn" ui-number-mask="0"
                                ng-model="vm.getModel().finanzielleSituationSV.nettolohn"
-                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_BETRAG">
+                               dv-max-length max="999999999999" class="form-control">
                         <dv-error-messages  for="form.nettolohn.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.getModel().finanzielleSituationGS.nettolohn"
                                    ja="vm.getModel().finanzielleSituationJA.nettolohn"

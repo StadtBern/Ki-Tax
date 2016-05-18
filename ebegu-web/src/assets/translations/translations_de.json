@@ -23,6 +23,7 @@
     "ERROR_EMAIL": "Keine gültige Email ",
     "ERROR_FORMAT": "Falsches Format",
     "ERROR_DATE": "Falsches Datums Format",
+    "ERROR_MAX": "Maximaler Wert überschritten",
     "FINANZIELLE_SITUATION": "Finanzielle Situation",
     "FINANZIELLE_SITUATION_STEUERVERANLAGUNG": "Haben Sie Ihre Steuerveranlagung {{basisjahr}} erhalten?",
     "FINANZIELLE_SITUATION_STEUERERKLAERUNG": "Haben Sie die Steuererklärung für das Jahr {{basisjahr}} ausgefüllt?",
