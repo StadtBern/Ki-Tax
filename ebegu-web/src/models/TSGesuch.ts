@@ -1,11 +1,13 @@
 import TSAbstractEntity from './TSAbstractEntity';
 import TSFall from './TSFall';
 import TSGesuchsteller from './TSGesuchsteller';
+import TSKindContainer from './TSKindContainer';
 
 export default class TSGesuch extends TSAbstractEntity {
     private _fall: TSFall;
     private _gesuchsteller1: TSGesuchsteller;
     private _gesuchsteller2: TSGesuchsteller;
+    private _kindContainer: Array<TSKindContainer>;
 
 
     public get fall(): TSFall {
@@ -30,5 +32,13 @@ export default class TSGesuch extends TSAbstractEntity {
 
     public set gesuchsteller2(value: TSGesuchsteller) {
         this._gesuchsteller2 = value;
+    }
+
+    get kindContainer(): Array<TSKindContainer> {
+        return this._kindContainer;
+    }
+
+    set kindContainer(value: Array<TSKindContainer>) {
+        this._kindContainer = value;
     }
 }

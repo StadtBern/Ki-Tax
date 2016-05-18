@@ -1,12 +1,7 @@
 package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
-import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -22,15 +17,16 @@ public final class TestDataUtil {
 	private TestDataUtil(){
 	}
 
-	public static Adresse createDefaultAdresse() {
-		Adresse adresse = new Adresse();
-		adresse.setStrasse("Nussbaumstrasse");
-		adresse.setHausnummer("21");
-		adresse.setZusatzzeile("c/o Uwe Untermieter");
-		adresse.setPlz("3014");
-		adresse.setOrt("Bern");
-		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
-		return adresse;
+	public  static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
+		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
+		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
+		gesuchstellerAdresse.setHausnummer("21");
+		gesuchstellerAdresse.setZusatzzeile("c/o Uwe Untermieter");
+		gesuchstellerAdresse.setPlz("3014");
+		gesuchstellerAdresse.setOrt("Bern");
+		gesuchstellerAdresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		gesuchstellerAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
+		return gesuchstellerAdresse;
 	}
 
 	public static Gesuchsteller createDefaultGesuchsteller(){
@@ -43,7 +39,7 @@ public final class TestDataUtil {
 		gesuchsteller.setMobile("076 309 30 58");
 		gesuchsteller.setTelefon("031 378 24 24");
 		gesuchsteller.setZpvNumber("0761234567897");
-		gesuchsteller.addAdresse(createDefaultAdresse());
+		gesuchsteller.addAdresse(createDefaultGesuchstellerAdresse());
 		return gesuchsteller;
 	}
 
@@ -116,5 +112,57 @@ public final class TestDataUtil {
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		return instStammdaten;
+	}
+	public static Kind createDefaultKind() {
+		Kind kind = new Kind();
+		kind.setNachname("Kind_Mustermann");
+		kind.setVorname("Kind_Max");
+		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
+		kind.setGeschlecht(Geschlecht.WEIBLICH);
+		kind.setWohnhaftImGleichenHaushalt(50);
+		kind.setBemerkungen("notizen");
+		kind.setPensumFachstelle(createDefaultPensumFachstelle());
+		kind.setFamilienErgaenzendeBetreuung(true);
+		kind.setUnterstuetzungspflicht(true);
+		kind.setMutterspracheDeutsch(true);
+		return kind;
+	}
+
+	public static PensumFachstelle createDefaultPensumFachstelle() {
+		PensumFachstelle pensumFachstelle = new PensumFachstelle();
+		pensumFachstelle.setPensum(50);
+		pensumFachstelle.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		pensumFachstelle.setFachstelle(createDefaultFachstelle());
+		return pensumFachstelle;
+	}
+
+	public static KindContainer createDefaultKindContainer() {
+		KindContainer kindContainer = new KindContainer();
+		Kind defaultKindGS = createDefaultKind();
+		defaultKindGS.setNachname("GS_Kind");
+		kindContainer.setKindGS(defaultKindGS);
+		Kind defaultKindJA = createDefaultKind();
+		defaultKindJA.setNachname("JA_Kind");
+		kindContainer.setKindJA(defaultKindJA);
+		return kindContainer;
+	}
+
+	public static ErwerbspensumContainer createErwerbspensumContainer() {
+		ErwerbspensumContainer epCont = new ErwerbspensumContainer();
+		epCont.setErwerbspensumGS(createErwerbspensumData());
+		Erwerbspensum epKorrigiertJA = createErwerbspensumData();
+		epKorrigiertJA.setTaetigkeit(Taetigkeit.RAV);
+		epCont.setErwerbspensumJA(epKorrigiertJA);
+		return epCont;
+	}
+
+	public static Erwerbspensum createErwerbspensumData() {
+		Erwerbspensum ep = new Erwerbspensum();
+		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		ep.setZuschlagZuErwerbspensum(true);
+		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
+		ep.setZuschlagsprozent(10);
+		ep.setGesundheitlicheEinschraenkungen(false);
+		return ep;
 	}
 }

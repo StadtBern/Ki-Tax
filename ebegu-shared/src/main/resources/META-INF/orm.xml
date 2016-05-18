@@ -5,10 +5,15 @@
                  version="2.1">
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresse"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuchsteller"/>
 	<entity class="ch.dvbern.ebegu.entities.Kind"/>
+	<entity class="ch.dvbern.ebegu.entities.ErwerbspensumContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.Erwerbspensum"/>
+	<entity class="ch.dvbern.ebegu.entities.KindContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
+	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>
 	<entity class="ch.dvbern.ebegu.entities.Fall"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>

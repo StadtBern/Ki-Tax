@@ -43,7 +43,7 @@ public class GesuchstellerResource {
 	@ApiOperation(value = "Create a new Gesuchsteller in the database. The transfer object also has a relation to adressen " +
 		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +
 		"umzugadresse are both stored as consecutive wohnadressen in the database")
-	@Nullable
+	@Nonnull
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

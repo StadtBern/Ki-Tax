@@ -4,6 +4,7 @@
 @import 'component/dv-adresse/dv-adresse.less';
 @import 'component/dv-input-container/dv-input-container.less';
 @import 'component/dv-radio-container/dv-radio-container.less';
+@import "directive/dv-dialog/dv-dialog.less";
 /* Add Component LESS Above */
 
 .ebegu {
@@ -21,13 +22,13 @@
 
     }
 
-    .subTitle{
+    .subTitle {
         font-size: 18px;
     }
 
     .bisher {
         clear: both;
-        float:right;
+        float: right;
         background-color: lightgrey;
     }
 
@@ -40,6 +41,24 @@
     .inlineHint {
         font-style: italic;
         font-size: 14px;
+    }
+
+    //SmartTable Styles
+    .sortable {
+        cursor: pointer;
+    }
+    .sortable:after {
+        font-family: FontAwesome;
+        content: "\f0dc";
+        padding-left: 1em;
+    }
+    .st-sort-ascent:after {
+        font-family: FontAwesome;
+        content: "\f0de";
+    }
+    .st-sort-descent:after {
+        font-family: FontAwesome;
+        content: "\f0dd";
     }
 
     hr.header {

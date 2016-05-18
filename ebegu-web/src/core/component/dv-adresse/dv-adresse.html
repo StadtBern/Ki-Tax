@@ -96,12 +96,12 @@
                     </label>
                     <p class="input-group">
                         <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb"
-                                       ng-model="vm.adresse.gueltigAb" ng-required="true">
+                                       ng-model="vm.adresse.gueltigkeit.gueltigAb" ng-required="true">
                         </dv-datepicker>
-                        <span class="input-group-btn">
-                          <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
-                              <i class="fa fa-calendar"></i></button>
-                        </span>
+                        <!--<span class="input-group-btn">-->
+                          <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
+                              <!--<i class="fa fa-calendar"></i></button>-->
+                        <!--</span>-->
                     </p>
                     <dv-error-messages  for="adresseForm.adresseGueltigAb.$error"
                                        class="error"></dv-error-messages>
@@ -115,7 +115,7 @@
                     <label data-translate="ADRESSE_GUELTIGBIS" for="{{vm.prefix}}-gueltigBis">
                     </label>
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigAb"
-                                   ng-model="vm.adresse.gueltigAb" ng-required="true">
+                                   ng-model="vm.adresse.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
 
                     <dv-error-messages  for="adresseForm.adresseGueltigBis.$error"

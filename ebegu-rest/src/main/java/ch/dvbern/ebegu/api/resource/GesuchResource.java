@@ -90,8 +90,15 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuch findGesuch(
 		@Nonnull @NotNull JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 
-		return null;
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		return converter.gesuchToJAX(gesuchToReturn);
 	}
 
 }

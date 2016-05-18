@@ -21,16 +21,13 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 
 
 export class FamiliensituationViewController extends AbstractGesuchViewController {
-    gesuchModelManager: GesuchModelManager;
-
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
     static $inject = ['$state', 'GesuchModelManager'];
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager) {
-        super($state);
-        this.gesuchModelManager = gesuchModelManager;
+        super($state, gesuchModelManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
     }

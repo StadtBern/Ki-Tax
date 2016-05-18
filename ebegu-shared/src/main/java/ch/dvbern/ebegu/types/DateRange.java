@@ -1,13 +1,11 @@
 package ch.dvbern.ebegu.types;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckDateRange;
 import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

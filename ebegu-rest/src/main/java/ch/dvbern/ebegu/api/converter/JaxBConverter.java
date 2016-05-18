@@ -20,8 +20,11 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,7 +38,15 @@ public class JaxBConverter {
 	@Inject
 	private AdresseService adresseService;
 	@Inject
+	private PensumFachstelleService pensumFachstelleService;
+	@Inject
+	private FachstelleService fachstelleService;
+	@Inject
+	private GesuchService gesuchService;
+	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
+	@Inject
+	private ErwerbspensumService erwerbspensumService;
 	@Inject
 	private FallService fallService;
 	@Inject
@@ -87,6 +98,32 @@ public class JaxBConverter {
 		return abstEntityToConvertTo;
 	}
 
+	/**
+	 * Converts all person related fields from Jax to Entity
+	 *
+	 * @param personEntityJAXP das objekt als Jax
+	 * @param personEntity     das object als Entity
+	 */
+	private void convertAbstractPersonFieldsToEntity(JaxAbstractPersonDTO personEntityJAXP, AbstractPersonEntity personEntity) {
+		personEntity.setNachname(personEntityJAXP.getNachname());
+		personEntity.setVorname(personEntityJAXP.getVorname());
+		personEntity.setGeburtsdatum(personEntityJAXP.getGeburtsdatum());
+		personEntity.setGeschlecht(personEntityJAXP.getGeschlecht());
+	}
+
+	/**
+	 * Converts all person related fields from Entity to Jax
+	 *
+	 * @param personEntity     das object als Entity
+	 * @param personEntityJAXP das objekt als Jax
+	 */
+	private void convertAbstractPersonFieldsToJax(AbstractPersonEntity personEntity, JaxAbstractPersonDTO personEntityJAXP) {
+		personEntityJAXP.setNachname(personEntity.getNachname());
+		personEntityJAXP.setVorname(personEntity.getVorname());
+		personEntityJAXP.setGeburtsdatum(personEntity.getGeburtsdatum());
+		personEntityJAXP.setGeschlecht(personEntity.getGeschlecht());
+	}
+
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
@@ -108,23 +145,23 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public Adresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final Adresse adresse) {
-		Validate.notNull(adresse);
+	public GesuchstellerAdresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
+		Validate.notNull(gesuchstellerAdresse);
 		Validate.notNull(jaxAdresse);
-		convertAbstractFieldsToEntity(jaxAdresse, adresse);
-		adresse.setStrasse(jaxAdresse.getStrasse());
-		adresse.setHausnummer(jaxAdresse.getHausnummer());
-		adresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
-		adresse.setPlz(jaxAdresse.getPlz());
-		adresse.setOrt(jaxAdresse.getOrt());
-		adresse.setGemeinde(jaxAdresse.getGemeinde());
-		adresse.setLand(jaxAdresse.getLand());
-		adresse.setGueltigkeit(convertDateRange(jaxAdresse));
+		convertAbstractFieldsToEntity(jaxAdresse, gesuchstellerAdresse);
+		gesuchstellerAdresse.setStrasse(jaxAdresse.getStrasse());
+		gesuchstellerAdresse.setHausnummer(jaxAdresse.getHausnummer());
+		gesuchstellerAdresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
+		gesuchstellerAdresse.setPlz(jaxAdresse.getPlz());
+		gesuchstellerAdresse.setOrt(jaxAdresse.getOrt());
+		gesuchstellerAdresse.setGemeinde(jaxAdresse.getGemeinde());
+		gesuchstellerAdresse.setLand(jaxAdresse.getLand());
+		gesuchstellerAdresse.setGueltigkeit(convertDateRange(jaxAdresse));
 		//adresse gilt per default von start of time an
-		adresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
-		adresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
+		gesuchstellerAdresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
+		gesuchstellerAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
-		return adresse;
+		return gesuchstellerAdresse;
 	}
 
 	/**
@@ -142,19 +179,19 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public JaxAdresse adresseToJAX(@Nonnull final Adresse adresse) {
+	public JaxAdresse adresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		JaxAdresse jaxAdresse = new JaxAdresse();
-		convertAbstractFieldsToJAX(adresse, jaxAdresse);
-		jaxAdresse.setStrasse(adresse.getStrasse());
-		jaxAdresse.setHausnummer(adresse.getHausnummer());
-		jaxAdresse.setZusatzzeile(adresse.getZusatzzeile());
-		jaxAdresse.setPlz(adresse.getPlz());
-		jaxAdresse.setOrt(adresse.getOrt());
-		jaxAdresse.setGemeinde(adresse.getGemeinde());
-		jaxAdresse.setLand(adresse.getLand());
-		jaxAdresse.setGueltigAb(adresse.getGueltigkeit().getGueltigAb());
-		jaxAdresse.setGueltigBis(adresse.getGueltigkeit().getGueltigBis());
-		jaxAdresse.setAdresseTyp(adresse.getAdresseTyp());
+		convertAbstractFieldsToJAX(gesuchstellerAdresse, jaxAdresse);
+		jaxAdresse.setStrasse(gesuchstellerAdresse.getStrasse());
+		jaxAdresse.setHausnummer(gesuchstellerAdresse.getHausnummer());
+		jaxAdresse.setZusatzzeile(gesuchstellerAdresse.getZusatzzeile());
+		jaxAdresse.setPlz(gesuchstellerAdresse.getPlz());
+		jaxAdresse.setOrt(gesuchstellerAdresse.getOrt());
+		jaxAdresse.setGemeinde(gesuchstellerAdresse.getGemeinde());
+		jaxAdresse.setLand(gesuchstellerAdresse.getLand());
+		jaxAdresse.setGueltigAb(gesuchstellerAdresse.getGueltigkeit().getGueltigAb());
+		jaxAdresse.setGueltigBis(gesuchstellerAdresse.getGueltigkeit().getGueltigBis());
+		jaxAdresse.setAdresseTyp(gesuchstellerAdresse.getAdresseTyp());
 		return jaxAdresse;
 	}
 
@@ -175,12 +212,9 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
 		convertAbstractFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
-		gesuchsteller.setNachname(gesuchstellerJAXP.getNachname());
-		gesuchsteller.setVorname(gesuchstellerJAXP.getVorname());
-		gesuchsteller.setGeburtsdatum(gesuchstellerJAXP.getGeburtsdatum());
-		gesuchsteller.setGeschlecht(gesuchstellerJAXP.getGeschlecht());
+		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
@@ -190,18 +224,18 @@ public class JaxBConverter {
 		//Relationen
 		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
 		if (gesuchstellerJAXP.getAlternativeAdresse() != null) {
-			Adresse currentAltAdr = adresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new Adresse());
-			Adresse altAddrToMerge = adresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
+			GesuchstellerAdresse currentAltAdr = adresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new GesuchstellerAdresse());
+			GesuchstellerAdresse altAddrToMerge = adresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
 		}
 		// Umzug und Wohnadresse
-		Adresse umzugAddr = null;
+		GesuchstellerAdresse umzugAddr = null;
 		if (gesuchstellerJAXP.getUmzugAdresse() != null) {
 			umzugAddr = toStoreableAddresse(gesuchstellerJAXP.getUmzugAdresse());
 			gesuchsteller.addAdresse(umzugAddr);
 		}
 		//Wohnadresse (abh von Umzug noch datum setzten)
-		Adresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
+		GesuchstellerAdresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
 		if (umzugAddr != null) {
 			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
 		}
@@ -210,15 +244,21 @@ public class JaxBConverter {
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
+
+		//Erwerbspensum
+		gesuchstellerJAXP.getErwerbspensenContainers()
+			.stream()
+			.map(this::erwerbspensumContainerToStoreableEntity)
+			.forEach(gesuchsteller::addErwerbspensumContainer);
 		return gesuchsteller;
 	}
 
 	@Nonnull
-	private Adresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
-		Adresse adrToMergeWith = new Adresse();
+	private GesuchstellerAdresse toStoreableAddresse(@Nonnull JaxAdresse adresseToPrepareForSaving) {
+		GesuchstellerAdresse adrToMergeWith = new GesuchstellerAdresse();
 		if (adresseToPrepareForSaving.getId() != null) {
 
-			Optional<Adresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
+			Optional<GesuchstellerAdresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
 			//wenn schon vorhanden updaten
 			if (altAdr.isPresent()) {
 				adrToMergeWith = altAdr.get();
@@ -227,36 +267,37 @@ public class JaxBConverter {
 		return adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
+	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull Gesuchsteller persistedGesuchsteller) {
 		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		convertAbstractFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
-		jaxGesuchsteller.setNachname(persistedGesuchsteller.getNachname());
-		jaxGesuchsteller.setVorname(persistedGesuchsteller.getVorname());
-		jaxGesuchsteller.setGeburtsdatum(persistedGesuchsteller.getGeburtsdatum());
-		jaxGesuchsteller.setGeschlecht(persistedGesuchsteller.getGeschlecht());
+		convertAbstractPersonFieldsToJax(persistedGesuchsteller, jaxGesuchsteller);
 		jaxGesuchsteller.setMail(persistedGesuchsteller.getMail());
 		jaxGesuchsteller.setTelefon(persistedGesuchsteller.getTelefon());
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
 		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
 		//relationen laden
-		Optional<Adresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+		Optional<GesuchstellerAdresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
 		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(adresseToJAX(adresse)));
-		Adresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
+		GesuchstellerAdresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
 		jaxGesuchsteller.setWohnAdresse(adresseToJAX(currentWohnadr));
 
 		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-		Optional<Adresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
+		Optional<GesuchstellerAdresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
 			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
 		// Finanzielle Situation
-		Optional<FinanzielleSituationContainer> finanzielleSituationForGesuchsteller = finanzielleSituationService.findFinanzielleSituationForGesuchsteller(persistedGesuchsteller);
-		if (finanzielleSituationForGesuchsteller.isPresent()) {
-			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(finanzielleSituationForGesuchsteller.get());
+		if (persistedGesuchsteller.getFinanzielleSituationContainer() != null) {
+			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
 			jaxGesuchsteller.setFinanzielleSituationContainer(jaxFinanzielleSituationContainer);
 		}
+		// Erwerbspensen
+		Collection<ErwerbspensumContainer> persistedPensen = erwerbspensumService.findErwerbspensenForGesuchsteller(persistedGesuchsteller);
+		List<JaxErwerbspensumContainer> listOfPensen = persistedPensen.stream().map(this::erwerbspensumContainerToJAX).collect(Collectors.toList());
+		jaxGesuchsteller.setErwerbspensenContainers(listOfPensen);
 		return jaxGesuchsteller;
 	}
 
@@ -315,7 +356,7 @@ public class JaxBConverter {
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
 			Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller2().getId());
-			if (gesuchsteller2.isPresent()){
+			if (gesuchsteller2.isPresent()) {
 				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
 				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
@@ -328,12 +369,16 @@ public class JaxBConverter {
 		JaxGesuch jaxGesuch = new JaxGesuch();
 		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
 		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
-		if(persistedGesuch.getGesuchsteller1() != null) {
+		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
-		if(persistedGesuch.getGesuchsteller2() != null) {
+		if (persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
+		for (KindContainer kind : persistedGesuch.getKindContainers()) {
+			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
+		}
+
 		return jaxGesuch;
 	}
 
@@ -431,7 +476,7 @@ public class JaxBConverter {
 		return institution;
 	}
 
-	public JaxInstitutionStammdaten institutionStammdatenToJAX(InstitutionStammdaten persistedInstStammdaten) {
+	public JaxInstitutionStammdaten institutionStammdatenToJAX(@Nonnull InstitutionStammdaten persistedInstStammdaten) {
 		JaxInstitutionStammdaten jaxInstStammdaten = new JaxInstitutionStammdaten();
 		convertAbstractFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
@@ -449,7 +494,6 @@ public class JaxBConverter {
 		Validate.notNull(institutionStammdaten);
 
 		convertAbstractFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
-
 		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
 		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
 		institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
@@ -480,20 +524,176 @@ public class JaxBConverter {
 		return mergedContainer;
 	}
 
+	@Nonnull
+	public JaxKind kindToJAX(@Nonnull Kind persistedKind) {
+		JaxKind jaxKind = new JaxKind();
+		convertAbstractFieldsToJAX(persistedKind, jaxKind);
+		convertAbstractPersonFieldsToJax(persistedKind, jaxKind);
+		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
+		jaxKind.setUnterstuetzungspflicht(persistedKind.getUnterstuetzungspflicht());
+		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
+		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
+		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
+		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
+		return jaxKind;
+	}
+
+	@Nullable
+	public JaxPensumFachstelle pensumFachstelleToJax(@Nullable PensumFachstelle persistedPensumFachstelle) {
+		if (persistedPensumFachstelle == null) {
+			return null;
+		}
+		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
+		convertAbstractFieldsToJAX(persistedPensumFachstelle, jaxPensumFachstelle);
+		jaxPensumFachstelle.setPensum(persistedPensumFachstelle.getPensum());
+		jaxPensumFachstelle.setGueltigAb(persistedPensumFachstelle.getGueltigkeit().getGueltigAb());
+		jaxPensumFachstelle.setGueltigBis(persistedPensumFachstelle.getGueltigkeit().getGueltigBis());
+		jaxPensumFachstelle.setFachstelle(fachstelleToJAX(persistedPensumFachstelle.getFachstelle()));
+		return jaxPensumFachstelle;
+	}
+
+	public PensumFachstelle pensumFachstelleToEntity(JaxPensumFachstelle pensumFachstelleJAXP, PensumFachstelle pensumFachstelle) {
+		Validate.notNull(pensumFachstelleJAXP.getFachstelle(), "Fachstelle muss existieren");
+		Validate.notNull(pensumFachstelleJAXP.getFachstelle().getId(), "Fachstelle muss bereits gespeichert sein");
+		pensumFachstelle.setGueltigkeit(convertDateRange(pensumFachstelleJAXP));
+		pensumFachstelle.setPensum(pensumFachstelleJAXP.getPensum());
+		Optional<Fachstelle> fachstelleFromDB = fachstelleService.findFachstelle(pensumFachstelleJAXP.getFachstelle().getId());
+		if (fachstelleFromDB.isPresent()) {
+			pensumFachstelle.setFachstelle(fachstelleToEntity(pensumFachstelleJAXP.getFachstelle(), fachstelleFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("pensumFachstelleToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFachstelleJAXP.getFachstelle().getId());
+		}
+
+		return pensumFachstelle;
+	}
+
+	private PensumFachstelle toStorablePensumFachstelle(@Nonnull JaxPensumFachstelle pensumFsToSave) {
+		PensumFachstelle pensumToMergeWith = new PensumFachstelle();
+		if (pensumFsToSave.getId() != null) {
+			Optional<PensumFachstelle> pensumFachstelleOpt = pensumFachstelleService.findPensumFachstelle(pensumFsToSave.getId());
+			if (pensumFachstelleOpt.isPresent()) {
+				pensumToMergeWith = pensumFachstelleOpt.get();
+			} else {
+				throw new EbeguEntityNotFoundException("toStorablePensumFachstelle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, pensumFsToSave.getId());
+			}
+		}
+		return pensumFachstelleToEntity(pensumFsToSave, pensumToMergeWith);
+	}
+
+
+	public JaxKindContainer kindContainerToJAX(KindContainer persistedKind) {
+		JaxKindContainer jaxKindContainer = new JaxKindContainer();
+		convertAbstractFieldsToJAX(persistedKind, jaxKindContainer);
+		if (persistedKind.getKindGS() != null) {
+			jaxKindContainer.setKindGS(kindToJAX(persistedKind.getKindGS()));
+		}
+		if (persistedKind.getKindJA() != null) {
+			jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
+		}
+		return jaxKindContainer;
+	}
+
+	public Kind kindToEntity(JaxKind kindJAXP, Kind kind) {
+		Validate.notNull(kindJAXP);
+		Validate.notNull(kind);
+		convertAbstractFieldsToEntity(kindJAXP, kind);
+		convertAbstractPersonFieldsToEntity(kindJAXP, kind);
+		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
+		kind.setUnterstuetzungspflicht(kindJAXP.getUnterstuetzungspflicht());
+		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
+		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
+
+		PensumFachstelle updtPensumFachstelle = null;
+		if(kindJAXP.getPensumFachstelle() != null) {
+			updtPensumFachstelle =  toStorablePensumFachstelle(kindJAXP.getPensumFachstelle());
+		}
+		kind.setPensumFachstelle(updtPensumFachstelle);
+
+		kind.setBemerkungen(kindJAXP.getBemerkungen());
+		return kind;
+	}
+
+	public KindContainer kindContainerToEntity(@Nonnull JaxKindContainer kindContainerJAXP, @Nonnull KindContainer kindContainer) {
+		Validate.notNull(kindContainer);
+		Validate.notNull(kindContainerJAXP);
+		convertAbstractFieldsToEntity(kindContainerJAXP, kindContainer);
+		//kind daten koennen nicht verschwinden
+		if (kindContainerJAXP.getKindGS() != null) {
+			Kind kindGS = new Kind();
+			if (kindContainer.getKindGS() != null) {
+				kindGS = kindContainer.getKindGS();
+			}
+			kindContainer.setKindGS(kindToEntity(kindContainerJAXP.getKindGS(), kindGS));
+		}
+		if (kindContainerJAXP.getKindJA() != null) {
+			Kind kindJA = new Kind();
+			if (kindContainer.getKindJA() != null) {
+				kindJA = kindContainer.getKindJA();
+			}
+			kindContainer.setKindJA(kindToEntity(kindContainerJAXP.getKindJA(), kindJA));
+		}
+		return kindContainer;
+	}
+
+	/**
+	 * Sucht die Fachstelle in der DB und fuegt sie mit der als Parameter gegebenen Fachstelle zusammen.
+	 * Sollte sie in der DB nicht existieren, gibt die Methode eine neue Fachstelle mit den gegebenen Daten zurueck
+	 *
+	 * @param fachstelleToFind die Fachstelle als JAX
+	 * @return die Fachstelle als Entity
+	 */
+	@Nonnull
+	public Fachstelle fachstelleToStoreableEntity(@Nonnull JaxFachstelle fachstelleToFind) {
+		Validate.notNull(fachstelleToFind);
+		Fachstelle fachstelleToMergeWith = new Fachstelle();
+		if (fachstelleToFind.getId() != null) {
+			Optional<Fachstelle> altFachstelle = fachstelleService.findFachstelle(fachstelleToFind.getId());
+			if (altFachstelle.isPresent()) {
+				fachstelleToMergeWith = altFachstelle.get();
+			}
+		}
+		return fachstelleToEntity(fachstelleToFind, fachstelleToMergeWith);
+	}
+
+	/**
+	 * Sucht das Gesuch in der DB und fuegt es mit dem als Parameter gegebenen Gesuch zusammen.
+	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
+	 *
+	 * @param gesuchToFind das Gesuch als JAX
+	 * @return das Gesuch als Entity
+	 */
+	@Nonnull
+	public Gesuch gesuchToStoreableEntity(JaxGesuch gesuchToFind) {
+		Validate.notNull(gesuchToFind);
+		Gesuch gesuchToMergeWith = new Gesuch();
+		if (gesuchToFind.getId() != null) {
+			Optional<Gesuch> altGesuch = gesuchService.findGesuch(gesuchToFind.getId());
+			if (altGesuch.isPresent()) {
+				gesuchToMergeWith = altGesuch.get();
+			}
+		}
+		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
+	}
+
 	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull JaxFinanzielleSituationContainer containerJAX,
-																			   @Nonnull FinanzielleSituationContainer container) {
+																				@Nonnull FinanzielleSituationContainer container) {
 		Validate.notNull(container);
 		Validate.notNull(containerJAX);
 		convertAbstractFieldsToEntity(containerJAX, container);
 		container.setJahr(containerJAX.getJahr());
-		if (containerJAX.getFinanzielleSituationGS() != null && container.getFinanzielleSituationGS() != null) {
-			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), container.getFinanzielleSituationGS()));
+		FinanzielleSituation finSitToMergeWith;
+		//Im moment kann eine einmal gespeicherte Finanzielle Situation nicht mehr entfernt werden.
+		if (containerJAX.getFinanzielleSituationGS() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationGS()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationGS(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationGS(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationJA() != null && container.getFinanzielleSituationJA() != null) {
-			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), container.getFinanzielleSituationJA()));
+		if (containerJAX.getFinanzielleSituationJA() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationJA()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null && container.getFinanzielleSituationSV() != null) {
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), container.getFinanzielleSituationSV()));
+		if (containerJAX.getFinanzielleSituationSV() != null) {
+			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationSV()).orElse(new FinanzielleSituation());
+			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), finSitToMergeWith));
 		}
 		return container;
 	}
@@ -546,6 +746,76 @@ public class JaxBConverter {
 			jaxPerson.setGeschaeftsgewinnBasisjahr(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
 			jaxPerson.setGeleisteteAlimente(persistedFinanzielleSituation.getGeleisteteAlimente());
 			return jaxPerson;
+		}
+		return null;
+	}
+
+	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
+		Validate.notNull(jaxEwpCont);
+		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
+		if (jaxEwpCont.getId() != null) {
+			Optional<ErwerbspensumContainer> existingEwpCont = erwerbspensumService.findErwerbspensum(jaxEwpCont.getId());
+			if (existingEwpCont.isPresent()) {
+				containerToMergeWith = existingEwpCont.get();
+			}
+		}
+		return erwerbspensumContainerToEntity(jaxEwpCont, containerToMergeWith);
+
+	}
+
+	public ErwerbspensumContainer erwerbspensumContainerToEntity(@Nonnull JaxErwerbspensumContainer jaxEwpCont, @Nonnull ErwerbspensumContainer erwerbspensumCont) {
+		Validate.notNull(jaxEwpCont);
+		Validate.notNull(erwerbspensumCont);
+		convertAbstractFieldsToEntity(jaxEwpCont, erwerbspensumCont);
+		Erwerbspensum pensumToMergeWith;
+		if (jaxEwpCont.getErwerbspensumGS() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumGS()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumGS(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumGS(), pensumToMergeWith));
+		}
+		if (jaxEwpCont.getErwerbspensumJA() != null) {
+			pensumToMergeWith = Optional.ofNullable(erwerbspensumCont.getErwerbspensumJA()).orElse(new Erwerbspensum());
+			erwerbspensumCont.setErwerbspensumJA(erbwerbspensumToEntity(jaxEwpCont.getErwerbspensumJA(), pensumToMergeWith));
+		}
+
+		return erwerbspensumCont;
+	}
+
+	public JaxErwerbspensumContainer erwerbspensumContainerToJAX(@Nonnull ErwerbspensumContainer storedErwerbspensumCont) {
+		Validate.notNull(storedErwerbspensumCont);
+		JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
+		convertAbstractFieldsToJAX(storedErwerbspensumCont, jaxEwpCont);
+		jaxEwpCont.setErwerbspensumGS(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumGS()));
+		jaxEwpCont.setErwerbspensumJA(erbwerbspensumToJax(storedErwerbspensumCont.getErwerbspensumJA()));
+		return jaxEwpCont;
+	}
+
+	private Erwerbspensum erbwerbspensumToEntity(@Nonnull JaxErwerbspensum jaxErwerbspensum, @Nonnull Erwerbspensum erwerbspensum) {
+		Validate.notNull(jaxErwerbspensum);
+		Validate.notNull(erwerbspensum);
+		erwerbspensum = convertAbstractFieldsToEntity(jaxErwerbspensum, erwerbspensum);
+		erwerbspensum.setGueltigkeit(convertDateRange(jaxErwerbspensum));
+		erwerbspensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
+		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
+		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
+		erwerbspensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
+		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
+		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
+		return erwerbspensum;
+	}
+
+	private JaxErwerbspensum erbwerbspensumToJax(@Nullable Erwerbspensum pensum) {
+		if (pensum != null) {
+			JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
+			jaxErwerbspensum = convertAbstractFieldsToJAX(pensum, jaxErwerbspensum);
+			jaxErwerbspensum.setGueltigAb(pensum.getGueltigkeit().getGueltigAb());
+			jaxErwerbspensum.setGueltigBis(pensum.getGueltigkeit().getGueltigBis());
+			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
+			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
+			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
+			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
+			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
+			jaxErwerbspensum.setPensum(pensum.getPensum());
+			return jaxErwerbspensum;
 		}
 		return null;
 	}

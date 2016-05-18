@@ -47,4 +47,8 @@ export default class TSAbstractPersonEntity extends TSAbstractEntity {
     public set geschlecht(value: TSGeschlecht) {
         this._geschlecht = value;
     }
+
+    public getFullName(): string {
+        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
+    }
 }

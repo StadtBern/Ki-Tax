@@ -10,7 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -46,18 +48,20 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private FinanzielleSituationContainer finanzielleSituationContainer;
 
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
+	private Set<ErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
+
 
 	@Valid
 	@Size(min = 1)
 	@Nonnull
 	// es handelt sich um eine "private" Relation, das heisst Adressen koennen nie einer anderen Gesuchsteller zugeordnet werden
 	@OneToMany(mappedBy = "gesuchsteller", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Adresse> adressen = new ArrayList<>();
+	private List<GesuchstellerAdresse> adressen = new ArrayList<>();
 
-
-	public boolean addAdresse(@Nonnull Adresse adresse) {
-		adresse.setGesuchsteller(this);
-		return !adressen.contains(adresse) && adressen.add(adresse);
+	public boolean addAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+		gesuchstellerAdresse.setGesuchsteller(this);
+		return !adressen.contains(gesuchstellerAdresse) && adressen.add(gesuchstellerAdresse);
 	}
 
 	public String getMail() {
@@ -101,11 +105,11 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	}
 
 	@Nonnull
-	public List<Adresse> getAdressen() {
+	public List<GesuchstellerAdresse> getAdressen() {
 		return adressen;
 	}
 
-	public void setAdressen(@Nonnull List<Adresse> adressen) {
+	public void setAdressen(@Nonnull List<GesuchstellerAdresse> adressen) {
 		this.adressen = adressen;
 	}
 
@@ -113,11 +117,25 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return finanzielleSituationContainer;
 	}
 
+	public Set<ErwerbspensumContainer> getErwerbspensenContainers() {
+		return erwerbspensenContainers;
+	}
+
+	public void setErwerbspensenContainers(Set<ErwerbspensumContainer> erwerbspensenContainers) {
+		this.erwerbspensenContainers = erwerbspensenContainers;
+	}
+
 	public void setFinanzielleSituationContainer(FinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 		if (finanzielleSituationContainer != null &&
-				(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
+			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
 			finanzielleSituationContainer.setGesuchsteller(this);
 		}
+	}
+
+	public boolean addErwerbspensumContainer(ErwerbspensumContainer erwerbspensumToAdd) {
+		erwerbspensumToAdd.setGesuchsteller(this);
+		return !erwerbspensenContainers.contains(erwerbspensumToAdd) &&
+			erwerbspensenContainers.add(erwerbspensumToAdd);
 	}
 }

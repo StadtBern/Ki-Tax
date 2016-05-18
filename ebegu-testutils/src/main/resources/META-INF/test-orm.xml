@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
 					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 					 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
 					 version="2.1">
-
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuchsteller"/>
+	<entity class="ch.dvbern.ebegu.entities.ErwerbspensumContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.Erwerbspensum"/>
+	<entity class="ch.dvbern.ebegu.entities.Kind"/>
+	<entity class="ch.dvbern.ebegu.entities.KindContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresse"/>
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
+	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>
 	<entity class="ch.dvbern.ebegu.entities.Fall"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>
@@ -18,6 +22,5 @@
 	<entity class="ch.dvbern.ebegu.entities.Traegerschaft"/>
 	<entity class="ch.dvbern.ebegu.entities.Institution"/>
 	<entity class="ch.dvbern.ebegu.entities.InstitutionStammdaten"/>
-
 
 </entity-mappings>

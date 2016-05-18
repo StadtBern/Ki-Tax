@@ -1,6 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise} from 'angular';
-import ILogService = angular.ILogService;
+import {IHttpService, IPromise, ILogService} from 'angular';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 
 export default class GesuchstellerRS {
