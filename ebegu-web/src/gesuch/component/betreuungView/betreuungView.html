@@ -10,6 +10,84 @@
         <hr class="header"/>
 
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
+            <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
+                        </label>
+                        <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot" class="form-control"
+                                ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                ng-required="true">
+                        </select>
+                        <dv-error-messages  for="form.betreuungsangebot.$error"
+                                            class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--Institutionen-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="INSTITUTION" for="institution">
+                        </label>
+                        <select name="institution" id="institution" ng-model="vm.institutionId" class="form-control"
+                                ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                ng-required="true" ng-change="vm.setSelectedInstitution()">
+                        </select>
+                        <dv-error-messages  for="form.institution.$error"
+                                            class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--Betreuungspensum-->
+            <div class="row">
+                <div class="col-md-12">
+                    <dv-input-container class="form-group">
+                        <label data-translate="BETREUUNGSPENSUM" for="betreuungspensum"></label>
+                        <input id="betreuungspensum" type="text" name="betreuungspensum"
+                               ng-model="vm.getModel().pensum"
+                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                               ng-required="true">
+                        <dv-error-messages  for="form.betreuungspensum.$error" class="error"></dv-error-messages>
+                        <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                    </dv-input-container>
+                </div>
+            </div>
+
+            <!-- gueltig ab / gueltig bis -->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="VON" for="datumAb">
+                        </label>
+                        <p class="input-group">
+                            <dv-datepicker input-id="datumAb" input-name="datumAb"
+                                           ng-model="vm.getModel().gueltigkeit.gueltigAb"
+                                           ng-required="true">
+                            </dv-datepicker>
+                        </p>
+                        <dv-error-messages  for="form.datumAb.$error"
+                                            class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="BIS" for="datumBis">
+                        </label>
+                        <p class="input-group">
+                            <dv-datepicker input-id="datumBis" input-name="datumBis"
+                                           ng-model="vm.getModel().gueltigkeit.gueltigBis"
+                                           ng-required="false">
+                            </dv-datepicker>
+                        </p>
+                        <dv-error-messages  for="form.datumBis.$error"
+                                            class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
+
 
             <!--Buttons-->
             <div class="row">

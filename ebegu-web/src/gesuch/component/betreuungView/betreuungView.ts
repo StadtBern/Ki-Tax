@@ -3,6 +3,9 @@ import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
+import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -13,12 +16,17 @@ export class BetreuungViewComponentConfig implements IComponentOptions {
 }
 
 
-export class BetreuungViewController extends AbstractGesuchViewController {
 
-    static $inject = ['$state', 'GesuchModelManager'];
+export class BetreuungViewController extends AbstractGesuchViewController {
+    betreuungsangebot: any;
+    betreuungsangebotValues: Array<any>;
+
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil) {
         super(state, gesuchModelManager);
+        this.setBetreuungsangebotTypValues();
+        this.betreuungsangebot = undefined;
     }
 
     public getKindModel(): TSKindContainer {
@@ -26,6 +34,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     submit(): void {
+    }
+
+    private setBetreuungsangebotTypValues(): void {
+        this.betreuungsangebotValues = this.ebeguRestUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
     cancel() {
@@ -39,4 +51,17 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.gesuchModelManager.removeBetreuungFromKind();
         }
     }
+
+    public getInstitutionenSDList(): Array<TSInstitutionStammdaten> {
+        let result: Array<TSInstitutionStammdaten> = [];
+        if (this.betreuungsangebot) {
+            this.gesuchModelManager.institutionenList.forEach((instStamm: TSInstitutionStammdaten) => {
+                if (instStamm.betreuungsangebotTyp === this.betreuungsangebot.key) {
+                    result.push(instStamm);
+                }
+            });
+        }
+        return result;
+    }
+
 }

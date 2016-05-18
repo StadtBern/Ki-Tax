@@ -21,6 +21,9 @@ import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 import TSBetreuung from '../../models/TSBetreuung';
+import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
+import DateUtil from '../../utils/DateUtil';
 
 
 export default class GesuchModelManager {
@@ -31,18 +34,21 @@ export default class GesuchModelManager {
     private kindNumber: number;
     private betreuungNumber: number;
     fachstellenList: Array<TSFachstelle>;
+    institutionenList: Array<TSInstitutionStammdaten>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'InstitutionStammdatenRS', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
-                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private instStamRS: InstitutionStammdatenRS,
                 private ebeguRestUtil: EbeguRestUtil) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
         this.fachstellenList = [];
+        this.institutionenList = [];
         this.updateFachstellenList();
+        this.updateInstitutionenList();
     }
 
     /**
@@ -60,6 +66,15 @@ export default class GesuchModelManager {
     public updateFachstellenList(): void {
         this.fachstelleRS.getAllFachstellen().then((response: any) => {
             this.fachstellenList = angular.copy(response);
+        });
+    }
+
+    /**
+     * Retrieves the list of InstitutionStammdaten for the date of today.
+     */
+    public updateInstitutionenList(): void {
+        this.instStamRS.getAllInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
+            this.institutionenList = angular.copy(response);
         });
     }
 
@@ -326,7 +341,7 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch && this.gesuch.kindContainer.length >= this.kindNumber) {
+        if (this.gesuch && this.gesuch.kindContainer && this.gesuch.kindContainer.length >= this.kindNumber) {
             return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt mit 1 an
         }
         return undefined;

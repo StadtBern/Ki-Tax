@@ -4,12 +4,16 @@ import {BetreuungViewController} from './betreuungView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import DateUtil from '../../../utils/DateUtil';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 
 describe('betreuungView', function () {
 
     let betreuungView: BetreuungViewController;
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
+    let ebeguRestUtil: EbeguRestUtil;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -17,7 +21,8 @@ describe('betreuungView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
-        betreuungView = new BetreuungViewController($state, gesuchModelManager);
+        ebeguRestUtil = $injector.get('EbeguRestUtil');
+        betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil);
     }));
 
     describe('Public API', function () {
@@ -52,7 +57,35 @@ describe('betreuungView', function () {
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
             });
         });
+        describe('getInstitutionenSDList', () => {
+            beforeEach(function() {
+                gesuchModelManager.institutionenList = [];
+                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
+                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
+                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
+                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
+            });
+            it('should return an empty list if betreuungsangebot is not yet defined', () => {
+                 let list: Array<TSInstitutionStammdaten> = betreuungView.getInstitutionenSDList();
+                expect(list).toBeDefined();
+                expect(list.length).toBe(0);
+            });
+            it('should return a list with 2 Institutions of type TSBetreuungsangebotTyp.KITA', () => {
+                betreuungView.betreuungsangebot = {key: 'KITA', value: 'kita'};
+                let list: Array<TSInstitutionStammdaten> = betreuungView.getInstitutionenSDList();
+                expect(list).toBeDefined();
+                expect(list.length).toBe(2);
+                expect(list[0].iban).toBe('1');
+                expect(list[1].iban).toBe('2');
+            });
+        });
     });
 
+    function createInstitutionStammdaten(iban: string, betAngTyp: TSBetreuungsangebotTyp) {
+        let instStam1: TSInstitutionStammdaten = new TSInstitutionStammdaten();
+        instStam1.iban = iban;
+        instStam1.betreuungsangebotTyp = betAngTyp;
+        return instStam1;
+    };
 
 });

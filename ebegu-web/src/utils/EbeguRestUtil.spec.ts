@@ -1,5 +1,6 @@
 import '../bootstrap.ts';
 import 'angular-mocks';
+import {IFilterService} from 'angular';
 import EbeguRestUtil from './EbeguRestUtil';
 import TSAdresse from '../models/TSAdresse';
 import {EbeguWebCore} from '../core/core.module';
@@ -21,12 +22,29 @@ import {TSDateRange} from '../models/types/TSDateRange';
 describe('EbeguRestUtil', function () {
 
     let ebeguRestUtil: EbeguRestUtil;
+    let filter: IFilterService;
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
+    // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
+    // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
+    beforeEach(angular.mock.module(function($provide: any) {
+        let mockTranslateFilter = function(value: any) {
+            if (value === 'FIRST') {
+                return 'Erster';
+            }
+            if (value === 'SECOND') {
+                return 'Zweiter';
+            }
+            return value;
+        };
+        $provide.value('translateFilter', mockTranslateFilter);
+    }));
+
     beforeEach(angular.mock.inject(function ($injector: any) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        filter = $injector.get('$filter');
         today = DateUtil.today();
     }));
 
@@ -206,6 +224,17 @@ describe('EbeguRestUtil', function () {
                 myInstitutionStammdaten.gueltigkeit.gueltigAb = transformedInstitutionStammdaten.gueltigkeit.gueltigAb;
                 myInstitutionStammdaten.gueltigkeit.gueltigBis = transformedInstitutionStammdaten.gueltigkeit.gueltigBis;
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
+            });
+        });
+        describe('translateStringList', () => {
+            it('should translate the given list of words', () => {
+                let list: Array<string> = ['FIRST', 'SECOND'];
+                let returnedList: Array<any> = ebeguRestUtil.translateStringList(list);
+                expect(returnedList.length).toBe(2);
+                expect(returnedList[0].key).toBe('FIRST');
+                expect(returnedList[0].value).toBe('Erster');
+                expect(returnedList[1].key).toBe('SECOND');
+                expect(returnedList[1].value).toBe('Zweiter');
             });
         });
     });

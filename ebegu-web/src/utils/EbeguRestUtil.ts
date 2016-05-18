@@ -25,7 +25,7 @@ import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
-    public filter: any;
+    public filter: IFilterService;
 
     /* @ngInject */
     constructor($filter: IFilterService) {
@@ -146,7 +146,7 @@ export default class EbeguRestUtil {
     public landCodeToTSLand(landCode: string): TSLand {
         if (landCode) {
             let translationKey = this.landCodeToTSLandCode(landCode);
-            return new TSLand(landCode, this.filter('translate')(translationKey).toString());
+            return new TSLand(landCode, this.translateString(translationKey));
         }
         return undefined;
     }
@@ -558,5 +558,27 @@ export default class EbeguRestUtil {
             return pensumFachstelleTS;
         }
         return undefined;
+    }
+
+    /**
+     * Translates the given string using the angular-translate filter
+     * @param toTranslate word to translate
+     * @returns {any} translated word
+     */
+    public translateString(toTranslate: string): string {
+        return this.filter('translate')(toTranslate).toString();
+    }
+
+    /**
+     * Translates the given list using the angular translate filter
+     * @param translationList list of words that will be translated
+     * @returns {any} A List of Objects with key and value, where value is the translated word.
+     */
+    public translateStringList(translationList: Array<any>): Array<any> {
+        let listResult: Array<any> = [];
+        translationList.forEach((item) => {
+            listResult.push({key: item, value: this.translateString(item)});
+        });
+        return listResult;
     }
 }

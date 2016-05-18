@@ -6,7 +6,7 @@ import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 export default class TSBetreuung extends TSAbstractEntity {
 
     private _institutionStammdaten: TSInstitutionStammdaten;
-    private _betreuungsstatus: TSBetreuungsstatus;
+    private _betreuungsstatus: TSBetreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
     private _betreuungspensumContainers: Array<TSBetreuungspensumContainer> = [];
     private _bemerkungen: string;
 
