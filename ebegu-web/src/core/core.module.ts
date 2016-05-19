@@ -54,7 +54,9 @@ const dependencies: string[] = [
     'ngMaterial',
     'ngMessages',
     'pascalprecht.translate',
-    'angularMoment'
+    'angularMoment',
+    'ui.utils.masks'
+
 ];
 
 

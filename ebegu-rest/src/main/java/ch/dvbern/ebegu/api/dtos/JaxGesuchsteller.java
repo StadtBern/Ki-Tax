@@ -1,9 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
-import ch.dvbern.ebegu.entities.Erwerbspensum;
-import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
-import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.validation.Valid;
@@ -13,11 +9,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 

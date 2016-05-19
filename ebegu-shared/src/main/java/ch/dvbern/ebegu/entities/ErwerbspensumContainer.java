@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 
 /**
  * Container-Entity für das Erwerbspensum: Diese muss für die  Benutzertypen (GS, JA) einzeln geführt werden,
