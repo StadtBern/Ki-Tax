@@ -7,6 +7,8 @@ import {FamiliensituationViewComponentConfig} from './component/familiensituatio
 import {KinderListViewComponentConfig} from './component/kinderListView/kinderListView';
 import {FinanzielleSituationViewComponentConfig} from './component/finanzielleSituationView/finanzielleSituationView';
 import {KindViewComponentConfig} from './component/kindView/kindView';
+import {FinanzielleSituationStartViewComponentConfig} from './component/finanzielleSituationStartView/finanzielleSituationStartView';
+import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -15,4 +17,6 @@ export const EbeguWebGesuch =
     .component('stammdatenView', new StammdatenViewComponentConfig)
     .component('kinderListView', new KinderListViewComponentConfig())
     .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
+    .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
+    .component('finanzielleSituationResultateView', new FinanzielleSituationResultateViewComponentConfig())
     .component('kindView', new KindViewComponentConfig());

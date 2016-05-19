@@ -13,11 +13,11 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                             translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
-                        <dv-radio-container name="nurEineSteuererklaerung"    class="input-element"
-                                            ng-model="vm.gesuchModelManager.familiensituation.nurEineSteuererklaerung"
+                        <dv-radio-container name="gemeinsameSteuererklaerung"    class="input-element"
+                                            ng-model="vm.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung"
                                             ng-required="true" class="radio">
                         </dv-radio-container>
-                        <dv-error-messages  for="form.nurEineSteuererklaerung.$error" class="error"></dv-error-messages>
+                        <dv-error-messages  for="form.gemeinsameSteuererklaerung.$error" class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>

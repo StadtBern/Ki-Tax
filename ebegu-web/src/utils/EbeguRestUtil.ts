@@ -212,6 +212,7 @@ export default class EbeguRestUtil {
         restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
         restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
         restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
+        restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
         this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
 
         return restFamiliensituation;
@@ -225,6 +226,7 @@ export default class EbeguRestUtil {
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gesuch = this.parseGesuch(familiensituation.gesuch, familiensituationFromServer.gesuch);
+            familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             return familiensituation;
         }
         return undefined;

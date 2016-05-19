@@ -2,14 +2,14 @@
     <div class="col-md-12">
 
         <h4 class="mainTitle">
-            <span data-translate="FINANZIELLE_SITUATION"></span>
+            <span data-translate="FINANZIELLE_SITUATION" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></span>
         </h4>
         <hr class="header"/>
         <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
 
             <!--Steuerveranlagung -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                             translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
@@ -24,7 +24,7 @@
 
             <!--Steuererklärung -->
             <div class="row">
-                <div class="col-md-6" ng-if="vm.showSteuererklaerung()">
+                <div class="col-md-6" ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                             translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
@@ -207,14 +207,6 @@
                     <button ng-click="vm.previousStep()" class="btn btn-link previous">
                         <span class="fa fa-chevron-left"></span>
                         <span data-translate="ZURUECK_UPPER"></span>
-                    </button>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
-                            ng-if="vm.getModel().timestampErstellt === undefined">
-                    </button>
-                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
-                            ng-if="vm.getModel().timestampErstellt">
                     </button>
                 </div>
                 <div class="col-md-2">

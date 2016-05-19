@@ -29,6 +29,10 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         this.gesuchModelManager.initFinanzielleSituation();
     }
 
+    showSteuerveranlagung(): boolean {
+        return !this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung || this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false;
+    }
+
     showSteuererklaerung(): boolean {
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.steuerveranlagungErhalten === false;
     }
@@ -44,6 +48,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     previousStep() {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+        } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+            this.state.go('gesuch.finanzielleSituationStart');
         } else {
             this.state.go('gesuch.kinder');
         }
@@ -53,7 +59,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
         } else {
-            alert('go to next page');
+            this.state.go('gesuch.finanzielleSituationResultate');
         }
     }
 
@@ -67,8 +73,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     calculate() {
-        this.gesuchModelManager.calculateFinanzielleSituation().then((finanzielleSituationResponse: any) => {
-            this.nextStep();
+        this.gesuchModelManager.calculateFinanzielleSituation().then((calculationReponse: any) => {
+            this.gesuchModelManager.finanzielleSituationResultate = calculationReponse;
         });
     }
 

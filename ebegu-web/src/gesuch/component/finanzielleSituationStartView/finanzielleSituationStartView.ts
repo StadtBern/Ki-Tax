@@ -31,7 +31,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     showSteuerveranlagung(): boolean {
-        return this.gesuchModelManager.familiensituation.nurEineSteuererklaerung === true;
+        return this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
     }
 
     showSteuererklaerung(): boolean {
