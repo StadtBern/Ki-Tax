@@ -12,6 +12,7 @@ export class DVDatepicker implements IDirective {
     scope = {
         ngModel: '=',
         inputId: '@',
+        placeholder: '@',
         ngRequired: '<'
     };
     controller = DatepickerController;
@@ -31,6 +32,7 @@ export class DatepickerController {
     ngModelCtrl: INgModelController;
     dateRequired: boolean;
     ngRequired: boolean;
+    placeholder: string;
 
     constructor() {
     }
@@ -47,6 +49,12 @@ export class DatepickerController {
     $onInit() {
         if (!this.ngModelCtrl) {
             return;
+        }
+        //wenn kein Placeholder gesetzt wird wird der standardplaceholder verwendet. kann mit placeholder="" ueberscrieben werden
+        if (this.placeholder === undefined) {
+            this.placeholder = 'tt.mm.jjjj';
+        } else if (this.placeholder === '') {
+            this.placeholder = undefined;
         }
 
         if (this.ngRequired) {

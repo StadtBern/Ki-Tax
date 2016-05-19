@@ -370,6 +370,8 @@
     "FIXE_ARBEITSZEITEN":"Fixe Arbeitszeiten",
     "LANGER_ARBWEITSWEG":"Langer Arbeitsweg",
     "ANDERE":"Andere",
-    "ERWERBSPENSEN_LIST_TITLE":"Erwerbspensen Liste"
+    "INFOTEXT_ERWERBSPENSUM":"Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
+    "ERWERBSPENSEN_LIST_TITLE":"Erwerbspensen Liste",
+    "DATE_PLACEHOLDER":"tt.mm.jjjj"
 }
 

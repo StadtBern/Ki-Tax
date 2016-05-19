@@ -46,6 +46,12 @@ export class DVErwerbspensumListController {
         if (this.addButtonVisible === undefined) {
             this.addButtonVisible = true;
         }
+        //clear selected
+        for (var i = 0; i < this.erwerbspensen.length; i++) {
+            let obj: any = this.erwerbspensen[i];
+            obj.isSelected = false;
+
+        }
     }
 
     removeClicked(pensumToRemove: TSErwerbspensumContainer) {

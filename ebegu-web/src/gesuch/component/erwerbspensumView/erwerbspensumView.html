@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <h4 class="mainTitle" ng-bind="vm.gesuchsteller.getFullName()"></h4>
         <hr class="header"/>
-        <p data-translate="INFOTEXT"></p>
+        <p data-translate="INFOTEXT_ERWERBSPENSUM"></p>
 
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
               unsaved-warning-form ng-if="vm.erwerbspensum">
@@ -56,21 +56,22 @@
                         </label>
                         <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
-                                       ng-required="true" class="input-element">
+                                       ng-required="true" class="input-element" placeholder="">
                         </dv-datepicker>
                         <dv-error-messages for="form.taetigkeitAb.$error"
-                                           class="error"></dv-error-messages>
+                                           class="error hint"></dv-error-messages>
+                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                 </div>
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
                         <label data-translate="BIS" for="taetigkeitBisID">
                         </label>
-                        <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"
+                        <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"  placeholder=""
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
                                        ng-required="false" class="input-element">
                         </dv-datepicker>
                         <dv-error-messages for="form.taetigkeitBis.$error"
-                                           class="error"></dv-error-messages>
+                                           class="error hint"></dv-error-messages>
                 </div>
             </div>
 

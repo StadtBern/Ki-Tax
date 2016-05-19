@@ -6,10 +6,10 @@
                    class="table table-striped" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
                 <thead>
                 <tr>
-                    <th st-sort="taetigkeit" data-translate="TAETIGKEIT"></th>
-                    <th st-sort="gueltigkeit" data-translate="AB"></th>
-                    <th st-sort="pensum" data-translate="PENSUM"></th>
-                    <th st-sort="zuschlag" data-translate="ZUSCHLAG"></th>
+                    <th st-sort="erwerbspensumJA.taetigkeit" class="sortable" data-translate="TAETIGKEIT"></th>
+                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigAb" class="sortable" data-translate="AB"></th>
+                    <th st-sort="erwerbspensumJA.pensum" class="sortable" data-translate="PENSUM"></th>
+                    <th st-sort="erwerbspensumJA.zuschlag" class="sortable" data-translate="ZUSCHLAG"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -18,8 +18,8 @@
                     ng-click="vm.editClicked(row)">
                     <td ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td ng-bind="row.erwerbspensumJA.pensum"></td>
-                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent"></td>
+                    <td ng-bind="row.erwerbspensumJA.pensum + '%'"></td>
+                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent +'%'"></td>
                     <td>
                         <button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
                                 class="btn btn-sm" title="{{vm.removeButtonTitle}}">

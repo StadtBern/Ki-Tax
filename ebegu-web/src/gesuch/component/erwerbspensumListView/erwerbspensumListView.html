@@ -7,7 +7,7 @@
 
         <!--Erwerbspensen von Gesuchsteller 1-->
         <div ng-if="vm.gesuchModelManager.gesuch.gesuchsteller1">
-            <h5 ng-bind="vm.gesuchModelManager.gesuch.gesuchsteller1.getFullName()"></h5>
+            <h4 ng-bind="vm.gesuchModelManager.gesuch.gesuchsteller1.getFullName()"></h4>
             <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
                                    table-title="Erwerbspensen Gesuchsteller 1" add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                    add-button-Visible="true"
@@ -17,8 +17,8 @@
 
         </div>
         <!--Erwerbspensen von Gesuchsteller 2-->
-        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsteller2">
-            <h5 ng-bind="vm.gesuchModelManager.gesuch.gesuchsteller2.getFullName()"></h5>
+        <div ng-if="vm.gesuchModelManager.gesuch.gesuchsteller2" class="marginTop20">
+            <h4 ng-bind="vm.gesuchModelManager.gesuch.gesuchsteller2.getFullName()"></h4>
             <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
                                    table-title="Erwerbspensen Gesuchsteller 2" add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
                                    add-button-Visible="true"
@@ -29,7 +29,7 @@
     </div>
 
     <!--Buttons-->
-    <div class="row">
+    <div class="row marginTop20">
         <div class="col-md-6">
             <button ng-click="vm.previousStep()" class="btn btn-link previous">
                 <span class="fa fa-chevron-left"></span>
