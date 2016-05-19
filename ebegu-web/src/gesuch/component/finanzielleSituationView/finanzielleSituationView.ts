@@ -33,6 +33,14 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.steuerveranlagungErhalten === false;
     }
 
+    showSelbstaendig(): boolean {
+        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.selbstaendig === true;
+    }
+
+    geschaeftsgewinnChanged() {
+        this.calculate();
+    }
+
     previousStep() {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
@@ -56,6 +64,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
                 this.nextStep();
             });
         }
+    }
+
+    calculate() {
+        this.gesuchModelManager.calculateFinanzielleSituation().then((finanzielleSituationResponse: any) => {
+            this.nextStep();
+        });
     }
 
     resetForm() {

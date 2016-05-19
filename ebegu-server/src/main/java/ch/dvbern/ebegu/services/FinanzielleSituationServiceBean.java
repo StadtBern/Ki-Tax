@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.FinanzielleSituationContainer_;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -61,5 +61,11 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 		Optional<FinanzielleSituationContainer> propertyToRemove = findFinanzielleSituation(finanzielleSituation.getId());
 		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, finanzielleSituation));
 		persistence.remove(FinanzielleSituationContainer.class, propertyToRemove.get().getId());
+	}
+
+	@Override
+	@Nonnull
+	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
+		return new FinanzielleSituationResultateDTO(gesuch);
 	}
 }

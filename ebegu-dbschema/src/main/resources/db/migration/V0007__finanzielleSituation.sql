@@ -19,7 +19,7 @@ CREATE TABLE finanzielle_situation_aud (
   selbstaendig                      BIT,
   steuererklaerung_ausgefuellt      BIT,
   steuerveranlagung_erhalten        BIT,
-  CONSTRAINT PK_finanzielle_situation_aud PRIMARY KEY (id)
+  CONSTRAINT PK_finanzielle_situation_aud PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE finanzielle_situation_container_aud (
@@ -35,7 +35,7 @@ CREATE TABLE finanzielle_situation_container_aud (
   finanzielle_situationja_id VARCHAR(36),
   finanzielle_situationsv_id VARCHAR(36),
   gesuchsteller_id           VARCHAR(36),
-  CONSTRAINT PK_finanzielle_situation_container_aud PRIMARY KEY (id)
+  CONSTRAINT PK_finanzielle_situation_container_aud PRIMARY KEY (id, rev)
 );
 
 CREATE TABLE finanzielle_situation (

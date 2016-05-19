@@ -20,6 +20,7 @@ import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
+import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 
 
 export default class GesuchModelManager {
@@ -29,6 +30,7 @@ export default class GesuchModelManager {
     gesuchstellerNumber: number;
     kindNumber: number;
     fachstellenList: Array<TSFachstelle>;
+    finanzielleSituationResultate: TSFinanzielleSituationResultateDTO;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
     /* @ngInject */
@@ -39,6 +41,7 @@ export default class GesuchModelManager {
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
+        this.finanzielleSituationResultate = new TSFinanzielleSituationResultateDTO();
         this.fachstellenList = [];
         this.updateFachstellenList();
     }
@@ -124,6 +127,15 @@ export default class GesuchModelManager {
         });
     }
 
+    public calculateFinanzielleSituation(): IPromise<TSFinanzielleSituationResultateDTO> {
+        return this.finanzielleSituationRS.calculateFinanzielleSituation(
+            this.gesuch)
+            .then((finSitContRespo: TSFinanzielleSituationResultateDTO) => {
+                this.finanzielleSituationResultate = finSitContRespo;
+                return finSitContRespo;
+            });
+    }
+
     /**
      * Gesuchsteller nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
      * @param gsNumber
@@ -207,9 +219,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public getBasisjahr(): string {
+    public getBasisjahr(): number {
         //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
-        return '2015';
+        return 2015;
     }
 
 

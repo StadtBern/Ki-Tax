@@ -39,10 +39,6 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
 		this.gesuchsteller = gesuchsteller;
-		if (gesuchsteller != null &&
-				(gesuchsteller.getFinanzielleSituationContainer() == null || !gesuchsteller.getFinanzielleSituationContainer().equals(this))) {
-			gesuchsteller.setFinanzielleSituationContainer(this);
-		}
 	}
 
 	public Integer getJahr() {
