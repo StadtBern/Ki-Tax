@@ -24,6 +24,7 @@ import TSBetreuung from '../../models/TSBetreuung';
 import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
+import BetreuungRS from '../../core/service/betreuungRS';
 
 
 export default class GesuchModelManager {
@@ -36,11 +37,11 @@ export default class GesuchModelManager {
     fachstellenList: Array<TSFachstelle>;
     institutionenList: Array<TSInstitutionStammdaten>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'InstitutionStammdatenRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
-                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private instStamRS: InstitutionStammdatenRS,
-                private ebeguRestUtil: EbeguRestUtil) {
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -322,6 +323,24 @@ export default class GesuchModelManager {
         }
     }
 
+    public updateBetreuung(): IPromise<TSBetreuung> {
+        if (this.getBetreuungToWorkWith().timestampErstellt) {
+            return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
+                this.setBetreuungToWorkWith(betreuungResponse);
+                return this.updateKind().then(() => {
+                    return this.getBetreuungToWorkWith();
+                });
+            });
+        } else {
+            return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
+                this.setBetreuungToWorkWith(betreuungResponse);
+                return this.updateKind().then(() => {
+                    return this.getBetreuungToWorkWith();
+                });
+            });
+        }
+    }
+
     public updateKind(): IPromise<TSKindContainer> {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
@@ -367,6 +386,16 @@ export default class GesuchModelManager {
      */
     private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
         return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
+    }
+
+    /**
+     * Ersetzt die Betreuung in der aktuelle Position "betreuungNumber" durch die gegebene Betreuung. Aus diesem Grund muss diese Methode
+     * nur aufgerufen werden, wenn die Position "betreuungNumber" schon richtig gesetzt wurde.
+     * @param betreuung
+     * @returns {TSBetreuung}
+     */
+    private setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
+        return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1] = betreuung;
     }
 
     /**

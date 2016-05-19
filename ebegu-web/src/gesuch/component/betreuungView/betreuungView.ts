@@ -1,11 +1,14 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
-import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
+import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
+import TSBetreuung from '../../../models/TSBetreuung';
+import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -33,7 +36,16 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         return this.gesuchModelManager.getKindToWorkWith();
     }
 
-    submit(): void {
+    public getBetreuungModel(): TSBetreuung {
+        return this.gesuchModelManager.getBetreuungToWorkWith();
+    }
+
+    submit(form: IFormController): void {
+        if (form.$valid) {
+            this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
+                this.state.go('gesuch.betreuungen');
+            });
+        }
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -62,6 +74,27 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             });
         }
         return result;
+    }
+
+    public getBetreuungspensen(): Array<TSBetreuungspensumContainer> {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().betreuungspensumContainers;
+        }
+        return undefined;
+    }
+
+    public getBetreuungspensum(index: number): TSBetreuungspensumContainer {
+        if (this.getBetreuungspensen() && index >= 0 && index < this.getBetreuungspensen().length) {
+            return this.getBetreuungspensen()[index];
+        }
+        return undefined;
+    }
+
+    public createBetreuungspensum(): void {
+        if (!this.getBetreuungspensen()) {
+            this.getBetreuungModel().betreuungspensumContainers = [];
+        }
+        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum()));
     }
 
 }

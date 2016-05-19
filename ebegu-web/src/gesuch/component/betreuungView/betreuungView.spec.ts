@@ -7,6 +7,7 @@ import DateUtil from '../../../utils/DateUtil';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import IQService = angular.IQService;
 
 describe('betreuungView', function () {
 
@@ -14,6 +15,7 @@ describe('betreuungView', function () {
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
     let ebeguRestUtil: EbeguRestUtil;
+    let $q: IQService;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -22,6 +24,7 @@ describe('betreuungView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        $q = $injector.get('$q');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil);
     }));
 
@@ -79,6 +82,37 @@ describe('betreuungView', function () {
                 expect(list[1].iban).toBe('2');
             });
         });
+        describe('createBetreuungspensum', () => {
+            it('creates the first betreuungspensum in empty list and then a second one', () => {
+                spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(new TSBetreuung());
+                betreuungView.createBetreuungspensum();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumGS).toBeUndefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA).toBeDefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.pensum).toBeUndefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.gueltigkeit).toBeUndefined();
+
+                betreuungView.createBetreuungspensum();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(2);
+            });
+        });
+        describe('submit', () => {
+            it('Does not submit because form is invalid', () => {
+                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                let form: any = {};
+                form.$valid = false;
+                betreuungView.submit(form);
+                expect(gesuchModelManager.updateBetreuung).not.toHaveBeenCalled();
+            });
+            it('submits all data of current Betreuung', () => {
+                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                let form: any = {};
+                form.$valid = true;
+                betreuungView.submit(form);
+                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+            });
+        });
     });
 
     function createInstitutionStammdaten(iban: string, betAngTyp: TSBetreuungsangebotTyp) {
@@ -86,6 +120,6 @@ describe('betreuungView', function () {
         instStam1.iban = iban;
         instStam1.betreuungsangebotTyp = betAngTyp;
         return instStam1;
-    };
+    }
 
 });

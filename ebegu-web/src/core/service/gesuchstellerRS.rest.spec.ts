@@ -23,8 +23,6 @@ describe('GesuchstellerRS', function () {
         gesuchstellerRS = $injector.get('GesuchstellerRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
-
-
     }));
 
     beforeEach(() => {

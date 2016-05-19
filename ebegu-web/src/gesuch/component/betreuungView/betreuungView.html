@@ -40,54 +40,86 @@
                     </div>
                 </div>
             </div>
-            <!--Betreuungspensum-->
+
+            <!--Betreuungspensen-->
+            <div class="row" ng-repeat="betpen in vm.getBetreuungspensen()">
+                <!--Betreuungspensum-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-input-container class="form-group">
+                            <label data-translate="BETREUUNGSPENSUM" for="betreuungspensum"></label>
+                            <input id="betreuungspensum" type="text" name="betreuungspensum"
+                                   ng-model="vm.getBetreuungspensum($index).pensum"
+                                   dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                   ng-required="true">
+                            <dv-error-messages  for="form.betreuungspensum.$error" class="error"></dv-error-messages>
+                            <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                        </dv-input-container>
+                    </div>
+                </div>
+
+                <!-- gueltig ab / gueltig bis -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="VON" for="datumAb">
+                            </label>
+                            <p class="input-group">
+                                <dv-datepicker input-id="datumAb" input-name="datumAb"
+                                               ng-model="vm.getBetreuungspensum($index).gueltigkeit.gueltigAb"
+                                               ng-required="true">
+                                </dv-datepicker>
+                            </p>
+                            <dv-error-messages  for="form.datumAb.$error"
+                                                class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
+
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="BIS" for="datumBis">
+                            </label>
+                            <p class="input-group">
+                                <dv-datepicker input-id="datumBis" input-name="datumBis"
+                                               ng-model="vm.getBetreuungspensum($index).gueltigkeit.gueltigBis"
+                                               ng-required="false">
+                                </dv-datepicker>
+                            </p>
+                            <dv-error-messages  for="form.datumBis.$error"
+                                                class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
+                </div>
+            </div>
+            <!--Neues Betreuungspensum hinzufuegen-->
+            <div class="col-md-12" style="margin-bottom: 20px">
+                <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span data-translate="BETREUUNGSPENSUM_ERFASSEN"></span>
+                </button>
+            </div>
+
+            <!--bemerkungen-->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12" ng-show="vm.isAdminRole()">
                     <dv-input-container class="form-group">
-                        <label data-translate="BETREUUNGSPENSUM" for="betreuungspensum"></label>
-                        <input id="betreuungspensum" type="text" name="betreuungspensum"
-                               ng-model="vm.getModel().pensum"
-                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                               ng-required="true">
-                        <dv-error-messages  for="form.betreuungspensum.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                        <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
+                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getBetreuungModel().bemerkungen"
+                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                     </dv-input-container>
                 </div>
             </div>
 
-            <!-- gueltig ab / gueltig bis -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="VON" for="datumAb">
-                        </label>
-                        <p class="input-group">
-                            <dv-datepicker input-id="datumAb" input-name="datumAb"
-                                           ng-model="vm.getModel().gueltigkeit.gueltigAb"
-                                           ng-required="true">
-                            </dv-datepicker>
-                        </p>
-                        <dv-error-messages  for="form.datumAb.$error"
-                                            class="error"></dv-error-messages>
-                    </dv-input-container>
-                </div>
-
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="BIS" for="datumBis">
-                        </label>
-                        <p class="input-group">
-                            <dv-datepicker input-id="datumBis" input-name="datumBis"
-                                           ng-model="vm.getModel().gueltigkeit.gueltigBis"
-                                           ng-required="false">
-                            </dv-datepicker>
-                        </p>
-                        <dv-error-messages  for="form.datumBis.$error"
-                                            class="error"></dv-error-messages>
-                    </dv-input-container>
-                </div>
+            <!--Platz anfordern-->
+            <div class="col-md-12" style="margin-bottom: 20px">
+                <button type="button" ng-click="vm.platzAnfordern()" class="btn btn-sm btn-success">
+                    <span data-translate="PLATZBESTAETIGUNG_ANFORDERN">
+                    </span>
+                </button>
             </div>
 
+            <!--Hint-->
+            <p class="inlineHint" data-translate="BETREUUNGSPENSUM_HINT1"></p>
 
             <!--Buttons-->
             <div class="row">

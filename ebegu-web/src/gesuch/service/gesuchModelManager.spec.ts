@@ -1,14 +1,21 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
+import IPromise = angular.IPromise;
+import BetreuungRS from '../../core/service/betreuungRS';
+import IQService = angular.IQService;
 
 describe('gesuchModelManager', function () {
 
     let gesuchModelManager: GesuchModelManager;
+    let betreuungRS: BetreuungRS;
+    let $q: IQService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
+        betreuungRS = $injector.get('BetreuungRS');
+        $q = $injector.get('$q');
     }));
 
     describe('Public API', function () {
@@ -41,6 +48,23 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.removeBetreuungFromKind();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
+            });
+        });
+        describe('updateBetreuung', () => {
+            it('creates a new betreuung', () => {
+                createKindContainer();
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
+                gesuchModelManager.getKindToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let called: boolean = false;
+                spyOn(betreuungRS, 'createBetreuung').and.callFake(function() {
+                    called = true;
+                    return $q.when({});
+                });
+                gesuchModelManager.updateBetreuung();
+                expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
+                expect(called).toBe(true);
+                expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
             });
         });
     });
