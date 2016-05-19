@@ -1,0 +1,49 @@
+<div class="dv-erwerbspensum-list">
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+        <!--Tabelle-->
+            <table st-table="displayedCollection" st-safe-src="vm.erwerbspensen"
+                   class="table table-striped" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
+                <thead>
+                <tr>
+                    <th st-sort="taetigkeit" data-translate="TAETIGKEIT"></th>
+                    <th st-sort="gueltigkeit" data-translate="AB"></th>
+                    <th st-sort="pensum" data-translate="PENSUM"></th>
+                    <th st-sort="zuschlag" data-translate="ZUSCHLAG"></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                    ng-click="vm.editClicked(row)">
+                    <td ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
+                    <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td ng-bind="row.erwerbspensumJA.pensum"></td>
+                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent"></td>
+                    <td>
+                        <button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
+                                class="btn btn-sm" title="{{vm.removeButtonTitle}}">
+                            <i class="fa fa-minus">
+                            </i>
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-if="vm.erwerbspensen.length === 0">
+                    <td colspan="5" data-translate="KEIN_EINTRAG">...</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <!--Addbutton -->
+    <div class="row">
+
+        <div class="col-md-12" style="margin-bottom: 20px">
+            <button type="button" ng-click="vm.addClicked()" class="btn btn-sm btn-success">
+                <i class="glyphicon glyphicon-plus">
+                </i> {{vm.addButtonText}}
+            </button>
+        </div>
+    </div>
+</div>

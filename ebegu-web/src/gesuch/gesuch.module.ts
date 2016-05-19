@@ -7,12 +7,16 @@ import {FamiliensituationViewComponentConfig} from './component/familiensituatio
 import {KinderListViewComponentConfig} from './component/kinderListView/kinderListView';
 import {FinanzielleSituationViewComponentConfig} from './component/finanzielleSituationView/finanzielleSituationView';
 import {KindViewComponentConfig} from './component/kindView/kindView';
+import {ErwerbspensumListViewComponentConfig} from './component/erwerbspensumListView/erwerbspensumListView';
+import {ErwerbspensumViewComponentConfig} from './component/erwerbspensumView/erwerbspensumView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
-    .run(gesuchRun)
-    .component('familiensituationView', new FamiliensituationViewComponentConfig())
-    .component('stammdatenView', new StammdatenViewComponentConfig)
-    .component('kinderListView', new KinderListViewComponentConfig())
-    .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
-    .component('kindView', new KindViewComponentConfig());
+        .run(gesuchRun)
+        .component('familiensituationView', new FamiliensituationViewComponentConfig())
+        .component('stammdatenView', new StammdatenViewComponentConfig)
+        .component('kinderListView', new KinderListViewComponentConfig())
+        .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
+        .component('kindView', new KindViewComponentConfig())
+        .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
+        .component('erwerbspensumView', new ErwerbspensumViewComponentConfig());

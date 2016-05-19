@@ -1,5 +1,5 @@
 export enum TSTaetigkeit {
-    ANGESTELLT = <any> 'Angestellt',
+    ANGESTELLT = <any> 'ANGESTELLT',
     SELBSTAENDIG = <any> 'SELBSTAENDIG',
     AUSBILDUNG = <any> 'AUSBILDUNG',
     RAV = <any> 'RAV'

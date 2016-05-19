@@ -2,6 +2,7 @@ import TSAdresse from './TSAdresse';
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
+import TSErwerbspensumContainer from './TSErwerbspensumContainer';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -14,15 +15,19 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _korrespondenzAdresse: TSAdresse;
     private _umzugAdresse: TSAdresse;
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
+    private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
-                email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean) {
+                email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
+                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
         this._umzug = umzug;
+        this._finanzielleSituationContainer = finanzielleSituation;
+        this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
     }
 
     public get mail(): string {
@@ -97,4 +102,12 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._finanzielleSituationContainer = value;
     }
 
+
+    get erwerbspensenContainer(): Array<TSErwerbspensumContainer> {
+        return this._erwerbspensenContainer;
+    }
+
+    set erwerbspensenContainer(value: Array<TSErwerbspensumContainer>) {
+        this._erwerbspensenContainer = value;
+    }
 }

@@ -20,6 +20,8 @@ import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
+import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
+import ErwerbspensumRS from '../../core/service/erwerbspensumRS.rest';
 
 
 export default class GesuchModelManager {
@@ -30,10 +32,10 @@ export default class GesuchModelManager {
     kindNumber: number;
     fachstellenList: Array<TSFachstelle>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'ErwerbspensumRS', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
-                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private ebeguRestUtil: EbeguRestUtil) {
 
         this.fall = new TSFall();
@@ -119,9 +121,9 @@ export default class GesuchModelManager {
         return this.finanzielleSituationRS.saveFinanzielleSituation(
             this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith())
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
-            this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
+                this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
                 return finSitContRespo;
-        });
+            });
     }
 
     /**
@@ -254,7 +256,6 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        //todo team KindJA setzen  todo homa was
         this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
         this.kindNumber = this.gesuch.kindContainer.length;
     }
@@ -324,5 +325,51 @@ export default class GesuchModelManager {
             this.removeKindFromList();
             return this.gesuchRS.update(this.gesuch);
         });
+    }
+
+    public removeErwerbspensum(pensum: TSErwerbspensumContainer) {
+        let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
+        erwerbspensenOfCurrentGS = this.getStammdatenToWorkWith().erwerbspensenContainer;
+        let index: number = erwerbspensenOfCurrentGS.indexOf(pensum);
+        if (index >= 0) {
+            let pensumToRemove: TSErwerbspensumContainer = this.getStammdatenToWorkWith().erwerbspensenContainer[index];
+            if (pensumToRemove.id) { //wenn id vorhanden dann aus der DB loeschen
+                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id)
+                    .then((ewpContainer: TSErwerbspensumContainer) => {
+                        erwerbspensenOfCurrentGS.splice(index, 1);
+                    });
+            } else {
+                //sonst nur vom gui wegnehmen
+                erwerbspensenOfCurrentGS.splice(index, 1);
+            }
+        } else {
+            console.log('can not remove Erwerbspensum since it  could not be found in list');
+        }
+    }
+
+    findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
+        let gesuchsteller: TSGesuchsteller;
+        gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
+        return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
+    }
+
+    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+        if (erwerbspensum.id) {
+            return this.erwerbspensumRS.updateErwerbspensum(erwerbspensum, gesuchsteller.id)
+                .then((response: TSErwerbspensumContainer) => {
+                    let i = gesuchsteller.erwerbspensenContainer.indexOf(erwerbspensum);
+                    if (i >= 0) {
+                        gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
+                    }
+                    return response;
+                });
+        } else {
+            return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
+                .then((storedErwerbspensum: TSErwerbspensumContainer) => {
+                    gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
+                    return storedErwerbspensum;
+                });
+        }
+
     }
 }

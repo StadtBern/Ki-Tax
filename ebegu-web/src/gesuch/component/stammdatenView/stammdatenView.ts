@@ -83,7 +83,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         } else {
             this.state.go('gesuch.familiensituation');
         }
-
     }
 
     nextStep() {
