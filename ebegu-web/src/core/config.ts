@@ -11,7 +11,9 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     //Translation Provider configuration
     let translProp = require('../assets/translations/translations_de.json');
 
-    $translateProvider.useSanitizeValueStrategy('escapeParameters');
+    // In case you have issues with double-escaped parameters, check out this issue: https://github.com/angular-translate/angular-translate/issues/1101
+    $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+
     $translateProvider
         .translations('de', translProp)
         .fallbackLanguage('de')
@@ -27,7 +29,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     }
     //Config Angular Module Theme
     $mdThemingProvider.theme('default')
-        // .primaryPalette('red')
+    // .primaryPalette('red')
         .accentPalette('red');
 
 }
