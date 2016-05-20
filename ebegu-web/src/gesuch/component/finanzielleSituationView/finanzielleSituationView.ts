@@ -42,6 +42,16 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.selbstaendig === true;
     }
 
+    private steuerveranlagungClicked(): void {
+        // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
+        if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === true) {
+            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = true;
+        } else if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === false) {
+            // Steuerveranlagung neu NEIN -> Fragen loeschen
+            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = undefined;
+        }
+    }
+
     previousStep() {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
@@ -79,12 +89,5 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     public getModel(): TSFinanzielleSituationContainer {
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer;
-    }
-
-    private updateModel(): void {
-        // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
-        if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten) {
-            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = true;
-        }
     }
 }

@@ -47,9 +47,9 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     submit(form: IFormController) {
-        this.updateModel();
         if (form.$valid) {
             // Speichern ausloesen
+            this.gesuchModelManager.saveFinanzielleSituation();
             this.nextStep();
         }
     }
@@ -66,13 +66,39 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return  this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV;
     }
 
-    private updateModel(): void {
-        if (this.showSteuerveranlagung()) {
-            // Die Fragen zur Steuererklaerung wurden eingeblendet, da gemeinsame STEK. Die Daten
-            // muessen auf beiden Gesuchstellern gespeichert werden!
-            this.getFinanzielleSituationGS2().steuerveranlagungErhalten = this.getFinanzielleSituationGS1().steuerveranlagungErhalten;
-            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
-            this.gesuchModelManager.saveFinanzielleSituation();
+    private gemeinsameStekClicked(): void {
+        // Wenn neu NEIN -> Fragen loeschen
+        if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false) {
+            this.getFinanzielleSituationGS1().steuerveranlagungErhalten = undefined;
+            this.getFinanzielleSituationGS2().steuerveranlagungErhalten = undefined;
+            this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = undefined;
+            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = undefined;
+        }
+    }
+
+    private steuerveranlagungClicked(): void {
+        // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
+        // Wenn zusätzlich noch GemeinsameStek -> Dasselbe auch für GS2
+        // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
+        if (this.getFinanzielleSituationGS1().steuerveranlagungErhalten === true) {
+            this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = true;
+            if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+                this.getFinanzielleSituationGS2().steuerveranlagungErhalten = true;
+                this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = true;
+            }
+        } else if (this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false) {
+            // Steuerveranlagung neu NEIN -> Fragen loeschen
+            this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = undefined;
+            if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+                this.getFinanzielleSituationGS2().steuerveranlagungErhalten = false;
+                this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = undefined;
+            }
+        }
+    }
+
+    private steuererklaerungClicked() {
+        if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt =  this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
         }
     }
 }
