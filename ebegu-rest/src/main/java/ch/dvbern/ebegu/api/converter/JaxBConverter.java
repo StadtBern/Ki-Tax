@@ -20,12 +20,7 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -833,7 +828,9 @@ public class JaxBConverter {
 		Validate.notNull(betreuungJAXP);
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
-		betreuung.setBetreuungspensumContainers(betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers()));
+
+		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung);
+
 		setBetreuunginbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
@@ -855,20 +852,18 @@ public class JaxBConverter {
 	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
 	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
 	 * @param jaxBetPenContainers
-	 * @param betPenContainers
-     * @return
+	 * @param betreuung
      */
-	private Set<BetreuungspensumContainer> betreuungsPensumContainersToEntity(Set<JaxBetreuungspensumContainer> jaxBetPenContainers, Set<BetreuungspensumContainer> betPenContainers) {
-		Set<BetreuungspensumContainer> resultBetPensContainer = new HashSet<>();
+	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers, Betreuung betreuung) {
 		for (JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
 			BetreuungspensumContainer bpContainer = new BetreuungspensumContainer();
-			BetreuungspensumContainer retrievedBPContainer = betPenContainerExists(betPenContainers, jaxBetPensContainer);
+			BetreuungspensumContainer retrievedBPContainer = findBetPenContainer(betreuung.getBetreuungspensumContainers(), jaxBetPensContainer);
 			if (retrievedBPContainer != null) {
 				bpContainer = retrievedBPContainer;
+				betreuung.getBetreuungspensumContainers().remove(retrievedBPContainer);
 			}
-			resultBetPensContainer.add(betreuungspensumContainerToEntity(jaxBetPensContainer, bpContainer));
+			betreuung.getBetreuungspensumContainers().add(betreuungspensumContainerToEntity(jaxBetPensContainer, bpContainer));
 		}
-		return  resultBetPensContainer;
 	}
 
 	/**
@@ -877,7 +872,7 @@ public class JaxBConverter {
 	 * @param jaxBetPensContainer Jax object to look for
      * @return the {@link BetreuungspensumContainer} if it exists or null if it doesn't
      */
-	private BetreuungspensumContainer betPenContainerExists(Set<BetreuungspensumContainer> betPenContainers, JaxBetreuungspensumContainer jaxBetPensContainer) {
+	private BetreuungspensumContainer findBetPenContainer(Set<BetreuungspensumContainer> betPenContainers, JaxBetreuungspensumContainer jaxBetPensContainer) {
 		for (BetreuungspensumContainer betPensContainer : betPenContainers) {
 			if (betPensContainer.getId().equals(jaxBetPensContainer.getId())) {
 				return betPensContainer;
@@ -938,8 +933,8 @@ public class JaxBConverter {
 	 * @param betreuungspensumContainers
 	 * @return
      */
-	private Set<JaxBetreuungspensumContainer> betreuungsPensumContainersToJax(Set<BetreuungspensumContainer> betreuungspensumContainers) {
-		Set<JaxBetreuungspensumContainer> jaxContainers = new HashSet<>();
+	private List<JaxBetreuungspensumContainer> betreuungsPensumContainersToJax(Set<BetreuungspensumContainer> betreuungspensumContainers) {
+		List<JaxBetreuungspensumContainer> jaxContainers = new ArrayList<>();
 		if (betreuungspensumContainers != null) {
 			for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
 				jaxContainers.add(betreuungsPensumContainerToJax(betreuungspensumContainer));

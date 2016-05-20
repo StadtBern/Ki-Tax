@@ -9,8 +9,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO fuer Daten der Betreuungen
@@ -28,7 +28,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private Betreuungsstatus betreuungsstatus;
 
 	@NotNull
-	private Set<JaxBetreuungspensumContainer> betreuungspensumContainers = new HashSet<>();
+	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -52,11 +52,11 @@ public class JaxBetreuung extends JaxAbstractDTO {
 		this.betreuungsstatus = betreuungsstatus;
 	}
 
-	public Set<JaxBetreuungspensumContainer> getBetreuungspensumContainers() {
+	public List<JaxBetreuungspensumContainer> getBetreuungspensumContainers() {
 		return betreuungspensumContainers;
 	}
 
-	public void setBetreuungspensumContainers(Set<JaxBetreuungspensumContainer> betreuungspensumContainers) {
+	public void setBetreuungspensumContainers(List<JaxBetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 

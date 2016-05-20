@@ -26,12 +26,25 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any) {
         super(state, gesuchModelManager);
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
+        this.initViewModel();
+    }
+
+    private initViewModel() {
+        if (this.getInstitutionSD()) {
+            this.instStammId = this.getInstitutionSD().id;
+            this.betreuungsangebot = $.grep(this.betreuungsangebotValues, (value: any) => {
+                return value.key === this.getInstitutionSD().betreuungsangebotTyp;
+            })[0];
+        }
+        if (!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) {
+            this.createBetreuungspensum();
+        }
     }
 
     public getKindModel(): TSKindContainer {
@@ -76,6 +89,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             });
         }
         return result;
+    }
+
+    public getInstitutionSD(): TSInstitutionStammdaten {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().institutionStammdaten;
+        }
+        return undefined;
     }
 
     public getBetreuungspensen(): Array<TSBetreuungspensumContainer> {

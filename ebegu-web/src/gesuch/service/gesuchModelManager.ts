@@ -449,4 +449,11 @@ export default class GesuchModelManager {
         });
     }
 
+    public findBetreuung(betreuung: TSBetreuung): number {
+        if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
+            return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
+        }
+        return -1;
+    }
+
 }
