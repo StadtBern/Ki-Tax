@@ -6,7 +6,11 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import IDialogService = angular.material.IDialogService;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {BetreuungRemoveDialogController} from '../../dialog/BetreuungRemoveDialogController';
+import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 let template = require('./betreuungListView.html');
+let removeBetreuungTemplate = require('../../dialog/removeBetreuungDialogTemplate.html');
 
 
 export class BetreuungListViewComponentConfig implements IComponentOptions {
@@ -18,9 +22,10 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog', 'EbeguRestUtil'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $mdDialog: IDialogService,
+                private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil) {
         super(state, gesuchModelManager);
     }
 
@@ -57,6 +62,20 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
             this.gesuchModelManager.createBetreuung();
             this.openBetreuungView();
         }
+    }
+
+    removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+        this.DvDialog.showDialog(removeBetreuungTemplate, BetreuungRemoveDialogController,
+            {kindName: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
+                betreuungsangebottyp: this.ebeguRestUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])})
+            .then(() => {   //User confirmed removal
+                this.gesuchModelManager.findKind(kind);
+                let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
+                if (betreuungNumber > 0) {
+                    this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+                    this.gesuchModelManager.removeBetreuung();
+                }
+            });
     }
 
     private openBetreuungView(): void {

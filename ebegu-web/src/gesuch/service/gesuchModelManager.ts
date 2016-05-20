@@ -370,7 +370,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Sucht im ausgewaehlten Kind (kindNumber) nach der aktuellen Betreuung. Deshalb muessen sowohl 
+     * Sucht im ausgewaehlten Kind (kindNumber) nach der aktuellen Betreuung. Deshalb muessen sowohl
      * kindNumber als auch betreuungNumber bereits gesetzt sein.
      * @returns {any}
      */
@@ -454,6 +454,13 @@ export default class GesuchModelManager {
             return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
         }
         return -1;
+    }
+
+    public removeBetreuung(): IPromise<TSKindContainer> {
+        return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id).then((responseBetreuung: any) => {
+            this.removeBetreuungFromKind();
+            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id);
+        });
     }
 
 }

@@ -32,7 +32,7 @@
                             <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"></td>
                             <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
                             <td ng-click="$event.stopPropagation()">
-                                <button type="button" ng-click="vm.removeBetreuung(betreuung)" class="btn btn-sm">
+                                <button type="button" ng-click="vm.removeBetreuung(kind, betreuung)" class="btn btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
                                 </button>

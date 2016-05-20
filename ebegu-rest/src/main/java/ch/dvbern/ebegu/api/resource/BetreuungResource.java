@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Optional;
 
@@ -67,6 +69,19 @@ public class BetreuungResource {
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{betreuungId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeKind(
+		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(betreuungJAXPId.getId());
+		betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
+		return Response.ok().build();
 	}
 
 }
