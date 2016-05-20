@@ -30,6 +30,9 @@ public class Gesuch extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
+	@Column(nullable = true)
+	private Boolean einkommensverschlechterung;
+
 
 	public Fall getFall() {
 		return fall;
@@ -63,6 +66,14 @@ public class Gesuch extends AbstractEntity {
 
 	public void setKindContainers(Set<KindContainer> kindContainers) {
 		this.kindContainers = kindContainers;
+	}
+
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
 	}
 
 	public boolean addKindContainer(@NotNull KindContainer kindContainer) {

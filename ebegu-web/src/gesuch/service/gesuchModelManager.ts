@@ -87,15 +87,11 @@ export default class GesuchModelManager {
         }
     }
 
-    ///**
-    // * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
-    // * automatisch gespeichert wenn Gesuch gespeichert wird.
-    // */
-    //public updateGesuch(): IPromise<TSGesuch> {
-    //    return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-    //        return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-    //    });
-    //}
+    public updateGesuch(): IPromise<TSGesuch> {
+       return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+           return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+       });
+    }
 
     /**
      * Speichert den StammdatenToWorkWith.

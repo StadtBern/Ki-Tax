@@ -252,7 +252,7 @@ export default class EbeguRestUtil {
         restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-
+        restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
         return restGesuch;
     }
 
@@ -262,6 +262,7 @@ export default class EbeguRestUtil {
             gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
+            gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
             return gesuchTS;
         }
         return undefined;

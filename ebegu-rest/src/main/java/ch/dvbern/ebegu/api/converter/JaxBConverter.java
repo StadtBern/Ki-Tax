@@ -364,6 +364,7 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
+		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
 		return gesuch;
 	}
 
@@ -380,7 +381,7 @@ public class JaxBConverter {
 		for (KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
 		}
-
+		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
 		return jaxGesuch;
 	}
 

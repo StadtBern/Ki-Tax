@@ -56,6 +56,8 @@
     "FINANZIELLE_SITUATION_ABZUG_FAMILIENGROESSE": "Abzug aufgrund Familiengrösse {{familiengroesse}} ",
     "FINANZIELLE_SITUATION_TOTAL_ABZUEGE": "Total Abzüge",
     "FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN": "Massgebendes Einkommen",
+    "FINANZIELLE_SITUATION_EINKOMMENSVERSCHLECHTERUNG": "Möchten Sie eine Einkommensverschlechterung geltend machen?",
+    "FINANZIELLE_SITUATION_DOWNLOAD_HINT": "pdf Download - Resultate Finanzielle Situation (TODO: Team)",
     "SAVE": "Speichern ",
     "PROPERTY_NAME": "Name",
     "PROPERTY_TEXT": "Text",

@@ -59,6 +59,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
+            this.gesuchModelManager.updateGesuch();
             this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
                 this.nextStep();
             });
