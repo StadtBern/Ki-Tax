@@ -498,6 +498,7 @@ export default class EbeguRestUtil {
         restFinanzielleSituationResultate.abzugAufgrundFamiliengroesse = finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse;
         restFinanzielleSituationResultate.totalAbzuege = finanzielleSituationResultateDTO.totalAbzuege;
         restFinanzielleSituationResultate.massgebendesEinkommen = finanzielleSituationResultateDTO.massgebendesEinkommen;
+        restFinanzielleSituationResultate.familiengroesse = finanzielleSituationResultateDTO.familiengroesse;
         return restFinanzielleSituationResultate;
     }
 
@@ -512,6 +513,7 @@ export default class EbeguRestUtil {
             finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse = finanzielleSituationResultateFromServer.abzugAufgrundFamiliengroesse;
             finanzielleSituationResultateDTO.totalAbzuege = finanzielleSituationResultateFromServer.totalAbzuege;
             finanzielleSituationResultateDTO.massgebendesEinkommen = finanzielleSituationResultateFromServer.massgebendesEinkommen;
+            finanzielleSituationResultateDTO.familiengroesse = finanzielleSituationResultateFromServer.familiengroesse;
             return finanzielleSituationResultateDTO;
         }
         return undefined;

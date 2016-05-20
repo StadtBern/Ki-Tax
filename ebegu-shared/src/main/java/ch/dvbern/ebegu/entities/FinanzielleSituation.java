@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * Entität für die Finanzielle Situation
@@ -162,51 +161,5 @@ public class FinanzielleSituation extends AbstractEntity {
 
 	public void setGeleisteteAlimente(BigDecimal geleisteteAlimente) {
 		this.geleisteteAlimente = geleisteteAlimente;
-	}
-
-	public BigDecimal getNettovermoegen() {
-		//TODO (team) Formel
-		return null;
-	}
-
-	public BigDecimal getGeschaeftsgewinnDurchschnitt() {
-		BigDecimal total = BigDecimal.ZERO;
-		BigDecimal anzahlJahre = BigDecimal.ZERO;
-		if (geschaeftsgewinnBasisjahrMinus2 != null) {
-			total = total.add(geschaeftsgewinnBasisjahrMinus2);
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (geschaeftsgewinnBasisjahrMinus1 != null) {
-			total = total.add(geschaeftsgewinnBasisjahrMinus1);
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (geschaeftsgewinnBasisjahr != null) {
-			total = total.add(geschaeftsgewinnBasisjahr);
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (anzahlJahre.intValue() > 0) {
-			return total.divide(anzahlJahre, RoundingMode.HALF_UP);
-		}
-		return null;
-	}
-
-	public BigDecimal getAnrechenbaresEinkommen() {
-		//TODO (team) Formel
-		return null;
-	}
-
-	public Integer getFamiliengroesse() {
-		//TODO (team) Formel
-		return null;
-	}
-
-	public BigDecimal getTotalAbzuege() {
-		//TODO (team) Formel
-		return null;
-	}
-
-	public BigDecimal getMassgebendesEinkommen() {
-		//TODO (team) Formel
-		return null;
 	}
 }

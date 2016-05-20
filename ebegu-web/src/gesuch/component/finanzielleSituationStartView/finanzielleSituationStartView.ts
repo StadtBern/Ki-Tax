@@ -47,21 +47,10 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     submit(form: IFormController) {
+        this.updateModel();
         if (form.$valid) {
             // Speichern ausloesen
-            this.gesuchModelManager.updateFamiliensituation().then((familiensituationResponse: any) => {
-                if (this.showSteuerveranlagung()) {
-                    // Die Fragen zur Steuererklaerung wurden eingeblendet, da gemeinsame STEK. Die Daten
-                    // muessen auf beiden Gesuchstellern gespeichert werden!
-                    this.getFinanzielleSituationGS2().steuerveranlagungErhalten = this.getFinanzielleSituationGS1().steuerveranlagungErhalten;
-                    this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
-                    this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
-                        this.nextStep();
-                    });
-                } else {
-                    this.nextStep();
-                }
-            });
+            this.nextStep();
         }
     }
 
@@ -75,5 +64,15 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
         return  this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV;
+    }
+
+    private updateModel(): void {
+        if (this.showSteuerveranlagung()) {
+            // Die Fragen zur Steuererklaerung wurden eingeblendet, da gemeinsame STEK. Die Daten
+            // muessen auf beiden Gesuchstellern gespeichert werden!
+            this.getFinanzielleSituationGS2().steuerveranlagungErhalten = this.getFinanzielleSituationGS1().steuerveranlagungErhalten;
+            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
+            this.gesuchModelManager.saveFinanzielleSituation();
+        }
     }
 }

@@ -9,13 +9,14 @@ export default class TSFinanzielleSituationResultateDTO {
     private _abzugAufgrundFamiliengroesse: number;
     private _totalAbzuege: number;
     private _massgebendesEinkommen: number;
+    private _familiengroesse: number;
 
 
     constructor(
             geschaeftsgewinnDurchschnittGesuchsteller1?: number, geschaeftsgewinnDurchschnittGesuchsteller2?: number,
             einkommenBeiderGesuchsteller?: number, nettovermoegenFuenfProzent?: number, anrechenbaresEinkommen?: number,
             abzuegeBeiderGesuchsteller?: number, abzugAufgrundFamiliengroesse?: number, totalAbzuege?: number,
-            massgebendesEinkommen?: number) {
+            massgebendesEinkommen?: number, familiengroesse?: number) {
         this._geschaeftsgewinnDurchschnittGesuchsteller1 = geschaeftsgewinnDurchschnittGesuchsteller1;
         this._geschaeftsgewinnDurchschnittGesuchsteller2 = geschaeftsgewinnDurchschnittGesuchsteller2;
         this._einkommenBeiderGesuchsteller = einkommenBeiderGesuchsteller;
@@ -25,6 +26,7 @@ export default class TSFinanzielleSituationResultateDTO {
         this._abzugAufgrundFamiliengroesse = abzugAufgrundFamiliengroesse;
         this._totalAbzuege = totalAbzuege;
         this._massgebendesEinkommen = massgebendesEinkommen;
+        this._familiengroesse = familiengroesse;
     }
 
 
@@ -98,5 +100,13 @@ export default class TSFinanzielleSituationResultateDTO {
 
     set massgebendesEinkommen(value: number) {
         this._massgebendesEinkommen = value;
+    }
+
+    get familiengroesse(): number {
+        return this._familiengroesse;
+    }
+
+    set familiengroesse(value: number) {
+        this._familiengroesse = value;
     }
 }

@@ -23,23 +23,26 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
         // let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         // this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
+        this.calculate();
     }
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
     }
 
-    // showSteuererklaerung(): boolean {
-    //     return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.steuerveranlagungErhalten === false;
-    // }
-    //
-    // showSelbstaendig(): boolean {
-    //     return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.selbstaendig === true;
-    // }
-    //
-    // geschaeftsgewinnChanged() {
-    //     this.calculate();
-    // }
+    showGemeinsam(): boolean {
+        return this.gesuchModelManager.isGesuchsteller2Required() &&
+                this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
+    }
+
+    showGS1(): boolean {
+        return !this.showGemeinsam();
+    }
+
+    showGS2(): boolean {
+        return this.gesuchModelManager.isGesuchsteller2Required() &&
+            this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false;
+    }
 
     previousStep() {
         if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
@@ -62,17 +65,23 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
         }
     }
 
-    // calculate() {
-    //     this.gesuchModelManager.calculateFinanzielleSituation().then((finanzielleSituationResponse: any) => {
-    //         this.nextStep();
-    //     });
-    // }
+    calculate() {
+        this.gesuchModelManager.calculateFinanzielleSituation();
+    }
 
     resetForm() {
         this.initViewModel();
     }
 
-    public getModel(): TSFinanzielleSituationContainer {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer;
+    public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
+        return  this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+    }
+
+    public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
+        return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
+    }
+
+    public getFamiliengroesse(): string {
+        return '' + this.gesuchModelManager.finanzielleSituationResultate.familiengroesse;
     }
 }

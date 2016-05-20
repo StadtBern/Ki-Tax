@@ -23,6 +23,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
+        this.calculate();
     }
 
     private initViewModel() {
@@ -39,10 +40,6 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     showSelbstaendig(): boolean {
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.selbstaendig === true;
-    }
-
-    geschaeftsgewinnChanged() {
-        this.calculate();
     }
 
     previousStep() {
@@ -73,9 +70,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     calculate() {
-        this.gesuchModelManager.calculateFinanzielleSituation().then((calculationReponse: any) => {
-            this.gesuchModelManager.finanzielleSituationResultate = calculationReponse;
-        });
+        this.gesuchModelManager.calculateFinanzielleSituation();
     }
 
     resetForm() {
@@ -84,5 +79,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     public getModel(): TSFinanzielleSituationContainer {
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer;
+    }
+
+    private updateModel(): void {
+        // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
+        if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten) {
+            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = true;
+        }
     }
 }
