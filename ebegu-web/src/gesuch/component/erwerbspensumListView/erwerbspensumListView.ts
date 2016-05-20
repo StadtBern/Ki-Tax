@@ -79,6 +79,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     removePensum(pensum: any, gesuchstellerNumber: number): void {
+        //todo homa dialog anpassen, sollte generalisiert werden
         this.dvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: pensum.prozent})
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.removeErwerbspensum(pensum);

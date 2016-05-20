@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -31,16 +32,16 @@
         </dependency>
         <!--todo team ich kommentiere das mal aus weil ich glaube das es im shared schon drin ist-->
         <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-envers</artifactId>-->
-            <!--<version>${version.hibernate}</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--&lt;!&ndash; mit dom4j kann orm.xml nicht geparst werden &ndash;&gt;-->
-                    <!--<groupId>dom4j</groupId>-->
-                    <!--<artifactId>dom4j</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+        <!--<groupId>org.hibernate</groupId>-->
+        <!--<artifactId>hibernate-envers</artifactId>-->
+        <!--<version>${version.hibernate}</version>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--&lt;!&ndash; mit dom4j kann orm.xml nicht geparst werden &ndash;&gt;-->
+        <!--<groupId>dom4j</groupId>-->
+        <!--<artifactId>dom4j</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -73,6 +74,18 @@
             <groupId>ch.dvbern.lib</groupId>
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
             <version>1.7</version>
+        </dependency>
+
+        <!--tests der validators-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
