@@ -72,7 +72,7 @@ CREATE TABLE finanzielle_situation_container (
   finanzielle_situationgs_id VARCHAR(36),
   finanzielle_situationja_id VARCHAR(36),
   finanzielle_situationsv_id VARCHAR(36),
-  gesuchsteller_id           VARCHAR(36) NULL,
+  gesuchsteller_id           VARCHAR(36) NOT NULL,
   CONSTRAINT PK_finanzielle_situation_container PRIMARY KEY (id)
 );
 

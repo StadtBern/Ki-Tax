@@ -17,6 +17,7 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	@NotNull
 	@OneToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_FinanzielleSituationContainer_gesuchsteller_id"), nullable = false)
 	private Gesuchsteller gesuchsteller;
 
 	@NotNull
