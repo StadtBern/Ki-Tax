@@ -80,8 +80,4 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
         return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
     }
-
-    public getFamiliengroesse(): string {
-        return '' + this.gesuchModelManager.finanzielleSituationResultate.familiengroesse;
-    }
 }

@@ -116,7 +116,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="checkbox">
-                        <md-checkbox ng-model="vm.getModel().finanzielleSituationSV.selbstaendig" name="selbstaendig" aria-label="selbstaendig">
+                        <md-checkbox ng-model="vm.getModel().finanzielleSituationSV.selbstaendig" name="selbstaendig" aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT|translate}}">
                             <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                         </md-checkbox>
                         <dv-error-messages  for="form.selbstaendig.$error" class="error"></dv-error-messages>
@@ -222,7 +222,6 @@
                 <div class="col-md-2">
                     <a href="#" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-
                 </div>
                 <div class="col-md-4 text-right">
                     <button type="submit" class="btn btn-link next">

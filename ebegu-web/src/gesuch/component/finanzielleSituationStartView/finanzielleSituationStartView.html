@@ -61,17 +61,8 @@
                     </button>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
-                            ng-if="vm.getModel().timestampErstellt === undefined">
-                    </button>
-                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
-                            ng-if="vm.getModel().timestampErstellt">
-                    </button>
-                </div>
-                <div class="col-md-2">
                     <a href="#" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-
                 </div>
                 <div class="col-md-4 text-right">
                     <button type="submit" class="btn btn-link next">
