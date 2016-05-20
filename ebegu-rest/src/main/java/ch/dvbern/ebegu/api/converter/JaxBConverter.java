@@ -600,6 +600,7 @@ public class JaxBConverter {
 		if (persistedKind.getKindJA() != null) {
 			jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
 		}
+		jaxKindContainer.setBetreuungen(betreuungListToJax(persistedKind.getBetreuungen()));
 		return jaxKindContainer;
 	}
 
@@ -833,6 +834,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
 		betreuung.setBetreuungspensumContainers(betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers()));
+		setBetreuunginbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(betreuungJAXP.getInstitutionStammdaten().getId());
@@ -840,6 +842,12 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		return betreuung;
+	}
+
+	private void setBetreuunginbetreuungsPensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers, Betreuung betreuung) {
+		for (BetreuungspensumContainer betreuungspensumContainer: betreuungspensumContainers) {
+			betreuungspensumContainer.setBetreuung(betreuung);
+		}
 	}
 
 	/**
@@ -904,6 +912,14 @@ public class JaxBConverter {
 		return betreuungspensum;
 	}
 
+	private Set<JaxBetreuung> betreuungListToJax(Set<Betreuung> betreuungen) {
+		Set<JaxBetreuung> jaxBetreuungen = new HashSet<>();
+		if (betreuungen != null) {
+			jaxBetreuungen.addAll(betreuungen.stream().map(this::betreuungToJAX).collect(Collectors.toList()));
+		}
+		return jaxBetreuungen;
+	}
+
 	public JaxBetreuung betreuungToJAX(Betreuung persistedBetreuung) {
 		if (persistedBetreuung != null) {
 			JaxBetreuung jaxBetreuung = new JaxBetreuung();
@@ -936,15 +952,20 @@ public class JaxBConverter {
 		if (betreuungspensumContainer != null) {
 			JaxBetreuungspensumContainer jaxBetreuungspensumContainer = new JaxBetreuungspensumContainer();
 			convertAbstractFieldsToJAX(betreuungspensumContainer, jaxBetreuungspensumContainer);
-			jaxBetreuungspensumContainer.setBetreuungspensumGS(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumGS()));
-			jaxBetreuungspensumContainer.setBetreuungspensumJA(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumJA()));
+			if (betreuungspensumContainer.getBetreuungspensumGS() != null) {
+				jaxBetreuungspensumContainer.setBetreuungspensumGS(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumGS()));
+			}
+			if (betreuungspensumContainer.getBetreuungspensumJA() != null) {
+				jaxBetreuungspensumContainer.setBetreuungspensumJA(betreuungspensumToJax(betreuungspensumContainer.getBetreuungspensumJA()));
+			}
+			return jaxBetreuungspensumContainer;
 		}
 		return null;
 	}
 
-	private JaxBetreuungspensum betreuungspensumToJax(Betreuungspensum betreuungspensumGS) {
+	private JaxBetreuungspensum betreuungspensumToJax(Betreuungspensum betreuungspensum) {
 		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
-		convertAbstractPensumFieldsToJAX(betreuungspensumGS, jaxBetreuungspensum);
+		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		return jaxBetreuungspensum;
 	}
 

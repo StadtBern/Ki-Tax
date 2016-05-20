@@ -25,6 +25,7 @@ import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import BetreuungRS from '../../core/service/betreuungRS';
+import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 
 
 export default class GesuchModelManager {
@@ -318,7 +319,9 @@ export default class GesuchModelManager {
     public createBetreuung(): void {
         if (this.getKindToWorkWith()) {
             this.initBetreuung();
-            this.getKindToWorkWith().betreuungen.push(new TSBetreuung());
+            let tsBetreuung: TSBetreuung = new TSBetreuung();
+            tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+            this.getKindToWorkWith().betreuungen.push(tsBetreuung);
             this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
         }
     }

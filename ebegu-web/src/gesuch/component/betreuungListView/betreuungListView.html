@@ -29,8 +29,8 @@
                         <tbody>
                         <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                             ng-click="vm.editKind(row)">
-                            <td ng-bind="row.kindGS.vorname"></td>
-                            <td ng-bind="row.kindGS.nachname"></td>
+                            <td ng-bind="vm.getBetreuungsangebotTyp(row) | translate"></td>
+                            <td ng-bind="row.betreuungsstatus | translate"></td>
                             <td ng-click="$event.stopPropagation()">
                                 <button type="button" ng-click="vm.removeBetreuung(row)" class="btn btn-sm">
                                     <i class="fa fa-minus">

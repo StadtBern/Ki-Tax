@@ -357,6 +357,11 @@
     "UNSAVED_WARNING":"Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite verlassen.",
     "UNSAVED_WARNING_RELOAD": "Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite neu laden.",
     "BETREUUNG": "Betreuung",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "AUSSTEHEND": "ausstehend",
+    "WARTEN": "warten",
+    "SCHULAMT": "Schulamt",
+    "ABGEWIESEN": "abgewiesen",
+    "BESTAETIGT": "bestätigt"
 }
 

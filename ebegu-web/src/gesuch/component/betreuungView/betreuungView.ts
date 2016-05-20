@@ -9,6 +9,7 @@ import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
+import {TSDateRange} from '../../../models/types/TSDateRange';
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -23,6 +24,7 @@ export class BetreuungViewComponentConfig implements IComponentOptions {
 export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
+    instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil'];
     /* @ngInject */
@@ -94,7 +96,16 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         if (!this.getBetreuungspensen()) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
-        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum()));
+        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(undefined, new TSDateRange())));
+    }
+
+    public setSelectedInstitutionStammdaten() {
+        let instStamList = this.gesuchModelManager.institutionenList;
+        for (let i: number = 0; i < instStamList.length; i++) {
+            if (instStamList[i].id === this.instStammId) {
+                this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = instStamList[i];
+            }
+        }
     }
 
 }

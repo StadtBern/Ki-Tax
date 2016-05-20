@@ -89,7 +89,7 @@ REFERENCES institution_stammdaten (id);
 ALTER TABLE betreuung
   ADD CONSTRAINT FK_betreuung_kind_id
 FOREIGN KEY (kind_id)
-REFERENCES kind (id);
+REFERENCES kind_container (id);
 
 ALTER TABLE betreuung_aud
   ADD CONSTRAINT FK_betreuung_aud_revinfo

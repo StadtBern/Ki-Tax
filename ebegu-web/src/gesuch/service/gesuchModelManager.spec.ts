@@ -3,6 +3,7 @@ import GesuchModelManager from './gesuchModelManager';
 import IPromise = angular.IPromise;
 import BetreuungRS from '../../core/service/betreuungRS';
 import IQService = angular.IQService;
+import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 
 describe('gesuchModelManager', function () {
 
@@ -35,7 +36,7 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeUndefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toBeUndefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten).toBeUndefined();
             });
         });

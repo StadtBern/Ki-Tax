@@ -54,8 +54,11 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
-			Betreuung retrievedBetreuung = optionalBetreuung.orElse(new Betreuung());
+			Betreuung retrievedBetreuung = new Betreuung();
+			if (betreuungJAXP.getId() != null) {
+				Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
+				retrievedBetreuung = optionalBetreuung.orElse(new Betreuung());
+			}
 
 			Betreuung convertedBetreuung = converter.betreuungToEntity(betreuungJAXP, retrievedBetreuung);
 			convertedBetreuung.setKind(kind.get());

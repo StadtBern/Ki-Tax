@@ -43,7 +43,7 @@ export default class EbeguRestUtil {
      */
     public parseApplicationProperties(data: any): TSApplicationProperty[] {
         var appProperties: TSApplicationProperty[] = [];
-        if (data !== null && Array.isArray(data)) {
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 appProperties[i] = this.parseApplicationProperty(new TSApplicationProperty('', ''), data[i]);
             }
@@ -290,7 +290,7 @@ export default class EbeguRestUtil {
 
     public parseFachstellen(data: any): TSFachstelle[] {
         var fachstellen: TSFachstelle[] = [];
-        if (data !== null && Array.isArray(data)) {
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 fachstellen[i] = this.parseFachstelle(new TSFachstelle(), data[i]);
             }
@@ -337,7 +337,7 @@ export default class EbeguRestUtil {
 
     public parseTraegerschaften(data: Array<any>): TSTraegerschaft[] {
         var traegerschaftenen: TSTraegerschaft[] = [];
-        if (data !== null && Array.isArray(data)) {
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 traegerschaftenen[i] = this.parseTraegerschaft(new TSTraegerschaft(), data[i]);
             }
@@ -360,8 +360,8 @@ export default class EbeguRestUtil {
         if (institution) {
             this.abstractEntityToRestObject(restInstitution, institution);
             restInstitution.name = institution.name;
-            restInstitution.mandant = this.mandantToRestObject(new TSMandant(), institution.mandant);
-            restInstitution.traegerschaft = this.traegerschaftToRestObject(new TSTraegerschaft(), institution.traegerschaft);
+            restInstitution.mandant = this.mandantToRestObject({}, institution.mandant);
+            restInstitution.traegerschaft = this.traegerschaftToRestObject({}, institution.traegerschaft);
             return restInstitution;
         }
         return undefined;
@@ -380,7 +380,7 @@ export default class EbeguRestUtil {
 
     public parseInstitutionen(data: Array<any>): TSInstitution[] {
         var institutionen: TSInstitution[] = [];
-        if (data !== null && Array.isArray(data)) {
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 institutionen[i] = this.parseInstitution(new TSInstitution(), data[i]);
             }
@@ -397,7 +397,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
             restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
             restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
-            restInstitutionStammdaten.institution = this.institutionToRestObject(new TSInstitution(), institutionStammdaten.institution);
+            restInstitutionStammdaten.institution = this.institutionToRestObject({}, institutionStammdaten.institution);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -418,7 +418,7 @@ export default class EbeguRestUtil {
 
     public parseInstitutionStammdatenArray(data: Array<any>): TSInstitutionStammdaten[] {
         var institutionStammdaten: TSInstitutionStammdaten[] = [];
-        if (data !== null && Array.isArray(data)) {
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 institutionStammdaten[i] = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), data[i]);
             }
@@ -503,6 +503,7 @@ export default class EbeguRestUtil {
         if (kindContainer.kindJA) {
             restKindContainer.kindJA = this.kindToRestObject({}, kindContainer.kindJA);
         }
+        restKindContainer.betreuungen = this.betreuungListToRestObject(kindContainer.betreuungen);
         return restKindContainer;
     }
 
@@ -524,6 +525,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(kindContainerTS, kindContainerFromServer);
             kindContainerTS.kindGS = this.parseKind(new TSKind(), kindContainerFromServer.kindGS);
             kindContainerTS.kindJA = this.parseKind(new TSKind(), kindContainerFromServer.kindJA);
+            kindContainerTS.betreuungen = this.parseBetreuungList(kindContainerFromServer.betreuungen);
             return kindContainerTS;
         }
         return undefined;
@@ -588,6 +590,16 @@ export default class EbeguRestUtil {
         return listResult;
     }
 
+    private betreuungListToRestObject(betreuungen: Array<TSBetreuung>): Array<any> {
+        let list: any[] = [];
+        if (betreuungen) {
+            for (var i = 0; i < betreuungen.length; i++) {
+                list[i] = this.betreuungToRestObject({}, betreuungen[i]);
+            }
+        }
+        return list;
+    }
+
     public betreuungToRestObject(restBetreuung: any, betreuung: TSBetreuung): any {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
@@ -606,14 +618,30 @@ export default class EbeguRestUtil {
 
     public betreuungspensumContainerToRestObject(restBetPensCont: any, betPensCont: TSBetreuungspensumContainer): any {
         this.abstractEntityToRestObject(restBetPensCont, betPensCont);
-        restBetPensCont.betreuungspensumGS = this.betreuungspensumToRestObject({}, betPensCont.betreuungspensumGS);
-        restBetPensCont.betreuungspensumJA = this.betreuungspensumToRestObject({}, betPensCont.betreuungspensumJA);
+        if (betPensCont.betreuungspensumGS) {
+            restBetPensCont.betreuungspensumGS = this.betreuungspensumToRestObject({}, betPensCont.betreuungspensumGS);
+        }
+        if (betPensCont.betreuungspensumJA) {
+            restBetPensCont.betreuungspensumJA = this.betreuungspensumToRestObject({}, betPensCont.betreuungspensumJA);
+        }
         return restBetPensCont;
     }
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntitytoRestObject(betreuungspensum, restBetreuungspensum);
         return restBetreuungspensum;
+    }
+
+    private parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
+        let resultList: TSBetreuung[] = [];
+        if (betreuungen && Array.isArray(betreuungen)) {
+            for (var i = 0; i < betreuungen.length; i++) {
+                resultList[i] = this.parseBetreuung(new TSBetreuung(), betreuungen[i]);
+            }
+        } else {
+            resultList[0] = this.parseBetreuung(new TSBetreuung(), betreuungen);
+        }
+        return resultList;
     }
 
     public parseBetreuung(betreuungTS: TSBetreuung, betreuungFromServer: any): TSBetreuung {
@@ -629,8 +657,8 @@ export default class EbeguRestUtil {
     }
 
     public parseBetreuungspensumContainers(data: Array<any>): TSBetreuungspensumContainer[] {
-        var betPensContainers: TSBetreuungspensumContainer[] = [];
-        if (data !== null && Array.isArray(data)) {
+        let betPensContainers: TSBetreuungspensumContainer[] = [];
+        if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
                 betPensContainers[i] = this.parseBetreuungspensumContainer(new TSBetreuungspensumContainer(), data[i]);
             }
@@ -643,8 +671,12 @@ export default class EbeguRestUtil {
     public parseBetreuungspensumContainer(betPensContainerTS: TSBetreuungspensumContainer, betPensContFromServer: any): TSBetreuungspensumContainer {
         if (betPensContFromServer) {
             this.parseAbstractEntity(betPensContainerTS, betPensContFromServer);
-            betPensContainerTS.betreuungspensumGS = this.parseBetreuungspensum(new TSBetreuungspensum(), betPensContFromServer.betreuungspensumGS);
-            betPensContainerTS.betreuungspensumJA = this.parseBetreuungspensum(new TSBetreuungspensum(), betPensContFromServer.betreuungspensumJA);
+            if (betPensContFromServer.betreuungspensumGS) {
+                betPensContainerTS.betreuungspensumGS = this.parseBetreuungspensum(new TSBetreuungspensum(), betPensContFromServer.betreuungspensumGS);
+            }
+            if (betPensContFromServer.betreuungspensumJA) {
+                betPensContainerTS.betreuungspensumJA = this.parseBetreuungspensum(new TSBetreuungspensum(), betPensContFromServer.betreuungspensumJA);
+            }
             return betPensContainerTS;
         }
         return undefined;

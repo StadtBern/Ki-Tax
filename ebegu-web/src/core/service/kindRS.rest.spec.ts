@@ -31,7 +31,7 @@ describe('KindRS', function () {
         setAbstractFieldsUndefined(kindGS);
         let kindJA: TSKind = new TSKind('Johan', 'Basel');
         setAbstractFieldsUndefined(kindJA);
-        mockKind = new TSKindContainer(kindGS, kindJA);
+        mockKind = new TSKindContainer(kindGS, kindJA, []);
         setAbstractFieldsUndefined(mockKind);
         mockKind.id = '2afc9d9a-957e-4550-9a22-97624a1d8feb';
         mockKindRest = ebeguRestUtil.kindContainerToRestObject({}, mockKind);

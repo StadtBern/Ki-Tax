@@ -4,6 +4,8 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import IDialogService = angular.material.IDialogService;
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
+import TSBetreuung from '../../../models/TSBetreuung';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 let template = require('./betreuungListView.html');
 
 
@@ -50,5 +52,18 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
 
     private openBetreuungView(): void {
         this.state.go('gesuch.betreuung');
+    }
+
+    /**
+     * Gibt den Betreuungsangebottyp der Institution, die mit der gegebenen Betreuung verknuepft ist zurueck.
+     * By default wird ein Leerzeichen zurueckgeliefert. 
+     * @param betreuung
+     * @returns {string} 
+     */
+    public getBetreuungsangebotTyp(betreuung: TSBetreuung): string {
+        if (betreuung && betreuung.institutionStammdaten) {
+            return TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp];
+        }
+        return '';
     }
 }
