@@ -18,8 +18,8 @@
                     ng-click="vm.editClicked(row)">
                     <td ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td ng-bind="row.erwerbspensumJA.pensum + '%'"></td>
-                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent +'%'"></td>
+                    <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
+                    <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td>
                         <button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
                                 class="btn btn-sm" title="{{vm.removeButtonTitle}}">
