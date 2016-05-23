@@ -11,15 +11,15 @@ import java.math.RoundingMode;
  */
 public class FinanzielleSituationResultateDTO {
 
-	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller1;
-	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller2;
-	private BigDecimal einkommenBeiderGesuchsteller;
-	private BigDecimal nettovermoegenFuenfProzent;
-	private BigDecimal anrechenbaresEinkommen;
-	private BigDecimal abzuegeBeiderGesuchsteller;
-	private BigDecimal abzugAufgrundFamiliengroesse;
-	private BigDecimal totalAbzuege;
-	private BigDecimal massgebendesEinkommen;
+	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller1  = BigDecimal.ZERO;
+	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller2 = BigDecimal.ZERO;
+	private BigDecimal einkommenBeiderGesuchsteller = BigDecimal.ZERO;
+	private BigDecimal nettovermoegenFuenfProzent = BigDecimal.ZERO;
+	private BigDecimal anrechenbaresEinkommen = BigDecimal.ZERO;
+	private BigDecimal abzuegeBeiderGesuchsteller = BigDecimal.ZERO;
+	private BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
+	private BigDecimal totalAbzuege = BigDecimal.ZERO;
+	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 	private Integer familiengroesse;
 
 
@@ -45,15 +45,15 @@ public class FinanzielleSituationResultateDTO {
 		}
 		// Alle Werte auf 0 initialisieren, falls Null
 		// Wenn negativ -> 0
-		geschaeftsgewinnDurchschnittGesuchsteller1 = positiveNonNull(geschaeftsgewinnDurchschnittGesuchsteller1);
-		geschaeftsgewinnDurchschnittGesuchsteller2 = positiveNonNull(geschaeftsgewinnDurchschnittGesuchsteller2);
-		einkommenBeiderGesuchsteller = positiveNonNull(einkommenBeiderGesuchsteller);
-		nettovermoegenFuenfProzent = positiveNonNull(nettovermoegenFuenfProzent);
-		anrechenbaresEinkommen = positiveNonNull(anrechenbaresEinkommen);
-		abzuegeBeiderGesuchsteller = positiveNonNull(abzuegeBeiderGesuchsteller);
-		abzugAufgrundFamiliengroesse = positiveNonNull(abzugAufgrundFamiliengroesse);
-		totalAbzuege = positiveNonNull(totalAbzuege);
-		massgebendesEinkommen = positiveNonNull(massgebendesEinkommen);
+		geschaeftsgewinnDurchschnittGesuchsteller1 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller1);
+		geschaeftsgewinnDurchschnittGesuchsteller2 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller2);
+		einkommenBeiderGesuchsteller = positiveNonNullAndRound(einkommenBeiderGesuchsteller);
+		nettovermoegenFuenfProzent = positiveNonNullAndRound(nettovermoegenFuenfProzent);
+		anrechenbaresEinkommen = positiveNonNullAndRound(anrechenbaresEinkommen);
+		abzuegeBeiderGesuchsteller = positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
+		abzugAufgrundFamiliengroesse = positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
+		totalAbzuege = positiveNonNullAndRound(totalAbzuege);
+		massgebendesEinkommen = positiveNonNullAndRound(massgebendesEinkommen);
 	}
 
 	private BigDecimal calcGeschaeftsgewinnDurchschnitt(FinanzielleSituation finanzielleSituation) {
@@ -84,7 +84,6 @@ public class FinanzielleSituationResultateDTO {
 		total = add(total, finanzielleSituation.getErsatzeinkommen());
 		total = add(total, finanzielleSituation.getErhalteneAlimente());
 		total = add(total, calcGeschaeftsgewinnDurchschnitt(finanzielleSituation));
-		total = subtract(total, finanzielleSituation.getGeleisteteAlimente());
 		return total;
 	}
 
@@ -109,15 +108,19 @@ public class FinanzielleSituationResultateDTO {
 	private BigDecimal percent(BigDecimal value, int percent) {
 		BigDecimal total = value != null ? value : BigDecimal.ZERO;
 		total = total.multiply(new BigDecimal(""+percent));
-		total = total.divide(new BigDecimal("100"), BigDecimal.ROUND_HALF_UP);
+		total = total.divide(new BigDecimal("100"), RoundingMode.HALF_UP);
 		return total;
 	}
 
-	private BigDecimal positiveNonNull(BigDecimal value) {
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	private BigDecimal positiveNonNullAndRound(BigDecimal value) {
 		if (value == null) {
 			return BigDecimal.ZERO;
 		}
 		// Returns the maximum of this BigDecimal and val.
+		value =  value.setScale(0, RoundingMode.HALF_UP);
 		return value.max(BigDecimal.ZERO);
 	}
 

@@ -3,9 +3,8 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
-import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
-import IFormController = angular.IFormController;
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
+import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationStartView.html');
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
@@ -21,8 +20,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
         super($state, gesuchModelManager);
-        // let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
-        // this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
+
         this.initViewModel();
     }
 

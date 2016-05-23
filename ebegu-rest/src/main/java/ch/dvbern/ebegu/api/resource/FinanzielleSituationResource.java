@@ -21,6 +21,8 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +56,9 @@ public class FinanzielleSituationResource {
 
 	@Inject
 	private Persistence<AbstractEntity> persistence;
+
+	@Resource
+ 	private EJBContext context;    //fuer rollback
 
 
 	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
@@ -97,9 +102,9 @@ public class FinanzielleSituationResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
-		persistence.getEntityManager().clear();
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
+		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
+		context.setRollbackOnly();
 		return Response.ok(finanzielleSituationResultateDTO).build();
 	}
 

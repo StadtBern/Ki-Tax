@@ -14,14 +14,15 @@ export class FinanzielleSituationResultateViewComponentConfig implements ICompon
     controllerAs = 'vm';
 }
 
+/**
+ * Controller fuer die Finanzielle Situation
+ */
 export class FinanzielleSituationResultateViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
         super($state, gesuchModelManager);
-        // let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
-        // this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
         this.calculate();
     }
@@ -32,7 +33,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     showGemeinsam(): boolean {
         return this.gesuchModelManager.isGesuchsteller2Required() &&
-                this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
+            this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
     }
 
     showGS1(): boolean {
@@ -59,8 +60,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
-            this.gesuchModelManager.updateGesuch();
-            this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
+            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
                 this.nextStep();
             });
         }
@@ -75,7 +75,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
-        return  this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+        return this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
     }
 
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {

@@ -4,6 +4,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,14 +21,17 @@ public class Gesuch extends AbstractEntity {
 	private Fall fall;
 
 	@Nullable
-	@OneToOne(optional = true)
+	@Valid
+	@OneToOne(cascade = CascadeType.ALL, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
 	@Nullable
-	@OneToOne(optional = true)
+	@Valid
+	@OneToOne(cascade = CascadeType.ALL, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@Valid
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
 	@Column(nullable = true)
