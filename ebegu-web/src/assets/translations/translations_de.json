@@ -364,8 +364,12 @@
     "STATUS": "Status",
     "AUSSTEHEND": "ausstehend",
     "WARTEN": "warten",
-    "SCHULAMT": "Schulamt",
+    "SCHULAMT": "nicht nötig",
     "ABGEWIESEN": "abgewiesen",
-    "BESTAETIGT": "bestätigt"
+    "BESTAETIGT": "bestätigt",
+    "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung",
+    "BETREUUNG_BESTAETIGT_TEXT": "Betreuungsangebot bestätigt",
+    "BETREUUNG_ABGEWIESEN_TEXT": "Betreuungsangebot abgewiesen",
+    "SCHULJAHR": "Betrifft Schuljahr {{schuljahr}}"
 }
 

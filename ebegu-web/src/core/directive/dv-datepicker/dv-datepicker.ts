@@ -12,7 +12,8 @@ export class DVDatepicker implements IDirective {
     scope = {
         ngModel: '=',
         inputId: '@',
-        ngRequired: '<'
+        ngRequired: '<',
+        ngDisabled: '<'
     };
     controller = DatepickerController;
     controllerAs = 'vm';

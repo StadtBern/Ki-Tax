@@ -3,13 +3,14 @@ import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
-import {getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -26,25 +27,34 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS', '$scope'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any, private $scope: any) {
         super(state, gesuchModelManager);
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
+
+        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
+        $scope.$on('$stateChangeStart', () => {
+            this.removeBetreuungFromKind();
+        });
     }
 
     private initViewModel() {
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
-            this.betreuungsangebot = $.grep(this.betreuungsangebotValues, (value: any) => {
-                return value.key === this.getInstitutionSD().betreuungsangebotTyp;
-            })[0];
+            this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
         if (!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) {
             this.createBetreuungspensum();
         }
+    }
+
+    private getBetreuungsangebotFromInstitutionList() {
+        return $.grep(this.betreuungsangebotValues, (value: any) => {
+            return value.key === this.getInstitutionSD().betreuungsangebotTyp;
+        })[0];
     }
 
     public getKindModel(): TSKindContainer {
@@ -57,6 +67,9 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController): void {
         if (form.$valid) {
+            if (this.isTagesschule() && this.getBetreuungModel()) {
+                this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
+            }
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
                 this.state.go('gesuch.betreuungen');
             });
@@ -113,19 +126,63 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public createBetreuungspensum(): void {
-        if (!this.getBetreuungspensen()) {
+        if (this.getBetreuungModel() && !this.getBetreuungspensen()) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(undefined, new TSDateRange())));
     }
 
-    public setSelectedInstitutionStammdaten() {
+    public setSelectedInstitutionStammdaten(): void {
         let instStamList = this.gesuchModelManager.institutionenList;
         for (let i: number = 0; i < instStamList.length; i++) {
             if (instStamList[i].id === this.instStammId) {
                 this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten = instStamList[i];
             }
         }
+    }
+
+    public platzAnfordern(form: IFormController): void {
+        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.WARTEN;
+        this.submit(form);
+    }
+
+    /**
+     * Returns true when the user is allowed to edit the content.
+     * @returns {boolean}
+     */
+    public isEnabled(): boolean {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND;
+        }
+        return false;
+    }
+
+    public isBetreuungsstatusWarten(): boolean {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.WARTEN;
+        }
+        return false;
+    }
+
+    public isBetreuungsstatusAbgewiesen(): boolean {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN;
+        }
+        return false;
+    }
+
+    public isBetreuungsstatusBestaetigt(): boolean {
+        if (this.getBetreuungModel()) {
+            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.BESTAETIGT;
+        }
+        return false;
+    }
+
+    public isTagesschule(): boolean {
+        if (this.betreuungsangebot) {
+            return this.betreuungsangebot.key === TSBetreuungsangebotTyp[TSBetreuungsangebotTyp.TAGESSCHULE];
+        }
+        return false;
     }
 
 }

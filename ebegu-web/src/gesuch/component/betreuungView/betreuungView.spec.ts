@@ -8,6 +8,7 @@ import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import IQService = angular.IQService;
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 describe('betreuungView', function () {
 
@@ -16,6 +17,7 @@ describe('betreuungView', function () {
     let $state: IStateService;
     let ebeguRestUtil: EbeguRestUtil;
     let $q: IQService;
+    let betreuung: TSBetreuung;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -25,7 +27,11 @@ describe('betreuungView', function () {
         $state = $injector.get('$state');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
         $q = $injector.get('$q');
-        betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil);
+        betreuung = new TSBetreuung();
+        betreuung.timestampErstellt = DateUtil.today();
+        spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
+        betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil, $injector.get('CONSTANTS'),
+            $injector.get('$rootScope').$new());
     }));
 
     describe('Public API', function () {
@@ -38,9 +44,6 @@ describe('betreuungView', function () {
         describe('cancel existing object', () => {
             it('should not remove the kind and then go to betreuungen', () => {
                 spyOn($state, 'go');
-                let betreuung: TSBetreuung = new TSBetreuung();
-                betreuung.timestampErstellt = DateUtil.today();
-                spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
 
                 betreuungView.cancel();
@@ -51,8 +54,7 @@ describe('betreuungView', function () {
         describe('cancel non-existing object', () => {
             it('should remove the kind and then go to betreuungen', () => {
                 spyOn($state, 'go');
-                let betreuung: TSBetreuung = new TSBetreuung();
-                spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
+                betreuung.timestampErstellt = undefined;
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
 
                 betreuungView.cancel();
@@ -84,18 +86,17 @@ describe('betreuungView', function () {
         });
         describe('createBetreuungspensum', () => {
             it('creates the first betreuungspensum in empty list and then a second one', () => {
-                spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(new TSBetreuung());
-                betreuungView.createBetreuungspensum();
+                // Just creating an object must add a new BetreuungspensumContainer
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
+                betreuungView.createBetreuungspensum();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(2);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumGS).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA).toBeDefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.pensum).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.gueltigkeit.gueltigAb).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.gueltigkeit.gueltigBis).toBeUndefined();
-
-                betreuungView.createBetreuungspensum();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(2);
             });
         });
         describe('submit', () => {
@@ -111,6 +112,19 @@ describe('betreuungView', function () {
                 let form: any = {};
                 form.$valid = true;
                 betreuungView.submit(form);
+                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+            });
+        });
+        describe('platzAnfordern()', () => {
+            it('must change the status of the Betreuung to WARTEN', () => {
+                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                let form: any = {};
+                form.$valid = true;
+                // betreuung.timestampErstellt = undefined;
+                betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
+                betreuungView.platzAnfordern(form);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.WARTEN);
                 expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
             });
         });

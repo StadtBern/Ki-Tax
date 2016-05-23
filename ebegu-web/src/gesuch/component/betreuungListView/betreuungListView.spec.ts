@@ -17,7 +17,10 @@ describe('betreuungListViewTest', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
-        betreuungListView = new BetreuungListViewController($state, gesuchModelManager);
+        let mddialog = $injector.get('$mdDialog');
+        let dialog = $injector.get('DvDialog');
+        let ebeguRestUtil = $injector.get('EbeguRestUtil');
+        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil);
     }));
 
     describe('Public API', function () {
