@@ -6,6 +6,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import IDialogService = angular.material.IDialogService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./kinderListView.html');
 let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
 
@@ -19,11 +20,11 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$mdDialog', 'DvDialog'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $mdDialog: IDialogService,
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private $mdDialog: IDialogService,
                 private DvDialog: DvDialog) {
-        super(state, gesuchModelManager);
+        super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
 

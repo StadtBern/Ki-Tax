@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,12 +25,15 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	@Column(nullable = false)
 	private Integer jahr;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationGS;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationSV;
 

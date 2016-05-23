@@ -20,7 +20,6 @@ import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
-import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 
 
 export default class GesuchModelManager {
@@ -30,7 +29,6 @@ export default class GesuchModelManager {
     gesuchstellerNumber: number;
     kindNumber: number;
     fachstellenList: Array<TSFachstelle>;
-    finanzielleSituationResultate: TSFinanzielleSituationResultateDTO;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'EbeguRestUtil'];
     /* @ngInject */
@@ -41,7 +39,6 @@ export default class GesuchModelManager {
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
         this.familiensituation = new TSFamiliensituation();
-        this.finanzielleSituationResultate = new TSFinanzielleSituationResultateDTO();
         this.fachstellenList = [];
         this.updateFachstellenList();
     }
@@ -121,15 +118,6 @@ export default class GesuchModelManager {
             this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
                 return finSitContRespo;
         });
-    }
-
-    public calculateFinanzielleSituation(): IPromise<TSFinanzielleSituationResultateDTO> {
-        return this.finanzielleSituationRS.calculateFinanzielleSituation(
-            this.gesuch)
-            .then((finSitContRespo: TSFinanzielleSituationResultateDTO) => {
-                this.finanzielleSituationResultate = finSitContRespo;
-                return finSitContRespo;
-            });
     }
 
     /**

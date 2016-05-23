@@ -23,21 +23,21 @@ public class FinanzielleSituationResultateDTO {
 	private Integer familiengroesse;
 
 
-	public FinanzielleSituationResultateDTO(Gesuch gesuch, Integer familiengroesse, BigDecimal abzugAufgrundFamiliengroesse) {
+	public FinanzielleSituationResultateDTO(Gesuch gesuch, Integer familiengroesse, BigDecimal famGroesseAbz) {
 		this.familiengroesse = familiengroesse;
-		this.abzugAufgrundFamiliengroesse = abzugAufgrundFamiliengroesse;
+		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
 		if (gesuch != null) {
 			if (gesuch.getGesuchsteller1() != null) {
-				this.geschaeftsgewinnDurchschnittGesuchsteller1 = calcGeschaeftsgewinnDurchschnitt(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV());
-				this.einkommenBeiderGesuchsteller = add(einkommenBeiderGesuchsteller, calcEinkommen(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV()));
-				this.nettovermoegenFuenfProzent = add(nettovermoegenFuenfProzent, calcVermoegen5Prozent(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV()));
-				this.abzuegeBeiderGesuchsteller = add(abzuegeBeiderGesuchsteller, gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV().getGeleisteteAlimente());
+				this.geschaeftsgewinnDurchschnittGesuchsteller1 = calcGeschaeftsgewinnDurchschnitt(getFinanzielleSituationGS1(gesuch));
+				this.einkommenBeiderGesuchsteller = add(einkommenBeiderGesuchsteller, calcEinkommen(getFinanzielleSituationGS1(gesuch)));
+				this.nettovermoegenFuenfProzent = add(nettovermoegenFuenfProzent, calcVermoegen5Prozent(getFinanzielleSituationGS1(gesuch)));
+				this.abzuegeBeiderGesuchsteller = add(abzuegeBeiderGesuchsteller, getFinanzielleSituationGS1(gesuch).getGeleisteteAlimente());
 			}
 			if (gesuch.getGesuchsteller2() != null) {
-				this.geschaeftsgewinnDurchschnittGesuchsteller2 = calcGeschaeftsgewinnDurchschnitt(gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV());
-				this.einkommenBeiderGesuchsteller = add(einkommenBeiderGesuchsteller, calcEinkommen(gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV()));
-				this.nettovermoegenFuenfProzent = add(nettovermoegenFuenfProzent, calcVermoegen5Prozent(gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV()));
-				this.abzuegeBeiderGesuchsteller = add(abzuegeBeiderGesuchsteller, gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV().getGeleisteteAlimente());
+				this.geschaeftsgewinnDurchschnittGesuchsteller2 = calcGeschaeftsgewinnDurchschnitt(getFinanzielleSituationGS2(gesuch));
+				this.einkommenBeiderGesuchsteller = add(einkommenBeiderGesuchsteller, calcEinkommen(getFinanzielleSituationGS2(gesuch)));
+				this.nettovermoegenFuenfProzent = add(nettovermoegenFuenfProzent, calcVermoegen5Prozent(getFinanzielleSituationGS2(gesuch)));
+				this.abzuegeBeiderGesuchsteller = add(abzuegeBeiderGesuchsteller, getFinanzielleSituationGS2(gesuch).getGeleisteteAlimente());
 			}
 			this.anrechenbaresEinkommen = add(einkommenBeiderGesuchsteller, nettovermoegenFuenfProzent);
 			this.totalAbzuege = add(abzuegeBeiderGesuchsteller, abzugAufgrundFamiliengroesse);
@@ -54,6 +54,20 @@ public class FinanzielleSituationResultateDTO {
 		abzugAufgrundFamiliengroesse = positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
 		totalAbzuege = positiveNonNullAndRound(totalAbzuege);
 		massgebendesEinkommen = positiveNonNullAndRound(massgebendesEinkommen);
+	}
+
+	private FinanzielleSituation getFinanzielleSituationGS1(Gesuch gesuch) {
+		if (gesuch.getGesuchsteller1() != null) {
+			return gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV();
+		}
+		return null;
+	}
+
+	private FinanzielleSituation getFinanzielleSituationGS2(Gesuch gesuch) {
+		if (gesuch.getGesuchsteller2() != null) {
+			return gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV();
+		}
+		return null;
 	}
 
 	private BigDecimal calcGeschaeftsgewinnDurchschnitt(FinanzielleSituation finanzielleSituation) {

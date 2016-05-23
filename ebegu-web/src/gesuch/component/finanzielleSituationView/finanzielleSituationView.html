@@ -181,13 +181,13 @@
                     <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 1">
                         <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS1"></label>
                         <input id="geschaeftsgewinnDurchschnittGS1" type="text" name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller1"
+                               ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                     <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
                         <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS2"></label>
                         <input id="geschaeftsgewinnDurchschnittGS2" type="text" name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller2"
+                               ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -235,7 +235,7 @@
 
         <pre>{{ vm.getModel() |json}}</pre>
 
-        <pre>{{ vm.gesuchModelManager.finanzielleSituationResultate |json}}</pre>
+        <pre>{{ vm.getResultate() |json}}</pre>
 
     </div>
 

@@ -5,6 +5,8 @@ import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
 import IFormController = angular.IFormController;
+import BerechnungsManager from '../../service/berechnungsManager';
+import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 let template = require('./finanzielleSituationView.html');
 
 export class FinanzielleSituationViewComponentConfig implements IComponentOptions {
@@ -16,10 +18,10 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
-        super($state, gesuchModelManager);
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private CONSTANTS: any) {
+        super($state, gesuchModelManager, berechnungsManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
@@ -80,7 +82,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     calculate() {
-        this.gesuchModelManager.calculateFinanzielleSituation();
+        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch);
     }
 
     resetForm() {
@@ -89,5 +91,9 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     public getModel(): TSFinanzielleSituationContainer {
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer;
+    }
+
+    public getResultate(): TSFinanzielleSituationResultateDTO {
+        return this.berechnungsManager.finanzielleSituationResultate;
     }
 }

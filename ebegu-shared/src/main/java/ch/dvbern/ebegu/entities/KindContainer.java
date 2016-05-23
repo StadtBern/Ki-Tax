@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -22,9 +23,11 @@ public class KindContainer extends AbstractEntity {
 	@ManyToOne(optional = false)
 	private Gesuch gesuch;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Kind kindGS;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Kind kindJA;
 

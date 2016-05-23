@@ -9,6 +9,7 @@ import {
     TSGesuchstellerKardinalitaet,
     getTSGesuchstellerKardinalitaetValues
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./familiensituationView.html');
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
@@ -24,10 +25,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
-    static $inject = ['$state', 'GesuchModelManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager) {
-        super($state, gesuchModelManager);
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+        super($state, gesuchModelManager, berechnungsManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
     }

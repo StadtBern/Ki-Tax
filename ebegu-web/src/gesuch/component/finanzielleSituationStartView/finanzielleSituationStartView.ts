@@ -5,6 +5,7 @@ import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import IFormController = angular.IFormController;
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./finanzielleSituationStartView.html');
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
@@ -16,10 +17,10 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any) {
-        super($state, gesuchModelManager);
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private CONSTANTS: any) {
+        super($state, gesuchModelManager, berechnungsManager);
 
         this.initViewModel();
     }
@@ -47,8 +48,9 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
-            this.gesuchModelManager.saveFinanzielleSituation();
-            this.nextStep();
+            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
+                this.nextStep();
+            });
         }
     }
 

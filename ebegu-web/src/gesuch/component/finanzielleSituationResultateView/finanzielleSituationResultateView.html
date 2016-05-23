@@ -14,7 +14,7 @@
                         <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS" for="einkommenBeiderGesuchsteller" ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
                         <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS" for="einkommenBeiderGesuchsteller" ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
                         <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller" ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS|translate}}"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.einkommenBeiderGesuchsteller"
+                               ng-model="vm.getResultate().einkommenBeiderGesuchsteller"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -90,7 +90,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN" for="nettovermoegenFuenfProzent"></label>
                         <input id="nettovermoegenFuenfProzent" type="text" name="nettovermoegenFuenfProzent" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.nettovermoegenFuenfProzent"
+                               ng-model="vm.getResultate().nettovermoegenFuenfProzent"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -104,7 +104,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN" for="anrechenbaresEinkommen"></label>
                         <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.anrechenbaresEinkommen"
+                               ng-model="vm.getResultate().anrechenbaresEinkommen"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -118,7 +118,7 @@
                         <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS" for="abzuegeBeiderGesuchsteller" ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
                         <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_EIN_GS" for="abzuegeBeiderGesuchsteller" ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
                         <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller" ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS|translate}}"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.abzuegeBeiderGesuchsteller"
+                               ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -129,10 +129,10 @@
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_ABZUG_FAMILIENGROESSE" for="abzugAufgrundFamiliengroesse"
-                               translate-values="{familiengroesse: vm.gesuchModelManager.finanzielleSituationResultate.familiengroesse }">
+                               translate-values="{familiengroesse: vm.getResultate().familiengroesse }">
                         </label>
                         <input id="abzugAufgrundFamiliengroesse" type="text" name="abzugAufgrundFamiliengroesse" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.abzugAufgrundFamiliengroesse"
+                               ng-model="vm.getResultate().abzugAufgrundFamiliengroesse"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -144,7 +144,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_TOTAL_ABZUEGE" for="totalAbzuege"></label>
                         <input id="totalAbzuege" type="text" name="totalAbzuege" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.totalAbzuege"
+                               ng-model="vm.getResultate().totalAbzuege"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -158,7 +158,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN" for="massgebendesEinkommen"></label>
                         <input id="massgebendesEinkommen" type="text" name="massgebendesEinkommen" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.finanzielleSituationResultate.massgebendesEinkommen"
+                               ng-model="vm.getResultate().massgebendesEinkommen"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>

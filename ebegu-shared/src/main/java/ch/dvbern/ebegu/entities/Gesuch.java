@@ -17,17 +17,18 @@ import java.util.Set;
 public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
+
 	@ManyToOne(optional = false)
 	private Fall fall;
 
 	@Nullable
 	@Valid
-	@OneToOne(cascade = CascadeType.ALL, optional = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
 	@Nullable
 	@Valid
-	@OneToOne(cascade = CascadeType.ALL, optional = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
