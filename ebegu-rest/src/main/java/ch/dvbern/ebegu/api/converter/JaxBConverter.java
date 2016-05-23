@@ -309,6 +309,7 @@ public class JaxBConverter {
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
 		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
+		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		return familiensituation;
 	}
 
@@ -319,6 +320,7 @@ public class JaxBConverter {
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
 		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
+		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		return jaxFamiliensituation;
 	}
 
@@ -362,6 +364,7 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
+		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
 		return gesuch;
 	}
 
@@ -378,7 +381,7 @@ public class JaxBConverter {
 		for (KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
 		}
-
+		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
 		return jaxGesuch;
 	}
 

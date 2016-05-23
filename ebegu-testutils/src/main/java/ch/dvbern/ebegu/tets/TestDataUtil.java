@@ -47,6 +47,7 @@ public final class TestDataUtil {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
 		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;

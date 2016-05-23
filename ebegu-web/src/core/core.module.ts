@@ -28,6 +28,7 @@ import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
 import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
 import ErwerbspensumRS from './service/erwerbspensumRS.rest';
+import BerechnungsManager from '../gesuch/service/berechnungsManager';
 
 let dynamicDependencies = function (): string[] {
 
@@ -92,6 +93,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
+    .service('BerechnungsManager', BerechnungsManager)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvErwerbspensumList', new DVErwerbspensumListConfig())

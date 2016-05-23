@@ -86,15 +86,11 @@ export default class GesuchModelManager {
         }
     }
 
-    ///**
-    // * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
-    // * automatisch gespeichert wenn Gesuch gespeichert wird.
-    // */
-    //public updateGesuch(): IPromise<TSGesuch> {
-    //    return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-    //        return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-    //    });
-    //}
+    public updateGesuch(): IPromise<TSGesuch> {
+       return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+           return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+       });
+    }
 
     /**
      * Speichert den StammdatenToWorkWith.
@@ -178,12 +174,19 @@ export default class GesuchModelManager {
 
     public initFinanzielleSituation(): void {
         this.initStammdaten();
-        if (!this.getStammdatenToWorkWith().finanzielleSituationContainer) {
+        if (!this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
-            this.getStammdatenToWorkWith().finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.jahr = 2015;
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+        }
+        if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
+            //TODO (hefr) Dummy Daten!
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
     }
 
@@ -209,9 +212,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public getBasisjahr(): string {
+    public getBasisjahr(): number {
         //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
-        return '2015';
+        return 2015;
     }
 
 

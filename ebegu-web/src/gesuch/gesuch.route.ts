@@ -10,9 +10,18 @@ export function gesuchRun(routerHelper: RouterHelper) {
 
 //array mit allen States
 function getStates(): IState[] {
-    return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
-        new EbeguKinderListState(), new EbeguFinanzielleSituationState(), new EbeguKindState(),
-        new EbeguErwerbspensenListState(), new EbeguErwerbspensumState()];
+    return [
+        new EbeguGesuchState(),
+        new EbeguFamiliensituationState(),
+        new EbeguStammdatenState(),
+        new EbeguKinderListState(),
+        new EbeguFinanzielleSituationStartState(),
+        new EbeguFinanzielleSituationState(),
+        new EbeguFinanzielleSituationResultateState(),
+        new EbeguKindState(),
+        new EbeguErwerbspensenListState(),
+        new EbeguErwerbspensumState()
+    ];
 }
 
 
@@ -67,6 +76,18 @@ export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
     template = '<finanzielle-situation-view>';
     url = '/finanzielleSituation/:gesuchstellerNumber';
+}
+
+export class EbeguFinanzielleSituationStartState implements IState {
+    name = 'gesuch.finanzielleSituationStart';
+    template = '<finanzielle-situation-start-view>';
+    url = '/finanzielleSituationStart';
+}
+
+export class EbeguFinanzielleSituationResultateState implements IState {
+    name = 'gesuch.finanzielleSituationResultate';
+    template = '<finanzielle-situation-resultate-view>';
+    url = '/finanzielleSituationResultate';
 }
 
 //PARAMS

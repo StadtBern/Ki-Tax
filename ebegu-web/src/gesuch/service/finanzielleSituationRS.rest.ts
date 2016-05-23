@@ -4,6 +4,8 @@ import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituation
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import TSGesuch from '../../models/TSGesuch';
+import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 
 
 export default class FinanzielleSituationRS {
@@ -31,6 +33,19 @@ export default class FinanzielleSituationRS {
         }).then((httpresponse: any) => {
             this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
             return this.ebeguRestUtil.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), httpresponse.data);
+        });
+    }
+
+    public calculateFinanzielleSituation(gesuch: TSGesuch): IPromise<TSFinanzielleSituationResultateDTO> {
+        let gesuchToSend = {};
+        gesuchToSend = this.ebeguRestUtil.gesuchToRestObject(gesuchToSend, gesuch);
+        return this.http.post(this.serviceURL + '/calculate', gesuchToSend, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((httpresponse: any) => {
+            this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
+            return this.ebeguRestUtil.parseFinanzielleSituationResultate(new TSFinanzielleSituationResultateDTO(), httpresponse.data);
         });
     }
 
