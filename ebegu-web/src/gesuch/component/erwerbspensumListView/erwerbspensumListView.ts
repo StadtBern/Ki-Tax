@@ -6,6 +6,7 @@ import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
+import BerechnungsManager from '../../service/berechnungsManager';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
@@ -34,10 +35,10 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$log', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $log: ILogService, private dvDialog: DvDialog) {
-        super(state, gesuchModelManager);
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private $log: ILogService, private dvDialog: DvDialog) {
+        super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
     }
 

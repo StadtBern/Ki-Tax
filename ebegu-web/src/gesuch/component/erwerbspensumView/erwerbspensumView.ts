@@ -12,6 +12,7 @@ import {
     getTSZuschlagsgrunde
 } from '../../../models/enums/TSZuschlagsgrund';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
+import BerechnungsManager from '../../service/berechnungsManager';
 import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
 
@@ -39,10 +40,11 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     erwerbspensum: TSErwerbspensumContainer;
     patternPercentage: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'CONSTANTS', '$scope'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope'];
     /* @ngInject */
-    constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager, private CONSTANTS: any, private $scope: any) {
-        super(state, gesuchModelManager);
+    constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any) {
+        super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
