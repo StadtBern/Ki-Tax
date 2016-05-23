@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -17,18 +18,22 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	@NotNull
 	@OneToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_FinanzielleSituationContainer_gesuchsteller_id"), nullable = false)
 	private Gesuchsteller gesuchsteller;
 
 	@NotNull
 	@Column(nullable = false)
 	private Integer jahr;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationGS;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
+	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private FinanzielleSituation finanzielleSituationSV;
 
@@ -39,10 +44,6 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	public void setGesuchsteller(Gesuchsteller gesuchsteller) {
 		this.gesuchsteller = gesuchsteller;
-		if (gesuchsteller != null &&
-				(gesuchsteller.getFinanzielleSituationContainer() == null || !gesuchsteller.getFinanzielleSituationContainer().equals(this))) {
-			gesuchsteller.setFinanzielleSituationContainer(this);
-		}
 	}
 
 	public Integer getJahr() {
