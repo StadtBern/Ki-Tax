@@ -21,4 +21,8 @@ export default class AbstractGesuchViewController {
     isAdminRole(): boolean {
         return true; // todo team wenn die Role definiert sind hier muss die Rolle berechnet werden
     }
+
+    isGesuchstellerRole(): boolean {
+        return false; // team wir haben gesagt ein user hat immer nur eine Rolle. Daher gilt wenn Rolle Gesuchsteller ist hat er nur diese Rolle.
+    }
 }

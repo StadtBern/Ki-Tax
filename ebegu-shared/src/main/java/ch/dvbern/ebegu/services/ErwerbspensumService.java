@@ -38,9 +38,9 @@ public interface ErwerbspensumService {
 	Collection<ErwerbspensumContainer> getAllErwerbspensenenContainer();
 
 	/**
-	 * entfernt eine Erwerbspensen aus der Databse
-	 * @param erwerbspensumContainer der Entfernt werden soll
+	 * entfernt eine Erwerbspensum aus der Databse
+	 * @param erwerbspensumContainerID der Entfernt werden soll
 	 */
-	void removeErwerbspensen(@Nonnull ErwerbspensumContainer erwerbspensumContainer);
+	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID);
 
 }

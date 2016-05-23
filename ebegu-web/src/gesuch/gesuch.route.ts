@@ -11,7 +11,8 @@ export function gesuchRun(routerHelper: RouterHelper) {
 //array mit allen States
 function getStates(): IState[] {
     return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
-        new EbeguKinderListState(), new EbeguFinanzielleSituationState(), new EbeguKindState()];
+        new EbeguKinderListState(), new EbeguFinanzielleSituationState(), new EbeguKindState(),
+        new EbeguErwerbspensenListState(), new EbeguErwerbspensumState()];
 }
 
 
@@ -48,6 +49,19 @@ export class EbeguKindState implements IState {
     url = '/kinder/kind/:kindNumber';
 }
 
+export class EbeguErwerbspensenListState implements IState {
+    name = 'gesuch.erwerbsPensen';
+    template = '<erwerbspensum-list-view>';
+    url = '/erwerbspensen';
+}
+
+
+export class EbeguErwerbspensumState implements IState {
+    name = 'gesuch.erwerbsPensum';
+    template = '<erwerbspensum-view>';
+    url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum';
+}
+
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
@@ -62,4 +76,9 @@ export class IStammdatenStateParams implements IStateParamsService {
 
 export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
+}
+
+export class IErwerbspensumStateParams implements IStateParamsService {
+    gesuchstellerNumber: string;
+    erwerbspensumNum: string;
 }

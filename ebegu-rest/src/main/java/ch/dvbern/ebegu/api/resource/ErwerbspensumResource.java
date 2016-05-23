@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * REST Resource fuer FinanzielleSituation
  */
-@Path("erwerbspensum")
+@Path("erwerbspensen")
 @Stateless
 @Api(description = "Resource welche zum bearbeiten des Erwerbspensums dient")
 public class ErwerbspensumResource {
@@ -122,6 +122,19 @@ public class ErwerbspensumResource {
 			.map(erwerbspensumContainer -> converter.erwerbspensumContainerToJAX(erwerbspensumContainer))
 			.collect(Collectors.toList());
 		return erwerbspensenList;
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{erwerbspensumContID}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeErwerbspensum(
+		@Nonnull @NotNull @PathParam("erwerbspensumContID") JaxId erwerbspensumContIDJAXPId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(erwerbspensumContIDJAXPId.getId());
+		erwerbspensumService.removeErwerbspensum(converter.toEntityId(erwerbspensumContIDJAXPId));
+		return Response.ok().build();
 	}
 
 

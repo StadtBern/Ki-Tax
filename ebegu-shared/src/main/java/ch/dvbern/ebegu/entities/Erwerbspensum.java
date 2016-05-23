@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import java.util.Objects;
  */
 @Entity
 @Audited
+@CheckZuschlagPensum
 public class Erwerbspensum extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = 4649639217797690323L;
