@@ -8,6 +8,7 @@ export default class TSGesuch extends TSAbstractEntity {
     private _gesuchsteller1: TSGesuchsteller;
     private _gesuchsteller2: TSGesuchsteller;
     private _kindContainer: Array<TSKindContainer>;
+    private _einkommensverschlechterung: boolean;
 
 
     public get fall(): TSFall {
@@ -40,5 +41,13 @@ export default class TSGesuch extends TSAbstractEntity {
 
     set kindContainer(value: Array<TSKindContainer>) {
         this._kindContainer = value;
+    }
+
+    get einkommensverschlechterung(): boolean {
+        return this._einkommensverschlechterung;
+    }
+
+    set einkommensverschlechterung(value: boolean) {
+        this._einkommensverschlechterung = value;
     }
 }

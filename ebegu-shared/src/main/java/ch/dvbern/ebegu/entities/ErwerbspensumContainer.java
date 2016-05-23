@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 
 /**
  * Container-Entity für das Erwerbspensum: Diese muss für die  Benutzertypen (GS, JA) einzeln geführt werden,
@@ -19,10 +20,12 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_gesuchsteller_id"))
 	private Gesuchsteller gesuchsteller;
 
+	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumgs_id"))
 	private Erwerbspensum erwerbspensumGS;
 
+	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;

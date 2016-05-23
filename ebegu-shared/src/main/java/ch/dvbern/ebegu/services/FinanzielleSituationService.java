@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -37,5 +38,11 @@ public interface FinanzielleSituationService {
 	 * @param finanzielleSituation FinanzielleSituation zu entfernen
 	 */
 	void removeFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation);
+
+	/**
+	 * Berechnet die Finanzielle Situation beider Gesuchsteller
+     */
+	@Nonnull
+	FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch);
 
 }

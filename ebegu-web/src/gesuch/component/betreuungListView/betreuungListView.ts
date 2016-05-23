@@ -9,6 +9,7 @@ import IDialogService = angular.material.IDialogService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {BetreuungRemoveDialogController} from '../../dialog/BetreuungRemoveDialogController';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./betreuungListView.html');
 let removeBetreuungTemplate = require('../../dialog/removeBetreuungDialogTemplate.html');
 
@@ -22,11 +23,11 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
 
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog', 'EbeguRestUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $mdDialog: IDialogService,
-                private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil) {
-        super(state, gesuchModelManager);
+                private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil, berechnungsManager: BerechnungsManager) {
+        super(state, gesuchModelManager, berechnungsManager);
     }
 
     submit(): void {

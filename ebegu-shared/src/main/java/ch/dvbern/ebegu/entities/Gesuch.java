@@ -4,6 +4,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,19 +17,26 @@ import java.util.Set;
 public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
+
 	@ManyToOne(optional = false)
 	private Fall fall;
 
 	@Nullable
-	@OneToOne(optional = true)
+	@Valid
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
 	@Nullable
-	@OneToOne(optional = true)
+	@Valid
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@Valid
 	private Set<KindContainer> kindContainers = new HashSet<>();
+
+	@Column(nullable = true)
+	private Boolean einkommensverschlechterung;
 
 
 	public Fall getFall() {
@@ -63,6 +71,14 @@ public class Gesuch extends AbstractEntity {
 
 	public void setKindContainers(Set<KindContainer> kindContainers) {
 		this.kindContainers = kindContainers;
+	}
+
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
 	}
 
 	public boolean addKindContainer(@NotNull KindContainer kindContainer) {

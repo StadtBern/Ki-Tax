@@ -22,10 +22,13 @@ import TSKindContainer from '../models/TSKindContainer';
 import TSKind from '../models/TSKind';
 import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
 import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
+import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
+import TSErwerbspensum from '../models/TSErwerbspensum';
+import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
+import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSituationResultateDTO';
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import {TSAbstractPensumEntity} from '../models/TSAbstractPensumEntity';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -98,7 +101,7 @@ export default class EbeguRestUtil {
         restPersonObject.geschlecht = personObject.geschlecht;
     }
 
-    private abstractDateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
+    private abstractDateRangeEntityToRestObject(restObj: any, dateRangedEntity: TSAbstractDateRangedEntity) {
         this.abstractEntityToRestObject(restObj, dateRangedEntity);
         if (dateRangedEntity && dateRangedEntity.gueltigkeit) {
             restObj.gueltigAb = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigAb);
@@ -106,7 +109,7 @@ export default class EbeguRestUtil {
         }
     }
 
-    private abstractPensumEntitytoRestObject(pensumEntity: TSAbstractPensumEntity, restObj: any) {
+    private abstractPensumEntityToRestObject(pensumEntity: TSAbstractPensumEntity, restObj: any) {
         this.abstractDateRangeEntityToRestObject(pensumEntity, restObj);
         restObj.pensum = pensumEntity.pensum;
     }
@@ -146,7 +149,7 @@ export default class EbeguRestUtil {
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
             adresseTS.plz = receivedAdresse.plz;
             adresseTS.ort = receivedAdresse.ort;
-            adresseTS.land =  (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
+            adresseTS.land = (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
             return adresseTS;
@@ -197,6 +200,14 @@ export default class EbeguRestUtil {
             if (gesuchsteller.finanzielleSituationContainer) {
                 restGesuchsteller.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchsteller.finanzielleSituationContainer);
             }
+            if (gesuchsteller.erwerbspensenContainer) {
+                let erwPensenCont: Array<any> = [];
+                for (var i = 0; i < gesuchsteller.erwerbspensenContainer.length; i++) {
+                    erwPensenCont.push(this.erwerbspensumContainerToRestObject({}, gesuchsteller.erwerbspensenContainer[i]));
+                }
+                restGesuchsteller.erwerbspensenContainers = erwPensenCont;
+
+            }
             return restGesuchsteller;
         }
         return undefined;
@@ -214,10 +225,58 @@ export default class EbeguRestUtil {
             gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
             gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
             gesuchstellerTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerFromServer.finanzielleSituationContainer);
+            gesuchstellerTS.erwerbspensenContainer = this.parseErwerbspensenContainers(gesuchstellerFromServer.erwerbspensenContainers);
             return gesuchstellerTS;
         }
         return undefined;
 
+    }
+
+    public parseErwerbspensumContainer(erwerbspensumContainer: TSErwerbspensumContainer, ewpContFromServer: any): TSErwerbspensumContainer {
+        if (ewpContFromServer) {
+            this.parseAbstractEntity(erwerbspensumContainer, ewpContFromServer);
+            erwerbspensumContainer.erwerbspensumGS = this.parseErwerbspensum(erwerbspensumContainer.erwerbspensumGS || new TSErwerbspensum(), ewpContFromServer.erwerbspensumGS);
+            erwerbspensumContainer.erwerbspensumJA = this.parseErwerbspensum(erwerbspensumContainer.erwerbspensumJA || new TSErwerbspensum(), ewpContFromServer.erwerbspensumJA);
+            return erwerbspensumContainer;
+        }
+        return undefined;
+    }
+
+    public erwerbspensumContainerToRestObject(restEwpContainer: any, erwerbspensumContainer: TSErwerbspensumContainer): any {
+        if (erwerbspensumContainer) {
+            this.abstractEntityToRestObject(restEwpContainer, erwerbspensumContainer);
+            restEwpContainer.erwerbspensumGS = this.erwerbspensumToRestObject({}, erwerbspensumContainer.erwerbspensumGS);
+            restEwpContainer.erwerbspensumJA = this.erwerbspensumToRestObject({}, erwerbspensumContainer.erwerbspensumJA);
+            return restEwpContainer;
+        }
+        return undefined;
+    }
+
+    public parseErwerbspensum(erwerbspensum: TSErwerbspensum, erwerbspensumFromServer: any): TSErwerbspensum {
+        if (erwerbspensumFromServer) {
+            this.parseAbstractPensumEntity(erwerbspensum, erwerbspensumFromServer);
+            erwerbspensum.gesundheitlicheEinschraenkungen = erwerbspensumFromServer.gesundheitlicheEinschraenkungen;
+            erwerbspensum.taetigkeit = erwerbspensumFromServer.taetigkeit;
+            erwerbspensum.zuschlagsgrund = erwerbspensumFromServer.zuschlagsgrund;
+            erwerbspensum.zuschlagsprozent = erwerbspensumFromServer.zuschlagsprozent;
+            erwerbspensum.zuschlagZuErwerbspensum = erwerbspensumFromServer.zuschlagZuErwerbspensum;
+            return erwerbspensum;
+        } else {
+            return undefined;
+        }
+    }
+
+    public erwerbspensumToRestObject(restErwerbspensum: any, erwerbspensum: TSErwerbspensum): any {
+        if (erwerbspensum) {
+            this.abstractPensumEntityToRestObject(erwerbspensum, restErwerbspensum);
+            restErwerbspensum.gesundheitlicheEinschraenkungen = erwerbspensum.gesundheitlicheEinschraenkungen;
+            restErwerbspensum.taetigkeit = erwerbspensum.taetigkeit;
+            restErwerbspensum.zuschlagsgrund = erwerbspensum.zuschlagsgrund;
+            restErwerbspensum.zuschlagsprozent = erwerbspensum.zuschlagsprozent;
+            restErwerbspensum.zuschlagZuErwerbspensum = erwerbspensum.zuschlagZuErwerbspensum;
+            return restErwerbspensum;
+        }
+        return undefined;
     }
 
     public familiensituationToRestObject(restFamiliensituation: any, familiensituation: TSFamiliensituation): TSFamiliensituation {
@@ -226,6 +285,7 @@ export default class EbeguRestUtil {
         restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
         restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
         restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
+        restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
 
         return restFamiliensituation;
     }
@@ -238,6 +298,7 @@ export default class EbeguRestUtil {
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gesuch = this.parseGesuch(familiensituation.gesuch, familiensituationFromServer.gesuch);
+            familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             return familiensituation;
         }
         return undefined;
@@ -263,7 +324,7 @@ export default class EbeguRestUtil {
         restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-
+        restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
         return restGesuch;
     }
 
@@ -273,6 +334,7 @@ export default class EbeguRestUtil {
             gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
+            gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
             return gesuchTS;
         }
         return undefined;
@@ -495,6 +557,37 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public finanzielleSituationResultateToRestObject(restFinanzielleSituationResultate: any, finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO): TSFinanzielleSituationResultateDTO {
+        restFinanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller1 = finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller1;
+        restFinanzielleSituationResultate.geschaeftsgewinnDurchschnittGesuchsteller2 = finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller2;
+        restFinanzielleSituationResultate.einkommenBeiderGesuchsteller = finanzielleSituationResultateDTO.einkommenBeiderGesuchsteller;
+        restFinanzielleSituationResultate.nettovermoegenFuenfProzent = finanzielleSituationResultateDTO.nettovermoegenFuenfProzent;
+        restFinanzielleSituationResultate.anrechenbaresEinkommen = finanzielleSituationResultateDTO.anrechenbaresEinkommen;
+        restFinanzielleSituationResultate.abzuegeBeiderGesuchsteller = finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller;
+        restFinanzielleSituationResultate.abzugAufgrundFamiliengroesse = finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse;
+        restFinanzielleSituationResultate.totalAbzuege = finanzielleSituationResultateDTO.totalAbzuege;
+        restFinanzielleSituationResultate.massgebendesEinkommen = finanzielleSituationResultateDTO.massgebendesEinkommen;
+        restFinanzielleSituationResultate.familiengroesse = finanzielleSituationResultateDTO.familiengroesse;
+        return restFinanzielleSituationResultate;
+    }
+
+    public parseFinanzielleSituationResultate(finanzielleSituationResultateDTO: TSFinanzielleSituationResultateDTO, finanzielleSituationResultateFromServer: any): TSFinanzielleSituationResultateDTO {
+        if (finanzielleSituationResultateFromServer) {
+            finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller1 = finanzielleSituationResultateFromServer.geschaeftsgewinnDurchschnittGesuchsteller1;
+            finanzielleSituationResultateDTO.geschaeftsgewinnDurchschnittGesuchsteller2 = finanzielleSituationResultateFromServer.geschaeftsgewinnDurchschnittGesuchsteller2;
+            finanzielleSituationResultateDTO.einkommenBeiderGesuchsteller = finanzielleSituationResultateFromServer.einkommenBeiderGesuchsteller;
+            finanzielleSituationResultateDTO.nettovermoegenFuenfProzent = finanzielleSituationResultateFromServer.nettovermoegenFuenfProzent;
+            finanzielleSituationResultateDTO.anrechenbaresEinkommen = finanzielleSituationResultateFromServer.anrechenbaresEinkommen;
+            finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller = finanzielleSituationResultateFromServer.abzuegeBeiderGesuchsteller;
+            finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse = finanzielleSituationResultateFromServer.abzugAufgrundFamiliengroesse;
+            finanzielleSituationResultateDTO.totalAbzuege = finanzielleSituationResultateFromServer.totalAbzuege;
+            finanzielleSituationResultateDTO.massgebendesEinkommen = finanzielleSituationResultateFromServer.massgebendesEinkommen;
+            finanzielleSituationResultateDTO.familiengroesse = finanzielleSituationResultateFromServer.familiengroesse;
+            return finanzielleSituationResultateDTO;
+        }
+        return undefined;
+    }
+
     public kindContainerToRestObject(restKindContainer: any, kindContainer: TSKindContainer): any {
         this.abstractEntityToRestObject(restKindContainer, kindContainer);
         if (kindContainer.kindGS) {
@@ -628,7 +721,7 @@ export default class EbeguRestUtil {
     }
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
-        this.abstractPensumEntitytoRestObject(betreuungspensum, restBetreuungspensum);
+        this.abstractPensumEntityToRestObject(betreuungspensum, restBetreuungspensum);
         return restBetreuungspensum;
     }
 
@@ -690,4 +783,19 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+
+    private parseErwerbspensenContainers(data: Array<any>): TSErwerbspensumContainer[] {
+        let erwerbspensen: TSErwerbspensumContainer[] = [];
+        if (data !== null && data !== undefined) {
+            if (Array.isArray(data)) {
+                for (var i = 0; i < data.length; i++) {
+                    erwerbspensen[i] = this.parseErwerbspensumContainer(new TSErwerbspensumContainer(), data[i]);
+                }
+            } else {
+                erwerbspensen[0] = this.parseErwerbspensumContainer(new TSErwerbspensumContainer(), data);
+            }
+        }
+        return erwerbspensen;
+
+    }
 }

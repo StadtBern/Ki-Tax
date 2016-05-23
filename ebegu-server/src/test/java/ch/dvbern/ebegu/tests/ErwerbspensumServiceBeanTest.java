@@ -87,7 +87,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ErwerbspensumContainer insertedEwpCont = insertNewEntity();
 		Assert.assertEquals(1, erwerbspensumService.getAllErwerbspensenenContainer().size());
 
-		erwerbspensumService.removeErwerbspensen(insertedEwpCont);
+		erwerbspensumService.removeErwerbspensum(insertedEwpCont.getId());
 		Assert.assertEquals(0, erwerbspensumService.getAllErwerbspensenenContainer().size());
 	}
 

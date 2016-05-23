@@ -5,6 +5,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ public class Kind extends AbstractPersonEntity {
 	@Nullable
 	private Boolean mutterspracheDeutsch;
 
+	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	private PensumFachstelle pensumFachstelle;
 

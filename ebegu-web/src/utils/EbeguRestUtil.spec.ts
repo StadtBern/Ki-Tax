@@ -7,8 +7,6 @@ import {EbeguWebCore} from '../core/core.module';
 import TSGesuchsteller from '../models/TSGesuchsteller';
 import {TSGeschlecht} from '../models/enums/TSGeschlecht';
 import {TSAdressetyp} from '../models/enums/TSAdressetyp';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import {TSFachstelle} from '../models/TSFachstelle';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import {TSMandant} from '../models/TSMandant';
@@ -18,6 +16,12 @@ import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../models/enums/TSBetreuungsangebotTyp';
 import DateUtil from './DateUtil';
 import {TSDateRange} from '../models/types/TSDateRange';
+import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
+import TSErwerbspensum from '../models/TSErwerbspensum';
+import {TSTaetigkeit} from '../models/enums/TSTaetigkeit';
+import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
 import TSBetreuung from '../models/TSBetreuung';
 import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
@@ -108,7 +112,7 @@ describe('EbeguRestUtil', function () {
                 adresse.id = '1234567';
                 adresse.gueltigkeit = new TSDateRange(today, today);
 
-                let restAdresse: any =  ebeguRestUtil.adresseToRestObject({}, adresse);
+                let restAdresse: any = ebeguRestUtil.adresseToRestObject({}, adresse);
                 expect(restAdresse).toBeDefined();
                 let adr: TSAdresse = ebeguRestUtil.parseAdresse(new TSAdresse(), restAdresse);
                 expect(adr).toBeDefined();
@@ -120,7 +124,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
-                let myGesuchsteller =  new TSGesuchsteller();
+                let myGesuchsteller = new TSGesuchsteller();
                 myGesuchsteller.vorname = 'Til';
                 myGesuchsteller.nachname = 'TestGesuchsteller';
                 myGesuchsteller.id = 'mytestid';
@@ -135,7 +139,7 @@ describe('EbeguRestUtil', function () {
                 myGesuchsteller.timestampErstellt = undefined;
                 myGesuchsteller.timestampMutiert = undefined;
                 myGesuchsteller.finanzielleSituationContainer = undefined;
-                let restGesuchsteller =  ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
+                let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
                 let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
                 expect(transformedPers).toBeDefined();
@@ -145,20 +149,20 @@ describe('EbeguRestUtil', function () {
             });
         });
         describe('parseFachstelle()', () => {
-           it('should transform TSFachstelle to REST object and back', () => {
-               let myFachstelle = new TSFachstelle('Fachstelle_name', 'Beschreibung', true);
-               setAbstractFieldsUndefined(myFachstelle);
+            it('should transform TSFachstelle to REST object and back', () => {
+                let myFachstelle = new TSFachstelle('Fachstelle_name', 'Beschreibung', true);
+                setAbstractFieldsUndefined(myFachstelle);
 
-               let restFachstelle = ebeguRestUtil.fachstelleToRestObject({}, myFachstelle);
-               expect(restFachstelle).toBeDefined();
-               expect(restFachstelle.name).toEqual(myFachstelle.name);
-               expect(restFachstelle.beschreibung).toEqual(myFachstelle.beschreibung);
-               expect(restFachstelle.behinderungsbestaetigung).toEqual(myFachstelle.behinderungsbestaetigung);
+                let restFachstelle = ebeguRestUtil.fachstelleToRestObject({}, myFachstelle);
+                expect(restFachstelle).toBeDefined();
+                expect(restFachstelle.name).toEqual(myFachstelle.name);
+                expect(restFachstelle.beschreibung).toEqual(myFachstelle.beschreibung);
+                expect(restFachstelle.behinderungsbestaetigung).toEqual(myFachstelle.behinderungsbestaetigung);
 
-               let transformedFachstelle = ebeguRestUtil.parseFachstelle(new TSFachstelle(), restFachstelle);
-               expect(transformedFachstelle).toBeDefined();
-               expect(transformedFachstelle).toEqual(myFachstelle);
-           });
+                let transformedFachstelle = ebeguRestUtil.parseFachstelle(new TSFachstelle(), restFachstelle);
+                expect(transformedFachstelle).toBeDefined();
+                expect(transformedFachstelle).toEqual(myFachstelle);
+            });
         });
         describe('parseMandant()', () => {
             it('should transform TSMandant to REST object and back', () => {
@@ -295,6 +299,32 @@ describe('EbeguRestUtil', function () {
                 expect(returnedList[1].value).toEqual('Zweiter');
             });
         });
+        describe('parseErwerbspensenContainer()', () => {
+            it('should transform TSErwerbspensum to REST object and back', () => {
+                var erwerbspensumContainer = createErwerbspensumContainer();
+                let erwerbspensumJA = erwerbspensumContainer.erwerbspensumJA;
+
+                let restErwerbspensum = ebeguRestUtil.erwerbspensumToRestObject({}, erwerbspensumContainer.erwerbspensumJA);
+                expect(restErwerbspensum).toBeDefined();
+                expect(restErwerbspensum.taetigkeit).toEqual(erwerbspensumJA.taetigkeit);
+                expect(restErwerbspensum.pensum).toEqual(erwerbspensumJA.pensum);
+                expect(restErwerbspensum.gueltigAb).toEqual(DateUtil.momentToLocalDate(erwerbspensumJA.gueltigkeit.gueltigAb));
+                expect(restErwerbspensum.gueltigBis).toEqual(DateUtil.momentToLocalDate(erwerbspensumJA.gueltigkeit.gueltigBis));
+                expect(restErwerbspensum.zuschlagZuErwerbspensum).toEqual(erwerbspensumJA.zuschlagZuErwerbspensum);
+                expect(restErwerbspensum.zuschlagsprozent).toEqual(erwerbspensumJA.zuschlagsprozent);
+                expect(restErwerbspensum.zuschlagsgrund).toEqual(erwerbspensumJA.zuschlagsgrund);
+                expect(restErwerbspensum.gesundheitlicheEinschraenkungen).toEqual(erwerbspensumJA.gesundheitlicheEinschraenkungen);
+
+                let transformedErwerbspensum = ebeguRestUtil.parseErwerbspensum(new TSErwerbspensum(), restErwerbspensum);
+
+                // Dieses hack wird gebraucht weil um 2 Moment zu vergleichen kann man nicht einfach equal() benutzen sondern isSame
+                expect(erwerbspensumJA.gueltigkeit.gueltigAb.isSame(transformedErwerbspensum.gueltigkeit.gueltigAb)).toBe(true);
+                expect(erwerbspensumJA.gueltigkeit.gueltigBis.isSame(transformedErwerbspensum.gueltigkeit.gueltigBis)).toBe(true);
+                erwerbspensumJA.gueltigkeit.gueltigAb = transformedErwerbspensum.gueltigkeit.gueltigAb;
+                erwerbspensumJA.gueltigkeit.gueltigBis = transformedErwerbspensum.gueltigkeit.gueltigBis;
+                expect(transformedErwerbspensum).toEqual(erwerbspensumJA);
+            });
+        });
     });
 
     function setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
@@ -317,6 +347,22 @@ describe('EbeguRestUtil', function () {
         expect(abstrTocopyTo.gueltigkeit.gueltigAb.isSame(abstrToCopyFrom.gueltigkeit.gueltigAb)).toBe(true);
         expect(abstrTocopyTo.gueltigkeit.gueltigBis.isSame(abstrToCopyFrom.gueltigkeit.gueltigBis)).toBe(true);
         abstrTocopyTo.gueltigkeit = abstrToCopyFrom.gueltigkeit;
+    }
+
+    function createErwerbspensumContainer(): TSErwerbspensumContainer {
+        let dummyErwerbspensum = new TSErwerbspensum();
+        dummyErwerbspensum.gesundheitlicheEinschraenkungen = false;
+        dummyErwerbspensum.taetigkeit = TSTaetigkeit.ANGESTELLT;
+        dummyErwerbspensum.pensum = 80;
+        dummyErwerbspensum.gueltigkeit = new TSDateRange(DateUtil.today(), DateUtil.today().add(7, 'months'));
+        dummyErwerbspensum.zuschlagZuErwerbspensum = true;
+        dummyErwerbspensum.zuschlagsprozent = 20;
+        dummyErwerbspensum.zuschlagsgrund = TSZuschlagsgrund.FIXE_ARBEITSZEITEN;
+        let dummyErwerbspensumContainer: TSErwerbspensumContainer = new TSErwerbspensumContainer();
+        dummyErwerbspensumContainer.erwerbspensumJA = dummyErwerbspensum;
+        setAbstractFieldsUndefined(dummyErwerbspensum);
+        setAbstractFieldsUndefined(dummyErwerbspensumContainer);
+        return dummyErwerbspensumContainer;
     }
 
 });

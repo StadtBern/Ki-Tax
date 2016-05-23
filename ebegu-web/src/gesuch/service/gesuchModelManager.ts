@@ -20,6 +20,8 @@ import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
 import {TSFachstelle} from '../../models/TSFachstelle';
 import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
+import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
+import ErwerbspensumRS from '../../core/service/erwerbspensumRS.rest';
 import TSBetreuung from '../../models/TSBetreuung';
 import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
@@ -32,16 +34,16 @@ export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
-    private gesuchstellerNumber: number;
+    gesuchstellerNumber: number;
     private kindNumber: number;
     private betreuungNumber: number;
     fachstellenList: Array<TSFachstelle>;
     institutionenList: Array<TSInstitutionStammdaten>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
-                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS,
+                private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil) {
 
         this.fall = new TSFall();
@@ -103,15 +105,11 @@ export default class GesuchModelManager {
         }
     }
 
-    ///**
-    // * Da die Verkuepfung zwischen Gesuchsteller und Gesuch 'cascade' ist, werden die Gesuchsteller
-    // * automatisch gespeichert wenn Gesuch gespeichert wird.
-    // */
-    //public updateGesuch(): IPromise<TSGesuch> {
-    //    return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-    //        return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-    //    });
-    //}
+    public updateGesuch(): IPromise<TSGesuch> {
+       return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+           return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+       });
+    }
 
     /**
      * Speichert den StammdatenToWorkWith.
@@ -138,9 +136,9 @@ export default class GesuchModelManager {
         return this.finanzielleSituationRS.saveFinanzielleSituation(
             this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith())
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
-            this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
+                this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
                 return finSitContRespo;
-        });
+            });
     }
 
     /**
@@ -207,12 +205,19 @@ export default class GesuchModelManager {
 
     public initFinanzielleSituation(): void {
         this.initStammdaten();
-        if (!this.getStammdatenToWorkWith().finanzielleSituationContainer) {
+        if (!this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
-            this.getStammdatenToWorkWith().finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.jahr = 2015;
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
+        }
+        if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
+            //TODO (hefr) Dummy Daten!
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
     }
 
@@ -244,9 +249,9 @@ export default class GesuchModelManager {
         }
     }
 
-    public getBasisjahr(): string {
+    public getBasisjahr(): number {
         //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
-        return '2015';
+        return 2015;
     }
 
 
@@ -307,8 +312,7 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        //todo team KindJA setzen  todo homa was
-        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind(), []));
+        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
         this.kindNumber = this.gesuch.kindContainer.length;
     }
 
@@ -463,4 +467,50 @@ export default class GesuchModelManager {
         });
     }
 
+
+    public removeErwerbspensum(pensum: TSErwerbspensumContainer) {
+        let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
+        erwerbspensenOfCurrentGS = this.getStammdatenToWorkWith().erwerbspensenContainer;
+        let index: number = erwerbspensenOfCurrentGS.indexOf(pensum);
+        if (index >= 0) {
+            let pensumToRemove: TSErwerbspensumContainer = this.getStammdatenToWorkWith().erwerbspensenContainer[index];
+            if (pensumToRemove.id) { //wenn id vorhanden dann aus der DB loeschen
+                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id)
+                    .then((ewpContainer: TSErwerbspensumContainer) => {
+                        erwerbspensenOfCurrentGS.splice(index, 1);
+                    });
+            } else {
+                //sonst nur vom gui wegnehmen
+                erwerbspensenOfCurrentGS.splice(index, 1);
+            }
+        } else {
+            console.log('can not remove Erwerbspensum since it  could not be found in list');
+        }
+    }
+
+    findIndexOfErwerbspensum(gesuchstellerNumber: number, pensum: any): number {
+        let gesuchsteller: TSGesuchsteller;
+        gesuchsteller = gesuchstellerNumber === 2 ? this.gesuch.gesuchsteller2 : this.gesuch.gesuchsteller1;
+        return gesuchsteller.erwerbspensenContainer.indexOf(pensum);
+    }
+
+    saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
+        if (erwerbspensum.id) {
+            return this.erwerbspensumRS.updateErwerbspensum(erwerbspensum, gesuchsteller.id)
+                .then((response: TSErwerbspensumContainer) => {
+                    let i = gesuchsteller.erwerbspensenContainer.indexOf(erwerbspensum);
+                    if (i >= 0) {
+                        gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
+                    }
+                    return response;
+                });
+        } else {
+            return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
+                .then((storedErwerbspensum: TSErwerbspensumContainer) => {
+                    gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
+                    return storedErwerbspensum;
+                });
+        }
+
+    }
 }

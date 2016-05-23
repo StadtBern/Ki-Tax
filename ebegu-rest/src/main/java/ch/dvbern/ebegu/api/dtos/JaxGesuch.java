@@ -29,6 +29,8 @@ public class JaxGesuch extends JaxAbstractDTO {
 	@NotNull
 	private Set<JaxKindContainer> kinder = new HashSet<>();
 
+	private Boolean einkommensverschlechterung;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -66,6 +68,14 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	public void setKinder(Set<JaxKindContainer> kinder) {
 		this.kinder = kinder;
+	}
+
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
 	}
 }
 

@@ -27,6 +27,9 @@ import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
 import BetreuungRS from './service/betreuungRS';
+import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
+import ErwerbspensumRS from './service/erwerbspensumRS.rest';
+import BerechnungsManager from '../gesuch/service/berechnungsManager';
 
 let dynamicDependencies = function (): string[] {
 
@@ -85,14 +88,17 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
+    .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)
     .service('BetreuungRS', BetreuungRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
+    .service('BerechnungsManager', BerechnungsManager)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
+    .component('dvErwerbspensumList', new DVErwerbspensumListConfig())
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());

@@ -11,6 +11,7 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -27,10 +28,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS', '$scope'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS', '$scope', 'BerechnungsManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any, private $scope: any) {
-        super(state, gesuchModelManager);
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any,
+                private $scope: any, berechnungsManager: BerechnungsManager) {
+        super(state, gesuchModelManager, berechnungsManager);
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();

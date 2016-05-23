@@ -10,9 +10,20 @@ export function gesuchRun(routerHelper: RouterHelper) {
 
 //array mit allen States
 function getStates(): IState[] {
-    return [new EbeguGesuchState(), new EbeguFamiliensituationState(), new EbeguStammdatenState(),
-        new EbeguKinderListState(), new EbeguFinanzielleSituationState(), new EbeguKindState(),
-        new EbeguBetreuungListState(), new EbeguBetreuungState()];
+    return [
+        new EbeguGesuchState(),
+        new EbeguFamiliensituationState(),
+        new EbeguStammdatenState(),
+        new EbeguKinderListState(),
+        new EbeguFinanzielleSituationStartState(),
+        new EbeguFinanzielleSituationState(),
+        new EbeguFinanzielleSituationResultateState(),
+        new EbeguKindState(),
+        new EbeguErwerbspensenListState(),
+        new EbeguErwerbspensumState(),
+        new EbeguBetreuungListState(),
+        new EbeguBetreuungState()
+    ];
 }
 
 
@@ -60,11 +71,36 @@ export class EbeguBetreuungState implements IState {
     template = '<betreuung-view>';
     url = '/betreuungen/betreuung';
 }
+export class EbeguErwerbspensenListState implements IState {
+    name = 'gesuch.erwerbsPensen';
+    template = '<erwerbspensum-list-view>';
+    url = '/erwerbspensen';
+}
+
+
+export class EbeguErwerbspensumState implements IState {
+    name = 'gesuch.erwerbsPensum';
+    template = '<erwerbspensum-view>';
+    url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum';
+}
+
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
     template = '<finanzielle-situation-view>';
     url = '/finanzielleSituation/:gesuchstellerNumber';
+}
+
+export class EbeguFinanzielleSituationStartState implements IState {
+    name = 'gesuch.finanzielleSituationStart';
+    template = '<finanzielle-situation-start-view>';
+    url = '/finanzielleSituationStart';
+}
+
+export class EbeguFinanzielleSituationResultateState implements IState {
+    name = 'gesuch.finanzielleSituationResultate';
+    template = '<finanzielle-situation-resultate-view>';
+    url = '/finanzielleSituationResultate';
 }
 
 //PARAMS
@@ -74,4 +110,9 @@ export class IStammdatenStateParams implements IStateParamsService {
 
 export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
+}
+
+export class IErwerbspensumStateParams implements IStateParamsService {
+    gesuchstellerNumber: string;
+    erwerbspensumNum: string;
 }
