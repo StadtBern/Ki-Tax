@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.api.dtos.JaxFinanzielleSituationContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
@@ -14,7 +13,6 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
-import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -53,9 +51,6 @@ public class FinanzielleSituationResource {
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
-
-	@Inject
-	private Persistence<AbstractEntity> persistence;
 
 	@Resource
  	private EJBContext context;    //fuer rollback
