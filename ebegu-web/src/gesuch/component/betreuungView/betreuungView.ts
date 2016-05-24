@@ -53,6 +53,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
+    public getAnfangsperiode(): string {
+        //todo team der richte Anfang der aktuellen Periode muss zurueckgegeben werden
+        return '01.08.2016';
+    }
+
     private getBetreuungsangebotFromInstitutionList() {
         return $.grep(this.betreuungsangebotValues, (value: any) => {
             return value.key === this.getInstitutionSD().betreuungsangebotTyp;
@@ -69,8 +74,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController): void {
         if (form.$valid) {
-            if (this.isTagesschule() && this.getBetreuungModel()) {
-                this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
+            if (this.getBetreuungModel()) {
+                if (this.isTagesschule()) {
+                    this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
+                }
+                if (this.isTageseltern()) {
+                    this.getBetreuungModel().schulpflichtig = false;
+                }
             }
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
                 this.state.go('gesuch.betreuungen');
@@ -160,29 +170,35 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public isBetreuungsstatusWarten(): boolean {
-        if (this.getBetreuungModel()) {
-            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.WARTEN;
-        }
-        return false;
+        return this.isBetreuungsstatus(TSBetreuungsstatus.WARTEN);
     }
 
     public isBetreuungsstatusAbgewiesen(): boolean {
-        if (this.getBetreuungModel()) {
-            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN;
-        }
-        return false;
+        return this.isBetreuungsstatus(TSBetreuungsstatus.ABGEWIESEN);
     }
 
     public isBetreuungsstatusBestaetigt(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.BESTAETIGT);
+    }
+
+    private isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         if (this.getBetreuungModel()) {
-            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.BESTAETIGT;
+            return this.getBetreuungModel().betreuungsstatus === status;
         }
         return false;
     }
 
     public isTagesschule(): boolean {
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESSCHULE);
+    }
+
+    public isTageseltern(): boolean {
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN);
+    }
+
+    private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {
         if (this.betreuungsangebot) {
-            return this.betreuungsangebot.key === TSBetreuungsangebotTyp[TSBetreuungsangebotTyp.TAGESSCHULE];
+            return this.betreuungsangebot.key === TSBetreuungsangebotTyp[betAngTyp];
         }
         return false;
     }

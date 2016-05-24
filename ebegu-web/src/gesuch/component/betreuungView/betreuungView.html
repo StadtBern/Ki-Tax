@@ -49,6 +49,19 @@
                 </div>
             </div>
 
+            <!--schulpflichtig-->
+            <div class="row" ng-if="vm.isTageseltern()">
+                <div class="col-md-6">
+                    <div class="checkbox">
+                        <md-checkbox ng-model="vm.getBetreuungModel().schulpflichtig" name="schulpflichtig" aria-label="schulpflichtig">
+                            <span data-translate="SCHULPFLICHTIG" data-translate-value-anfangsperiode="{{vm.getAnfangsperiode()}}"></span>
+                        </md-checkbox>
+                        <dv-error-messages  for="form.schulpflichtig.$error"
+                                            class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
             <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
             <div ng-if="!vm.isTagesschule()">
                 <!--Betreuungspensen-->

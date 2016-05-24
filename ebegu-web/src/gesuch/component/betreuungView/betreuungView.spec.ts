@@ -31,7 +31,7 @@ describe('betreuungView', function () {
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil, $injector.get('CONSTANTS'),
-            $injector.get('$rootScope').$new());
+            $injector.get('$rootScope').$new(), $injector.get('BerechnungsManager'));
     }));
 
     describe('Public API', function () {
