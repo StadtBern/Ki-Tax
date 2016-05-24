@@ -115,6 +115,7 @@ export default class EbeguRestUtil {
             restObj.gueltigBis = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigBis);
         }
     }
+
     private parseDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
         parsedObject.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAppProperty.gueltigAb), DateUtil.localDateToMoment(receivedAppProperty.gueltigBis));
     }
@@ -305,9 +306,12 @@ export default class EbeguRestUtil {
     }
 
     public fallToRestObject(restFall: any, fall: TSFall): TSFall {
-        this.abstractEntityToRestObject(restFall, fall);
+        if (fall) {
+            this.abstractEntityToRestObject(restFall, fall);
+            return restFall;
+        }
+        return undefined;
 
-        return restFall;
     }
 
     public parseFall(fallTS: TSFall, fallFromServer: any): TSFall {

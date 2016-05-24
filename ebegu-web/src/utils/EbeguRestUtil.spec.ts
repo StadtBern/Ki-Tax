@@ -15,10 +15,8 @@ import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../models/enums/TSBetreuungsangebotTyp';
 import DateUtil from './DateUtil';
 import {TSDateRange} from '../models/types/TSDateRange';
-import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
 import TSErwerbspensum from '../models/TSErwerbspensum';
-import {TSTaetigkeit} from '../models/enums/TSTaetigkeit';
-import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
+import TestDataUtil from './TestDataUtil';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
@@ -214,7 +212,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseErwerbspensenContainer()', () => {
             it('should transform TSErwerbspensum to REST object and back', () => {
-                var erwerbspensumContainer = createErwerbspensumContainer();
+                var erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
                 let erwerbspensumJA = erwerbspensumContainer.erwerbspensumJA;
 
                 let restErwerbspensum = ebeguRestUtil.erwerbspensumToRestObject({}, erwerbspensumContainer.erwerbspensumJA);
@@ -254,22 +252,6 @@ describe('EbeguRestUtil', function () {
         let myInstitution = new TSInstitution('myInstitution', traegerschaft, mandant);
         setAbstractFieldsUndefined(myInstitution);
         return myInstitution;
-    }
-
-    function createErwerbspensumContainer(): TSErwerbspensumContainer {
-        let dummyErwerbspensum = new TSErwerbspensum();
-        dummyErwerbspensum.gesundheitlicheEinschraenkungen = false;
-        dummyErwerbspensum.taetigkeit = TSTaetigkeit.ANGESTELLT;
-        dummyErwerbspensum.pensum = 80;
-        dummyErwerbspensum.gueltigkeit = new TSDateRange(DateUtil.today(), DateUtil.today().add(7, 'months'));
-        dummyErwerbspensum.zuschlagZuErwerbspensum = true;
-        dummyErwerbspensum.zuschlagsprozent = 20;
-        dummyErwerbspensum.zuschlagsgrund = TSZuschlagsgrund.FIXE_ARBEITSZEITEN;
-        let dummyErwerbspensumContainer: TSErwerbspensumContainer = new TSErwerbspensumContainer();
-        dummyErwerbspensumContainer.erwerbspensumJA = dummyErwerbspensum;
-        setAbstractFieldsUndefined(dummyErwerbspensum);
-        setAbstractFieldsUndefined(dummyErwerbspensumContainer);
-        return dummyErwerbspensumContainer;
     }
 
 });

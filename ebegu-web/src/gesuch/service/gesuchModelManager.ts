@@ -10,7 +10,7 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest.ts';
 import FamiliensituationRS from './familiensituationRS.rest';
-import {IPromise} from 'angular';
+import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
@@ -28,15 +28,15 @@ export default class GesuchModelManager {
     fall: TSFall;
     gesuch: TSGesuch;
     familiensituation: TSFamiliensituation;
-    gesuchstellerNumber: number;
+    gesuchstellerNumber: number = 1;
     kindNumber: number;
     fachstellenList: Array<TSFachstelle>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'ErwerbspensumRS', 'EbeguRestUtil'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'ErwerbspensumRS', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
-                private ebeguRestUtil: EbeguRestUtil) {
+                private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -50,11 +50,13 @@ export default class GesuchModelManager {
      * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
      */
     public isGesuchsteller2Required(): boolean {
-        if ((this.familiensituation !== null) && (this.familiensituation !== undefined)) {
+        if ((this.familiensituation && this.familiensituation.familienstatus)) {
             return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+        } else {
+            this.log.debug('zweiter Gesuchsteller nicht initialisiert da keine Familiensituation festgelegt war');
+            return false;
         }
-        return false;
     }
 
     public updateFachstellenList(): void {
@@ -87,9 +89,9 @@ export default class GesuchModelManager {
     }
 
     public updateGesuch(): IPromise<TSGesuch> {
-       return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
-           return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-       });
+        return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+            return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+        });
     }
 
     /**
@@ -147,10 +149,10 @@ export default class GesuchModelManager {
     }
 
     public getStammdatenToWorkWith(): TSGesuchsteller {
-        if (this.gesuchstellerNumber === 1) {
-            return this.gesuch.gesuchsteller1;
-        } else {
+        if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
+        } else {
+            return this.gesuch.gesuchsteller1;
         }
     }
 
