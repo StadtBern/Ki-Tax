@@ -76,7 +76,8 @@
                                        ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
                                        dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                        ng-required="true" ng-disabled="!vm.isEnabled()">
-                                <dv-error-messages  for="form.betreuungspensum-$index.$error" class="error"></dv-error-messages>
+                                <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                                <dv-error-messages  for="form['betreuungspensum-' + $index].$error" class="error hint"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
@@ -88,14 +89,13 @@
                             <dv-input-container class="form-group">
                                 <label data-translate="VON" for="datumAb-{{$index}}">
                                 </label>
-                                <p class="input-group">
-                                    <dv-datepicker input-id="datumAb-{{$index}}" input-name="datumAb-{{$index}}"
-                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
-                                                   ng-required="true" ng-disabled="!vm.isEnabled()">
-                                    </dv-datepicker>
-                                </p>
-                                <dv-error-messages  for="form.datumAb-$index.$error"
-                                                    class="error"></dv-error-messages>
+                                <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}" class="input-element"
+                                               ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
+                                               ng-required="true" ng-disabled="!vm.isEnabled()" placeholder="">
+                                </dv-datepicker>
+                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                <dv-error-messages  for="form['datumAb-' + $index].$error"
+                                                    class="error hint"></dv-error-messages>
                             </dv-input-container>
                         </div>
 
@@ -103,13 +103,12 @@
                             <dv-input-container class="form-group">
                                 <label data-translate="BIS" for="datumBis-{{$index}}">
                                 </label>
-                                <p class="input-group">
-                                    <dv-datepicker input-id="datumBis-{{$index}}" input-name="datumBis-{{$index}}"
-                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
-                                                   ng-required="false" ng-disabled="!vm.isEnabled()">
-                                    </dv-datepicker>
-                                </p>
-                                <dv-error-messages  for="form.datumBis-$index.$error"
+                                <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}" class="input-element"
+                                               ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
+                                               ng-required="false" ng-disabled="!vm.isEnabled()" placeholder="">
+                                </dv-datepicker>
+                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                <dv-error-messages  for="form['datumBis-' + $index].$error"
                                                     class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
