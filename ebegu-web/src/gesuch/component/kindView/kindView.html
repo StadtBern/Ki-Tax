@@ -92,6 +92,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label data-translate="FAM_ERGAENZENDE_BETREUUNG"></label>
+                        <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
                         <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
                                             ng-required="true" ng-model="vm.getModel().familienErgaenzendeBetreuung"
                                             ng-change="vm.familienErgaenzendeBetreuungClicked()">
@@ -107,6 +108,7 @@
                 <div class="col-md-6">
                     <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                         <label data-translate="MUTTERSPRACHE_DEUTSCH"></label>
+                        <dv-tooltip text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip>
                         <dv-radio-container name="mutterspracheDeutsch" class="input-element"
                                             ng-required="vm.getModel().familienErgaenzendeBetreuung" ng-model="vm.getModel().mutterspracheDeutsch">
                         </dv-radio-container>
@@ -123,6 +125,7 @@
                         <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle" aria-label="showFachstelle"
                                      ng-change="vm.showFachstelleClicked()">
                             <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
+                            <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages  for="form.korrespondenzAdr.$error"
                                             class="error"></dv-error-messages>

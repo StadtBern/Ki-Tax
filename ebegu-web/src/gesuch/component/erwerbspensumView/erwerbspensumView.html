@@ -15,11 +15,7 @@
                     <div class="form-group">
                         <label data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
                         </label>
-                        <i class="fa fa-info-circle" aria-hidden="false">
-                            <md-tooltip md-direction="right">
-                                <span data-translate="TAETIGKEIT_WAEHLEN_HELP"></span>
-                            </md-tooltip>
-                        </i>
+                        <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                         <select name="taetigkeit" id="taetigkeit" ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
                                 class="form-control"
                                 ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
@@ -86,11 +82,7 @@
                                      name="zuschlag"
                                      aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                             <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                            <i class="fa fa-info-circle" aria-hidden="false">
-                                <md-tooltip md-direction="right">
-                                    <span data-translate="ZUSCHLAGSGRUND_HELP"></span>
-                                </md-tooltip>
-                            </i>
+                            <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages for="form.zuschlag.$error"
                                            class="error"></dv-error-messages>
@@ -144,11 +136,7 @@
                                      name="gesundheitlEinschr"
                                      aria-label="{{GESUNDH_EINSCHRAENKUNGEN | translate}}">
                             <span data-translate="GESUNDH_EINSCHRAENKUNGEN"></span>
-                            <i class="fa fa-info-circle" aria-hidden="false">
-                                <md-tooltip md-direction="right">
-                                    <span data-translate="GESUNDH_EINSCHRAENKUNGEN_HELP"></span>
-                                </md-tooltip>
-                            </i>
+                            <dv-tooltip text="'GESUNDH_EINSCHRAENKUNGEN_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages for="form.gesundheitlEinschr.$error"
                                            class="error"></dv-error-messages>

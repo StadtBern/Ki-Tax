@@ -24,6 +24,7 @@
                     <div class="form-group">
                         <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
                         </label>
+                        <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                         <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot" class="form-control"
                                 ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
                                 ng-required="true" ng-disabled="!vm.isEnabled()">

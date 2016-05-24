@@ -426,6 +426,11 @@
     "INFOTEXT_ERWERBSPENSUM":"Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
     "ERWERBSPENSEN_LIST_TITLE":"Erwerbspensen Liste",
     "DATE_PLACEHOLDER":"tt.mm.jjjj",
-    "PERCENTAGE_PLACEHOLDER": "Angabe in %"
+    "PERCENTAGE_PLACEHOLDER": "Angabe in %",
+    "FAM_ERGAENZENDE_BETREUUNG_HELP": "noch_nicht_definiert",
+    "MUTTERSPRACHE_DEUTSCH_HELP": "noch_nicht_definiert",
+    "INVOLVIERTE_FACHSTELLE_HELP": "noch_nicht_definiert",
+    "BETREUUNGSANGEBOT_WAEHLEN_HELP": "noch_nicht_definiert",
+    "KORRESPONDENZADR_HELP": "noch_nicht_definiert"
 }
 
