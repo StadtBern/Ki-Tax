@@ -4,9 +4,9 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
-import IFormController = angular.IFormController;
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
+import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationResultateView.html');
 
 export class FinanzielleSituationResultateViewComponentConfig implements IComponentOptions {
@@ -20,6 +20,9 @@ export class FinanzielleSituationResultateViewComponentConfig implements ICompon
  * Controller fuer die Finanzielle Situation
  */
 export class FinanzielleSituationResultateViewController extends AbstractGesuchViewController {
+
+    gesuchsteller1FinSit: TSFinanzielleSituationContainer;
+    gesuchsteller2FinSit: TSFinanzielleSituationContainer;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
     /* @ngInject */
@@ -77,11 +80,26 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
-        return this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+        if (!this.gesuchsteller1FinSit) {
+            if (this.gesuchModelManager.gesuch.gesuchsteller1) {
+                this.gesuchsteller1FinSit = this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+            } else {
+                this.gesuchsteller1FinSit = new TSFinanzielleSituationContainer();
+            }
+        }
+        return this.gesuchsteller1FinSit;
+
     }
 
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
-        return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
+        if (!this.gesuchsteller2FinSit) {
+            if (this.gesuchModelManager.gesuch.gesuchsteller2) {
+                this.gesuchsteller2FinSit = this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
+            } else {
+                this.gesuchsteller2FinSit = new TSFinanzielleSituationContainer();
+            }
+        }
+        return this.gesuchsteller2FinSit;
     }
 
     public getResultate(): TSFinanzielleSituationResultateDTO {

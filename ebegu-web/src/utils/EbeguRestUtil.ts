@@ -114,7 +114,7 @@ export default class EbeguRestUtil {
         restObj.pensum = pensumEntity.pensum;
     }
 
-    private parseAbstractDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
+    private parseDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
         this.parseAbstractEntity(parsedObject, receivedAppProperty);
         parsedObject.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAppProperty.gueltigAb), DateUtil.localDateToMoment(receivedAppProperty.gueltigBis));
     }
@@ -305,9 +305,12 @@ export default class EbeguRestUtil {
     }
 
     public fallToRestObject(restFall: any, fall: TSFall): TSFall {
-        this.abstractEntityToRestObject(restFall, fall);
+        if (fall) {
+            this.abstractEntityToRestObject(restFall, fall);
+            return restFall;
+        }
+        return undefined;
 
-        return restFall;
     }
 
     public parseFall(fallTS: TSFall, fallFromServer: any): TSFall {
