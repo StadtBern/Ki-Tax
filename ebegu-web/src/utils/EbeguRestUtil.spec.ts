@@ -18,12 +18,13 @@ import DateUtil from './DateUtil';
 import {TSDateRange} from '../models/types/TSDateRange';
 import TSErwerbspensum from '../models/TSErwerbspensum';
 import TestDataUtil from './TestDataUtil';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
 import TSBetreuung from '../models/TSBetreuung';
 import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
+import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 
 describe('EbeguRestUtil', function () {
 
