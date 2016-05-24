@@ -78,8 +78,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                 if (this.isTagesschule()) {
                     this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
                 }
-                if (this.isTageseltern()) {
-                    this.getBetreuungModel().schulpflichtig = false;
+                if (!this.isTageseltern()) {
+                    this.getBetreuungModel().schulpflichtig = undefined;
+                } else if (!this.getBetreuungModel().schulpflichtig) {
+                    this.getBetreuungModel().schulpflichtig = false; // sollte es undefined sein setzen wir es direkt auf false
                 }
             }
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
@@ -98,7 +100,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     private removeBetreuungFromKind(): void {
-        if (!this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
+        if (this.gesuchModelManager.getBetreuungToWorkWith() && !this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
             //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
             this.gesuchModelManager.removeBetreuungFromKind();
         }

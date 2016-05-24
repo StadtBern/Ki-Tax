@@ -18,7 +18,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
         this._betreuungspensumContainers = betreuungspensumContainers ? betreuungspensumContainers : [];
         this._bemerkungen = bemerkungen;
-        this._schulpflichtig = schulpflichtig ? schulpflichtig : false;
+        this._schulpflichtig = schulpflichtig;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {

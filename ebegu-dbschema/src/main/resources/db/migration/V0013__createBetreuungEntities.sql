@@ -7,7 +7,7 @@ CREATE TABLE betreuung (
   version                   BIGINT       NOT NULL,
   bemerkungen               VARCHAR(1000),
   betreuungsstatus          VARCHAR(255) NOT NULL,
-  schulpflichtig            BIT          NOT NULL,
+  schulpflichtig            BIT,
   institution_stammdaten_id VARCHAR(36)  NOT NULL,
   kind_id                   VARCHAR(36)  NOT NULL,
   CONSTRAINT PK_betreuung PRIMARY KEY (id)
