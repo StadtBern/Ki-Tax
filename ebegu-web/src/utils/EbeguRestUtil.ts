@@ -120,7 +120,7 @@ export default class EbeguRestUtil {
     }
 
     private parseAbstractPensumEntity(betreuungspensumTS: TSAbstractPensumEntity, betreuungspensumFromServer: any) {
-        this.parseAbstractDateRangeEntity(betreuungspensumTS, betreuungspensumFromServer);
+        this.parseDateRangeEntity(betreuungspensumTS, betreuungspensumFromServer);
         betreuungspensumTS.pensum = betreuungspensumFromServer.pensum;
     }
 
@@ -143,7 +143,7 @@ export default class EbeguRestUtil {
 
     public parseAdresse(adresseTS: TSAdresse, receivedAdresse: any): TSAdresse {
         if (receivedAdresse) {
-            this.parseAbstractDateRangeEntity(adresseTS, receivedAdresse);
+            this.parseDateRangeEntity(adresseTS, receivedAdresse);
             adresseTS.strasse = receivedAdresse.strasse;
             adresseTS.hausnummer = receivedAdresse.hausnummer;
             adresseTS.zusatzzeile = receivedAdresse.zusatzzeile;
@@ -470,7 +470,7 @@ export default class EbeguRestUtil {
 
     public parseInstitutionStammdaten(institutionStammdatenTS: TSInstitutionStammdaten, institutionStammdatenFromServer: any): TSInstitutionStammdaten {
         if (institutionStammdatenFromServer) {
-            this.parseAbstractDateRangeEntity(institutionStammdatenTS, institutionStammdatenFromServer);
+            this.parseDateRangeEntity(institutionStammdatenTS, institutionStammdatenFromServer);
             institutionStammdatenTS.iban = institutionStammdatenFromServer.iban;
             institutionStammdatenTS.oeffnungsstunden = institutionStammdatenFromServer.oeffnungsstunden;
             institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
@@ -654,7 +654,7 @@ export default class EbeguRestUtil {
 
     private parsePensumFachstelle(pensumFachstelleTS: TSPensumFachstelle, pensumFachstelleFromServer: any): TSPensumFachstelle {
         if (pensumFachstelleFromServer) {
-            this.parseAbstractDateRangeEntity(pensumFachstelleTS, pensumFachstelleFromServer);
+            this.parseDateRangeEntity(pensumFachstelleTS, pensumFachstelleFromServer);
             pensumFachstelleTS.pensum = pensumFachstelleFromServer.pensum;
             if (pensumFachstelleFromServer.fachstelle) {
                 pensumFachstelleTS.fachstelle = this.parseFachstelle(new TSFachstelle(), pensumFachstelleFromServer.fachstelle);
