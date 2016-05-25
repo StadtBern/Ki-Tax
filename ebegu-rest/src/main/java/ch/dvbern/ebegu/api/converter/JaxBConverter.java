@@ -851,6 +851,7 @@ public class JaxBConverter {
 		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
+		betreuung.setSchulpflichtig(betreuungJAXP.getSchulpflichtig());
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
@@ -884,7 +885,7 @@ public class JaxBConverter {
 	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
 	 *
 	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
-	 * @param jaxBetPenContainers List of currently stored BetreungspensumContainers
+	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
 	 */
 	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 																			   Collection<BetreuungspensumContainer> existingBetreuungspensen) {
@@ -944,9 +945,9 @@ public class JaxBConverter {
 			jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
 			jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
 			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
+			jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
 			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
 			return jaxBetreuung;
-
 	}
 
 	/**

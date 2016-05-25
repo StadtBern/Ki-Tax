@@ -15,11 +15,7 @@
                     <div class="form-group">
                         <label data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
                         </label>
-                        <i class="fa fa-info-circle" aria-hidden="false">
-                            <md-tooltip md-direction="right">
-                                <span data-translate="TAETIGKEIT_WAEHLEN_HELP"></span>
-                            </md-tooltip>
-                        </i>
+                        <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                         <select name="taetigkeit" id="taetigkeit" ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
                                 class="form-control"
                                 ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
@@ -40,7 +36,7 @@
                                ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
                                dv-max-length class="form-control" max="100"
                                ng-required="true" ng-pattern="vm.patternPercentage">
-                        <div class="hint">Angabe in %</div>
+                        <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                         <dv-error-messages for="form.taetigkeitPensum.$error"
                                            class="error hint"></dv-error-messages>
                         <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
@@ -58,9 +54,10 @@
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
                                        ng-required="true" class="input-element" placeholder="">
                         </dv-datepicker>
+                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                         <dv-error-messages for="form.taetigkeitAb.$error"
                                            class="error hint"></dv-error-messages>
-                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                    </dv-input-container>
                 </div>
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
@@ -70,8 +67,10 @@
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
                                        ng-required="false" class="input-element">
                         </dv-datepicker>
+                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                         <dv-error-messages for="form.taetigkeitBis.$error"
                                            class="error hint"></dv-error-messages>
+                    </dv-input-container>
                 </div>
             </div>
 
@@ -83,11 +82,7 @@
                                      name="zuschlag"
                                      aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                             <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                            <i class="fa fa-info-circle" aria-hidden="false">
-                                <md-tooltip md-direction="right">
-                                    <span data-translate="ZUSCHLAGSGRUND_HELP"></span>
-                                </md-tooltip>
-                            </i>
+                            <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages for="form.zuschlag.$error"
                                            class="error"></dv-error-messages>
@@ -127,7 +122,7 @@
                                ng-required="true" ng-pattern="vm.patternPercentage">
                         <dv-error-messages for="form.zuschlagsprozent.$error"
                         class="error hint"></dv-error-messages>
-                        <div class="hint">Angabe in %</div>
+                        <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                         <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                     </dv-input-container>
                 </div>
@@ -141,11 +136,7 @@
                                      name="gesundheitlEinschr"
                                      aria-label="{{GESUNDH_EINSCHRAENKUNGEN | translate}}">
                             <span data-translate="GESUNDH_EINSCHRAENKUNGEN"></span>
-                            <i class="fa fa-info-circle" aria-hidden="false">
-                                <md-tooltip md-direction="right">
-                                    <span data-translate="GESUNDH_EINSCHRAENKUNGEN_HELP"></span>
-                                </md-tooltip>
-                            </i>
+                            <dv-tooltip text="'GESUNDH_EINSCHRAENKUNGEN_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages for="form.gesundheitlEinschr.$error"
                                            class="error"></dv-error-messages>

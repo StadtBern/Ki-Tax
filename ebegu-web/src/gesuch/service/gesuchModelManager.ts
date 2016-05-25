@@ -40,11 +40,12 @@ export default class GesuchModelManager {
     fachstellenList: Array<TSFachstelle>;
     institutionenList: Array<TSInstitutionStammdaten>;
 
-    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS', 'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil','$log'];
+    static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
-                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil,private log: ILogService) {
+                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -254,6 +255,12 @@ export default class GesuchModelManager {
     public getBasisjahr(): number {
         //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
         return 2015;
+    }
+
+
+    getGesuchsperiode(): any {
+        //todo betrperiode
+        return {gueltigAb: '01.08.2016', gueltigBis: '31.07.2017'};
     }
 
 

@@ -39,6 +39,10 @@ public class Betreuung extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new HashSet<>();
 
+	@Nullable
+	@Column(nullable = true)
+	private Boolean schulpflichtig = false;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -75,6 +79,15 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
+	}
+
+	@Nullable
+	public Boolean getSchulpflichtig() {
+		return schulpflichtig;
+	}
+
+	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
+		this.schulpflichtig = schulpflichtig;
 	}
 
 	@Nullable

@@ -20,7 +20,7 @@ describe('betreuungListViewTest', function () {
         let mddialog = $injector.get('$mdDialog');
         let dialog = $injector.get('DvDialog');
         let ebeguRestUtil = $injector.get('EbeguRestUtil');
-        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil,undefined);
+        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined);
     }));
 
     describe('Public API', function () {

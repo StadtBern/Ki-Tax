@@ -7,8 +7,8 @@ import DateUtil from '../../../utils/DateUtil';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import IQService = angular.IQService;
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 describe('betreuungView', function () {
 
@@ -31,7 +31,7 @@ describe('betreuungView', function () {
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil, $injector.get('CONSTANTS'),
-            $injector.get('$rootScope').$new(), undefined);
+            $injector.get('$rootScope').$new(), $injector.get('BerechnungsManager'));
     }));
 
     describe('Public API', function () {

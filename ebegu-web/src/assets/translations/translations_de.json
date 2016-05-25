@@ -374,6 +374,7 @@
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
     "PLATZBESTAETIGUNG_ANFORDERN": "PLATZBESTÄTIGUNG ANFORDERN",
+    "SCHULPFLICHTIG": "schulpflichtig per {{anfangsperiode}}",
     "INSTITUTION": "Institution",
     "MENU_FAMSITUATION" :"01&nbsp;Familiensituation",
     "MENU_GESUCHSTELLER" :"02&nbsp; Gesuchsteller",
@@ -424,6 +425,12 @@
     "ANDERE":"Andere",
     "INFOTEXT_ERWERBSPENSUM":"Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
     "ERWERBSPENSEN_LIST_TITLE":"Erwerbspensen Liste",
-    "DATE_PLACEHOLDER":"tt.mm.jjjj"
+    "DATE_PLACEHOLDER":"tt.mm.jjjj",
+    "PERCENTAGE_PLACEHOLDER": "Angabe in %",
+    "FAM_ERGAENZENDE_BETREUUNG_HELP": "noch_nicht_definiert",
+    "MUTTERSPRACHE_DEUTSCH_HELP": "noch_nicht_definiert",
+    "INVOLVIERTE_FACHSTELLE_HELP": "noch_nicht_definiert",
+    "BETREUUNGSANGEBOT_WAEHLEN_HELP": "noch_nicht_definiert",
+    "KORRESPONDENZADR_HELP": "noch_nicht_definiert"
 }
 

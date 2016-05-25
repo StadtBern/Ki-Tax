@@ -35,7 +35,7 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toBeUndefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeUndefined();
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toEqual([]);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten).toBeUndefined();
             });

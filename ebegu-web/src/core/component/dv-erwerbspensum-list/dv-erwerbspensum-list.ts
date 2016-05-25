@@ -28,7 +28,7 @@ export class DVErwerbspensumListController {
     tableTitle: string;
     removeButtonTitle: string;
     addButtonText: string;
-    addButtonVisible: boolean
+    addButtonVisible: boolean;
     onRemove: (pensumToRemove: any) => void;
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;

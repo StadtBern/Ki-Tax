@@ -217,13 +217,14 @@ describe('EbeguRestUtil', function () {
                 let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
                 setAbstractFieldsUndefined(tsBetreuungspensumContainer);
                 let betContainers: Array<TSBetreuungspensumContainer> = [tsBetreuungspensumContainer];
-                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen');
+                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen', true);
                 setAbstractFieldsUndefined(betreuung);
 
                 let restBetreuung = ebeguRestUtil.betreuungToRestObject({}, betreuung);
 
                 expect(restBetreuung).toBeDefined();
                 expect(restBetreuung.bemerkungen).toEqual('bemerkungen');
+                expect(restBetreuung.schulpflichtig).toBe(true);
                 expect(restBetreuung.betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(restBetreuung.institutionStammdaten.iban).toEqual(betreuung.institutionStammdaten.iban);
                 expect(restBetreuung.betreuungspensumContainers).toBeDefined();
@@ -238,6 +239,7 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumJA, betreuung.betreuungspensumContainers[0].betreuungspensumJA);
                 TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.institutionStammdaten, betreuung.institutionStammdaten);
                 expect(transformedBetreuung.bemerkungen).toEqual(betreuung.bemerkungen);
+                expect(transformedBetreuung.schulpflichtig).toEqual(betreuung.schulpflichtig);
                 expect(transformedBetreuung.betreuungsstatus).toEqual(betreuung.betreuungsstatus);
                 expect(transformedBetreuung.betreuungspensumContainers[0]).toEqual(betreuung.betreuungspensumContainers[0]);
             });

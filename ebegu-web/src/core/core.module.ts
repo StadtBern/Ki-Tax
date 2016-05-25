@@ -30,6 +30,7 @@ import BetreuungRS from './service/betreuungRS';
 import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
 import ErwerbspensumRS from './service/erwerbspensumRS.rest';
 import BerechnungsManager from '../gesuch/service/berechnungsManager';
+import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 
 let dynamicDependencies = function (): string[] {
 
@@ -101,4 +102,5 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvErwerbspensumList', new DVErwerbspensumListConfig())
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
+    .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());

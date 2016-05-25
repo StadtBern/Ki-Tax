@@ -30,6 +30,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
+	@Nullable
+	private Boolean schulpflichtig;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	private String bemerkungen;
@@ -58,6 +61,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBetreuungspensumContainers(List<JaxBetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
+	}
+
+	@Nullable
+	public Boolean getSchulpflichtig() {
+		return schulpflichtig;
+	}
+
+	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
+		this.schulpflichtig = schulpflichtig;
 	}
 
 	@Nullable
