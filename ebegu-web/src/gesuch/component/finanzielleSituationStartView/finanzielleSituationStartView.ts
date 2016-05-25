@@ -69,10 +69,8 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     private gemeinsameStekClicked(): void {
         // Wenn neu NEIN -> Fragen loeschen
         if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false) {
-            this.getFinanzielleSituationGS1().steuerveranlagungErhalten = undefined;
-            this.getFinanzielleSituationGS2().steuerveranlagungErhalten = undefined;
-            this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = undefined;
-            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer = undefined;
         }
     }
 
