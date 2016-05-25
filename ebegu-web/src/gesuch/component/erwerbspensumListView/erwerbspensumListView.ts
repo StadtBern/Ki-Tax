@@ -109,7 +109,11 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     nextStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+        if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            this.state.go('gesuch.finanzielleSituationStart');
+        } else {
+            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+        }
     }
 }
 
