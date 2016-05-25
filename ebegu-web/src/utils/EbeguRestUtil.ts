@@ -101,7 +101,7 @@ export default class EbeguRestUtil {
         restPersonObject.geschlecht = personObject.geschlecht;
     }
 
-    private abstractDateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
+    private abstractDateRangeEntityToRestObject(restObj: any, dateRangedEntity: TSAbstractDateRangedEntity) {
         this.abstractEntityToRestObject(restObj, dateRangedEntity);
         if (dateRangedEntity && dateRangedEntity.gueltigkeit) {
             restObj.gueltigAb = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigAb);
@@ -109,8 +109,8 @@ export default class EbeguRestUtil {
         }
     }
 
-    private abstractPensumEntityToRestObject(pensumEntity: TSAbstractPensumEntity, restObj: any) {
-        this.abstractDateRangeEntityToRestObject(pensumEntity, restObj);
+    private abstractPensumEntityToRestObject(restObj: any, pensumEntity: TSAbstractPensumEntity) {
+        this.abstractDateRangeEntityToRestObject(restObj, pensumEntity);
         restObj.pensum = pensumEntity.pensum;
     }
 
@@ -126,7 +126,7 @@ export default class EbeguRestUtil {
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
         if (adresse) {
-            this.abstractDateRangeEntityToRestObject(adresse, restAdresse);
+            this.abstractDateRangeEntityToRestObject(restAdresse, adresse);
             restAdresse.strasse = adresse.strasse;
             restAdresse.hausnummer = adresse.hausnummer;
             restAdresse.zusatzzeile = adresse.zusatzzeile;
@@ -268,7 +268,7 @@ export default class EbeguRestUtil {
 
     public erwerbspensumToRestObject(restErwerbspensum: any, erwerbspensum: TSErwerbspensum): any {
         if (erwerbspensum) {
-            this.abstractPensumEntityToRestObject(erwerbspensum, restErwerbspensum);
+            this.abstractPensumEntityToRestObject(restErwerbspensum, erwerbspensum);
             restErwerbspensum.gesundheitlicheEinschraenkungen = erwerbspensum.gesundheitlicheEinschraenkungen;
             restErwerbspensum.taetigkeit = erwerbspensum.taetigkeit;
             restErwerbspensum.zuschlagsgrund = erwerbspensum.zuschlagsgrund;
@@ -457,7 +457,7 @@ export default class EbeguRestUtil {
 
     public institutionStammdatenToRestObject(restInstitutionStammdaten: any, institutionStammdaten: TSInstitutionStammdaten): any {
         if (institutionStammdaten) {
-            this.abstractDateRangeEntityToRestObject(institutionStammdaten, restInstitutionStammdaten);
+            this.abstractDateRangeEntityToRestObject(restInstitutionStammdaten, institutionStammdaten);
             restInstitutionStammdaten.iban = institutionStammdaten.iban;
             restInstitutionStammdaten.oeffnungsstunden = institutionStammdaten.oeffnungsstunden;
             restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
@@ -644,7 +644,7 @@ export default class EbeguRestUtil {
     }
 
     private pensumFachstelleToRestObject(restPensumFachstelle: any, pensumFachstelle: TSPensumFachstelle): any {
-        this.abstractDateRangeEntityToRestObject(pensumFachstelle, restPensumFachstelle);
+        this.abstractDateRangeEntityToRestObject(restPensumFachstelle, pensumFachstelle);
         restPensumFachstelle.pensum = pensumFachstelle.pensum;
         if (pensumFachstelle.fachstelle) {
             restPensumFachstelle.fachstelle = this.fachstelleToRestObject({}, pensumFachstelle.fachstelle);
@@ -724,7 +724,7 @@ export default class EbeguRestUtil {
     }
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
-        this.abstractPensumEntityToRestObject(betreuungspensum, restBetreuungspensum);
+        this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
         return restBetreuungspensum;
     }
 

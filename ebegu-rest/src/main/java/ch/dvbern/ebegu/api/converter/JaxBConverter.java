@@ -144,10 +144,19 @@ public class JaxBConverter {
 		dateRangedEntity.setGueltigkeit(new DateRange(dateAb, dateBis));
 	}
 
-	private void convertAbstractDateRangedFieldsToJAX(AbstractDateRangedEntity dateRangedEntity, JaxAbstractDateRangedDTO jaxDateRanged) {
+	/***
+	 * Konvertiert eine DateRange fuer den Client. Wenn das DatumBis {@link Constants#END_OF_TIME} entspricht wird es NICHT
+	 * konvertiert
+	 */
+	private void convertAbstractDateRangedFieldsToJAX(@Nonnull AbstractDateRangedEntity dateRangedEntity, @Nonnull JaxAbstractDateRangedDTO jaxDateRanged) {
+		Validate.notNull(dateRangedEntity.getGueltigkeit());
 		convertAbstractFieldsToJAX(dateRangedEntity, jaxDateRanged);
 		jaxDateRanged.setGueltigAb(dateRangedEntity.getGueltigkeit().getGueltigAb());
-		jaxDateRanged.setGueltigBis(dateRangedEntity.getGueltigkeit().getGueltigBis());
+		if (Constants.END_OF_TIME.equals(dateRangedEntity.getGueltigkeit().getGueltigBis())) {
+			jaxDateRanged.setGueltigBis(null); // end of time gueltigkeit wird nicht an client geschickt
+		} else{
+			jaxDateRanged.setGueltigBis(dateRangedEntity.getGueltigkeit().getGueltigBis());
+		}
 	}
 
 	private void convertAbstractPensumFieldsToEntity(JaxAbstractPensumDTO jaxPensum, AbstractPensumEntity pensumEntity) {

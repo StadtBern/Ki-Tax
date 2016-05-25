@@ -2,8 +2,10 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
+import ch.dvbern.ebegu.api.dtos.JaxPensumFachstelle;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -46,6 +48,21 @@ public class BetreuungConverterTest extends AbstractEbeguRestTest {
 		Assert.assertTrue(betreuung.isSame(betrToEntity));
 
 	}
+
+	@Test
+	public void convertFachstelleTest(){
+		Betreuung betreuung = insertNewEntity();
+		KindContainer kind = betreuung.getKind();
+		Assert.assertEquals(Constants.END_OF_TIME, kind.getKindJA().getPensumFachstelle().getGueltigkeit().getGueltigBis());
+
+		JaxPensumFachstelle jaxPenFachstelle = converter.pensumFachstelleToJax(kind.getKindJA().getPensumFachstelle());
+		Assert.assertNull("Gueltig bis wird nicht transformiert",jaxPenFachstelle.getGueltigBis());
+
+		PensumFachstelle reconvertedPensum = converter.pensumFachstelleToEntity(jaxPenFachstelle, new PensumFachstelle());
+		Assert.assertEquals(Constants.END_OF_TIME, reconvertedPensum.getGueltigkeit().getGueltigBis());
+	}
+
+
 
 
 
