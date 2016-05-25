@@ -81,11 +81,12 @@ public class Betreuung extends AbstractEntity {
 		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 
+	@Nullable
 	public Boolean getSchulpflichtig() {
 		return schulpflichtig;
 	}
 
-	public void setSchulpflichtig(Boolean schulpflichtig) {
+	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
 		this.schulpflichtig = schulpflichtig;
 	}
 

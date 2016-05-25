@@ -876,7 +876,7 @@ public class JaxBConverter {
 	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
 	 *
 	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
-	 * @param jaxBetPenContainers List of currently stored BetreungspensumContainers
+	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
 	 */
 	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 																			   Collection<BetreuungspensumContainer> existingBetreuungspensen) {

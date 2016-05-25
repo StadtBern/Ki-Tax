@@ -169,12 +169,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     /**
-     * Returns true when the user is allowed to edit the content.
+     * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
      * @returns {boolean}
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-            return this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND;
+            return (this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND
+                || this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.SCHULAMT);
         }
         return false;
     }
