@@ -41,9 +41,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.kinder');
     }
 
-    // TODO (team) vorübergehend direkt auf FinanzSit navigieren
     nextStep(): void  {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+        this.state.go('gesuch.erwerbsPensen');
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {

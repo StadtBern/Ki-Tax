@@ -3,10 +3,10 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSKindContainer from '../../../models/TSKindContainer';
 import AbstractGesuchViewController from '../abstractGesuchView';
-import IDialogService = angular.material.IDialogService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
 import BerechnungsManager from '../../service/berechnungsManager';
+import IDialogService = angular.material.IDialogService;
 let template = require('./kinderListView.html');
 let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
 
@@ -76,7 +76,6 @@ export class KinderListViewController extends AbstractGesuchViewController {
         }
     }
 
-    // TODO (team) vorübergehend direkt auf FinanzSit navigieren
     nextStep(): void  {
         this.state.go('gesuch.betreuungen');
     }

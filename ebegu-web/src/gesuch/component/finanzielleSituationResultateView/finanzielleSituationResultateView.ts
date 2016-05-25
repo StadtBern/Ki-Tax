@@ -59,7 +59,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     nextStep() {
-        alert('go to next page');
+        alert('go to next page Einkommensverschlechterung');
     }
 
     submit(form: IFormController) {
