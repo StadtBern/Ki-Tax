@@ -8,6 +8,7 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSPensumFachstelle} from '../../../models/TSPensumFachstelle';
 import BerechnungsManager from '../../service/berechnungsManager';
+import TSKindContainer from '../../../models/TSKindContainer';
 let template = require('./kindView.html');
 
 export class KindViewComponentConfig implements IComponentOptions {
@@ -99,6 +100,13 @@ export class KindViewController extends AbstractGesuchViewController {
     public getModel(): TSKind {
         if (this.gesuchModelManager.getKindToWorkWith()) {
             return this.gesuchModelManager.getKindToWorkWith().kindJA;
+        }
+        return undefined;
+    }
+
+    public getContainer(): TSKindContainer {
+        if (this.gesuchModelManager.getKindToWorkWith()) {
+            return this.gesuchModelManager.getKindToWorkWith();
         }
         return undefined;
     }

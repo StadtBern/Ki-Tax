@@ -30,6 +30,9 @@
                                dv-max-length class="form-control" required>
                         <dv-error-messages  for="form.vorname.$error"
                                             class="error"></dv-error-messages>
+                        <dv-bisher gs="vm.getContainer().kindGS.vorname"
+                                   ja="vm.getContainer().kindJA.vorname"
+                                   sv="vm.getContainer().kindJA.vorname"></dv-bisher>
                     </dv-input-container>
                 </div>
                 <div class="col-md-6">
@@ -39,6 +42,9 @@
                                dv-max-length class="form-control" required>
                         <dv-error-messages  for="form.name.$error"
                                             class="error"></dv-error-messages>
+                        <dv-bisher gs="vm.getContainer().kindGS.nachname"
+                                   ja="vm.getContainer().kindJA.nachname"
+                                   sv="vm.getContainer().kindJA.nachname"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -55,6 +61,9 @@
                         <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                         <dv-error-messages  for="form.geburtsdatum.$error"
                                             class="error hint"></dv-error-messages>
+                        <dv-bisher gs="vm.getContainer().kindGS.geburtsdatum"
+                                   ja="vm.getContainer().kindJA.geburtsdatum"
+                                   sv="vm.getContainer().kindJA.geburtsdatum"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -69,7 +78,9 @@
                                dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE" ng-required="true">
                         <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                         <dv-error-messages  for="form.wohnhaftImGleichenHaushalt.$error" class="error hint"></dv-error-messages>
-                        <dv-bisher gs="vm.getModel().wohnhaftImGleichenHaushalt"></dv-bisher>
+                        <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
+                                   ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"
+                                   sv="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -161,7 +172,7 @@
                                    ng-required="vm.isFachstelleRequired()">
                             <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                             <dv-error-messages  for="form.betreuungspensumFachstelle.$error" class="error hint"></dv-error-messages>
-                            <dv-bisher gs="vm.getPensumFachstelle().pensum"></dv-bisher>
+                            <dv-bisher gs="vm.getContainer().kindGS.pensum" ja="vm.getContainer().kindJA.pensum" sv="vm.getContainer().kindJA.pensum"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
@@ -179,6 +190,9 @@
                             <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                             <dv-error-messages  for="form.datumAb.$error"
                                                 class="error hint"></dv-error-messages>
+                            <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigAb"
+                                       ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigAb"
+                                       sv="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigAb"></dv-bisher>
                         </dv-input-container>
                     </div>
 
@@ -193,6 +207,9 @@
                             <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                             <dv-error-messages  for="form.datumBis.$error"
                                                 class="error hint"></dv-error-messages>
+                            <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigBis"
+                                       ja="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigBis"
+                                       sv="vm.getContainer().kindJA.pensumFachstelle.gueltigkeit.gueltigBis"></dv-bisher>
                         </dv-input-container>
                     </div>
                 </div>
