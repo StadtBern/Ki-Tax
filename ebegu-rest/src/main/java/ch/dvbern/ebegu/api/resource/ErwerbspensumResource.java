@@ -53,7 +53,7 @@ public class ErwerbspensumResource {
 
 	@ApiOperation(value = "Create a new ErwerbspensumContainer in the database. The object also has a relations to Erwerbspensum data Objects, " +
 		", those will be created as well")
-	@Nullable
+	@Nonnull
 	@PUT
 	@Path("/{gesuchstellerId}")
 	@Consumes(MediaType.APPLICATION_JSON)

@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -22,10 +23,12 @@ public class Betreuung extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_kind_id"), nullable = false)
 	private KindContainer kind;
 
 	@NotNull
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_institution_stammdaten_id"), nullable = false)
 	private InstitutionStammdaten institutionStammdaten;
 
 	@Enumerated(value = EnumType.STRING)
@@ -93,5 +96,21 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public boolean isSame(Betreuung otherBetreuung) {
+		if (this == otherBetreuung) {
+			return true;
+		}
+		if (otherBetreuung == null || getClass() != otherBetreuung.getClass()) {
+			return false;
+		}
+
+		boolean bemSame = Objects.equals(this.getBemerkungen(), otherBetreuung.getBemerkungen());
+		boolean pensenSame =  this.getBetreuungspensumContainers().stream().allMatch(
+			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
+		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
+		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
+		return bemSame && pensenSame && statusSame && stammdatenSame;
 	}
 }

@@ -21,8 +21,6 @@ export class BetreuungViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
-
-
 export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
@@ -70,6 +68,16 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public getBetreuungModel(): TSBetreuung {
         return this.gesuchModelManager.getBetreuungToWorkWith();
+    }
+
+    public changedAngebot() {
+        if (this.getBetreuungModel()) {
+            if (this.isTagesschule()) {
+                this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.SCHULAMT;
+            } else {
+                this.getBetreuungModel().betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
+            }
+        }
     }
 
     submit(form: IFormController): void {

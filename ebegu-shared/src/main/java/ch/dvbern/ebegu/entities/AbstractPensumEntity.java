@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 /**
  * Abstrakte Entitaet. Muss von Entitaeten erweitert werden, die ein Pensum (Prozent) und ein DateRange beeinhalten.
@@ -28,5 +29,16 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 
 	public void setPensum(@Nullable Integer pensum) {
 		this.pensum = pensum;
+	}
+
+	@SuppressWarnings("ObjectEquality")
+	public boolean isSame(AbstractPensumEntity otherAbstDateRangedEntity) {
+		if (this == otherAbstDateRangedEntity) {
+			return true;
+		}
+		if (otherAbstDateRangedEntity == null || getClass() != otherAbstDateRangedEntity.getClass()) {
+			return false;
+		}
+		return super.isSame(otherAbstDateRangedEntity) && Objects.equals(this.getPensum(), otherAbstDateRangedEntity.getPensum());
 	}
 }

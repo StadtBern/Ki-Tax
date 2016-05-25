@@ -18,13 +18,12 @@ import DateUtil from './DateUtil';
 import {TSDateRange} from '../models/types/TSDateRange';
 import TSErwerbspensum from '../models/TSErwerbspensum';
 import TestDataUtil from './TestDataUtil';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import TSBetreuung from '../models/TSBetreuung';
 import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
 
 describe('EbeguRestUtil', function () {
 
@@ -115,7 +114,7 @@ describe('EbeguRestUtil', function () {
                 let adr: TSAdresse = ebeguRestUtil.parseAdresse(new TSAdresse(), restAdresse);
                 expect(adr).toBeDefined();
                 expect(adresse.gemeinde).toEqual(adr.gemeinde);
-                checkAndCopyDates(adr, adresse);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(adr, adresse);
                 expect(adresse).toEqual(adr);
 
             });
@@ -236,9 +235,9 @@ describe('EbeguRestUtil', function () {
                 let transformedBetreuung: TSBetreuung = ebeguRestUtil.parseBetreuung(new TSBetreuung(), restBetreuung);
 
                 expect(transformedBetreuung).toBeDefined();
-                checkAndCopyDates(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumGS, betreuung.betreuungspensumContainers[0].betreuungspensumGS);
-                checkAndCopyDates(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumJA, betreuung.betreuungspensumContainers[0].betreuungspensumJA);
-                checkAndCopyDates(transformedBetreuung.institutionStammdaten, betreuung.institutionStammdaten);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumGS, betreuung.betreuungspensumContainers[0].betreuungspensumGS);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumJA, betreuung.betreuungspensumContainers[0].betreuungspensumJA);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.institutionStammdaten, betreuung.institutionStammdaten);
                 expect(transformedBetreuung.bemerkungen).toEqual(betreuung.bemerkungen);
                 expect(transformedBetreuung.schulpflichtig).toEqual(betreuung.schulpflichtig);
                 expect(transformedBetreuung.betreuungsstatus).toEqual(betreuung.betreuungsstatus);
@@ -257,7 +256,7 @@ describe('EbeguRestUtil', function () {
                 let transformedBetreuungspensum: TSBetreuungspensum = ebeguRestUtil.parseBetreuungspensum(new TSBetreuungspensum(), restBetreuungspensum);
 
                 expect(transformedBetreuungspensum).toBeDefined();
-                checkAndCopyDates(transformedBetreuungspensum, betreuungspensum);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuungspensum, betreuungspensum);
                 expect(transformedBetreuungspensum).toEqual(betreuungspensum);
             });
         });
@@ -342,11 +341,4 @@ describe('EbeguRestUtil', function () {
         setAbstractFieldsUndefined(myInstitution);
         return myInstitution;
     }
-    
-    function checkAndCopyDates(abstrTocopyTo: TSAbstractDateRangedEntity, abstrToCopyFrom: TSAbstractDateRangedEntity): void {
-        expect(abstrTocopyTo.gueltigkeit.gueltigAb.isSame(abstrToCopyFrom.gueltigkeit.gueltigAb)).toBe(true);
-        expect(abstrTocopyTo.gueltigkeit.gueltigBis.isSame(abstrToCopyFrom.gueltigkeit.gueltigBis)).toBe(true);
-        abstrTocopyTo.gueltigkeit = abstrToCopyFrom.gueltigkeit;
-    }
-
 });

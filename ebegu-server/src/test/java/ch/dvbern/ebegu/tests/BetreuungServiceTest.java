@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
