@@ -24,7 +24,6 @@ import TSBetreuung from '../models/TSBetreuung';
 import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
-import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 
 describe('EbeguRestUtil', function () {
 
