@@ -7,7 +7,7 @@
             <div class="col-md-12 table-responsive">
 
                 <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
-                       class="table table-striped" st-delay="20">
+                       class="table table-striped table-hover" st-delay="20">
                     <thead>
                     <tr>
                         <th st-sort="kindJA.vorname" class="sortable"  data-translate="VORNAME" ></th>
@@ -30,7 +30,7 @@
                         </td>
                     </tr>
                     <tr ng-if="vm.getKinderList().length === 0">
-                        <td colspan="4" data-translate="KINDER_NOCH_KEINE"> hola</td>
+                        <td colspan="4" data-translate="KINDER_NOCH_KEINE"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -38,8 +38,8 @@
             </div>
             <div class="col-md-12" style="margin-bottom: 20px">
                 <button type="button" ng-click="vm.createKind()" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-plus">
-                    </i> add item
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span data-translate="KIND_HINZUFUEGEN"></span>
                 </button>
             </div>
 

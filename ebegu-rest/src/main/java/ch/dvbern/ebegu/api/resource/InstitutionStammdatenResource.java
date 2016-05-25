@@ -110,7 +110,7 @@ public class InstitutionStammdatenResource {
 	 * Sucht in der DB alle InstitutionStammdaten, bei welchen das gegebene Datum zwischen DatumVon und DatumBis liegt
 	 * Wenn das Datum null ist, wird dieses automatisch als heutiges Datum gesetzt.
 	 *
-	 * @param stringDate Date als String mit Format "dd-MM-yyyy". Wenn null, heutiges Datum gesetzt
+	 * @param stringDate Date als String mit Format "yyyy-MM-dd". Wenn null, heutiges Datum gesetzt
 	 * @return Liste mit allen InstitutionStammdaten die den Bedingungen folgen
      */
 	@Nonnull
@@ -123,7 +123,7 @@ public class InstitutionStammdatenResource {
 
 		LocalDate date = LocalDate.now();
 		if (stringDate != null && !stringDate.isEmpty()) {
-			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		return institutionStammdatenService.getAllInstitutionStammdatenByDate(date).stream()
 			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))

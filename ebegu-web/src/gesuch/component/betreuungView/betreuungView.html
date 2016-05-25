@@ -1,0 +1,183 @@
+<div class="betreuungView row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="mainTitle">
+                    <span data-translate="BETREUUNGSANGEBOT_NUMBER" data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
+                          data-translate-value-betreuungnumber="{{vm.gesuchModelManager.betreuungNumber}}"></span>
+                </h4>
+            </div>
+        </div>
+        <hr class="header"/>
+
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
+
+            <!--Schuljahr -->
+            <div class="row">
+                <div class="col-md-12" ng-if="vm.isTagesschule()">
+                    <span data-translate="SCHULJAHR" data-translate-value-schuljahr="2016/2017"></span>
+                </div>
+            </div>
+
+            <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
+            <div class="row marginTop20">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
+                        </label>
+                        <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot" class="form-control"
+                                ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
+                                ng-required="true" ng-disabled="!vm.isEnabled()" ng-change="vm.changedAngebot()">
+                        </select>
+                        <dv-error-messages  for="form.betreuungsangebot.$error"
+                                            class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+            <!--Institutionen-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="INSTITUTION" for="institution">
+                        </label>
+                        <select name="institution" id="institution" ng-model="vm.instStammId" class="form-control"
+                                ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
+                                ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()" ng-disabled="!vm.isEnabled()">
+                        </select>
+                        <dv-error-messages  for="form.institution.$error"
+                                            class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
+            <div ng-if="!vm.isTagesschule()">
+                <!--Betreuungspensen-->
+                <div ng-repeat="betpen in vm.getBetreuungspensen()">
+                    <!--Betreuungspensum-->
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dv-input-container class="form-group">
+                                <label data-translate="BETREUUNGSPENSUM" data-translate-value-betreuungspensumnumber="{{$index + 1}}" for="betreuungspensum-{{$index}}"></label>
+                                <input id="betreuungspensum-{{$index}}" type="text" name="betreuungspensum-{{$index}}"
+                                       ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
+                                       dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                       ng-required="true" ng-disabled="!vm.isEnabled()">
+                                <dv-error-messages  for="form.betreuungspensum-$index.$error" class="error"></dv-error-messages>
+                                <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!-- gueltig ab / gueltig bis -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dv-input-container class="form-group">
+                                <label data-translate="VON" for="datumAb-{{$index}}">
+                                </label>
+                                <p class="input-group">
+                                    <dv-datepicker input-id="datumAb-{{$index}}" input-name="datumAb-{{$index}}"
+                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
+                                                   ng-required="true" ng-disabled="!vm.isEnabled()">
+                                    </dv-datepicker>
+                                </p>
+                                <dv-error-messages  for="form.datumAb-$index.$error"
+                                                    class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+
+                        <div class="col-md-6">
+                            <dv-input-container class="form-group">
+                                <label data-translate="BIS" for="datumBis-{{$index}}">
+                                </label>
+                                <p class="input-group">
+                                    <dv-datepicker input-id="datumBis-{{$index}}" input-name="datumBis-{{$index}}"
+                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
+                                                   ng-required="false" ng-disabled="!vm.isEnabled()">
+                                    </dv-datepicker>
+                                </p>
+                                <dv-error-messages  for="form.datumBis-$index.$error"
+                                                    class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Dieses div wird fuer alle status ausser AUSSTEHEND ausgeblendet-->
+                <div ng-if="vm.isEnabled()">
+                    <!--Neues Betreuungspensum hinzufuegen-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span data-translate="BETREUUNGSPENSUM_ERFASSEN"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!--bemerkungen-->
+                    <div class="row marginTop20">
+                        <div class="col-md-12" ng-show="vm.isAdminRole()">
+                            <dv-input-container class="form-group">
+                                <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
+                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getBetreuungModel().bemerkungen"
+                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}" ng-disabled="!vm.isEnabled()"></textarea>
+                            </dv-input-container>
+                        </div>
+                    </div>
+
+                    <!--Platz anfordern-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" ng-click="vm.platzAnfordern(form)" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
+                        <span data-translate="PLATZBESTAETIGUNG_ANFORDERN">
+                        </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!--Hint-->
+                    <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"></p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusWarten()">
+                        <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusAbgewiesen()">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12"  ng-if="vm.isBetreuungsstatusBestaetigt()">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-6">
+                    <button ng-click="vm.cancel()" class="btn btn-link previous">
+                        <span data-translate="ABBRECHEN_UPPER"></span>
+                    </button>
+                </div>
+                <div ng-if="vm.isEnabled()" class="col-md-6 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

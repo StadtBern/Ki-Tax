@@ -2,12 +2,15 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 /**
  * comments homa
@@ -165,5 +168,15 @@ public final class TestDataUtil {
 		ep.setZuschlagsprozent(10);
 		ep.setGesundheitlicheEinschraenkungen(false);
 		return ep;
+	}
+
+	public static Betreuung createDefaultBetreuung() {
+		Betreuung betreuung = new Betreuung();
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setKind(createDefaultKindContainer());
+		betreuung.setBemerkungen("Betreuung_Bemerkungen");
+		return betreuung;
 	}
 }

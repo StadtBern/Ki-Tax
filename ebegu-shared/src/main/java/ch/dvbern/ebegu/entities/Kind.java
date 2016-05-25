@@ -4,7 +4,10 @@ import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -99,4 +102,5 @@ public class Kind extends AbstractPersonEntity {
 	public void setPensumFachstelle(PensumFachstelle pensumFachstelle) {
 		this.pensumFachstelle = pensumFachstelle;
 	}
+
 }

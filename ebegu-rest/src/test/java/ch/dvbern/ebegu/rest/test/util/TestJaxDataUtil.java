@@ -1,18 +1,12 @@
 package ch.dvbern.ebegu.rest.test.util;
 
-import ch.dvbern.ebegu.api.dtos.JaxAdresse;
-import ch.dvbern.ebegu.api.dtos.JaxErwerbspensum;
-import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.enums.Geschlecht;
-import ch.dvbern.ebegu.enums.Land;
-import ch.dvbern.ebegu.enums.Taetigkeit;
-import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.enums.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -161,5 +155,38 @@ public class TestJaxDataUtil {
 		jaxKindContainer.setKindGS(createTestJaxKind());
 		jaxKindContainer.setKindJA(createTestJaxKind());
 		return jaxKindContainer;
+	}
+
+	public static JaxBetreuungspensum createTestJaxBetreuungspensum(){
+		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
+		jaxBetreuungspensum.setGueltigAb(LocalDate.now());
+		jaxBetreuungspensum.setPensum(40);
+		return jaxBetreuungspensum;
+	}
+
+	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(){
+		JaxBetreuungspensumContainer jaxBetrPenCnt = new JaxBetreuungspensumContainer();
+		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum());
+		jaxBetrPenCnt.setBetreuungspensumGS(createTestJaxBetreuungspensum());
+		return jaxBetrPenCnt;
+	}
+
+	public static JaxBetreuung createTestJaxBetreuung() {
+		JaxBetreuung betreuung = new JaxBetreuung();
+		JaxInstitutionStammdaten jaxInst = createTestJaxInstitutionsStammdaten();
+		betreuung.setInstitutionStammdaten(jaxInst);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		betreuung.setBetreuungspensumContainers(new ArrayList<>());
+		betreuung.setBemerkungen("Betreuung_Bemerkungen");
+		return betreuung;
+	}
+
+	private static JaxInstitutionStammdaten createTestJaxInstitutionsStammdaten() {
+		JaxInstitutionStammdaten institutionStammdaten = new JaxInstitutionStammdaten();
+		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		institutionStammdaten.setOeffnungsstunden(new BigDecimal(1000));
+		institutionStammdaten.setGueltigAb(LocalDate.now());
+		institutionStammdaten.setOeffnungstage(new BigDecimal(250));
+		return institutionStammdaten;
 	}
 }

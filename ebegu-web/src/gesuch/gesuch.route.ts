@@ -20,7 +20,9 @@ function getStates(): IState[] {
         new EbeguFinanzielleSituationResultateState(),
         new EbeguKindState(),
         new EbeguErwerbspensenListState(),
-        new EbeguErwerbspensumState()
+        new EbeguErwerbspensumState(),
+        new EbeguBetreuungListState(),
+        new EbeguBetreuungState()
     ];
 }
 
@@ -58,6 +60,17 @@ export class EbeguKindState implements IState {
     url = '/kinder/kind/:kindNumber';
 }
 
+export class EbeguBetreuungListState implements IState {
+    name = 'gesuch.betreuungen';
+    template = '<betreuung-list-view>';
+    url = '/betreuungen';
+}
+
+export class EbeguBetreuungState implements IState {
+    name = 'gesuch.betreuung';
+    template = '<betreuung-view>';
+    url = '/betreuungen/betreuung';
+}
 export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
     template = '<erwerbspensum-list-view>';

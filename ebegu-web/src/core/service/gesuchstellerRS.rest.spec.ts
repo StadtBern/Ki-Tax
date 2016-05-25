@@ -23,8 +23,6 @@ describe('GesuchstellerRS', function () {
         gesuchstellerRS = $injector.get('GesuchstellerRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
-
-
     }));
 
     beforeEach(() => {
@@ -46,6 +44,7 @@ describe('GesuchstellerRS', function () {
             expect(gesuchstellerRS.updateGesuchsteller).toBeDefined();
         });
     });
+
     describe('API Usage', function () {
         describe('updateGesuchsteller', () => {
             it('should updateGesuchsteller a gesuchsteller and her adresses', () => {

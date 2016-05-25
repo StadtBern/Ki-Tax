@@ -79,7 +79,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     previousStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
         } else {
             this.state.go('gesuch.familiensituation');
@@ -87,7 +87,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     nextStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
         } else {
             this.state.go('gesuch.kinder');

@@ -58,7 +58,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
             .then(() => {   //User confirmed removal
                 let kindNumber: number = this.gesuchModelManager.findKind(kind);
                 if (kindNumber > 0) {
-                    this.gesuchModelManager.kindNumber = kindNumber;
+                    this.gesuchModelManager.setKindNumber(kindNumber);
                     this.gesuchModelManager.removeKind();
                 }
         });
@@ -69,7 +69,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     previousStep(): void {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
         } else {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
@@ -78,10 +78,6 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     // TODO (team) vorübergehend direkt auf FinanzSit navigieren
     nextStep(): void  {
-        if (this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-        }
+        this.state.go('gesuch.betreuungen');
     }
 }

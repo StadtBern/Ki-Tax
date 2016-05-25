@@ -1,5 +1,6 @@
 import '../bootstrap.ts';
 import 'angular-mocks';
+import {IFilterService} from 'angular';
 import EbeguRestUtil from './EbeguRestUtil';
 import TSAdresse from '../models/TSAdresse';
 import {EbeguWebCore} from '../core/core.module';
@@ -17,18 +18,39 @@ import DateUtil from './DateUtil';
 import {TSDateRange} from '../models/types/TSDateRange';
 import TSErwerbspensum from '../models/TSErwerbspensum';
 import TestDataUtil from './TestDataUtil';
+import TSBetreuung from '../models/TSBetreuung';
+import {TSBetreuungsstatus} from '../models/enums/TSBetreuungsstatus';
+import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
+import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
 describe('EbeguRestUtil', function () {
 
     let ebeguRestUtil: EbeguRestUtil;
+    let filter: IFilterService;
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
+    // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
+    // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
+    beforeEach(angular.mock.module(function($provide: any) {
+        let mockTranslateFilter = function(value: any) {
+            if (value === 'FIRST') {
+                return 'Erster';
+            }
+            if (value === 'SECOND') {
+                return 'Zweiter';
+            }
+            return value;
+        };
+        $provide.value('translateFilter', mockTranslateFilter);
+    }));
+
     beforeEach(angular.mock.inject(function ($injector: any) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        filter = $injector.get('$filter');
         today = DateUtil.today();
     }));
 
@@ -76,6 +98,7 @@ describe('EbeguRestUtil', function () {
             it('should transfrom Adresse Rest Objects', () => {
                 let adresse = new TSAdresse();
                 adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+                setAbstractFieldsUndefined(adresse);
                 adresse.gemeinde = 'Testingen';
                 adresse.land = 'CH';
                 adresse.ort = 'Testort';
@@ -91,9 +114,7 @@ describe('EbeguRestUtil', function () {
                 let adr: TSAdresse = ebeguRestUtil.parseAdresse(new TSAdresse(), restAdresse);
                 expect(adr).toBeDefined();
                 expect(adresse.gemeinde).toEqual(adr.gemeinde);
-                expect(adr.gueltigkeit.gueltigAb.isSame(adresse.gueltigkeit.gueltigAb)).toBe(true);
-                expect(adr.gueltigkeit.gueltigBis.isSame(adresse.gueltigkeit.gueltigBis)).toBe(true);
-                adr.gueltigkeit = adresse.gueltigkeit;
+                TestDataUtil.checkGueltigkeitAndSetIfSame(adr, adresse);
                 expect(adresse).toEqual(adr);
 
             });
@@ -183,6 +204,60 @@ describe('EbeguRestUtil', function () {
                 expect(transformedInstitution).toEqual(myInstitution);
             });
         });
+        describe('parseBetreuung()', () => {
+            it('should transform TSBetreuung to REST object and back', () => {
+                let instStam: TSInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, createInstitution(),
+                    new TSDateRange(DateUtil.today(), DateUtil.today()));
+                setAbstractFieldsUndefined(instStam);
+
+                let tsBetreuungspensumGS: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                setAbstractFieldsUndefined(tsBetreuungspensumGS);
+                let tsBetreuungspensumJA: TSBetreuungspensum = new TSBetreuungspensum(50, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                setAbstractFieldsUndefined(tsBetreuungspensumJA);
+                let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
+                setAbstractFieldsUndefined(tsBetreuungspensumContainer);
+                let betContainers: Array<TSBetreuungspensumContainer> = [tsBetreuungspensumContainer];
+                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen');
+                setAbstractFieldsUndefined(betreuung);
+
+                let restBetreuung = ebeguRestUtil.betreuungToRestObject({}, betreuung);
+
+                expect(restBetreuung).toBeDefined();
+                expect(restBetreuung.bemerkungen).toEqual('bemerkungen');
+                expect(restBetreuung.betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
+                expect(restBetreuung.institutionStammdaten.iban).toEqual(betreuung.institutionStammdaten.iban);
+                expect(restBetreuung.betreuungspensumContainers).toBeDefined();
+                expect(restBetreuung.betreuungspensumContainers.length).toEqual(betreuung.betreuungspensumContainers.length);
+                expect(restBetreuung.betreuungspensumContainers[0].betreuungspensumGS.pensum).toBe(betreuung.betreuungspensumContainers[0].betreuungspensumGS.pensum);
+                expect(restBetreuung.betreuungspensumContainers[0].betreuungspensumJA.pensum).toBe(betreuung.betreuungspensumContainers[0].betreuungspensumJA.pensum);
+
+                let transformedBetreuung: TSBetreuung = ebeguRestUtil.parseBetreuung(new TSBetreuung(), restBetreuung);
+
+                expect(transformedBetreuung).toBeDefined();
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumGS, betreuung.betreuungspensumContainers[0].betreuungspensumGS);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.betreuungspensumContainers[0].betreuungspensumJA, betreuung.betreuungspensumContainers[0].betreuungspensumJA);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuung.institutionStammdaten, betreuung.institutionStammdaten);
+                expect(transformedBetreuung.bemerkungen).toEqual(betreuung.bemerkungen);
+                expect(transformedBetreuung.betreuungsstatus).toEqual(betreuung.betreuungsstatus);
+                expect(transformedBetreuung.betreuungspensumContainers[0]).toEqual(betreuung.betreuungspensumContainers[0]);
+            });
+        });
+        describe('parseBetreuungspensum', () => {
+            it('should transform TSBetreuungspensum to REST object and back', () => {
+                let betreuungspensum: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                setAbstractFieldsUndefined(betreuungspensum);
+
+                let restBetreuungspensum: TSBetreuungspensum = ebeguRestUtil.betreuungspensumToRestObject({}, betreuungspensum);
+                expect(restBetreuungspensum).toBeDefined();
+                expect(restBetreuungspensum.pensum).toEqual(betreuungspensum.pensum);
+
+                let transformedBetreuungspensum: TSBetreuungspensum = ebeguRestUtil.parseBetreuungspensum(new TSBetreuungspensum(), restBetreuungspensum);
+
+                expect(transformedBetreuungspensum).toBeDefined();
+                TestDataUtil.checkGueltigkeitAndSetIfSame(transformedBetreuungspensum, betreuungspensum);
+                expect(transformedBetreuungspensum).toEqual(betreuungspensum);
+            });
+        });
         describe('parseInstitutionStammdaten()', () => {
             it('should transform TSInstitutionStammdaten to REST object and back', () => {
                 var myInstitution = createInstitution();
@@ -208,6 +283,17 @@ describe('EbeguRestUtil', function () {
                 myInstitutionStammdaten.gueltigkeit.gueltigAb = transformedInstitutionStammdaten.gueltigkeit.gueltigAb;
                 myInstitutionStammdaten.gueltigkeit.gueltigBis = transformedInstitutionStammdaten.gueltigkeit.gueltigBis;
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
+            });
+        });
+        describe('translateStringList', () => {
+            it('should translate the given list of words', () => {
+                let list: Array<string> = ['FIRST', 'SECOND'];
+                let returnedList: Array<any> = ebeguRestUtil.translateStringList(list);
+                expect(returnedList.length).toEqual(2);
+                expect(returnedList[0].key).toEqual('FIRST');
+                expect(returnedList[0].value).toEqual('Erster');
+                expect(returnedList[1].key).toEqual('SECOND');
+                expect(returnedList[1].value).toEqual('Zweiter');
             });
         });
         describe('parseErwerbspensenContainer()', () => {
@@ -253,5 +339,4 @@ describe('EbeguRestUtil', function () {
         setAbstractFieldsUndefined(myInstitution);
         return myInstitution;
     }
-
 });

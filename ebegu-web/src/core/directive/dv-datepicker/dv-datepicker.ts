@@ -12,8 +12,9 @@ export class DVDatepicker implements IDirective {
     scope = {
         ngModel: '=',
         inputId: '@',
+        ngRequired: '<',
         placeholder: '@',
-        ngRequired: '<'
+        ngDisabled: '<'
     };
     controller = DatepickerController;
     controllerAs = 'vm';
@@ -33,6 +34,7 @@ export class DatepickerController {
     dateRequired: boolean;
     ngRequired: boolean;
     placeholder: string;
+
 
     constructor() {
     }

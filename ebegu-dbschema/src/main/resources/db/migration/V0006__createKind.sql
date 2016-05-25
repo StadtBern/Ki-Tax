@@ -10,10 +10,10 @@ CREATE TABLE kind (
   nachname                       VARCHAR(255) NOT NULL,
   vorname                        VARCHAR(255) NOT NULL,
   bemerkungen                    VARCHAR(1000),
-  familien_ergaenzende_betreuung BIT,
+  familien_ergaenzende_betreuung BIT          NOT NULL,
   muttersprache_deutsch          BIT,
   unterstuetzungspflicht         BIT,
-  wohnhaft_im_gleichen_haushalt  INTEGER,
+  wohnhaft_im_gleichen_haushalt  INTEGER      NOT NULL,
   pensum_fachstelle_id           VARCHAR(36),
   CONSTRAINT PK_kind PRIMARY KEY (id)
 );
