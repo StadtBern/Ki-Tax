@@ -333,19 +333,17 @@ export default class GesuchModelManager {
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
+        //besteht schon -> update
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.setBetreuungToWorkWith(betreuungResponse);
-                return this.updateKind().then(() => {
-                    return this.getBetreuungToWorkWith();
-                });
+                return this.getBetreuungToWorkWith();
             });
+            //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.setBetreuungToWorkWith(betreuungResponse);
-                return this.updateKind().then(() => {
-                    return this.getBetreuungToWorkWith();
-                });
+                return this.getBetreuungToWorkWith();
             });
         }
     }

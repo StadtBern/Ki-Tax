@@ -101,7 +101,7 @@ export default class EbeguRestUtil {
         restPersonObject.geschlecht = personObject.geschlecht;
     }
 
-    private abstractDateRangeEntityToRestObject(restObj: any, dateRangedEntity: TSAbstractDateRangedEntity) {
+    private abstractDateRangeEntityToRestObject(dateRangedEntity: TSAbstractDateRangedEntity, restObj: any) {
         this.abstractEntityToRestObject(restObj, dateRangedEntity);
         if (dateRangedEntity && dateRangedEntity.gueltigkeit) {
             restObj.gueltigAb = DateUtil.momentToLocalDate(dateRangedEntity.gueltigkeit.gueltigAb);

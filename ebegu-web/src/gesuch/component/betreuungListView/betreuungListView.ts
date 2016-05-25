@@ -5,11 +5,11 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import IDialogService = angular.material.IDialogService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {BetreuungRemoveDialogController} from '../../dialog/BetreuungRemoveDialogController';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
+import IDialogService = angular.material.IDialogService;
 let template = require('./betreuungListView.html');
 let removeBetreuungTemplate = require('../../dialog/removeBetreuungDialogTemplate.html');
 
@@ -21,6 +21,9 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
     controllerAs = 'vm';
 }
 
+/**
+ * View fuer die Liste der Betreeungen der eingegebenen Kinder
+ */
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager'];

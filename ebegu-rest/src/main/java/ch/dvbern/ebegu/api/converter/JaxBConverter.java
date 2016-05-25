@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
 import org.apache.commons.lang3.Validate;
@@ -54,6 +55,9 @@ public class JaxBConverter {
 	private InstitutionService institutionService;
 	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
+	@Inject
+	private BetreuungService betreuungService;
+
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -129,9 +133,10 @@ public class JaxBConverter {
 	 * Checks fields gueltigAb and gueltigBis from given object and stores the corresponding DateRange object in the given Jax Object
 	 * If gueltigAb is null then current date is set instead
 	 * If gueltigBis is null then end_of_time is set instead
-	 * @param dateRangedJAXP AbstractDateRanged jax where to take the date from
+	 *
+	 * @param dateRangedJAXP   AbstractDateRanged jax where to take the date from
 	 * @param dateRangedEntity AbstractDateRanged entity where to store the date into
-     */
+	 */
 	private void convertAbstractDateRangedFieldsToEntity(JaxAbstractDateRangedDTO dateRangedJAXP, AbstractDateRangedEntity dateRangedEntity) {
 		convertAbstractFieldsToEntity(dateRangedJAXP, dateRangedEntity);
 		LocalDate dateAb = dateRangedJAXP.getGueltigAb() == null ? LocalDate.now() : dateRangedJAXP.getGueltigAb();
@@ -226,7 +231,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(),"Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
 		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
@@ -612,8 +617,8 @@ public class JaxBConverter {
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
 
 		PensumFachstelle updtPensumFachstelle = null;
-		if(kindJAXP.getPensumFachstelle() != null) {
-			updtPensumFachstelle =  toStorablePensumFachstelle(kindJAXP.getPensumFachstelle());
+		if (kindJAXP.getPensumFachstelle() != null) {
+			updtPensumFachstelle = toStorablePensumFachstelle(kindJAXP.getPensumFachstelle());
 		}
 		kind.setPensumFachstelle(updtPensumFachstelle);
 
@@ -758,7 +763,7 @@ public class JaxBConverter {
 		return null;
 	}
 
-	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(JaxErwerbspensumContainer jaxEwpCont) {
+	public ErwerbspensumContainer erwerbspensumContainerToStoreableEntity(@Nonnull JaxErwerbspensumContainer jaxEwpCont) {
 		Validate.notNull(jaxEwpCont);
 		ErwerbspensumContainer containerToMergeWith = new ErwerbspensumContainer();
 		if (jaxEwpCont.getId() != null) {
@@ -788,6 +793,7 @@ public class JaxBConverter {
 		return erwerbspensumCont;
 	}
 
+	@Nonnull
 	public JaxErwerbspensumContainer erwerbspensumContainerToJAX(@Nonnull ErwerbspensumContainer storedErwerbspensumCont) {
 		Validate.notNull(storedErwerbspensumCont);
 		JaxErwerbspensumContainer jaxEwpCont = new JaxErwerbspensumContainer();
@@ -826,26 +832,39 @@ public class JaxBConverter {
 		}
 		return null;
 	}
-	public Betreuung betreuungToEntity(@Nullable JaxBetreuung betreuungJAXP, @Nullable Betreuung betreuung) {
+
+	public Betreuung betreuungToEntity(@Nonnull JaxBetreuung betreuungJAXP, @Nonnull Betreuung betreuung) {
 		Validate.notNull(betreuung);
 		Validate.notNull(betreuungJAXP);
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
 
-		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung);
-
-		setBetreuunginbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
+		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
+		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
+		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
-			Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(betreuungJAXP.getInstitutionStammdaten().getId());
-			InstitutionStammdaten instStammdatenToMerge = optInstStammdaten.orElse(new InstitutionStammdaten());
+			String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
+			Optional<InstitutionStammdaten> optInstStammdaten = institutionStammdatenService.findInstitutionStammdaten(instStammdatenID);
+			InstitutionStammdaten instStammdatenToMerge =
+				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, instStammdatenID));
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		return betreuung;
 	}
 
-	private void setBetreuunginbetreuungsPensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers, Betreuung betreuung) {
-		for (BetreuungspensumContainer betreuungspensumContainer: betreuungspensumContainers) {
+	public Betreuung betreuungToStoreableEntity(@Nonnull JaxBetreuung betreuungJAXP) {
+		Validate.notNull(betreuungJAXP);
+		Betreuung betreuungToMergeWith = new Betreuung();
+		if (betreuungJAXP.getId() != null) {
+			Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
+			betreuungToMergeWith = optionalBetreuung.orElse(new Betreuung());
+		}
+		return this.betreuungToEntity(betreuungJAXP, betreuungToMergeWith);
+	}
+
+	private void setBetreuungInbetreuungsPensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers, Betreuung betreuung) {
+		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
 			betreuungspensumContainer.setBetreuung(betreuung);
 		}
 	}
@@ -854,35 +873,27 @@ public class JaxBConverter {
 	 * Goes through the whole list of jaxBetPenContainers. For each (jax)Container that already exists as Entity it merges both and adds the resulting
 	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
 	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
-	 * @param jaxBetPenContainers
-	 * @param betreuung
-     */
-	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers, Betreuung betreuung) {
+	 *
+	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
+	 * @param jaxBetPenContainers List of currently stored BetreungspensumContainers
+	 */
+	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers,
+																			   Collection<BetreuungspensumContainer> existingBetreuungspensen) {
+		Set<BetreuungspensumContainer> transformedBetPenContainers = new HashSet<>();
 		for (JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
-			BetreuungspensumContainer bpContainer = new BetreuungspensumContainer();
-			BetreuungspensumContainer retrievedBPContainer = findBetPenContainer(betreuung.getBetreuungspensumContainers(), jaxBetPensContainer);
-			if (retrievedBPContainer != null) {
-				bpContainer = retrievedBPContainer;
-				betreuung.getBetreuungspensumContainers().remove(retrievedBPContainer);
-			}
-			betreuung.getBetreuungspensumContainers().add(betreuungspensumContainerToEntity(jaxBetPensContainer, bpContainer));
+			BetreuungspensumContainer containerToMergeWith = existingBetreuungspensen
+				.stream()
+				.filter(existingBetPensumEntity -> existingBetPensumEntity.getId().equals(jaxBetPensContainer.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new BetreuungspensumContainer());
+			transformedBetPenContainers.add(betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith));
 		}
+
+		//change the existing collection to reflect changes
+		existingBetreuungspensen.clear();
+		existingBetreuungspensen.addAll(transformedBetPenContainers);
 	}
 
-	/**
-	 * Checks whether the given jaxBetPensContainer exists in the given list of {@link BetreuungspensumContainer} by comparing their ID parameter.
-	 * @param betPenContainers list of {@link BetreuungspensumContainer}
-	 * @param jaxBetPensContainer Jax object to look for
-     * @return the {@link BetreuungspensumContainer} if it exists or null if it doesn't
-     */
-	private BetreuungspensumContainer findBetPenContainer(Set<BetreuungspensumContainer> betPenContainers, JaxBetreuungspensumContainer jaxBetPensContainer) {
-		for (BetreuungspensumContainer betPensContainer : betPenContainers) {
-			if (betPensContainer.getId().equals(jaxBetPensContainer.getId())) {
-				return betPensContainer;
-			}
-		}
-		return null;
-	}
 
 	private BetreuungspensumContainer betreuungspensumContainerToEntity(JaxBetreuungspensumContainer jaxBetPenContainers, BetreuungspensumContainer bpContainer) {
 		Validate.notNull(jaxBetPenContainers);
@@ -919,7 +930,6 @@ public class JaxBConverter {
 	}
 
 	public JaxBetreuung betreuungToJAX(Betreuung persistedBetreuung) {
-		if (persistedBetreuung != null) {
 			JaxBetreuung jaxBetreuung = new JaxBetreuung();
 			convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
 			jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
@@ -927,15 +937,15 @@ public class JaxBConverter {
 			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
 			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
 			return jaxBetreuung;
-		}
-		return null;
+
 	}
 
 	/**
 	 * calls betreuungsPensumContainerToJax for each betreuungspensumContainer found in given the list
+	 *
 	 * @param betreuungspensumContainers
 	 * @return
-     */
+	 */
 	private List<JaxBetreuungspensumContainer> betreuungsPensumContainersToJax(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		List<JaxBetreuungspensumContainer> jaxContainers = new ArrayList<>();
 		if (betreuungspensumContainers != null) {

@@ -43,7 +43,7 @@ public class BetreuungResource {
 	private JaxBConverter converter;
 
 
-	@Nullable
+	@Nonnull
 	@PUT
 	@Path("/{kindId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -56,15 +56,8 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
-			Betreuung retrievedBetreuung = new Betreuung();
-			if (betreuungJAXP.getId() != null) {
-				Optional<Betreuung> optionalBetreuung = betreuungService.findBetreuung(betreuungJAXP.getId());
-				retrievedBetreuung = optionalBetreuung.orElse(new Betreuung());
-			}
-
-			Betreuung convertedBetreuung = converter.betreuungToEntity(betreuungJAXP, retrievedBetreuung);
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
-
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
@@ -75,7 +68,7 @@ public class BetreuungResource {
 	@DELETE
 	@Path("/{betreuungId}")
 	@Consumes(MediaType.WILDCARD)
-	public Response removeKind(
+	public Response removeBetreuung(
 		@Nonnull @NotNull @PathParam("betreuungId") JaxId betreuungJAXPId,
 		@Context HttpServletResponse response) {
 

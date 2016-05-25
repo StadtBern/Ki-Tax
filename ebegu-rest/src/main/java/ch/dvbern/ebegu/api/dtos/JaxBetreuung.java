@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DTO fuer Daten der Betreuungen
+ * DTO fuer Daten der Betreuungen,
  */
 @XmlRootElement(name = "betreuung")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -12,21 +12,22 @@
 
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
 
+            <!--Schuljahr -->
             <div class="row">
-                <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isTagesschule()">
+                <div class="col-md-12" ng-if="vm.isTagesschule()">
                     <span data-translate="SCHULJAHR" data-translate-value-schuljahr="2016/2017"></span>
                 </div>
             </div>
 
             <!--Betreuungsangebot (Mit diesem Wert filtern wir die Institutionen)-->
-            <div class="row">
+            <div class="row marginTop20">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
                         </label>
                         <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot" class="form-control"
                                 ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
-                                ng-required="true" ng-disabled="!vm.isEnabled()">
+                                ng-required="true" ng-disabled="!vm.isEnabled()" ng-change="vm.changedAngebot()">
                         </select>
                         <dv-error-messages  for="form.betreuungsangebot.$error"
                                             class="error"></dv-error-messages>
@@ -107,7 +108,7 @@
                 <div ng-if="vm.isEnabled()">
                     <!--Neues Betreuungspensum hinzufuegen-->
                     <div class="row">
-                        <div class="col-md-12" style="margin-bottom: 20px">
+                        <div class="col-md-12">
                             <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="BETREUUNGSPENSUM_ERFASSEN"></span>
@@ -116,7 +117,7 @@
                     </div>
 
                     <!--bemerkungen-->
-                    <div class="row">
+                    <div class="row marginTop20">
                         <div class="col-md-12" ng-show="vm.isAdminRole()">
                             <dv-input-container class="form-group">
                                 <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
@@ -128,7 +129,7 @@
 
                     <!--Platz anfordern-->
                     <div class="row">
-                        <div class="col-md-12" style="margin-bottom: 20px">
+                        <div class="col-md-12">
                             <button type="button" ng-click="vm.platzAnfordern(form)" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
                         <span data-translate="PLATZBESTAETIGUNG_ANFORDERN">
                         </span>
@@ -137,25 +138,25 @@
                     </div>
 
                     <!--Hint-->
-                    <p class="inlineHint" data-translate="BETREUUNGSPENSUM_HINT1"></p>
+                    <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"></p>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isBetreuungsstatusWarten()">
+                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusWarten()">
                         <i class="fa fa-hourglass-half" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isBetreuungsstatusAbgewiesen()">
+                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusAbgewiesen()">
                         <i class="fa fa-times" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"></span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isBetreuungsstatusBestaetigt()">
+                    <div class="col-md-12"  ng-if="vm.isBetreuungsstatusBestaetigt()">
                         <i class="fa fa-check" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
                     </div>
