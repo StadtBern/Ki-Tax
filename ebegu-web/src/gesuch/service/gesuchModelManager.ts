@@ -258,6 +258,12 @@ export default class GesuchModelManager {
     }
 
 
+    getGesuchsperiode(): any {
+        //todo betrperiode
+        return {gueltigAb: '01.08.2016', gueltigBis: '31.07.2017'};
+    }
+
+
     private initAdresse(): TSAdresse {
         let wohnAdr = new TSAdresse();
         wohnAdr.showDatumVon = false;

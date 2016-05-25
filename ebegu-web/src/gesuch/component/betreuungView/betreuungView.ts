@@ -53,7 +53,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public getAnfangsperiode(): string {
         //todo team der richte Anfang der aktuellen Periode muss zurueckgegeben werden
-        return '01.08.2016';
+        return this.gesuchModelManager.getGesuchsperiode() ? this.gesuchModelManager.getGesuchsperiode().gueltigAb : '01.08.YYYY';
     }
 
     private getBetreuungsangebotFromInstitutionList() {
