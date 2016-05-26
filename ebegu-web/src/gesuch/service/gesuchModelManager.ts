@@ -65,7 +65,6 @@ export default class GesuchModelManager {
             return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
             && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         } else {
-            this.log.debug('zweiter Gesuchsteller nicht initialisiert da keine Familiensituation festgelegt war');
             return false;
         }
     }
@@ -212,10 +211,8 @@ export default class GesuchModelManager {
             //TODO (hefr) Dummy Daten!
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = 2015;
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationGS = new TSFinanzielleSituation();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationGS.nettolohn = 12345;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
         if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!

@@ -1,5 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState, IStateParamsService} from 'angular-ui-router';
+import {GesuchRouteController} from './gesuch';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -34,6 +35,8 @@ export class EbeguGesuchState implements IState {
     template = gesuchTpl;
     url = '/gesuch';
     abstract = true;
+    controller = GesuchRouteController;
+    controllerAs = 'vm';
 }
 
 export class EbeguFamiliensituationState implements IState {
