@@ -29,7 +29,7 @@
 
             <!--Pensum-->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <dv-input-container class="form-group">
                         <label data-translate="PENSUM" for="taetigkeitPensum"></label>
                         <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
@@ -110,13 +110,12 @@
                 </div>
             </div>
 
-
             <!--Zuschlagsprozent-->
             <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <dv-input-container class="form-group">
                         <label data-translate="ZUSCHLAGSPROZENT" for="zuschlagsprozent"></label>
-                        <input id="zuschlagsprozent" type="text" name="zuschlagsprozent"
+                        <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
                                ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
                                dv-max-length class="form-control" max="20"
                                ng-required="true" ng-pattern="vm.patternPercentage">
