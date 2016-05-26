@@ -13,6 +13,7 @@ import 'angular-smart-table';
 import 'angular-moment';
 import 'angular-unsavedchanges';
 import 'angular-input-masks';
+import 'angular-hotkeys';
 import appModule from './app.module';
 
 angular.element(document).ready(function () {

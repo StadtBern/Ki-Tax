@@ -58,7 +58,8 @@ const dependencies: string[] = [
     'ngMessages',
     'pascalprecht.translate',
     'angularMoment',
-    'ui.utils.masks'
+    'cfp.hotkeys',
+     'ui.utils.masks'
 
 ];
 

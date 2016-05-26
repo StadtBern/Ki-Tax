@@ -2,12 +2,13 @@ import 'angular';
 import 'angular-translate';
 import 'angular-unsavedchanges';
 import {ITranslateProvider} from 'angular-translate';
+import 'angular-hotkeys';
 import IInjectorService = angular.auto.IInjectorService;
 import IThemingProvider = angular.material.IThemingProvider;
 
-configure.$inject = ['$translateProvider', '$injector', '$mdThemingProvider'];
+configure.$inject = ['$translateProvider', '$injector', '$mdThemingProvider', 'hotkeysProvider'];
 /* @ngInject */
-export function configure($translateProvider: ITranslateProvider, $injector: IInjectorService, $mdThemingProvider: IThemingProvider) {
+export function configure($translateProvider: ITranslateProvider, $injector: IInjectorService, $mdThemingProvider: IThemingProvider, hotkeysProvider: any) {
     //Translation Provider configuration
     let translProp = require('../assets/translations/translations_de.json');
 
@@ -31,5 +32,9 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     $mdThemingProvider.theme('default')
     // .primaryPalette('red')
         .accentPalette('red');
+
+    //Config hotkey provider: https://github.com/chieffancypants/angular-hotkeys#angular-hotkeys-
+    hotkeysProvider.useNgRoute = false;
+    hotkeysProvider.includeCheatSheet = false;
 
 }
