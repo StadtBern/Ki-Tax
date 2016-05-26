@@ -14,7 +14,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
     }
     $rootScope.$on('$viewContentLoaded', function () {
-        jQuery('html, body').animate({scrollTop: 0}, 200);
+        angular.element('html, body').animate({scrollTop: 0}, 200);
     //    oder so  $anchorScroll('top') mit einem <div id="top">;
     });
 
