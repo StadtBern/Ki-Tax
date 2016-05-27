@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
+import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Audited
 @Entity
 @CheckBetreuungspensum
+@CheckBetreuungspensumDatesOverlapping
 public class Betreuung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6776987863150835840L;

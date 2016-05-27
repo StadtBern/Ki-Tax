@@ -15,7 +15,7 @@ import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertNotVi
 import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertViolated;
 
 /**
- * Tests der die Konvertierung von Erwerbspensen prueft
+ * Tests der den Validator fuer die Werte in Betreuungspensum checkt
  */
 public class CheckBetreuungspensumValidatorTest {
 
@@ -96,12 +96,22 @@ public class CheckBetreuungspensumValidatorTest {
 		Betreuung betreuung = createBetreuung(BetreuungsangebotTyp.TAGI, 60, 60);
 
 		BetreuungspensumContainer betPensContainer = TestDataUtil.createBetPensContainer(betreuung);
-		betreuung.getBetreuungspensumContainers().add(betPensContainer);
 		betPensContainer.getBetreuungspensumGS().setPensum(59);
 		betPensContainer.getBetreuungspensumJA().setPensum(60);
+		betreuung.getBetreuungspensumContainers().add(betPensContainer);
 
-		assertViolated(CheckBetreuungspensum.class, betreuung, "betreuungspensumContainers[1].betreuungspensumGS.pensum");
-		assertNotViolated(CheckBetreuungspensum.class, betreuung, "betreuungspensumContainers[1].betreuungspensumJA.pensum");
+		//es ist ein Set. Daher muessen wir die Stelle finden
+		//todo team macht es Sinn dass wir die Stelle dem Client uebergeben wenn es eigentlich auf dem Server keine Liste ist???? Die Stelle ist nicht immer richtig
+		int i = 0;
+		for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
+			if (betreuungspensumContainer.equals(betPensContainer)) {
+				break;
+			}
+			i++;
+		}
+
+		assertViolated(CheckBetreuungspensum.class, betreuung, "betreuungspensumContainers[" + i + "].betreuungspensumGS.pensum");
+		assertNotViolated(CheckBetreuungspensum.class, betreuung, "betreuungspensumContainers[" + i + "].betreuungspensumJA.pensum");
 	}
 
 
