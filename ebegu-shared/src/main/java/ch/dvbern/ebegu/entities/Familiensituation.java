@@ -38,6 +38,9 @@ public class Familiensituation extends AbstractEntity {
 	@ManyToOne(optional = false)
 	private Gesuch gesuch;
 
+	@Column(nullable = true)
+	private Boolean gemeinsameSteuererklaerung;
+
 
 	public Familiensituation() {
 	}
@@ -75,5 +78,13 @@ public class Familiensituation extends AbstractEntity {
 
 	public void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
+	}
+
+	public Boolean getGemeinsameSteuererklaerung() {
+		return gemeinsameSteuererklaerung;
+	}
+
+	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
+		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 }

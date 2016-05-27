@@ -1,32 +1,31 @@
 <div class="familiensituationView row">
 
     <div class="col-md-12">
-        <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
 
             <!--familienstatus-->
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_1"></h4>
-                        <dv-radio-container name="familienstatus" model="vm.getFamiliensituation().familienstatus" ng-required="true"
-                                            class="radio" items="vm.familienstatusValues">
+                        <h4 class="mainQuestion"><span data-translate="FAMILIENSITUATION_FRAGE_1"></span> <dv-tooltip text="'FAMILIENSITUATION_HELP' | translate"></dv-tooltip></h4>
+                        <dv-radio-container name="familienstatus" ng-model="vm.getFamiliensituation().familienstatus" ng-required="true"
+                                            class="input-element" items="vm.familienstatusValues">
                         </dv-radio-container>
-                        <dv-error-messages ng-if="form.$submitted" for="form.familienstatus.$error"
+                        <dv-error-messages for="form.familienstatus.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
             <br/>
-
             <!--gesuchstellerKardinalitaet-->
             <div class="row">
                 <div class="col-md-12" ng-if="vm.showGesuchstellerKardinalitaet()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FAMILIENSITUATION_FRAGE_2"></h4>
-                        <dv-radio-container name="gesuchstellerKardinalitaet" model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="true"
-                                            class="radio" items="vm.gesuchstellerKardinalitaetValues">
+                        <dv-radio-container name="gesuchstellerKardinalitaet" ng-model="vm.getFamiliensituation().gesuchstellerKardinalitaet" ng-required="true"
+                                            class="input-element" items="vm.gesuchstellerKardinalitaetValues">
                         </dv-radio-container>
-                        <dv-error-messages ng-if="form.$submitted" for="form.gesuchstellerKardinalitaet.$error"
+                        <dv-error-messages for="form.gesuchstellerKardinalitaet.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>

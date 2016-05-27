@@ -7,7 +7,8 @@ import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSPerson from "../../../models/TSPerson";
+import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./stammdatenView.html');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
@@ -20,27 +21,27 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 
 
 export class StammdatenViewController extends AbstractGesuchViewController {
-    gesuchModelManager: GesuchModelManager;
     geschlechter: Array<string>;
     showUmzug: boolean;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
     phonePattern: string;
+    mobilePattern: string;
 
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager'];
+    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
-                gesuchModelManager: GesuchModelManager) {
-        super($state);
-        this.gesuchModelManager = gesuchModelManager;
+                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+        super($state, gesuchModelManager, berechnungsManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewmodel();
         this.phonePattern = '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
+        this.mobilePattern = '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
     }
 
     private initViewmodel() {
@@ -60,7 +61,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
 
-            this.gesuchModelManager.updateGesuchsteller().then((personResponse: any) => {
+            this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
                 this.nextStep();
             });
         }
@@ -80,23 +81,22 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     previousStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
         } else {
             this.state.go('gesuch.familiensituation');
         }
-
     }
 
     nextStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
         } else {
             this.state.go('gesuch.kinder');
         }
     }
 
-    public getModel(): TSPerson {
+    public getModel(): TSGesuchsteller {
         return this.gesuchModelManager.getStammdatenToWorkWith();
     }
 

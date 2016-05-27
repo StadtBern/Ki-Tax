@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.2.0</version>
+        <version>0.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -46,6 +46,11 @@
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.dvbern.lib.beanvalidation</groupId>
+            <artifactId>dvbern-lib-beanvalidation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

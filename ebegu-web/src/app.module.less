@@ -63,7 +63,12 @@ body {
     font-weight: bolder;
 }
 
-@background-error-color:  #ffe6e6;
+.empty-table {
+    font-style: italic;
+    color: gray;
+}
+
+@background-error-color: #ffe6e6;
 
 .ErrorInput {
     border-color: @state-danger-text;
@@ -77,6 +82,7 @@ body {
     }
 }
 
+//roter hintergund bei den feldern die invalid sind
 form {
     &.ng-submitted {
         input {
@@ -84,20 +90,18 @@ form {
                 .ErrorInput
             }
         }
-        .ng-invalid.highlight-input-fields-when-invalid {
-            input {
-                .ErrorInput
-            }
+        md-radio-group.ng-invalid {
+            .ErrorInput
         }
-        .error-message {
-            display: inherit;
-            line-height: @floating-text-line-height;
-            color: @color-contrast-hover;
+
+    }
+    // style der den Hintergrund der inputs on-blur Rot markiert wenn nicht valid
+    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid {
+        &.ng-touched {
+            .ErrorInput
         }
     }
-    .error-message {
-        display: none;
-    }
+
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and

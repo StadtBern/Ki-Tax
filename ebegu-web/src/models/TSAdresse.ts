@@ -1,7 +1,8 @@
-import TSAbstractEntity from './TSAbstractEntity';
 import {TSAdressetyp} from './enums/TSAdressetyp';
+import {TSDateRange} from './types/TSDateRange';
+import {TSAbstractDateRangedEntity} from './TSAbstractDateRangedEntity';
 
-export default class TSAdresse extends TSAbstractEntity {
+export default class TSAdresse extends TSAbstractDateRangedEntity {
 
     private _strasse: string;
     private _hausnummer: string;
@@ -11,13 +12,11 @@ export default class TSAdresse extends TSAbstractEntity {
     private _land: string;
     private _gemeinde: string;
     private _showDatumVon: boolean;
-    private _gueltigAb: moment.Moment;
-    private _gueltigBis: moment.Moment;
     private _adresseTyp: TSAdressetyp = TSAdressetyp.WOHNADRESSE;
 
     constructor(strasse?: string, hausnummer?: string, zusatzzeile?: string, plz?: string, ort?: string,
-                land?: string, gemeinde?: string, gueltigAb?: moment.Moment, gueltigBis?: moment.Moment, adresseTyp?: TSAdressetyp) {
-        super();
+                land?: string, gemeinde?: string, gueltigkeit?: TSDateRange, adresseTyp?: TSAdressetyp) {
+        super(gueltigkeit);
         this._strasse = strasse;
         this._hausnummer = hausnummer;
         this._zusatzzeile = zusatzzeile;
@@ -25,10 +24,7 @@ export default class TSAdresse extends TSAbstractEntity {
         this._ort = ort;
         this._land = land || 'CH';
         this._gemeinde = gemeinde;
-        this._gueltigAb = gueltigAb;
-        this._gueltigBis = gueltigBis;
         this._adresseTyp = adresseTyp;
-
     }
 
 
@@ -88,23 +84,6 @@ export default class TSAdresse extends TSAbstractEntity {
         this._gemeinde = value;
     }
 
-    public get gueltigAb(): moment.Moment {
-        return this._gueltigAb;
-    }
-
-    public set gueltigAb(value: moment.Moment) {
-        this._gueltigAb = value;
-    }
-
-    public get gueltigBis(): moment.Moment {
-        return this._gueltigBis;
-    }
-
-    public set gueltigBis(value: moment.Moment) {
-        this._gueltigBis = value;
-    }
-
-
     public get showDatumVon(): boolean {
         return this._showDatumVon;
     }
@@ -112,7 +91,6 @@ export default class TSAdresse extends TSAbstractEntity {
     public set showDatumVon(value: boolean) {
         this._showDatumVon = value;
     }
-
 
     get adresseTyp(): TSAdressetyp {
         return this._adresseTyp;

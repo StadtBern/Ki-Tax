@@ -74,9 +74,8 @@ public class GesuchResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(gesuchJAXP.getId());
-		String gesuchsID = converter.toEntityId(gesuchJAXP);
-		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchsID);
-		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId().toString()));
+		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
@@ -91,8 +90,15 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuch findGesuch(
 		@Nonnull @NotNull JaxId gesuchJAXPId) throws EbeguException {
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 
-		return null;
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		return converter.gesuchToJAX(gesuchToReturn);
 	}
 
 }

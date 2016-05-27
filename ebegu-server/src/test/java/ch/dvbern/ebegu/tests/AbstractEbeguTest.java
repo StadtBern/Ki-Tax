@@ -23,7 +23,7 @@ public abstract class AbstractEbeguTest {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
 		File[] runtimeDeps = pom.importRuntimeDependencies().resolve().withTransitivity().asFile();
-		File[] testDeps = pom.importTestDependencies().resolve().withTransitivity().asFile();
+		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
 
 
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben doppelt eingefuegt werden
@@ -31,11 +31,12 @@ public abstract class AbstractEbeguTest {
 			.addPackages(true, "ch/dvbern/ebegu/persistence")
 			.addPackages(true, "ch/dvbern/ebegu/services")
 			.addPackages(true, "ch/dvbern/ebegu/validation")
-			.addPackages(true, "ch/dvbern/ebegu/errors")
-			.addPackages(true, "ch/dvbern/ebegu/entities")
+//			.addPackages(true, "ch/dvbern/ebegu/errors")
+//			.addPackages(true, "ch/dvbern/ebegu/entities")
 			.addPackages(true, "ch/dvbern/ebegu/tests")
+//			.addPackages(true, "ch/dvbern/ebegu/enums")
 			.addClasses(AbstractEbeguTest.class, Persistence.class,
-				ISessionContextService.class, AbstractEntity.class)
+				ISessionContextService.class, AbstractEntity.class )
 
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)

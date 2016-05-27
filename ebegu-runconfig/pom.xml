@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.2.0</version>
+        <version>0.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -105,6 +105,16 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>push docker wildfly image to repo</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                                <configuration>
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-wildfly</imageName>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>build web-client docker image</id>
                                 <phase>package</phase>
                                 <goals>
@@ -131,11 +141,14 @@
                             <!--stellt sich die Frage wann wir neue build in unser dvbern repo pushen, mal bei deploy?
                             koennte auch mit -DpushImage aausgeloest werden-->
                             <execution>
-                                <id>push docker image to repo</id>
+                                <id>push docker ngnix image to repo</id>
                                 <phase>deploy</phase>
                                 <goals>
                                     <goal>push</goal>
                                 </goals>
+                                <configuration>
+                                    <imageName>docker.dvbern.ch:5000/stadt-bern/ebegu-ngnix</imageName>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

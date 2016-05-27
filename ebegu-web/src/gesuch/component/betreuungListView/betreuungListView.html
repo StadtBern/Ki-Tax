@@ -1,0 +1,73 @@
+<div class="betreuungListView">
+    <div class="col-md-12">
+        <h4 class="mainTitle">
+            <span data-translate="KINDER_MIT_BETREUUNG"></span>
+        </h4>
+        <hr class="header"/>
+
+        <!--Fuer jedes Kind Tabelle anzeigen-->
+        <div ng-repeat="kind in vm.getKinderWithBetreuungList()">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="mainTitle">
+                        <span>{{kind.kindJA.getFullName()}}</span>
+                    </h4>
+                </div>
+            </div>
+<!--Tabelle mit Betreuungen-->
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table st-table="displayedCollection" st-safe-src="kind.betreuungen"
+                           class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th st-sort="betreuung" data-translate="BETREUUNG"></th>
+                            <th st-sort="status" data-translate="STATUS"></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="betreuung in displayedCollection" st-select-row="betreuung" st-select-mode="single"
+                            ng-click="vm.editBetreuung(kind, betreuung)">
+                            <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"></td>
+                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
+                            <td ng-click="$event.stopPropagation()">
+                                <button type="button" ng-click="vm.removeBetreuung(kind, betreuung)" class="btn btn-sm">
+                                    <i class="fa fa-minus">
+                                    </i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="(!kind.betreuungen) || (kind.betreuungen.length === 0)">
+                            <td colspan="4" class="empty-table" data-translate="BETREUUNGEN_NOCH_KEINE"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12" style="margin-bottom: 20px">
+                    <button type="button" ng-click="vm.createBetreuung(kind)" class="btn btn-sm btn-success">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <!--Buttons-->
+        <div class="row">
+            <div class="col-md-6">
+                <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                    <span class="fa fa-chevron-left"></span>
+                    <span data-translate="ZURUECK_UPPER"></span>
+                </button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button ng-click="vm.nextStep()" class="btn btn-link next">
+                    <span data-translate="WEITER_UPPER"></span>
+                    <span class="fa fa-chevron-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

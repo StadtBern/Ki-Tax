@@ -4,6 +4,8 @@
 @import 'component/dv-adresse/dv-adresse.less';
 @import 'component/dv-input-container/dv-input-container.less';
 @import 'component/dv-radio-container/dv-radio-container.less';
+@import "directive/dv-dialog/dv-dialog.less";
+@import "component/dv-tooltip/dv-tooltip.less";
 /* Add Component LESS Above */
 
 .ebegu {
@@ -21,7 +23,17 @@
 
     }
 
-    .next, .previous  {
+    .subTitle {
+        font-size: 18px;
+    }
+
+    .bisher {
+        clear: both;
+        float: right;
+        background-color: lightgrey;
+    }
+
+    .next, .previous {
         font-size: 16px;
         font-weight: bold;
         color: black;
@@ -30,6 +42,24 @@
     .inlineHint {
         font-style: italic;
         font-size: 14px;
+    }
+
+    //SmartTable Styles
+    .sortable {
+        cursor: pointer;
+    }
+    .sortable:after {
+        font-family: FontAwesome;
+        content: "\f0dc";
+        padding-left: 1em;
+    }
+    .st-sort-ascent:after {
+        font-family: FontAwesome;
+        content: "\f0de";
+    }
+    .st-sort-descent:after {
+        font-family: FontAwesome;
+        content: "\f0dd";
     }
 
     hr.header {
@@ -42,36 +72,28 @@
 
     //    error styling
     form {
-/*        .ng-invalid-required:after, .ng-required:after {
-            content: '***';
-
-        }
-        .ng-invalid:after {
-            content: '***';
-        }*/
-
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             border: 0;
             border-bottom: 1px solid lightgray;
-            box-shadow: 0 0  0 @input-boder-focus;
-            outline:0;
+            box-shadow: 0 0 0 @input-boder-focus;
+            outline: 0;
             border-radius: 0px;
-            font-size:20px;
+            font-size: 20px;
             font-weight: 600;
             color: black;
             padding: 2px 2px 1px;
+            -moz-appearance:textfield; // spinner in firefox sieht doof aus -> disable
         }
 
         input[type="text"]:placeholder-shown {
-            font-size:16px;
-
+            font-size: 16px;
         }
 
         input[type="text"]:focus {
             border-color: @input-boder-focus;
             //this simulates the outline that chrome places around focused fields using css
-            outline:none; /*or outline-color:#FFFFFF; if the first doesn't work*/
-            border:1px solid @input-boder-focus;
+            outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
+            border: 1px solid @input-boder-focus;
             -webkit-box-shadow: 0px 0px 4px 0px @input-boder-focus;
             box-shadow: 0px 0px 4px 0px @input-boder-focus;
         }
@@ -80,12 +102,47 @@
             font-weight: normal;
         }
     }
-    .marginLeft10{
-       margin-left: 10px;
+    .marginLeft10 {
+        margin-left: 10px;
 
     }
-    .marginTop10{
-        margin-top:10px;
+    .marginTop10 {
+        margin-top: 10px;
+    }
+    .marginTop20 {
+        margin-top: 20px;
+    }
+
+    //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
+    form:not(.ng-submitted) .form-group {
+        //geschwisterelement von .formcontrol feldern oder .input-element feldern sollen Fehlermeldung noch nicht anzeigen wenn input untouched ist
+        .form-control.ng-untouched ~ .error,
+        .input-element.ng-untouched ~ .error {
+            display: none;
+        }
+
+    }
+
+//    Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
+    .hint {
+        position: absolute;
+        left: 2px;
+        right: auto;
+        bottom: 7px;
+        font-size: 12px;
+        line-height: 14px;
+        transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+        color: grey;
+    }
+
+    md-input-container .error.hint [ng-messages]{
+        position: relative;
+        -webkit-order: 4;
+        -ms-flex-order: 4;
+        order: 4;
+        overflow: hidden;
+        top: 16px;
+        clear: left;
     }
 
 }

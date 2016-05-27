@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>0.2.0</version>
+    <version>0.4.0</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -145,6 +145,13 @@
                 <artifactId>dvbern-lib-date</artifactId>
                 <version>1.5.0</version>
             </dependency>
+
+            <dependency>
+                <groupId>ch.dvbern.lib.beanvalidation</groupId>
+                <artifactId>dvbern-lib-beanvalidation</artifactId>
+                <version>0.6</version>
+            </dependency>
+
             <!--<dependency>-->
             <!--<groupId>commons-codec</groupId>-->
             <!--<artifactId>commons-codec</artifactId>-->
@@ -184,6 +191,8 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ebegu-testutils</artifactId>
                 <version>${project.version}</version>
+                <!--dep hat testscope, -->
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -247,6 +256,20 @@
                 <artifactId>hibernate-java8</artifactId>
                 <version>${version.hibernate}</version>
             </dependency>
+
+            <!--Hibernate validator implementation fuer testing-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>5.2.3.Final</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>2.2.4</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -299,6 +322,10 @@
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
@@ -437,6 +464,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.17</version>
                         <configuration>
+                            <!--Port offset um auf jenkins zu funktionieren (port 8080 ist schon besetzt)-->
+                            <argLine>-Djboss.socket.binding.port-offset=200</argLine>
                             <!-- Fork every test because it will launch a separate AS instance -->
                             <forkMode>always</forkMode>
                             <systemPropertyVariables>
@@ -559,7 +588,7 @@
                         </goals>
                         <configuration>
                             <source>
-                                      <![CDATA[
+                                <![CDATA[
                                 import java.io.File;
 
                                 log.info('## define projects super pom absolute path through basepath_marker')
@@ -567,10 +596,7 @@
                                 File f = null;
                                 if (p != null) {
                                     def _max_child_poms = 0
-                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) {
-                                            break;
-                                        }
-                                        p = "../" + p;
+                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; } p = "../" + p;
                                     }
                                 }
                                 if (f != null) {
@@ -731,7 +757,7 @@
         <module>ebegu-server</module>
         <module>ebegu-testutils</module>
         <module>ebegu-rest</module>
-        <module>ebegu-runconfig</module>
         <module>ebegu-web</module>
+        <module>ebegu-runconfig</module>
     </modules>
 </project>

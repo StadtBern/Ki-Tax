@@ -10,7 +10,7 @@ export default class DateUtil {
      * @returns {?Moment}
      */
     public static localDateTimeToMoment(localDateTimeString: string): Moment {
-        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss'], true);
+        var theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.SSSZ'], true);
         return theMoment.isValid() ? theMoment : undefined;
     }
 
@@ -25,9 +25,6 @@ export default class DateUtil {
         return moment(aMoment).startOf('day').format('YYYY-MM-DD');
     }
 
-    public static jsDateToMoment(date: Date): Moment {
-        return moment(date);
-    }
 
     /**
      * @param {Moment} aMoment time instance

@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
@@ -32,6 +32,10 @@ public class JaxFamilienSituation extends JaxAbstractDTO{
 
 	@NotNull
 	private JaxGesuch gesuch;
+
+	@NotNull
+	private Boolean gemeinsameSteuererklaerung;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -69,5 +73,13 @@ public class JaxFamilienSituation extends JaxAbstractDTO{
 
 	public void setGesuch(JaxGesuch gesuch) {
 		this.gesuch = gesuch;
+	}
+
+	public Boolean getGemeinsameSteuererklaerung() {
+		return gemeinsameSteuererklaerung;
+	}
+
+	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
+		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 }

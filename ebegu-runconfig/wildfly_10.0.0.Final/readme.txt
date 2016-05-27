@@ -3,8 +3,8 @@ Datenbank einrichten (mariadb):
 - mariadb installieren: sudo apt-get install mariadb-server
 - schema und Benutzer konfigurieren (in mysql command line):
 create schema ebegu;
-create user 'ebegue' identified by 'ebegu';
-grant all on ebegu.* to 'ebegu';
+create user 'ebegu'@'localhost' identified by 'ebegu';
+grant all on 'ebegu.*' to 'ebegu';
 
 Wildfly konfigurieren
 =========================

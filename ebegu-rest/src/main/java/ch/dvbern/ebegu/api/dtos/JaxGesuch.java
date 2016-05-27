@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * DTO fuer Faelle
@@ -19,10 +21,16 @@ public class JaxGesuch extends JaxAbstractDTO {
 	private JaxFall fall;
 
 	@Nullable
-	private JaxPerson gesuchsteller1;
+	private JaxGesuchsteller gesuchsteller1;
 
 	@Nullable
-	private JaxPerson gesuchsteller2;
+	private JaxGesuchsteller gesuchsteller2;
+
+	@NotNull
+	private Set<JaxKindContainer> kinder = new HashSet<>();
+
+	private Boolean einkommensverschlechterung;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -37,21 +45,37 @@ public class JaxGesuch extends JaxAbstractDTO {
 	}
 
 	@Nullable
-	public JaxPerson getGesuchsteller1() {
+	public JaxGesuchsteller getGesuchsteller1() {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable JaxPerson gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable JaxGesuchsteller gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
 	@Nullable
-	public JaxPerson getGesuchsteller2() {
+	public JaxGesuchsteller getGesuchsteller2() {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable JaxPerson gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable JaxGesuchsteller gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
+	}
+
+	public Set<JaxKindContainer> getKinder() {
+		return kinder;
+	}
+
+	public void setKinder(Set<JaxKindContainer> kinder) {
+		this.kinder = kinder;
+	}
+
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
 	}
 }
 

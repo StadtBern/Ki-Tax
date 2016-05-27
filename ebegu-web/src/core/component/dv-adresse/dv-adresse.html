@@ -9,7 +9,7 @@
                     </label>
                     <input id="{{vm.prefix}}-strasse" type="text" name="adresseStrasse" ng-model="vm.adresse.strasse"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseStrasse.$error"
+                    <dv-error-messages for="adresseForm.adresseStrasse.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -19,7 +19,7 @@
                     </label>
                     <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
                            dv-max-length class="form-control">
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseHausnummer.$error"
+                    <dv-error-messages  for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -32,7 +32,7 @@
                     </label>
                     <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
                            dv-max-length class="form-control">
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseZusatzzeile.$error"
+                    <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -45,7 +45,7 @@
                     </label>
                     <input id="{{vm.prefix}}-plz" type="text" name="adressePlz" ng-model="vm.adresse.plz"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adressePlz.$error"
+                    <dv-error-messages for="adresseForm.adressePlz.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -55,7 +55,7 @@
                     </label>
                     <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseOrt.$error"
+                    <dv-error-messages  for="adresseForm.adresseOrt.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -68,7 +68,7 @@
                     </label>
                     <input id="{{vm.prefix}}-gemeinde" type="text" name="adresseGemeinde" ng-model="vm.adresse.gemeinde"
                            dv-max-length class="form-control">
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGemeinde.$error"
+                    <dv-error-messages for="adresseForm.adresseGemeinde.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -83,7 +83,7 @@
                         <option ng-repeat="land in vm.laenderList | orderBy: 'name'" ng-value="land.code"
                                 ng-bind="land.name" ng-selected="land.code == vm.adresse.land"></option>
                     </select>
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseLand.$error"
+                    <dv-error-messages  for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>
                 </div>
             </div>
@@ -96,14 +96,14 @@
                     </label>
                     <p class="input-group">
                         <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb"
-                                       ng-model="vm.adresse.gueltigAb" required>
+                                       ng-model="vm.adresse.gueltigkeit.gueltigAb" ng-required="true">
                         </dv-datepicker>
-                        <span class="input-group-btn">
-                          <button type="button" class="btn btn-default" ng-click="vm.openPopup()">
-                              <i class="fa fa-calendar"></i></button>
-                        </span>
+                        <!--<span class="input-group-btn">-->
+                          <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
+                              <!--<i class="fa fa-calendar"></i></button>-->
+                        <!--</span>-->
                     </p>
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigAb.$error"
+                    <dv-error-messages  for="adresseForm.adresseGueltigAb.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -115,10 +115,10 @@
                     <label data-translate="ADRESSE_GUELTIGBIS" for="{{vm.prefix}}-gueltigBis">
                     </label>
                     <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigAb"
-                                   ng-model="vm.adresse.gueltigAb" required>
+                                   ng-model="vm.adresse.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
 
-                    <dv-error-messages ng-if="vm.parentForm.$submitted" for="adresseForm.adresseGueltigBis.$error"
+                    <dv-error-messages  for="adresseForm.adresseGueltigBis.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>

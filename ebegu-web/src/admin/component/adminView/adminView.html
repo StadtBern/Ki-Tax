@@ -5,13 +5,13 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties"
+                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties"  st-delay="20"
                        class="table table-striped">
                     <thead>
                     <tr>
-                        <th st-sort="name" data-translate="PROPERTY_NAME"></th>
-                        <th st-sort="value" data-translate="PROPERTY_TEXT"></th>
-                        <th st-sort="timestampErstellt" data-translate="TIMEERSTELLT"></th>
+                        <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
+                        <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
+                        <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
                         <th data-translate="AKTION"></th>
                     </tr>
                     <tr>
@@ -50,16 +50,17 @@
 
         </div>
 
-        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty">
+        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty"
+        unsaved-warning-form>
             <div class="row" style="margin-top: 20px">
                 <div class="col-md-6">
                     <div class="form-group top5">
                         <label data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
                         </label>
                         <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-10" required max="vm.length"
+                               dv-max-length class="col-md-10 input-element" required
                                ng-disabled="vm.applicationProperty.timestampErstellt">
-                        <dv-error-messages ng-if="form.$submitted" for="form.propertyName.$error"
+                        <dv-error-messages for="form.propertyName.$error"
                                            class="error col-md-offset-2 col-md-10"></dv-error-messages>
                     </div>
 
@@ -68,7 +69,7 @@
                         <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
                         </label>
                         <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               ng-maxlength="vm.length" class="col-md-10">
+                               dv-max-length class="col-md-10">
 
                         <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
 
@@ -82,9 +83,11 @@
                     </button>
                 </div>
                 <div class="col-md-4 ">
-                    <a href="#" id="cancelLink" data-translate="CANCEL"
-                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
-                </div>
+                                  <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
+                                     ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                                      <span data-translate="CANCEL"></span>
+                                  </a>
+                              </div>
             </div>
         </form>
     </div>

@@ -110,6 +110,14 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#plugins
     plugins: [
+        
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.jquery': 'jquery',
+            'moment': 'moment'
+        }),
 
         // Plugin: ForkCheckerPlugin
         // Description: Do type checking in a separate process, so webpack don't need to wait.
@@ -145,7 +153,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: 'src/assets', to: 'src/assets'},
         ]),
-
+        
         // Plugin: HtmlWebpackPlugin
         // Description: Simplifies creation of HTML files to serve your webpack bundles.
         // This is especially useful for webpack bundles that include a hash in the filename

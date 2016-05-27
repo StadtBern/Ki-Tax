@@ -1,16 +1,18 @@
-<div class="familiensituationView row">
+<div class="row">
 
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
-            <li ui-sref-active="active" ui-sref="gesuch.familiensituation"><a data-translate="MENU_FAMSITUATION"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.familiensituation"><a data-translate="MENU_FAMSITUATION"></a>
+            </li>
             <li ui-sref-active="active" ui-sref="gesuch.stammdaten"><a data-translate="MENU_GESUCHSTELLER"></a></li>
             <li ui-sref-active="active" ui-sref="gesuch.kinder"><a data-translate="MENU_KINDER"></a></li>
-            <li><a data-translate="MENU_BETREUUNG"></a> </li>
-           <li><a data-translate="MENU_ERWERBSPENSUM"></a></li>
-           <li><a data-translate="MENU_FINANZIELLE"></a></li>
-           <li><a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a></li>
-           <li><a data-translate="MENU_DOKUMENTE"></a></li>
-           <li><a data-translate="MENU_FREIGABEQUITTUNG"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.betreuungen"><a data-translate="MENU_BETREUUNG"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.erwerbsPensen"><a data-translate="MENU_ERWERBSPENSUM"></a></li>
+            <li  ui-sref-active="active" ui-sref="gesuch.finanzielleSituationStart" ng-if="vm.showFinanzsituationStart()"><a data-translate="MENU_FINANZIELLE_SITUATION"></a></li>
+            <li  ui-sref-active="active" ui-sref="gesuch.finanzielleSituation" ng-if="!vm.showFinanzsituationStart()"><a data-translate="MENU_FINANZIELLE_SITUATION"></a></li>
+            <li><a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a></li>
+            <li><a data-translate="MENU_DOKUMENTE"></a></li>
+            <li><a data-translate="MENU_FREIGABEQUITTUNG"></a></li>
         </ul>
     </div>
     <div ui-view class="col-md-5"></div>
