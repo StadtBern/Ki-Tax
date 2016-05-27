@@ -5,11 +5,11 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
 import BerechnungsManager from '../../service/berechnungsManager';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
-let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {
@@ -80,8 +80,10 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     removePensum(pensum: any, gesuchstellerNumber: number): void {
-        //todo homa dialog anpassen, sollte generalisiert werden
-        this.dvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: pensum.prozent})
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'ERWERBSPENSUM_LOESCHEN'
+        })
             .then(() => {   //User confirmed removal
                 this.gesuchModelManager.removeErwerbspensum(pensum);
 

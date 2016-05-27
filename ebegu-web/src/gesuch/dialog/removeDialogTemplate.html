@@ -1,9 +1,9 @@
-<md-dialog md-theme="default" aria-label="{{'KIND_LOESCHEN' | translate}}" ng-class="vm.css" class="md-default-theme md-transition-in"
+<md-dialog md-theme="default" aria-label="{{'BETREUUNG_LOESCHEN' | translate}}" ng-class="vm.css" class="md-default-theme md-transition-in"
            role="dialog" tabindex="-1" aria-describedby="dialogContent">
 
     <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
-        <h2 class="md-title ng-binding" data-translate="KIND_LOESCHEN" data-translate-value-kindname="{{vm.kindName}}"></h2>
-        <div class="md-dialog-content-body ng-scope"><p class="ng-binding" data-translate="KIND_LOESCHEN_BESCHREIBUNG"></p></div>
+        <h2 class="md-title ng-binding"  ng-bind="vm.title"></h2>
+        <div class="md-dialog-content-body ng-scope"><p class="ng-binding" ng-bind="vm.deleteText"></p></div>
     </md-dialog-content>
 
     <md-dialog-actions>
@@ -18,4 +18,3 @@
     </md-dialog-actions>
 
 </md-dialog>
-

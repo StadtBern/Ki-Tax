@@ -6,12 +6,13 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {BetreuungRemoveDialogController} from '../../dialog/BetreuungRemoveDialogController';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import IDialogService = angular.material.IDialogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungListView.html');
-let removeBetreuungTemplate = require('../../dialog/removeBetreuungDialogTemplate.html');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 
 export class BetreuungListViewComponentConfig implements IComponentOptions {
@@ -26,9 +27,9 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$mdDialog', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $mdDialog: IDialogService,
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil, berechnungsManager: BerechnungsManager) {
         super(state, gesuchModelManager, berechnungsManager);
     }
@@ -41,7 +42,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.kinder');
     }
 
-    nextStep(): void  {
+    nextStep(): void {
         this.state.go('gesuch.erwerbsPensen');
     }
 
@@ -68,17 +69,21 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
-        this.DvDialog.showDialog(removeBetreuungTemplate, BetreuungRemoveDialogController,
-            {kindName: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
-                betreuungsangebottyp: this.ebeguRestUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])})
-            .then(() => {   //User confirmed removal
-                this.gesuchModelManager.findKind(kind);
-                let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-                if (betreuungNumber > 0) {
-                    this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                    this.gesuchModelManager.removeBetreuung();
-                }
-            });
+        var remTitleText = this.$translate.instant('BETREUUNG_LOESCHEN', {
+            kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
+            betreuungsangebottyp: this.ebeguRestUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
+        });
+        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            title: remTitleText,
+            deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
+        }).then(() => {   //User confirmed removal
+            this.gesuchModelManager.findKind(kind);
+            let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
+            if (betreuungNumber > 0) {
+                this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+                this.gesuchModelManager.removeBetreuung();
+            }
+        });
     }
 
     private openBetreuungView(): void {

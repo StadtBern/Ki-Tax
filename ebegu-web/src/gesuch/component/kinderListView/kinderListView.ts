@@ -4,11 +4,12 @@ import {IStateService} from 'angular-ui-router';
 import TSKindContainer from '../../../models/TSKindContainer';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {KindRemoveDialogController} from '../../dialog/KindRemoveDialogController';
 import BerechnungsManager from '../../service/berechnungsManager';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import IDialogService = angular.material.IDialogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
-let removeKindTemplate = require('../../dialog/removeKindDialogTemplate.html');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 
 export class KinderListViewComponentConfig implements IComponentOptions {
@@ -20,10 +21,10 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$mdDialog', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private $mdDialog: IDialogService,
-                private DvDialog: DvDialog) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private $translate: ITranslateService, private DvDialog: DvDialog) {
         super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
@@ -54,14 +55,18 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     removeKind(kind: any): void {
-        this.DvDialog.showDialog(removeKindTemplate, KindRemoveDialogController, {kindName: kind.kindJA.getFullName()})
+        var remTitleText = this.$translate.instant('KIND_LOESCHEN', {kindname: kind.kindJA.getFullName()});
+        this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: remTitleText,
+            deleteText: 'KIND_LOESCHEN_BESCHREIBUNG'
+        })
             .then(() => {   //User confirmed removal
                 let kindNumber: number = this.gesuchModelManager.findKind(kind);
                 if (kindNumber > 0) {
                     this.gesuchModelManager.setKindNumber(kindNumber);
                     this.gesuchModelManager.removeKind();
                 }
-        });
+            });
     }
 
     submit(): void {
@@ -76,7 +81,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
         }
     }
 
-    nextStep(): void  {
+    nextStep(): void {
         this.state.go('gesuch.betreuungen');
     }
 }
