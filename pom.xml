@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -596,8 +596,7 @@
                                 File f = null;
                                 if (p != null) {
                                     def _max_child_poms = 0
-                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; } p = "../" + p;
-                                    }
+                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; } p = "../" + p; }
                                 }
                                 if (f != null) {
                                     String basePath = f.getCanonicalPath();
