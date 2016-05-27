@@ -180,4 +180,18 @@ public final class TestDataUtil {
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
+
+	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
+		BetreuungspensumContainer container = new BetreuungspensumContainer();
+		container.setBetreuung(betreuung);
+		container.setBetreuungspensumGS(TestDataUtil.createBetreuungspensum());
+		container.setBetreuungspensumJA(TestDataUtil.createBetreuungspensum());
+		return container;
+	}
+
+	private static Betreuungspensum createBetreuungspensum() {
+		Betreuungspensum betreuungspensum = new Betreuungspensum();
+		betreuungspensum.setPensum(10);
+		return betreuungspensum;
+	}
 }
