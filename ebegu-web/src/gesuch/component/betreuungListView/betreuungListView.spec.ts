@@ -54,7 +54,7 @@ describe('betreuungListViewTest', function () {
             it('should go to finanzielleSituation', () => {
                 spyOn($state, 'go');
                 betreuungListView.nextStep();
-                expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                expect($state.go).toHaveBeenCalledWith('gesuch.erwerbsPensen');
             });
         });
         describe('previousStep', () => {
