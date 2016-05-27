@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -519,7 +518,7 @@
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix/>
+                        <versionTagPrefix />
                     </flowInitContext>
                     <allowUntracked>true</allowUntracked>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -597,8 +596,7 @@
                                 File f = null;
                                 if (p != null) {
                                     def _max_child_poms = 0
-                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break;
-                                        }
+                                    while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; }
                                         p = "../" + p;
                                     }
                                 }
