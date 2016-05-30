@@ -180,4 +180,12 @@ public final class TestDataUtil {
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_1);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
+		return instStammdaten;
+	}
 }
