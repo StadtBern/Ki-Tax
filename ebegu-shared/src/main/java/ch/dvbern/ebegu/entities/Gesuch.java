@@ -38,6 +38,10 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true)
 	private Boolean einkommensverschlechterung;
 
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id"))
+	private Gesuchsperiode gesuchsperiode;
+
 
 	public Fall getFall() {
 		return fall;
@@ -84,5 +88,13 @@ public class Gesuch extends AbstractEntity {
 	public boolean addKindContainer(@NotNull KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+	}
+
+	public Gesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
 	}
 }

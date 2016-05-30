@@ -83,6 +83,7 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
 		persistence.persist(gesuch);
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());

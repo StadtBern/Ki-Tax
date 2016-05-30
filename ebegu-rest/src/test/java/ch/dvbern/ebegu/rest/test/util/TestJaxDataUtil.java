@@ -111,6 +111,7 @@ public class TestJaxDataUtil {
 	public static JaxGesuch createTestJaxGesuch() {
 		JaxGesuch jaxGesuch = new JaxGesuch();
 		jaxGesuch.setFall(createTestJaxFall());
+		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
 		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
 		testJaxGesuchsteller.setNachname("Gesuchsteller2");
@@ -194,5 +195,13 @@ public class TestJaxDataUtil {
 		institutionStammdaten.setGueltigAb(LocalDate.now());
 		institutionStammdaten.setOeffnungstage(new BigDecimal(250));
 		return institutionStammdaten;
+	}
+
+	public static JaxGesuchsperiode createTestJaxGesuchsperiode() {
+		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
+		jaxGesuchsperiode.setGueltigAb(LocalDate.now());
+		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
+		jaxGesuchsperiode.setActive(true);
+		return jaxGesuchsperiode;
 	}
 }

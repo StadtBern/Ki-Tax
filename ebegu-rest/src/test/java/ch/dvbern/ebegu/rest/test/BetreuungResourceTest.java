@@ -48,6 +48,8 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private GesuchResource gesuchResource;
 	@Inject
+	private GesuchsperiodeResource gesuchsperiodeResource;
+	@Inject
 	private FallResource fallResource;
 	@Inject
 	private FachstelleResource fachstelleResource;
@@ -128,6 +130,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	private KindContainer persistKindAndDependingObjects(UriInfo uri) throws EbeguException {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+		jaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null));
 		jaxGesuch.setFall(returnedFall);
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();
 

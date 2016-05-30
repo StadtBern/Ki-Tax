@@ -75,6 +75,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	private Gesuch persistNewEntity() {
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);
 		return gesuch;

@@ -56,6 +56,7 @@ public final class TestDataUtil {
 
 	public static Gesuch createDefaultGesuch() {
 		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		return gesuch;
 	}
@@ -191,5 +192,12 @@ public final class TestDataUtil {
 		Betreuungspensum betreuungspensum = new Betreuungspensum();
 		betreuungspensum.setPensum(80);
 		return betreuungspensum;
+	}
+
+	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return gesuchsperiode;
 	}
 }
