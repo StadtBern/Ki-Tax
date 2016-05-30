@@ -29,6 +29,7 @@ import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSitua
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
+import TSEbeguParameter from '../models/TSEbeguParameter';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -67,6 +68,25 @@ export default class EbeguRestUtil {
         parsedAppProperty.name = receivedAppProperty.name;
         parsedAppProperty.value = receivedAppProperty.value;
         return parsedAppProperty;
+    }
+
+    public parseEbeguParameters(data: any): TSEbeguParameter[] {
+        var ebeguParameters: TSEbeguParameter[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                ebeguParameters[i] = this.parseEbeguParameter(new TSEbeguParameter(), data[i]);
+            }
+        } else {
+            ebeguParameters[0] = this.parseEbeguParameter(new TSEbeguParameter(), data);
+        }
+        return ebeguParameters;
+    }
+
+    public parseEbeguParameter(parsedEbeguParameter: TSEbeguParameter, receivedEbeguParameter: any): TSEbeguParameter {
+        this.parseDateRangeEntity(parsedEbeguParameter, receivedEbeguParameter);
+        parsedEbeguParameter.name = receivedEbeguParameter.name;
+        parsedEbeguParameter.value = receivedEbeguParameter.value;
+        return parsedEbeguParameter;
     }
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
