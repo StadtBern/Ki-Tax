@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	public Betreuung saveBetreuung(@Nonnull Betreuung betreuung) {
+	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 		return persistence.merge(betreuung);
 	}

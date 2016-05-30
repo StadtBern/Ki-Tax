@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	public ErwerbspensumContainer saveErwerbspensum(@Nonnull ErwerbspensumContainer erwerbspensumContainer) {
+	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer) {
 		Objects.requireNonNull(erwerbspensumContainer);
 		return persistence.merge(erwerbspensumContainer);
 	}

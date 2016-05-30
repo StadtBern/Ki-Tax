@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * Created by imanol on 01.03.16.
- * ExceptionMapper fuer EbeguExceptions und Subklassen davon
+ * ExceptionMapper fuer EJBTransactionRolledbackException. Dient zum Beispiel dazu ConstraintViolationException abzufangen
  */
 @Provider
 public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExceptionMapper<EJBTransactionRolledbackException> {
@@ -27,16 +27,16 @@ public class EbeguConstraintValidationExceptionMapper extends AbstractEbeguExcep
 
 	@Override
 	public Response toResponse(EJBTransactionRolledbackException exception) {
-		LOG.warn("Constraint Violation occured ", exception);
 		Throwable rootCause = ExceptionUtils.getRootCause(exception);
 		if (rootCause instanceof ConstraintViolationException) {
+			LOG.warn("Constraint Violation occured ", exception);
 			ConstraintViolationException constViolationEx = (ConstraintViolationException) rootCause;
 			ResteasyViolationException resteasyViolationException = new ResteasyViolationException(constViolationEx.getConstraintViolations());
 			resteasyViolationException.getAccept().add(MediaType.APPLICATION_JSON_TYPE);
 			return ViolationReportCreator.
 				buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(resteasyViolationException.getAccept()));
 		}
-
+		// wir bauen hier auch eine eigene response fuer EJBTransactionRolledbackException die wir nicht erwarten
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 	}
 

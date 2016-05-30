@@ -8,11 +8,12 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Entity fuer Betreuungen.
@@ -40,8 +41,9 @@ public class Betreuung extends AbstractEntity {
 	@NotNull
 	private Betreuungsstatus betreuungsstatus;
 
+	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
-	private Set<BetreuungspensumContainer> betreuungspensumContainers = new HashSet<>();
+	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
 	@Nullable
 	@Column(nullable = true)

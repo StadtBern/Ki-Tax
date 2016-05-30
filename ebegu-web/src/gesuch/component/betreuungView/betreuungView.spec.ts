@@ -142,8 +142,8 @@ describe('betreuungView', function () {
 
     /**
      * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.updateBetreuung() zurueckgeben muss. Wenn dieses
-     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher die Methode $state.go() wird nicht aufgerufen. 
-     * Sonst muss sie doch aufgerufen werden und zwar mit dem naechsten state 'gesuch.betreuungen'
+     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen. 
+     * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {

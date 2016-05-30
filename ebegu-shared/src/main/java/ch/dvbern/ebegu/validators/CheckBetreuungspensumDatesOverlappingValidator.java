@@ -3,15 +3,15 @@ package ch.dvbern.ebegu.validators;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.types.DateRange;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Validator fuer Datum in Betreuungspensen
+ * Validator fuer Datum in Betreuungspensen. Die Zeitraeume duerfen sich nicht ueberschneiden
  */
 public class CheckBetreuungspensumDatesOverlappingValidator implements ConstraintValidator<CheckBetreuungspensumDatesOverlapping, Betreuung> {
 	@Override
@@ -24,16 +24,18 @@ public class CheckBetreuungspensumDatesOverlappingValidator implements Constrain
 		return !(checkOverlapping("JA", instance.getBetreuungspensumContainers()) || checkOverlapping("GS", instance.getBetreuungspensumContainers()));
 	}
 
+	/**
+	 * prueft ob es eine ueberschneidung zwischen den Zeitrauemen gibt
+	 */
 	private boolean checkOverlapping(String type, Set<BetreuungspensumContainer> betreuungspensumContainers) {
-		// todo team Diese Version ist etwas schlecht weil O(n2). Mit einem normalen foreach waere es nur O(n), dafuer aber schwieriger zu verstehen
 		// Da es wahrscheinlich wenige Betreuungspensen innerhalb einer Betreuung gibt, macht es vielleicht mehr Sinn diese Version zu nutzen
-		Set<DateRange> gueltigkeitStream = betreuungspensumContainers.stream()
+		List<Betreuungspensum> gueltigkeitStream = betreuungspensumContainers.stream()
 			.filter(cont -> type.equalsIgnoreCase("GS") ? cont.getBetreuungspensumGS() != null : cont.getBetreuungspensumJA() != null)
 			.map(type.equalsIgnoreCase("GS") ? BetreuungspensumContainer::getBetreuungspensumGS : BetreuungspensumContainer::getBetreuungspensumJA)
-			.map(Betreuungspensum::getGueltigkeit)
-			.collect(Collectors.toSet());
+			.collect(Collectors.toList());
 
+		//Achtung hier MUSS instanz verglichen werden
 		return gueltigkeitStream.stream()
-			.anyMatch(o1 -> gueltigkeitStream.stream().anyMatch(o2 -> o1 != o2 && o1.intersects(o2)));
+			.anyMatch(o1 -> gueltigkeitStream.stream().anyMatch(o2 -> o1 != o2 && o1.getGueltigkeit().intersects(o2.getGueltigkeit())));
 	}
 }

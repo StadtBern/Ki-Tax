@@ -100,8 +100,8 @@ public class CheckBetreuungspensumValidatorTest {
 		betPensContainer.getBetreuungspensumJA().setPensum(60);
 		betreuung.getBetreuungspensumContainers().add(betPensContainer);
 
-		//es ist ein Set. Daher muessen wir die Stelle finden
-		//todo team macht es Sinn dass wir die Stelle dem Client uebergeben wenn es eigentlich auf dem Server keine Liste ist???? Die Stelle ist nicht immer richtig
+		//es ist ein Set. Daher muessen wir den Index finden
+		//es ist etwas problematisch dass wir den Index dem Client uebergeben wenn es eigentlich auf dem Server ein Set (und nicht eine Liste ist). Der Index wird durch die Sortierung gegeben
 		int i = 0;
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
 			if (betreuungspensumContainer.equals(betPensContainer)) {
@@ -117,6 +117,9 @@ public class CheckBetreuungspensumValidatorTest {
 
 	// HELP METHODS
 
+	/**
+	 * creates a Betreeung with {@link BetreuungspensumContainer} gs and ja with the specified Pensum
+	 */
 	@Nonnull
 	private Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, int pensumGS, int pensumJA) {
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();

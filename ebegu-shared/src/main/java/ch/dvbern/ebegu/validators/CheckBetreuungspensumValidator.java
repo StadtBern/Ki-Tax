@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
@@ -15,10 +16,10 @@ import java.util.ResourceBundle;
 public class CheckBetreuungspensumValidator implements ConstraintValidator<CheckBetreuungspensum, Betreuung> {
 
 	//todo team Diese Konstanten durch Werte aus der DB ersetzen. siehe todo unten
-	private static int KITA_PENSUM_MIN = 10;
-	private static int TAGI_PENSUM_MIN = 60;
-	private static int TAGESSCHULE_PENSUM_MIN = 0;
-	private static int TAGESELTERN_PENSUM_MIN = 20;
+	private static final int KITA_PENSUM_MIN = 10;
+	private static final int TAGI_PENSUM_MIN = 60;
+	private static final int TAGESSCHULE_PENSUM_MIN = 0;
+	private static final int TAGESELTERN_PENSUM_MIN = 20;
 
 	@Override
 	public void initialize(CheckBetreuungspensum constraintAnnotation) {
