@@ -25,5 +25,6 @@
 	<entity class="ch.dvbern.ebegu.entities.Betreuung"/>
 	<entity class="ch.dvbern.ebegu.entities.Betreuungspensum"/>
 	<entity class="ch.dvbern.ebegu.entities.BetreuungspensumContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.EbeguParameter"/>
 
 </entity-mappings>
