@@ -190,6 +190,25 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
+	public JaxEbeguParameter ebeguParameterToJAX(@Nonnull final EbeguParameter ebeguParameter) {
+		JaxEbeguParameter jaxEbeguParameter = new JaxEbeguParameter();
+		convertAbstractDateRangedFieldsToJAX(ebeguParameter, jaxEbeguParameter);
+		jaxEbeguParameter.setName(ebeguParameter.getName());
+		jaxEbeguParameter.setValue(ebeguParameter.getValue());
+		return jaxEbeguParameter;
+	}
+
+	@Nonnull
+	public EbeguParameter ebeguParameterToEntity(JaxEbeguParameter jaxEbeguParameter, @Nonnull final EbeguParameter ebeguParameter) {
+		Validate.notNull(ebeguParameter);
+		Validate.notNull(jaxEbeguParameter);
+		convertAbstractDateRangedFieldsToEntity(jaxEbeguParameter, ebeguParameter);
+		ebeguParameter.setName(jaxEbeguParameter.getName());
+		ebeguParameter.setValue(jaxEbeguParameter.getValue());
+		return ebeguParameter;
+	}
+
+	@Nonnull
 	public GesuchstellerAdresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		Validate.notNull(gesuchstellerAdresse);
 		Validate.notNull(jaxAdresse);
