@@ -21,16 +21,16 @@ describe('gesuch', function () {
 
     describe('Public API', function () {
 
-        it('should include a create() function', function () {
-            expect(gesuchRS.create).toBeDefined();
+        it('should include a createGesuch() function', function () {
+            expect(gesuchRS.createGesuch).toBeDefined();
         });
 
         it('should include a findGesuch() function', function () {
             expect(gesuchRS.findGesuch).toBeDefined();
         });
 
-        it('should include a update() function', function () {
-            expect(gesuchRS.update).toBeDefined();
+        it('should include a updateGesuch() function', function () {
+            expect(gesuchRS.updateGesuch).toBeDefined();
         });
 
 

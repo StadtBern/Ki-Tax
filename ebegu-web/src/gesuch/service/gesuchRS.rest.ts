@@ -16,7 +16,7 @@ export default class GesuchRS implements IEntityRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public create(gesuch: TSGesuch): IHttpPromise<any> {
+    public createGesuch(gesuch: TSGesuch): IHttpPromise<any> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);
         return this.http.post(this.serviceURL, sentGesuch, {
@@ -26,7 +26,7 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public update(gesuch: TSGesuch): IHttpPromise<any> {
+    public updateGesuch(gesuch: TSGesuch): IHttpPromise<any> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);
         return this.http.put(this.serviceURL, sentGesuch, {

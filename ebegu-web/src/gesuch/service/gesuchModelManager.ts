@@ -98,6 +98,16 @@ export default class GesuchModelManager {
         });
     }
 
+    public createFallWithGesuch(): IPromise<TSFall> {
+        return this.fallRS.createFall(this.fall).then((fallResponse: any) => {
+            this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
+            this.gesuch.fall = angular.copy(this.fall);
+            return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
+                return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+            });
+        });
+    }
+
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
         //testen ob aktuelles familiensituation schon gespeichert ist
         if (this.familiensituation.timestampErstellt) {
@@ -105,24 +115,15 @@ export default class GesuchModelManager {
                 return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
             });
         } else {
-            //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
-            //todo homa beim review das sollte nicht so verschachtelt sein imho ist aber nur temporaer so gedacht
-            return this.fallRS.create(this.fall).then((fallResponse: any) => {
-                this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
-                this.gesuch.fall = angular.copy(this.fall);
-                return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
-                    this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    this.familiensituation.gesuch = angular.copy(this.gesuch);
-                    return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
-                        return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
-                    });
-                });
+            this.familiensituation.gesuch = angular.copy(this.gesuch);
+            return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
+                return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
             });
         }
     }
 
     public updateGesuch(): IPromise<TSGesuch> {
-        return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+        return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
         });
     }
@@ -134,14 +135,14 @@ export default class GesuchModelManager {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
         } else {
             return this.gesuchstellerRS.create(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
@@ -265,7 +266,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde 
+     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
      */
     public getBasisjahr(): number {
@@ -393,14 +394,14 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getKindToWorkWith();
                 });
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getKindToWorkWith();
                 });
             });
@@ -490,7 +491,7 @@ export default class GesuchModelManager {
     public removeKind(): IPromise<TSKindContainer> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
-            return this.gesuchRS.update(this.gesuch);
+            return this.gesuchRS.updateGesuch(this.gesuch);
         });
     }
 

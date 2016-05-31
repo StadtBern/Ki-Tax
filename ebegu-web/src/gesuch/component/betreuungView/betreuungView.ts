@@ -12,7 +12,6 @@ import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
-import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
 let template = require('./betreuungView.html');
 

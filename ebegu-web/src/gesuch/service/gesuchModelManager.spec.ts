@@ -1,21 +1,32 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
-import IPromise = angular.IPromise;
+import {IHttpBackendService, IScope} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS';
 import IQService = angular.IQService;
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import FallRS from './fallRS.rest';
+import GesuchRS from './gesuchRS.rest';
+import TestDataUtil from '../../utils/TestDataUtil';
 
 describe('gesuchModelManager', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let betreuungRS: BetreuungRS;
+    let fallRS: FallRS;
+    let gesuchRS: GesuchRS;
+    let scope: IScope;
+    let $httpBackend: IHttpBackendService;
     let $q: IQService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
+        $httpBackend = $injector.get('$httpBackend');
         betreuungRS = $injector.get('BetreuungRS');
+        fallRS = $injector.get('FallRS');
+        gesuchRS = $injector.get('GesuchRS');
+        scope = $injector.get('$rootScope').$new();
         $q = $injector.get('$q');
     }));
 
@@ -66,6 +77,19 @@ describe('gesuchModelManager', function () {
                 expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(called).toBe(true);
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
+            });
+        });
+        describe('createFallWithGesuch', () => {
+            it('creates a Fall with a linked Gesuch', () => {
+                spyOn(fallRS, 'createFall').and.returnValue($q.when({}));
+                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                gesuchModelManager.createFallWithGesuch();
+
+                scope.$apply();
+                expect(fallRS.createFall).toHaveBeenCalled();
+                expect(gesuchRS.createGesuch).toHaveBeenCalled();
             });
         });
     });
