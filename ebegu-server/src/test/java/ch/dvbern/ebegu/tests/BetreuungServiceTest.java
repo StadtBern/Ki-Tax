@@ -42,9 +42,9 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 	public void createAndUpdateBetreuungTest() {
 		Assert.assertNotNull(betreuungService);
 		Betreuung persitedBetreuung = persistBetreuung();
-		Optional<Betreuung> betreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
-		Assert.assertTrue(betreuung.isPresent());
-		Betreuung savedBetreuung = betreuung.get();
+		Betreuung betreuung = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
+		Assert.assertNotNull(betreuung);
+		Betreuung savedBetreuung = betreuung;
 		Assert.assertEquals(persitedBetreuung.getBemerkungen(), savedBetreuung.getBemerkungen());
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), savedBetreuung.getBetreuungsstatus());
 

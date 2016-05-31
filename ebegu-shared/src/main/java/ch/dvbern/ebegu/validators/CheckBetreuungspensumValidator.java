@@ -27,14 +27,14 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	}
 
 	@Override
-	public boolean isValid(Betreuung instance, ConstraintValidatorContext context) {
+	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
 		// todo team Fuer diese Methode muessen wir die Werte aus der DB holen. Das koennen wir erst machen wenn
 		// die neue ApplicationProperties fuer die Periode implementiert ist. Momentan werden diese Werte direkt
 		// hier als Constants kodiert.
-		int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(instance.getInstitutionStammdaten().getBetreuungsangebotTyp());
+		int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 
 		int index = 0;
-		for (BetreuungspensumContainer betPenContainer: instance.getBetreuungspensumContainers()) {
+		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
 				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
 				return false;

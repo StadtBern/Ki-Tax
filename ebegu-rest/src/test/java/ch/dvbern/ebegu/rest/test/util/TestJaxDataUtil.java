@@ -157,17 +157,23 @@ public class TestJaxDataUtil {
 		return jaxKindContainer;
 	}
 
-	public static JaxBetreuungspensum createTestJaxBetreuungspensum(){
+	public static JaxBetreuungspensum createTestJaxBetreuungspensum(LocalDate from, LocalDate to){
 		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
-		jaxBetreuungspensum.setGueltigAb(LocalDate.now());
+		jaxBetreuungspensum.setGueltigAb(from);
+		jaxBetreuungspensum.setGueltigBis(to);
+
 		jaxBetreuungspensum.setPensum(40);
 		return jaxBetreuungspensum;
 	}
 
-	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(){
+	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(int year){
+
+		LocalDate from = LocalDate.of(year, 8, 1);
+		LocalDate to = LocalDate.of(year  + 1 , 7, 31);
+
 		JaxBetreuungspensumContainer jaxBetrPenCnt = new JaxBetreuungspensumContainer();
-		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum());
-		jaxBetrPenCnt.setBetreuungspensumGS(createTestJaxBetreuungspensum());
+		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum(from, to));
+		jaxBetrPenCnt.setBetreuungspensumGS(createTestJaxBetreuungspensum(from, to));
 		return jaxBetrPenCnt;
 	}
 

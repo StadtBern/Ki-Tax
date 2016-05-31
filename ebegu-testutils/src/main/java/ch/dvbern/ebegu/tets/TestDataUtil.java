@@ -2,8 +2,6 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -191,7 +189,7 @@ public final class TestDataUtil {
 
 	private static Betreuungspensum createBetreuungspensum() {
 		Betreuungspensum betreuungspensum = new Betreuungspensum();
-		betreuungspensum.setPensum(10);
+		betreuungspensum.setPensum(80);
 		return betreuungspensum;
 	}
 }

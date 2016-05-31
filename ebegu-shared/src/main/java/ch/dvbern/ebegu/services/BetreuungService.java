@@ -26,6 +26,9 @@ public interface BetreuungService {
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key);
 
+	@Nonnull
+	Betreuung findBetreuungWithBetreuungsPensen(@Nonnull String key);
+
 	/**
 	 * entfernt eine Betreuung aus der Databse
 	 * @param betreuungId Id der Betreuung zu entfernen
