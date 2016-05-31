@@ -12,6 +12,8 @@ import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
+import DateUtil from '../../../utils/DateUtil';
+import Moment = moment.Moment;
 let template = require('./betreuungView.html');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
@@ -51,9 +53,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    public getAnfangsperiode(): string {
-        //todo team der richte Anfang der aktuellen Periode muss zurueckgegeben werden
-        return this.gesuchModelManager.getGesuchsperiode() ? this.gesuchModelManager.getGesuchsperiode().gueltigAb : '01.08.YYYY';
+    public getGesuchsperiodeBegin(): Moment {
+        return this.gesuchModelManager.getGesuchsperiodeBegin();
     }
 
     private getBetreuungsangebotFromInstitutionList() {

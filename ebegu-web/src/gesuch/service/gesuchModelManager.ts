@@ -28,6 +28,8 @@ import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenR
 import DateUtil from '../../utils/DateUtil';
 import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 
 
 export default class GesuchModelManager {
@@ -41,11 +43,12 @@ export default class GesuchModelManager {
     institutionenList: Array<TSInstitutionStammdaten>;
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
-        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil', '$log'];
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
-                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
+                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
 
         this.fall = new TSFall();
         this.gesuch = new TSGesuch();
@@ -54,6 +57,7 @@ export default class GesuchModelManager {
         this.institutionenList = [];
         this.updateFachstellenList();
         this.updateInstitutionenList();
+        this.setGesuchsperiode();
     }
 
     /**
@@ -81,6 +85,16 @@ export default class GesuchModelManager {
     public updateInstitutionenList(): void {
         this.instStamRS.getAllInstitutionStammdatenByDate(DateUtil.today()).then((response: any) => {
             this.institutionenList = angular.copy(response);
+        });
+    }
+
+    /**
+     * Retrieves the Gesuchsperiode from the DB and set it in the Gesuch
+     */
+    private setGesuchsperiode() {
+        //todo team Die Gesuchsperiode muss vom Benutzer eingegeben werden und nicht direkt mit dem ID geholt
+        this.gesuchsperiodeRS.findGesuchsperiode('0621fb5d-a187-5a91-abaf-8a813c4d263a').then((gesuchsperiodeResponse: any) => {
+            this.gesuch.gesuchsperiode = gesuchsperiodeResponse;
         });
     }
 
@@ -210,14 +224,14 @@ export default class GesuchModelManager {
         if (!this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
         if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             //TODO (hefr) Dummy Daten!
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
         }
     }
@@ -250,15 +264,37 @@ export default class GesuchModelManager {
         }
     }
 
+    /**
+     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde 
+     * @returns {number}
+     */
     public getBasisjahr(): number {
-        //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
-        return 2015;
+        if (this.getGesuchsperiodeBegin()) {
+            return this.getGesuchsperiodeBegin().year() - 1;
+        }
+        return undefined;
     }
 
+    /**
+     * Gibt das gesamte Objekt Gesuchsperiode zurueck, das zum Gesuch gehoert.
+     * @returns {any}
+     */
+    public getGesuchsperiode(): TSGesuchsperiode {
+        if (this.gesuch) {
+            return this.gesuch.gesuchsperiode;
+        }
+        return undefined;
+    }
 
-    getGesuchsperiode(): any {
-        //todo betrperiode
-        return {gueltigAb: '01.08.2016', gueltigBis: '31.07.2017'};
+    /**
+     * Gibt den Anfang der Gesuchsperiode als Moment zurueck
+     * @returns {any}
+     */
+    public getGesuchsperiodeBegin(): moment.Moment {
+        if (this.getGesuchsperiode() && this.getGesuchsperiode().gueltigkeit) {
+            return this.gesuch.gesuchsperiode.gueltigkeit.gueltigAb;
+        }
+        return undefined;
     }
 
 
