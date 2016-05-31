@@ -94,6 +94,9 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             }
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
                 this.state.go('gesuch.betreuungen');
+            }).catch((exception) => {
+                //todo team Fehler anzeigen
+                return undefined;
             });
         }
     }

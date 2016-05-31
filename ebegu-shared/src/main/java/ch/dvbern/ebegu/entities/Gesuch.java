@@ -21,18 +21,18 @@ public class Gesuch extends AbstractEntity {
 	@ManyToOne(optional = false)
 	private Fall fall;
 
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
 	@Column(nullable = true)
