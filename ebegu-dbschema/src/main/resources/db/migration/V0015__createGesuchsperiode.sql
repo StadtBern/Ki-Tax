@@ -1,7 +1,7 @@
 CREATE TABLE gesuchsperiode (
   id                 VARCHAR(36) NOT NULL,
-  timestamp_erstellt datetime    NOT NULL,
-  timestamp_mutiert  datetime    NOT NULL,
+  timestamp_erstellt DATETIME    NOT NULL,
+  timestamp_mutiert  DATETIME    NOT NULL,
   user_erstellt      VARCHAR(36) NOT NULL,
   user_mutiert       VARCHAR(36) NOT NULL,
   version            BIGINT      NOT NULL,
@@ -14,9 +14,9 @@ CREATE TABLE gesuchsperiode (
 CREATE TABLE gesuchsperiode_aud (
   id                 VARCHAR(36) NOT NULL,
   rev                INTEGER     NOT NULL,
-  revtype            tinyint,
-  timestamp_erstellt datetime,
-  timestamp_mutiert  datetime,
+  revtype            TINYINT,
+  timestamp_erstellt DATETIME,
+  timestamp_mutiert  DATETIME,
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   gueltig_ab         DATE,
@@ -30,7 +30,16 @@ ALTER TABLE gesuchsperiode_aud
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
-INSERT INTO ebegu.gesuchsperiode (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, active) VALUES ('0621fb5d-a187-5a91-abaf-8a813c4d263a', '2016-05-30 16:39:38', '2016-05-30 16:39:38', 'anonymous', 'anonymous', 0, '2016-08-01', '2017-07-31', true);
+INSERT INTO ebegu.gesuchsperiode (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, gueltig_ab, gueltig_bis, active)
+VALUES
+  ('0621fb5d-a187-5a91-abaf-8a813c4d263a', '2016-05-30 16:39:38', '2016-05-30 16:39:38', 'anonymous', 'anonymous', 0,
+   '2016-08-01', '2017-07-31', TRUE);
+
+ALTER TABLE gesuch
+  ADD eingangsdatum DATE NOT NULL;
+
+ALTER TABLE gesuch_aud
+  ADD eingangsdatum DATE;
 
 ALTER TABLE gesuch
   ADD gesuchsperiode_id VARCHAR(36) NOT NULL DEFAULT '0621fb5d-a187-5a91-abaf-8a813c4d263a';

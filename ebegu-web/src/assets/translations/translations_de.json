@@ -389,7 +389,7 @@
     "MENU_FALL_EROEFFNEN": "FALL ERÖFFNEN",
     "MENU_ERSTGESUCH_VOM": "Erstgesuch vom {{date}}",
     "MENU_ERSTGESUCH": "Erstgesuch",
-    "ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",
+    "MENU_ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",
     "EINGANGSDATUM": "Eingangsdatum",
     "PENSUM": "Pensum",
     "LABEL_JA": "Ja",

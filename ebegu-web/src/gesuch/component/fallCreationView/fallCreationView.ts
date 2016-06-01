@@ -28,10 +28,12 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     submit(form: IFormController) {
-        if (form.$valid) {
+        if (!this.isGesuchSaved() && form.$valid) {
             this.gesuchModelManager.createFallWithGesuch().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });
+        } else if (this.isGesuchSaved()) { // when the Gesuch is saved, we just move to the next step
+            this.state.go('gesuch.familiensituation');
         }
     }
 
@@ -43,7 +45,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         return this.getGesuchsperiode(this.gesuchModelManager.getGesuchsperiode());
     }
     /**
-     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year" 
+     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
      * @returns {any}
      */
     private getGesuchsperiode(gesuchsperiode: TSGesuchsperiode): string {
@@ -51,14 +53,23 @@ export class FallCreationViewController extends AbstractGesuchViewController {
             return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
                 + gesuchsperiode.gueltigkeit.gueltigBis.year();
         }
-        return '';
+        return undefined;
     }
 
     public getAllActiveGesuchsperioden() {
         // this.gesuchModelManager.getAllActiveGesuchsperioden().forEach((gesuchsPeriode) => {
-        //    
+        //
         // });
         return this.gesuchModelManager.getAllActiveGesuchsperioden();
+    }
+
+    /**
+     * Check whether the Gesuch is already saved in the database.
+     * Case yes the fields shouldn't be editable anymore
+     */
+    public isGesuchSaved(): boolean {
+        return this.gesuchModelManager.gesuch && (this.gesuchModelManager.gesuch.timestampErstellt !== undefined)
+            && (this.gesuchModelManager.gesuch.timestampErstellt !== null);
     }
 
 }

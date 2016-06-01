@@ -41,7 +41,7 @@ export default class GesuchModelManager {
     private betreuungNumber: number;
     fachstellenList: Array<TSFachstelle>;
     institutionenList: Array<TSInstitutionStammdaten>;
-    private activeGesuchsperioden: Array<TSGesuchsperiode>;
+    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -57,6 +57,7 @@ export default class GesuchModelManager {
         this.familiensituation = new TSFamiliensituation();
         this.fachstellenList = [];
         this.institutionenList = [];
+        this.activeGesuchsperiodenList = [];
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
@@ -93,7 +94,7 @@ export default class GesuchModelManager {
 
     public updateActiveGesuchsperiodenList(): void {
         this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperioden = angular.copy(response);
+            this.activeGesuchsperiodenList = angular.copy(response);
         });
     }
 
@@ -204,7 +205,7 @@ export default class GesuchModelManager {
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
-        return this.activeGesuchsperioden;
+        return this.activeGesuchsperiodenList;
     }
 
     public getStammdatenToWorkWith(): TSGesuchsteller {

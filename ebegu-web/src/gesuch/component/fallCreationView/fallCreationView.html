@@ -2,7 +2,10 @@
     <div class="row">
         <div class="col-md-12">
             <h4 class="mainTitle">
-                <span data-translate="ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiode()}}"></span>
+                <span ng-if="!vm.getCurrentGesuchsperiode()"
+                      span data-translate="MENU_ERSTGESUCH"></span>
+                <span ng-if="vm.getCurrentGesuchsperiode()"
+                      span data-translate="MENU_ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiode()}}"></span>
             </h4>
         </div>
     </div>
@@ -16,7 +19,7 @@
                 <dv-input-container class="form-group">
                     <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
                     </label>
-                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum"
+                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum" ng-disabled="vm.isGesuchSaved()"
                                    ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
                     </dv-datepicker>
                     <dv-error-messages  for="form.eingangsdatum.$error"
@@ -29,7 +32,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <dv-radio-container name="gesuchsperiode" class="input-element"
+                    <dv-radio-container name="gesuchsperiode" class="input-element" ng-disabled="vm.isGesuchSaved()"
                                         ng-required="true" items="vm.getAllActiveGesuchsperioden()" ng-model="vm.gesuchsperiode">
                     </dv-radio-container>
                     <dv-error-messages for="form.gesuchsperiode.$error"
@@ -42,7 +45,8 @@
         <div class="row">
             <div class="col-md-6 col-md-offset-6">
                 <button type="submit" class="btn btn-link next">
-                    <span data-translate="SPEICHERN_UPPER"></span>
+                    <span ng-if="!vm.isGesuchSaved()" data-translate="SPEICHERN_UPPER"></span>
+                    <span ng-if="vm.isGesuchSaved()" data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </button>
             </div>

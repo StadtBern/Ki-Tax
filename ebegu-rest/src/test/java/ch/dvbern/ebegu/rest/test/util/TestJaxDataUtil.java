@@ -113,6 +113,7 @@ public class TestJaxDataUtil {
 		jaxGesuch.setFall(createTestJaxFall());
 		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
+		jaxGesuch.setEingangsdatum(LocalDate.now());
 		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
 		testJaxGesuchsteller.setNachname("Gesuchsteller2");
 		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
