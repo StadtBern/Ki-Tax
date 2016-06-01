@@ -28,7 +28,7 @@ public interface GesuchsperiodeService {
 	Optional<Gesuchsperiode> findGesuchsperiode(@Nonnull String key);
 
 	/**
-	 * Gibt alle existierenden Gesuchsperiodeen zurueck.
+	 * Gibt alle existierenden Gesuchsperioden zurueck.
 	 * @return Liste aller Gesuchsperiodeen aus der DB
 	 */
 	@Nonnull
@@ -41,4 +41,10 @@ public interface GesuchsperiodeService {
 	@Nonnull
 	void removeGesuchsperiode(@Nonnull String gesuchsperiode);
 
+	/**
+	 * Gibt alle aktiven Gesuchsperioden zurueck.
+	 * @return Liste aller Gesuchsperiodeen aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuchsperiode> getAllActiveGesuchsperioden();
 }

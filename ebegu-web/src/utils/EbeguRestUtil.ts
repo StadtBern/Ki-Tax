@@ -834,4 +834,16 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
+
+    public parseGesuchsperioden(data: any) {
+        var gesuchsperioden: TSGesuchsperiode[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                gesuchsperioden[i] = this.parseGesuchsperiode(new TSGesuchsperiode(), data[i]);
+            }
+        } else {
+            gesuchsperioden[0] = this.parseGesuchsperiode(new TSGesuchsperiode(), data);
+        }
+        return gesuchsperioden;
+    }
 }

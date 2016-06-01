@@ -189,6 +189,7 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsperiode().getId());
 			}
 		}
+		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
 	}
 
 	private void convertAbstractAntragFieldsToJAX(AbstractAntragEntity antrag, JaxAbstractAntragDTO antragJAXP) {
@@ -197,6 +198,7 @@ public class JaxBConverter {
 		if (antrag.getGesuchsperiode() != null) {
 			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
 		}
+		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
 	}
 
 	@Nonnull
