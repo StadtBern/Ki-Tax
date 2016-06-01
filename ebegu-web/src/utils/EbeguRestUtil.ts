@@ -30,6 +30,7 @@ import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
+import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -110,19 +111,33 @@ export default class EbeguRestUtil {
         }
     }
 
-    private abstractPensumEntityToRestObject(restObj: any, pensumEntity: TSAbstractPensumEntity) {
-        this.abstractDateRangeEntityToRestObject(restObj, pensumEntity);
-        restObj.pensum = pensumEntity.pensum;
-    }
-
     private parseDateRangeEntity(parsedObject: TSAbstractDateRangedEntity, receivedAppProperty: any) {
         this.parseAbstractEntity(parsedObject, receivedAppProperty);
         parsedObject.gueltigkeit = new TSDateRange(DateUtil.localDateToMoment(receivedAppProperty.gueltigAb), DateUtil.localDateToMoment(receivedAppProperty.gueltigBis));
     }
 
+    private abstractPensumEntityToRestObject(restObj: any, pensumEntity: TSAbstractPensumEntity) {
+        this.abstractDateRangeEntityToRestObject(restObj, pensumEntity);
+        restObj.pensum = pensumEntity.pensum;
+    }
+
     private parseAbstractPensumEntity(betreuungspensumTS: TSAbstractPensumEntity, betreuungspensumFromServer: any) {
         this.parseDateRangeEntity(betreuungspensumTS, betreuungspensumFromServer);
         betreuungspensumTS.pensum = betreuungspensumFromServer.pensum;
+    }
+
+    private abstractAntragEntityToRestObject(restObj: any, antragEntity: TSAbstractAntragEntity) {
+        this.abstractEntityToRestObject(restObj, antragEntity);
+        restObj.fall = this.fallToRestObject({}, antragEntity.fall);
+        restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
+        restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
+    }
+
+    private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
+        this.parseAbstractEntity(antragTS, antragFromServer);
+        antragTS.fall = this.parseFall(new TSFall(), antragFromServer.fall);
+        antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
+        antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -324,23 +339,19 @@ export default class EbeguRestUtil {
 
 
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
-        this.abstractEntityToRestObject(restGesuch, gesuch);
+        this.abstractAntragEntityToRestObject(restGesuch, gesuch);
         restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
-        restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-        restGesuch.gesuchsperiode = this.gesuchsperiodeToRestObject({}, gesuch.gesuchsperiode);
         return restGesuch;
     }
 
     public parseGesuch(gesuchTS: TSGesuch, gesuchFromServer: any): TSGesuch {
         if (gesuchFromServer) {
-            this.parseAbstractEntity(gesuchTS, gesuchFromServer);
+            this.parseAbstractAntragEntity(gesuchTS, gesuchFromServer);
             gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
-            gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
-            gesuchTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), gesuchFromServer.gesuchsperiode);
             return gesuchTS;
         }
         return undefined;

@@ -39,6 +39,6 @@ ALTER TABLE gesuch_aud
   ADD gesuchsperiode_id VARCHAR(36);
 
 ALTER TABLE gesuch
-  ADD CONSTRAINT FK_gesuch_gesuchsperiode_id
+  ADD CONSTRAINT FK_antrag_gesuchsperiode_id
 FOREIGN KEY (gesuchsperiode_id)
 REFERENCES gesuchsperiode (id);
