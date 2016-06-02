@@ -8,7 +8,7 @@ CREATE TABLE gesuchsperiode (
   gueltig_ab         DATE        NOT NULL,
   gueltig_bis        DATE        NOT NULL,
   active             BIT         NOT NULL,
-  PRIMARY KEY (id)
+  CONSTRAINT PK_gesuchsperiode PRIMARY KEY (id)
 );
 
 CREATE TABLE gesuchsperiode_aud (
@@ -22,7 +22,7 @@ CREATE TABLE gesuchsperiode_aud (
   gueltig_ab         DATE,
   gueltig_bis        DATE,
   active             BIT,
-  PRIMARY KEY (id, rev)
+  CONSTRAINT PK_gesuchsperiode_aud PRIMARY KEY (id, rev)
 );
 
 ALTER TABLE gesuchsperiode_aud

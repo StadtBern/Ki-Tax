@@ -370,18 +370,20 @@ public class JaxBConverter {
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
 
+		String exceptionString = "gesuchToEntity";
+
 		Optional<Fall> fallFromDB = fallService.findFall(gesuchJAXP.getFall().getId());
 		if (fallFromDB.isPresent()) {
 			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), fallFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFall());
+			throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFall());
 		}
 		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
 			Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
 				gesuch.setGesuchsteller1(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
 			}
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
@@ -389,7 +391,7 @@ public class JaxBConverter {
 			if (gesuchsteller2.isPresent()) {
 				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
 		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
@@ -399,7 +401,7 @@ public class JaxBConverter {
 			if (gesuchsperiode.isPresent()) {
 				gesuch.setGesuchsperiode(gesuchsperiodeToEntity(gesuchJAXP.getGesuchsperiode(), gesuchsperiode.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsperiode().getId());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsperiode().getId());
 			}
 		}
 
