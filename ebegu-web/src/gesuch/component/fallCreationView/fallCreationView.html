@@ -19,7 +19,7 @@
                 <dv-input-container class="form-group">
                     <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
                     </label>
-                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum" ng-disabled="vm.gesuchModelManager.isGesuchSaved()"
+                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum""
                                    ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
                     </dv-datepicker>
                     <dv-error-messages  for="form.eingangsdatum.$error"
@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <div class="dv-radio-container" >
                         <md-radio-group name="gesuchsperioden" class="input-element radio" ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
-                                        ng-required="true" ng-disabled="vm.gesuchModelManager.isGesuchSaved()">
+                                        ng-required="true">
                             <md-radio-button ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
                                              ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}">
                                 <span>{{vm.getGesuchsperiodeAsString(current)}}</span>

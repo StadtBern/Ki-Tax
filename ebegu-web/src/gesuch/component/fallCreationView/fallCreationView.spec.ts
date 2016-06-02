@@ -43,38 +43,26 @@ describe('fallCreationView', function () {
     describe('Submit', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'createFallWithGesuch').and.returnValue($q.reject({}));
-            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
             fallCreationview.submit(form);
             $rootScope.$apply();
-            expect(gesuchModelManager.createFallWithGesuch).toHaveBeenCalled();
-            expect($state.go).not.toHaveBeenCalledWith();
+            expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
+            expect($state.go).not.toHaveBeenCalled();
         });
-        it('should submit the form and go to the next page because gesuch is not saved', () => {
+        it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'createFallWithGesuch').and.returnValue($q.when({}));
-            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
             fallCreationview.submit(form);
             $rootScope.$apply();
-            expect(gesuchModelManager.createFallWithGesuch).toHaveBeenCalled();
-            expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation');
-        });
-        it('should not submit the form and must go directly to the next page because gesuch is already saved', () => {
-            spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'createFallWithGesuch').and.returnValue($q.when({}));
-            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
-            fallCreationview.submit(form);
-            $rootScope.$apply();
-            expect(gesuchModelManager.createFallWithGesuch).not.toHaveBeenCalled();
+            expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
             expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation');
         });
         it('should not submit the form and not go to the next page because form is invalid', () => {
             spyOn($state, 'go');
-            spyOn(gesuchModelManager, 'createFallWithGesuch');
-            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            spyOn(gesuchModelManager, 'saveGesuchAndFall');
             form.$valid = false;
             fallCreationview.submit(form);
-            expect(gesuchModelManager.createFallWithGesuch).not.toHaveBeenCalled();
+            expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
             expect($state.go).not.toHaveBeenCalled();
         });
     });

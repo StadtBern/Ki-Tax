@@ -3,8 +3,8 @@
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
             <li ui-sref-active="active" ui-sref="gesuch.fallcreation">
-                <a ng-if="vm.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM" data-translate-value-date="{{vm.getDateErstgesuch()}}"></a>
-                <a ng-if="!vm.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></a>
+                <a ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM" data-translate-value-date="{{vm.getDateErstgesuch()}}"></a>
+                <a ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></a>
             </li>
             <li ui-sref-active="active" ui-sref="gesuch.familiensituation"><a data-translate="MENU_FAMSITUATION"></a></li>
             <li ui-sref-active="active" ui-sref="gesuch.stammdaten"><a data-translate="MENU_GESUCHSTELLER"></a></li>

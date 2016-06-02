@@ -2,11 +2,12 @@ import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
 import {IHttpBackendService, IScope} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS';
-import IQService = angular.IQService;
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import TestDataUtil from '../../utils/TestDataUtil';
+import IQService = angular.IQService;
+import DateUtil from '../../utils/DateUtil';
 
 describe('gesuchModelManager', function () {
 
@@ -82,18 +83,29 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
             });
         });
-        describe('createFallWithGesuch', () => {
+        describe('saveGesuchAndFall', () => {
             it('creates a Fall with a linked Gesuch', () => {
                 spyOn(fallRS, 'createFall').and.returnValue($q.when({}));
                 spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch();
-                gesuchModelManager.createFallWithGesuch();
+                gesuchModelManager.saveGesuchAndFall();
 
                 scope.$apply();
                 expect(fallRS.createFall).toHaveBeenCalled();
                 expect(gesuchRS.createGesuch).toHaveBeenCalled();
+            });
+            it('only updates the Gesuch because it already exists', () => {
+                spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                gesuchModelManager.initGesuch();
+                gesuchModelManager.gesuch.timestampErstellt = DateUtil.today();
+                gesuchModelManager.saveGesuchAndFall();
+
+                scope.$apply();
+                expect(gesuchRS.updateGesuch).toHaveBeenCalled();
             });
         });
     });

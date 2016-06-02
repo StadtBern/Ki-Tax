@@ -11,8 +11,6 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any) {
         super(state, gesuchModelManager, berechnungsManager);
-
-        var vm = this;
     }
 
     showFinanzsituationStart(): boolean {
@@ -21,7 +19,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
 
     public getDateErstgesuch(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return DateUtil.momentToLocalDate(this.gesuchModelManager.gesuch.eingangsdatum);
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.eingangsdatum, 'DD.MM.YYYY');
         }
         return undefined;
     }

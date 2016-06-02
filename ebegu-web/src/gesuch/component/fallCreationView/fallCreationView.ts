@@ -36,12 +36,10 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     submit(form: IFormController) {
-        if (!this.gesuchModelManager.isGesuchSaved() && form.$valid) {
-            this.gesuchModelManager.createFallWithGesuch().then((response: any) => {
+        if (form.$valid) {
+            this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });
-        } else if (this.gesuchModelManager.isGesuchSaved()) { // when the Gesuch is saved, we just move to the next step
-            this.state.go('gesuch.familiensituation');
         }
     }
 

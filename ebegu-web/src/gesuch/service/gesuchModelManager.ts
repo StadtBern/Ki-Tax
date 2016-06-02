@@ -93,14 +93,23 @@ export default class GesuchModelManager {
         });
     }
 
-    public createFallWithGesuch(): IPromise<TSFall> {
-        return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: any) => {
-            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse.data);
-            this.gesuch.fall = angular.copy(parsedFall);
-            return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
-                return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+    /**
+     * Wenn das Gesuch schon gespeichert ist (timestampErstellt != null), wird dieses nur aktualisiert. Wenn es um ein neues Gesuch handelt
+     * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
+     * @returns {IPromise<TSGesuch>}
+     */
+    public saveGesuchAndFall(): IPromise<TSFall> {
+        if (this.gesuch && this.gesuch.timestampErstellt) { //update
+            return this.updateGesuch();
+        } else { //create
+            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: any) => {
+                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse.data);
+                this.gesuch.fall = angular.copy(parsedFall);
+                return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
+                    return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+                });
             });
-        });
+        }
     }
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
@@ -117,6 +126,10 @@ export default class GesuchModelManager {
         }
     }
 
+    /**
+     * Update das Gesuch
+     * @returns {IPromise<TSGesuch>}
+     */
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
