@@ -50,6 +50,9 @@ describe('gesuchsperiodeRS', function () {
         it('should include a removeGesuchsperiode() function', function () {
             expect(gesuchsperiodeRS.removeGesuchsperiode).toBeDefined();
         });
+        it('should include a getAllActiveGesuchsperioden() function', function () {
+            expect(gesuchsperiodeRS.getAllActiveGesuchsperioden).toBeDefined();
+        });
     });
 
     describe('API Usage', function () {
@@ -64,7 +67,23 @@ describe('gesuchsperiodeRS', function () {
                 $httpBackend.flush();
                 checkFieldValues(foundGesuchsperiode, mockGesuchsperiode, true);
             });
+        });
+        describe('getAllActiveGesuchsperioden', () => {
+            it('should return all active Gesuchsperiode by id', () => {
+                let gesuchsperiodenList: Array<any> = [mockGesuchsperiodeRest];
+                $httpBackend.expectGET(gesuchsperiodeRS.serviceURL + '/active').respond(gesuchsperiodenList);
 
+                let foundGesuchsperioden: Array<TSGesuchsperiode>;
+                gesuchsperiodeRS.getAllActiveGesuchsperioden().then((result) => {
+                    foundGesuchsperioden = result;
+                });
+                $httpBackend.flush();
+                expect(foundGesuchsperioden).toBeDefined();
+                expect(foundGesuchsperioden.length).toBe(1);
+                expect(foundGesuchsperioden[0].active).toBe(true);
+                TestDataUtil.checkGueltigkeitAndSetIfSame(foundGesuchsperioden[0], mockGesuchsperiode);
+                expect(foundGesuchsperioden[0]).toEqual(mockGesuchsperiode);
+            });
         });
         describe('createGesuchsperiode', () => {
             it('should create a gesuchsperiode', () => {

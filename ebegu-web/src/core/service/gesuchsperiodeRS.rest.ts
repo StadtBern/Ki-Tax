@@ -1,4 +1,4 @@
-import {IHttpService, ILogService, IPromise} from 'angular';
+import {IHttpService, ILogService, IPromise, IHttpPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 
@@ -37,7 +37,7 @@ export default class GesuchsperiodeRS {
         return this.saveGesuchsperiode(gesuchsperiode);
     }
 
-    private saveGesuchsperiode(gesuchsperiode: TSGesuchsperiode) {
+    private saveGesuchsperiode(gesuchsperiode: TSGesuchsperiode): IPromise<TSGesuchsperiode> {
         let restGesuchsperiode = {};
         restGesuchsperiode = this.ebeguRestUtil.gesuchsperiodeToRestObject(restGesuchsperiode, gesuchsperiode);
         return this.http.put(this.serviceURL, restGesuchsperiode, {
@@ -50,7 +50,13 @@ export default class GesuchsperiodeRS {
         });
     }
 
-    removeGesuchsperiode(gesuchsperiodeId: string) {
+    public removeGesuchsperiode(gesuchsperiodeId: string): IHttpPromise<TSGesuchsperiode> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(gesuchsperiodeId));
+    }
+
+    public getAllActiveGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+        return this.http.get(this.serviceURL + '/active').then((response: any) => {
+            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+        });
     }
 }

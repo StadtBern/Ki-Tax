@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -55,5 +56,11 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		Optional<Gesuchsperiode> gesuchsperiodeToRemove = findGesuchsperiode(gesuchsperiodeId);
 		gesuchsperiodeToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsperiode", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId));
 		persistence.remove(gesuchsperiodeToRemove.get());
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
+		return criteriaQueryHelper.getEntitiesByAttribute(Gesuchsperiode.class, true, Gesuchsperiode_.active);
 	}
 }

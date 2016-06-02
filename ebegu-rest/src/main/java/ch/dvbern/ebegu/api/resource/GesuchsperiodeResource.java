@@ -102,4 +102,14 @@ public class GesuchsperiodeResource {
 			.collect(Collectors.toList());
 	}
 
+	@Nonnull
+	@GET
+	@Path("/active")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxGesuchsperiode> getAllActiveGesuchsperioden() {
+		return gesuchsperiodeService.getAllActiveGesuchsperioden().stream()
+			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
+			.collect(Collectors.toList());
+	}
 }

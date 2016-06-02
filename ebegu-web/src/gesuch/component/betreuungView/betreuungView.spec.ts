@@ -9,6 +9,7 @@ import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
+import TestDataUtil from '../../../utils/TestDataUtil';
 
 describe('betreuungView', function () {
 
@@ -149,9 +150,7 @@ describe('betreuungView', function () {
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
-        $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
-        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
+        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form: any = {};
         form.$valid = true;
         betreuungView.submit(form);
