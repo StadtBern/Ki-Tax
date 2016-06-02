@@ -14,8 +14,9 @@ import java.util.Set;
  */
 @Audited
 @Entity
-//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgender Code sollte gehen aber es ueberschreibt den Namen nicht
+//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgende 2 Moeglichkeiten sollten gehen aber es ueberschreibt den Namen nicht --> Problem mit hibernate-maven-plugin??
 //@AssociationOverride(name = "gesuchsperiode", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id")))
+//@AssociationOverride(name = "gesuchsperiode", foreignKey = @ForeignKey(name="FK_gesuch_gesuchsperiode_id"))
 public class Gesuch extends AbstractAntragEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;

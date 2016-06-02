@@ -15,40 +15,48 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 }
 
 export class FallCreationViewController extends AbstractGesuchViewController {
+    private gesuchsperiodeId: string;
 
     static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
         super(state, gesuchModelManager, berechnungsManager);
+        this.initViewModel();
     }
 
+    private initViewModel(): void {
+        this.gesuchModelManager.initGesuch();
+        if (this.gesuchModelManager.getGesuchsperiode()) {
+            this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
+        }
+    }
 
     public getGesuchModel(): TSGesuch {
         return this.gesuchModelManager.gesuch;
     }
 
     submit(form: IFormController) {
-        if (!this.isGesuchSaved() && form.$valid) {
+        if (!this.gesuchModelManager.isGesuchSaved() && form.$valid) {
             this.gesuchModelManager.createFallWithGesuch().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });
-        } else if (this.isGesuchSaved()) { // when the Gesuch is saved, we just move to the next step
+        } else if (this.gesuchModelManager.isGesuchSaved()) { // when the Gesuch is saved, we just move to the next step
             this.state.go('gesuch.familiensituation');
         }
     }
 
     /**
-     * Calls getGesuchsperiode with the Gesuchsperiode of the current Gesuch
+     * Calls getGesuchsperiodeAsString with the Gesuchsperiode of the current Gesuch
      * @returns {string}
      */
-    public getCurrentGesuchsperiode(): string {
-        return this.getGesuchsperiode(this.gesuchModelManager.getGesuchsperiode());
+    public getCurrentGesuchsperiodeAsString(): string {
+        return this.getGesuchsperiodeAsString(this.gesuchModelManager.getGesuchsperiode());
     }
     /**
      * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
      * @returns {any}
      */
-    private getGesuchsperiode(gesuchsperiode: TSGesuchsperiode): string {
+    private getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
         if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
             return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
                 + gesuchsperiode.gueltigkeit.gueltigBis.year();
@@ -57,19 +65,16 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     public getAllActiveGesuchsperioden() {
-        // this.gesuchModelManager.getAllActiveGesuchsperioden().forEach((gesuchsPeriode) => {
-        //
-        // });
         return this.gesuchModelManager.getAllActiveGesuchsperioden();
     }
 
-    /**
-     * Check whether the Gesuch is already saved in the database.
-     * Case yes the fields shouldn't be editable anymore
-     */
-    public isGesuchSaved(): boolean {
-        return this.gesuchModelManager.gesuch && (this.gesuchModelManager.gesuch.timestampErstellt !== undefined)
-            && (this.gesuchModelManager.gesuch.timestampErstellt !== null);
+    public setSelectedGesuchsperiode(): void {
+        let gesuchsperiodeList = this.getAllActiveGesuchsperioden();
+        for (let i: number = 0; i < gesuchsperiodeList.length; i++) {
+            if (gesuchsperiodeList[i].id === this.gesuchsperiodeId) {
+                this.getGesuchModel().gesuchsperiode = gesuchsperiodeList[i];
+            }
+        }
     }
 
 }

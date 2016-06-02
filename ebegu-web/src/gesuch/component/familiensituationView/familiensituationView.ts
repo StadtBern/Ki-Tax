@@ -15,7 +15,7 @@ let template = require('./familiensituationView.html');
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
-    template = template;   //todo low prio evtl mit require statt mit import
+    template = template;
     controller = FamiliensituationViewController;
     controllerAs = 'vm';
 }
@@ -31,6 +31,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         super($state, gesuchModelManager, berechnungsManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
+        this.initViewModel();
+    }
+
+    private initViewModel(): void {
+        this.gesuchModelManager.initFamiliensituation();
     }
 
     submit($form: IFormController) {
@@ -49,6 +54,5 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     public getFamiliensituation(): TSFamiliensituation {
         return this.gesuchModelManager.familiensituation;
     }
-
 
 }

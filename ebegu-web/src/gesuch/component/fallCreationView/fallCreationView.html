@@ -2,10 +2,10 @@
     <div class="row">
         <div class="col-md-12">
             <h4 class="mainTitle">
-                <span ng-if="!vm.getCurrentGesuchsperiode()"
+                <span ng-if="!vm.gesuchModelManager.isGesuchSaved()"
                       span data-translate="MENU_ERSTGESUCH"></span>
-                <span ng-if="vm.getCurrentGesuchsperiode()"
-                      span data-translate="MENU_ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiode()}}"></span>
+                <span ng-if="vm.gesuchModelManager.isGesuchSaved()"
+                      span data-translate="MENU_ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiodeAsString()}}"></span>
             </h4>
         </div>
     </div>
@@ -19,7 +19,7 @@
                 <dv-input-container class="form-group">
                     <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
                     </label>
-                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum" ng-disabled="vm.isGesuchSaved()"
+                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum" ng-disabled="vm.gesuchModelManager.isGesuchSaved()"
                                    ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
                     </dv-datepicker>
                     <dv-error-messages  for="form.eingangsdatum.$error"
@@ -32,21 +32,28 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <dv-radio-container name="gesuchsperiode" class="input-element" ng-disabled="vm.isGesuchSaved()"
-                                        ng-required="true" items="vm.getAllActiveGesuchsperioden()" ng-model="vm.gesuchsperiode">
-                    </dv-radio-container>
-                    <dv-error-messages for="form.gesuchsperiode.$error"
-                                       class="error"></dv-error-messages>
+                    <div class="dv-radio-container" >
+                        <md-radio-group name="gesuchsperioden" class="input-element radio" ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
+                                        ng-required="true" ng-disabled="vm.gesuchModelManager.isGesuchSaved()">
+                            <md-radio-button ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                             ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}">
+                                <span>{{vm.getGesuchsperiodeAsString(current)}}</span>
+                            </md-radio-button>
+                        </md-radio-group>
+                        <dv-error-messages for="form.gesuchsperioden.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!--Buttons-->
+    </div>
+
+    <!--Buttons-->
         <div class="row">
             <div class="col-md-6 col-md-offset-6">
                 <button type="submit" class="btn btn-link next">
-                    <span ng-if="!vm.isGesuchSaved()" data-translate="SPEICHERN_UPPER"></span>
-                    <span ng-if="vm.isGesuchSaved()" data-translate="WEITER_UPPER"></span>
+                    <span ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="SPEICHERN_UPPER"></span>
+                    <span ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </button>
             </div>

@@ -39,6 +39,7 @@ describe('gesuchModelManager', function () {
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a new empty Betreuung for the current KindContainer', () => {
+                gesuchModelManager.initGesuch();
                 createKindContainer();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
@@ -53,6 +54,7 @@ describe('gesuchModelManager', function () {
         });
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
+                gesuchModelManager.initGesuch();
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
@@ -64,6 +66,7 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuung', () => {
             it('creates a new betreuung', () => {
+                gesuchModelManager.initGesuch();
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
@@ -85,6 +88,7 @@ describe('gesuchModelManager', function () {
                 spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
+                gesuchModelManager.initGesuch();
                 gesuchModelManager.createFallWithGesuch();
 
                 scope.$apply();
