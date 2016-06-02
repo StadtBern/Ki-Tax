@@ -31,6 +31,9 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	private Boolean einkommensverschlechterung;
 
+	@NotNull
+	private JaxGesuchsperiode gesuchsperiode;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -76,6 +79,14 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
 		this.einkommensverschlechterung = einkommensverschlechterung;
+	}
+
+	public JaxGesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public void setGesuchsperiode(JaxGesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
 	}
 }
 

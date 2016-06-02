@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * REST Resource fuer FinanzielleSituation
+ * REST Resource fuer Erwerbspensum
  */
 @Path("erwerbspensen")
 @Stateless

@@ -42,6 +42,8 @@ public class JaxBConverter {
 	@Inject
 	private GesuchService gesuchService;
 	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
@@ -387,18 +389,20 @@ public class JaxBConverter {
 		Validate.notNull(gesuchJAXP);
 		convertAbstractFieldsToEntity(gesuchJAXP, gesuch);
 
+		String exceptionString = "gesuchToEntity";
+
 		Optional<Fall> fallFromDB = fallService.findFall(gesuchJAXP.getFall().getId());
 		if (fallFromDB.isPresent()) {
 			gesuch.setFall(this.fallToEntity(gesuchJAXP.getFall(), fallFromDB.get()));
 		} else {
-			throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFall());
+			throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFall());
 		}
 		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
 			Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
 				gesuch.setGesuchsteller1(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
 			}
 		}
 		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
@@ -406,10 +410,20 @@ public class JaxBConverter {
 			if (gesuchsteller2.isPresent()) {
 				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
-				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
 		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
+
+		if (gesuchJAXP.getGesuchsperiode() != null && gesuchJAXP.getGesuchsperiode().getId() != null) {
+			Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchJAXP.getGesuchsperiode().getId());
+			if (gesuchsperiode.isPresent()) {
+				gesuch.setGesuchsperiode(gesuchsperiodeToEntity(gesuchJAXP.getGesuchsperiode(), gesuchsperiode.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsperiode().getId());
+			}
+		}
+
 		return gesuch;
 	}
 
@@ -427,6 +441,9 @@ public class JaxBConverter {
 			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
 		}
 		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
+		if (persistedGesuch.getGesuchsperiode() != null) {
+			jaxGesuch.setGesuchsperiode(gesuchsperiodeToJAX(persistedGesuch.getGesuchsperiode()));
+		}
 		return jaxGesuch;
 	}
 
@@ -959,14 +976,14 @@ public class JaxBConverter {
 	}
 
 	public JaxBetreuung betreuungToJAX(Betreuung persistedBetreuung) {
-			JaxBetreuung jaxBetreuung = new JaxBetreuung();
-			convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
-			jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
-			jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
-			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
-			jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
-			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
-			return jaxBetreuung;
+		JaxBetreuung jaxBetreuung = new JaxBetreuung();
+		convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
+		jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
+		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
+		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
+		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
+		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+		return jaxBetreuung;
 	}
 
 	/**
@@ -1007,4 +1024,16 @@ public class JaxBConverter {
 	}
 
 
+	public JaxGesuchsperiode gesuchsperiodeToJAX(Gesuchsperiode persistedGesuchsperiode) {
+		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
+		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
+		jaxGesuchsperiode.setActive(persistedGesuchsperiode.getActive());
+		return jaxGesuchsperiode;
+	}
+
+	public Gesuchsperiode gesuchsperiodeToEntity(JaxGesuchsperiode jaxGesuchsperiode, Gesuchsperiode gesuchsperiode) {
+		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
+		gesuchsperiode.setActive(jaxGesuchsperiode.getActive());
+		return gesuchsperiode;
+	}
 }

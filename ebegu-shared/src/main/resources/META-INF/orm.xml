@@ -14,6 +14,7 @@
 	<entity class="ch.dvbern.ebegu.entities.Familiensituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Fachstelle"/>
 	<entity class="ch.dvbern.ebegu.entities.PensumFachstelle"/>
+	<entity class="ch.dvbern.ebegu.entities.Gesuchsperiode"/>
 	<entity class="ch.dvbern.ebegu.entities.Gesuch"/>
 	<entity class="ch.dvbern.ebegu.entities.Fall"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>

@@ -129,9 +129,4 @@ describe('ErwerbspensumRS', function () {
         expect(foundEWPCont).toEqual(mockErwerbspensum);
     }
 
-    function setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
-        abstractEntity.id = undefined;
-        abstractEntity.timestampErstellt = undefined;
-        abstractEntity.timestampMutiert = undefined;
-    }
 });

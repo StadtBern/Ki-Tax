@@ -7,7 +7,7 @@ import DateUtil from '../../../utils/DateUtil';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import IQService = angular.IQService;
+import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 
 describe('betreuungView', function () {
@@ -18,6 +18,8 @@ describe('betreuungView', function () {
     let ebeguRestUtil: EbeguRestUtil;
     let $q: IQService;
     let betreuung: TSBetreuung;
+    let $rootScope: IScope;
+    let $httpBackend: IHttpBackendService;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -26,12 +28,14 @@ describe('betreuungView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        $httpBackend = $injector.get('$httpBackend');
         $q = $injector.get('$q');
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
+        $rootScope = $injector.get('$rootScope');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil, $injector.get('CONSTANTS'),
-            $injector.get('$rootScope').$new(), $injector.get('BerechnungsManager'));
+            $rootScope.$new(), $injector.get('BerechnungsManager'));
     }));
 
     describe('Public API', function () {
@@ -108,11 +112,10 @@ describe('betreuungView', function () {
                 expect(gesuchModelManager.updateBetreuung).not.toHaveBeenCalled();
             });
             it('submits all data of current Betreuung', () => {
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
-                let form: any = {};
-                form.$valid = true;
-                betreuungView.submit(form);
-                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+                testSubmit($q.when({}), true);
+            });
+            it('submits but data are invalid and does not move forward', () => {
+                testSubmit($q.reject(), false);
             });
         });
         describe('platzAnfordern()', () => {
@@ -135,6 +138,30 @@ describe('betreuungView', function () {
         instStam1.iban = iban;
         instStam1.betreuungsangebotTyp = betAngTyp;
         return instStam1;
+    }
+
+    /**
+     * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.updateBetreuung() zurueckgeben muss. Wenn dieses
+     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen. 
+     * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
+     * @param promiseResponse
+     */
+    function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
+        spyOn($state, 'go');
+        spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
+        $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
+        let form: any = {};
+        form.$valid = true;
+        betreuungView.submit(form);
+        $rootScope.$apply();
+        expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+        if (moveToNextStep) {
+            expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
+        } else {
+            expect($state.go).not.toHaveBeenCalled();
+        }
     }
 
 });

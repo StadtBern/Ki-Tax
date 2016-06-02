@@ -2,8 +2,6 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -58,6 +56,7 @@ public final class TestDataUtil {
 
 	public static Gesuch createDefaultGesuch() {
 		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		return gesuch;
 	}
@@ -179,6 +178,27 @@ public final class TestDataUtil {
 		betreuung.setKind(createDefaultKindContainer());
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
+	}
+
+	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
+		BetreuungspensumContainer container = new BetreuungspensumContainer();
+		container.setBetreuung(betreuung);
+		container.setBetreuungspensumGS(TestDataUtil.createBetreuungspensum());
+		container.setBetreuungspensumJA(TestDataUtil.createBetreuungspensum());
+		return container;
+	}
+
+	private static Betreuungspensum createBetreuungspensum() {
+		Betreuungspensum betreuungspensum = new Betreuungspensum();
+		betreuungspensum.setPensum(80);
+		return betreuungspensum;
+	}
+
+	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return gesuchsperiode;
 	}
 
 	public static EbeguParameter createDefaultEbeguParameter() {

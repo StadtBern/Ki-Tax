@@ -45,10 +45,12 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
+	@Nonnull
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private FinanzielleSituationContainer finanzielleSituationContainer;
 
+	@Nonnull
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private Set<ErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();

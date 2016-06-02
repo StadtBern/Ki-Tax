@@ -30,6 +30,7 @@ import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSEbeguParameter from '../models/TSEbeguParameter';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -357,20 +358,22 @@ export default class EbeguRestUtil {
 
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
         this.abstractEntityToRestObject(restGesuch, gesuch);
+        restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
         restGesuch.fall = this.fallToRestObject({}, gesuch.fall);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-        restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
+        restGesuch.gesuchsperiode = this.gesuchsperiodeToRestObject({}, gesuch.gesuchsperiode);
         return restGesuch;
     }
 
     public parseGesuch(gesuchTS: TSGesuch, gesuchFromServer: any): TSGesuch {
         if (gesuchFromServer) {
             this.parseAbstractEntity(gesuchTS, gesuchFromServer);
+            gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
             gesuchTS.fall = this.parseFall(new TSFall(), gesuchFromServer.fall);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
-            gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
+            gesuchTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), gesuchFromServer.gesuchsperiode);
             return gesuchTS;
         }
         return undefined;
@@ -834,6 +837,23 @@ export default class EbeguRestUtil {
             }
         }
         return erwerbspensen;
+    }
 
+    public gesuchsperiodeToRestObject(restGesuchsperiode: any, gesuchsperiode: TSGesuchsperiode): any {
+        if (gesuchsperiode) {
+            this.abstractDateRangeEntityToRestObject(restGesuchsperiode, gesuchsperiode);
+            restGesuchsperiode.active = gesuchsperiode.active;
+            return restGesuchsperiode;
+        }
+        return undefined;
+    }
+
+    public parseGesuchsperiode(gesuchsperiodeTS: TSGesuchsperiode, gesuchsperiodeFromServer: any): TSGesuchsperiode {
+        if (gesuchsperiodeFromServer) {
+            this.parseDateRangeEntity(gesuchsperiodeTS, gesuchsperiodeFromServer);
+            gesuchsperiodeTS.active = gesuchsperiodeFromServer.active;
+            return gesuchsperiodeTS;
+        }
+        return undefined;
     }
 }

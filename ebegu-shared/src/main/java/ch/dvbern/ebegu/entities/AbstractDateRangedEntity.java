@@ -19,6 +19,7 @@ public class AbstractDateRangedEntity extends AbstractEntity {
 
 	@Nonnull
 	@Embedded
+	//@Valid todo team dies einkommentieren fuer die Produktion. Auskommentiert damit wir einfacher Daten automatisch eingeben koennen mit FormFiller
 	private DateRange gueltigkeit = new DateRange();
 
 	@Nonnull

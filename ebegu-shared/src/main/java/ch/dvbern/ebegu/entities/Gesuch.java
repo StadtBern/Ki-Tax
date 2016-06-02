@@ -21,22 +21,26 @@ public class Gesuch extends AbstractEntity {
 	@ManyToOne(optional = false)
 	private Fall fall;
 
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
 	@Column(nullable = true)
 	private Boolean einkommensverschlechterung;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id"))
+	private Gesuchsperiode gesuchsperiode;
 
 
 	public Fall getFall() {
@@ -84,5 +88,13 @@ public class Gesuch extends AbstractEntity {
 	public boolean addKindContainer(@NotNull KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+	}
+
+	public Gesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
 	}
 }

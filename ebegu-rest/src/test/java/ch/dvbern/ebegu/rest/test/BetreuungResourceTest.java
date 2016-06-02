@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -46,6 +47,8 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	private KindResource kindResource;
 	@Inject
 	private GesuchResource gesuchResource;
+	@Inject
+	private GesuchsperiodeResource gesuchsperiodeResource;
 	@Inject
 	private FallResource fallResource;
 	@Inject
@@ -87,7 +90,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		JaxBetreuung betreuung = betreuungenBeforeUpdate.iterator().next();
 		Assert.assertEquals(0, betreuung.getBetreuungspensumContainers().size());
 
-		JaxBetreuungspensumContainer containerToAdd = TestJaxDataUtil.createBetreuungspensumContainer();
+		JaxBetreuungspensumContainer containerToAdd = TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().getYear());
 
 		betreuung.getBetreuungspensumContainers().add(containerToAdd);
 		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, RESTEASY_URI_INFO, null);
@@ -106,14 +109,14 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(1, betreuungenBeforeUpdate.size());
 		JaxBetreuung betreuung = betreuungenBeforeUpdate.iterator().next();
 
-		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer());
-		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer());
-		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer());
+		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().minusYears(1).getYear()));
+		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().getYear()));
+		betreuung.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().plusYears(1).getYear()));
 		JaxBetreuung updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), betreuung, RESTEASY_URI_INFO, null);
 		Assert.assertNotNull(updatedBetr.getBetreuungspensumContainers());
 		Assert.assertEquals(3, updatedBetr.getBetreuungspensumContainers().size());
 		updatedBetr.getBetreuungspensumContainers().clear(); //alle bestehenden entfernen
-		updatedBetr.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer()); //einen neuen einfuegen
+		updatedBetr.getBetreuungspensumContainers().add(TestJaxDataUtil.createBetreuungspensumContainer(LocalDate.now().plusYears(2).getYear())); //einen neuen einfuegen
 
 		updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), updatedBetr, RESTEASY_URI_INFO, null);
 		Assert.assertEquals(1, updatedBetr.getBetreuungspensumContainers().size());
@@ -127,6 +130,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	private KindContainer persistKindAndDependingObjects(UriInfo uri) throws EbeguException {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+		jaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null));
 		jaxGesuch.setFall(returnedFall);
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();
 
