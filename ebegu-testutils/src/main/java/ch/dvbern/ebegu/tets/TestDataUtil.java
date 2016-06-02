@@ -58,6 +58,7 @@ public final class TestDataUtil {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
+		gesuch.setEingangsdatum(LocalDate.now());
 		return gesuch;
 	}
 

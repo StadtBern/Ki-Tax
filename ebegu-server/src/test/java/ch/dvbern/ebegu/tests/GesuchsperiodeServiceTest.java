@@ -36,7 +36,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createGesuchsperiodeTest() {
 		Assert.assertNotNull(gesuchsperiodeService);
-		insertNewEntity();
+		insertNewEntity(true);
 
 		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
 		Assert.assertEquals(1, allGesuchsperioden.size());
@@ -47,7 +47,7 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguTest {
 	@Test
 	public void updateGesuchsperiodeTest() {
 		Assert.assertNotNull(gesuchsperiodeService);
-		Gesuchsperiode insertedGesuchsperiode = insertNewEntity();
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(insertedGesuchsperiode.getId());
 		Assert.assertTrue(gesuchsperiode.get().getActive());
 
@@ -62,18 +62,32 @@ public class GesuchsperiodeServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchsperiodeService);
 		Assert.assertEquals(0, gesuchsperiodeService.getAllGesuchsperioden().size());
 
-		Gesuchsperiode insertedGesuchsperiode = insertNewEntity();
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
 		Assert.assertEquals(1, gesuchsperiodeService.getAllGesuchsperioden().size());
 
 		gesuchsperiodeService.removeGesuchsperiode(insertedGesuchsperiode.getId());
 		Assert.assertEquals(0, gesuchsperiodeService.getAllGesuchsperioden().size());
 	}
 
+	@Test
+	public void getAllActiveGesuchsperiodenTest() {
+		Gesuchsperiode insertedGesuchsperiode = insertNewEntity(true);
+		insertNewEntity(false);
+
+		Collection<Gesuchsperiode> allGesuchsperioden = gesuchsperiodeService.getAllGesuchsperioden();
+		Assert.assertEquals(2, allGesuchsperioden.size());
+
+		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
+		Assert.assertEquals(1, allActiveGesuchsperioden.size());
+		Assert.assertEquals(insertedGesuchsperiode, allActiveGesuchsperioden.iterator().next());
+	}
+
 
 	// HELP METHODS
 
-	private Gesuchsperiode insertNewEntity() {
+	private Gesuchsperiode insertNewEntity(boolean active) {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
+		gesuchsperiode.setActive(active);
 		gesuchsperiodeService.saveGesuchsperiode(gesuchsperiode);
 		return gesuchsperiode;
 	}

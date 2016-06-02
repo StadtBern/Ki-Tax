@@ -14,12 +14,12 @@ import java.util.Set;
  */
 @Audited
 @Entity
-public class Gesuch extends AbstractEntity {
+//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgende 2 Moeglichkeiten sollten gehen aber es ueberschreibt den Namen nicht --> Problem mit hibernate-maven-plugin??
+//@AssociationOverride(name = "gesuchsperiode", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id")))
+//@AssociationOverride(name = "gesuchsperiode", foreignKey = @ForeignKey(name="FK_gesuch_gesuchsperiode_id"))
+public class Gesuch extends AbstractAntragEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
-
-	@ManyToOne(optional = false)
-	private Fall fall;
 
 	@Valid
 	@Nullable
@@ -38,18 +38,7 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true)
 	private Boolean einkommensverschlechterung;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id"))
-	private Gesuchsperiode gesuchsperiode;
 
-
-	public Fall getFall() {
-		return fall;
-	}
-
-	public void setFall(Fall fall) {
-		this.fall = fall;
-	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
@@ -90,11 +79,4 @@ public class Gesuch extends AbstractEntity {
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
 
-	public Gesuchsperiode getGesuchsperiode() {
-		return gesuchsperiode;
-	}
-
-	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
-		this.gesuchsperiode = gesuchsperiode;
-	}
 }

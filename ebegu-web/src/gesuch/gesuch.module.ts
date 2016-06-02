@@ -13,6 +13,7 @@ import {ErwerbspensumListViewComponentConfig} from './component/erwerbspensumLis
 import {ErwerbspensumViewComponentConfig} from './component/erwerbspensumView/erwerbspensumView';
 import {FinanzielleSituationStartViewComponentConfig} from './component/finanzielleSituationStartView/finanzielleSituationStartView';
 import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
+import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -27,4 +28,5 @@ export const EbeguWebGesuch =
     .component('betreuungListView', new BetreuungListViewComponentConfig())
     .component('betreuungView', new BetreuungViewComponentConfig())
     .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
-    .component('erwerbspensumView', new ErwerbspensumViewComponentConfig());
+    .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
+    .component('fallCreationView', new FallCreationViewComponentConfig());
