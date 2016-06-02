@@ -82,11 +82,24 @@ export default class EbeguRestUtil {
         return ebeguParameters;
     }
 
-    public parseEbeguParameter(parsedEbeguParameter: TSEbeguParameter, receivedEbeguParameter: any): TSEbeguParameter {
-        this.parseDateRangeEntity(parsedEbeguParameter, receivedEbeguParameter);
-        parsedEbeguParameter.name = receivedEbeguParameter.name;
-        parsedEbeguParameter.value = receivedEbeguParameter.value;
-        return parsedEbeguParameter;
+    public parseEbeguParameter(ebeguParameterTS: TSEbeguParameter, receivedEbeguParameter: any): TSEbeguParameter {
+        if (receivedEbeguParameter) {
+            this.parseDateRangeEntity(ebeguParameterTS, receivedEbeguParameter);
+            ebeguParameterTS.name = receivedEbeguParameter.name;
+            ebeguParameterTS.value = receivedEbeguParameter.value;
+            return ebeguParameterTS;
+        }
+        return undefined;
+    }
+
+    public ebeguParameterToRestObject(restEbeguParameter: any, ebeguParameter: TSEbeguParameter): TSEbeguParameter {
+        if (ebeguParameter) {
+            this.abstractDateRangeEntityToRestObject(restEbeguParameter, ebeguParameter);
+            restEbeguParameter.name = ebeguParameter.name;
+            restEbeguParameter.value = ebeguParameter.value;
+            return restEbeguParameter;
+        }
+        return undefined;
     }
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {

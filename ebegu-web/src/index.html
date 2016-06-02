@@ -12,7 +12,38 @@
 <body class="ebegu">
 
 <div id="Intro" class="logo-bern">
+
+    <md-menu-bar class="userMenu">
+        <md-menu >
+            <md-button ng-click="$mdOpenMenu()">
+                Janett Hohmann
+                <i class="fa fa-angle-down"></i>
+            </md-button>
+            <md-menu-content>
+                <md-menu-item>
+                    <md-button  ui-sref-active="true">
+                        <a ui-sref="admin">Admin</a>
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button  ui-sref-active="true">
+                        <a ui-sref="parameter">Parameter</a>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-divider></md-menu-divider>
+
+                <md-menu-item>
+                    <md-button>
+                        Ausloggen
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+    </md-menu-bar>
+
     <p class="logo-text">E-BEGU</p>
+
 </div>
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
