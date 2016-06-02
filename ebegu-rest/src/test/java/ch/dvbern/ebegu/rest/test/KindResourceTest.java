@@ -2,13 +2,11 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.api.resource.FachstelleResource;
-import ch.dvbern.ebegu.api.resource.FallResource;
-import ch.dvbern.ebegu.api.resource.GesuchResource;
-import ch.dvbern.ebegu.api.resource.KindResource;
+import ch.dvbern.ebegu.api.resource.*;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -40,6 +38,8 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private GesuchResource gesuchResource;
 	@Inject
+	private GesuchsperiodeResource gesuchsperiodeResource;
+	@Inject
 	private FallResource fallResource;
 	@Inject
 	private FachstelleResource fachstelleResource;
@@ -55,7 +55,9 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 		UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+		JaxGesuchsperiode returnedGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null);
 		jaxGesuch.setFall(returnedFall);
+		jaxGesuch.setGesuchsperiode(returnedGesuchsperiode);
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();
 
 		JaxKindContainer testJaxKindContainer = TestJaxDataUtil.createTestJaxKindContainer();

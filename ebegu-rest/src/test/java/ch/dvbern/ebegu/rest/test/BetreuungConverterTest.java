@@ -88,9 +88,9 @@ public class BetreuungConverterTest extends AbstractEbeguRestTest {
 
 		kind.getKindGS().setPensumFachstelle(pensumFachstelle);
 		kind.getKindJA().setPensumFachstelle(pensumFachstelle2);
-		Fall fall = persistence.persist(TestDataUtil.createDefaultFall());
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		gesuch.setFall(fall);
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
+		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		kind.setGesuch(persistence.persist(gesuch));
 		betreuung.setKind(persistence.persist(kind));
 		betreuung.setInstitutionStammdaten(instStammdaten);

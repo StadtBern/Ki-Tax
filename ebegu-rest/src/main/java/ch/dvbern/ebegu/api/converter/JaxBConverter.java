@@ -42,6 +42,8 @@ public class JaxBConverter {
 	@Inject
 	private GesuchService gesuchService;
 	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
@@ -391,6 +393,16 @@ public class JaxBConverter {
 			}
 		}
 		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
+
+		if (gesuchJAXP.getGesuchsperiode() != null && gesuchJAXP.getGesuchsperiode().getId() != null) {
+			Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchJAXP.getGesuchsperiode().getId());
+			if (gesuchsperiode.isPresent()) {
+				gesuch.setGesuchsperiode(gesuchsperiodeToEntity(gesuchJAXP.getGesuchsperiode(), gesuchsperiode.get()));
+			} else {
+				throw new EbeguEntityNotFoundException("gesuchToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsperiode().getId());
+			}
+		}
+
 		return gesuch;
 	}
 
@@ -408,6 +420,9 @@ public class JaxBConverter {
 			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
 		}
 		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
+		if (persistedGesuch.getGesuchsperiode() != null) {
+			jaxGesuch.setGesuchsperiode(gesuchsperiodeToJAX(persistedGesuch.getGesuchsperiode()));
+		}
 		return jaxGesuch;
 	}
 
@@ -940,14 +955,14 @@ public class JaxBConverter {
 	}
 
 	public JaxBetreuung betreuungToJAX(Betreuung persistedBetreuung) {
-			JaxBetreuung jaxBetreuung = new JaxBetreuung();
-			convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
-			jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
-			jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
-			jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
-			jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
-			jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
-			return jaxBetreuung;
+		JaxBetreuung jaxBetreuung = new JaxBetreuung();
+		convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
+		jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
+		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
+		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
+		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
+		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+		return jaxBetreuung;
 	}
 
 	/**
@@ -988,4 +1003,16 @@ public class JaxBConverter {
 	}
 
 
+	public JaxGesuchsperiode gesuchsperiodeToJAX(Gesuchsperiode persistedGesuchsperiode) {
+		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
+		convertAbstractDateRangedFieldsToJAX(persistedGesuchsperiode, jaxGesuchsperiode);
+		jaxGesuchsperiode.setActive(persistedGesuchsperiode.getActive());
+		return jaxGesuchsperiode;
+	}
+
+	public Gesuchsperiode gesuchsperiodeToEntity(JaxGesuchsperiode jaxGesuchsperiode, Gesuchsperiode gesuchsperiode) {
+		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
+		gesuchsperiode.setActive(jaxGesuchsperiode.getActive());
+		return gesuchsperiode;
+	}
 }

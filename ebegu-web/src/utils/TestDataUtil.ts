@@ -44,11 +44,10 @@ export default class TestDataUtil {
     }
 
     static checkGueltigkeitAndSetIfSame(first: TSAbstractDateRangedEntity, second: TSAbstractDateRangedEntity) {
+        // Dieses hack wird gebraucht weil um 2 Moment zu vergleichen kann man nicht einfach equal() benutzen sondern isSame
         expect(first.gueltigkeit.gueltigAb.isSame(second.gueltigkeit.gueltigAb)).toBe(true);
         expect(first.gueltigkeit.gueltigBis.isSame(second.gueltigkeit.gueltigBis)).toBe(true);
         first.gueltigkeit.gueltigAb = second.gueltigkeit.gueltigAb;
         first.gueltigkeit.gueltigBis = second.gueltigkeit.gueltigBis;
-
-
     }
 }

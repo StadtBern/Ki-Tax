@@ -7,7 +7,7 @@ import TSBetreuung from '../../models/TSBetreuung';
 import IInjectorService = angular.auto.IInjectorService;
 import BetreuungRS from './betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
-import TSAbstractEntity from '../../models/TSAbstractEntity';
+import TestDataUtil from '../../utils/TestDataUtil';
 
 
 describe('betreuungRS', function () {
@@ -31,7 +31,7 @@ describe('betreuungRS', function () {
     beforeEach(() => {
         kindId = '2afc9d9a-957e-4550-9a22-97624a000feb';
         mockBetreuung = new TSBetreuung(undefined, TSBetreuungsstatus.AUSSTEHEND, [], 'bemerkungen');
-        setAbstractFieldsUndefined(mockBetreuung);
+        TestDataUtil.setAbstractFieldsUndefined(mockBetreuung);
         mockBetreuungRest = ebeguRestUtil.betreuungToRestObject({}, mockBetreuung);
 
         $httpBackend.whenGET(betreuungRS.serviceURL + '/' + encodeURIComponent(mockBetreuung.id)).respond(mockBetreuungRest);
@@ -103,11 +103,5 @@ describe('betreuungRS', function () {
             });
         });
     });
-
-    function setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
-        abstractEntity.id = undefined;
-        abstractEntity.timestampErstellt = undefined;
-        abstractEntity.timestampMutiert = undefined;
-    }
 
 });

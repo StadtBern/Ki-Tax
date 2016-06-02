@@ -75,6 +75,7 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	@Nonnull
 	private KindContainer persistKind() {
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		persistence.persist(gesuch.getGesuchsperiode());
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch);
 
