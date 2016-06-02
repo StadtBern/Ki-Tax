@@ -11,6 +11,8 @@ import {
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
 import BerechnungsManager from '../../service/berechnungsManager';
 let template = require('./familiensituationView.html');
+require('./familiensituationView.less');
+
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;

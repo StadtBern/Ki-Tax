@@ -12,6 +12,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungListView.html');
+require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 

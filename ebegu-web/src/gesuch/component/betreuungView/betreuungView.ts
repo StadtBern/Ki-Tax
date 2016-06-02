@@ -14,6 +14,7 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
 import Moment = moment.Moment;
 let template = require('./betreuungView.html');
+require('./betreuungView.less');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
     transclude = false;

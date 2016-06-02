@@ -15,6 +15,7 @@ import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
+require('./erwerbspensumView.less');
 
 
 export class ErwerbspensumViewComponentConfig implements IComponentOptions {

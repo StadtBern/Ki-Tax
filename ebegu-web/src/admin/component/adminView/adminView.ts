@@ -2,7 +2,7 @@ import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
-import './adminView.less';
+require('./adminView.less');
 let template = require('./adminView.html');
 
 export class AdminViewComponentConfig implements IComponentOptions {

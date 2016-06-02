@@ -8,6 +8,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationResultateView.html');
+require('./finanzielleSituationResultateView.less');
 
 export class FinanzielleSituationResultateViewComponentConfig implements IComponentOptions {
     transclude = false;

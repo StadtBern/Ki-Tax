@@ -6,6 +6,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
 let template = require('./fallCreationView.html');
+require('./fallCreationView.less');
 
 export class FallCreationViewComponentConfig implements IComponentOptions {
     transclude = false;

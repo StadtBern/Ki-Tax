@@ -1,0 +1,47 @@
+<div class="pendenzenListView">
+    <div class="col-md-8 col-md-offset-2">
+        <h1 data-translate="PENDENZEN_LIST"></h1>
+
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+
+                <table st-table="displayedCollection" st-safe-src="vm.pendenzenList"  st-delay="20"
+                       class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
+                        <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
+                        <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
+                        <th data-translate="AKTION"></th>
+                    </tr>
+                    <tr>
+                        <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                        ng-click="vm.editRow(row)">
+                        <td ng-bind="row.name"></td>
+                        <td ng-bind="row.value"></td>
+                        <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td>
+                            <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash-o">
+                                </i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
