@@ -112,4 +112,15 @@ public class GesuchsperiodeResource {
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
 			.collect(Collectors.toList());
 	}
+
+	@Nonnull
+	@GET
+	@Path("/unclosed")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxGesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
+		return gesuchsperiodeService.getAllNichtAbgeschlosseneGesuchsperioden().stream()
+			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
+			.collect(Collectors.toList());
+	}
 }

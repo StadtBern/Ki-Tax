@@ -38,7 +38,6 @@ public interface GesuchsperiodeService {
 	 * entfernt eine Gesuchsperiode aus der Database
 	 * @param gesuchsperiode die Gesuchsperiode als DTO
 	 */
-	@Nonnull
 	void removeGesuchsperiode(@Nonnull String gesuchsperiode);
 
 	/**
@@ -47,4 +46,10 @@ public interface GesuchsperiodeService {
 	 */
 	@Nonnull
 	Collection<Gesuchsperiode> getAllActiveGesuchsperioden();
+
+	/**
+	 * Gibt alle Gesuchsperioden zurueck, deren Ende-Datum noch nicht erreicht ist.
+     */
+	@Nonnull
+	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden();
 }
