@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 
 import javax.annotation.Nonnull;
@@ -13,6 +14,12 @@ import java.util.Optional;
  * Service zum Verwalten von zeitabhängigen E-BEGU-Parametern.
  */
 public interface EbeguParameterService {
+
+	/**
+	 * Erstellt die Parameter für die neue Gesuchsperiode mit demselben Wert wie in der
+	 * Vorperiode
+     */
+	void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
 	 * Speichert den Parameter neu in der DB falls der Key noch nicht existiert. Ansonsten wird ein neuer Parameter mit
@@ -46,5 +53,5 @@ public interface EbeguParameterService {
 	/**
 	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
 	 */
-	EbeguParameter getEbeguParameterByKeyAndDate(EbeguParameterKey key, LocalDate date);
+	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(EbeguParameterKey key, LocalDate date);
 }

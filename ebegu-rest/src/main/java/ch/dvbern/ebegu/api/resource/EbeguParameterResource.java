@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEbeguParameter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import io.swagger.annotations.Api;
@@ -120,5 +121,27 @@ public class EbeguParameterResource {
 		return ebeguParameterService.getAllEbeguParameterByDate(date).stream()
 			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
 			.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "Get all E-BEGU parameter by key and date")
+	@Nullable
+	@GET
+	@Path("/name/{key}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxEbeguParameter getEbeguParameterByKeyAndDate (
+		@Nonnull @PathParam("key") String key,
+		@Nullable @QueryParam("date") String stringDate) {
+
+		LocalDate date = LocalDate.now();
+		if (stringDate != null && !stringDate.isEmpty()) {
+			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		}
+		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(key);
+		Optional<EbeguParameter> optional  = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
+		if (optional.isPresent()) {
+			return converter.ebeguParameterToJAX(optional.get());
+		}
+		return null;
 	}
 }

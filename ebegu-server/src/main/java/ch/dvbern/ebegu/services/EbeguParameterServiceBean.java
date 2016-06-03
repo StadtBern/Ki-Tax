@@ -10,10 +10,7 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.EbeguParameter;
-import ch.dvbern.ebegu.entities.EbeguParameter_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -25,13 +22,11 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer E-BEGU-Parameter
@@ -47,6 +42,15 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Override
+	public void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+		// Die Parameter des letzten Jahres suchen
+		Collection<EbeguParameter> lastYearParameterList = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+		lastYearParameterList.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
+			EbeguParameter newParameter = lastYearParameter.copy(gesuchsperiode.getGueltigkeit());
+			saveEbeguParameter(newParameter);
+		});
+	}
 
 	@Override
 	@Nonnull
@@ -78,13 +82,14 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		return new ArrayList<>(criteriaQueryHelper.getAll(EbeguParameter.class));
 	}
 
+	@Nonnull
 	@Override
 	public Collection<EbeguParameter> getAllEbeguParameterByDate(LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(EbeguParameter.class, date));
 	}
 
 	@Override
-	public EbeguParameter getEbeguParameterByKeyAndDate(EbeguParameterKey key, LocalDate date) {
+	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(EbeguParameterKey key, LocalDate date) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
 		Root<EbeguParameter> root = query.from(EbeguParameter.class);
@@ -102,6 +107,13 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		TypedQuery<EbeguParameter> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(dateParam, date);
 		q.setParameter(keyParam, key);
-		return q.getSingleResult();
+		List<EbeguParameter> resultList = q.getResultList();
+		EbeguParameter paramOrNull = null;
+		if (!resultList.isEmpty() && resultList.size() == 1) {
+			paramOrNull = resultList.get(0);
+		} else if (resultList.size() > 1) {
+			throw new NonUniqueResultException();
+		}
+		return Optional.ofNullable(paramOrNull);
 	}
 }
