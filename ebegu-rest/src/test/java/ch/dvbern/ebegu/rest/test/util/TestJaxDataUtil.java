@@ -138,8 +138,7 @@ public class TestJaxDataUtil {
 		jaxKind.setBemerkungen("Notizen");
 		jaxKind.setMutterspracheDeutsch(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
-		jaxKind.setUnterstuetzungspflicht(true);
-		jaxKind.setWohnhaftImGleichenHaushalt(75);
+		jaxKind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		return jaxKind;
 	}
 

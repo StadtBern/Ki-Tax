@@ -9,6 +9,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSPensumFachstelle} from '../../../models/TSPensumFachstelle';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
+import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 let template = require('./kindView.html');
 
 export class KindViewComponentConfig implements IComponentOptions {
@@ -20,6 +21,7 @@ export class KindViewComponentConfig implements IComponentOptions {
 
 export class KindViewController extends AbstractGesuchViewController {
     geschlechter: Array<string>;
+    kinderabzugValues: Array<TSKinderabzug>;
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
@@ -38,6 +40,7 @@ export class KindViewController extends AbstractGesuchViewController {
 
     private initViewModel(): void {
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
+        this.kinderabzugValues = getTSKinderabzugValues();
         this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;

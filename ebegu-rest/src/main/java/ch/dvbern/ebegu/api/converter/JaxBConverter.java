@@ -279,6 +279,7 @@ public class JaxBConverter {
 		gesuchsteller.setMobile(gesuchstellerJAXP.getMobile());
 		gesuchsteller.setTelefonAusland(gesuchstellerJAXP.getTelefonAusland());
 		gesuchsteller.setZpvNumber(gesuchstellerJAXP.getZpvNumber());
+		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
 
 		//Relationen
 		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
@@ -303,7 +304,6 @@ public class JaxBConverter {
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
-
 		//Erwerbspensum
 		gesuchstellerJAXP.getErwerbspensenContainers()
 			.stream()
@@ -337,6 +337,7 @@ public class JaxBConverter {
 		jaxGesuchsteller.setMobile(persistedGesuchsteller.getMobile());
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
 		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
+		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
 		//relationen laden
 		Optional<GesuchstellerAdresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
 		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(adresseToJAX(adresse)));
@@ -584,8 +585,7 @@ public class JaxBConverter {
 	public JaxKind kindToJAX(@Nonnull Kind persistedKind) {
 		JaxKind jaxKind = new JaxKind();
 		convertAbstractPersonFieldsToJAX(persistedKind, jaxKind);
-		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
-		jaxKind.setUnterstuetzungspflicht(persistedKind.getUnterstuetzungspflicht());
+		jaxKind.setKinderabzug(persistedKind.getKinderabzug());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
 		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
@@ -650,8 +650,7 @@ public class JaxBConverter {
 		Validate.notNull(kindJAXP);
 		Validate.notNull(kind);
 		convertAbstractPersonFieldsToEntity(kindJAXP, kind);
-		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
-		kind.setUnterstuetzungspflicht(kindJAXP.getUnterstuetzungspflicht());
+		kind.setKinderabzug(kindJAXP.getKinderabzug());
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
 

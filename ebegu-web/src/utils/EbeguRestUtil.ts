@@ -224,6 +224,7 @@ export default class EbeguRestUtil {
                 restGesuchsteller.erwerbspensenContainers = erwPensenCont;
 
             }
+            restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
             return restGesuchsteller;
         }
         return undefined;
@@ -242,6 +243,7 @@ export default class EbeguRestUtil {
             gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
             gesuchstellerTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerFromServer.finanzielleSituationContainer);
             gesuchstellerTS.erwerbspensenContainer = this.parseErwerbspensenContainers(gesuchstellerFromServer.erwerbspensenContainers);
+            gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
             return gesuchstellerTS;
         }
         return undefined;
@@ -619,8 +621,7 @@ export default class EbeguRestUtil {
 
     private kindToRestObject(restKind: any, kind: TSKind): any {
         this.abstractPersonEntitytoRestObject(restKind, kind);
-        restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
-        restKind.unterstuetzungspflicht = kind.unterstuetzungspflicht;
+        restKind.kinderabzug = kind.kinderabzug;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
         if (kind.pensumFachstelle) {
@@ -644,8 +645,7 @@ export default class EbeguRestUtil {
     private parseKind(kindTS: TSKind, kindFromServer: any): TSKind {
         if (kindFromServer) {
             this.parseAbstractPersonEntity(kindTS, kindFromServer);
-            kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
-            kindTS.unterstuetzungspflicht = kindFromServer.unterstuetzungspflicht;
+            kindTS.kinderabzug = kindFromServer.kinderabzug;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
             if (kindFromServer.pensumFachstelle) {

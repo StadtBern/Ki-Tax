@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
@@ -17,10 +18,7 @@ public class JaxKind extends JaxAbstractPersonDTO {
 	private static final long serialVersionUID = -1297026881674137397L;
 
 	@NotNull
-	private Integer wohnhaftImGleichenHaushalt;
-
-	@Nullable
-	private Boolean unterstuetzungspflicht;
+	private Kinderabzug kinderabzug;
 
 	@NotNull
 	private Boolean familienErgaenzendeBetreuung;
@@ -36,22 +34,12 @@ public class JaxKind extends JaxAbstractPersonDTO {
 	private String bemerkungen;
 
 
-
-	public Integer getWohnhaftImGleichenHaushalt() {
-		return wohnhaftImGleichenHaushalt;
+	public Kinderabzug getKinderabzug() {
+		return kinderabzug;
 	}
 
-	public void setWohnhaftImGleichenHaushalt(Integer wohnhaftImGleichenHaushalt) {
-		this.wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
-	}
-
-	@Nullable
-	public Boolean getUnterstuetzungspflicht() {
-		return unterstuetzungspflicht;
-	}
-
-	public void setUnterstuetzungspflicht(@Nullable Boolean unterstuetzungspflicht) {
-		this.unterstuetzungspflicht = unterstuetzungspflicht;
+	public void setKinderabzug(Kinderabzug kinderabzug) {
+		this.kinderabzug = kinderabzug;
 	}
 
 	public Boolean getFamilienErgaenzendeBetreuung() {
