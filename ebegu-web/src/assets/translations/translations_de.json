@@ -360,6 +360,7 @@
     "KIND_HINZUFUEGEN": "Kind hinzufügen",
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
+    "KIND_ANDERERFALL": "Anderer Fall",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
     "FACHSTELLE": "Fachstelle",
