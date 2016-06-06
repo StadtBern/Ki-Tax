@@ -9,6 +9,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * Entitaet zum Speichern von zeitabhängigen Parametern in E-BEGU
@@ -54,5 +55,13 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 		that.setName(this.getName());
 		that.setValue(this.getValue());
 		return that;
+	}
+
+	public BigDecimal getAsBigDecimal() {
+		return new BigDecimal(value);
+	}
+
+	public Integer getAsInteger() {
+		return Integer.valueOf(value);
 	}
 }

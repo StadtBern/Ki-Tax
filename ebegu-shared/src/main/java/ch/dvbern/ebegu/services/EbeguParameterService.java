@@ -46,13 +46,15 @@ public interface EbeguParameterService {
 	Collection<EbeguParameter> getAllEbeguParameterByDate(@Nonnull LocalDate date);
 
 	/**
-	 * Sucht alle für die Gesuchsperiode gueltigen Ebegu-Parameter
+	 * Sucht alle für die Gesuchsperiode gueltigen Ebegu-Parameter. Falls noch keine vorhanden sind, werden sie
+	 * aus der letzten Gesuchsperiode kopiert
 	 */
 	@Nonnull
 	Collection<EbeguParameter> getEbeguParameterByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
-	 * Sucht alle für die Gesuchsperiode gueltigen Ebegu-Parameter
+	 * Sucht alle für das Jahr gültigen Ebegu-Parameter. Falls ncoh keine vorhanden sind, werden sie vom
+	 * Vorjahr kopiert.
 	 */
 	@Nonnull
 	Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr);
