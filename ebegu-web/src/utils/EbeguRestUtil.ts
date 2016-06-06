@@ -89,6 +89,7 @@ export default class EbeguRestUtil {
             this.parseDateRangeEntity(ebeguParameterTS, receivedEbeguParameter);
             ebeguParameterTS.name = receivedEbeguParameter.name;
             ebeguParameterTS.value = receivedEbeguParameter.value;
+            ebeguParameterTS.proGesuchsperiode = receivedEbeguParameter.proGesuchsperiode;
             return ebeguParameterTS;
         }
         return undefined;

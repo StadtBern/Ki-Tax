@@ -33,20 +33,12 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-	@Inject
-	private EbeguParameterService parameterService;
-
 
 	@Nonnull
 	@Override
 	public Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Objects.requireNonNull(gesuchsperiode);
-		if (gesuchsperiode.isNew()) {
-			parameterService.createEbeguParameterListForGesuchsperiode(gesuchsperiode);
-			return persistence.persist(gesuchsperiode);
-		} else {
-			return persistence.merge(gesuchsperiode);
-		}
+		return persistence.merge(gesuchsperiode);
 	}
 
 	@Nonnull

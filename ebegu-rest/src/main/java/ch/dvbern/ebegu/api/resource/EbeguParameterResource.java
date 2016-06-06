@@ -4,9 +4,11 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEbeguParameter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +43,9 @@ public class EbeguParameterResource {
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;
+
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -119,6 +125,40 @@ public class EbeguParameterResource {
 			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		return ebeguParameterService.getAllEbeguParameterByDate(date).stream()
+			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
+			.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "Get all E-BEGU parameter by date")
+	@Nonnull
+	@GET
+	@Path("/gesuchsperiode/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxEbeguParameter> getEbeguParameterByGesuchsperiode (
+		@Nonnull @NotNull @PathParam("id") JaxId id) {
+
+		Validate.notNull(id.getId());
+		String gesuchsperiodeId = converter.toEntityId(id);
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
+		if (gesuchsperiode.isPresent()) {
+			return ebeguParameterService.getEbeguParameterByGesuchsperiode(gesuchsperiode.get()).stream()
+				.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
+				.collect(Collectors.toList());
+		}
+		return Collections.EMPTY_LIST;
+	}
+
+	@ApiOperation(value = "Get all E-BEGU parameter by date")
+	@Nonnull
+	@GET
+	@Path("/jahr/{jahr}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxEbeguParameter> getEbeguParameterByJahr (
+		@Nonnull @NotNull @PathParam("jahr") Integer jahr) {
+
+		return ebeguParameterService.getEbeguParameterByJahr(jahr).stream()
 			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
 			.collect(Collectors.toList());
 	}

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -45,5 +46,13 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 
 	public void setValue(@Nonnull String value) {
 		this.value = value;
+	}
+
+	public EbeguParameter copy(DateRange gueltigkeit) {
+		EbeguParameter that = new EbeguParameter();
+		that.setGueltigkeit(gueltigkeit);
+		that.setName(this.getName());
+		that.setValue(this.getValue());
+		return that;
 	}
 }

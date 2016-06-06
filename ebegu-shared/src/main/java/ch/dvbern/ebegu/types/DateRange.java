@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
@@ -59,6 +60,13 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	 */
 	public DateRange(@Nonnull DateRange gueltigkeit) {
 		this(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis());
+	}
+
+	/**
+	 * DateRange für ein ganzes Kalender-Jahr
+     */
+	public DateRange(@Nonnull Integer jahr) {
+		this(LocalDate.of(jahr, Month.JANUARY, 1), LocalDate.of(jahr, Month.DECEMBER, 31));
 	}
 
 	/**

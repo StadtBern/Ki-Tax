@@ -22,6 +22,8 @@ public class JaxEbeguParameter extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private EbeguParameterKey name = null;
 
+	private boolean proGesuchsperiode;
+
 
 	public String getValue() {
 		return value;
@@ -37,5 +39,13 @@ public class JaxEbeguParameter extends JaxAbstractDateRangedDTO {
 
 	public void setName(EbeguParameterKey name) {
 		this.name = name;
+	}
+
+	public boolean isProGesuchsperiode() {
+		return proGesuchsperiode;
+	}
+
+	public void setProGesuchsperiode(boolean proGesuchsperiode) {
+		this.proGesuchsperiode = proGesuchsperiode;
 	}
 }

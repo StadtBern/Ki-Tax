@@ -46,6 +46,20 @@ export class EbeguParameterRS {
             });
     }
 
+    public getEbeguParameterByGesuchsperiode(gesuchsperiodeId: string): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/gesuchsperiode/' + gesuchsperiodeId)
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
+    public getEbeguParameterByJahr(jahr: number): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/jahr/' + jahr)
+            .then((response: any) => {
+                return this.ebeguRestUtil.parseEbeguParameters(response.data);
+            });
+    }
+
     public getEbeguParameterByKeyAndDate(dateParam: moment.Moment, keyParam: TSEbeguParameterKey): IPromise<TSEbeguParameter> {
         return this.http.get(this.serviceURL + '/name/' + keyParam)
             .then((param: TSEbeguParameter) => {

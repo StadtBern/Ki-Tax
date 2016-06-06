@@ -6,11 +6,13 @@ export default class TSEbeguParameter extends TSAbstractDateRangedEntity {
 
     private _name: TSEbeguParameterKey;
     private _value: string;
+    private _proGesuchsperiode: boolean;
 
-    constructor(name?: TSEbeguParameterKey, value?: string, gueltigkeit?: TSDateRange) {
+    constructor(name?: TSEbeguParameterKey, value?: string, gueltigkeit?: TSDateRange, proGesuchsperiode?: boolean) {
         super(gueltigkeit);
         this._name = name;
         this._value = value;
+        this._proGesuchsperiode = proGesuchsperiode;
     }
 
     public set name(name: TSEbeguParameterKey) {
@@ -27,5 +29,13 @@ export default class TSEbeguParameter extends TSAbstractDateRangedEntity {
 
     public get value(): string {
         return this._value;
+    }
+
+    get proGesuchsperiode(): boolean {
+        return this._proGesuchsperiode;
+    }
+
+    set proGesuchsperiode(value: boolean) {
+        this._proGesuchsperiode = value;
     }
 }

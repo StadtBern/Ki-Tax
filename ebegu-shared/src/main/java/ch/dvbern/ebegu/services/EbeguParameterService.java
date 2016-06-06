@@ -16,12 +16,6 @@ import java.util.Optional;
 public interface EbeguParameterService {
 
 	/**
-	 * Erstellt die Parameter für die neue Gesuchsperiode mit demselben Wert wie in der
-	 * Vorperiode
-     */
-	void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
-
-	/**
 	 * Speichert den Parameter neu in der DB falls der Key noch nicht existiert. Ansonsten wird ein neuer Parameter mit
 	 * diesem Key erstellt
 	 */
@@ -48,10 +42,24 @@ public interface EbeguParameterService {
 	/**
 	 * Sucht alle am Stichtag gueltigen Ebegu-Parameter
 	 */
-	Collection<EbeguParameter> getAllEbeguParameterByDate(LocalDate date);
+	@Nonnull
+	Collection<EbeguParameter> getAllEbeguParameterByDate(@Nonnull LocalDate date);
+
+	/**
+	 * Sucht alle für die Gesuchsperiode gueltigen Ebegu-Parameter
+	 */
+	@Nonnull
+	Collection<EbeguParameter> getEbeguParameterByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
+
+	/**
+	 * Sucht alle für die Gesuchsperiode gueltigen Ebegu-Parameter
+	 */
+	@Nonnull
+	Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr);
 
 	/**
 	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
 	 */
-	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(EbeguParameterKey key, LocalDate date);
+	@Nonnull
+	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date);
 }

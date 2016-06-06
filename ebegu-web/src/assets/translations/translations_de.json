@@ -442,7 +442,14 @@
     "FAMILIENSITUATION_HELP": "noch_nicht_definiert",
     "KORRESPONDENZADR_HELP": "noch_nicht_definiert",
 
-    "PARAMETER": "E-BEGU Parameter",
+    "GESUCHSPERIODEN": "Gesuchsperiode",
+    "GESUCHSPERIODE_GUELTIG_AB": "Beginn",
+    "GESUCHSPERIODE_GUELTIG_BIS": "Ende",
+    "GESUCHSPERIODE_AKTIV": "Aktiv",
+
+    "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
+    "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",
+    "PARAMETER_JAHR": "Jahr",
     "PARAM_FIXBETRAG_STADT_PRO_TAG_KITA": "Fixbeitrag der Stadt pro Tag",
     "PARAM_ANZAL_TAGE_MAX_KITA": "Anzahl Tage Kita Max",
     "PARAM_STUNDEN_PRO_TAG_MAX_KITA": "Stunden / Tag Max",

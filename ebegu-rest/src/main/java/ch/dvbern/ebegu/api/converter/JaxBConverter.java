@@ -227,6 +227,7 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(ebeguParameter, jaxEbeguParameter);
 		jaxEbeguParameter.setName(ebeguParameter.getName());
 		jaxEbeguParameter.setValue(ebeguParameter.getValue());
+		jaxEbeguParameter.setProGesuchsperiode(ebeguParameter.getName().isProGesuchsperiode());
 		return jaxEbeguParameter;
 	}
 
