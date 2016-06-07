@@ -2,7 +2,7 @@ import {EbeguWebPendenzen} from '../../pendenzen.module';
 import PendenzRS from '../../service/PendenzRS.rest';
 import {PendenzenListViewController} from './pendenzenListView';
 import {IScope, IQService} from 'angular';
-import TSPendenz from '../../../models/TSPendenz';
+import TSPendenzJA from '../../../models/TSPendenzJA';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 describe('pendenzenListView', function () {
@@ -25,16 +25,16 @@ describe('pendenzenListView', function () {
     describe('API Usage', function () {
         describe('getPendenzenList', function () {
             it('should return the list with all pendenzen', function () {
-                let mockPendenz: TSPendenz = new TSPendenz(123, 'name', TSAntragTyp.GESUCH, undefined,
+                let mockPendenz: TSPendenzJA = new TSPendenzJA(123, 'name', TSAntragTyp.GESUCH, undefined,
                     undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
-                let result: Array<TSPendenz> = [mockPendenz];
+                let result: Array<TSPendenzJA> = [mockPendenz];
                 spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
 
                 pendenzListViewController = new PendenzenListViewController(pendenzRS);
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
 
-                let list: Array<TSPendenz> = pendenzListViewController.getPendenzenList();
+                let list: Array<TSPendenzJA> = pendenzListViewController.getPendenzenList();
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
                 expect(list[0]).toEqual(mockPendenz);

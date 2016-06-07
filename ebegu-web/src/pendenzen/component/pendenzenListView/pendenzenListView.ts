@@ -1,5 +1,5 @@
 import {IComponentOptions} from 'angular';
-import TSPendenz from '../../../models/TSPendenz';
+import TSPendenzJA from '../../../models/TSPendenzJA';
 import PendenzRS from '../../service/PendenzRS.rest';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
@@ -15,7 +15,7 @@ export class PendenzenListViewController {
 
 
     static $inject: string[] = ['PendenzRS'];
-    private pendenzenList: Array<TSPendenz>;
+    private pendenzenList: Array<TSPendenzJA>;
 
     constructor(public pendenzRS: PendenzRS) {
         this.initViewModel();
@@ -27,7 +27,7 @@ export class PendenzenListViewController {
         });
     }
 
-    public getPendenzenList(): Array<TSPendenz> {
+    public getPendenzenList(): Array<TSPendenzJA> {
         return this.pendenzenList;
     }
 }

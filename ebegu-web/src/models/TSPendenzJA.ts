@@ -2,7 +2,7 @@ import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 
-export default class TSPendenz {
+export default class TSPendenzJA {
 
     private _fallNummer: number;
     private _familienName: string;

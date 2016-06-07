@@ -1,4 +1,4 @@
-import TSPendenz from '../../models/TSPendenz';
+import TSPendenzJA from '../../models/TSPendenzJA';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpBackendService} from 'angular';
 import {EbeguWebPendenzen} from '../pendenzen.module';
@@ -11,7 +11,7 @@ describe('pendenzRS', function () {
     var pendenzRS: PendenzRS;
     let $httpBackend: IHttpBackendService;
     let ebeguRestUtil: EbeguRestUtil;
-    let mockPendenz: TSPendenz;
+    let mockPendenz: TSPendenzJA;
     let mockPendenzRest: any;
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -23,7 +23,7 @@ describe('pendenzRS', function () {
     }));
 
     beforeEach(() => {
-        mockPendenz = new TSPendenz(123, 'name', TSAntragTyp.GESUCH, undefined,
+        mockPendenz = new TSPendenzJA(123, 'name', TSAntragTyp.GESUCH, undefined,
             undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
         mockPendenzRest = ebeguRestUtil.pendenzToRestObject({}, mockPendenz);
     });
@@ -43,7 +43,7 @@ describe('pendenzRS', function () {
                 let arrayResult: Array<any> = [mockPendenzRest];
                 $httpBackend.expectGET(pendenzRS.serviceURL).respond(arrayResult);
 
-                let foundPendenzen: Array<TSPendenz>;
+                let foundPendenzen: Array<TSPendenzJA>;
                 pendenzRS.getPendenzenList().then((result) => {
                     foundPendenzen = result;
                 });

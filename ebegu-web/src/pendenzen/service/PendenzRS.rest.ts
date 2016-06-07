@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSPendenz from '../../models/TSPendenz';
+import TSPendenzJA from '../../models/TSPendenzJA';
 
 export default class PendenzRS {
     serviceURL: string;
@@ -21,7 +21,7 @@ export default class PendenzRS {
         return 'PendenzRS';
     }
 
-    public getPendenzenList(): IPromise<Array<TSPendenz>> {
+    public getPendenzenList(): IPromise<Array<TSPendenzJA>> {
         return this.http.get(this.serviceURL)
             .then((response: any) => {
                 this.log.debug('PARSING pendenz REST object ', response.data);

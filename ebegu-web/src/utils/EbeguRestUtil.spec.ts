@@ -26,7 +26,7 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSFall from '../models/TSFall';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
-import TSPendenz from '../models/TSPendenz';
+import TSPendenzJA from '../models/TSPendenzJA';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 
@@ -355,16 +355,16 @@ describe('EbeguRestUtil', function () {
             });
         });
         describe('parsePendenz()', () => {
-            it('should transform TSPendenz to REST Obj and back', () => {
+            it('should transform TSPendenzJA to REST Obj and back', () => {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
-                let myPendenz = new TSPendenz(123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
+                let myPendenz = new TSPendenzJA(123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
                 DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
 
                 let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
 
-                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenz(), restPendenz);
+                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenzJA(), restPendenz);
                 expect(transformedPendenz).toBeDefined();
                 expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
                 transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;

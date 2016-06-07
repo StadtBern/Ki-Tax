@@ -31,7 +31,7 @@ import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
-import TSPendenz from '../models/TSPendenz';
+import TSPendenzJA from '../models/TSPendenzJA';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -850,7 +850,7 @@ export default class EbeguRestUtil {
         return gesuchsperioden;
     }
 
-    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenz): any {
+    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
         restPendenz.fallNummer = pendenz.fallNummer;
         restPendenz.familienName = pendenz.familienName;
         restPendenz.angebote = pendenz.angebote;
@@ -861,7 +861,7 @@ export default class EbeguRestUtil {
         return restPendenz;
     }
 
-    public parsePendenz(pendenzTS: TSPendenz, pendenzFromServer: any): TSPendenz {
+    public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
         pendenzTS.fallNummer = pendenzFromServer.fallNummer;
         pendenzTS.familienName = pendenzFromServer.familienName;
         pendenzTS.angebote = pendenzFromServer.angebote;
@@ -873,13 +873,13 @@ export default class EbeguRestUtil {
     }
 
     parsePendenzen(data: any) {
-        var pendenzen: TSPendenz[] = [];
+        var pendenzen: TSPendenzJA[] = [];
         if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
-                pendenzen[i] = this.parsePendenz(new TSPendenz(), data[i]);
+                pendenzen[i] = this.parsePendenz(new TSPendenzJA(), data[i]);
             }
         } else {
-            pendenzen[0] = this.parsePendenz(new TSPendenz(), data);
+            pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
         }
         return pendenzen;
     }

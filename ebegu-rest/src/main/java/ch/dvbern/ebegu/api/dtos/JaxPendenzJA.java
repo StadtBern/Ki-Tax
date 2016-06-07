@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 /**
  * DTO fuer Pendenzen
@@ -20,8 +20,10 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxPendenzJA {
 
+	private static final long serialVersionUID = -1277026654764135397L;
+
 	@NotNull
-	private Long fallNummer;
+	private int fallNummer;
 
 	@NotNull
 	private String familienName;
@@ -42,8 +44,68 @@ public class JaxPendenzJA {
 //	private User bearbeiter;
 
 	@NotNull
-	private List<BetreuungsangebotTyp> angebote;
+	private Set<BetreuungsangebotTyp> angebote;
 
 	@NotNull
-	private List<String> institutionen;
+	private Set<String> institutionen;
+
+
+
+
+	public int getFallNummer() {
+		return fallNummer;
+	}
+
+	public void setFallNummer(int fallNummer) {
+		this.fallNummer = fallNummer;
+	}
+
+	public String getFamilienName() {
+		return familienName;
+	}
+
+	public void setFamilienName(String familienName) {
+		this.familienName = familienName;
+	}
+
+	public AntragTyp getAntragTyp() {
+		return antragTyp;
+	}
+
+	public void setAntragTyp(AntragTyp antragTyp) {
+		this.antragTyp = antragTyp;
+	}
+
+	public JaxGesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public void setGesuchsperiode(JaxGesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	@Nullable
+	public LocalDate getEingangsdatum() {
+		return eingangsdatum;
+	}
+
+	public void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
+		this.eingangsdatum = eingangsdatum;
+	}
+
+	public Set<BetreuungsangebotTyp> getAngebote() {
+		return angebote;
+	}
+
+	public void setAngebote(Set<BetreuungsangebotTyp> angebote) {
+		this.angebote = angebote;
+	}
+
+	public Set<String> getInstitutionen() {
+		return institutionen;
+	}
+
+	public void setInstitutionen(Set<String> institutionen) {
+		this.institutionen = institutionen;
+	}
 }
