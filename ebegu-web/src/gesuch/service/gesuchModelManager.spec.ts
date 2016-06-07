@@ -1,14 +1,12 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
-import {IHttpBackendService, IScope} from 'angular';
+import {IHttpBackendService, IScope, IQService} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import TestDataUtil from '../../utils/TestDataUtil';
-import IQService = angular.IQService;
 import DateUtil from '../../utils/DateUtil';
-import TSAbstractAntragEntity from '../../models/TSAbstractAntragEntity';
 
 describe('gesuchModelManager', function () {
 
@@ -107,16 +105,6 @@ describe('gesuchModelManager', function () {
 
                 scope.$apply();
                 expect(gesuchRS.updateGesuch).toHaveBeenCalled();
-            });
-        });
-        describe('getPendenzenList', () => {
-            it('should return a list with all Antraege that are still to be checked', () => {
-                spyOn(pendenzenRS, 'getPendenzenList').and.returnValue($q.when({}));
-
-                let list: Array<TSAbstractAntragEntity> = gesuchModelManager.getPendenzenList();
-
-                expect(pendenzenRS.getPendenzenList).toHaveBeenCalled();
-                expect(list).toBeDefined();
             });
         });
     });

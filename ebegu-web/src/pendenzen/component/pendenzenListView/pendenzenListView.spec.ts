@@ -1,23 +1,44 @@
+import {EbeguWebPendenzen} from '../../pendenzen.module';
+import PendenzRS from '../../service/PendenzRS.rest';
+import {PendenzenListViewController} from './pendenzenListView';
+import {IScope, IQService} from 'angular';
+import TSPendenz from '../../../models/TSPendenz';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 describe('pendenzenListView', function () {
 
-    beforeEach(angular.mock.module('ebeguWeb.pendenzen'));
+    let pendenzRS: PendenzRS;
+    let pendenzListViewController: PendenzenListViewController;
+    let $q: IQService;
+    let $scope: IScope;
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
 
-    beforeEach(angular.mock.inject(function (_$componentController_, $rootScope) {
-        $componentController = _$componentController_;
-        scope = $rootScope.$new();
+    beforeEach(angular.mock.module(EbeguWebPendenzen.name));
+
+    beforeEach(angular.mock.inject(function ($injector: any) {
+        pendenzRS = $injector.get('PendenzRS');
+        $q = $injector.get('$q');
+        $scope = $injector.get('$rootScope');
     }));
 
-    it('should be defined', function () {
-        /*
-         To initialise your component controller you have to setup your (mock) bindings and
-         pass them to $componentController.
-         */
-        var bindings: {};
-        component = $componentController('pendenzenListView', {$scope: scope}, bindings);
-        expect(component).toBeDefined();
+
+    describe('API Usage', function () {
+        describe('getPendenzenList', function () {
+            it('should return the list with all pendenzen', function () {
+                let mockPendenz: TSPendenz = new TSPendenz(123, 'name', TSAntragTyp.GESUCH, undefined,
+                    undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
+                let result: Array<TSPendenz> = [mockPendenz];
+                spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
+
+                pendenzListViewController = new PendenzenListViewController(pendenzRS);
+                $scope.$apply();
+                expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
+
+                let list: Array<TSPendenz> = pendenzListViewController.getPendenzenList();
+                expect(list).toBeDefined();
+                expect(list.length).toBe(1);
+                expect(list[0]).toEqual(mockPendenz);
+            });
+        });
     });
 });

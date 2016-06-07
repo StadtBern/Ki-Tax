@@ -31,6 +31,7 @@ import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
+import TSPendenz from '../models/TSPendenz';
 
 export default class EbeguRestUtil {
     static $inject = ['$filter'];
@@ -847,5 +848,39 @@ export default class EbeguRestUtil {
             gesuchsperioden[0] = this.parseGesuchsperiode(new TSGesuchsperiode(), data);
         }
         return gesuchsperioden;
+    }
+
+    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenz): any {
+        restPendenz.fallNummer = pendenz.fallNummer;
+        restPendenz.familienName = pendenz.familienName;
+        restPendenz.angebote = pendenz.angebote;
+        restPendenz.antragTyp = pendenz.antragTyp;
+        restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject(new TSGesuchsperiode(), pendenz.gesuchsperiode);
+        restPendenz.institutionen = pendenz.institutionen;
+        return restPendenz;
+    }
+
+    public parsePendenz(pendenzTS: TSPendenz, pendenzFromServer: any): TSPendenz {
+        pendenzTS.fallNummer = pendenzFromServer.fallNummer;
+        pendenzTS.familienName = pendenzFromServer.familienName;
+        pendenzTS.angebote = pendenzFromServer.angebote;
+        pendenzTS.antragTyp = pendenzFromServer.antragTyp;
+        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.institutionen = pendenzFromServer.institutionen;
+        return pendenzTS;
+    }
+
+    parsePendenzen(data: any) {
+        var pendenzen: TSPendenz[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                pendenzen[i] = this.parsePendenz(new TSPendenz(), data[i]);
+            }
+        } else {
+            pendenzen[0] = this.parsePendenz(new TSPendenz(), data);
+        }
+        return pendenzen;
     }
 }

@@ -30,7 +30,6 @@ import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
-import TSAbstractAntragEntity from '../../models/TSAbstractAntragEntity';
 
 
 export default class GesuchModelManager {
@@ -363,14 +362,6 @@ export default class GesuchModelManager {
         if (this.gesuch) {
             return this.gesuch.kindContainer;
         }
-        return [];
-    }
-
-    /**
-     * Returns alle AbstractAntrag Elemente (Mutationen und Gesuche) die noch nicht bearbeitet wurden, also die Pendenzen.
-     * @returns {Array}
-     */
-    public getPendenzenList(): Array<TSAbstractAntragEntity> {
         return [];
     }
 

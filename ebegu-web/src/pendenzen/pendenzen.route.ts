@@ -2,9 +2,9 @@ import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
 
 
-pendenzenRun.$inject = ['RouterHelper'];
+pendenzRun.$inject = ['RouterHelper'];
 /* @ngInject */
-export function pendenzenRun(routerHelper: RouterHelper) {
+export function pendenzRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
 }
 

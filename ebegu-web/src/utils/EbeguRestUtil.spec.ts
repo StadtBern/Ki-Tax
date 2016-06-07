@@ -26,6 +26,9 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSFall from '../models/TSFall';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSPendenz from '../models/TSPendenz';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 
 describe('EbeguRestUtil', function () {
 
@@ -34,6 +37,7 @@ describe('EbeguRestUtil', function () {
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
+    beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
     // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
     // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
@@ -337,7 +341,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseGesuchsperiode()', () => {
             it('should transfrom TSGesuchsperiode to REST Obj and back', () => {
-                var myGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                let myGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(myGesuchsperiode);
 
                 let restGesuchsperiode = ebeguRestUtil.gesuchsperiodeToRestObject({}, myGesuchsperiode);
@@ -348,6 +352,23 @@ describe('EbeguRestUtil', function () {
                 expect(myGesuchsperiode.active).toBe(true);
                 expect(myGesuchsperiode).toEqual(transformedGesuchsperiode);
 
+            });
+        });
+        describe('parsePendenz()', () => {
+            it('should transform TSPendenz to REST Obj and back', () => {
+                let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
+                let myPendenz = new TSPendenz(123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
+                DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
+
+                let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
+                expect(restPendenz).toBeDefined();
+
+                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenz(), restPendenz);
+                expect(transformedPendenz).toBeDefined();
+                expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
+                transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
+                expect(transformedPendenz).toEqual(myPendenz);
             });
         });
     });

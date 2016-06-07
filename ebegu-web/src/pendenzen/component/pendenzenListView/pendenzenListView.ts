@@ -1,6 +1,6 @@
 import {IComponentOptions} from 'angular';
-import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
-import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import TSPendenz from '../../../models/TSPendenz';
+import PendenzRS from '../../service/PendenzRS.rest';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -14,11 +14,20 @@ export class PendenzenListViewComponentConfig implements IComponentOptions {
 export class PendenzenListViewController {
 
 
-    static $inject: string[] = ['GesuchModelManager'];
+    static $inject: string[] = ['PendenzRS'];
+    private pendenzenList: Array<TSPendenz>;
 
-    constructor(public gesuchModelManager: GesuchModelManager) {}
+    constructor(public pendenzRS: PendenzRS) {
+        this.initViewModel();
+    }
 
-    public getPendenzenList(): Array<TSAbstractAntragEntity> {
-        return this.gesuchModelManager.getPendenzenList();
+    private initViewModel() {
+        this.pendenzRS.getPendenzenList().then((response: any) => {
+            this.pendenzenList = angular.copy(response);
+        });
+    }
+
+    public getPendenzenList(): Array<TSPendenz> {
+        return this.pendenzenList;
     }
 }

@@ -9,15 +9,15 @@
                        class="table table-striped">
                     <thead>
                     <tr>
-                        <th st-sort="fall" class="sortable" data-translate="FALL_UPPER"></th>
-                        <th st-sort="familie" class="sortable" data-translate="FAMILIE_UPPER"></th>
-                        <th st-sort="typ" class="sortable" data-translate="TYP_UPPER"></th>
-                        <th st-sort="periode" class="sortable" data-translate="PERIODE_UPPER"></th>
+                        <th st-sort="fallNummer" class="sortable" data-translate="FALL_UPPER"></th>
+                        <th st-sort="familienName" class="sortable" data-translate="FAMILIE_UPPER"></th>
+                        <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
+                        <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
                         <th st-sort="eingangsdatum" class="sortable" data-translate="EINGANG_UPPER"></th>
                         <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
                         <th st-sort="bearbeiter" class="sortable" data-translate="BEARBEITER_UPPER"></th>
-                        <th st-sort="angebot" class="sortable" data-translate="ANGEBOT_UPPER"></th>
-                        <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
+                        <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
+                        <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
                     <tr>
                         <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
@@ -41,15 +41,15 @@
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editRow(row)">
-                        <td ng-bind="row.fall"></td>
-                        <td ng-bind="row.familie"></td>
-                        <td ng-bind="row.typ"></td>
-                        <td ng-bind="row.periode"></td>
-                        <td ng-bind="row.eingang | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td ng-bind="row.fallNummer"></td>
+                        <td ng-bind="row.familienName"></td>
+                        <td ng-bind="row.antragTyp"></td>
+                        <td ng-bind="row.gesuchsperiode"></td>
+                        <td ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-bind="row.status"></td>
                         <td ng-bind="row.bearbeiter"></td>
-                        <td ng-bind="row.angebot"></td>
-                        <td ng-bind="row.institution"></td>
+                        <td ng-bind="row.angebote"></td>
+                        <td ng-bind="row.institutionen"></td>
                     </tr>
                     </tbody>
                 </table>
