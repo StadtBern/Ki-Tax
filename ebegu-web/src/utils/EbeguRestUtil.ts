@@ -323,6 +323,7 @@ export default class EbeguRestUtil {
     public fallToRestObject(restFall: any, fall: TSFall): TSFall {
         if (fall) {
             this.abstractEntityToRestObject(restFall, fall);
+            restFall.fallNummer = fall.fallNummer;
             return restFall;
         }
         return undefined;
@@ -332,6 +333,7 @@ export default class EbeguRestUtil {
     public parseFall(fallTS: TSFall, fallFromServer: any): TSFall {
         if (fallFromServer) {
             this.parseAbstractEntity(fallTS, fallFromServer);
+            fallTS.fallNummer = fallFromServer.fallNummer;
             return fallTS;
         }
         return undefined;

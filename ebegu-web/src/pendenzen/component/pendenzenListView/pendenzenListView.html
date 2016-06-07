@@ -5,37 +5,51 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.pendenzenList"  st-delay="20"
+                <table st-table="displayedCollection" st-safe-src="vm.getPendenzenList()"  st-delay="20"
                        class="table table-striped">
                     <thead>
                     <tr>
-                        <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
-                        <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
-                        <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
-                        <th data-translate="AKTION"></th>
+                        <th st-sort="fall" class="sortable" data-translate="FALL_UPPER"></th>
+                        <th st-sort="familie" class="sortable" data-translate="FAMILIE_UPPER"></th>
+                        <th st-sort="typ" class="sortable" data-translate="TYP_UPPER"></th>
+                        <th st-sort="periode" class="sortable" data-translate="PERIODE_UPPER"></th>
+                        <th st-sort="eingangsdatum" class="sortable" data-translate="EINGANG_UPPER"></th>
+                        <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
+                        <th st-sort="bearbeiter" class="sortable" data-translate="BEARBEITER_UPPER"></th>
+                        <th st-sort="angebot" class="sortable" data-translate="ANGEBOT_UPPER"></th>
+                        <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
                     <tr>
                         <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
                                    type="text"/></th>
                         <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
                                    type="text"/></th>
-                        <th></th>
-                        <th></th>
-
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editRow(row)">
-                        <td ng-bind="row.name"></td>
-                        <td ng-bind="row.value"></td>
-                        <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>
-                            <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
-                                <i class="fa fa-trash-o">
-                                </i>
-                            </button>
-                        </td>
+                        <td ng-bind="row.fall"></td>
+                        <td ng-bind="row.familie"></td>
+                        <td ng-bind="row.typ"></td>
+                        <td ng-bind="row.periode"></td>
+                        <td ng-bind="row.eingang | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td ng-bind="row.status"></td>
+                        <td ng-bind="row.bearbeiter"></td>
+                        <td ng-bind="row.angebot"></td>
+                        <td ng-bind="row.institution"></td>
                     </tr>
                     </tbody>
                 </table>
