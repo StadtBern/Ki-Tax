@@ -20,24 +20,39 @@
                         <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
                     <tr>
-                        <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
+                        <th><input st-search="fallNummer" class="form-control" type="text"/></th>
+                        <th><input st-search="familienName" class="form-control"  type="text"/></th>
+                        <th>
+                            <select name="antragTyp" id="antragTyp" st-search="antragTyp" class="form-control"
+                                    ng-options="typ | translate for typ in vm.getAntragTypen() track by typ"
+                                    ng-model="vm.selectedAntragTyp">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select name="gesuchsperiode" id="gesuchsperiode" st-search="gesuchsperiode" class="form-control"
+                                    ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
+                                    ng-model="vm.selectedGesuchsperiode">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
+                        <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
+                        <th><input st-search="status" class="form-control" type="text"/></th>
+                        <th><input st-search="bearbeiter" class="form-control" type="text"/></th>
+                        <th>
+                            <select name="angebote" id="angebote" st-search="angebote" class="form-control"
+                                    ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
+                                    ng-model="vm.selectedBetreuungsangebotTyp">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select name="institutionen" id="institutionen" st-search="institutionen" class="form-control"
+                                    ng-options="institution.name for institution in vm.institutionenList track by institution.name"
+                                    ng-model="vm.selectedInstitution">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>

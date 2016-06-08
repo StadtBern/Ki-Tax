@@ -383,7 +383,7 @@
     "STATUS_UPPER": "STATUS",
     "EINGANG_UPPER": "EINGANG",
     "PERIODE_UPPER": "PERIODE",
-    "TYP_UPPER": "typ",
+    "TYP_UPPER": "TYP",
     "FAMILIE_UPPER": "FAMILIE",
     "FALL_UPPER": "FALL",
     "MENU_FAMSITUATION" :"Familiensituation",
@@ -453,6 +453,7 @@
     "FAMILIENSITUATION_HELP": "noch_nicht_definiert",
     "KORRESPONDENZADR_HELP": "noch_nicht_definiert",
     "GESUCH": "Gesuch",
-    "MUTATION": "Mutation"
+    "MUTATION": "Mutation",
+    "ALLE": "alle"
 }
 

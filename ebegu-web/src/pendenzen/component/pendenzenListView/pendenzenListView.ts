@@ -3,7 +3,11 @@ import TSPendenzJA from '../../../models/TSPendenzJA';
 import PendenzRS from '../../service/PendenzRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
+import {TSInstitution} from '../../../models/TSInstitution';
+import {InstitutionRS} from '../../../core/service/institutionRS.rest';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -17,15 +21,48 @@ export class PendenzenListViewComponentConfig implements IComponentOptions {
 export class PendenzenListViewController {
 
     private pendenzenList: Array<TSPendenzJA>;
+    selectedBetreuungsangebotTyp: string;
+    selectedAntragTyp: string;
+    selectedInstitution: string;
+    selectedGesuchsperiode: string;
+    institutionenList: Array<TSInstitution>;
+    activeGesuchsperiodenList: Array<string>;
 
-    static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter'];
-    constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService) {
+
+    static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS'];
+    constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
+                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
         this.pendenzRS.getPendenzenList().then((response: any) => {
             this.pendenzenList = angular.copy(response);
+        });
+        this.updateInstitutionenList();
+        this.updateActiveGesuchsperiodenList();
+    }
+
+    public getAntragTypen(): Array<TSAntragTyp> {
+        return getTSAntragTypValues();
+    }
+
+    public getBetreuungsangebotTypen(): Array<TSBetreuungsangebotTyp> {
+        return getTSBetreuungsangebotTypValues();
+    }
+
+    public updateActiveGesuchsperiodenList(): void {
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+            this.activeGesuchsperiodenList = [];
+            response.forEach((gesuchsperiode: TSGesuchsperiode) => {
+                this.activeGesuchsperiodenList.push(this.getGesuchsperiodeAsString(gesuchsperiode));
+            });
+        });
+    }
+
+    public updateInstitutionenList(): void {
+        this.institutionRS.getAllInstitutionen().then((response: any) => {
+            this.institutionenList = angular.copy(response);
         });
     }
 
@@ -67,4 +104,5 @@ export class PendenzenListViewController {
         }
         return result;
     }
+
 }
