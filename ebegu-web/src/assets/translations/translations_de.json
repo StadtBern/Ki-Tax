@@ -451,6 +451,8 @@
     "INVOLVIERTE_FACHSTELLE_HELP": "noch_nicht_definiert",
     "BETREUUNGSANGEBOT_WAEHLEN_HELP": "noch_nicht_definiert",
     "FAMILIENSITUATION_HELP": "noch_nicht_definiert",
-    "KORRESPONDENZADR_HELP": "noch_nicht_definiert"
+    "KORRESPONDENZADR_HELP": "noch_nicht_definiert",
+    "GESUCH": "Gesuch",
+    "MUTATION": "Mutation"
 }
 

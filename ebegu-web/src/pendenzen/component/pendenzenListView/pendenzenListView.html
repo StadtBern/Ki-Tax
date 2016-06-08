@@ -36,19 +36,21 @@
                                    type="text"/></th>
                         <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
                                    type="text"/></th>
+                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                   type="text"/></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editRow(row)">
-                        <td ng-bind="row.fallNummer"></td>
+                        <td ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                         <td ng-bind="row.familienName"></td>
-                        <td ng-bind="row.antragTyp"></td>
-                        <td ng-bind="row.gesuchsperiode"></td>
+                        <td ng-bind="row.antragTyp | translate"></td>
+                        <td ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
                         <td ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-bind="row.status"></td>
                         <td ng-bind="row.bearbeiter"></td>
-                        <td ng-bind="row.angebote"></td>
+                        <td ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)"></td>
                         <td ng-bind="row.institutionen"></td>
                     </tr>
                     </tbody>

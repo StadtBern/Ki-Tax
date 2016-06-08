@@ -6,7 +6,6 @@ import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSGesuch from '../models/TSGesuch';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
-import {IFilterService} from 'angular';
 import TSLand from '../models/types/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
@@ -32,14 +31,13 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
 import TSPendenzJA from '../models/TSPendenzJA';
+import EbeguUtil from './EbeguUtil';
 
 export default class EbeguRestUtil {
-    static $inject = ['$filter'];
-    public filter: IFilterService;
+    static $inject = ['EbeguUtil'];
 
     /* @ngInject */
-    constructor($filter: IFilterService) {
-        this.filter = $filter;
+    constructor(private ebeguUtil: EbeguUtil) {
     }
 
     /**
@@ -183,7 +181,7 @@ export default class EbeguRestUtil {
     public landCodeToTSLand(landCode: string): TSLand {
         if (landCode) {
             let translationKey = this.landCodeToTSLandCode(landCode);
-            return new TSLand(landCode, this.translateString(translationKey));
+            return new TSLand(landCode, this.ebeguUtil.translateString(translationKey));
         }
         return undefined;
     }
@@ -681,28 +679,6 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    /**
-     * Translates the given string using the angular-translate filter
-     * @param toTranslate word to translate
-     * @returns {any} translated word
-     */
-    public translateString(toTranslate: string): string {
-        return this.filter('translate')(toTranslate).toString();
-    }
-
-    /**
-     * Translates the given list using the angular translate filter
-     * @param translationList list of words that will be translated
-     * @returns {any} A List of Objects with key and value, where value is the translated word.
-     */
-    public translateStringList(translationList: Array<any>): Array<any> {
-        let listResult: Array<any> = [];
-        translationList.forEach((item) => {
-            listResult.push({key: item, value: this.translateString(item)});
-        });
-        return listResult;
-    }
-
     private betreuungListToRestObject(betreuungen: Array<TSBetreuung>): Array<any> {
         let list: any[] = [];
         if (betreuungen) {
@@ -872,7 +848,7 @@ export default class EbeguRestUtil {
         return pendenzTS;
     }
 
-    parsePendenzen(data: any) {
+    public parsePendenzen(data: any): TSPendenzJA[] {
         var pendenzen: TSPendenzJA[] = [];
         if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {

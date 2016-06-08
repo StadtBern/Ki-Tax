@@ -39,21 +39,6 @@ describe('EbeguRestUtil', function () {
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
-    // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
-    // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
-    beforeEach(angular.mock.module(function($provide: any) {
-        let mockTranslateFilter = function(value: any) {
-            if (value === 'FIRST') {
-                return 'Erster';
-            }
-            if (value === 'SECOND') {
-                return 'Zweiter';
-            }
-            return value;
-        };
-        $provide.value('translateFilter', mockTranslateFilter);
-    }));
-
     beforeEach(angular.mock.inject(function ($injector: any) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
         filter = $injector.get('$filter');
@@ -304,17 +289,6 @@ describe('EbeguRestUtil', function () {
 
                 TestDataUtil.checkGueltigkeitAndSetIfSame(transformedInstitutionStammdaten, myInstitutionStammdaten);
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
-            });
-        });
-        describe('translateStringList', () => {
-            it('should translate the given list of words', () => {
-                let list: Array<string> = ['FIRST', 'SECOND'];
-                let returnedList: Array<any> = ebeguRestUtil.translateStringList(list);
-                expect(returnedList.length).toEqual(2);
-                expect(returnedList[0].key).toEqual('FIRST');
-                expect(returnedList[0].value).toEqual('Erster');
-                expect(returnedList[1].key).toEqual('SECOND');
-                expect(returnedList[1].value).toEqual('Zweiter');
             });
         });
         describe('parseErwerbspensenContainer()', () => {
