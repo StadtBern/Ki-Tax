@@ -53,4 +53,18 @@ describe('EbeguUtil', function () {
             expect(returnedList[1].value).toEqual('Zweiter');
         });
     });
+    describe('addZerosToNumber', () => {
+        it('returns a string with 6 chars starting with 0s and ending with the given number', () => {
+            expect(ebeguUtil.addZerosToNumber(0, 2)).toEqual('00');
+            expect(ebeguUtil.addZerosToNumber(1, 2)).toEqual('01');
+            expect(ebeguUtil.addZerosToNumber(12, 2)).toEqual('12');
+        });
+        it('returns undefined if the number is undefined', () => {
+            expect(ebeguUtil.addZerosToNumber(undefined, 2)).toBeUndefined();
+            expect(ebeguUtil.addZerosToNumber(null, 2)).toBeUndefined();
+        });
+        it('returns the given number as string if its length is greather than 6', () => {
+            expect(ebeguUtil.addZerosToNumber(1234567, 6)).toEqual('1234567');
+        });
+    });
 });

@@ -44,4 +44,21 @@ export default class EbeguUtil {
         });
         return listResult;
     }
+
+    /**
+     * Die Methode fuegt 0s (links) hinzu bis die gegebene Nummer, die gegebene Laenge hat und dann gibt die nummer als string zurueck
+     * @param number
+     * @param length
+     * @returns {any}
+     */
+    public addZerosToNumber(number: number, length: number): string {
+        if (number != null) {
+            let fallnummerString = '' + number;
+            while (fallnummerString.length < length) {
+                fallnummerString = '0' + fallnummerString;
+            }
+            return fallnummerString;
+        }
+        return undefined;
+    }
 }

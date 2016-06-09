@@ -1,26 +1,34 @@
 import {EbeguWebPendenzen} from '../../pendenzen.module';
 import PendenzRS from '../../service/PendenzRS.rest';
 import {PendenzenListViewController} from './pendenzenListView';
-import {IScope, IQService, IFilterService} from 'angular';
+import {IScope, IQService, IFilterService, IHttpBackendService} from 'angular';
 import TSPendenzJA from '../../../models/TSPendenzJA';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 describe('pendenzenListView', function () {
 
+    let institutionRS: InstitutionRS;
+    let gesuchsperiodeRS: GesuchsperiodeRS;
     let pendenzRS: PendenzRS;
     let pendenzListViewController: PendenzenListViewController;
     let $q: IQService;
     let $scope: IScope;
     let $filter: IFilterService;
+    let $httpBackend: IHttpBackendService;
 
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         pendenzRS = $injector.get('PendenzRS');
+        institutionRS = $injector.get('InstitutionRS');
+        gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         $q = $injector.get('$q');
         $scope = $injector.get('$rootScope');
         $filter = $injector.get('$filter');
+        $httpBackend = $injector.get('$httpBackend');
     }));
 
 
@@ -32,7 +40,10 @@ describe('pendenzenListView', function () {
                 let result: Array<TSPendenzJA> = [mockPendenz];
                 spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
 
-                pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter);
+                $httpBackend.when('GET', '/ebegu/api/v1/institutionen').respond({});
+                $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+
+                pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter, institutionRS, gesuchsperiodeRS);
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
 
@@ -40,24 +51,6 @@ describe('pendenzenListView', function () {
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
                 expect(list[0]).toEqual(mockPendenz);
-            });
-        });
-        describe('addZerosToFallnummer', () => {
-            it('returns a string with 6 chars starting with 0s and ending with the given number', () => {
-                expect(pendenzListViewController.addZerosToFallnummer(0)).toEqual('000000');
-                expect(pendenzListViewController.addZerosToFallnummer(1)).toEqual('000001');
-                expect(pendenzListViewController.addZerosToFallnummer(12)).toEqual('000012');
-                expect(pendenzListViewController.addZerosToFallnummer(123)).toEqual('000123');
-                expect(pendenzListViewController.addZerosToFallnummer(1234)).toEqual('001234');
-                expect(pendenzListViewController.addZerosToFallnummer(12345)).toEqual('012345');
-                expect(pendenzListViewController.addZerosToFallnummer(123456)).toEqual('123456');
-            });
-            it('returns undefined if the number is undefined', () => {
-                expect(pendenzListViewController.addZerosToFallnummer(undefined)).toBeUndefined();
-                expect(pendenzListViewController.addZerosToFallnummer(null)).toBeUndefined();
-            });
-            it('returns the given number as string if its length is greather than 6', () => {
-                expect(pendenzListViewController.addZerosToFallnummer(1234567)).toEqual('1234567');
             });
         });
         describe('translateBetreuungsangebotTypList', () => {

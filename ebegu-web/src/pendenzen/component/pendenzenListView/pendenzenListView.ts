@@ -27,6 +27,8 @@ export class PendenzenListViewController {
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     activeGesuchsperiodenList: Array<string>;
+    itemsByPage: number = 20;
+    numberOfPages: number = 1;
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS'];
@@ -36,11 +38,17 @@ export class PendenzenListViewController {
     }
 
     private initViewModel() {
-        this.pendenzRS.getPendenzenList().then((response: any) => {
-            this.pendenzenList = angular.copy(response);
-        });
+        this.updatePendenzenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+    }
+
+
+    private updatePendenzenList() {
+        this.pendenzRS.getPendenzenList().then((response: any) => {
+            this.pendenzenList = angular.copy(response);
+            this.numberOfPages = this.pendenzenList.length / this.itemsByPage;
+        });
     }
 
     public getAntragTypen(): Array<TSAntragTyp> {
@@ -80,14 +88,7 @@ export class PendenzenListViewController {
      * @param fallNummer
      */
     public addZerosToFallnummer(fallnummer: number): string {
-        if (fallnummer != null) {
-            let fallnummerString = '' + fallnummer;
-            while (fallnummerString.length < 6) {
-                fallnummerString = '0' + fallnummerString;
-            }
-            return fallnummerString;
-        }
-        return undefined;
+        return this.ebeguUtil.addZerosToNumber(fallnummer, 6);
     }
 
     public translateBetreuungsangebotTypList(betreuungsangebotTypList: Array<TSBetreuungsangebotTyp>): string {

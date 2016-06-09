@@ -1,19 +1,25 @@
 <div class="pendenzenListView">
     <div class="col-md-8 col-md-offset-2">
-        <h1 data-translate="PENDENZEN_LIST"></h1>
-
+        <div class="row">
+            <div class="col-md-11">
+                <h3 data-translate="PENDENZEN_LIST"></h3>
+            </div>
+            <div class="col-md-1 text-right">
+                <h3 ng-bind="vm.getPendenzenList() ? vm.getPendenzenList().length : 0"></h3>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getPendenzenList()"  st-delay="20"
-                       class="table table-striped">
+                <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"  st-delay="20"
+                       class="table table-striped fixedtable">
                     <thead>
                     <tr>
                         <th st-sort="fallNummer" class="sortable" data-translate="FALL_UPPER"></th>
                         <th st-sort="familienName" class="sortable" data-translate="FAMILIE_UPPER"></th>
                         <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
                         <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
-                        <th st-sort="eingangsdatum" class="sortable" data-translate="EINGANG_UPPER"></th>
+                        <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
                         <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
                         <th st-sort="bearbeiter" class="sortable" data-translate="BEARBEITER_UPPER"></th>
                         <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
@@ -58,17 +64,24 @@
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                         ng-click="vm.editRow(row)">
-                        <td ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
-                        <td ng-bind="row.familienName"></td>
-                        <td ng-bind="row.antragTyp | translate"></td>
-                        <td ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
-                        <td ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td ng-bind="row.status"></td>
-                        <td ng-bind="row.bearbeiter"></td>
-                        <td ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)"></td>
-                        <td ng-bind="row.institutionen"></td>
+                        <td class="ellipsis" ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
+                        <td class="ellipsis" ng-bind="row.familienName"></td>
+                        <td class="ellipsis" ng-bind="row.antragTyp | translate"></td>
+                        <td class="ellipsis" ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
+                        <td class="ellipsis" ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td class="ellipsis" ng-bind="row.status"></td>
+                        <td class="ellipsis" ng-bind="row.bearbeiter"></td>
+                        <td class="ellipsis" ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)"></td>
+                        <td class="ellipsis" ng-bind="row.institutionen"></td>
                     </tr>
                     </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <div st-pagination="" st-items-by-page="vm.itemsByPage" st-displayed-pages="5"></div>
+                        </td>
+                    </tr>
+                    </tfoot>
                 </table>
 
             </div>
