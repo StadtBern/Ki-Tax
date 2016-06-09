@@ -15,11 +15,8 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil) {
     };
 
     return (array: any, expression: any) => {
-console.log('expression: ', expression);
         function customComparator(actual: any, expected: any) {
-console.log('expected: ', expected);
             if (expression.eingangsdatum && expression.eingangsdatum === expected) {
-console.log('entra en eingangsdatum: ');
                 let actualDate = dateFilter(new Date(actual), 'dd.MM.yyyy');
                 return actualDate === expected;
             }
