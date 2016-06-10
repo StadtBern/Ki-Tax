@@ -50,7 +50,6 @@ public final class TestDataUtil {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
-		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;
 	}
 
@@ -59,6 +58,7 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
+		gesuch.setFamiliensituation(createDefaultFamiliensituation());
 		return gesuch;
 	}
 

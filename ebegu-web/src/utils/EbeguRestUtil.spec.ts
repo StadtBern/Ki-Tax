@@ -29,6 +29,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 import TSPendenzJA from '../models/TSPendenzJA';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
+import TSFamiliensituation from '../models/TSFamiliensituation';
 
 describe('EbeguRestUtil', function () {
 
@@ -159,6 +160,9 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsperiode);
                 gesuchsperiode.gueltigkeit = new TSDateRange(undefined, undefined);
                 myGesuch.gesuchsperiode = gesuchsperiode;
+                let familiensituation: TSFamiliensituation = new TSFamiliensituation();
+                TestDataUtil.setAbstractFieldsUndefined(familiensituation);
+                myGesuch.familiensituation = familiensituation;
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();

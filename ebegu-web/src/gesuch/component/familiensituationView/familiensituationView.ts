@@ -54,7 +54,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     public getFamiliensituation(): TSFamiliensituation {
-        return this.gesuchModelManager.familiensituation;
+        return this.gesuchModelManager.getFamiliensituation();
     }
 
 }

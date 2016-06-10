@@ -39,7 +39,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     showGemeinsam(): boolean {
         return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
+            this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true;
     }
 
     showGS1(): boolean {
@@ -48,7 +48,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     showGS2(): boolean {
         return this.gesuchModelManager.isGesuchsteller2Required() &&
-            this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false;
+            this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
     }
 
     previousStep() {

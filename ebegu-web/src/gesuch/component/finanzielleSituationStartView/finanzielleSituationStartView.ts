@@ -32,7 +32,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     showSteuerveranlagung(): boolean {
-        return this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true;
+        return this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true;
     }
 
     showSteuererklaerung(): boolean {
@@ -70,7 +70,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private gemeinsameStekClicked(): void {
         // Wenn neu NEIN -> Fragen loeschen
-        if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false) {
+        if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false) {
             this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer = undefined;
             this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer = undefined;
         }
@@ -82,14 +82,14 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         // Wenn Steuerveranlagung erhalten, muss auch STEK ausgefüllt worden sein
         if (this.getFinanzielleSituationGS1().steuerveranlagungErhalten === true) {
             this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = true;
-            if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+            if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true) {
                 this.getFinanzielleSituationGS2().steuerveranlagungErhalten = true;
                 this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = true;
             }
         } else if (this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false) {
             // Steuerveranlagung neu NEIN -> Fragen loeschen
             this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt = undefined;
-            if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+            if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true) {
                 this.getFinanzielleSituationGS2().steuerveranlagungErhalten = false;
                 this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = undefined;
             }
@@ -97,7 +97,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     private steuererklaerungClicked() {
-        if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
+        if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === true) {
             this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt =  this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
         }
     }
