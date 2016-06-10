@@ -6,6 +6,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
@@ -21,10 +22,10 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'ErrorService'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private $translate: ITranslateService, private DvDialog: DvDialog) {
+                private $translate: ITranslateService, private DvDialog: DvDialog, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
@@ -70,6 +71,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     submit(): void {
+        this.errorService.clearAll();
         this.nextStep();
     }
 

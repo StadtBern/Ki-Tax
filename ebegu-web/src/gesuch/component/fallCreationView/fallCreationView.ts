@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
+import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./fallCreationView.html');
 
 export class FallCreationViewComponentConfig implements IComponentOptions {
@@ -17,9 +18,9 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
@@ -37,6 +38,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController) {
         if (form.$valid) {
+            this.errorService.clearAll();
             this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });

@@ -9,6 +9,7 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungListView.html');
@@ -27,10 +28,11 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguRestUtil', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
-                private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil, berechnungsManager: BerechnungsManager) {
+                private DvDialog: DvDialog, private ebeguRestUtil: EbeguRestUtil, berechnungsManager: BerechnungsManager,
+                private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
     }
 
@@ -77,6 +79,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
             title: remTitleText,
             deleteText: 'BETREUUNG_LOESCHEN_BESCHREIBUNG'
         }).then(() => {   //User confirmed removal
+            this.errorService.clearAll();
             this.gesuchModelManager.findKind(kind);
             let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
             if (betreuungNumber > 0) {

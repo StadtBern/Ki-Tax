@@ -32,6 +32,7 @@ import ErwerbspensumRS from './service/erwerbspensumRS.rest';
 import BerechnungsManager from '../gesuch/service/berechnungsManager';
 import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
+import {EbeguErrors} from './errors/errors';
 
 let dynamicDependencies = function (): string[] {
 
@@ -52,6 +53,7 @@ const dependencies: string[] = [
     'ngCookies',
     /* shared DVBern modules */
     router.name,
+    EbeguErrors.name,
     /* 3rd-party modules */
     'ui.bootstrap',
     'smart-table',

@@ -27,6 +27,7 @@
     "ERROR_DATE": "Falsches Datums Format",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
+    "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
     "ERWERBSPENSUM_LOESCHEN": "Wollen Sie das Erwerbspensum wirklich löschen",
     "FINANZIELLE_SITUATION": "Finanzielle Situation {{basisjahr}}",
     "FINANZIELLE_SITUATION_RESULTATE": "Resultate Finanzielle Situation {{basisjahr}}",

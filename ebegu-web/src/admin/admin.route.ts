@@ -14,10 +14,8 @@ function getStates(): IState[] {
     return [
         {
             name: 'admin',
-            template: '<dv-admin-view application-properties="vm.applicationProperties"></dv-admin-view>',
+            template: '<dv-admin-view application-properties="$resolve.applicationProperties"></dv-admin-view>',
             url: '/admin',
-            controller: EbeguStateController,
-            controllerAs: 'vm',
             resolve: {
                 applicationProperties: getApplicationProperties
             }

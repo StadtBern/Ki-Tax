@@ -4,8 +4,9 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
-import IFormController = angular.IFormController;
 import BerechnungsManager from '../../service/berechnungsManager';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationStartView.html');
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
@@ -17,9 +18,10 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private CONSTANTS: any) {
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
 
         this.initViewModel();
@@ -48,6 +50,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
+            this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
                 this.nextStep();
             });
@@ -59,11 +62,11 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
-        return  this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV;
+        return this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV;
     }
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
-        return  this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV;
+        return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV;
     }
 
     private gemeinsameStekClicked(): void {
@@ -96,7 +99,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private steuererklaerungClicked() {
         if (this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === true) {
-            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt =  this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
+            this.getFinanzielleSituationGS2().steuererklaerungAusgefuellt = this.getFinanzielleSituationGS1().steuererklaerungAusgefuellt;
         }
     }
 }

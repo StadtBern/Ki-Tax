@@ -13,6 +13,7 @@ import {
 } from '../../../models/enums/TSZuschlagsgrund';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
 
@@ -40,10 +41,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     erwerbspensum: TSErwerbspensumContainer;
     patternPercentage: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any) {
+                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
@@ -79,6 +80,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     submit(form: IFormController) {
         if (form.$valid) {
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
+            this.errorService.clearAll();
             this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
                 this.state.go('gesuch.erwerbsPensen');
             });

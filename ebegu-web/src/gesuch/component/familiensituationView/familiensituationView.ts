@@ -10,6 +10,7 @@ import {
     getTSGesuchstellerKardinalitaetValues
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
 import BerechnungsManager from '../../service/berechnungsManager';
+import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./familiensituationView.html');
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
@@ -25,9 +26,9 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
@@ -40,6 +41,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     submit($form: IFormController) {
         if ($form.$valid) {
+            this.errorService.clearAll();
             this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
                 this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
             });
