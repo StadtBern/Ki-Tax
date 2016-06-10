@@ -25,15 +25,15 @@ describe('pendenzFilter', function () {
         gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
 
         pendenzArray = [];
-        pendenz1 = new TSPendenzJA(1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
+        pendenz1 = new TSPendenzJA('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
             [TSBetreuungsangebotTyp.KITA], ['Instit1']);
         pendenzArray.push(pendenz1);
 
-        pendenz2 = new TSPendenzJA(2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
+        pendenz2 = new TSPendenzJA('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
             [TSBetreuungsangebotTyp.TAGESELTERN], ['Instit2']);
         pendenzArray.push(pendenz2);
 
-        pendenz3 = new TSPendenzJA(3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
+        pendenz3 = new TSPendenzJA('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
             [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN], ['Instit1', 'Instit2']);
         pendenzArray.push(pendenz3);
 

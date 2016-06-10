@@ -8,8 +8,12 @@ import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragT
 import {TSInstitution} from '../../../models/TSInstitution';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import TSGesuch from '../../../models/TSGesuch';
+import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
+import {IStateService} from 'angular-ui-router';
 
 export class PendenzenListViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -31,9 +35,11 @@ export class PendenzenListViewController {
     numberOfPages: number = 1;
 
 
-    static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS'];
+    static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
+        'GesuchRS', 'GesuchModelManager', '$state'];
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS) {
+                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService) {
         this.initViewModel();
     }
 
@@ -85,7 +91,7 @@ export class PendenzenListViewController {
     /**
      * Fallnummer muss 6-stellig dargestellt werden. Deshalb muessen so viele 0s am Anfang hinzugefuegt werden
      * bis die Fallnummer ein 6-stelliges String ist
-     * @param fallNummer
+     * @param fallnummer
      */
     public addZerosToFallnummer(fallnummer: number): string {
         return this.ebeguUtil.addZerosToNumber(fallnummer, 6);
@@ -106,4 +112,22 @@ export class PendenzenListViewController {
         return result;
     }
 
+    public editPendenzJA(pendenz: TSPendenzJA): void {
+        // todo team hier müssen wir auch MUTATIONEN bekommen koennen
+        if (pendenz && pendenz.antragTyp === TSAntragTyp.GESUCH) {
+            this.gesuchRS.findGesuch(pendenz.antragId).then((response) => {
+                if (response) {
+                    // pendenz.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
+                    this.openGesuch(response);
+                }
+            });
+        }
+    }
+
+    private openGesuch(gesuch: TSGesuch): void {
+        if (gesuch) {
+            this.gesuchModelManager.gesuch = gesuch;
+            this.$state.go('gesuch.fallcreation');
+        }
+    }
 }

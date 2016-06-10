@@ -4,6 +4,7 @@ import {TSAntragTyp} from './enums/TSAntragTyp';
 
 export default class TSPendenzJA {
 
+    private _antragId: string;
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
@@ -14,9 +15,10 @@ export default class TSPendenzJA {
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
 
-    constructor(fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
+    constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
                 angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>) {
 
+        this._antragId = antragId;
         this._fallNummer = fallNummer;
         this._familienName = familienName;
         this._antragTyp = antragTyp;
@@ -26,6 +28,14 @@ export default class TSPendenzJA {
         this._institutionen = institutionen;
     }
 
+
+    get antragId(): string {
+        return this._antragId;
+    }
+
+    set antragId(value: string) {
+        this._antragId = value;
+    }
 
     get fallNummer(): number {
         return this._fallNummer;

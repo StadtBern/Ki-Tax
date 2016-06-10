@@ -48,6 +48,7 @@ public class PendenzResource {
 		for (Gesuch gesuch : gesucheList) {
 			if (gesuch.getFall() != null && gesuch.getGesuchsteller1() != null) {
 				JaxPendenzJA pendenz = new JaxPendenzJA();
+				pendenz.setAntragId(gesuch.getId());
 				pendenz.setFallNummer(gesuch.getFall().getFallNummer());
 				pendenz.setFamilienName(gesuch.getGesuchsteller1().getNachname());
 				pendenz.setEingangsdatum(gesuch.getEingangsdatum());

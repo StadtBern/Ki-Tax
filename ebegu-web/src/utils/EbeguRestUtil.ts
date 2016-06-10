@@ -827,6 +827,7 @@ export default class EbeguRestUtil {
     }
 
     public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
+        restPendenz.antragId = pendenz.antragId;
         restPendenz.fallNummer = pendenz.fallNummer;
         restPendenz.familienName = pendenz.familienName;
         restPendenz.angebote = pendenz.angebote;
@@ -838,6 +839,7 @@ export default class EbeguRestUtil {
     }
 
     public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
+        pendenzTS.antragId = pendenzFromServer.antragId;
         pendenzTS.fallNummer = pendenzFromServer.fallNummer;
         pendenzTS.familienName = pendenzFromServer.familienName;
         pendenzTS.angebote = pendenzFromServer.angebote;

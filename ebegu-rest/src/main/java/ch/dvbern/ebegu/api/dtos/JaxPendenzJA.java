@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.dtos;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.validation.Persisted;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,9 @@ import java.util.Set;
 public class JaxPendenzJA {
 
 	private static final long serialVersionUID = -1277026654764135397L;
+
+	@NotNull
+	private String antragId = null;
 
 	@NotNull
 	private int fallNummer;
@@ -50,7 +54,13 @@ public class JaxPendenzJA {
 	private Set<String> institutionen;
 
 
+	public String getAntragId() {
+		return antragId;
+	}
 
+	public void setAntragId(String antragId) {
+		this.antragId = antragId;
+	}
 
 	public int getFallNummer() {
 		return fallNummer;
