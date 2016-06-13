@@ -39,7 +39,7 @@ describe('gesuchModelManager', function () {
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a new empty Betreuung for the current KindContainer', () => {
-                gesuchModelManager.initGesuch();
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
@@ -54,7 +54,7 @@ describe('gesuchModelManager', function () {
         });
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
-                gesuchModelManager.initGesuch();
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
@@ -66,7 +66,7 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuung', () => {
             it('creates a new betreuung', () => {
-                gesuchModelManager.initGesuch();
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
@@ -88,7 +88,7 @@ describe('gesuchModelManager', function () {
                 spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                gesuchModelManager.initGesuch();
+                gesuchModelManager.initGesuch(false);
                 gesuchModelManager.saveGesuchAndFall();
 
                 scope.$apply();
@@ -99,7 +99,7 @@ describe('gesuchModelManager', function () {
                 spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                gesuchModelManager.initGesuch();
+                gesuchModelManager.initGesuch(false);
                 gesuchModelManager.gesuch.timestampErstellt = DateUtil.today();
                 gesuchModelManager.saveGesuchAndFall();
 

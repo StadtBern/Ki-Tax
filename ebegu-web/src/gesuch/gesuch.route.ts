@@ -43,7 +43,7 @@ export class EbeguGesuchState implements IState {
 export class EbeguNewFallState implements IState {
     name = 'gesuch.fallcreation';
     template = '<fall-creation-view>';
-    url = '/fall';
+    url = '/fall/:createNew';
 }
 
 export class EbeguFamiliensituationState implements IState {
@@ -118,6 +118,10 @@ export class IStammdatenStateParams implements IStateParamsService {
 
 export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
+}
+
+export class INewFallStateParams implements IStateParamsService {
+    createNew: boolean;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {

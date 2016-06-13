@@ -6,6 +6,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuch from '../../../models/TSGesuch';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {INewFallStateParams} from '../../gesuch.route';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -18,16 +19,19 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
+    private createNewParam: boolean = false;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$stateParams'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
+                $stateParams: INewFallStateParams) {
         super(state, gesuchModelManager, berechnungsManager);
+        this.createNewParam = $stateParams.createNew;
         this.initViewModel();
     }
 
     private initViewModel(): void {
-        this.gesuchModelManager.initGesuch();
+        this.gesuchModelManager.initGesuch(this.createNewParam);
         if (this.gesuchModelManager.getGesuchsperiode()) {
             this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
         }

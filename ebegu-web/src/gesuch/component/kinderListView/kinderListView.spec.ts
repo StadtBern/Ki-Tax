@@ -23,7 +23,7 @@ describe('kinderListView', function () {
     }));
 
     beforeEach(function () {
-        gesuchModelManager.initGesuch();
+        gesuchModelManager.initGesuch(false);
     });
 
     it('should be defined', function () {

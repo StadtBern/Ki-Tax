@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -83,17 +82,6 @@ public class FamiliensituationResource {
 		Familiensituation persistedFamiliensituation = this.familiensituationService.updateFamiliensituation(convertedFamiliensituation);
 
 		return converter.familiensituationToJAX(persistedFamiliensituation);
-	}
-
-	@Nullable
-	@GET
-	@Path("/{familiensituationId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFamiliensituation findFamiliensituation(
-		@Nonnull @NotNull JaxId fallJAXPId) throws EbeguException {
-
-		return null;
 	}
 
 }

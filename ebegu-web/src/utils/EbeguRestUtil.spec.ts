@@ -163,6 +163,7 @@ describe('EbeguRestUtil', function () {
                 let familiensituation: TSFamiliensituation = new TSFamiliensituation();
                 TestDataUtil.setAbstractFieldsUndefined(familiensituation);
                 myGesuch.familiensituation = familiensituation;
+                myGesuch.kindContainers = [undefined];
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();

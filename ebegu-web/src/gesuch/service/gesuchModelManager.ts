@@ -255,9 +255,13 @@ export default class GesuchModelManager {
         }
     }
 
-
-    public initGesuch() {
-        if (!this.gesuch) {
+    /**
+     * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
+     * Wenn force werden Gesuch und Fall immer erstellt.
+     * @param forced
+     */
+    public initGesuch(forced: boolean) {
+        if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
         }
