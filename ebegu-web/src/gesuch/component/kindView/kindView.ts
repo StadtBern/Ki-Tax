@@ -10,6 +10,7 @@ import {TSPensumFachstelle} from '../../../models/TSPensumFachstelle';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 let template = require('./kindView.html');
+require('./kindView.less');
 
 export class KindViewComponentConfig implements IComponentOptions {
     transclude = false;

@@ -1,12 +1,11 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
-import {IHttpBackendService, IScope} from 'angular';
+import {IHttpBackendService, IScope, IQService} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import TestDataUtil from '../../utils/TestDataUtil';
-import IQService = angular.IQService;
 import DateUtil from '../../utils/DateUtil';
 
 describe('gesuchModelManager', function () {

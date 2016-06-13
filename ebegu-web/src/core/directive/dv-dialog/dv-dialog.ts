@@ -1,6 +1,7 @@
 import {IPromise} from 'angular';
 import IDialogService = angular.material.IDialogService;
 import IDialogOptions = angular.material.IDialogOptions;
+require('./dv-dialog.less');
 
 export class DvDialog {
 
