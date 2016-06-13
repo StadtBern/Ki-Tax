@@ -7,13 +7,11 @@ import {TSErrorLevel} from '../../../models/enums/TSErrorLevel';
 export default class ErrorService {
 
     errors: Array<TSExceptionReport> = [];
-    $rootScope: IRootScopeService;
 
 
     static $inject = ['$rootScope'];
     /* @ngInject */
-    constructor($rootScope: IRootScopeService) {
-        this.$rootScope = $rootScope;
+    constructor(private $rootScope: IRootScopeService) {
     }
 
 
