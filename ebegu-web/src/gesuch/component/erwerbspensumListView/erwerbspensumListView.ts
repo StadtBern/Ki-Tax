@@ -7,6 +7,7 @@ import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -36,9 +37,10 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     erwerbspensenGS1: Array<TSErwerbspensumContainer> = undefined;
     erwerbspensenGS2: Array<TSErwerbspensumContainer>;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private $log: ILogService, private dvDialog: DvDialog) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
     }
@@ -81,6 +83,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     removePensum(pensum: any, gesuchstellerNumber: number): void {
+        this.errorService.clearAll();
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'ERWERBSPENSUM_LOESCHEN'
@@ -112,6 +115,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     nextStep() {
+        this.errorService.clearAll();
         if (this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.finanzielleSituationStart');
         } else {

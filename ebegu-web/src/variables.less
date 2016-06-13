@@ -1,6 +1,6 @@
 @background-color: white;
 @state-danger-text: red;
-@floating-text-line-height :4px;
+@floating-text-line-height: 2;
 @color-contrast-hover: red;
 @highlight-color: #216eff;
 @grid-gutter-width: 32px;
@@ -8,3 +8,28 @@
 
 /* Guide Color */
 @color-guide: #d50025;
+
+/* Contrast Color für Error Handling */
+@color-contrast-hue: 359;
+@color-contrast: hsl(@color-contrast-hue, 100%, 67%);
+@color-contrast-hover: hsl(@color-contrast-hue, 100%, 67%);
+@color-contrast-normal: hsl(@color-contrast-hue, 100%, 74%);
+@color-contrast-middle: hsl(@color-contrast-hue, 100%, 87%);
+@color-contrast-bright: hsl(@color-contrast-hue, 100%, 94%);
+@color-contrast-bright-on-hover: white;
+
+
+
+/* Abstände */
+@small-abstand: 10px;
+@smaller-abstand: @small-abstand / 2;
+@normal-abstand: 2*@small-abstand;
+@big-abstand: 5*@small-abstand;
+@padding-base-horizontal: @small-abstand;
+@padding-base-vertical: @small-abstand;
+
+/*Navbar */
+@navbar-height: 50px;
+
+/*Positionen*/
+@page-start: (@navbar-height  + 30px); //40px fuer intro

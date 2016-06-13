@@ -4,9 +4,10 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
-import IFormController = angular.IFormController;
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -20,9 +21,10 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private CONSTANTS: any) {
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
@@ -77,6 +79,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
+            this.errorService.clearAll();
             this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
                 this.nextStep();
             });

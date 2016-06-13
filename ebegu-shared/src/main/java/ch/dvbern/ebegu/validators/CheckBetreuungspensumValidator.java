@@ -80,10 +80,10 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
      */
 	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String objectType, ConstraintValidatorContext context) {
 		// todo homa in Review. Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
-		if(betreuungspensum != null && betreuungspensum.getPensum() < pensumMin) {
+		if(betreuungspensum != null && betreuungspensum.getPensum() != null && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
-			message = MessageFormat.format(message, pensumMin);
+			message = MessageFormat.format(message, betreuungspensum.getPensum(), pensumMin);
 
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate(message)
