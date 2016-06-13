@@ -11,6 +11,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./kindView.html');
+require('./kindView.less');
 
 export class KindViewComponentConfig implements IComponentOptions {
     transclude = false;

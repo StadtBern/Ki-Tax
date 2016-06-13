@@ -38,4 +38,11 @@ public interface InstitutionService {
      */
 	@Nonnull
 	Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId);
+
+	/**
+	 *
+	 * @return Alle Institutionen in der DB
+     */
+	@Nonnull
+	Collection<Institution> getAllInstitutionen();
 }

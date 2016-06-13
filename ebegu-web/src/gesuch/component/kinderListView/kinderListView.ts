@@ -11,6 +11,7 @@ import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
+require('./kinderListView.less');
 
 
 export class KinderListViewComponentConfig implements IComponentOptions {

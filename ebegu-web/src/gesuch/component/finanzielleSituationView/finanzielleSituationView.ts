@@ -9,6 +9,8 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationView.html');
+require('./finanzielleSituationView.less');
+
 
 export class FinanzielleSituationViewComponentConfig implements IComponentOptions {
     transclude = false;

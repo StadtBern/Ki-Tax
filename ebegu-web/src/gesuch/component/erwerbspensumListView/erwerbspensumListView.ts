@@ -11,6 +11,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
+require('./erwerbspensumListView.less');
 
 
 export class ErwerbspensumListViewComponentConfig implements IComponentOptions {

@@ -1,4 +1,3 @@
-import TSApplicationProperty from '../models/TSApplicationProperty';
 import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
@@ -21,17 +20,6 @@ function getStates(): IState[] {
             }
         }
     ];
-}
-
-class EbeguStateController {
-    static $inject = ['applicationProperties'];
-
-    applicationProperties: TSApplicationProperty[];
-
-    constructor(applicationProperties: TSApplicationProperty[]) {
-        var vm = this;
-        vm.applicationProperties = applicationProperties;
-    }
 }
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?

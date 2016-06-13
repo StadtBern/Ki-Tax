@@ -8,6 +8,8 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationStartView.html');
+require('./finanzielleSituationStartView.less');
+
 
 export class FinanzielleSituationStartViewComponentConfig implements IComponentOptions {
     transclude = false;

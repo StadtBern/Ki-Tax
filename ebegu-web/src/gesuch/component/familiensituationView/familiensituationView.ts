@@ -12,6 +12,8 @@ import {
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./familiensituationView.html');
+require('./familiensituationView.less');
+
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;

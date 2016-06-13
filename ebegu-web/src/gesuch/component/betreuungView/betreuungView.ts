@@ -4,7 +4,6 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
@@ -12,9 +11,11 @@ import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
+import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import Moment = moment.Moment;
 let template = require('./betreuungView.html');
+require('./betreuungView.less');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -28,9 +29,9 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any,
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         this.setBetreuungsangebotTypValues();
@@ -104,7 +105,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     private setBetreuungsangebotTypValues(): void {
-        this.betreuungsangebotValues = this.ebeguRestUtil.translateStringList(getTSBetreuungsangebotTypValues());
+        this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
     cancel() {

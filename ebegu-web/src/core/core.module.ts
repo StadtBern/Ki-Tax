@@ -33,6 +33,7 @@ import BerechnungsManager from '../gesuch/service/berechnungsManager';
 import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import {EbeguErrors} from './errors/errors';
+import EbeguUtil from '../utils/EbeguUtil';
 
 let dynamicDependencies = function (): string[] {
 
@@ -81,6 +82,7 @@ export const EbeguWebCore: angular.IModule = angular
         PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
     })
     .service('EbeguRestUtil', EbeguRestUtil)
+    .service('EbeguUtil', EbeguUtil)
     .service('GesuchstellerRS', GesuchstellerRS)
     .service('AdresseRS', AdresseRS)
     .service('ListResourceRS', ListResourceRS)

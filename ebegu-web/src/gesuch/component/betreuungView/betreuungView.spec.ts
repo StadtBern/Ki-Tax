@@ -4,19 +4,19 @@ import {BetreuungViewController} from './betreuungView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import DateUtil from '../../../utils/DateUtil';
-import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
 
 describe('betreuungView', function () {
 
     let betreuungView: BetreuungViewController;
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
-    let ebeguRestUtil: EbeguRestUtil;
+    let ebeguUtil: EbeguUtil;
     let $q: IQService;
     let betreuung: TSBetreuung;
     let $rootScope: IScope;
@@ -28,14 +28,14 @@ describe('betreuungView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
-        ebeguRestUtil = $injector.get('EbeguRestUtil');
+        ebeguUtil = $injector.get('EbeguUtil');
         $httpBackend = $injector.get('$httpBackend');
         $q = $injector.get('$q');
         betreuung = new TSBetreuung();
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
         $rootScope = $injector.get('$rootScope');
-        betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguRestUtil, $injector.get('CONSTANTS'),
+        betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
             $rootScope.$new(), $injector.get('BerechnungsManager'), $injector.get('ErrorService'));
     }));
 

@@ -11,6 +11,7 @@ import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./stammdatenView.html');
+require('./stammdatenView.less');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;

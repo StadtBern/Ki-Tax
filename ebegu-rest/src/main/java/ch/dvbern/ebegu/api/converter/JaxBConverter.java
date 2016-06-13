@@ -386,12 +386,14 @@ public class JaxBConverter {
 		Validate.notNull(fall);
 		Validate.notNull(fallJAXP);
 		convertAbstractFieldsToEntity(fallJAXP, fall);
+		fall.setFallNummer(fallJAXP.getFallNummer());
 		return fall;
 	}
 
 	public JaxFall fallToJAX(@Nonnull Fall persistedFall) {
 		JaxFall jaxFall = new JaxFall();
 		convertAbstractFieldsToJAX(persistedFall, jaxFall);
+		jaxFall.setFallNummer(persistedFall.getFallNummer());
 		return jaxFall;
 	}
 
