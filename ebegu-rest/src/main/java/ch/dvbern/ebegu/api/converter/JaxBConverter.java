@@ -932,14 +932,16 @@ public class JaxBConverter {
 	 */
 	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 																			   Collection<BetreuungspensumContainer> existingBetreuungspensen) {
-		Set<BetreuungspensumContainer> transformedBetPenContainers = new HashSet<>();
+		Set<BetreuungspensumContainer> transformedBetPenContainers = new TreeSet<>();
 		for (JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
 			BetreuungspensumContainer containerToMergeWith = existingBetreuungspensen
 				.stream()
 				.filter(existingBetPensumEntity -> existingBetPensumEntity.getId().equals(jaxBetPensContainer.getId()))
 				.reduce(StreamsUtil.toOnlyElement())
 				.orElse(new BetreuungspensumContainer());
-			transformedBetPenContainers.add(betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith));
+			BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
+			boolean added =  transformedBetPenContainers.add(contToAdd);
+			if(!added){LOG.warn("dropped duplicate container " +contToAdd);}
 		}
 
 		//change the existing collection to reflect changes

@@ -14,8 +14,7 @@ import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -120,6 +119,71 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 		LocalDate montag = getGueltigAb().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 		LocalDate sonntag = getGueltigBis().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 		return new DateRange(montag, sonntag);
+	}
+
+
+
+	@Nonnull
+	public List<DateRange> toFullWeekRanges() {
+		if (gueltigAb.getDayOfWeek() == DayOfWeek.MONDAY && gueltigBis.getDayOfWeek() == DayOfWeek.SUNDAY) {
+			//noinspection ArraysAsListWithZeroOrOneArgument
+			return Arrays.asList(new DateRange(gueltigAb, gueltigBis));
+		}
+
+		DateRange gueltigAbWeek = new DateRange(gueltigAb).withFullWeeks();
+		DateRange gueltigBisWeek = new DateRange(gueltigBis).withFullWeeks();
+
+		if (gueltigAbWeek.intersects(gueltigBisWeek)) {
+			// both dates are within the same week
+			//noinspection ArraysAsListWithZeroOrOneArgument
+			return Arrays.asList(gueltigAbWeek);
+		}
+
+		if (gueltigAbWeek.endsDayBefore(gueltigBisWeek)) {
+			// gueltigAb & gueltigBis are in two adjacent weeks
+			return Arrays.asList(gueltigAbWeek, gueltigBisWeek);
+		}
+
+
+		LocalDate ab = gueltigAb.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+		LocalDate bis = gueltigBis.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+		List<DateRange> result = new ArrayList<>();
+
+		if (ab.isAfter(gueltigAb)) {
+			result.add(gueltigAbWeek);
+		}
+
+		result.add(new DateRange(ab, bis));
+
+		if (bis.isBefore(gueltigBis)) {
+			result.add(gueltigBisWeek);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Neue DateRange, mit gueltigAb auf den ersten Tag des Monats von gueltigAb
+	 * un dem lezten Tag des Monats von gueltigBs.
+	 * Kann also mehrere Monate umspannen!
+	 */
+	@Nonnull
+	public DateRange withFullMonths() {
+		LocalDate firstDay = getGueltigAb().with(TemporalAdjusters.firstDayOfMonth());
+		LocalDate lastDay = getGueltigBis().with(TemporalAdjusters.lastDayOfMonth());
+		return new DateRange(firstDay, lastDay);
+	}
+
+	/**
+	 * Neue DateRange, mit gueltigAb auf den ersten Tag des Jahres von gueltigAb
+	 * und gueltigBis auf den letzten Tag des Jahres von gueltigBis.
+	 * Kann also mehrere Jahre umspannen!
+	 */
+	@Nonnull
+	public DateRange withFullYears() {
+		LocalDate firstDay = getGueltigAb().with(TemporalAdjusters.firstDayOfYear());
+		LocalDate lastDay = getGueltigBis().with(TemporalAdjusters.lastDayOfYear());
+		return new DateRange(firstDay, lastDay);
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class InstitutionResource {
 		}
 
 		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, institution);
-		Institution persistedInstitution = this.institutionService.saveInstitution(convertedInstitution);
+		Institution persistedInstitution = institutionService.saveInstitution(convertedInstitution);
 
 		return converter.institutionToJAX(persistedInstitution);
 

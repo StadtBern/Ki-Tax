@@ -4,6 +4,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuch from '../../../models/TSGesuch';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {INewFallStateParams} from '../../gesuch.route';
@@ -21,10 +22,10 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$stateParams'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-                $stateParams: INewFallStateParams) {
+        private errorService: ErrorService, $stateParams: INewFallStateParams) {
         super(state, gesuchModelManager, berechnungsManager);
         this.createNewParam = $stateParams.createNew;
         this.initViewModel();
@@ -43,6 +44,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController) {
         if (form.$valid) {
+            this.errorService.clearAll();
             this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });

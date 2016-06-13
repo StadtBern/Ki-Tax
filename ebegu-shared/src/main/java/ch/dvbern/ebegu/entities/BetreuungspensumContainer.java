@@ -75,6 +75,7 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	public int compareTo(BetreuungspensumContainer o) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(this.getBetreuungspensumJA(), o.getBetreuungspensumJA());
+		builder.append(this.getBetreuungspensumJA().getId(), o.getBetreuungspensumJA().getId());
 		return builder.toComparison();
 	}
 }
