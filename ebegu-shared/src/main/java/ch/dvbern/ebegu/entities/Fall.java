@@ -20,10 +20,6 @@ public class Fall extends AbstractEntity {
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
-//	@GeneratedValue
-//	@Column(unique = true, nullable = false, updatable = false)
-//	private Long fallNummer;
-
 	@NotNull
 	@Generated(GenerationTime.INSERT)
 	@Column(columnDefinition = "integer auto_increment")
