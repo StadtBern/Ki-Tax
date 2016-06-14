@@ -10,6 +10,7 @@ import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import {TSMandant} from '../../../models/TSMandant';
 import TSAdresse from '../../../models/TSAdresse';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./institutionView.html');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
@@ -26,11 +27,11 @@ export class InstitutionViewComponentConfig implements IComponentOptions {
 
 export class InstitutionViewController {
 
-    static $inject = ['InstitutionRS', 'MAX_LENGTH', 'EbeguRestUtil', 'InstitutionStammdatenRS'];
+    static $inject = ['InstitutionRS', 'MAX_LENGTH', 'EbeguUtil', 'InstitutionStammdatenRS'];
 
     institutionRS: InstitutionRS;
     institutionStammdatenRS: InstitutionStammdatenRS;
-    ebeguRestUtil: EbeguRestUtil;
+    ebeguUtil: EbeguUtil;
     institutionen: TSInstitution[];
     traegerschaften: TSTraegerschaft[];
     mandant: TSMandant;
@@ -46,9 +47,9 @@ export class InstitutionViewController {
 
     //
     /* @ngInject */
-    constructor(institutionRS: InstitutionRS,  MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil, institutionStammdatenRS: InstitutionStammdatenRS) {
+    constructor(institutionRS: InstitutionRS,  MAX_LENGTH: number, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS) {
         this.institutionRS = institutionRS;
-        this.ebeguRestUtil = ebeguRestUtil;
+        this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
         this.setBetreuungsangebotTypValues();
 
@@ -178,7 +179,7 @@ export class InstitutionViewController {
     }
 
     private setBetreuungsangebotTypValues(): void {
-        this.betreuungsangebotValues = this.ebeguRestUtil.translateStringList(getTSBetreuungsangebotTypValues());
+        this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
     getBetreuungsangebotFromInstitutionList(betreuungsangebotTyp: TSBetreuungsangebotTyp) {
