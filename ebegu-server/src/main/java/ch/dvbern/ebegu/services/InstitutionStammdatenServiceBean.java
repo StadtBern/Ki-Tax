@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -11,11 +11,10 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer InstitutionStammdaten
@@ -63,5 +62,27 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByDate(@Nonnull LocalDate date) {
 		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(InstitutionStammdaten.class, date));
+	}
+
+	@Override
+	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
+		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
+		if(resultList== null){
+			resultList = new ArrayList<InstitutionStammdaten>();
+		}
+		return resultList;
+	}
+
+	private TypedQuery<InstitutionStammdaten> getQueryAllInstitutionStammdatenByInstitution(@Nonnull String institutionId) {
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		ParameterExpression<String> institutionIdParam = cb.parameter(String.class, "institutionId");
+
+		CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		Predicate gesuchstellerPred = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id),institutionIdParam);
+		query.where(gesuchstellerPred);
+		TypedQuery<InstitutionStammdaten> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter("institutionId", institutionId);
+		return typedQuery;
 	}
 }

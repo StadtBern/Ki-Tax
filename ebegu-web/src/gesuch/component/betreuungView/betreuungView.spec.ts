@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import DateUtil from '../../../utils/DateUtil';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
@@ -143,7 +143,7 @@ describe('betreuungView', function () {
 
     /**
      * Das Parameter promiseResponse ist das Object das die Methode gesuchModelManager.updateBetreuung() zurueckgeben muss. Wenn dieses
-     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen. 
+     * eine Exception (reject) ist, muss der $state nicht geaendert werden und daher wird die Methode $state.go()  nicht aufgerufen.
      * Ansonsten wird sie mit  dem naechsten state 'gesuch.betreuungen' aufgerufen
      * @param promiseResponse
      */

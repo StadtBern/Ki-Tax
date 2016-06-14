@@ -1,6 +1,6 @@
 import {IHttpService, ILogService, IPromise, IHttpPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import DateUtil from '../../utils/DateUtil';
 
 export class InstitutionStammdatenRS {
@@ -62,6 +62,14 @@ export class InstitutionStammdatenRS {
 
     public getAllInstitutionStammdatenByDate(dateParam: moment.Moment): IPromise<TSInstitutionStammdaten[]> {
         return this.http.get(this.serviceURL + '/date', {params: {date: DateUtil.momentToLocalDate(dateParam)}})
+            .then((response: any) => {
+                this.log.debug('PARSING institutionStammdaten REST array object', response.data);
+                return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);
+            });
+    }
+
+    public getAllInstitutionStammdatenByInstitution(institutionID: string): IPromise<TSInstitutionStammdaten[]> {
+        return this.http.get(this.serviceURL + '/institution' + '/' + encodeURIComponent(institutionID))
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return this.ebeguRestUtil.parseInstitutionStammdatenArray(response.data);

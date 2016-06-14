@@ -3,16 +3,18 @@ import {IState} from 'angular-ui-router';
 import ListResourceRS from './service/listResourceRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+import {MandantRS} from './service/mandantRS.rest';
 
-appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', '$rootScope', 'hotkeys', '$timeout'];
+appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys', '$timeout'];
 
 /* @ngInject */
-export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService) {
+export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS, mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService) {
     routerHelper.configureStates(getStates());
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert
     if (ENV !== 'test') {
         listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
+        mandantRS.getFirst();
     }
     $rootScope.$on('$viewContentLoaded', function () {
         angular.element('html, body').animate({scrollTop: 0}, 200);

@@ -24,10 +24,6 @@
             true,
             "spaces"
         ],
-        "max-line-length": [
-            true,
-            200
-        ],
         "member-ordering": [
             true,
             "variables-before-functions"

@@ -25,6 +25,18 @@ export class MandantRS {
             });
     }
 
+    /**
+     * laedt und cached den ersten und einzigenMandanten aus der DB
+     * @returns {IPromise<TSMandant>}
+     */
+    public getFirst(): IPromise<TSMandant> {
+        return this.http.get(this.serviceURL + '/first', { cache: true })
+            .then((response: any) => {
+                this.log.debug('PARSING mandant REST object ', response.data);
+                return this.ebeguRestUtil.parseMandant(new TSMandant(), response.data);
+            });
+    }
+
     public getServiceName(): string {
         return 'MandantRS';
     }

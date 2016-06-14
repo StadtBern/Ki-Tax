@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import TSBetreuungspensumContainer from '../../../models/TSBetreuungspensumContainer';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSBetreuungspensum from '../../../models/TSBetreuungspensum';

@@ -440,6 +440,15 @@
     "INVOLVIERTE_FACHSTELLE_HELP": "noch_nicht_definiert",
     "BETREUUNGSANGEBOT_WAEHLEN_HELP": "noch_nicht_definiert",
     "FAMILIENSITUATION_HELP": "noch_nicht_definiert",
-    "KORRESPONDENZADR_HELP": "noch_nicht_definiert"
+    "KORRESPONDENZADR_HELP": "noch_nicht_definiert",
+    "INSTITUTION_HINZUFUEGEN": "Institution hinzufügen",
+    "INSTITUTION_SPEICHERN": "Institution speichern",
+    "INSTITUTIONEN_NOCH_KEINE": "Noch keine Institutionen",
+    "TRAEGERSCHAFT": "Trägerschaft",
+    "MANDANT": "Mandant",
+    "INSTITUTION_STAMMDATEN": "Institution Stammdaten,",
+    "INSTITUTION_STAMMDATEN_NOCH_KEINE": "Noch keine Institution Stammdaten",
+    "INSTITUTION_STAMMDATEN_HINZUFUEGEN": "Institution Stammdaten hinzufügen",
+    "INSTITUTION_STAMMDATEN_SPEICHERN": "Institution Stammdaten speichern"
 }
 

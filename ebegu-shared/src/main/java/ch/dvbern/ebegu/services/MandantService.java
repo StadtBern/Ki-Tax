@@ -17,4 +17,6 @@ public interface MandantService {
 	@Nonnull
 	Optional<Mandant> findMandant(@Nonnull final String id);
 
+	@Nonnull
+	Mandant getFirst();
 }

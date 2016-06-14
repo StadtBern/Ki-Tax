@@ -1,12 +1,18 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitution;
+import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -21,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,30 +46,50 @@ public class InstitutionResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@ApiOperation(value = "Creates a new Institution in the database.")
+	@Nullable
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response create(
+		@Nonnull @NotNull JaxInstitution institutionJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, new Institution());
+		Institution persistedInstitution = this.institutionService.createInstitution(convertedInstitution);
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(InstitutionResource.class)
+			.path("/" + persistedInstitution.getId())
+			.build();
+
+		JaxInstitution jaxInstitution = converter.institutionToJAX(persistedInstitution);
+
+		return Response.created(uri).entity(jaxInstitution).build();
+	}
+
+	@ApiOperation(value = "Update a Institution in the database.")
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitution saveInstitution(
-		@Nonnull @NotNull @Valid JaxInstitution institutionJAXP,
+	public JaxInstitution update(
+		@Nonnull @NotNull JaxInstitution institutionJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Institution institution;
-		if (institutionJAXP.getId() != null) {
-			Optional<Institution> optional = institutionService.findInstitution(institutionJAXP.getId());
-			institution = optional.isPresent() ? optional.get() : new Institution();
-		} else {
-			institution = new Institution();
-		}
+		Validate.notNull(institutionJAXP.getId());
+		Optional<Institution> optInstitution = institutionService.findInstitution(institutionJAXP.getId());
+		Institution institutionFromDB = optInstitution.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getId()));
 
-		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, institution);
-		Institution persistedInstitution = this.institutionService.saveInstitution(convertedInstitution);
+		Institution institutionToMerge = converter.institutionToEntity(institutionJAXP, institutionFromDB);
+		Institution modifiedInstitution = this.institutionService.updateInstitution(institutionToMerge);
 
-		return converter.institutionToJAX(persistedInstitution);
-
+		return converter.institutionToJAX(modifiedInstitution);
 	}
 
+	@ApiOperation(value = "Find and return an Institution by his institution id as parameter")
 	@Nullable
 	@GET
 	@Path("/{institutionId}")
@@ -81,6 +108,7 @@ public class InstitutionResource {
 		return converter.institutionToJAX(optional.get());
 	}
 
+	@ApiOperation(value = "Remove an Institution by his institution-id as parameter")
 	@Nullable
 	@DELETE
 	@Path("/{institutionId}")
@@ -90,10 +118,11 @@ public class InstitutionResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(institutionJAXPId.getId());
-		institutionService.removeInstitution(converter.toEntityId(institutionJAXPId));
+		institutionService.setInstitutionInactive(converter.toEntityId(institutionJAXPId));
 		return Response.ok().build();
 	}
 
+	@ApiOperation(value = "Find and return a list of Institution by the Traegerschaft as parameter")
 	@Nonnull
 	@GET
 	@Path("/traegerschaft/{traegerschaftId}")
@@ -109,4 +138,27 @@ public class InstitutionResource {
 			.collect(Collectors.toList());
 	}
 
+
+	@ApiOperation(value = "Find and return a list of all Institutionen")
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitution> getAllInstitutionen() {
+		return institutionService.getAllInstitutionen().stream()
+			.map(inst -> converter.institutionToJAX(inst))
+			.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "Find and return a list of all active Institutionen. An active Institution is a Institution where the active flag is true")
+	@Nonnull
+	@GET
+	@Path("/active")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitution> getAllActiveInstitutionen() {
+		return institutionService.getAllActiveInstitutionen().stream()
+			.map(inst -> converter.institutionToJAX(inst))
+			.collect(Collectors.toList());
+	}
 }
