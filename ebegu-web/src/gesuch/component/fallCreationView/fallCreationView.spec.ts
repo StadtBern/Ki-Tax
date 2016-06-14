@@ -1,9 +1,6 @@
 import {EbeguWebCore} from '../../../core/core.module';
 import {FallCreationViewController} from './fallCreationView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import {TSDateRange} from '../../../models/types/TSDateRange';
-import DateUtil from '../../../utils/DateUtil';
 import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
@@ -27,19 +24,10 @@ describe('fallCreationView', function () {
         $rootScope = $injector.get('$rootScope');
         form = {};
         form.$valid = true;
-        fallCreationview = new FallCreationViewController($injector.get('$state'), gesuchModelManager, $injector.get('BerechnungsManager'));
+        fallCreationview = new FallCreationViewController($injector.get('$state'), gesuchModelManager, $injector.get('BerechnungsManager'),
+            $injector.get('EbeguUtil'), $injector.get('ErrorService'));
     }));
 
-    describe('API Usage', function () {
-        it('should return the current Gesuchsperiode formatted', function () {
-            var momentAb = DateUtil.today().year(2016);
-            var momentBis = DateUtil.today().year(2017);
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(momentAb, momentBis));
-            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
-            let result: string = fallCreationview.getCurrentGesuchsperiodeAsString();
-            expect(result).toEqual('2016/2017');
-        });
-    });
     describe('Submit', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');

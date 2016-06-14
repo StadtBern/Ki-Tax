@@ -3,9 +3,12 @@ import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 let template = require('./fallCreationView.html');
+require('./fallCreationView.less');
 
 export class FallCreationViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -17,9 +20,10 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
+        private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
@@ -37,10 +41,15 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController) {
         if (form.$valid) {
+            this.errorService.clearAll();
             this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {
                 this.state.go('gesuch.familiensituation');
             });
         }
+    }
+
+    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
+        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
     }
 
     /**
@@ -48,18 +57,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
      * @returns {string}
      */
     public getCurrentGesuchsperiodeAsString(): string {
-        return this.getGesuchsperiodeAsString(this.gesuchModelManager.getGesuchsperiode());
-    }
-    /**
-     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
-     * @returns {any}
-     */
-    private getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
-            return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
-                + gesuchsperiode.gueltigkeit.gueltigBis.year();
-        }
-        return undefined;
+        return this.ebeguUtil.getGesuchsperiodeAsString(this.gesuchModelManager.getGesuchsperiode());
     }
 
     public getAllActiveGesuchsperioden() {

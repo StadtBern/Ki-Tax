@@ -6,8 +6,10 @@ import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationResultateView.html');
+require('./finanzielleSituationResultateView.less');
 
 export class FinanzielleSituationResultateViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -24,9 +26,10 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     gesuchsteller1FinSit: TSFinanzielleSituationContainer;
     gesuchsteller2FinSit: TSFinanzielleSituationContainer;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private CONSTANTS: any) {
+    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
         this.calculate();
@@ -65,6 +68,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     submit(form: IFormController) {
         if (form.$valid) {
             // Speichern ausloesen
+            this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
                 this.nextStep();
             });

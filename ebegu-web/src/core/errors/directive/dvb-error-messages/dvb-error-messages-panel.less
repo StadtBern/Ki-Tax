@@ -1,0 +1,39 @@
+@import "../../../../variables.less";
+@zindex-navbar-fixed: 1030;
+.dvb-error-messages-panel {
+    .container {
+        margin-top: @small-abstand;
+        margin-bottom: @small-abstand;
+        display: flex;
+        .alarm-icon {
+            margin-right: @small-abstand;
+        }
+        div {
+            margin-right: auto;
+        }
+        .close-icon {
+            margin-left: @small-abstand;
+            margin-right: @small-abstand;
+        }
+        .fa {
+            line-height: @floating-text-line-height;
+        }
+        a {
+            :hover {
+                cursor: pointer;
+            }
+            color: @color-contrast-bright-on-hover;
+        }
+    }
+    position: fixed;
+    top: @page-start;
+    right: 0;
+    left: 0;
+    z-index: @zindex-navbar-fixed - 1;
+    background-color: @color-contrast-normal;
+    color: @color-contrast-bright-on-hover;
+    font-weight: bold;
+    display: none;
+}
+
+

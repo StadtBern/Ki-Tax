@@ -98,7 +98,7 @@ export default class GesuchModelManager {
      * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
      * @returns {IPromise<TSGesuch>}
      */
-    public saveGesuchAndFall(): IPromise<TSFall> {
+    public saveGesuchAndFall(): IPromise<TSGesuch> {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create

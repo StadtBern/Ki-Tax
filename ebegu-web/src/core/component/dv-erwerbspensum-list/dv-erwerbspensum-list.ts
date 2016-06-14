@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
 let template = require('./dv-erwerbspensum-list.html');
+require('./dv-erwerbspensum-list.less');
 
 export class DVErwerbspensumListConfig implements IComponentOptions {
     transclude = false;

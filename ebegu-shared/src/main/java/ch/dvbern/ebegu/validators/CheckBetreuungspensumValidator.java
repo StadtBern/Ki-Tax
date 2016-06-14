@@ -92,7 +92,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		if(betreuungspensum != null && betreuungspensum.getPensum() != null && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
-			message = MessageFormat.format(message, pensumMin);
+			message = MessageFormat.format(message, betreuungspensum.getPensum(), pensumMin);
 
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate(message)

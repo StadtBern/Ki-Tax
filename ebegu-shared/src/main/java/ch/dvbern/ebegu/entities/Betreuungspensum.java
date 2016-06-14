@@ -21,6 +21,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	public int compareTo(Betreuungspensum o) {
 		CompareToBuilder builder = new CompareToBuilder();
 		builder.append(this.getGueltigkeit(), o.getGueltigkeit());
+		builder.append(this.getId(), o.getId());
 		return builder.toComparison();
 	}
 }

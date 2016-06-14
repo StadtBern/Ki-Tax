@@ -57,7 +57,7 @@ public class InstitutionResource {
 		}
 
 		Institution convertedInstitution = converter.institutionToEntity(institutionJAXP, institution);
-		Institution persistedInstitution = this.institutionService.saveInstitution(convertedInstitution);
+		Institution persistedInstitution = institutionService.saveInstitution(convertedInstitution);
 
 		return converter.institutionToJAX(persistedInstitution);
 
@@ -105,6 +105,16 @@ public class InstitutionResource {
 		Validate.notNull(traegerschaftJAXPId.getId());
 		String traegerschaftId = converter.toEntityId(traegerschaftJAXPId);
 		return institutionService.getAllInstitutionenFromTraegerschaft(traegerschaftId).stream()
+			.map(institution -> converter.institutionToJAX(institution))
+			.collect(Collectors.toList());
+	}
+
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitution> getAllFachstellen() {
+		return institutionService.getAllInstitutionen().stream()
 			.map(institution -> converter.institutionToJAX(institution))
 			.collect(Collectors.toList());
 	}

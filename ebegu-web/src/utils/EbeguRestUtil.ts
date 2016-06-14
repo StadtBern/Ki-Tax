@@ -6,7 +6,6 @@ import TSGesuchsteller from '../models/TSGesuchsteller';
 import TSGesuch from '../models/TSGesuch';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
-import {IFilterService} from 'angular';
 import TSLand from '../models/types/TSLand';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import {TSFachstelle} from '../models/TSFachstelle';
@@ -32,14 +31,14 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSEbeguParameter from '../models/TSEbeguParameter';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
+import TSPendenzJA from '../models/TSPendenzJA';
+import EbeguUtil from './EbeguUtil';
 
 export default class EbeguRestUtil {
-    static $inject = ['$filter'];
-    public filter: IFilterService;
+    static $inject = ['EbeguUtil'];
 
     /* @ngInject */
-    constructor($filter: IFilterService) {
-        this.filter = $filter;
+    constructor(private ebeguUtil: EbeguUtil) {
     }
 
     /**
@@ -216,7 +215,7 @@ export default class EbeguRestUtil {
     public landCodeToTSLand(landCode: string): TSLand {
         if (landCode) {
             let translationKey = this.landCodeToTSLandCode(landCode);
-            return new TSLand(landCode, this.translateString(translationKey));
+            return new TSLand(landCode, this.ebeguUtil.translateString(translationKey));
         }
         return undefined;
     }
@@ -357,6 +356,7 @@ export default class EbeguRestUtil {
     public fallToRestObject(restFall: any, fall: TSFall): TSFall {
         if (fall) {
             this.abstractEntityToRestObject(restFall, fall);
+            restFall.fallNummer = fall.fallNummer;
             return restFall;
         }
         return undefined;
@@ -366,6 +366,7 @@ export default class EbeguRestUtil {
     public parseFall(fallTS: TSFall, fallFromServer: any): TSFall {
         if (fallFromServer) {
             this.parseAbstractEntity(fallTS, fallFromServer);
+            fallTS.fallNummer = fallFromServer.fallNummer;
             return fallTS;
         }
         return undefined;
@@ -712,28 +713,6 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    /**
-     * Translates the given string using the angular-translate filter
-     * @param toTranslate word to translate
-     * @returns {any} translated word
-     */
-    public translateString(toTranslate: string): string {
-        return this.filter('translate')(toTranslate).toString();
-    }
-
-    /**
-     * Translates the given list using the angular translate filter
-     * @param translationList list of words that will be translated
-     * @returns {any} A List of Objects with key and value, where value is the translated word.
-     */
-    public translateStringList(translationList: Array<any>): Array<any> {
-        let listResult: Array<any> = [];
-        translationList.forEach((item) => {
-            listResult.push({key: item, value: this.translateString(item)});
-        });
-        return listResult;
-    }
-
     private betreuungListToRestObject(betreuungen: Array<TSBetreuung>): Array<any> {
         let list: any[] = [];
         if (betreuungen) {
@@ -879,5 +858,39 @@ export default class EbeguRestUtil {
             gesuchsperioden[0] = this.parseGesuchsperiode(new TSGesuchsperiode(), data);
         }
         return gesuchsperioden;
+    }
+
+    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
+        restPendenz.fallNummer = pendenz.fallNummer;
+        restPendenz.familienName = pendenz.familienName;
+        restPendenz.angebote = pendenz.angebote;
+        restPendenz.antragTyp = pendenz.antragTyp;
+        restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject(new TSGesuchsperiode(), pendenz.gesuchsperiode);
+        restPendenz.institutionen = pendenz.institutionen;
+        return restPendenz;
+    }
+
+    public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
+        pendenzTS.fallNummer = pendenzFromServer.fallNummer;
+        pendenzTS.familienName = pendenzFromServer.familienName;
+        pendenzTS.angebote = pendenzFromServer.angebote;
+        pendenzTS.antragTyp = pendenzFromServer.antragTyp;
+        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.institutionen = pendenzFromServer.institutionen;
+        return pendenzTS;
+    }
+
+    public parsePendenzen(data: any): TSPendenzJA[] {
+        var pendenzen: TSPendenzJA[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                pendenzen[i] = this.parsePendenz(new TSPendenzJA(), data[i]);
+            }
+        } else {
+            pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
+        }
+        return pendenzen;
     }
 }

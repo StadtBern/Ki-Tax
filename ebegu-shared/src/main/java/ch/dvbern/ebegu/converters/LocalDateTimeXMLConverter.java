@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 /**
  * Konvertiert ein LocalDateTime Java 8 Objekt in einen String fuer JSON
  */
-
 @XmlJavaTypeAdapter(value = LocalDateTimeXMLConverter.class, type = LocalDateTime.class)
 public class LocalDateTimeXMLConverter extends XmlAdapter<String, LocalDateTime>  {
 
