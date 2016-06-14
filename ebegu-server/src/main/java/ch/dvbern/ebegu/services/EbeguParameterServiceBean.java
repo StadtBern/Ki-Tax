@@ -64,9 +64,8 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	public void removeEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		Optional<EbeguParameter> parameterToRemove = findEbeguParameter(id);
-		parameterToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeEbeguParameter", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
-		//noinspection OptionalGetWithoutIsPresent
-		persistence.remove(parameterToRemove.get());
+		EbeguParameter param = parameterToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeEbeguParameter", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
+		persistence.remove(param);
 	}
 
 	@Override
@@ -85,12 +84,13 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Nonnull
 	public Collection<EbeguParameter> getEbeguParameterByGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
-		ArrayList<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
+		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		if (collect.isEmpty()) {
 			createEbeguParameterListForGesuchsperiode(gesuchsperiode);
 			ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
 			collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		}
+		collect.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 		return collect;
 	}
 
@@ -98,12 +98,13 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Nonnull
 	public Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
-		ArrayList<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
+		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		if (collect.isEmpty()) {
 			createEbeguParameterListForJahr(jahr);
 			ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
 			collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		}
+		collect.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 		return collect;
 	}
 
@@ -138,17 +139,22 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	}
 
 	private void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
-		// Die Parameter des letzten Jahres suchen
-		Collection<EbeguParameter> lastYearParameterList = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
-		lastYearParameterList.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
+		// Die Parameter des letzten Jahres suchen (datumAb -1 Tag)
+		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
 			EbeguParameter newParameter = lastYearParameter.copy(gesuchsperiode.getGueltigkeit());
 			saveEbeguParameter(newParameter);
 		});
 	}
 
+	/**
+	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
+	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
+	 * @param jahr
+	 */
 	private void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
-		Collection<EbeguParameter> lastYearParameterList = getAllEbeguParameterByDate(LocalDate.of(jahr-1, Month.JANUARY, 1));
-		lastYearParameterList.stream().filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
+		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(LocalDate.of(jahr-1, Month.JANUARY, 1));
+		paramsOfYear.stream().filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
 			EbeguParameter newParameter = lastYearParameter.copy(new DateRange(jahr));
 			saveEbeguParameter(newParameter);
 		});

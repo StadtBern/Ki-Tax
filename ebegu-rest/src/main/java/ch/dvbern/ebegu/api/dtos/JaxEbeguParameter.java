@@ -16,6 +16,9 @@ public class JaxEbeguParameter extends JaxAbstractDateRangedDTO {
 
 	private static final long serialVersionUID = 2539868697910194410L;
 
+	/**
+	 * value of the parameter
+	 */
 	@NotNull
 	private String value = null;
 

@@ -18,7 +18,7 @@ import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertViola
 /**
  * Tests der den Validator fuer die Werte in Betreuungspensum checkt
  */
-@Ignore
+@Ignore  //todo homa mock param service for this test
 public class CheckBetreuungspensumValidatorTest {
 
 	@Test

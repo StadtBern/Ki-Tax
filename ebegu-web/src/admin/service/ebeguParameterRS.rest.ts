@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSEbeguParameter from '../../models/TSEbeguParameter';
-import {IHttpService, IPromise, IHttpPromise} from 'angular';
+import {IHttpService, IPromise} from 'angular';
 import {TSEbeguParameterKey} from '../../models/enums/TSEbeguParameterKey';
 import DateUtil from '../../utils/DateUtil';
 
@@ -53,8 +53,8 @@ export class EbeguParameterRS {
             });
     }
 
-    public getEbeguParameterByJahr(jahr: number): IPromise<TSEbeguParameter[]> {
-        return this.http.get(this.serviceURL + '/jahr/' + jahr)
+    public getEbeguParameterByJahr(year: number): IPromise<TSEbeguParameter[]> {
+        return this.http.get(this.serviceURL + '/year/' + year)
             .then((response: any) => {
                 return this.ebeguRestUtil.parseEbeguParameters(response.data);
             });

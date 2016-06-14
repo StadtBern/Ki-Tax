@@ -17,7 +17,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
- * Validator fuer Betreuungspensen
+ * Validator for Betreuungspensen, checks that the entered betreuungspensum is bigger than the minimum
+ * that is allowed for the Betreungstyp for a given date
  */
 public class CheckBetreuungspensumValidator implements ConstraintValidator<CheckBetreuungspensum, Betreuung> {
 
@@ -49,7 +50,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	/**
 	 * Returns the corresponding minimum value for the given betreuungsangebotTyp.
 	 * @param betreuungsangebotTyp betreuungsangebotTyp
-	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't much any
+	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't match any
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
      */
 	private int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp) {

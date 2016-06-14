@@ -81,7 +81,7 @@ public class EbeguParameterResource {
 	}
 
 
-	@ApiOperation(value = "Find a E-BEGU parameter by its unique name (called key)",
+	@ApiOperation(value = "Find a E-BEGU parameter by its unique name",
 		response = JaxEbeguParameter.class)
 	@Nullable
 	@GET
@@ -111,7 +111,7 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter by date")
+	@ApiOperation(value = "Get all E-BEGU parameter that are valid at a certain date")
 	@Nonnull
 	@GET
 	@Path("/date")
@@ -129,7 +129,7 @@ public class EbeguParameterResource {
 			.collect(Collectors.toList());
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter by date")
+	@ApiOperation(value = "Get all E-BEGU parameter for a specific Gesuchsperiode. The id of the gesuchsperiode is passed  as a pathParam")
 	@Nonnull
 	@GET
 	@Path("/gesuchsperiode/{id}")
@@ -146,17 +146,17 @@ public class EbeguParameterResource {
 				.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
 				.collect(Collectors.toList());
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
-	@ApiOperation(value = "Get all E-BEGU parameter by date")
+	@ApiOperation(value = "Get all E-BEGU for a year")
 	@Nonnull
 	@GET
-	@Path("/jahr/{jahr}")
+	@Path("/year/{year}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxEbeguParameter> getEbeguParameterByJahr (
-		@Nonnull @NotNull @PathParam("jahr") Integer jahr) {
+		@Nonnull @NotNull @PathParam("year") Integer jahr) {
 
 		return ebeguParameterService.getEbeguParameterByJahr(jahr).stream()
 			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
@@ -166,18 +166,18 @@ public class EbeguParameterResource {
 	@ApiOperation(value = "Get all E-BEGU parameter by key and date")
 	@Nullable
 	@GET
-	@Path("/name/{key}")
+	@Path("/name/{name}")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxEbeguParameter getEbeguParameterByKeyAndDate (
-		@Nonnull @PathParam("key") String key,
+		@Nonnull @PathParam("name") String name,
 		@Nullable @QueryParam("date") String stringDate) {
 
 		LocalDate date = LocalDate.now();
 		if (stringDate != null && !stringDate.isEmpty()) {
 			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
-		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(key);
+		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(name);
 		Optional<EbeguParameter> optional  = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
 		if (optional.isPresent()) {
 			return converter.ebeguParameterToJAX(optional.get());

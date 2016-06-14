@@ -18,7 +18,7 @@ import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertViola
 /**
  * Test fuer {@link ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlappingValidator}
  */
-@Ignore
+@Ignore //todo homa mock param service for this test
 public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 
 	@Test

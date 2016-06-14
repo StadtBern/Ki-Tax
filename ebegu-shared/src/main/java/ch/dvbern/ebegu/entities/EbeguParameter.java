@@ -7,7 +7,10 @@ import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -49,12 +52,16 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 		this.value = value;
 	}
 
+	/**
+	 * @param gueltigkeit
+	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
+	 */
 	public EbeguParameter copy(DateRange gueltigkeit) {
-		EbeguParameter that = new EbeguParameter();
-		that.setGueltigkeit(gueltigkeit);
-		that.setName(this.getName());
-		that.setValue(this.getValue());
-		return that;
+		EbeguParameter copiedParam = new EbeguParameter();
+		copiedParam.setGueltigkeit(gueltigkeit);
+		copiedParam.setName(this.getName());
+		copiedParam.setValue(this.getValue());
+		return copiedParam;
 	}
 
 	public BigDecimal getAsBigDecimal() {

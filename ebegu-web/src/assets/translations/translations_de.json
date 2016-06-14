@@ -1,7 +1,7 @@
 {
     "AB": "Ab",
     "AKTION": "Aktion",
-    "AKTUALISIEREN": "Aktualisieren",
+    "UPDATE": "Aktualisieren",
     "APP_TITLE": "ebegu",
     "ADMIN": "Administration",
     "BISHER_GS": "Eingabe Gesuchsteller: ",
@@ -463,6 +463,7 @@
     "PARAM_PENSUM_TAGI_MIN": "Min Pensum Tagesstätten",
     "PARAM_PENSUM_KITA_MIN": "Min Pensum Kitas",
     "PARAM_PENSUM_TAGESELTERN_MIN": "Min Pensum Tageseltern",
+    "PARAM_PENSUM_TAGESSCHULE_MIN": "Min Pensum Tagesschule",
     "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3": "Pauschalabzug bei einer Familiengrösse von drei Personen pauschal pro Person",
     "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4": "Pauschalabzug bei einer Familiengrösse von vier Personen pauschal pro Person",
     "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5": "Pauschalabzug bei einer Familiengrösse von fünf Personen pauschal pro Person",

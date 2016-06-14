@@ -45,14 +45,20 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	public Optional<Gesuchsperiode> findGesuchsperiode(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Gesuchsperiode gesuchsperiode =  persistence.find(Gesuchsperiode.class, key);
+		Gesuchsperiode gesuchsperiode = persistence.find(Gesuchsperiode.class, key);
 		return Optional.ofNullable(gesuchsperiode);
 	}
 
 	@Nonnull
 	@Override
 	public Collection<Gesuchsperiode> getAllGesuchsperioden() {
-		return criteriaQueryHelper.getAll(Gesuchsperiode.class);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.select(root);
+		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return persistence.getCriteriaResults(query);
+
 	}
 
 	@Override
@@ -69,6 +75,9 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		return criteriaQueryHelper.getEntitiesByAttribute(Gesuchsperiode.class, true, Gesuchsperiode_.active);
 	}
 
+	/**
+	 * @return all Gesuchsperioden that have a gueltigkeitBis Date that is in the future (compared to the current date)
+	 */
 	@Override
 	@Nonnull
 	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
@@ -84,6 +93,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		query.where(predicate);
 		TypedQuery<Gesuchsperiode> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(dateParam, LocalDate.now());
+		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return q.getResultList();
 	}
 }

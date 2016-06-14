@@ -62,7 +62,7 @@ public enum EbeguParameterKey {
 	// Max Abwesenheit
 	PARAM_MAX_TAGE_ABWESENHEIT,
 
-	// Abgeltung des Kantons pro Tag (Achtung: Kann auf den 1.1. ändern!)
+	// Abgeltung des Kantons pro Tag (Achtung: Kann auf den 1.1. aendern! Im Gegensatz zu den anderen Parametern)
 	PARAM_ABGELTUNG_PRO_TAG_KANTON(Boolean.FALSE);
 
 	private boolean proGesuchsperiode;
