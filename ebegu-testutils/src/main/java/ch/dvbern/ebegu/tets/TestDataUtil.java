@@ -201,4 +201,12 @@ public final class TestDataUtil {
 		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return gesuchsperiode;
 	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return instStammdaten;
+	}
 }
