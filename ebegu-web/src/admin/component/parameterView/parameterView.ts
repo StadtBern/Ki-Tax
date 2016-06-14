@@ -11,6 +11,7 @@ import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
 let template = require('./parameterView.html');
+let style = require('./parameterView.less');
 
 export class ParameterViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
