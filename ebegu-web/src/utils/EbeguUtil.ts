@@ -1,5 +1,6 @@
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {IFilterService} from 'angular';
+import TSAbstractEntity from '../models/TSAbstractEntity';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert 
@@ -60,5 +61,17 @@ export default class EbeguUtil {
             return fallnummerString;
         }
         return undefined;
+    }
+
+
+    public static getIndexOfElementwithID(entityToSearch: TSAbstractEntity, listToSearchIn: Array<any>): number {
+        var idToSearch = entityToSearch.id;
+        for (var i = 0; i < listToSearchIn.length; i++) {
+            if (listToSearchIn[i].id === idToSearch) {
+                return i;
+            }
+        }
+        return -1;
+
     }
 }

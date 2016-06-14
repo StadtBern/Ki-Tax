@@ -65,11 +65,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	}
 
 	@Override
+	@Nonnull
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
 		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
-		if(resultList== null){
-			resultList = new ArrayList<InstitutionStammdaten>();
-		}
 		return resultList;
 	}
 

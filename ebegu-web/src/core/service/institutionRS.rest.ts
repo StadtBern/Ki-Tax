@@ -52,7 +52,7 @@ export class InstitutionRS {
 
     }
 
-    public removeInstitution(institutionID: string): IHttpPromise<TSInstitution> {
+    public removeInstitution(institutionID: string): IHttpPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(institutionID));
     }
 

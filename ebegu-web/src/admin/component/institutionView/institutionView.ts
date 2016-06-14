@@ -1,17 +1,17 @@
-import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
+import {IComponentOptions} from 'angular';
 import './institutionView.less';
 import TSInstitution from '../../../models/TSInstitution';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
-import IPromise = angular.IPromise;
 import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import {TSMandant} from '../../../models/TSMandant';
 import TSAdresse from '../../../models/TSAdresse';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import IPromise = angular.IPromise;
 let template = require('./institutionView.html');
+let style = require('./institutionView.less');
 
 export class InstitutionViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -27,7 +27,7 @@ export class InstitutionViewComponentConfig implements IComponentOptions {
 
 export class InstitutionViewController {
 
-    static $inject = ['InstitutionRS', 'MAX_LENGTH', 'EbeguUtil', 'InstitutionStammdatenRS'];
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS'];
 
     institutionRS: InstitutionRS;
     institutionStammdatenRS: InstitutionStammdatenRS;
@@ -40,14 +40,13 @@ export class InstitutionViewController {
     isSelected: boolean = false;
     selectedInstitutionStammdaten: TSInstitutionStammdaten = null;
     isSelectedStammdaten: boolean = false;
-    createInstitutionMode : boolean = false;
-    createInstitutionStammdatenMode : boolean = false;
+
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
 
     //
     /* @ngInject */
-    constructor(institutionRS: InstitutionRS,  MAX_LENGTH: number, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS) {
+    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS) {
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
@@ -71,11 +70,15 @@ export class InstitutionViewController {
         this.institutionStammdatenRS.getAllInstitutionStammdatenByInstitution(this.selectedInstitution.id).then((loadedInstStammdaten) => {
             this.instStammdatenList = loadedInstStammdaten;
         });
-        this.createInstitutionMode = false;
     }
 
     isCreateInstitutionsMode(): boolean {
-        return this.createInstitutionMode;
+        return this.selectedInstitution.isNew();
+
+    }
+
+    isCreateStammdatenMode(): boolean {
+        return this.selectedInstitutionStammdaten.isNew();
     }
 
     getSelectedInstitution(): TSInstitution {
@@ -87,11 +90,15 @@ export class InstitutionViewController {
     }
 
     removeInstitution(institution: any): void {
-        this.institutionRS.removeInstitution(institution.id);
-        var index = this.institutionen.indexOf(institution, 0);
-        if (index > -1) {
-            this.institutionen.splice(index, 1);
-        }
+        this.selectedInstitution = null;
+        this.isSelected = false;
+        this.institutionRS.removeInstitution(institution.id).then((response) => {
+            var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+            if (index > -1) {
+                this.institutionen.splice(index, 1);
+            }
+        });
+
     }
 
     createInstitution(): void {
@@ -101,25 +108,25 @@ export class InstitutionViewController {
         this.selectedInstitutionStammdaten = null;
         this.isSelectedStammdaten = false;
         this.instStammdatenList = [];
-        this.createInstitutionMode = true;
     }
 
-    saveInstitution() : void {
+    saveInstitution(): void {
         this.isSelected = false;
 
-        if (this.createInstitutionMode === true) {
+        if (this.isCreateInstitutionsMode() === true) {
             this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                 this.institutionen.push(institution);
             });
-        }else {
+        } else {
             this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                var index = this.institutionen.indexOf(institution, 0);
+                var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                 if (index > -1) {
                     this.institutionen[index] = institution;
                 }
             });
         }
-        this.createInstitutionMode = false;
+        this.selectedInstitution = null;
+
     }
 
     getSelectedInstitutionStammdatenList(): TSInstitutionStammdaten[] {
@@ -130,7 +137,6 @@ export class InstitutionViewController {
         this.selectedInstitutionStammdaten = institutionStammdaten;
         this.selectedInstitutionStammdatenBetreuungsangebot = this.getBetreuungsangebotFromInstitutionList(institutionStammdaten.betreuungsangebotTyp);
         this.isSelectedStammdaten = true;
-        this.createInstitutionStammdatenMode = false;
     }
 
     getSelectedInstitutionStammdaten(): TSInstitutionStammdaten {
@@ -146,36 +152,37 @@ export class InstitutionViewController {
         this.selectedInstitutionStammdaten.adresse = new TSAdresse();
         this.selectedInstitutionStammdaten.institution = this.selectedInstitution;
         this.isSelectedStammdaten = true;
-        this.createInstitutionStammdatenMode = true;
     }
 
-    saveInstitutionStammdaten() : void {
+    saveInstitutionStammdaten(): void {
         this.isSelectedStammdaten = false;
         this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
 
-        if (this.createInstitutionStammdatenMode === true) {
+        if (this.isCreateStammdatenMode()) {
             this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
                 this.instStammdatenList.push(institutionStammdaten);
             });
-        }else {
+        } else {
             this.institutionStammdatenRS.updateInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
-                var index = this.instStammdatenList.indexOf(institutionStammdaten, 0);
+                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
                 if (index > -1) {
                     this.instStammdatenList[index] = institutionStammdaten;
                 }
             });
         }
-        this.createInstitutionStammdatenMode = false;
+        this.selectedInstitutionStammdaten = null;
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
-        this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id);
-        var index = this.instStammdatenList.indexOf(institutionStammdaten, 0);
-        if (index > -1) {
-            this.instStammdatenList.splice(index, 1);
-        }
-        this.isSelectedStammdaten = false;
-        this.createInstitutionStammdatenMode = false;
+        this.institutionStammdatenRS.removeInstitutionStammdaten(institutionStammdaten.id).then((result) => {
+
+            var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+            if (index > -1) {
+                this.instStammdatenList.splice(index, 1);
+            }
+            this.isSelectedStammdaten = false;
+        });
+
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -189,9 +196,9 @@ export class InstitutionViewController {
     }
 
     isKita(): boolean {
-        if (this.selectedInstitutionStammdatenBetreuungsangebot != null && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.KITA) {
+        if (this.selectedInstitutionStammdatenBetreuungsangebot && this.selectedInstitutionStammdatenBetreuungsangebot.key === TSBetreuungsangebotTyp.KITA) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }

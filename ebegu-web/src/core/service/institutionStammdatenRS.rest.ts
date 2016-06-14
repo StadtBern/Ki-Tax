@@ -49,7 +49,7 @@ export class InstitutionStammdatenRS {
         );
     }
 
-    public removeInstitutionStammdaten(institutionStammdatenID: string): IHttpPromise<TSInstitutionStammdaten> {
+    public removeInstitutionStammdaten(institutionStammdatenID: string): IHttpPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(institutionStammdatenID));
     }
 

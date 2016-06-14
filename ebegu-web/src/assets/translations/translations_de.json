@@ -493,6 +493,8 @@
     "INSTITUTION_STAMMDATEN": "Institution Stammdaten,",
     "INSTITUTION_STAMMDATEN_NOCH_KEINE": "Noch keine Institution Stammdaten",
     "INSTITUTION_STAMMDATEN_HINZUFUEGEN": "Institution Stammdaten hinzufügen",
+    "OEFFNUNGSTAGE": "Öffnungstage",
+    "OEFFNUNGSSTUNDEN": "Öffnungsstunden",
     "INSTITUTION_STAMMDATEN_SPEICHERN": "Institution Stammdaten speichern"
 }
 

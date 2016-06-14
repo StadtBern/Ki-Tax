@@ -51,7 +51,7 @@ public class InstitutionResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(
+	public Response createInstitution(
 		@Nonnull @NotNull JaxInstitution institutionJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -74,8 +74,8 @@ public class InstitutionResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxInstitution update(
-		@Nonnull @NotNull JaxInstitution institutionJAXP,
+	public JaxInstitution updateInstitution(
+		@Nonnull @NotNull @Valid JaxInstitution institutionJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -108,7 +108,7 @@ public class InstitutionResource {
 		return converter.institutionToJAX(optional.get());
 	}
 
-	@ApiOperation(value = "Remove an Institution by his institution-id as parameter")
+	@ApiOperation(value = "Remove an Institution logically by his institution-id as parameter")
 	@Nullable
 	@DELETE
 	@Path("/{institutionId}")

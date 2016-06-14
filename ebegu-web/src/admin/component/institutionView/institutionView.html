@@ -5,19 +5,19 @@
         <form ng-submit="" role="form" name="form" class="" unsaved-warning-form="" novalidate>
 
             <div class="row">
-                <div class="col-md-12 table-responsive">
 
-                    <!--Tabelle zum anzeigen aller Institutionen--></div>
+
+                <!--Tabelle zum anzeigen aller Institutionen-->
                 <div class="col-md-12 table-responsive">
                     <table st-table="displayedCollection" st-safe-src="vm.getInstitutionenList()"
                            class="table table-striped table-hover" st-delay="20">
                         <thead>
                         <tr>
-                            <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION"></th>
+                            <th st-sort="name" class="sortable" data-translate="INSTITUTION"></th>
                             <th></th>
                         </tr>
                         <tr>
-                            <th><input st-search="institutionen" class="form-control"
+                            <th><input st-search="name" class="form-control"
                                        placeholder="Suche nach Institutionen"
                                        type="text"/></th>
                             <th></th>
@@ -72,99 +72,109 @@
                     <div class="col-md-11 col-md-offset-1" ng-if="vm.isSelectedInstitution()">
                         <div class="form-group">
 
-                            <!--Name der Institution-->
-                            <dv-input-container class="form-group">
-                                <label data-translate="NAME" for="name_ID"></label>
-                                <input id="name_ID" type="text" name="name" ng-model="vm.getSelectedInstitution().name"
-                                       dv-max-length class="form-control" required>
-                                <dv-error-messages for="form.name_ID.$error"
-                                                   class="error"></dv-error-messages>
-                            </dv-input-container>
-
-                            <!--Auswahl der Trägerschaft-->
-                            <div class="form-group">
-                                <label data-translate="TRAEGERSCHAFT" for="traegerschaft_ID"></label>
-                                <select name="traegerschaft_ID" id="traegerschaft_ID" class="form-control"
-                                        ng-model="vm.getSelectedInstitution().traegerschaft"
-                                        ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
-                                        ng-required="true">
-                                </select>
-                                <dv-error-messages for="form.traegerschaft_ID.$error"
-                                                   class="error"></dv-error-messages>
+                            <div class="row">
+                                <!--Name der Institution-->
+                                <dv-input-container class="form-group col-md-6">
+                                    <label data-translate="NAME" for="name_ID"></label>
+                                    <input id="name_ID" type="text" name="name"
+                                           ng-model="vm.getSelectedInstitution().name"
+                                           dv-max-length class="form-control" required>
+                                    <dv-error-messages for="form.name_ID.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
                             </div>
 
-                            <!--Auswahl des Mandanten. Heute immer fix-->
-                            <dv-input-container class="form-group">
-                                <label data-translate="MANDANT" for="mandant_ID"></label>
-                                <output id="mandant_ID" type="text" name="mandant_ID"
-                                        ng-model="vm.getSelectedInstitution().mandant.name"
-                                        dv-max-length class="form-control" required disabled="true"></output>
-                            </dv-input-container>
+                            <!--Auswahl der Trägerschaft-->
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label data-translate="TRAEGERSCHAFT" for="traegerschaft_ID"></label>
+                                    <select name="traegerschaft_ID" id="traegerschaft_ID" class="form-control"
+                                            ng-model="vm.getSelectedInstitution().traegerschaft"
+                                            ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
+                                            ng-required="true">
+                                    </select>
+                                    <dv-error-messages for="form.traegerschaft_ID.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!--Auswahl des Mandanten. Heute immer fix-->
+                                <dv-input-container class="form-group col-md-6">
+                                    <label data-translate="MANDANT" for="mandant_ID"></label>
+                                    <output id="mandant_ID" type="text" name="mandant_ID"
+                                            ng-model="vm.getSelectedInstitution().mandant.name"
+                                            dv-max-length class="form-control" required disabled="true"></output>
+                                </dv-input-container>
+                            </div>
 
                             <!--Wird nur Angegeigt, wenn neue Institution erstellt wird:-->
-                            <div ng-if="!vm.isCreateInstitutionsMode()">
+                            <div ng-if="!vm.isCreateInstitutionsMode()" class="row">
+                                <div class="col-md-12">
 
-                                <!--Tabelle zum Anzeigen aller Institutions-Stammdaten-->
-                                <table st-table="displayedCollection"
-                                       st-safe-src="vm.getSelectedInstitutionStammdatenList()"
-                                       class="table table-striped table-hover" st-delay="20"
-                                       disabled="vm.isCreateInstitutionsMode()">
-                                    <thead>
-                                    <tr>
-                                        <th st-sort="institutionenStammdaten" class="sortable"
-                                            data-translate="INSTITUTION_STAMMDATEN"></th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <th><input st-search="institutionenStammdaten" class="form-control"
-                                                   placeholder="Suche nach Institution Stammdaten"
-                                                   type="text"/></th>
-                                        <th></th>
-                                    </tr>
+                                    <!--Tabelle zum Anzeigen aller Institutions-Stammdaten-->
+                                    <table st-table="displayedCollection"
+                                           st-safe-src="vm.getSelectedInstitutionStammdatenList()"
+                                           class="table table-striped table-hover" st-delay="20"
+                                           disabled="vm.isCreateInstitutionsMode()">
+                                        <thead>
+                                        <tr>
+                                            <th st-sort="betreuungsangebotTyp" class="sortable"
+                                                data-translate="INSTITUTION_STAMMDATEN"></th>
+                                            <th></th>
+                                        </tr>
+                                        <!--suche brauchen wir hier wohl nicht-->
+                                        <!--<tr>-->
+                                        <!--<th><input st-search="institutionenStammdaten" class="form-control"-->
+                                        <!--placeholder="Suche nach Institution Stammdaten"-->
+                                        <!--type="text"/></th>-->
+                                        <!--<th></th>-->
+                                        <!--</tr>-->
 
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="row in displayedCollection" st-select-row="row"
-                                        st-select-mode="single"
-                                        ng-click="vm.setSelectedInstitutionStammdaten(row)">
-                                        <td ng-bind="vm.getBetreuungsangebotFromInstitutionList( row.betreuungsangebotTyp).value"></td>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="row in displayedCollection" st-select-row="row"
+                                            st-select-mode="single"
+                                            ng-click="vm.setSelectedInstitutionStammdaten(row)">
+                                            <td ng-bind="vm.getBetreuungsangebotFromInstitutionList( row.betreuungsangebotTyp).value"></td>
 
-                                        <td ng-click="$event.stopPropagation()">
-                                            <button type="button" ng-click="vm.removeInstitutionStammdaten(row)"
-                                                    class="btn btn-sm">
-                                                <i class="fa fa-minus">
-                                                </i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="vm.getSelectedInstitutionStammdatenList().length === 0">
-                                        <td colspan="4" class="empty-table"
-                                            data-translate="INSTITUTION_STAMMDATEN_NOCH_KEINE"></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                            <td ng-click="$event.stopPropagation()">
+                                                <button type="button" ng-click="vm.removeInstitutionStammdaten(row)"
+                                                        class="btn btn-sm">
+                                                    <i class="fa fa-minus">
+                                                    </i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr ng-if="vm.getSelectedInstitutionStammdatenList().length === 0">
+                                            <td colspan="4" class="empty-table"
+                                                data-translate="INSTITUTION_STAMMDATEN_NOCH_KEINE"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
 
-                                <!--Knöpfe unterhalb der Tabelle zum Anzeigen aller Institutions-Stammdaten-->
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
-                                            <button type="button" ng-click="vm.createInstitutionStammdaten()"
-                                                    class="btn btn-sm btn-success">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                                <span data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
-                                            </button>
+                                    <!--Knöpfe unterhalb der Tabelle zum Anzeigen aller Institutions-Stammdaten-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
+                                                <button type="button" ng-click="vm.createInstitutionStammdaten()"
+                                                        class="btn btn-sm btn-success">
+                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                    <span data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group secondColumn">
-                                            <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
-                                            <button type="button" ng-click="vm.saveInstitutionStammdaten()"
-                                                    class="btn btn-sm btn-success"
-                                                    ng-disabled="!vm.isSelectedInstitutionStammdaten()">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                                <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>
-                                            </button>
+                                        <div class="col-md-6">
+                                            <div class="form-group secondColumn">
+                                                <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
+                                                <button type="button" ng-click="vm.saveInstitutionStammdaten()"
+                                                        class="btn btn-sm btn-success"
+                                                        ng-disabled="!vm.isSelectedInstitutionStammdaten()">
+                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                    <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -173,97 +183,102 @@
                             <!--Anzeigen der gewählten InstitutionStammdaten -->
                             <div class="row">
                                 <div class="col-md-11 col-md-offset-1" ng-if="vm.isSelectedInstitutionStammdaten()">
-                                    <div class="form-group">
+                                    <div class="form-group row">
 
                                         <!--Betreuungsangebot auswählen-->
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
                                             </label>
                                             <select name="betreuungsangebot" id="betreuungsangebot" class="form-control"
                                                     ng-model="vm.selectedInstitutionStammdatenBetreuungsangebot"
                                                     ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
                                                     ng-required="true"
-                                                    ng-disabled="!vm.createInstitutionStammdatenMode">
+                                                    ng-disabled="!vm.isCreateStammdatenMode()">
                                             </select>
                                             <dv-error-messages for="form.betreuungsangebot.$error"
                                                                class="error"></dv-error-messages>
                                         </div>
+                                    </div>
 
-                                        <!--Dieser Teil wird nur angezeigt, wenn das Betreuungsangebot eine Kita ist-->
-                                        <div ng-if="vm.isKita()">
+                                    <!--Dieser Teil wird nur angezeigt, wenn das Betreuungsangebot eine Kita ist-->
+                                    <div ng-if="vm.isKita()">
 
-                                            <!--IBAN-->
-                                            <dv-input-container class="form-group">
-                                                <label data-translate="IBAN" for="iban"></label>
-                                                <input id="iban" type="text" name="iban"
-                                                       ng-model="vm.getSelectedInstitutionStammdaten().iban"
-                                                       dv-max-length class="form-control" required>
-                                                <dv-error-messages for="form.iban.$error"
-                                                                   class="error"></dv-error-messages>
-                                            </dv-input-container>
-
-                                            <!--Ab Wann / Bis-->
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <dv-input-container class="form-group">
-                                                        <label data-translate="AB" for="angebotAbID">
-                                                        </label>
-                                                        <dv-datepicker input-id="angebotAbID" name="angebotAb"
-                                                                       ng-model="vm.getSelectedInstitutionStammdaten().gueltigkeit.gueltigAb"
-                                                                       ng-required="true" class="input-element"
-                                                                       placeholder="">
-                                                        </dv-datepicker>
-                                                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                                        <dv-error-messages for="form.angebotAb.$error"
-                                                                           class="error hint"></dv-error-messages>
-                                                    </dv-input-container>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <dv-input-container class="form-group">
-                                                        <label data-translate="BIS" for="angebotBisID">
-                                                        </label>
-                                                        <dv-datepicker input-id="angebotBisID" name="angebotBis"
-                                                                       placeholder=""
-                                                                       ng-model="vm.getSelectedInstitutionStammdaten().gueltigkeit.gueltigBis"
-                                                                       ng-required="false" class="input-element">
-                                                        </dv-datepicker>
-                                                        <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                                        <dv-error-messages for="form.angebotBis.$error"
-                                                                           class="error hint"></dv-error-messages>
-                                                    </dv-input-container>
-                                                </div>
+                                        <!--IBAN-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <dv-input-container class="form-group">
+                                                    <label data-translate="IBAN" for="iban"></label>
+                                                    <input id="iban" type="text" name="iban"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().iban"
+                                                           dv-max-length class="form-control" required>
+                                                    <dv-error-messages for="form.iban.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
                                             </div>
+                                        </div>
 
-                                            <!--Oeffnungtage und Oeffnungsstunden-->
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <dv-input-container class="form-group">
-                                                        <label data-translate="OEFFNUNGSTAGE"
-                                                               for="oeffnungstage"></label>
-                                                        <input id="oeffnungstage" type="text" name="oeffnungstage"
-                                                               ng-model="vm.getSelectedInstitutionStammdaten().oeffnungstage"
-                                                               dv-max-length class="form-control" required
-                                                               ng-disabled="!vm.createInstitutionStammdatenMode">
-                                                        <dv-error-messages for="form.oeffnungstage.$error"
-                                                                           class="error"></dv-error-messages>
-                                                    </dv-input-container>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <dv-input-container class="form-group secondColumn">
-                                                        <label data-translate="OEFFNUNGSSTUNDEN"
-                                                               for="oeffnungsstunden"></label>
-                                                        <input id="oeffnungsstunden" type="text" name="oeffnungsstunden"
-                                                               ng-model="vm.getSelectedInstitutionStammdaten().oeffnungsstunden"
-                                                               dv-max-length class="form-control" required
-                                                               ng-disabled="!vm.createInstitutionStammdatenMode">
-                                                        <dv-error-messages for="form.oeffnungsstunden.$error"
-                                                                           class="error"></dv-error-messages>
-                                                    </dv-input-container>
+                                        <!--Ab Wann / Bis-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <dv-input-container class="form-group">
+                                                    <label data-translate="AB" for="angebotAbID">
+                                                    </label>
+                                                    <dv-datepicker input-id="angebotAbID" name="angebotAb"
+                                                                   ng-model="vm.getSelectedInstitutionStammdaten().gueltigkeit.gueltigAb"
+                                                                   ng-required="true" class="input-element"
+                                                                   placeholder="">
+                                                    </dv-datepicker>
+                                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                                    <dv-error-messages for="form.angebotAb.$error"
+                                                                       class="error hint"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <dv-input-container class="form-group">
+                                                    <label data-translate="BIS" for="angebotBisID">
+                                                    </label>
+                                                    <dv-datepicker input-id="angebotBisID" name="angebotBis"
+                                                                   placeholder=""
+                                                                   ng-model="vm.getSelectedInstitutionStammdaten().gueltigkeit.gueltigBis"
+                                                                   ng-required="false" class="input-element">
+                                                    </dv-datepicker>
+                                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                                    <dv-error-messages for="form.angebotBis.$error"
+                                                                       class="error hint"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                        </div>
 
-                                                </div>
+                                        <!--Oeffnungtage und Oeffnungsstunden-->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <dv-input-container class="form-group">
+                                                    <label data-translate="OEFFNUNGSTAGE"
+                                                           for="oeffnungstage"></label>
+                                                    <input id="oeffnungstage" type="text" name="oeffnungstage"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().oeffnungstage"
+                                                           dv-max-length class="form-control" required
+                                                           ng-disabled="!vm.isCreateStammdatenMode()">
+                                                    <dv-error-messages for="form.oeffnungstage.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <dv-input-container class="form-group secondColumn">
+                                                    <label data-translate="OEFFNUNGSSTUNDEN"
+                                                           for="oeffnungsstunden"></label>
+                                                    <input id="oeffnungsstunden" type="text" name="oeffnungsstunden"
+                                                           ng-model="vm.getSelectedInstitutionStammdaten().oeffnungsstunden"
+                                                           dv-max-length class="form-control" required
+                                                           ng-disabled="!vm.isCreateStammdatenMode()">
+                                                    <dv-error-messages for="form.oeffnungsstunden.$error"
+                                                                       class="error"></dv-error-messages>
+                                                </dv-input-container>
+
                                             </div>
                                         </div>
                                     </div>
+
 
                                     <!--Adresse-->
                                     <dv-adresse adresse="vm.getSelectedInstitutionStammdaten().adresse"></dv-adresse>
