@@ -9,7 +9,6 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +19,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Provider
 @PreMatching
@@ -83,7 +80,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 
 			try {
 				// EJB Container Login
-				request.login("pepito", "perez");
+				request.login("baku", "password4");
 //				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
 				// Login Failed

@@ -331,8 +331,16 @@
                         <login-module code="RealmDirect" flag="required">
                             <module-option name="password-stacking" value="useFirstPass"/>
                         </login-module>
-                    </authentication>
+					</authentication>
                 </security-domain>
+				<security-domain name="ebegu">
+					<authentication>
+						<login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
+							<module-option name="usersProperties" value="dummylogin-users.properties"/>
+							<module-option name="rolesProperties" value="dummylogin-roles.properties"/>
+						</login-module>
+					</authentication>
+				</security-domain>
                 <security-domain name="jboss-web-policy" cache-type="default">
                     <authorization>
                         <policy-module code="Delegating" flag="required"/>
