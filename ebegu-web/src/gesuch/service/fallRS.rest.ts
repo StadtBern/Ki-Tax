@@ -15,7 +15,7 @@ export default class FallRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public create(fall: TSFall): IHttpPromise<any> {
+    public createFall(fall: TSFall): IHttpPromise<any> {
         let returnedFall = {};
         returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
         return this.http.post(this.serviceURL, returnedFall, {
@@ -25,7 +25,7 @@ export default class FallRS {
         });
     }
 
-    public update(fall: TSFall): IHttpPromise<any> {
+    public updateFall(fall: TSFall): IHttpPromise<any> {
         let returnedFall = {};
         returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
         return this.http.put(this.serviceURL, returnedFall, {

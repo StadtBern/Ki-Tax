@@ -25,7 +25,7 @@
 
 body {
     //navbar paddingtodo remove me just testing
-    padding-top: 80px;
+    padding-top: @page-start;
     font-family: "Open Sans", Arial, Helvetica, sans-serif;
     .starter-template {
         padding: 40px 15px;
@@ -63,6 +63,19 @@ body {
     font-weight: bolder;
 }
 
+.userMenu{
+    background-size: Auto 40px;
+    background-position: right 20px center;
+    float: right;
+}
+.md-open-menu-container {
+    z-index: 5000;
+}
+.empty-table {
+    font-style: italic;
+    color: gray;
+}
+
 @background-error-color: #ffe6e6;
 
 .ErrorInput {
@@ -98,6 +111,7 @@ form {
     }
 
 }
+
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
    causes the modal to fade in rather than slide in. */

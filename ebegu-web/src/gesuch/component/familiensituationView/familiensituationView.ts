@@ -9,12 +9,16 @@ import {
     TSGesuchstellerKardinalitaet,
     getTSGesuchstellerKardinalitaetValues
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
+import BerechnungsManager from '../../service/berechnungsManager';
+import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./familiensituationView.html');
+require('./familiensituationView.less');
+
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {};
-    template = template;   //todo low prio evtl mit require statt mit import
+    template = template;
     controller = FamiliensituationViewController;
     controllerAs = 'vm';
 }
@@ -24,16 +28,22 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
 
-    static $inject = ['$state', 'GesuchModelManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager) {
-        super($state, gesuchModelManager);
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
+        super($state, gesuchModelManager, berechnungsManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
+        this.initViewModel();
+    }
+
+    private initViewModel(): void {
+        this.gesuchModelManager.initFamiliensituation();
     }
 
     submit($form: IFormController) {
         if ($form.$valid) {
+            this.errorService.clearAll();
             this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
                 this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
             });
@@ -48,6 +58,5 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     public getFamiliensituation(): TSFamiliensituation {
         return this.gesuchModelManager.familiensituation;
     }
-
 
 }

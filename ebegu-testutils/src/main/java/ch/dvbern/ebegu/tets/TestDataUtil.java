@@ -8,6 +8,7 @@ import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 /**
  * comments homa
@@ -47,6 +48,7 @@ public final class TestDataUtil {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
 		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;
@@ -54,7 +56,9 @@ public final class TestDataUtil {
 
 	public static Gesuch createDefaultGesuch() {
 		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
+		gesuch.setEingangsdatum(LocalDate.now());
 		return gesuch;
 	}
 
@@ -164,5 +168,45 @@ public final class TestDataUtil {
 		ep.setZuschlagsprozent(10);
 		ep.setGesundheitlicheEinschraenkungen(false);
 		return ep;
+	}
+
+	public static Betreuung createDefaultBetreuung() {
+		Betreuung betreuung = new Betreuung();
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
+		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+		betreuung.setSchulpflichtig(false);
+		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setKind(createDefaultKindContainer());
+		betreuung.setBemerkungen("Betreuung_Bemerkungen");
+		return betreuung;
+	}
+
+	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
+		BetreuungspensumContainer container = new BetreuungspensumContainer();
+		container.setBetreuung(betreuung);
+		container.setBetreuungspensumGS(TestDataUtil.createBetreuungspensum());
+		container.setBetreuungspensumJA(TestDataUtil.createBetreuungspensum());
+		return container;
+	}
+
+	private static Betreuungspensum createBetreuungspensum() {
+		Betreuungspensum betreuungspensum = new Betreuungspensum();
+		betreuungspensum.setPensum(80);
+		return betreuungspensum;
+	}
+
+	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return gesuchsperiode;
+	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return instStammdaten;
 	}
 }

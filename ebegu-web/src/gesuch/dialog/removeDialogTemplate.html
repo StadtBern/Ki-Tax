@@ -1,0 +1,20 @@
+<md-dialog md-theme="default" aria-label="{{'BETREUUNG_LOESCHEN' | translate}}" ng-class="vm.css" class="md-default-theme md-transition-in"
+           role="dialog" tabindex="-1" aria-describedby="dialogContent">
+
+    <md-dialog-content class="md-dialog-content" role="document" tabindex="-1" id="dialogContent">
+        <h2 class="md-title ng-binding"  ng-bind="vm.title"></h2>
+        <div class="md-dialog-content-body ng-scope"><p class="ng-binding" ng-bind="vm.deleteText"></p></div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <button class="md-primary md-button ng-scope md-default-theme md-ink-ripple" type="button"
+                ng-click="vm.cancel()" aria-label="{{'LABEL_NEIN' | translate}}" style="">
+            <span class="ng-binding ng-scope" data-translate="LABEL_NEIN"></span>
+        </button>
+        <button class="md-primary md-button md-default-theme md-ink-ripple" type="button"
+                ng-click="vm.hide()" md-autofocus="dialog.$type==='alert'" aria-label="{{'LABEL_JA' | translate}}">
+            <span class="ng-binding ng-scope" data-translate="LABEL_JA"></span>
+        </button>
+    </md-dialog-actions>
+
+</md-dialog>

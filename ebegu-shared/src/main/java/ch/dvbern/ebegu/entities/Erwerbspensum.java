@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import java.util.Objects;
  */
 @Entity
 @Audited
+@CheckZuschlagPensum
 public class Erwerbspensum extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = 4649639217797690323L;
@@ -91,19 +93,10 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
 	public boolean isSame(Erwerbspensum otherErwerbspensum) {
-		if (this == otherErwerbspensum) {
-			return true;
-		}
-		if (otherErwerbspensum == null || getClass() != otherErwerbspensum.getClass()) {
-			return false;
-		}
+		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
-		boolean gueltigkeitSame = Objects.equals(this.getGueltigkeit(), otherErwerbspensum.getGueltigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
 		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		boolean pensumSame =  Objects.equals(this.getPensum(), otherErwerbspensum.getPensum());
-		return taetigkeitSame && gueltigkeitSame && zuschlagSame && gesundhSame && pensumSame;
-
-
+		return pensumIsSame && taetigkeitSame &&  zuschlagSame && gesundhSame;
 	}
 }

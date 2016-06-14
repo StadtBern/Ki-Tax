@@ -3,8 +3,6 @@ import Moment = moment.Moment; // TODO kann das über ein anderes Import Format 
 
 export default class DateUtil {
 
-
-
     /**
      * @param {string} localDateTimeString string with format YYYY-MM-DDTHH:mm:ss.SSS
      * @returns {?Moment}
@@ -15,14 +13,23 @@ export default class DateUtil {
     }
 
     /**
+     * Calls momentToLocalDateFormat with the format by default 'YYYY-MM-DD'
+     * @param aMoment
+     * @returns {string}
+     */
+    public static momentToLocalDate(aMoment: Moment): string {
+        return DateUtil.momentToLocalDateFormat(aMoment, 'YYYY-MM-DD');
+    }
+
+    /**
      * @param {Moment} aMoment time instance
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
      */
-    public static momentToLocalDate(aMoment: Moment): string {
+    public static momentToLocalDateFormat(aMoment: Moment, format: string): string {
         if (!aMoment) {
             return undefined;
         }
-        return moment(aMoment).startOf('day').format('YYYY-MM-DD');
+        return moment(aMoment).startOf('day').format(format);
     }
 
 
@@ -45,5 +52,9 @@ export default class DateUtil {
 
     public static today(): Moment {
         return moment().startOf('day');
+    }
+
+    public static currentYear(): number {
+        return moment().year();
     }
 }

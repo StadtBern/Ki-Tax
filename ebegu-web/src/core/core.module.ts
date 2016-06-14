@@ -26,6 +26,14 @@ import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
+import BetreuungRS from './service/betreuungRS';
+import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
+import ErwerbspensumRS from './service/erwerbspensumRS.rest';
+import BerechnungsManager from '../gesuch/service/berechnungsManager';
+import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
+import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
+import {EbeguErrors} from './errors/errors';
+import EbeguUtil from '../utils/EbeguUtil';
 
 let dynamicDependencies = function (): string[] {
 
@@ -46,6 +54,7 @@ const dependencies: string[] = [
     'ngCookies',
     /* shared DVBern modules */
     router.name,
+    EbeguErrors.name,
     /* 3rd-party modules */
     'ui.bootstrap',
     'smart-table',
@@ -53,7 +62,8 @@ const dependencies: string[] = [
     'ngMessages',
     'pascalprecht.translate',
     'angularMoment',
-    'ui.utils.masks'
+    'cfp.hotkeys',
+     'ui.utils.masks'
 
 ];
 
@@ -72,6 +82,7 @@ export const EbeguWebCore: angular.IModule = angular
         PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
     })
     .service('EbeguRestUtil', EbeguRestUtil)
+    .service('EbeguUtil', EbeguUtil)
     .service('GesuchstellerRS', GesuchstellerRS)
     .service('AdresseRS', AdresseRS)
     .service('ListResourceRS', ListResourceRS)
@@ -84,13 +95,19 @@ export const EbeguWebCore: angular.IModule = angular
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
     .service('InstitutionStammdatenRS', InstitutionStammdatenRS)
+    .service('ErwerbspensumRS', ErwerbspensumRS)
     .service('KindRS', KindRS)
     .service('DvDialog', DvDialog)
+    .service('BetreuungRS', BetreuungRS)
+    .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .service('FachstelleRS', FachstelleRS)
+    .service('BerechnungsManager', BerechnungsManager)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
+    .component('dvErwerbspensumList', new DVErwerbspensumListConfig())
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
+    .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());

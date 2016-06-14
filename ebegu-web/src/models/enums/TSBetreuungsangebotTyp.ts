@@ -4,3 +4,12 @@ export enum TSBetreuungsangebotTyp {
     TAGI = <any> 'TAGI',
     TAGESSCHULE = <any> 'TAGESSCHULE'
 }
+
+export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp> {
+    return [
+        TSBetreuungsangebotTyp.KITA,
+        TSBetreuungsangebotTyp.TAGESELTERN,
+        TSBetreuungsangebotTyp.TAGI,
+        TSBetreuungsangebotTyp.TAGESSCHULE
+    ];
+}

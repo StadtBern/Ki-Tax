@@ -13,12 +13,10 @@ import java.util.Set;
  */
 @XmlRootElement(name = "gesuch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxGesuch extends JaxAbstractDTO {
+public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private static final long serialVersionUID = -1217019901364130097L;
 
-	@NotNull
-	private JaxFall fall;
 
 	@Nullable
 	private JaxGesuchsteller gesuchsteller1;
@@ -29,17 +27,11 @@ public class JaxGesuch extends JaxAbstractDTO {
 	@NotNull
 	private Set<JaxKindContainer> kinder = new HashSet<>();
 
+	private Boolean einkommensverschlechterung;
+
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
-	}
-
-	public JaxFall getFall() {
-		return fall;
-	}
-
-	public void setFall(JaxFall fall) {
-		this.fall = fall;
 	}
 
 	@Nullable
@@ -66,6 +58,14 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	public void setKinder(Set<JaxKindContainer> kinder) {
 		this.kinder = kinder;
+	}
+
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
 	}
 }
 

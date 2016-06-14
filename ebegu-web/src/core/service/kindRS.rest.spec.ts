@@ -6,6 +6,7 @@ import {EbeguWebCore} from '../core.module';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
 import TSAbstractEntity from '../../models/TSAbstractEntity';
+import TestDataUtil from '../../utils/TestDataUtil';
 
 describe('KindRS', function () {
 
@@ -28,11 +29,11 @@ describe('KindRS', function () {
     beforeEach(() => {
         gesuchId = '2afc9d9a-957e-4550-9a22-97624a000feb';
         let kindGS: TSKind = new TSKind('Pedro', 'Bern');
-        setAbstractFieldsUndefined(kindGS);
+        TestDataUtil.setAbstractFieldsUndefined(kindGS);
         let kindJA: TSKind = new TSKind('Johan', 'Basel');
-        setAbstractFieldsUndefined(kindJA);
-        mockKind = new TSKindContainer(kindGS, kindJA);
-        setAbstractFieldsUndefined(mockKind);
+        TestDataUtil.setAbstractFieldsUndefined(kindJA);
+        mockKind = new TSKindContainer(kindGS, kindJA, []);
+        TestDataUtil.setAbstractFieldsUndefined(mockKind);
         mockKind.id = '2afc9d9a-957e-4550-9a22-97624a1d8feb';
         mockKindRest = ebeguRestUtil.kindContainerToRestObject({}, mockKind);
     });
@@ -69,57 +70,53 @@ describe('KindRS', function () {
                 $httpBackend.flush();
                 checkFieldValues(foundKind);
             });
+        });
+        describe('createKind', () => {
+            it('should create a Kind', () => {
+                let createdKind: TSKindContainer;
+                $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
 
+                kindRS.createKind(mockKind, gesuchId)
+                    .then((result) => {
+                        createdKind = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(createdKind);
+            });
+        });
+        describe('updateKind', () => {
+            it('should update a Kind', () => {
+                let kindJA2: TSKind = new TSKind('Johan', 'Basel');
+                TestDataUtil.setAbstractFieldsUndefined(kindJA2);
+                mockKind.kindJA = kindJA2;
+                mockKindRest = ebeguRestUtil.kindContainerToRestObject({}, mockKind);
+                let updatedKindContainer: TSKindContainer;
+                $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
+
+                kindRS.updateKind(mockKind, gesuchId)
+                    .then((result) => {
+                        updatedKindContainer = result;
+                    });
+                $httpBackend.flush();
+                checkFieldValues(updatedKindContainer);
+            });
+        });
+        describe('removeKind', () => {
+            it('should remove a Kind', () => {
+                $httpBackend.expectDELETE(kindRS.serviceURL + '/' + encodeURIComponent(mockKind.id))
+                    .respond(200);
+
+                let deleteResult: any;
+                kindRS.removeKind(mockKind.id)
+                    .then((result) => {
+                        deleteResult = result;
+                    });
+                $httpBackend.flush();
+                expect(deleteResult).toBeDefined();
+                expect(deleteResult.status).toEqual(200);
+            });
         });
     });
-    describe('createKind', () => {
-        it('should create a Kind', () => {
-            let createdKind: TSKindContainer;
-            $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
-
-            kindRS.createKind(mockKind, gesuchId)
-                .then((result) => {
-                    createdKind = result;
-                });
-            $httpBackend.flush();
-            checkFieldValues(createdKind);
-        });
-    });
-
-    describe('updateKind', () => {
-        it('should update a Kind', () => {
-            let kindJA2: TSKind = new TSKind('Johan', 'Basel');
-            setAbstractFieldsUndefined(kindJA2);
-            mockKind.kindJA = kindJA2;
-            mockKindRest = ebeguRestUtil.kindContainerToRestObject({}, mockKind);
-            let updatedKindContainer: TSKindContainer;
-            $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
-
-            kindRS.updateKind(mockKind, gesuchId)
-                .then((result) => {
-                    updatedKindContainer = result;
-                });
-            $httpBackend.flush();
-            checkFieldValues(updatedKindContainer);
-        });
-    });
-
-    describe('removeKind', () => {
-        it('should remove a Kind', () => {
-            $httpBackend.expectDELETE(kindRS.serviceURL + '/' + encodeURIComponent(mockKind.id))
-                .respond(200);
-
-            let deleteResult: any;
-            kindRS.removeKind(mockKind.id)
-                .then((result) => {
-                    deleteResult = result;
-                });
-            $httpBackend.flush();
-            expect(deleteResult).toBeDefined();
-            expect(deleteResult.status).toEqual(200);
-        });
-    });
-
 
     function checkFieldValues(foundKind: TSKindContainer) {
         expect(foundKind).toBeDefined();
@@ -128,11 +125,5 @@ describe('KindRS', function () {
         expect(foundKind.kindGS).toEqual(mockKind.kindGS);
         expect(foundKind.kindJA).toBeDefined();
         expect(foundKind.kindJA).toEqual(mockKind.kindJA);
-    }
-
-    function setAbstractFieldsUndefined(abstractEntity: TSAbstractEntity) {
-        abstractEntity.id = undefined;
-        abstractEntity.timestampErstellt = undefined;
-        abstractEntity.timestampMutiert = undefined;
     }
 });

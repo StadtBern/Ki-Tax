@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
+import java.util.Objects;
 
 /**
  * Abstrakte Entitaet. Muss von Entitaeten erweitert werden, die eine Periode (DateRange) mit datumVon und datumBis haben.
@@ -18,6 +19,7 @@ public class AbstractDateRangedEntity extends AbstractEntity {
 
 	@Nonnull
 	@Embedded
+	//@Valid todo team dies einkommentieren fuer die Produktion. Auskommentiert damit wir einfacher Daten automatisch eingeben koennen mit FormFiller
 	private DateRange gueltigkeit = new DateRange();
 
 	@Nonnull
@@ -27,6 +29,17 @@ public class AbstractDateRangedEntity extends AbstractEntity {
 
 	public void setGueltigkeit(@Nonnull DateRange gueltigkeit) {
 		this.gueltigkeit = gueltigkeit;
+	}
+
+	@SuppressWarnings("ObjectEquality")
+	public boolean isSame(AbstractDateRangedEntity otherAbstDateRangedEntity) {
+		if (this == otherAbstDateRangedEntity) {
+			return true;
+		}
+		if (otherAbstDateRangedEntity == null || getClass() != otherAbstDateRangedEntity.getClass()) {
+			return false;
+		}
+		return Objects.equals(this.getGueltigkeit(), otherAbstDateRangedEntity.getGueltigkeit());
 	}
 
 }

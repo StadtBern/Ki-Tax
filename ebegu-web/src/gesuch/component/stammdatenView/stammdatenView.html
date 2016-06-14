@@ -68,6 +68,7 @@
                         <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" aria-label="korrespondenzAdr"
                                      ng-change="vm.korrespondenzAdrClicked()">
                             <span data-translate="KORRESPONDENZADR"></span>
+                            <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
                         <dv-error-messages  for="form.korrespondenzAdr.$error"
                                            class="error"></dv-error-messages>
@@ -101,7 +102,7 @@
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                               ng-pattern="vm.phonePattern">
+                               ng-pattern="vm.mobilePattern">
                         <dv-error-messages  for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
@@ -161,7 +162,7 @@
                     <button class="btn btn-primary" type="submit" data-translate="SAVE"
                             ng-if="vm.getModel().timestampErstellt === undefined">
                     </button>
-                    <button class="btn btn-primary" type="submit" data-translate="AKTUALISIEREN"
+                    <button class="btn btn-primary" type="submit" data-translate="UPDATE"
                             ng-if="vm.getModel().timestampErstellt">
                     </button>
                 </div>

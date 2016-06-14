@@ -33,7 +33,8 @@ module.exports = webpackMerge(commonConfig,  {
     //
     // See: http://webpack.github.io/docs/configuration.html#devtool
     // See: https://github.com/webpack/docs/wiki/build-performance#sourcemaps
-    //devtool: 'cheap-module-eval-source-map',
+    devtool: 'cheap-module-eval-source-map',
+
 
     output:{
         // The output directory as absolute path (required).
@@ -63,13 +64,7 @@ module.exports = webpackMerge(commonConfig,  {
 
     plugins: [
 
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery',
-            'window.jQuery': 'jquery',
-            'window.jquery': 'jquery',
-            'moment': 'moment'
-        }),
+
         // Plugin: DefinePlugin
         // Description: Define free variables.
         // Useful for having development builds with debug logging or adding global constants.

@@ -1,8 +1,6 @@
 package ch.dvbern.ebegu.api.errors;
 
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
-import org.jboss.resteasy.api.validation.Validation;
-import org.jboss.resteasy.api.validation.ViolationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,6 @@ import javax.validation.GroupDefinitionException;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
@@ -46,31 +43,12 @@ public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper
 			if (e != null) {
 				return buildResponse(unwrapException(e), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
 			} else if (resteasyViolationException.getReturnValueViolations().isEmpty()) {
-				return buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST);
+				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.BAD_REQUEST, getAcceptMediaType(resteasyViolationException.getAccept()));
 			} else {
-				return buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR);
+				return ViolationReportCreator.buildViolationReportResponse(resteasyViolationException, Status.INTERNAL_SERVER_ERROR, getAcceptMediaType(resteasyViolationException.getAccept()));
 			}
 		}
 		return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
-	}
-
-
-	protected Response buildViolationReportResponse(ResteasyViolationException exception, Status status) {
-		ResponseBuilder builder = Response.status(status);
-		builder.header(Validation.VALIDATION_HEADER, "true");
-
-		// Check standard media types.
-		MediaType mediaType = getAcceptMediaType(exception.getAccept());
-		if (mediaType != null) {
-			builder.type(mediaType);
-			builder.entity(new ViolationReport(exception));
-			return builder.build();
-		}
-
-		// Default media type.
-		builder.type(MediaType.TEXT_PLAIN);
-		builder.entity(exception.toString());
-		return builder.build();
 	}
 
 	@Override

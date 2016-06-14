@@ -3,6 +3,8 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer_;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -10,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +31,7 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 
 	@Nonnull
 	@Override
-	public ErwerbspensumContainer saveErwerbspensum(@Nonnull ErwerbspensumContainer erwerbspensumContainer) {
+	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer) {
 		Objects.requireNonNull(erwerbspensumContainer);
 		return persistence.merge(erwerbspensumContainer);
 	}
@@ -53,8 +56,15 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	}
 
 	@Override
-	public void removeErwerbspensen(@Nonnull ErwerbspensumContainer erwerbspensumContainer) {
-		persistence.remove(ErwerbspensumContainer.class, erwerbspensumContainer.getId());
+	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID) {
+		Objects.requireNonNull(erwerbspensumContainerID);
+		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);
+
+		persistence.remove(ewpCont
+			.orElseThrow(
+				() -> new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, erwerbspensumContainerID)
+			)
+		);
 
 	}
 }

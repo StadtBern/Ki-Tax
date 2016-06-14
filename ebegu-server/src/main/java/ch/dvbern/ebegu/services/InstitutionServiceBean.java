@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,6 +59,12 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	public Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId) {
 		Traegerschaft traegerschaft = persistence.find(Traegerschaft.class, traegerschaftId);
 		return criteriaQueryHelper.getEntitiesByAttribute(Institution.class, traegerschaft, Institution_.traegerschaft);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Institution> getAllInstitutionen() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
 	}
 
 }

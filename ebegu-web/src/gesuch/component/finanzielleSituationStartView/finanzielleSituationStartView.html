@@ -1,0 +1,81 @@
+<div class="finanzielleSituation row">
+    <div class="col-md-12">
+
+        <h4 class="mainTitle">
+            <span data-translate="FINANZIELLE_SITUATION" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></span>
+        </h4>
+        <hr class="header"/>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+
+            <!-- Gemeinsame Steuererklaerung -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
+                        <dv-radio-container name="gemeinsameSteuererklaerung"    class="input-element"
+                                            ng-model="vm.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung"
+                                            ng-required="true" class="radio" ng-change="vm.gemeinsameStekClicked()">
+                        </dv-radio-container>
+                        <dv-error-messages  for="form.gemeinsameSteuererklaerung.$error" class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steuerveranlagung -->
+            <div class="row">
+                <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
+                        <dv-radio-container name="steuerveranlagung"    class="input-element"
+                                            ng-model="vm.getFinanzielleSituationGS1().steuerveranlagungErhalten"
+                                            ng-required="true" class="radio" ng-change="vm.steuerveranlagungClicked()">
+                        </dv-radio-container>
+                        <dv-error-messages  for="form.steuerveranlagung.$error" class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steuererklärung -->
+            <div class="row">
+                <div class="col-md-6" ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
+                        <dv-radio-container name="steuererklaerung"   class="input-element"
+                                            ng-model="vm.getFinanzielleSituationGS1().steuererklaerungAusgefuellt"
+                                            ng-required="true" class="radio" ng-change="vm.steuererklaerungClicked()">
+                        </dv-radio-container>
+                        <dv-error-messages  for="form.steuererklaerung.$error" class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <!--<pre>{{ vm.getModel() |json}}</pre>-->
+
+    </div>
+
+</div>

@@ -1,22 +1,15 @@
-import TSAbstractEntity from './TSAbstractEntity';
-import TSFall from './TSFall';
 import TSGesuchsteller from './TSGesuchsteller';
 import TSKindContainer from './TSKindContainer';
+import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 
-export default class TSGesuch extends TSAbstractEntity {
-    private _fall: TSFall;
+export default class TSGesuch extends TSAbstractAntragEntity {
+
     private _gesuchsteller1: TSGesuchsteller;
     private _gesuchsteller2: TSGesuchsteller;
     private _kindContainer: Array<TSKindContainer>;
+    private _einkommensverschlechterung: boolean;
 
 
-    public get fall(): TSFall {
-        return this._fall;
-    }
-
-    public set fall(value: TSFall) {
-        this._fall = value;
-    }
 
     public get gesuchsteller1(): TSGesuchsteller {
         return this._gesuchsteller1;
@@ -40,5 +33,13 @@ export default class TSGesuch extends TSAbstractEntity {
 
     set kindContainer(value: Array<TSKindContainer>) {
         this._kindContainer = value;
+    }
+
+    get einkommensverschlechterung(): boolean {
+        return this._einkommensverschlechterung;
+    }
+
+    set einkommensverschlechterung(value: boolean) {
+        this._einkommensverschlechterung = value;
     }
 }

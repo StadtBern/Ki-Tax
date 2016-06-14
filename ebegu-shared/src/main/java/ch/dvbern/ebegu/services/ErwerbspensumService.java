@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface ErwerbspensumService {
 	 * @param erwerbspensumContainer Das Erwerbspensum das gespeichert werden soll
 	 */
 	@Nonnull
-	ErwerbspensumContainer saveErwerbspensum(@Nonnull ErwerbspensumContainer erwerbspensumContainer);
+	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer);
 
 	/**
 	 * @param key PK (id) des ErwerbspensumContainers
@@ -38,9 +39,9 @@ public interface ErwerbspensumService {
 	Collection<ErwerbspensumContainer> getAllErwerbspensenenContainer();
 
 	/**
-	 * entfernt eine Erwerbspensen aus der Databse
-	 * @param erwerbspensumContainer der Entfernt werden soll
+	 * entfernt eine Erwerbspensum aus der Databse
+	 * @param erwerbspensumContainerID der Entfernt werden soll
 	 */
-	void removeErwerbspensen(@Nonnull ErwerbspensumContainer erwerbspensumContainer);
+	void removeErwerbspensum(@Nonnull String erwerbspensumContainerID);
 
 }

@@ -4,6 +4,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,31 +14,31 @@ import java.util.Set;
  */
 @Audited
 @Entity
-public class Gesuch extends AbstractEntity {
+//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgende 2 Moeglichkeiten sollten gehen aber es ueberschreibt den Namen nicht --> Problem mit hibernate-maven-plugin??
+//@AssociationOverride(name = "gesuchsperiode", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id")))
+//@AssociationOverride(name = "gesuchsperiode", foreignKey = @ForeignKey(name="FK_gesuch_gesuchsperiode_id"))
+public class Gesuch extends AbstractAntragEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
-	@ManyToOne(optional = false)
-	private Fall fall;
 
+	@Valid
 	@Nullable
-	@OneToOne(optional = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller1;
 
+	@Valid
 	@Nullable
-	@OneToOne(optional = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	private Gesuchsteller gesuchsteller2;
 
+	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
+	@Column(nullable = true)
+	private Boolean einkommensverschlechterung;
 
-	public Fall getFall() {
-		return fall;
-	}
 
-	public void setFall(Fall fall) {
-		this.fall = fall;
-	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
@@ -65,8 +66,17 @@ public class Gesuch extends AbstractEntity {
 		this.kindContainers = kindContainers;
 	}
 
+	public Boolean getEinkommensverschlechterung() {
+		return einkommensverschlechterung;
+	}
+
+	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
+		this.einkommensverschlechterung = einkommensverschlechterung;
+	}
+
 	public boolean addKindContainer(@NotNull KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
+
 }

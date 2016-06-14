@@ -9,5 +9,5 @@ public enum Zuschlagsgrund {
 	UEBERLAPPENDE_ARBEITSZEITEN,
 	FIXE_ARBEITSZEITEN,
 	LANGER_ARBWEITSWEG,
-	ANDERE //Ausnahmefaelle aufgrund individueller verh
+	ANDERE //Ausnahmefaelle aufgrund individueller verhaeltnisse, nur vom JA auswahlbar
 }

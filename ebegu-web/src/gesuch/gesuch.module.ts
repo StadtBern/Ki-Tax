@@ -7,6 +7,13 @@ import {FamiliensituationViewComponentConfig} from './component/familiensituatio
 import {KinderListViewComponentConfig} from './component/kinderListView/kinderListView';
 import {FinanzielleSituationViewComponentConfig} from './component/finanzielleSituationView/finanzielleSituationView';
 import {KindViewComponentConfig} from './component/kindView/kindView';
+import {BetreuungListViewComponentConfig} from './component/betreuungListView/betreuungListView';
+import {BetreuungViewComponentConfig} from './component/betreuungView/betreuungView';
+import {ErwerbspensumListViewComponentConfig} from './component/erwerbspensumListView/erwerbspensumListView';
+import {ErwerbspensumViewComponentConfig} from './component/erwerbspensumView/erwerbspensumView';
+import {FinanzielleSituationStartViewComponentConfig} from './component/finanzielleSituationStartView/finanzielleSituationStartView';
+import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
+import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -15,4 +22,11 @@ export const EbeguWebGesuch =
     .component('stammdatenView', new StammdatenViewComponentConfig)
     .component('kinderListView', new KinderListViewComponentConfig())
     .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
-    .component('kindView', new KindViewComponentConfig());
+    .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
+    .component('finanzielleSituationResultateView', new FinanzielleSituationResultateViewComponentConfig())
+    .component('kindView', new KindViewComponentConfig())
+    .component('betreuungListView', new BetreuungListViewComponentConfig())
+    .component('betreuungView', new BetreuungViewComponentConfig())
+    .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
+    .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
+    .component('fallCreationView', new FallCreationViewComponentConfig());

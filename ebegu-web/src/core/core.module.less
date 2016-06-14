@@ -1,10 +1,5 @@
 /* Component LESS */
-@import 'component/dv-error-messages/dv-error-messages.less';
 @import '../variables.less';
-@import 'component/dv-adresse/dv-adresse.less';
-@import 'component/dv-input-container/dv-input-container.less';
-@import 'component/dv-radio-container/dv-radio-container.less';
-@import "directive/dv-dialog/dv-dialog.less";
 /* Add Component LESS Above */
 
 .ebegu {
@@ -71,7 +66,7 @@
 
     //    error styling
     form {
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             border: 0;
             border-bottom: 1px solid lightgray;
             box-shadow: 0 0 0 @input-boder-focus;
@@ -81,6 +76,7 @@
             font-weight: 600;
             color: black;
             padding: 2px 2px 1px;
+            -moz-appearance:textfield; // spinner in firefox sieht doof aus -> disable
         }
 
         input[type="text"]:placeholder-shown {
@@ -101,11 +97,18 @@
         }
     }
     .marginLeft10 {
-        margin-left: 10px;
+        margin-left: @small-abstand;
 
     }
     .marginTop10 {
-        margin-top: 10px;
+        margin-top: @small-abstand;
+    }
+    .marginTop20 {
+        margin-top: @normal-abstand;
+    }
+
+    .marginTop40 {
+        margin-top: 40px;
     }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
@@ -116,6 +119,28 @@
             display: none;
         }
 
+    }
+
+//    Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
+    .hint {
+        position: absolute;
+        left: 2px;
+        right: auto;
+        bottom: 7px;
+        font-size: 12px;
+        line-height: 14px;
+        transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+        color: grey;
+    }
+
+    md-input-container .error.hint [ng-messages]{
+        position: relative;
+        -webkit-order: 4;
+        -ms-flex-order: 4;
+        order: 4;
+        overflow: hidden;
+        top: 16px;
+        clear: left;
     }
 
 }

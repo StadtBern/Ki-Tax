@@ -1,9 +1,12 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * DTO fuer Kind Container
@@ -20,6 +23,10 @@ public class JaxKindContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxKind kindJA;
 
+	@NotNull
+	private Set<JaxBetreuung> betreuungen = new HashSet<>();
+
+
 	public JaxKind getKindGS() {
 		return kindGS;
 	}
@@ -34,5 +41,13 @@ public class JaxKindContainer extends JaxAbstractDTO {
 
 	public void setKindJA(JaxKind kindJA) {
 		this.kindJA = kindJA;
+	}
+
+	public Set<JaxBetreuung> getBetreuungen() {
+		return betreuungen;
+	}
+
+	public void setBetreuungen(Set<JaxBetreuung> betreuungen) {
+		this.betreuungen = betreuungen;
 	}
 }
