@@ -29,6 +29,7 @@ import IHttpBackendService = angular.IHttpBackendService;
 import TSPendenzJA from '../models/TSPendenzJA';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
+import TSFamiliensituation from '../models/TSFamiliensituation';
 
 describe('EbeguRestUtil', function () {
 
@@ -159,6 +160,10 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsperiode);
                 gesuchsperiode.gueltigkeit = new TSDateRange(undefined, undefined);
                 myGesuch.gesuchsperiode = gesuchsperiode;
+                let familiensituation: TSFamiliensituation = new TSFamiliensituation();
+                TestDataUtil.setAbstractFieldsUndefined(familiensituation);
+                myGesuch.familiensituation = familiensituation;
+                myGesuch.kindContainers = [undefined];
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();
@@ -332,7 +337,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSPendenzJA to REST Obj and back', () => {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
-                let myPendenz = new TSPendenzJA(123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
+                let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
                 DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
 
                 let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
@@ -374,5 +379,5 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.adresse = undefined;
         myGesuchsteller.finanzielleSituationContainer = undefined;
         return myGesuchsteller;
-    };
+    }
 });

@@ -50,6 +50,8 @@ public class JaxBConverter {
 	@Inject
 	private FallService fallService;
 	@Inject
+	private FamiliensituationService familiensituationService;
+	@Inject
 	private MandantService mandantService;
 	@Inject
 	private TraegerschaftService traegerschaftService;
@@ -359,25 +361,23 @@ public class JaxBConverter {
 		return jaxGesuchsteller;
 	}
 
-	public Familiensituation familiensituationToEntity(@Nonnull JaxFamilienSituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
+	public Familiensituation familiensituationToEntity(@Nonnull JaxFamiliensituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
 		Validate.notNull(familiensituation);
 		Validate.notNull(familiensituationJAXP);
 		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
 		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
-		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		return familiensituation;
 	}
 
-	public JaxFamilienSituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
-		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
+	public JaxFamiliensituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
+		JaxFamiliensituation jaxFamiliensituation = new JaxFamiliensituation();
 		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
 		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
-		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		return jaxFamiliensituation;
 	}
@@ -420,6 +420,14 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
+		if (gesuchJAXP.getFamiliensituation() != null && gesuchJAXP.getFamiliensituation().getId() != null) {
+			Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(gesuchJAXP.getFamiliensituation().getId());
+			if (famSituation.isPresent()) {
+				gesuch.setFamiliensituation(familiensituationToEntity(gesuchJAXP.getFamiliensituation(), famSituation.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFamiliensituation().getId());
+			}
+		}
 		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
 
 		return gesuch;
@@ -435,8 +443,11 @@ public class JaxBConverter {
 		if (persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
+		if (persistedGesuch.getFamiliensituation() != null) {
+			jaxGesuch.setFamiliensituation(this.familiensituationToJAX(persistedGesuch.getFamiliensituation()));
+		}
 		for (KindContainer kind : persistedGesuch.getKindContainers()) {
-			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
+			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
 		}
 		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
 

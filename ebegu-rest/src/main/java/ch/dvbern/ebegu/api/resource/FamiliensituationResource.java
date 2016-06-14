@@ -1,8 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxFamilienSituation;
-import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxFamiliensituation;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -32,7 +31,7 @@ import java.util.Optional;
 @Path("familiensituation")
 @Stateless
 @Api
-public class FamilienSituationResource {
+public class FamiliensituationResource {
 
 	@Inject
 	private FamiliensituationService familiensituationService;
@@ -47,7 +46,7 @@ public class FamilienSituationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response create(
-		@Nonnull @NotNull JaxFamilienSituation familiensituationJAXP,
+		@Nonnull @NotNull JaxFamiliensituation familiensituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -55,11 +54,11 @@ public class FamilienSituationResource {
 		Familiensituation persistedFamiliensituation = this.familiensituationService.createFamiliensituation(convertedFamiliensituation);
 
 		URI uri = uriInfo.getBaseUriBuilder()
-			.path(FamilienSituationResource.class)
+			.path(FamiliensituationResource.class)
 			.path("/" + persistedFamiliensituation.getId())
 			.build();
 
-		JaxFamilienSituation jaxGesuchsteller = converter.familiensituationToJAX(persistedFamiliensituation);
+		JaxFamiliensituation jaxGesuchsteller = converter.familiensituationToJAX(persistedFamiliensituation);
 
 		return Response.created(uri).entity(jaxGesuchsteller).build();
 	}
@@ -68,8 +67,8 @@ public class FamilienSituationResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFamilienSituation update(
-		@Nonnull @NotNull JaxFamilienSituation familiensituationJAXP,
+	public JaxFamiliensituation update(
+		@Nonnull @NotNull JaxFamiliensituation familiensituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -83,17 +82,6 @@ public class FamilienSituationResource {
 		Familiensituation persistedFamiliensituation = this.familiensituationService.updateFamiliensituation(convertedFamiliensituation);
 
 		return converter.familiensituationToJAX(persistedFamiliensituation);
-	}
-
-	@Nullable
-	@GET
-	@Path("/{familiensituationId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFamilienSituation findFamiliensituation(
-		@Nonnull @NotNull JaxId fallJAXPId) throws EbeguException {
-
-		return null;
 	}
 
 }

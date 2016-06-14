@@ -25,7 +25,10 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private JaxGesuchsteller gesuchsteller2;
 
 	@NotNull
-	private Set<JaxKindContainer> kinder = new HashSet<>();
+	private Set<JaxKindContainer> kindContainers = new HashSet<>();
+
+	@Nullable
+	private JaxFamiliensituation familiensituation;
 
 	private Boolean einkommensverschlechterung;
 
@@ -52,12 +55,21 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
-	public Set<JaxKindContainer> getKinder() {
-		return kinder;
+	public Set<JaxKindContainer> getKindContainers() {
+		return kindContainers;
 	}
 
-	public void setKinder(Set<JaxKindContainer> kinder) {
-		this.kinder = kinder;
+	public void setKindContainers(Set<JaxKindContainer> kindContainers) {
+		this.kindContainers = kindContainers;
+	}
+
+	@Nullable
+	public JaxFamiliensituation getFamiliensituation() {
+		return familiensituation;
+	}
+
+	public void setFamiliensituation(@Nullable JaxFamiliensituation familiensituation) {
+		this.familiensituation = familiensituation;
 	}
 
 	public Boolean getEinkommensverschlechterung() {

@@ -23,7 +23,7 @@ describe('pendenzRS', function () {
     }));
 
     beforeEach(() => {
-        mockPendenz = new TSPendenzJA(123, 'name', TSAntragTyp.GESUCH, undefined,
+        mockPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, undefined,
             undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
         mockPendenzRest = ebeguRestUtil.pendenzToRestObject({}, mockPendenz);
     });
