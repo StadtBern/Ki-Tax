@@ -81,7 +81,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresse::getAdresseTyp);
 		GesuchstellerAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
-		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
+		Assert.assertTrue(altAdr.isSame(converter.gesuchstellerAdresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
 
 	}
 
@@ -90,7 +90,7 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		JaxAdresse adr = TestJaxDataUtil.createTestJaxAdr(null);
 		adr.setGueltigAb(null);
 		adr.setGueltigBis(null);
-		GesuchstellerAdresse adrEntity = converter.adresseToEntity(adr, new GesuchstellerAdresse());
+		GesuchstellerAdresse adrEntity = converter.gesuchstellerAdresseToEntity(adr, new GesuchstellerAdresse());
 		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
 	}

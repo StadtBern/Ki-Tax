@@ -1,5 +1,5 @@
 import TSAbstractEntity from './TSAbstractEntity';
-import {TSInstitutionStammdaten} from './TSInstitutionStammdaten';
+import TSInstitutionStammdaten from './TSInstitutionStammdaten';
 import {TSBetreuungsstatus} from './enums/TSBetreuungsstatus';
 import TSBetreuungspensumContainer from './TSBetreuungspensumContainer';
 

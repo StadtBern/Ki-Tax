@@ -1,12 +1,13 @@
 import {EbeguWebCore} from '../core.module';
 import {IHttpBackendService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import {TSInstitution} from '../../models/TSInstitution';
+import TSInstitution from '../../models/TSInstitution';
 import {InstitutionStammdatenRS} from './institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import {TSDateRange} from '../../models/types/TSDateRange';
+import TSAdresse from '../../models/TSAdresse';
 
 describe('institutionStammdatenRS', function () {
 
@@ -16,6 +17,7 @@ describe('institutionStammdatenRS', function () {
     let mockInstitutionStammdaten: TSInstitutionStammdaten;
     let mockInstitutionStammdatenRest: any;
     let mockInstitution: TSInstitution;
+    let mockAdresse: TSAdresse;
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -29,8 +31,9 @@ describe('institutionStammdatenRS', function () {
     beforeEach(() => {
         today = DateUtil.today();
         mockInstitution = new TSInstitution('Institution_Test');
+        mockAdresse = new TSAdresse();
         mockInstitutionStammdaten = new TSInstitutionStammdaten('InstStammDaten_Test', 250, 12,
-            TSBetreuungsangebotTyp.KITA, mockInstitution, new TSDateRange(today, today));
+            TSBetreuungsangebotTyp.KITA, mockInstitution, mockAdresse, new TSDateRange(today, today));
         mockInstitutionStammdaten.id = '2afc9d9a-957e-4550-9a22-97624a1d8f05';
         mockInstitutionStammdatenRest = ebeguRestUtil.institutionStammdatenToRestObject({}, mockInstitutionStammdaten);
     });

@@ -14,6 +14,7 @@ public abstract class InstitutionStammdaten_ extends ch.dvbern.ebegu.entities.Ab
 	public static volatile SingularAttribute<InstitutionStammdaten, Institution> institution;
 	public static volatile SingularAttribute<InstitutionStammdaten, BetreuungsangebotTyp> betreuungsangebotTyp;
 	public static volatile SingularAttribute<InstitutionStammdaten, IBAN> iban;
+	public static volatile SingularAttribute<InstitutionStammdaten, Adresse> adresse;
 	public static volatile SingularAttribute<InstitutionStammdaten, BigDecimal> oeffnungsstunden;
 	public static volatile SingularAttribute<InstitutionStammdaten, BigDecimal> oeffnungstage;
 

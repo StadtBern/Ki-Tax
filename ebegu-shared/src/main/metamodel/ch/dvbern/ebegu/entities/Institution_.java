@@ -10,6 +10,7 @@ public abstract class Institution_ extends ch.dvbern.ebegu.entities.AbstractEnti
 
 	public static volatile SingularAttribute<Institution, Mandant> mandant;
 	public static volatile SingularAttribute<Institution, String> name;
+	public static volatile SingularAttribute<Institution, Boolean> active;
 	public static volatile SingularAttribute<Institution, Traegerschaft> traegerschaft;
 
 }

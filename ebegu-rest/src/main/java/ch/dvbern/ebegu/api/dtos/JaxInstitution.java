@@ -17,7 +17,7 @@ public class JaxInstitution extends JaxAbstractDTO {
 
 	@NotNull
 	private String name;
-	@NotNull
+
 	private JaxTraegerschaft traegerschaft;
 	@NotNull
 	private JaxMandant mandant;
