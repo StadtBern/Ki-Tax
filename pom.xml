@@ -248,7 +248,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
-                <version>1.5.7</version>
+                <version>1.5.9</version>
             </dependency>
             <!--hibernate 5 mit java 8 support-->
             <dependency>

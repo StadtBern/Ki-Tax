@@ -1,7 +1,7 @@
 {
     "AB": "Ab",
     "AKTION": "Aktion",
-    "AKTUALISIEREN": "Aktualisieren",
+    "UPDATE": "Aktualisieren",
     "APP_TITLE": "ebegu",
     "ADMIN": "Administration",
     "BISHER_GS": "Eingabe Gesuchsteller: ",
@@ -455,6 +455,35 @@
     "KORRESPONDENZADR_HELP": "noch_nicht_definiert",
     "GESUCH": "Gesuch",
     "MUTATION": "Mutation",
-    "ALLE": "alle"
+    "ALLE": "alle",
+
+    "GESUCHSPERIODEN": "Gesuchsperiode",
+    "GESUCHSPERIODE_GUELTIG_AB": "Beginn",
+    "GESUCHSPERIODE_GUELTIG_BIS": "Ende",
+    "GESUCHSPERIODE_AKTIV": "Aktiv",
+
+    "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
+    "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",
+    "PARAMETER_JAHR": "Jahr",
+    "PARAM_FIXBETRAG_STADT_PRO_TAG_KITA": "Fixbeitrag der Stadt pro Tag",
+    "PARAM_ANZAL_TAGE_MAX_KITA": "Anzahl Tage Kita Max",
+    "PARAM_STUNDEN_PRO_TAG_MAX_KITA": "Stunden / Tag Max",
+    "PARAM_KOSTEN_PRO_STUNDE_MAX": "Kosten pro Stunde Max",
+    "PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN": "Kosten pro Stunde Max Tageseltern",
+    "PARAM_KOSTEN_PRO_STUNDE_MIN": "Kosten pro Stunde Min",
+    "PARAM_MASSGEBENDES_EINKOMMEN_MIN": "Minimal Massgebendes Einkommen",
+    "PARAM_MASSGEBENDES_EINKOMMEN_MAX": "Maximal Massgebendes Einkommen",
+    "PARAM_ANZAHL_TAGE_KANTON": "Anzahl Tage Kanton",
+    "PARAM_STUNDEN_PRO_TAG_TAGI": "Stunden / Tag Tagi",
+    "PARAM_PENSUM_TAGI_MIN": "Min Pensum Tagesstätten",
+    "PARAM_PENSUM_KITA_MIN": "Min Pensum Kitas",
+    "PARAM_PENSUM_TAGESELTERN_MIN": "Min Pensum Tageseltern",
+    "PARAM_PENSUM_TAGESSCHULE_MIN": "Min Pensum Tagesschule",
+    "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3": "Pauschalabzug bei einer Familiengrösse von drei Personen pauschal pro Person",
+    "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4": "Pauschalabzug bei einer Familiengrösse von vier Personen pauschal pro Person",
+    "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5": "Pauschalabzug bei einer Familiengrösse von fünf Personen pauschal pro Person",
+    "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6": "Pauschalabzug bei einer Familiengrösse von sechs Personen pauschal pro Person",
+    "PARAM_MAX_TAGE_ABWESENHEIT": "Max Abwesenheit",
+    "PARAM_ABGELTUNG_PRO_TAG_KANTON": "Abgeltung des Kantons pro Tag"
 }
 

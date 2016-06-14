@@ -1,16 +1,21 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Gesuchsperiode_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +29,7 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Inject
 	private Persistence<Gesuchsperiode> persistence;
+
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
@@ -39,17 +45,22 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Override
 	public Optional<Gesuchsperiode> findGesuchsperiode(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Gesuchsperiode gesuchsperiode =  persistence.find(Gesuchsperiode.class, key);
+		Gesuchsperiode gesuchsperiode = persistence.find(Gesuchsperiode.class, key);
 		return Optional.ofNullable(gesuchsperiode);
 	}
 
 	@Nonnull
 	@Override
 	public Collection<Gesuchsperiode> getAllGesuchsperioden() {
-		return criteriaQueryHelper.getAll(Gesuchsperiode.class);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.select(root);
+		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return persistence.getCriteriaResults(query);
+
 	}
 
-	@Nonnull
 	@Override
 	public void removeGesuchsperiode(@Nonnull String gesuchsperiodeId) {
 		Objects.requireNonNull(gesuchsperiodeId);
@@ -62,5 +73,27 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 	@Nonnull
 	public Collection<Gesuchsperiode> getAllActiveGesuchsperioden() {
 		return criteriaQueryHelper.getEntitiesByAttribute(Gesuchsperiode.class, true, Gesuchsperiode_.active);
+	}
+
+	/**
+	 * @return all Gesuchsperioden that have a gueltigkeitBis Date that is in the future (compared to the current date)
+	 */
+	@Override
+	@Nonnull
+	public Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
+		// Alle Gesuchsperioden, die aktuell am laufen sind oder in der Zukunft liegen, d.h. deren Ende-Datum nicht in der Vergangenheit liegt
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuchsperiode> root = query.from(Gesuchsperiode.class);
+		query.select(root);
+
+		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
+		Predicate predicate = cb.greaterThanOrEqualTo(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis), dateParam);
+
+		query.where(predicate);
+		TypedQuery<Gesuchsperiode> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(dateParam, LocalDate.now());
+		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return q.getResultList();
 	}
 }

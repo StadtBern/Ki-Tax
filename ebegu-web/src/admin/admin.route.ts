@@ -18,6 +18,11 @@ function getStates(): IState[] {
             resolve: {
                 applicationProperties: getApplicationProperties
             }
+        },
+        {
+            name: 'parameter',
+            template: '<dv-parameter-view ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
+            url: '/parameter',
         }
     ];
 }

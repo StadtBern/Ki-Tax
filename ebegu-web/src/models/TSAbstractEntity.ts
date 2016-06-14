@@ -27,4 +27,8 @@ export default class TSAbstractEntity {
     public get timestampMutiert(): moment.Moment {
         return this._timestampMutiert;
     }
+
+    public isNew(): boolean {
+        return !this._timestampErstellt;
+    }
 }

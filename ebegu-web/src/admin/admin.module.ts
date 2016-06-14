@@ -3,12 +3,16 @@ import 'angular-smart-table';
 import {EbeguWebCore} from '../core/core.module';
 import './admin.module.less';
 import {AdminViewComponentConfig} from './component/adminView/adminView';
+import {ParameterViewComponentConfig} from './component/parameterView/parameterView';
 import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
 import {adminRun} from './admin.route';
+import {EbeguParameterRS} from './service/ebeguParameterRS.rest';
 
 export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name, 'smart-table'])
     .service('ApplicationPropertyRS', ApplicationPropertyRS)
+    .service('EbeguParameterRS', EbeguParameterRS)
     .component('dvAdminView', new AdminViewComponentConfig())
+    .component('dvParameterView', new ParameterViewComponentConfig())
     .run(adminRun);
 
 export default EbeguWebAdmin;

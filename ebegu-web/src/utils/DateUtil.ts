@@ -3,8 +3,6 @@ import Moment = moment.Moment; // TODO kann das über ein anderes Import Format 
 
 export default class DateUtil {
 
-
-
     /**
      * @param {string} localDateTimeString string with format YYYY-MM-DDTHH:mm:ss.SSS
      * @returns {?Moment}
@@ -54,5 +52,9 @@ export default class DateUtil {
 
     public static today(): Moment {
         return moment().startOf('day');
+    }
+
+    public static currentYear(): number {
+        return moment().year();
     }
 }

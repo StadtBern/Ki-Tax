@@ -3,23 +3,28 @@ package ch.dvbern.ebegu.validators;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuungspensum;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.services.EbeguParameterService;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
- * Validator fuer Betreuungspensen
+ * Validator for Betreuungspensen, checks that the entered betreuungspensum is bigger than the minimum
+ * that is allowed for the Betreungstyp for a given date
  */
 public class CheckBetreuungspensumValidator implements ConstraintValidator<CheckBetreuungspensum, Betreuung> {
 
-	//todo team Diese Konstanten durch Werte aus der DB ersetzen. siehe todo unten
-	private static final int KITA_PENSUM_MIN = 10;
-	private static final int TAGI_PENSUM_MIN = 60;
-	private static final int TAGESSCHULE_PENSUM_MIN = 0;
-	private static final int TAGESELTERN_PENSUM_MIN = 20;
+	@SuppressWarnings("CdiInjectionPointsInspection")
+	@Inject
+	private EbeguParameterService ebeguParameterService;
 
 	@Override
 	public void initialize(CheckBetreuungspensum constraintAnnotation) {
@@ -28,41 +33,45 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
-		// todo team Fuer diese Methode muessen wir die Werte aus der DB holen. Das koennen wir erst machen wenn
-		// die neue ApplicationProperties fuer die Periode implementiert ist. Momentan werden diese Werte direkt
-		// hier als Constants kodiert.
-		int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
-
 		int index = 0;
 		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
+			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
+				betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb(),
+				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
 				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
 				return false;
 			}
 			index++;
 		}
-
 		return true;
 	}
 
 	/**
 	 * Returns the corresponding minimum value for the given betreuungsangebotTyp.
 	 * @param betreuungsangebotTyp betreuungsangebotTyp
-	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't much any
+	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't match any
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
      */
-	private int getMinValueFromBetreuungsangebotTyp(BetreuungsangebotTyp betreuungsangebotTyp) {
+	private int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp) {
+		EbeguParameterKey key = null;
 		if (betreuungsangebotTyp == BetreuungsangebotTyp.KITA) {
-			return KITA_PENSUM_MIN;
+			key = EbeguParameterKey.PARAM_PENSUM_KITA_MIN;
 		}
-		if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGI) {
-			return TAGI_PENSUM_MIN;
+		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGI) {
+			key = EbeguParameterKey.PARAM_PENSUM_TAGI_MIN;
 		}
-		if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
-			return TAGESSCHULE_PENSUM_MIN;
+		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
+			key = EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN;
 		}
-		if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN) {
-			return TAGESELTERN_PENSUM_MIN;
+		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN) {
+			key = EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
+		}
+		if (key != null) {
+			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag);
+			if (parameter.isPresent()) {
+				return parameter.get().getAsInteger();
+			}
 		}
 		return 0;
 	}

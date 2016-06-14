@@ -28,6 +28,7 @@ import TSFinanzielleSituationResultateDTO from '../models/dto/TSFinanzielleSitua
 import TSBetreuung from '../models/TSBetreuung';
 import TSBetreuungspensumContainer from '../models/TSBetreuungspensumContainer';
 import TSBetreuungspensum from '../models/TSBetreuungspensum';
+import TSEbeguParameter from '../models/TSEbeguParameter';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
 import TSPendenzJA from '../models/TSPendenzJA';
@@ -68,6 +69,39 @@ export default class EbeguRestUtil {
         parsedAppProperty.name = receivedAppProperty.name;
         parsedAppProperty.value = receivedAppProperty.value;
         return parsedAppProperty;
+    }
+
+    public parseEbeguParameters(data: any): TSEbeguParameter[] {
+        var ebeguParameters: TSEbeguParameter[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                ebeguParameters[i] = this.parseEbeguParameter(new TSEbeguParameter(), data[i]);
+            }
+        } else {
+            ebeguParameters[0] = this.parseEbeguParameter(new TSEbeguParameter(), data);
+        }
+        return ebeguParameters;
+    }
+
+    public parseEbeguParameter(ebeguParameterTS: TSEbeguParameter, receivedEbeguParameter: any): TSEbeguParameter {
+        if (receivedEbeguParameter) {
+            this.parseDateRangeEntity(ebeguParameterTS, receivedEbeguParameter);
+            ebeguParameterTS.name = receivedEbeguParameter.name;
+            ebeguParameterTS.value = receivedEbeguParameter.value;
+            ebeguParameterTS.proGesuchsperiode = receivedEbeguParameter.proGesuchsperiode;
+            return ebeguParameterTS;
+        }
+        return undefined;
+    }
+
+    public ebeguParameterToRestObject(restEbeguParameter: any, ebeguParameter: TSEbeguParameter): TSEbeguParameter {
+        if (ebeguParameter) {
+            this.abstractDateRangeEntityToRestObject(restEbeguParameter, ebeguParameter);
+            restEbeguParameter.name = ebeguParameter.name;
+            restEbeguParameter.value = ebeguParameter.value;
+            return restEbeguParameter;
+        }
+        return undefined;
     }
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
