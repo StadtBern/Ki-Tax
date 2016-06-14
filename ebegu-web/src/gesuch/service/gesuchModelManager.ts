@@ -241,14 +241,11 @@ export default class GesuchModelManager {
     public initFinanzielleSituation(): void {
         this.initStammdaten();
         if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
-        if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
+        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
