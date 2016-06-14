@@ -14,14 +14,17 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
 
 
     public responseError = (response: any) => {
-
-        //here we could analyze the http status of the response. But instead we check if the  response has the format
-        // of a known response such as errortypes such as violationReport or ExceptionReport and transform it 
-        //as such. If the response matches know expected format we create an unexpected error. 
-        let errors: Array<TSExceptionReport> = this.handleErrorResponse(response.data);
-        this.errorService.handleErrors(errors);
-        return this.$q.reject(errors);
-
+        switch (response.status) {
+            case 400:
+            case 500:
+                //here we could analyze the http status of the response. But instead we check if the  response has the format
+                // of a known response such as errortypes such as violationReport or ExceptionReport and transform it
+                //as such. If the response matches know expected format we create an unexpected error.
+                let errors: Array<TSExceptionReport> = this.handleErrorResponse(response.data);
+                this.errorService.handleErrors(errors);
+                return this.$q.reject(errors);
+        }
+        return this.$q.reject(response);
     };
 
     /**

@@ -1,0 +1,5 @@
+export enum TSRole {
+    ADMIN,
+    SACHBEARBEITER_JA,
+    SACHBEARBEITER_INSTITUTION
+}

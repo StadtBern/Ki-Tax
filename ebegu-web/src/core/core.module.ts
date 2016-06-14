@@ -34,6 +34,7 @@ import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import {EbeguErrors} from './errors/errors';
 import EbeguUtil from '../utils/EbeguUtil';
+import {EbeguAuthentication} from '../authentication/authentication.module';
 
 let dynamicDependencies = function (): string[] {
 
@@ -55,6 +56,7 @@ const dependencies: string[] = [
     /* shared DVBern modules */
     router.name,
     EbeguErrors.name,
+    EbeguAuthentication.name,
     /* 3rd-party modules */
     'ui.bootstrap',
     'smart-table',
