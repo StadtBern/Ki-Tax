@@ -1,5 +1,5 @@
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
-import {IHttpPromise, IHttpService} from 'angular';
+import {IHttpPromise, IHttpService, IPromise, ILogService} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 
@@ -8,15 +8,15 @@ export default class GesuchRS implements IEntityRS {
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService) {
         this.serviceURL = REST_API + 'gesuche';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public createGesuch(gesuch: TSGesuch): IHttpPromise<any> {
+    public createGesuch(gesuch: TSGesuch): IHttpPromise<TSGesuch> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);
         return this.http.post(this.serviceURL, sentGesuch, {
@@ -26,7 +26,7 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public updateGesuch(gesuch: TSGesuch): IHttpPromise<any> {
+    public updateGesuch(gesuch: TSGesuch): IHttpPromise<TSGesuch> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);
         return this.http.put(this.serviceURL, sentGesuch, {
@@ -36,8 +36,12 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-    public findGesuch(gesuchID: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchID));
+    public findGesuch(gesuchID: string): IPromise<TSGesuch> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                this.$log.debug('PARSING gesuch REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+            });
     }
 
 }

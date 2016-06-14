@@ -17,7 +17,6 @@ import {TSInstitution} from '../models/TSInstitution';
 import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
 import {TSDateRange} from '../models/types/TSDateRange';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
-import TSKindContainer from '../models/TSKindContainer';
 import TSKind from '../models/TSKind';
 import TSAbstractPersonEntity from '../models/TSAbstractPersonEntity';
 import {TSPensumFachstelle} from '../models/TSPensumFachstelle';
@@ -33,6 +32,7 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
 import TSPendenzJA from '../models/TSPendenzJA';
 import EbeguUtil from './EbeguUtil';
+import TSKindContainer from '../models/TSKindContainer';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -329,24 +329,24 @@ export default class EbeguRestUtil {
     }
 
     public familiensituationToRestObject(restFamiliensituation: any, familiensituation: TSFamiliensituation): TSFamiliensituation {
-        this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
-        restFamiliensituation.familienstatus = familiensituation.familienstatus;
-        restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
-        restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
-        restFamiliensituation.gesuch = this.gesuchToRestObject({}, familiensituation.gesuch);
-        restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
+        if (familiensituation) {
+            this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
+            restFamiliensituation.familienstatus = familiensituation.familienstatus;
+            restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
+            restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
+            restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
 
-        return restFamiliensituation;
+            return restFamiliensituation;
+        }
+        return undefined;
     }
 
     public parseFamiliensituation(familiensituation: TSFamiliensituation, familiensituationFromServer: any): TSFamiliensituation {
-
         if (familiensituationFromServer) {
             this.parseAbstractEntity(familiensituation, familiensituationFromServer);
             familiensituation.bemerkungen = familiensituationFromServer.bemerkungen;
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
-            familiensituation.gesuch = this.parseGesuch(familiensituation.gesuch, familiensituationFromServer.gesuch);
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
             return familiensituation;
         }
@@ -378,6 +378,7 @@ export default class EbeguRestUtil {
         restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
+        restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
         return restGesuch;
     }
 
@@ -387,6 +388,8 @@ export default class EbeguRestUtil {
             gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
+            gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
+            gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             return gesuchTS;
         }
         return undefined;
@@ -398,7 +401,6 @@ export default class EbeguRestUtil {
         restFachstelle.name = fachstelle.name;
         restFachstelle.beschreibung = fachstelle.beschreibung;
         restFachstelle.behinderungsbestaetigung = fachstelle.behinderungsbestaetigung;
-
         return restFachstelle;
     }
 
@@ -665,6 +667,18 @@ export default class EbeguRestUtil {
         return restKind;
     }
 
+    public parseKindContainerList(data: Array<any>): TSKindContainer[] {
+        var kindContainerList: TSKindContainer[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                kindContainerList[i] = this.parseKindContainer(new TSKindContainer(), data[i]);
+            }
+        } else {
+            kindContainerList[0] = this.parseKindContainer(new TSKindContainer(), data);
+        }
+        return kindContainerList;
+    }
+
     public parseKindContainer(kindContainerTS: TSKindContainer, kindContainerFromServer: any): TSKindContainer {
         if (kindContainerFromServer) {
             this.parseAbstractEntity(kindContainerTS, kindContainerFromServer);
@@ -861,6 +875,7 @@ export default class EbeguRestUtil {
     }
 
     public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
+        restPendenz.antragId = pendenz.antragId;
         restPendenz.fallNummer = pendenz.fallNummer;
         restPendenz.familienName = pendenz.familienName;
         restPendenz.angebote = pendenz.angebote;
@@ -872,6 +887,7 @@ export default class EbeguRestUtil {
     }
 
     public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
+        pendenzTS.antragId = pendenzFromServer.antragId;
         pendenzTS.fallNummer = pendenzFromServer.fallNummer;
         pendenzTS.familienName = pendenzFromServer.familienName;
         pendenzTS.angebote = pendenzFromServer.angebote;

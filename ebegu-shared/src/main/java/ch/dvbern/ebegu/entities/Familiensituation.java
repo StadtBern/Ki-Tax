@@ -35,9 +35,6 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
-	@ManyToOne(optional = false)
-	private Gesuch gesuch;
-
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
 
@@ -70,14 +67,6 @@ public class Familiensituation extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
-	}
-
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
 	}
 
 	public Boolean getGemeinsameSteuererklaerung() {

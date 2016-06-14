@@ -1,6 +1,5 @@
 import {TSFamilienstatus} from './enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from './enums/TSGesuchstellerKardinalitaet';
-import TSGesuch from './TSGesuch';
 import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSFamiliensituation extends TSAbstractEntity {
@@ -8,7 +7,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     private _familienstatus: TSFamilienstatus;
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
     private _bemerkungen: string;
-    private _gesuch: TSGesuch;
     private _gemeinsameSteuererklaerung: boolean;
 
 
@@ -43,14 +41,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
 
     public set bemerkungen(bemerkungen: string) {
         this._bemerkungen = bemerkungen;
-    }
-
-    public get gesuch(): TSGesuch {
-        return this._gesuch;
-    }
-
-    public set gesuch(value: TSGesuch) {
-        this._gesuch = value;
     }
 
     get gemeinsameSteuererklaerung(): boolean {

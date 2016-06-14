@@ -37,7 +37,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     showSteuerveranlagung(): boolean {
-        return !this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung || this.gesuchModelManager.familiensituation.gemeinsameSteuererklaerung === false;
+        return !this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung || this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
     }
 
     showSteuererklaerung(): boolean {

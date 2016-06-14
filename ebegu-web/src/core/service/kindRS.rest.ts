@@ -24,7 +24,7 @@ export default class KindRS {
     public findKind(kindContainerID: string): IPromise<TSKindContainer> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(kindContainerID))
             .then((response: any) => {
-                this.log.debug('PARSING kindContainer REST object ', response.data);
+                this.log.debug('PARSING kindContainers REST object ', response.data);
                 return this.ebeguRestUtil.parseKindContainer(new TSKindContainer(), response.data);
             });
     }
