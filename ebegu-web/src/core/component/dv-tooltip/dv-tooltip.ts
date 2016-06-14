@@ -1,5 +1,6 @@
 import {IComponentOptions} from 'angular';
 let template = require('./dv-tooltip.html');
+require('./dv-tooltip.less');
 
 export class DvTooltipComponentConfig implements IComponentOptions {
     transclude = false;

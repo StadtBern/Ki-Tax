@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -85,8 +86,9 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	}
 
 	@Override
+	@Nonnull
 	public Collection<Institution> getAllInstitutionen() {
-		return criteriaQueryHelper.getAll(Institution.class);
+		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
 	}
 
 }

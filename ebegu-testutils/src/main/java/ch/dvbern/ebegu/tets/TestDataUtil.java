@@ -50,7 +50,6 @@ public final class TestDataUtil {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
-		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;
 	}
 
@@ -59,6 +58,7 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
+		gesuch.setFamiliensituation(createDefaultFamiliensituation());
 		return gesuch;
 	}
 
@@ -200,5 +200,13 @@ public final class TestDataUtil {
 		gesuchsperiode.setActive(true);
 		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return gesuchsperiode;
+	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return instStammdaten;
 	}
 }

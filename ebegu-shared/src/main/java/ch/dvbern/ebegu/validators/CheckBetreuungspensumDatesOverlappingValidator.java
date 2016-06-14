@@ -36,6 +36,7 @@ public class CheckBetreuungspensumDatesOverlappingValidator implements Constrain
 
 		//Achtung hier MUSS instanz verglichen werden
 		return gueltigkeitStream.stream()
-			.anyMatch(o1 -> gueltigkeitStream.stream().anyMatch(o2 -> o1 != o2 && o1.getGueltigkeit().intersects(o2.getGueltigkeit())));
+			.anyMatch(o1 -> gueltigkeitStream.stream()
+				.anyMatch(o2 -> o1 != o2 && o1.getGueltigkeit().intersects(o2.getGueltigkeit())));
 	}
 }

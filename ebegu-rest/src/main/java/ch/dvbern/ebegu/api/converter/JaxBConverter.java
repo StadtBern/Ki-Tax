@@ -52,6 +52,8 @@ public class JaxBConverter {
 	@Inject
 	private FallService fallService;
 	@Inject
+	private FamiliensituationService familiensituationService;
+	@Inject
 	private MandantService mandantService;
 	@Inject
 	private TraegerschaftService traegerschaftService;
@@ -224,6 +226,26 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
+	public JaxEbeguParameter ebeguParameterToJAX(@Nonnull final EbeguParameter ebeguParameter) {
+		JaxEbeguParameter jaxEbeguParameter = new JaxEbeguParameter();
+		convertAbstractDateRangedFieldsToJAX(ebeguParameter, jaxEbeguParameter);
+		jaxEbeguParameter.setName(ebeguParameter.getName());
+		jaxEbeguParameter.setValue(ebeguParameter.getValue());
+		jaxEbeguParameter.setProGesuchsperiode(ebeguParameter.getName().isProGesuchsperiode());
+		return jaxEbeguParameter;
+	}
+
+	@Nonnull
+	public EbeguParameter ebeguParameterToEntity(JaxEbeguParameter jaxEbeguParameter, @Nonnull final EbeguParameter ebeguParameter) {
+		Validate.notNull(ebeguParameter);
+		Validate.notNull(jaxEbeguParameter);
+		convertAbstractDateRangedFieldsToEntity(jaxEbeguParameter, ebeguParameter);
+		ebeguParameter.setName(jaxEbeguParameter.getName());
+		ebeguParameter.setValue(jaxEbeguParameter.getValue());
+		return ebeguParameter;
+	}
+
+	@Nonnull
 	public GesuchstellerAdresse gesuchstellerAdresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 
 		adresseToEntity(jaxAdresse, gesuchstellerAdresse);
@@ -375,25 +397,23 @@ public class JaxBConverter {
 		return jaxGesuchsteller;
 	}
 
-	public Familiensituation familiensituationToEntity(@Nonnull JaxFamilienSituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
+	public Familiensituation familiensituationToEntity(@Nonnull JaxFamiliensituation familiensituationJAXP, @Nonnull Familiensituation familiensituation) {
 		Validate.notNull(familiensituation);
 		Validate.notNull(familiensituationJAXP);
 		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
 		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
-		familiensituation.setGesuch(this.gesuchToEntity(familiensituationJAXP.getGesuch(), new Gesuch())); //todo imanol sollte Gesuch nicht aus der DB geholt werden?
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		return familiensituation;
 	}
 
-	public JaxFamilienSituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
-		JaxFamilienSituation jaxFamiliensituation = new JaxFamilienSituation();
+	public JaxFamiliensituation familiensituationToJAX(@Nonnull Familiensituation persistedFamiliensituation) {
+		JaxFamiliensituation jaxFamiliensituation = new JaxFamiliensituation();
 		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
 		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
-		jaxFamiliensituation.setGesuch(this.gesuchToJAX(persistedFamiliensituation.getGesuch()));
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		return jaxFamiliensituation;
 	}
@@ -402,12 +422,14 @@ public class JaxBConverter {
 		Validate.notNull(fall);
 		Validate.notNull(fallJAXP);
 		convertAbstractFieldsToEntity(fallJAXP, fall);
+		fall.setFallNummer(fallJAXP.getFallNummer());
 		return fall;
 	}
 
 	public JaxFall fallToJAX(@Nonnull Fall persistedFall) {
 		JaxFall jaxFall = new JaxFall();
 		convertAbstractFieldsToJAX(persistedFall, jaxFall);
+		jaxFall.setFallNummer(persistedFall.getFallNummer());
 		return jaxFall;
 	}
 
@@ -434,6 +456,14 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
 			}
 		}
+		if (gesuchJAXP.getFamiliensituation() != null && gesuchJAXP.getFamiliensituation().getId() != null) {
+			Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(gesuchJAXP.getFamiliensituation().getId());
+			if (famSituation.isPresent()) {
+				gesuch.setFamiliensituation(familiensituationToEntity(gesuchJAXP.getFamiliensituation(), famSituation.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFamiliensituation().getId());
+			}
+		}
 		gesuch.setEinkommensverschlechterung(gesuchJAXP.getEinkommensverschlechterung());
 
 		return gesuch;
@@ -449,8 +479,11 @@ public class JaxBConverter {
 		if (persistedGesuch.getGesuchsteller2() != null) {
 			jaxGesuch.setGesuchsteller2(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller2()));
 		}
+		if (persistedGesuch.getFamiliensituation() != null) {
+			jaxGesuch.setFamiliensituation(this.familiensituationToJAX(persistedGesuch.getFamiliensituation()));
+		}
 		for (KindContainer kind : persistedGesuch.getKindContainers()) {
-			jaxGesuch.getKinder().add(kindContainerToJAX(kind));
+			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));
 		}
 		jaxGesuch.setEinkommensverschlechterung(persistedGesuch.getEinkommensverschlechterung());
 
@@ -948,14 +981,16 @@ public class JaxBConverter {
 	 */
 	private void betreuungsPensumContainersToEntity(List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 																			   Collection<BetreuungspensumContainer> existingBetreuungspensen) {
-		Set<BetreuungspensumContainer> transformedBetPenContainers = new HashSet<>();
+		Set<BetreuungspensumContainer> transformedBetPenContainers = new TreeSet<>();
 		for (JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
 			BetreuungspensumContainer containerToMergeWith = existingBetreuungspensen
 				.stream()
 				.filter(existingBetPensumEntity -> existingBetPensumEntity.getId().equals(jaxBetPensContainer.getId()))
 				.reduce(StreamsUtil.toOnlyElement())
 				.orElse(new BetreuungspensumContainer());
-			transformedBetPenContainers.add(betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith));
+			BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
+			boolean added =  transformedBetPenContainers.add(contToAdd);
+			if(!added){LOG.warn("dropped duplicate container " +contToAdd);}
 		}
 
 		//change the existing collection to reflect changes

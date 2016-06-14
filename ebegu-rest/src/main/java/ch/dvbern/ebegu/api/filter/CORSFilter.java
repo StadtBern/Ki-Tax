@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.filter;
 
-import ch.dvbern.ebegu.config.config.EbeguConfiguration;
+
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;

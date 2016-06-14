@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "familiensituation")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxFamilienSituation extends JaxAbstractDTO{
+public class JaxFamiliensituation extends JaxAbstractDTO{
 
 	private static final long serialVersionUID = -1297019741664130597L;
 

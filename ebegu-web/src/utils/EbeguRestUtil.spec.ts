@@ -24,6 +24,10 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuch from '../models/TSGesuch';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSFall from '../models/TSFall';
+import TSPendenzJA from '../models/TSPendenzJA';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
+import TSFamiliensituation from '../models/TSFamiliensituation';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
@@ -34,21 +38,7 @@ describe('EbeguRestUtil', function () {
     let today: moment.Moment;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
-
-    // Das wird nur fuer tests gebraucht in denen etwas uebersetzt wird. Leider muss man dieses erstellen
-    // bevor man den Injector erstellt hat. Deshalb muss es fuer alle Tests definiert werden
-    beforeEach(angular.mock.module(function($provide: any) {
-        let mockTranslateFilter = function(value: any) {
-            if (value === 'FIRST') {
-                return 'Erster';
-            }
-            if (value === 'SECOND') {
-                return 'Zweiter';
-            }
-            return value;
-        };
-        $provide.value('translateFilter', mockTranslateFilter);
-    }));
+    beforeEach(angular.mock.module(EbeguWebPendenzen.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         ebeguRestUtil = $injector.get('EbeguRestUtil');
@@ -170,6 +160,10 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(gesuchsperiode);
                 gesuchsperiode.gueltigkeit = new TSDateRange(undefined, undefined);
                 myGesuch.gesuchsperiode = gesuchsperiode;
+                let familiensituation: TSFamiliensituation = new TSFamiliensituation();
+                TestDataUtil.setAbstractFieldsUndefined(familiensituation);
+                myGesuch.familiensituation = familiensituation;
+                myGesuch.kindContainers = [undefined];
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();
@@ -301,17 +295,6 @@ describe('EbeguRestUtil', function () {
                 expect(transformedInstitutionStammdaten).toEqual(myInstitutionStammdaten);
             });
         });
-        describe('translateStringList', () => {
-            it('should translate the given list of words', () => {
-                let list: Array<string> = ['FIRST', 'SECOND'];
-                let returnedList: Array<any> = ebeguRestUtil.translateStringList(list);
-                expect(returnedList.length).toEqual(2);
-                expect(returnedList[0].key).toEqual('FIRST');
-                expect(returnedList[0].value).toEqual('Erster');
-                expect(returnedList[1].key).toEqual('SECOND');
-                expect(returnedList[1].value).toEqual('Zweiter');
-            });
-        });
         describe('parseErwerbspensenContainer()', () => {
             it('should transform TSErwerbspensum to REST object and back', () => {
                 var erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
@@ -336,7 +319,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseGesuchsperiode()', () => {
             it('should transfrom TSGesuchsperiode to REST Obj and back', () => {
-                var myGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                let myGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(myGesuchsperiode);
 
                 let restGesuchsperiode = ebeguRestUtil.gesuchsperiodeToRestObject({}, myGesuchsperiode);
@@ -347,6 +330,23 @@ describe('EbeguRestUtil', function () {
                 expect(myGesuchsperiode.active).toBe(true);
                 expect(myGesuchsperiode).toEqual(transformedGesuchsperiode);
 
+            });
+        });
+        describe('parsePendenz()', () => {
+            it('should transform TSPendenzJA to REST Obj and back', () => {
+                let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
+                TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
+                let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
+                DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
+
+                let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
+                expect(restPendenz).toBeDefined();
+
+                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenzJA(), restPendenz);
+                expect(transformedPendenz).toBeDefined();
+                expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
+                transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
+                expect(transformedPendenz).toEqual(myPendenz);
             });
         });
     });
@@ -378,5 +378,5 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.adresse = undefined;
         myGesuchsteller.finanzielleSituationContainer = undefined;
         return myGesuchsteller;
-    };
+    }
 });

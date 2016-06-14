@@ -12,8 +12,11 @@ import TSBetreuungspensum from '../../../models/TSBetreuungspensum';
 import {TSDateRange} from '../../../models/types/TSDateRange';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import Moment = moment.Moment;
 let template = require('./betreuungView.html');
+require('./betreuungView.less');
 
 export class BetreuungViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -27,10 +30,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguRestUtil', 'CONSTANTS', '$scope', 'BerechnungsManager'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguRestUtil: EbeguRestUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
@@ -92,6 +95,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                     this.getBetreuungModel().schulpflichtig = false; // sollte es undefined sein setzen wir es direkt auf false
                 }
             }
+            this.errorService.clearAll();
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
                 this.state.go('gesuch.betreuungen');
             }).catch((exception) => {
@@ -102,7 +106,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     private setBetreuungsangebotTypValues(): void {
-        this.betreuungsangebotValues = this.ebeguRestUtil.translateStringList(getTSBetreuungsangebotTypValues());
+        this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
     cancel() {
@@ -151,7 +155,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public createBetreuungspensum(): void {
-        if (this.getBetreuungModel() && !this.getBetreuungspensen()) {
+        if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(undefined, new TSDateRange())));

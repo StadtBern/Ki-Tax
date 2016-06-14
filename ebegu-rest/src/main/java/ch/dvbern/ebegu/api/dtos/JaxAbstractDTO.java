@@ -2,11 +2,9 @@ package ch.dvbern.ebegu.api.dtos;
 
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.validation.Persisted;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -22,7 +20,6 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 	private static final long serialVersionUID = 7069586216789441112L;
 
 	@Nullable
-	@NotNull(groups = Persisted.class)
 	private String id = null;
 
 	@Nullable

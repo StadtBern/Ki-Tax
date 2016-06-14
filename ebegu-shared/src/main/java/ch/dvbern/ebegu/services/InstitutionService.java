@@ -56,8 +56,9 @@ public interface InstitutionService {
 
 	/**
 	 *
-	 * @return Gibt alle Institutionen zurück
+	 * @return Alle Institutionen in der DB
      */
+	@Nonnull
 	Collection<Institution> getAllInstitutionen();
 
 	/**

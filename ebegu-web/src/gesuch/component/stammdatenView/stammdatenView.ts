@@ -9,7 +9,9 @@ import './stammdatenView.less';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
+import ErrorService from '../../../core/errors/service/ErrorService';
 let template = require('./stammdatenView.html');
+require('./stammdatenView.less');
 
 export class StammdatenViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -31,10 +33,10 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager'];
+    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
-                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager) {
+                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -60,7 +62,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
-
+            this.errorService.clearAll();
             this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
                 this.nextStep();
             });

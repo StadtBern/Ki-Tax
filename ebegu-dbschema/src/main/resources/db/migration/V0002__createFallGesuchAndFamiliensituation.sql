@@ -29,7 +29,6 @@ CREATE TABLE familiensituation (
   gesuchsteller_kardinalitaet VARCHAR(255),
   bemerkungen                 VARCHAR(1000),
   familienstatus              VARCHAR(255) NOT NULL,
-  gesuch_id                   VARCHAR(36)  NOT NULL,
   CONSTRAINT PK_familiensituation PRIMARY KEY (id)
 );
 
@@ -44,7 +43,6 @@ CREATE TABLE familiensituation_aud (
   gesuchsteller_kardinalitaet VARCHAR(255),
   bemerkungen                 VARCHAR(1000),
   familienstatus              VARCHAR(255),
-  gesuch_id                   VARCHAR(36),
   CONSTRAINT PK_familiensituation_aud PRIMARY KEY (id, rev)
 );
 
@@ -56,6 +54,7 @@ CREATE TABLE gesuch (
   user_mutiert       VARCHAR(36) NOT NULL,
   version            BIGINT      NOT NULL,
   fall_id            VARCHAR(36) NOT NULL,
+  familiensituation_id       VARCHAR(36),
   gesuchsteller1_id  VARCHAR(36),
   gesuchsteller2_id  VARCHAR(36),
   CONSTRAINT PK_gesuch PRIMARY KEY (id)
@@ -70,6 +69,7 @@ CREATE TABLE gesuch_aud (
   user_erstellt      VARCHAR(36),
   user_mutiert       VARCHAR(36),
   fall_id            VARCHAR(36),
+  familiensituation_id       VARCHAR(36),
   gesuchsteller1_id  VARCHAR(36),
   gesuchsteller2_id  VARCHAR(36),
   CONSTRAINT PK_gesuch_aud PRIMARY KEY (id, rev)
@@ -80,10 +80,10 @@ ADD CONSTRAINT FK_fall_aud_revinfo
 FOREIGN KEY (rev)
 REFERENCES revinfo (rev);
 
-ALTER TABLE familiensituation
-ADD CONSTRAINT FK_familiensituation_gesuch_id
-FOREIGN KEY (gesuch_id)
-REFERENCES gesuch (id);
+ALTER TABLE gesuch
+  ADD CONSTRAINT FK_gesuch_familiensituation_id
+FOREIGN KEY (familiensituation_id)
+REFERENCES familiensituation (id);
 
 ALTER TABLE familiensituation_aud
 ADD CONSTRAINT FK_familiensituation_aud_revinfo

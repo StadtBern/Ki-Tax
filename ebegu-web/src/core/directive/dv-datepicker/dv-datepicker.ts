@@ -4,8 +4,10 @@ import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 let template = require('./dv-datepicker.html');
+
 export interface DatepickerScope extends IScope { updateModelValue: Function; date: Date;
 }
+
 export class DVDatepicker implements IDirective {
     restrict = 'E';
     require: any = {ngModelCtrl: 'ngModel'};

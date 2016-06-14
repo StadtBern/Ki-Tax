@@ -35,6 +35,12 @@ public class Gesuch extends AbstractAntragEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
 
+	@Valid
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
+	private Familiensituation familiensituation;
+
 	@Column(nullable = true)
 	private Boolean einkommensverschlechterung;
 
@@ -64,6 +70,15 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setKindContainers(Set<KindContainer> kindContainers) {
 		this.kindContainers = kindContainers;
+	}
+
+	@Nullable
+	public Familiensituation getFamiliensituation() {
+		return familiensituation;
+	}
+
+	public void setFamiliensituation(@Nullable Familiensituation familiensituation) {
+		this.familiensituation = familiensituation;
 	}
 
 	public Boolean getEinkommensverschlechterung() {
