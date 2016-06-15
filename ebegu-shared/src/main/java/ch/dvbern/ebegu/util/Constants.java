@@ -26,6 +26,9 @@ public interface Constants {
 	int UUID_LENGTH = 36;
 	int PLZ_LENGTH = 4;
 
+	int LOGIN_TIMEOUT_SECONDS = 60 * 60;
+	int COOKIE_TIMEOUT_SECONDS = 60 * 60 * 12;
+
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
 

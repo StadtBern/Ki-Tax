@@ -14,7 +14,6 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
     public responseError = (response: any) => {
         switch (response.status) {
             case 401:
-                console.log('responseRR:', response);
                 // exclude requests from the login form
                 if (response.config && response.config.url === this.CONSTANTS.REST_API + '/api/v1/auth/login') {
                     return this.$q.reject(response);

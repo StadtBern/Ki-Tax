@@ -1,4 +1,5 @@
 import 'angular';
+import 'angular-base64';
 import 'angular-i18n/angular-locale_de-ch';
 import 'angular-material';
 import 'angular-animate';

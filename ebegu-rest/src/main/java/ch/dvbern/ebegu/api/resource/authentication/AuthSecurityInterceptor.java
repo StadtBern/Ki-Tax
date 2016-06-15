@@ -9,6 +9,10 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
+import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.authentication.BenutzerCredentials;
+import ch.dvbern.ebegu.services.AuthService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +23,11 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Provider
 @PreMatching
@@ -32,8 +38,8 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@Context
 	private HttpServletRequest request;
 
-//	@EJB
-//	private AuthService authService;
+	@EJB
+	private AuthService authService;
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
@@ -53,45 +59,45 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			return;
 		}
 
-//		// Verify that XSRF-Token from HTTP-Header matches Cookie-XSRF-Token
-//		String xsrfTokenHeader = requestContext.getHeaderString(AuthDataUtil.PARAM_XSRF_TOKEN);
-//		Cookie xsrfTokenCookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_XSRF_TOKEN);
-//		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
-//			&& xsrfTokenCookie != null
-//			&& RestUtil.isFileDownloadRequest(requestContext);
-//		if (!request.getRequestURI().contains("/migration/")) {
-//			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, requestContext)) {
-//				setResponseUnauthorised(requestContext);
-//				return;
-//			}
-//		}
+		// Verify that XSRF-Token from HTTP-Header matches Cookie-XSRF-Token
+		String xsrfTokenHeader = requestContext.getHeaderString(AuthDataUtil.PARAM_XSRF_TOKEN);
+		Cookie xsrfTokenCookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_XSRF_TOKEN);
+		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
+			&& xsrfTokenCookie != null
+			&& RestUtil.isFileDownloadRequest(requestContext);
+		if (!request.getRequestURI().contains("/migration/")) {
+			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, requestContext)) {
+				setResponseUnauthorised(requestContext);
+				return;
+			}
+		}
 
 		try {
 			// Get AuthId and AuthToken from Cookies.
-//			String authId = AuthDataUtil.getAuthAccessElement(requestContext).get().getAuthId();
-//			String authToken = AuthDataUtil.getAuthToken(requestContext).get();
-//
-//			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
-//			if (!loginWithToken.isPresent()) {
-//				setResponseUnauthorised(requestContext);
-//				return;
-//			}
-//			BenutzerCredentials credentials = loginWithToken.get();
+			String authId = AuthDataUtil.getAuthAccessElement(requestContext).get().getAuthId();
+			String authToken = AuthDataUtil.getAuthToken(requestContext).get();
+
+			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
+			if (!loginWithToken.isPresent()) {
+				setResponseUnauthorised(requestContext);
+				return;
+			}
+			BenutzerCredentials credentials = loginWithToken.get();
 
 			try {
 				// EJB Container Login
-				request.login("baku", "password4");
-//				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
+				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
 				// Login Failed
 				setResponseUnauthorised(requestContext);
 				return;
 			}
 
-//			if (!authService.verifyToken(credentials)) {
-//				// Token Verification Failed
-//				setResponseUnauthorised(requestContext);
-//			}
+			if (!authService.verifyToken(credentials)) {
+				// Token Verification Failed
+				setResponseUnauthorised(requestContext);
+			}
+
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);
 			setResponseUnauthorised(requestContext);

@@ -1,8 +1,10 @@
 package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -1092,5 +1094,11 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToEntity(jaxGesuchsperiode, gesuchsperiode);
 		gesuchsperiode.setActive(jaxGesuchsperiode.getActive());
 		return gesuchsperiode;
+	}
+
+	@Nonnull
+	public JaxAuthAccessElement authAccessElementToResource(@Nonnull final AuthAccessElement access) {
+		Set<UserRole> rollen = new HashSet<>(); //access.getRoles().stream().map(this::BenutzerRolleToResource).collect(Collectors.toSet());
+		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUserId()), rollen);
 	}
 }

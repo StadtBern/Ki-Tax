@@ -1,0 +1,166 @@
+/*
+ * Copyright (c) 2015 DV Bern AG, Switzerland
+ *
+ * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
+ * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
+ * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
+ * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
+ * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+ */
+package ch.dvbern.ebegu.api.resource.authentication;
+
+import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
+import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.authentication.AuthLoginElement;
+import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.util.Constants;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Optional;
+
+@Stateless
+@Path("auth")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class AuthResource {
+
+	public static final String COOKIE_PATH = "/";
+	public static final String COOKIE_DOMAIN = null;
+
+	private static final Logger LOG = LoggerFactory.getLogger(AuthResource.class);
+
+	@EJB
+	private AuthService authService;
+
+	@Context
+	private HttpServletRequest request;
+
+	@Inject
+	private JaxBConverter converter;
+
+	private boolean containerLogin(@Nonnull JaxAuthLoginElement loginElement) { //throws RuleViolationException {
+		try {
+			// zuallererst einloggen, damit die SQL-Statements in den Services auch den richtigen Mandant haben...
+//			HashedPassword hashedPassword = authService.encryptPassword(loginElement.getUsername(), loginElement.getPassword());
+			request.login(loginElement.getUsername(), loginElement.getPassword());
+			return true;
+		} catch (ServletException ignored) {
+			return false;
+//		} catch (PasswordPreReqsException ignored) {
+//			return false;
+		}
+	}
+
+	/**
+	 * {@link AuthSecurityInterceptor}
+	 * @param loginElement Benutzer Identifikation (Benutzername/Passwort)
+	 * @return im Erfolgsfall eine HTTP Response mit Cookies
+	 */
+	@Nullable
+	@POST
+	@Path("/login")
+	@PermitAll
+	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
+
+		Optional<AuthAccessElement> accessElement;
+		try {
+			// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
+			if (!containerLogin(loginElement)) {
+				return Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+			AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword());
+
+			accessElement = authService.login(login);
+			if (!accessElement.isPresent()) {
+				return Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+//		} catch (RuleViolationException e) {
+//			return JaxErrorResponse.fromBusinessException(e);
+//		}
+		} catch (Exception e) {
+			return null; //JaxErrorResponse.fromBusinessException(e);
+		}
+
+		AuthAccessElement access = accessElement.get();
+		JaxAuthAccessElement element = converter.authAccessElementToResource(access);
+
+		boolean cookieSecure = isCookieSecure();
+
+		// HTTP-Only Cookie --> Protection from XSS
+		NewCookie authCookie = new NewCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, access.getAuthToken(),
+			COOKIE_PATH, COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
+		// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
+		NewCookie xsrfCookie = new NewCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, access.getXsrfToken(),
+			COOKIE_PATH, COOKIE_DOMAIN, "XSRF", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+		// Readable Cookie storing user data
+		NewCookie principalCookie = new NewCookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element),
+			COOKIE_PATH, COOKIE_DOMAIN, "principal", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, false);
+
+		return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+	}
+
+	/**
+	 *   TODO testen, bisher konnte dies nicht getestet werden
+	 */
+	private boolean isCookieSecure() {
+		return request.isSecure();
+	}
+
+//	@POST
+//	@Path("/logout")
+//	@PermitAll
+//	public Response logout(@CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+//		try {
+//			String authToken = Objects.requireNonNull(authTokenCookie.getValue());
+//			boolean cookieSecure = isCookieSecure();
+//
+//			if (authService.logout(authToken)) {
+//				// Respond with expired cookies
+//				NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
+//				NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
+//				NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
+//				return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+//			}
+//			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+//		} catch (NoSuchElementException e) {
+//			LOG.info("Token Decoding from Cookies failed", e);
+//			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+//		}
+//	}
+
+//	@Nonnull
+//	private NewCookie expireCookie(@Nonnull String name, boolean secure, boolean httpOnly) {
+//		return new NewCookie(name, "", COOKIE_PATH, COOKIE_DOMAIN, "", 0, secure, httpOnly);
+//	}
+
+	/**
+	 * @param element zu codirendes AuthAccessElement
+	 * @return Base64 encoded JSON representation
+	 */
+	private String encodeAuthAccessElement(JaxAuthAccessElement element) {
+		Gson gson = new Gson();
+		return Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.defaultCharset()));
+	}
+}

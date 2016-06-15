@@ -2,6 +2,7 @@ import {IComponentOptions} from 'angular';
 import TSUser from '../models/TSUser';
 import {TSRole} from '../models/enums/TSRole';
 import {IStateService} from 'angular-ui-router';
+import AuthServiceRS from './service/AuthServiceRS.rest';
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -16,19 +17,20 @@ export class AuthenticationListViewController {
 
     public usersList: Array<TSUser>;
 
-    static $inject: string[] = ['$state'];
+    static $inject: string[] = ['$state', 'AuthServiceRS'];
 
-    constructor(private $state: IStateService) {
+    constructor(private $state: IStateService, private authServiceRS: AuthServiceRS) {
         this.usersList = [];
-        this.usersList.push(new TSUser('Jörg', 'Becker', 'joerg.becker@bern.ch', TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Jennifer', 'Müller', 'jenniver.mueller@bern.ch', TSRole.SACHBEARBEITER_JA));
-        this.usersList.push(new TSUser('Sophie', 'Bergmann', 'sophie.bergmann@gugus.ch', TSRole.SACHBEARBEITER_INSTITUTION));
-        this.usersList.push(new TSUser('Kurt', 'Blaser', 'kurt.blaser@bern.ch', TSRole.ADMIN));
-        console.log('list', this.usersList);
+        this.usersList.push(new TSUser('jobe', 'Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', [TSRole.SACHBEARBEITER_JA]));
+        this.usersList.push(new TSUser('jemu', 'Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', [TSRole.SACHBEARBEITER_JA]));
+        this.usersList.push(new TSUser('beso', 'Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch', [TSRole.SACHBEARBEITER_INSTITUTION]));
+        this.usersList.push(new TSUser('blku', 'Kurt', 'Blaser', 'blku', 'password4', 'kurt.blaser@bern.ch', [TSRole.ADMIN]));
     }
 
     public logIn(user: TSUser): void {
-        this.$state.go('pendenzen')
-        console.log('login!');
+        this.authServiceRS.loginRequest(user).then(() => {
+            console.log('login!');
+            this.$state.go('pendenzen');
+        });
     }
 }

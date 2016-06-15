@@ -2,18 +2,33 @@ import {TSRole} from './enums/TSRole';
 
 export default class TSUser {
 
+    private _userId: string;
     private _nachname: string;
     private _vorname: string;
+    private _username: string;
+    private _password: string;
     private _email: string;
-    private _role: TSRole;
+    private _roles: Array<TSRole>;
 
-    constructor(nachname?: string, vorname?: string, email?: string, role?: TSRole) {
+    constructor(userId?: string, nachname?: string, vorname?: string, username?: string,
+                password?: string, email?: string, roles?: Array<TSRole>) {
+        this._userId = userId;
         this._nachname = nachname;
         this._vorname = vorname;
+        this._username = username;
+        this._password = password;
         this._email = email;
-        this._role = role;
+        this._roles = roles;
     }
 
+
+    get userId(): string {
+        return this._userId;
+    }
+
+    set userId(value: string) {
+        this._userId = value;
+    }
 
     get nachname(): string {
         return this._nachname;
@@ -31,6 +46,22 @@ export default class TSUser {
         this._vorname = value;
     }
 
+    get username(): string {
+        return this._username;
+    }
+
+    set username(value: string) {
+        this._username = value;
+    }
+
+    get password(): string {
+        return this._password;
+    }
+
+    set password(value: string) {
+        this._password = value;
+    }
+
     get email(): string {
         return this._email;
     }
@@ -39,11 +70,11 @@ export default class TSUser {
         this._email = value;
     }
 
-    get role(): TSRole {
-        return this._role;
+    get roles(): Array<TSRole> {
+        return this._roles;
     }
 
-    set role(value: TSRole) {
-        this._role = value;
+    set roles(value: Array<TSRole>) {
+        this._roles = value;
     }
 }

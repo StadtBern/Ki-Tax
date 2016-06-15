@@ -33,6 +33,7 @@ import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
 import TSPendenzJA from '../models/TSPendenzJA';
 import EbeguUtil from './EbeguUtil';
 import TSKindContainer from '../models/TSKindContainer';
+import TSUser from '../models/TSUser';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -910,5 +911,11 @@ export default class EbeguRestUtil {
             pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
         }
         return pendenzen;
+    }
+
+    public userToRestObject(user: any, userTS: TSUser): any {
+        user.username = userTS.username;
+        user.password = userTS.password;
+        return user;
     }
 }
