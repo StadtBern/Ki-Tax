@@ -24,7 +24,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Ignore
+@Ignore //im moment haben wir glaube ich noch keinen schlauen use case fuer needle tests. Kitadmin benutzt das so,
+// dass die businessmethoden innerhalb eines services damit gestestet werden
 public class NeedleTest {
 
 
