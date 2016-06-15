@@ -24,11 +24,13 @@ public class Gesuch extends AbstractAntragEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
 	private Gesuchsteller gesuchsteller1;
 
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
 	private Gesuchsteller gesuchsteller2;
 
 	@Valid

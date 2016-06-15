@@ -12,13 +12,16 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = "gesuchsteller_id", name = "UK_finanzielle_situation_container_gesuchsteller")
+)
 public class FinanzielleSituationContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -6504985266190035840L;
 
 	@NotNull
 	@OneToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_FinanzielleSituationContainer_gesuchsteller_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_gesuchsteller_id"), nullable = false)
 	private Gesuchsteller gesuchsteller;
 
 	@NotNull
@@ -27,14 +30,17 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationGS_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationGS;
 
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationJA_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationSV_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationSV;
 
 

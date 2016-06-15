@@ -27,6 +27,7 @@ public class Institution extends AbstractEntity {
 	private Traegerschaft traegerschaft;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_mandant_id"))
 	private Mandant mandant;
 
 	@NotNull
