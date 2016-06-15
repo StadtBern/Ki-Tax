@@ -37,8 +37,8 @@ export default class GesuchModelManager {
     gesuchstellerNumber: number = 1;
     private kindNumber: number;
     private betreuungNumber: number;
-    fachstellenList: Array<TSFachstelle>;
-    institutionenList: Array<TSInstitutionStammdaten>;
+    private fachstellenList: Array<TSFachstelle>;
+    private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
 
@@ -206,6 +206,14 @@ export default class GesuchModelManager {
         } else {
             this.betreuungNumber = 1;
         }
+    }
+
+    public getFachstellenList(): Array<TSFachstelle> {
+        return this.fachstellenList;
+    }
+
+    public getInstitutionenList(): Array<TSInstitutionStammdaten> {
+        return this.institutionenList;
     }
 
     public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
