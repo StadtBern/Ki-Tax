@@ -10,6 +10,7 @@ appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'Mand
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService) {
+
     routerHelper.configureStates(getStates(), '/pendenzen');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert

@@ -1,12 +1,3 @@
-/*
- * Copyright (c) 2015 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- */
 package ch.dvbern.ebegu.api.resource.authentication;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
@@ -28,16 +19,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Stateless
@@ -128,32 +115,32 @@ public class AuthResource {
 		return request.isSecure();
 	}
 
-//	@POST
-//	@Path("/logout")
-//	@PermitAll
-//	public Response logout(@CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
-//		try {
-//			String authToken = Objects.requireNonNull(authTokenCookie.getValue());
-//			boolean cookieSecure = isCookieSecure();
-//
-//			if (authService.logout(authToken)) {
-//				// Respond with expired cookies
-//				NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
-//				NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
-//				NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
-//				return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
-//			}
-//			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
-//		} catch (NoSuchElementException e) {
-//			LOG.info("Token Decoding from Cookies failed", e);
-//			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
-//		}
-//	}
+	@POST
+	@Path("/logout")
+	@PermitAll
+	public Response logout(@CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+		try {
+			String authToken = Objects.requireNonNull(authTokenCookie.getValue());
+			boolean cookieSecure = isCookieSecure();
 
-//	@Nonnull
-//	private NewCookie expireCookie(@Nonnull String name, boolean secure, boolean httpOnly) {
-//		return new NewCookie(name, "", COOKIE_PATH, COOKIE_DOMAIN, "", 0, secure, httpOnly);
-//	}
+			if (authService.logout(authToken)) {
+				// Respond with expired cookies
+				NewCookie authCookie = expireCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, cookieSecure, true);
+				NewCookie xsrfCookie = expireCookie(AuthDataUtil.COOKIE_XSRF_TOKEN, cookieSecure, false);
+				NewCookie principalCookie = expireCookie(AuthDataUtil.COOKIE_PRINCIPAL, cookieSecure, false);
+				return Response.ok().cookie(authCookie, xsrfCookie, principalCookie).build();
+			}
+			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+		} catch (NoSuchElementException e) {
+			LOG.info("Token Decoding from Cookies failed", e);
+			return Response.ok().build(); // TODO team Maybe notify the client? Seems not important for a logout request though.
+		}
+	}
+
+	@Nonnull
+	private NewCookie expireCookie(@Nonnull String name, boolean secure, boolean httpOnly) {
+		return new NewCookie(name, "", COOKIE_PATH, COOKIE_DOMAIN, "", 0, secure, httpOnly);
+	}
 
 	/**
 	 * @param element zu codirendes AuthAccessElement

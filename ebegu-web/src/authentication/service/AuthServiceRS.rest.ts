@@ -5,13 +5,17 @@ import ICookiesService = angular.cookies.ICookiesService;
 
 export default class AuthServiceRS {
 
-    private principal: TSUser = new TSUser();
+    private principal: TSUser;
 
 
     static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', '$base64', 'EbeguRestUtil'];
     /* @ngInject */
     constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
                 private $cookies: ICookiesService, private $base64: any, private ebeguRestUtil: EbeguRestUtil) {
+    }
+
+    public getPrincipal() {
+        return this.principal;
     }
 
     public loginRequest(userCredentials: TSUser): IPromise<TSUser> {
@@ -37,6 +41,7 @@ export default class AuthServiceRS {
         if (authIdbase64) {
             try {
                 var authData = angular.fromJson(this.$base64.decode(authIdbase64));
+                this.principal = new TSUser();
                 this.principal.username = authData.authId;
                 this.principal.userId = authData.userId;
                 if (authData.roles) {
@@ -49,6 +54,13 @@ export default class AuthServiceRS {
         }
 
         return false;
+    };
+
+    public logoutRequest() {
+        return this.$http.post(this.CONSTANTS.REST_API + 'auth/logout', null).then((res: any) => {
+            this.principal = undefined;
+            return res;
+        });
     };
 
 }

@@ -29,7 +29,6 @@ export class AuthenticationListViewController {
 
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
-            console.log('login!');
             this.$state.go('pendenzen');
         });
     }

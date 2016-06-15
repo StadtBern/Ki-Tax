@@ -98,25 +98,25 @@ public class AuthServiceBean implements AuthService {
 		}
 	}
 
-//	@Override
-//	public boolean logout(@Nonnull String authToken) {
-//		if (StringUtils.isEmpty(authToken)) {
-//			return false;
-//		}
-//
-//		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//		CriteriaDelete<AuthorisierterBenutzer> delete = criteriaBuilder.createCriteriaDelete(AuthorisierterBenutzer.class);
-//		Root<AuthorisierterBenutzer> root = delete.from(AuthorisierterBenutzer.class);
-//		Predicate authTokenPredicate = criteriaBuilder.equal(root.get(AuthorisierterBenutzer_.authToken), authToken);
-//		delete.where(criteriaBuilder.and(authTokenPredicate));
-//
-//		try {
-//			entityManager.createQuery(delete).executeUpdate();
-//			return true;
-//		} catch (Exception ignored) {
-//			return false;
-//		}
-//	}
+	@Override
+	public boolean logout(@Nonnull String authToken) {
+		if (StringUtils.isEmpty(authToken)) {
+			return false;
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaDelete<AuthorisierterBenutzer> delete = criteriaBuilder.createCriteriaDelete(AuthorisierterBenutzer.class);
+		Root<AuthorisierterBenutzer> root = delete.from(AuthorisierterBenutzer.class);
+		Predicate authTokenPredicate = criteriaBuilder.equal(root.get(AuthorisierterBenutzer_.authToken), authToken);
+		delete.where(criteriaBuilder.and(authTokenPredicate));
+
+		try {
+			entityManager.createQuery(delete).executeUpdate();
+			return true;
+		} catch (Exception ignored) {
+			return false;
+		}
+	}
 
 	@Override
 	public boolean verifyToken(@Nonnull BenutzerCredentials credentials) {

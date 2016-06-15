@@ -1,0 +1,40 @@
+<!--Es wird gecheckt ob der Benutzer sich eingeloggt hat. Falls nein, wird ein "Einloggen" Button angezeigt, die zur Loginseite fuehrt.
+Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
+
+<md-button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="userMenu" aria-label="{{'EINLOGGEN' | translate}}">
+    <a href="javascript:void(0)"  data-translate="EINLOGGEN"></a>
+</md-button>
+
+<md-menu-bar ng-if="vm.getPrincipal()" class="userMenu">
+    <md-menu>
+        <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().username}}">
+            <span ng-bind="vm.getPrincipal().username"></span>
+            <i class="fa fa-angle-down"></i>
+        </md-button>
+        <md-menu-content>
+            <md-menu-item>
+                <md-button ui-sref-active="active" ui-sref="admin" aria-label="{{'ADMIN' | translate}}">
+                    <a href="javascript:void(0)" data-translate="ADMIN"></a>
+                </md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button ui-sref-active="active" ui-sref="parameter" aria-label="{{'PARAMETER' | translate}}">
+                    <a href="javascript:void(0)" data-translate="PARAMETER"></a>
+                </md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button ui-sref-active="active" ui-sref="institution" aria-label="{{'INSTITUTION' | translate}}">
+                    <a href="javascript:void(0)" data-translate="INSTITUTION"></a>
+                </md-button>
+            </md-menu-item>
+
+            <md-menu-divider></md-menu-divider>
+
+            <md-menu-item>
+                <md-button ng-click="vm.logout()" aria-label="{{'AUSLOGGEN' | translate}}">
+                    <a href="javascript:void(0)" data-translate="AUSLOGGEN"></a>
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</md-menu-bar>

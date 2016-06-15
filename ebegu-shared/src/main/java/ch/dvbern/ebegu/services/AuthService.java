@@ -1,12 +1,3 @@
-/*
- * Copyright (c) 2015 DV Bern AG, Switzerland
- *
- * Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
- * geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
- * insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
- * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
- * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
- */
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
@@ -41,11 +32,11 @@ public interface AuthService {
 	@Nonnull
 	Optional<BenutzerCredentials> loginWithToken(@Nonnull final String username, @Nonnull final String authToken);
 
-//	/**
-//	 * @param authToken Authentifizierungs Token Identifikation
-//	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
-//	 */
-//	boolean logout(@Nonnull final String authToken);
+	/**
+	 * @param authToken Authentifizierungs Token Identifikation
+	 * @return TRUE falls das Logout erfolgreich war, sonst FALSE
+	 */
+	boolean logout(@Nonnull final String authToken);
 
 	/**
 	 * @param credentials Token spezifische Credentials

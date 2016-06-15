@@ -500,6 +500,9 @@
     "KEIN_ABZUG": "Nein",
     "HALBER_ABZUG": "50%",
     "GANZER_ABZUG": "100%",
-    "KEINE_STEUERERKLAERUNG": "Keine Steuererklärung"
+    "KEINE_STEUERERKLAERUNG": "Keine Steuererklärung",
+    "AUSLOGGEN": "Ausloggen",
+    "EINLOGGEN": "Einloggen",
+    "PARAMETER": "Parameter"
 }
 
