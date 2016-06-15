@@ -101,6 +101,7 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 		persistence.persist(institutionStammdaten.getInstitution().getMandant());
 		persistence.persist(institutionStammdaten.getInstitution().getTraegerschaft());
 		persistence.persist(institutionStammdaten.getInstitution());
+		persistence.persist(institutionStammdaten.getAdresse());
 		return institutionStammdatenService.saveInstitutionStammdaten(institutionStammdaten);
 	}
 

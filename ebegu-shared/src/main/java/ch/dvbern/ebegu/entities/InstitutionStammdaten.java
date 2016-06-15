@@ -17,6 +17,9 @@ import java.math.BigDecimal;
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = "adresse_id", name = "UK_institution_stammdaten_adresse_id")
+)
 public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -8403411439882700618L;
@@ -43,7 +46,7 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	private Institution institution;
 
 	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institutionStammdaten_adresse_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adresse_id"), nullable = false)
 	private Adresse adresse;
 
 	public InstitutionStammdaten() {

@@ -17,17 +17,17 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	private static final long serialVersionUID = -3084333639027795652L;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_gesuchsteller_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_gesuchsteller_id"))
 	private Gesuchsteller gesuchsteller;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumgs_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumgs_id"))
 	private Erwerbspensum erwerbspensumGS;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ErwerbspensumContainer_erwerbspensumja_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
 
 	public Gesuchsteller getGesuchsteller() {

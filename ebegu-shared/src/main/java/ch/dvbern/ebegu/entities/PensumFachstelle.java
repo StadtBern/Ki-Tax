@@ -3,6 +3,8 @@ package ch.dvbern.ebegu.entities;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 /**
@@ -15,6 +17,7 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	private static final long serialVersionUID = -9132257320978374570L;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pensum_fachstelle_fachstelle_id"))
 	private Fachstelle fachstelle;
 
 	public Fachstelle getFachstelle() {
