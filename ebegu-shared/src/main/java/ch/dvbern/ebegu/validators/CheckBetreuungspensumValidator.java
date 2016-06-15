@@ -26,6 +26,17 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
+	public CheckBetreuungspensumValidator() {
+	}
+
+	/**
+	 * Constructor fuer tests damit service reingegeben werden kann
+	 * @param service service zum testen
+	 */
+	public CheckBetreuungspensumValidator(EbeguParameterService service){
+		this.ebeguParameterService = service;
+	}
+
 	@Override
 	public void initialize(CheckBetreuungspensum constraintAnnotation) {
 		// nop
