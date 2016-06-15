@@ -4,7 +4,7 @@ import {BetreuungViewController} from './betreuungView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import DateUtil from '../../../utils/DateUtil';
-import {TSInstitutionStammdaten} from '../../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';

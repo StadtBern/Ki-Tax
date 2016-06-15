@@ -83,6 +83,16 @@ public class InstitutionStammdatenServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(1, allInstitutionStammdatenByDate2.size());
 	}
 
+	@Test
+	public void getAllInstitutionStammdatenByInstitution() {
+		Assert.assertNotNull(institutionStammdatenService);
+		InstitutionStammdaten insertedInstitutionStammdaten = insertInstitutionStammdaten();
+		String id = insertedInstitutionStammdaten.getInstitution().getId();
+		Collection<InstitutionStammdaten> allInstitutionStammdatenByInstitution = institutionStammdatenService.getAllInstitutionStammdatenByInstitution(id);
+		Assert.assertEquals(1, allInstitutionStammdatenByInstitution.size());
+
+	}
+
 
 	// HELP METHODS
 

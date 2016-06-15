@@ -36,6 +36,8 @@ public class JaxBConverter {
 	@Inject
 	private AdresseService adresseService;
 	@Inject
+	private GesuchstellerAdresseService gesuchstellerAdresseService;
+	@Inject
 	private PensumFachstelleService pensumFachstelleService;
 	@Inject
 	private FachstelleService fachstelleService;
@@ -244,36 +246,50 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public GesuchstellerAdresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
-		Validate.notNull(gesuchstellerAdresse);
-		Validate.notNull(jaxAdresse);
-		convertAbstractDateRangedFieldsToEntity(jaxAdresse, gesuchstellerAdresse);
-		gesuchstellerAdresse.setStrasse(jaxAdresse.getStrasse());
-		gesuchstellerAdresse.setHausnummer(jaxAdresse.getHausnummer());
-		gesuchstellerAdresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
-		gesuchstellerAdresse.setPlz(jaxAdresse.getPlz());
-		gesuchstellerAdresse.setOrt(jaxAdresse.getOrt());
-		gesuchstellerAdresse.setGemeinde(jaxAdresse.getGemeinde());
-		gesuchstellerAdresse.setLand(jaxAdresse.getLand());
-		//adresse gilt per default von start of time an
-		gesuchstellerAdresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
+	public GesuchstellerAdresse gesuchstellerAdresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
+
+		adresseToEntity(jaxAdresse, gesuchstellerAdresse);
 		gesuchstellerAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
 
 		return gesuchstellerAdresse;
 	}
 
 	@Nonnull
-	public JaxAdresse adresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
-		JaxAdresse jaxAdresse = new JaxAdresse();
-		convertAbstractDateRangedFieldsToJAX(gesuchstellerAdresse, jaxAdresse);
-		jaxAdresse.setStrasse(gesuchstellerAdresse.getStrasse());
-		jaxAdresse.setHausnummer(gesuchstellerAdresse.getHausnummer());
-		jaxAdresse.setZusatzzeile(gesuchstellerAdresse.getZusatzzeile());
-		jaxAdresse.setPlz(gesuchstellerAdresse.getPlz());
-		jaxAdresse.setOrt(gesuchstellerAdresse.getOrt());
-		jaxAdresse.setGemeinde(gesuchstellerAdresse.getGemeinde());
-		jaxAdresse.setLand(gesuchstellerAdresse.getLand());
+	public JaxAdresse gesuchstellerAdresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
+		JaxAdresse jaxAdresse = adresseToJAX(gesuchstellerAdresse);
 		jaxAdresse.setAdresseTyp(gesuchstellerAdresse.getAdresseTyp());
+		return jaxAdresse;
+	}
+
+	@Nonnull
+	public Adresse adresseToEntity(@Nonnull JaxAdresse jaxAdresse, @Nonnull final Adresse adresse) {
+		Validate.notNull(adresse);
+		Validate.notNull(jaxAdresse);
+		convertAbstractDateRangedFieldsToEntity(jaxAdresse, adresse);
+		adresse.setStrasse(jaxAdresse.getStrasse());
+		adresse.setHausnummer(jaxAdresse.getHausnummer());
+		adresse.setZusatzzeile(jaxAdresse.getZusatzzeile());
+		adresse.setPlz(jaxAdresse.getPlz());
+		adresse.setOrt(jaxAdresse.getOrt());
+		adresse.setGemeinde(jaxAdresse.getGemeinde());
+		adresse.setLand(jaxAdresse.getLand());
+		//adresse gilt per default von start of time an
+		adresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
+
+		return adresse;
+	}
+
+	@Nonnull
+	public JaxAdresse adresseToJAX(@Nonnull final Adresse adresse) {
+		JaxAdresse jaxAdresse = new JaxAdresse();
+		convertAbstractDateRangedFieldsToJAX(adresse, jaxAdresse);
+		jaxAdresse.setStrasse(adresse.getStrasse());
+		jaxAdresse.setHausnummer(adresse.getHausnummer());
+		jaxAdresse.setZusatzzeile(adresse.getZusatzzeile());
+		jaxAdresse.setPlz(adresse.getPlz());
+		jaxAdresse.setOrt(adresse.getOrt());
+		jaxAdresse.setGemeinde(adresse.getGemeinde());
+		jaxAdresse.setLand(adresse.getLand());
 		return jaxAdresse;
 	}
 
@@ -305,8 +321,8 @@ public class JaxBConverter {
 		//Relationen
 		//Wir fuehren derzeit immer maximal  eine alternative Korrespondenzadressse -> diese updaten wenn vorhanden
 		if (gesuchstellerJAXP.getAlternativeAdresse() != null) {
-			GesuchstellerAdresse currentAltAdr = adresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new GesuchstellerAdresse());
-			GesuchstellerAdresse altAddrToMerge = adresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
+			GesuchstellerAdresse currentAltAdr = gesuchstellerAdresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new GesuchstellerAdresse());
+			GesuchstellerAdresse altAddrToMerge = gesuchstellerAdresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
 		}
 		// Umzug und Wohnadresse
@@ -339,13 +355,13 @@ public class JaxBConverter {
 		GesuchstellerAdresse adrToMergeWith = new GesuchstellerAdresse();
 		if (adresseToPrepareForSaving.getId() != null) {
 
-			Optional<GesuchstellerAdresse> altAdr = adresseService.findAdresse(adresseToPrepareForSaving.getId());
+			Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.findAdresse(adresseToPrepareForSaving.getId());
 			//wenn schon vorhanden updaten
 			if (altAdr.isPresent()) {
 				adrToMergeWith = altAdr.get();
 			}
 		}
-		return adresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
+		return gesuchstellerAdresseToEntity(adresseToPrepareForSaving, adrToMergeWith);
 	}
 
 	@Nonnull
@@ -360,15 +376,15 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
 		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
 		//relationen laden
-		Optional<GesuchstellerAdresse> altAdr = adresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
-		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(adresseToJAX(adresse)));
-		GesuchstellerAdresse currentWohnadr = adresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
-		jaxGesuchsteller.setWohnAdresse(adresseToJAX(currentWohnadr));
+		Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
+		GesuchstellerAdresse currentWohnadr = gesuchstellerAdresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
+		jaxGesuchsteller.setWohnAdresse(gesuchstellerAdresseToJAX(currentWohnadr));
 
 		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-		Optional<GesuchstellerAdresse> maybeUmzugadresse = adresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
+		Optional<GesuchstellerAdresse> maybeUmzugadresse = gesuchstellerAdresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
 		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
-			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(adresseToJAX(umzugAdr)));
+			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(gesuchstellerAdresseToJAX(umzugAdr)));
 		// Finanzielle Situation
 		if (persistedGesuchsteller.getFinanzielleSituationContainer() != null) {
 			JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
@@ -529,7 +545,9 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(persistedInstitution, jaxInstitution);
 		jaxInstitution.setName(persistedInstitution.getName());
 		jaxInstitution.setMandant(mandantToJAX(persistedInstitution.getMandant()));
-		jaxInstitution.setTraegerschaft(traegerschaftToJAX(persistedInstitution.getTraegerschaft()));
+		if(persistedInstitution.getTraegerschaft() != null) {
+			jaxInstitution.setTraegerschaft(traegerschaftToJAX(persistedInstitution.getTraegerschaft()));
+		}
 		return jaxInstitution;
 	}
 
@@ -553,17 +571,18 @@ public class JaxBConverter {
 //			institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), new Mandant()));
 		}
 
-		if (institutionJAXP.getTraegerschaft().getId() != null) {
-			Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
-			if (traegerschaftFromDB.isPresent()) {
-				institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+//		Institution ist nicht required!
+		if (institutionJAXP.getTraegerschaft() != null) {
+			if (institutionJAXP.getTraegerschaft().getId() != null) {
+				Optional<Traegerschaft> traegerschaftFromDB = traegerschaftService.findTraegerschaft(institutionJAXP.getTraegerschaft().getId());
+				if (traegerschaftFromDB.isPresent()) {
+					institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), traegerschaftFromDB.get()));
+				} else {
+					throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getTraegerschaft().getId());
+				}
 			} else {
-				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionJAXP.getTraegerschaft().getId());
+				throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 			}
-		} else {
-			//todo homa ebegu 82 review wie reagieren wir hier
-			throw new EbeguEntityNotFoundException("institutionToEntity -> traegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-//			institution.setTraegerschaft(traegerschaftToEntity(institutionJAXP.getTraegerschaft(), new Traegerschaft()));
 		}
 		return institution;
 	}
@@ -573,21 +592,31 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(persistedInstStammdaten, jaxInstStammdaten);
 		jaxInstStammdaten.setOeffnungstage(persistedInstStammdaten.getOeffnungstage());
 		jaxInstStammdaten.setOeffnungsstunden(persistedInstStammdaten.getOeffnungsstunden());
-		jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
+		if(persistedInstStammdaten.getIban()!= null) {
+			jaxInstStammdaten.setIban(persistedInstStammdaten.getIban().getIban());
+		}
 		jaxInstStammdaten.setBetreuungsangebotTyp(persistedInstStammdaten.getBetreuungsangebotTyp());
 		jaxInstStammdaten.setInstitution(institutionToJAX(persistedInstStammdaten.getInstitution()));
+		jaxInstStammdaten.setAdresse(adresseToJAX(persistedInstStammdaten.getAdresse()));
 		return jaxInstStammdaten;
 	}
 
 	public InstitutionStammdaten institutionStammdatenToEntity(JaxInstitutionStammdaten institutionStammdatenJAXP, InstitutionStammdaten institutionStammdaten) {
 		Validate.notNull(institutionStammdatenJAXP);
+		Validate.notNull(institutionStammdatenJAXP.getInstitution());
 		Validate.notNull(institutionStammdaten);
+		Validate.notNull(institutionStammdaten.getAdresse());
+
 
 		convertAbstractDateRangedFieldsToEntity(institutionStammdatenJAXP, institutionStammdaten);
 		institutionStammdaten.setOeffnungstage(institutionStammdatenJAXP.getOeffnungstage());
 		institutionStammdaten.setOeffnungsstunden(institutionStammdatenJAXP.getOeffnungsstunden());
-		institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
+		if(institutionStammdatenJAXP.getIban()!= null) {
+			institutionStammdaten.setIban(new IBAN(institutionStammdatenJAXP.getIban()));
+		}
 		institutionStammdaten.setBetreuungsangebotTyp(institutionStammdatenJAXP.getBetreuungsangebotTyp());
+
+		adresseToEntity(institutionStammdatenJAXP.getAdresse(), institutionStammdaten.getAdresse());
 
 		Optional<Institution> institutionFromDB = institutionService.findInstitution(institutionStammdatenJAXP.getInstitution().getId());
 		if (institutionFromDB.isPresent()) {

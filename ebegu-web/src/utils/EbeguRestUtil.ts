@@ -13,8 +13,8 @@ import TSFinanzielleSituation from '../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../models/TSFinanzielleSituationContainer';
 import {TSMandant} from '../models/TSMandant';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import {TSInstitution} from '../models/TSInstitution';
-import {TSInstitutionStammdaten} from '../models/TSInstitutionStammdaten';
+import TSInstitution from '../models/TSInstitution';
+import TSInstitutionStammdaten from '../models/TSInstitutionStammdaten';
 import {TSDateRange} from '../models/types/TSDateRange';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 import TSKind from '../models/TSKind';
@@ -514,6 +514,7 @@ export default class EbeguRestUtil {
             restInstitutionStammdaten.oeffnungstage = institutionStammdaten.oeffnungstage;
             restInstitutionStammdaten.betreuungsangebotTyp = institutionStammdaten.betreuungsangebotTyp;
             restInstitutionStammdaten.institution = this.institutionToRestObject({}, institutionStammdaten.institution);
+            restInstitutionStammdaten.adresse = this.adresseToRestObject({}, institutionStammdaten.adresse);
             return restInstitutionStammdaten;
         }
         return undefined;
@@ -527,6 +528,7 @@ export default class EbeguRestUtil {
             institutionStammdatenTS.oeffnungstage = institutionStammdatenFromServer.oeffnungstage;
             institutionStammdatenTS.betreuungsangebotTyp = institutionStammdatenFromServer.betreuungsangebotTyp;
             institutionStammdatenTS.institution = this.parseInstitution(new TSInstitution(), institutionStammdatenFromServer.institution);
+            institutionStammdatenTS.adresse = this.parseAdresse(new TSAdresse(), institutionStammdatenFromServer.adresse);
             return institutionStammdatenTS;
         }
         return undefined;

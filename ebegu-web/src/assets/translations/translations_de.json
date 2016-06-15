@@ -484,6 +484,17 @@
     "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5": "Pauschalabzug bei einer Familiengrösse von fünf Personen pauschal pro Person",
     "PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6": "Pauschalabzug bei einer Familiengrösse von sechs Personen pauschal pro Person",
     "PARAM_MAX_TAGE_ABWESENHEIT": "Max Abwesenheit",
-    "PARAM_ABGELTUNG_PRO_TAG_KANTON": "Abgeltung des Kantons pro Tag"
+    "PARAM_ABGELTUNG_PRO_TAG_KANTON": "Abgeltung des Kantons pro Tag",
+    "INSTITUTION_HINZUFUEGEN": "Institution hinzufügen",
+    "INSTITUTION_SPEICHERN": "Institution speichern",
+    "INSTITUTIONEN_NOCH_KEINE": "Noch keine Institutionen",
+    "TRAEGERSCHAFT": "Trägerschaft",
+    "MANDANT": "Mandant",
+    "INSTITUTION_STAMMDATEN": "Institution Stammdaten,",
+    "INSTITUTION_STAMMDATEN_NOCH_KEINE": "Noch keine Institution Stammdaten",
+    "INSTITUTION_STAMMDATEN_HINZUFUEGEN": "Institution Stammdaten hinzufügen",
+    "OEFFNUNGSTAGE": "Öffnungstage",
+    "OEFFNUNGSSTUNDEN": "Öffnungsstunden",
+    "INSTITUTION_STAMMDATEN_SPEICHERN": "Institution Stammdaten speichern"
 }
 

@@ -23,7 +23,7 @@ import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import ErwerbspensumRS from '../../core/service/erwerbspensumRS.rest';
 import TSBetreuung from '../../models/TSBetreuung';
-import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import BetreuungRS from '../../core/service/betreuungRS';

@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxInstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
@@ -57,6 +58,8 @@ public class InstitutionStammdatenResource {
 			instDaten = optional.orElse(new InstitutionStammdaten());
 		} else {
 			instDaten = new InstitutionStammdaten();
+			Adresse adresse = new Adresse();
+			instDaten.setAdresse(adresse);
 		}
 		InstitutionStammdaten convertedInstData = converter.institutionStammdatenToEntity(institutionStammdatenJAXP, instDaten);
 		InstitutionStammdaten persistedInstData = institutionStammdatenService.saveInstitutionStammdaten(convertedInstData);
@@ -129,5 +132,27 @@ public class InstitutionStammdatenResource {
 			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))
 			.collect(Collectors.toList());
 	}
+
+	/**
+	 * Sucht in der DB alle InstitutionStammdaten, bei welchen die Institutions-id dem übergabeparameter entspricht
+	 *
+	 * @param institutionJAXPId ID der gesuchten Institution
+	 * @return Liste mit allen InstitutionStammdaten die der Bedingung folgen
+	 */
+	@Nonnull
+	@GET
+	@Path("/institution/{institutionId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitutionStammdaten> getAllInstitutionStammdatenByInstitution(
+		@Nonnull @NotNull @PathParam("institutionId") JaxId institutionJAXPId) {
+
+		Validate.notNull(institutionJAXPId.getId());
+		String institutionID = converter.toEntityId(institutionJAXPId);
+		return institutionStammdatenService.getAllInstitutionStammdatenByInstitution(institutionID).stream()
+			.map(instStammdaten -> converter.institutionStammdatenToJAX(instStammdaten))
+			.collect(Collectors.toList());
+	}
+
 
 }
