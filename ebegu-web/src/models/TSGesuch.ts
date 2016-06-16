@@ -1,23 +1,17 @@
-import TSAbstractEntity from './TSAbstractEntity';
-import TSFall from './TSFall';
 import TSGesuchsteller from './TSGesuchsteller';
 import TSKindContainer from './TSKindContainer';
+import TSAbstractAntragEntity from './TSAbstractAntragEntity';
+import TSFamiliensituation from './TSFamiliensituation';
 
-export default class TSGesuch extends TSAbstractEntity {
-    private _fall: TSFall;
+export default class TSGesuch extends TSAbstractAntragEntity {
+
     private _gesuchsteller1: TSGesuchsteller;
     private _gesuchsteller2: TSGesuchsteller;
-    private _kindContainer: Array<TSKindContainer>;
+    private _kindContainers: Array<TSKindContainer>;
+    private _familiensituation: TSFamiliensituation;
     private _einkommensverschlechterung: boolean;
 
 
-    public get fall(): TSFall {
-        return this._fall;
-    }
-
-    public set fall(value: TSFall) {
-        this._fall = value;
-    }
 
     public get gesuchsteller1(): TSGesuchsteller {
         return this._gesuchsteller1;
@@ -35,12 +29,20 @@ export default class TSGesuch extends TSAbstractEntity {
         this._gesuchsteller2 = value;
     }
 
-    get kindContainer(): Array<TSKindContainer> {
-        return this._kindContainer;
+    get kindContainers(): Array<TSKindContainer> {
+        return this._kindContainers;
     }
 
-    set kindContainer(value: Array<TSKindContainer>) {
-        this._kindContainer = value;
+    set kindContainers(value: Array<TSKindContainer>) {
+        this._kindContainers = value;
+    }
+
+    get familiensituation(): TSFamiliensituation {
+        return this._familiensituation;
+    }
+
+    set familiensituation(value: TSFamiliensituation) {
+        this._familiensituation = value;
     }
 
     get einkommensverschlechterung(): boolean {

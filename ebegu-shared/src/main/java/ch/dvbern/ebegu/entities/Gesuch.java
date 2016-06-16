@@ -14,38 +14,39 @@ import java.util.Set;
  */
 @Audited
 @Entity
-public class Gesuch extends AbstractEntity {
+//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgende 2 Moeglichkeiten sollten gehen aber es ueberschreibt den Namen nicht --> Problem mit hibernate-maven-plugin??
+//@AssociationOverride(name = "gesuchsperiode", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id")))
+//@AssociationOverride(name = "gesuchsperiode", foreignKey = @ForeignKey(name="FK_gesuch_gesuchsperiode_id"))
+public class Gesuch extends AbstractAntragEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
 
-	@ManyToOne(optional = false)
-	private Fall fall;
-
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller1_id"))
 	private Gesuchsteller gesuchsteller1;
 
-	@Nullable
 	@Valid
+	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsteller2_id"))
 	private Gesuchsteller gesuchsteller2;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
 	private Set<KindContainer> kindContainers = new HashSet<>();
+
+	@Valid
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
+	private Familiensituation familiensituation;
 
 	@Column(nullable = true)
 	private Boolean einkommensverschlechterung;
 
 
-	public Fall getFall() {
-		return fall;
-	}
-
-	public void setFall(Fall fall) {
-		this.fall = fall;
-	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
@@ -73,6 +74,15 @@ public class Gesuch extends AbstractEntity {
 		this.kindContainers = kindContainers;
 	}
 
+	@Nullable
+	public Familiensituation getFamiliensituation() {
+		return familiensituation;
+	}
+
+	public void setFamiliensituation(@Nullable Familiensituation familiensituation) {
+		this.familiensituation = familiensituation;
+	}
+
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
 	}
@@ -85,4 +95,5 @@ public class Gesuch extends AbstractEntity {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
+
 }

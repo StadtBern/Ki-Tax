@@ -1,21 +1,32 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
-import IPromise = angular.IPromise;
+import {IHttpBackendService, IScope, IQService} from 'angular';
 import BetreuungRS from '../../core/service/betreuungRS';
-import IQService = angular.IQService;
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import FallRS from './fallRS.rest';
+import GesuchRS from './gesuchRS.rest';
+import TestDataUtil from '../../utils/TestDataUtil';
+import DateUtil from '../../utils/DateUtil';
 
 describe('gesuchModelManager', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let betreuungRS: BetreuungRS;
+    let fallRS: FallRS;
+    let gesuchRS: GesuchRS;
+    let scope: IScope;
+    let $httpBackend: IHttpBackendService;
     let $q: IQService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
+        $httpBackend = $injector.get('$httpBackend');
         betreuungRS = $injector.get('BetreuungRS');
+        fallRS = $injector.get('FallRS');
+        gesuchRS = $injector.get('GesuchRS');
+        scope = $injector.get('$rootScope').$new();
         $q = $injector.get('$q');
     }));
 
@@ -28,6 +39,7 @@ describe('gesuchModelManager', function () {
     describe('API Usage', function () {
         describe('createBetreuung', () => {
             it('should create a new empty Betreuung for the current KindContainer', () => {
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(0);
@@ -42,6 +54,7 @@ describe('gesuchModelManager', function () {
         });
         describe('removeBetreuungFromKind', () => {
             it('should remove the current Betreuung from the list of the current Kind', () => {
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
@@ -53,6 +66,7 @@ describe('gesuchModelManager', function () {
         });
         describe('updateBetreuung', () => {
             it('creates a new betreuung', () => {
+                gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
                 gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
@@ -66,6 +80,31 @@ describe('gesuchModelManager', function () {
                 expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(called).toBe(true);
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
+            });
+        });
+        describe('saveGesuchAndFall', () => {
+            it('creates a Fall with a linked Gesuch', () => {
+                spyOn(fallRS, 'createFall').and.returnValue($q.when({}));
+                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.saveGesuchAndFall();
+
+                scope.$apply();
+                expect(fallRS.createFall).toHaveBeenCalled();
+                expect(gesuchRS.createGesuch).toHaveBeenCalled();
+            });
+            it('only updates the Gesuch because it already exists', () => {
+                spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
+                gesuchModelManager.initGesuch(false);
+                gesuchModelManager.gesuch.timestampErstellt = DateUtil.today();
+                gesuchModelManager.saveGesuchAndFall();
+
+                scope.$apply();
+                expect(gesuchRS.updateGesuch).toHaveBeenCalled();
             });
         });
     });

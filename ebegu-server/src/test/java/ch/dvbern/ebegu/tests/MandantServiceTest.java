@@ -45,4 +45,13 @@ public class MandantServiceTest extends AbstractEbeguTest {
 		Assert.assertTrue(mandantOpt.isPresent());
 		Assert.assertEquals("Mandant1", mandantOpt.get().getName());
 	}
+
+	@Test
+	public void firstMandantTest() {
+		Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		Mandant loadedMandant = mandantService.getFirst();
+		Assert.assertNotNull(loadedMandant);
+		Assert.assertEquals("Mandant1", loadedMandant.getName());
+	}
 }

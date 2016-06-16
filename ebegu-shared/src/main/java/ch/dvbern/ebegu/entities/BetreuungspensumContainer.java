@@ -1,8 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 
@@ -12,7 +14,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class BetreuungspensumContainer extends AbstractEntity {
+public class BetreuungspensumContainer extends AbstractEntity implements Comparable<BetreuungspensumContainer>{
 
 	private static final long serialVersionUID = -6784987861150035840L;
 
@@ -21,10 +23,12 @@ public class BetreuungspensumContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuung_id"), nullable = false)
 	private Betreuung betreuung;
 
+	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuungspensum_gs"))
 	private Betreuungspensum betreuungspensumGS;
 
+	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuungspensum_ja"))
 	private Betreuungspensum betreuungspensumJA;
@@ -65,5 +69,13 @@ public class BetreuungspensumContainer extends AbstractEntity {
 
 		return getBetreuungspensumGS().isSame(otherBetreuungspensumContainer.getBetreuungspensumGS()) &&
 			getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
+	}
+
+	@Override
+	public int compareTo(BetreuungspensumContainer o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getBetreuungspensumJA(), o.getBetreuungspensumJA());
+		builder.append(this.getBetreuungspensumJA().getId(), o.getBetreuungspensumJA().getId());
+		return builder.toComparison();
 	}
 }

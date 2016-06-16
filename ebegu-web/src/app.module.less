@@ -25,11 +25,16 @@
 
 body {
     //navbar paddingtodo remove me just testing
-    padding-top: 80px;
+    padding-top: @page-start;
     font-family: "Open Sans", Arial, Helvetica, sans-serif;
     .starter-template {
         padding: 40px 15px;
         text-align: center;
+    };
+    &.ebegu {
+        // Wir setzen die Farbe gleich, wie die Background Farbe von Angular Material Design da sonst der Browser der
+        // Teil des Body ausserhalb des sichtbaren Windows eine andere Farbe hat.
+        background-color: rgb(250,250,250);
     }
 }
 //logobar
@@ -61,6 +66,12 @@ body {
     width: 150px;
     margin: 0 auto;
     font-weight: bolder;
+}
+
+.userMenu{
+    background-size: Auto 40px;
+    background-position: right 20px center;
+    float: right;
 }
 
 .empty-table {
@@ -103,6 +114,7 @@ form {
     }
 
 }
+
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
    causes the modal to fade in rather than slide in. */

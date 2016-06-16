@@ -1,10 +1,15 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import BerechnungsManager from '../../service/berechnungsManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
 describe('finanzielleSituationView', function () {
+
+    let gesuchModelManager: GesuchModelManager;
+    let berechnungsManager: BerechnungsManager;
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
@@ -14,15 +19,18 @@ describe('finanzielleSituationView', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
+        gesuchModelManager = $injector.get('GesuchModelManager');
+        berechnungsManager = $injector.get('BerechnungsManager');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
 
+    beforeEach(function () {
+        gesuchModelManager.initGesuch(false);
+    });
+
     it('should be defined', function () {
-        /*
-         To initialise your component controller you have to setup your (mock) bindings and
-         pass them to $componentController.
-         */
+        spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
         var bindings: {};
         component = $componentController('finanzielleSituationView', {$scope: scope}, bindings);
         expect(component).toBeDefined();

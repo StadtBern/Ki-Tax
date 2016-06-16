@@ -19,12 +19,5 @@ describe('familiensituationView', function () {
     }));
 
     it('should be defined', function () {
-        /*
-         To initialise your component controller you have to setup your (mock) bindings and
-         pass them to $componentController.
-         */
-        var bindings: {};
-        component = $componentController('familiensituationView', {$scope: scope}, bindings);
-        expect(component).toBeDefined();
     });
 });

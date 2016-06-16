@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface ErwerbspensumService {
 	 * @param erwerbspensumContainer Das Erwerbspensum das gespeichert werden soll
 	 */
 	@Nonnull
-	ErwerbspensumContainer saveErwerbspensum(@Nonnull ErwerbspensumContainer erwerbspensumContainer);
+	ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer);
 
 	/**
 	 * @param key PK (id) des ErwerbspensumContainers

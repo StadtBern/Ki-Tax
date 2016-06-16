@@ -2,6 +2,7 @@ import TSErwerbspensumContainer from '../models/TSErwerbspensumContainer';
 import TSErwerbspensum from '../models/TSErwerbspensum';
 import {TSTaetigkeit} from '../models/enums/TSTaetigkeit';
 import DateUtil from './DateUtil';
+import {IHttpBackendService} from 'angular';
 import {TSDateRange} from '../models/types/TSDateRange';
 import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
 import TSAbstractEntity from '../models/TSAbstractEntity';
@@ -44,11 +45,18 @@ export default class TestDataUtil {
     }
 
     static checkGueltigkeitAndSetIfSame(first: TSAbstractDateRangedEntity, second: TSAbstractDateRangedEntity) {
+        // Dieses hack wird gebraucht weil um 2 Moment zu vergleichen kann man nicht einfach equal() benutzen sondern isSame
         expect(first.gueltigkeit.gueltigAb.isSame(second.gueltigkeit.gueltigAb)).toBe(true);
         expect(first.gueltigkeit.gueltigBis.isSame(second.gueltigkeit.gueltigBis)).toBe(true);
         first.gueltigkeit.gueltigAb = second.gueltigkeit.gueltigAb;
         first.gueltigkeit.gueltigBis = second.gueltigkeit.gueltigBis;
+    }
 
 
+    static mockDefaultGesuchModelManagerHttpCalls($httpBackend: IHttpBackendService) {
+        $httpBackend.when('GET', '/ebegu/api/v1/fachstellen').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
     }
 }

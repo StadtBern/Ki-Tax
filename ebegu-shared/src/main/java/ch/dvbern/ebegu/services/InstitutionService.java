@@ -12,11 +12,18 @@ import java.util.Optional;
 public interface InstitutionService {
 
 	/**
-	 * Speichert die Institution neu in der DB falls der Key noch nicht existiert.
+	 * Aktualisiert die Institution in der DB
 	 * @param institution Die Institution als DTO
 	 */
 	@Nonnull
-	Institution saveInstitution(@Nonnull Institution institution);
+	Institution updateInstitution(@Nonnull Institution institution);
+
+	/**
+	 * Speichert die Institution neu in der DB
+	 * @param institution Die Institution als DTO
+	 */
+	@Nonnull
+	Institution createInstitution(@Nonnull Institution institution);
 
 	/**
 	 * @param key PK (id) der Institution
@@ -26,10 +33,16 @@ public interface InstitutionService {
 	Optional<Institution> findInstitution(@Nonnull String key);
 
 	/**
-	 * removes an Institution from the Database.
+	 * marks an Institution as inactive on the Database.
 	 * @param InstitutionId
 	 */
-	void removeInstitution(@Nonnull String InstitutionId);
+	void setInstitutionInactive(@Nonnull String InstitutionId);
+
+	/**
+	 * Delete Institution on the Database.
+	 * @param InstitutionId
+	 */
+	void deleteInstitution(@Nonnull String InstitutionId);
 
 	/**
 	 *
@@ -38,4 +51,17 @@ public interface InstitutionService {
      */
 	@Nonnull
 	Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId);
+
+	/**
+	 *
+	 * @return Alle Institutionen in der DB
+     */
+	@Nonnull
+	Collection<Institution> getAllInstitutionen();
+
+	/**
+	 *
+	 * @return Gibt alle aktive Institutionen zurück
+	 */
+	Collection<Institution> getAllActiveInstitutionen();
 }

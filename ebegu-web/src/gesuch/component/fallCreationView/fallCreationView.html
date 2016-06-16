@@ -1,0 +1,63 @@
+<div class="fallCreationView row">
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="mainTitle">
+                <span ng-if="!vm.gesuchModelManager.isGesuchSaved()"
+                      span data-translate="MENU_ERSTGESUCH"></span>
+                <span ng-if="vm.gesuchModelManager.isGesuchSaved()"
+                      span data-translate="MENU_ERSTGESUCH_PERIODE" data-translate-value-periode="{{vm.getCurrentGesuchsperiodeAsString()}}"></span>
+            </h4>
+        </div>
+    </div>
+    <hr class="header"/>
+
+    <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
+
+        <!--Eingangsdatum-->
+        <div class="row">
+            <div class="col-md-6">
+                <dv-input-container class="form-group">
+                    <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
+                    </label>
+                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum""
+                                   ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
+                    </dv-datepicker>
+                    <dv-error-messages  for="form.eingangsdatum.$error"
+                                        class="error"></dv-error-messages>
+                </dv-input-container>
+            </div>
+        </div>
+
+        <!--Gesuchsperioden-->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="dv-radio-container" >
+                        <md-radio-group name="gesuchsperioden" class="input-element radio" ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
+                                        ng-required="true">
+                            <md-radio-button ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                             ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}">
+                                <span>{{vm.getGesuchsperiodeAsString(current)}}</span>
+                            </md-radio-button>
+                        </md-radio-group>
+                        <dv-error-messages for="form.gesuchsperioden.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+    <!--Buttons-->
+        <div class="row">
+            <div class="col-md-6 col-md-offset-6">
+                <button type="submit" class="btn btn-link next">
+                    <span ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="SPEICHERN_UPPER"></span>
+                    <span ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="WEITER_UPPER"></span>
+                    <span class="fa fa-chevron-right"></span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>

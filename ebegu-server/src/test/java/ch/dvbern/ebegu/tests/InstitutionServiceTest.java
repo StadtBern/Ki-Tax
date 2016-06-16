@@ -16,8 +16,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -51,15 +51,40 @@ public class InstitutionServiceTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void removeInstitution(){
+	public void deleteInstitution(){
 		Assert.assertNotNull(institutionService);
 		Institution institution = insertInstitution();
 
 		Optional<Institution> institutionOpt = institutionService.findInstitution(institution.getId());
 		Assert.assertTrue(institutionOpt.isPresent());
-		institutionService.removeInstitution(institutionOpt.get().getId());
+		institutionService.deleteInstitution(institutionOpt.get().getId());
 		Optional<Institution> institutionOpt2 = institutionService.findInstitution(institution.getId());
 		Assert.assertFalse(institutionOpt2.isPresent());
+	}
+
+	// This test gives a really strange Error java.lang.NoSuchMethodError: ch.dvbern.ebegu.entities.Institution.setActive(Ljava/lang/Boolean;)V
+	// but the method in the entity is definitely there!
+	@Test
+	public void inactiveInstitution(){
+		Assert.assertNotNull(institutionService);
+		Institution institution = insertInstitution();
+
+		Optional<Institution> institutionOpt = institutionService.findInstitution(institution.getId());
+		Assert.assertTrue(institutionOpt.isPresent());
+		institutionService.setInstitutionInactive(institutionOpt.get().getId());
+		Optional<Institution> institutionOpt2 = institutionService.findInstitution(institution.getId());
+		Assert.assertFalse(institutionOpt2.get().getActive());
+	}
+
+
+	@Test
+	public void getAllInstitutionenTest(){
+		Assert.assertNotNull(institutionService);
+		Institution institution = insertInstitution();
+
+		Collection<Institution> allInstitutionen = institutionService.getAllInstitutionen();
+		Assert.assertFalse(allInstitutionen.isEmpty());
+
 	}
 
 
@@ -76,7 +101,7 @@ public class InstitutionServiceTest extends AbstractEbeguTest {
 		persistence.persist(mandant);
 		institution.setMandant(mandant);
 
-		institutionService.saveInstitution(institution);
+		institutionService.createInstitution(institution);
 		return institution;
 	}
 

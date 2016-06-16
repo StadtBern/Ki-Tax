@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.util.Optional;
 
 /**
@@ -15,7 +16,7 @@ public interface BetreuungService {
 	 * @param betreuung Die Betreuung als DTO
 	 */
 	@Nonnull
-	Betreuung saveBetreuung(@Nonnull Betreuung betreuung);
+	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
 
 	/**
 
@@ -24,6 +25,9 @@ public interface BetreuungService {
 	 */
 	@Nonnull
 	Optional<Betreuung> findBetreuung(@Nonnull String key);
+
+	@Nonnull
+	Betreuung findBetreuungWithBetreuungsPensen(@Nonnull String key);
 
 	/**
 	 * entfernt eine Betreuung aus der Databse

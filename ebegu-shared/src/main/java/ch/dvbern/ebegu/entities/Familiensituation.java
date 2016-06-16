@@ -7,7 +7,10 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,9 +37,6 @@ public class Familiensituation extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
-
-	@ManyToOne(optional = false)
-	private Gesuch gesuch;
 
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
@@ -70,14 +70,6 @@ public class Familiensituation extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
-	}
-
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
 	}
 
 	public Boolean getGemeinsameSteuererklaerung() {

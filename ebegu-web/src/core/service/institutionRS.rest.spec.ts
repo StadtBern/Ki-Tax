@@ -1,7 +1,8 @@
+///<reference path="../../models/TSInstitution.ts"/>
 import {EbeguWebCore} from '../core.module';
 import {IHttpBackendService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {TSInstitution} from '../../models/TSInstitution';
+import TSInstitution from '../../models/TSInstitution';
 import {InstitutionRS} from './institutionRS.rest';
 import {TSTraegerschaft} from '../../models/TSTraegerschaft';
 import {TSMandant} from '../../models/TSMandant';
@@ -74,7 +75,7 @@ describe('institutionRS', function () {
         describe('createInstitution', () => {
             it('should create an institution', () => {
                 let createdInstitution: TSInstitution;
-                $httpBackend.expectPUT(institutionRS.serviceURL, mockInstitutionRest).respond(mockInstitutionRest);
+                $httpBackend.expectPOST(institutionRS.serviceURL, mockInstitutionRest).respond(mockInstitutionRest);
 
                 institutionRS.createInstitution(mockInstitution)
                     .then((result) => {

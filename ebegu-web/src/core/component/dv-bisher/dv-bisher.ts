@@ -1,5 +1,6 @@
 import {IComponentOptions} from 'angular';
 let template =  require('./dv-bisher.html');
+require('./dv-bisher.less');
 
 export class DvBisherComponentConfig implements IComponentOptions {
     transclude = false;

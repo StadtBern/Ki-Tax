@@ -1,11 +1,5 @@
 /* Component LESS */
-@import 'component/dv-error-messages/dv-error-messages.less';
 @import '../variables.less';
-@import 'component/dv-adresse/dv-adresse.less';
-@import 'component/dv-input-container/dv-input-container.less';
-@import 'component/dv-radio-container/dv-radio-container.less';
-@import "directive/dv-dialog/dv-dialog.less";
-@import "component/dv-tooltip/dv-tooltip.less";
 /* Add Component LESS Above */
 
 .ebegu {
@@ -103,14 +97,18 @@
         }
     }
     .marginLeft10 {
-        margin-left: 10px;
+        margin-left: @small-abstand;
 
     }
     .marginTop10 {
-        margin-top: 10px;
+        margin-top: @small-abstand;
     }
     .marginTop20 {
-        margin-top: 20px;
+        margin-top: @normal-abstand;
+    }
+
+    .marginTop40 {
+        margin-top: 40px;
     }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
@@ -143,6 +141,10 @@
         overflow: hidden;
         top: 16px;
         clear: left;
+    }
+
+    ._md-open-menu-container, .md-open-menu-container {
+        z-index: 5000 !important;
     }
 
 }

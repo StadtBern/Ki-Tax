@@ -13,12 +13,10 @@ import java.util.Set;
  */
 @XmlRootElement(name = "gesuch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxGesuch extends JaxAbstractDTO {
+public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private static final long serialVersionUID = -1217019901364130097L;
 
-	@NotNull
-	private JaxFall fall;
 
 	@Nullable
 	private JaxGesuchsteller gesuchsteller1;
@@ -27,21 +25,16 @@ public class JaxGesuch extends JaxAbstractDTO {
 	private JaxGesuchsteller gesuchsteller2;
 
 	@NotNull
-	private Set<JaxKindContainer> kinder = new HashSet<>();
+	private Set<JaxKindContainer> kindContainers = new HashSet<>();
+
+	@Nullable
+	private JaxFamiliensituation familiensituation;
 
 	private Boolean einkommensverschlechterung;
 
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
-	}
-
-	public JaxFall getFall() {
-		return fall;
-	}
-
-	public void setFall(JaxFall fall) {
-		this.fall = fall;
 	}
 
 	@Nullable
@@ -62,12 +55,21 @@ public class JaxGesuch extends JaxAbstractDTO {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
-	public Set<JaxKindContainer> getKinder() {
-		return kinder;
+	public Set<JaxKindContainer> getKindContainers() {
+		return kindContainers;
 	}
 
-	public void setKinder(Set<JaxKindContainer> kinder) {
-		this.kinder = kinder;
+	public void setKindContainers(Set<JaxKindContainer> kindContainers) {
+		this.kindContainers = kindContainers;
+	}
+
+	@Nullable
+	public JaxFamiliensituation getFamiliensituation() {
+		return familiensituation;
+	}
+
+	public void setFamiliensituation(@Nullable JaxFamiliensituation familiensituation) {
+		this.familiensituation = familiensituation;
 	}
 
 	public Boolean getEinkommensverschlechterung() {

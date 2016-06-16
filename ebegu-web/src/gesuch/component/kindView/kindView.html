@@ -68,33 +68,20 @@
                 </div>
             </div>
 
-            <!--wohnhaftImGleichenHaushalt-->
+            <!-- Kinderabzug -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <dv-input-container class="form-group">
-                        <label data-translate="KINDER_GLEICHEM_HAUSHALT" for="wohnhaftImGleichenHaushalt"></label>
-                        <input id="wohnhaftImGleichenHaushalt" type="text" name="wohnhaftImGleichenHaushalt"
-                               ng-model="vm.getModel().wohnhaftImGleichenHaushalt" aria-label="wohnhaftImGleichenHaushalt"
-                               dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE" ng-required="true">
-                        <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
-                        <dv-error-messages  for="form.wohnhaftImGleichenHaushalt.$error" class="error hint"></dv-error-messages>
-                        <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
-                                   ja="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"
-                                   sv="vm.getContainer().kindJA.wohnhaftImGleichenHaushalt"></dv-bisher>
+                        <h4 class="mainQuestion"><span data-translate="KINDERABZUG"></span></h4>
+                        <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug" ng-required="true"
+                                            class="input-element" items="vm.kinderabzugValues">
+                        </dv-radio-container>
+                        <dv-error-messages for="form.familienstatus.$error"
+                                           class="error"></dv-error-messages>
+                        <dv-bisher gs="vm.getContainer().kindGS.kinderabzug"
+                                   ja="vm.getContainer().kindJA.kinderabzug"
+                                   sv="vm.getContainer().kindJA.kinderabzug"></dv-bisher>
                     </dv-input-container>
-                </div>
-            </div>
-
-            <!--unterstuetzungspflicht-->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="checkbox">
-                        <md-checkbox ng-model="vm.getModel().unterstuetzungspflicht" name="unterstuetzungspflicht" aria-label="unterstuetzungspflicht">
-                            <span data-translate="UNTERSTUETZUNGSPFLICHT"></span>
-                        </md-checkbox>
-                        <dv-error-messages  for="form.unterstuetzungspflicht.$error"
-                                            class="error"></dv-error-messages>
-                    </div>
                 </div>
             </div>
 

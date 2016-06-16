@@ -3,15 +3,16 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="mainTitle">
-                    <span data-translate="BETREUUNGSANGEBOT_NUMBER" data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
+                    <span data-translate="BETREUUNGSANGEBOT_NUMBER"
+                          data-translate-value-kindname="{{vm.getKindModel().kindJA.getFullName()}}"
                           data-translate-value-betreuungnumber="{{vm.gesuchModelManager.betreuungNumber}}"></span>
                 </h4>
             </div>
         </div>
         <hr class="header"/>
 
-        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
-
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
+              unsaved-warning-form>
             <!--Schuljahr -->
             <div class="row">
                 <div class="col-md-12" ng-if="vm.isTagesschule()">
@@ -26,12 +27,13 @@
                         <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
                         </label>
                         <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
-                        <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot" class="form-control"
+                        <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
+                                class="form-control"
                                 ng-options="betreuungsangebot as betreuungsangebot.value for betreuungsangebot in vm.betreuungsangebotValues | orderBy: 'value' track by betreuungsangebot.key"
                                 ng-required="true" ng-disabled="!vm.isEnabled()" ng-change="vm.changedAngebot()">
                         </select>
-                        <dv-error-messages  for="form.betreuungsangebot.$error"
-                                            class="error"></dv-error-messages>
+                        <dv-error-messages for="form.betreuungsangebot.$error"
+                                           class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
@@ -43,10 +45,11 @@
                         </label>
                         <select name="institution" id="institution" ng-model="vm.instStammId" class="form-control"
                                 ng-options="institutionSD.id as institutionSD.institution.name for institutionSD in vm.getInstitutionenSDList() | orderBy: 'institution.name'"
-                                ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()" ng-disabled="!vm.isEnabled()">
+                                ng-required="true" ng-change="vm.setSelectedInstitutionStammdaten()"
+                                ng-disabled="!vm.isEnabled()">
                         </select>
-                        <dv-error-messages  for="form.institution.$error"
-                                            class="error"></dv-error-messages>
+                        <dv-error-messages for="form.institution.$error"
+                                           class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
@@ -55,11 +58,13 @@
             <div class="row" ng-if="vm.isTageseltern()">
                 <div class="col-md-6">
                     <div class="checkbox">
-                        <md-checkbox ng-model="vm.getBetreuungModel().schulpflichtig" name="schulpflichtig" aria-label="schulpflichtig">
-                            <span data-translate="SCHULPFLICHTIG" data-translate-value-anfangsperiode="{{vm.getAnfangsperiode()}}"></span>
+                        <md-checkbox ng-model="vm.getBetreuungModel().schulpflichtig" name="schulpflichtig"
+                                     aria-label="schulpflichtig">
+                            <span data-translate="SCHULPFLICHTIG"
+                                  data-translate-value-anfangsperiode="{{vm.getGesuchsperiodeBegin() | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         </md-checkbox>
-                        <dv-error-messages  for="form.schulpflichtig.$error"
-                                            class="error"></dv-error-messages>
+                        <dv-error-messages for="form.schulpflichtig.$error"
+                                           class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
@@ -73,13 +78,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="BETREUUNGSPENSUM" data-translate-value-betreuungspensumnumber="{{$index + 1}}" for="betreuungspensum-{{$index}}"></label>
+                                <label data-translate="BETREUUNGSPENSUM"
+                                       data-translate-value-betreuungspensumnumber="{{$index + 1}}"
+                                       for="betreuungspensum-{{$index}}"></label>
                                 <input id="betreuungspensum-{{$index}}" type="text" name="betreuungspensum-{{$index}}"
                                        ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
                                        dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
                                        ng-required="true" ng-disabled="!vm.isEnabled()">
                                 <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
-                                <dv-error-messages  for="form['betreuungspensum-' + $index].$error" class="error hint"></dv-error-messages>
+                                <dv-error-messages for="form['betreuungspensum-' + $index].$error"
+                                                   class="error hint"></dv-error-messages>
                                 <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
                             </dv-input-container>
                         </div>
@@ -91,13 +99,14 @@
                             <dv-input-container class="form-group">
                                 <label data-translate="VON" for="datumAb-{{$index}}">
                                 </label>
-                                <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}" class="input-element"
+                                <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}"
+                                               class="input-element"
                                                ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
                                                ng-required="true" ng-disabled="!vm.isEnabled()" placeholder="">
                                 </dv-datepicker>
                                 <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages  for="form['datumAb-' + $index].$error"
-                                                    class="error hint"></dv-error-messages>
+                                <dv-error-messages for="form['datumAb-' + $index].$error"
+                                                   class="error hint"></dv-error-messages>
                             </dv-input-container>
                         </div>
 
@@ -105,13 +114,14 @@
                             <dv-input-container class="form-group">
                                 <label data-translate="BIS" for="datumBis-{{$index}}">
                                 </label>
-                                <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}" class="input-element"
+                                <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}"
+                                               class="input-element"
                                                ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
                                                ng-required="false" ng-disabled="!vm.isEnabled()" placeholder="">
                                 </dv-datepicker>
                                 <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages  for="form['datumBis-' + $index].$error"
-                                                    class="error"></dv-error-messages>
+                                <dv-error-messages for="form['datumBis-' + $index].$error"
+                                                   class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
                     </div>
@@ -122,7 +132,8 @@
                     <!--Neues Betreuungspensum hinzufuegen-->
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
+                            <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success"
+                                    ng-disabled="!vm.isEnabled()">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="BETREUUNGSPENSUM_ERFASSEN"></span>
                             </button>
@@ -134,8 +145,10 @@
                         <div class="col-md-12" ng-show="vm.isAdminRole()">
                             <dv-input-container class="form-group">
                                 <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="6" id="notes" ng-model="vm.getBetreuungModel().bemerkungen"
-                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}" ng-disabled="!vm.isEnabled()"></textarea>
+                        <textarea md-no-autogrow class="form-control" rows="6" id="notes"
+                                  ng-model="vm.getBetreuungModel().bemerkungen"
+                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"
+                                  ng-disabled="!vm.isEnabled()"></textarea>
                             </dv-input-container>
                         </div>
                     </div>
@@ -143,7 +156,8 @@
                     <!--Platz anfordern-->
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" ng-click="vm.platzAnfordern(form)" class="btn btn-sm btn-success" ng-disabled="!vm.isEnabled()">
+                            <button type="button" ng-click="vm.platzAnfordern(form)" class="btn btn-sm btn-success"
+                                    ng-disabled="!vm.isEnabled()">
                         <span data-translate="PLATZBESTAETIGUNG_ANFORDERN">
                         </span>
                             </button>
@@ -169,7 +183,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12"  ng-if="vm.isBetreuungsstatusBestaetigt()">
+                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusBestaetigt()">
                         <i class="fa fa-check" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
                     </div>

@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -33,9 +32,6 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	@Override
 	public Familiensituation createFamiliensituation(@Nonnull Familiensituation familiensituation) {
 		Objects.requireNonNull(familiensituation);
-
-		//Das verknuepfte Gesuch wird aus der DB geholt
-		familiensituation.setGesuch(persistence.find(Gesuch.class,familiensituation.getGesuch().getId()));
 		return persistence.persist(familiensituation);
 	}
 
@@ -43,9 +39,6 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	@Override
 	public Familiensituation updateFamiliensituation(@Nonnull Familiensituation familiensituation) {
 		Objects.requireNonNull(familiensituation);
-
-		//Das verknuepfte Gesuch wird aus der DB geholt
-		familiensituation.setGesuch(persistence.find(Gesuch.class,familiensituation.getGesuch().getId()));
 		return persistence.merge(familiensituation);
 	}
 

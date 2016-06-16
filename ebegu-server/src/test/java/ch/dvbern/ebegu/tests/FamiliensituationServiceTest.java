@@ -83,8 +83,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguTest {
 	@Nonnull
 	private Familiensituation insertNewEntity() {
 		Familiensituation familiensituation = TestDataUtil.createDefaultFamiliensituation();
-		familiensituation.getGesuch().setFall(persistence.persist(familiensituation.getGesuch().getFall()));
-		familiensituation.setGesuch(persistence.persist(familiensituation.getGesuch()));
 		familiensituationService.createFamiliensituation(familiensituation);
 		return familiensituation;
 	}

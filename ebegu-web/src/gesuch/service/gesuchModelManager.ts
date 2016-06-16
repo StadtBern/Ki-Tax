@@ -23,37 +23,39 @@ import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import ErwerbspensumRS from '../../core/service/erwerbspensumRS.rest';
 import TSBetreuung from '../../models/TSBetreuung';
-import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import TSGesuchsperiode from '../../models/TSGesuchsperiode';
+import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 
 
 export default class GesuchModelManager {
-    fall: TSFall;
     gesuch: TSGesuch;
-    familiensituation: TSFamiliensituation;
     gesuchstellerNumber: number = 1;
     private kindNumber: number;
     private betreuungNumber: number;
     fachstellenList: Array<TSFachstelle>;
     institutionenList: Array<TSInstitutionStammdaten>;
+    private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
-        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'EbeguRestUtil', '$log'];
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
-                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
+                private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
 
-        this.fall = new TSFall();
-        this.gesuch = new TSGesuch();
-        this.familiensituation = new TSFamiliensituation();
         this.fachstellenList = [];
         this.institutionenList = [];
+        this.activeGesuchsperiodenList = [];
         this.updateFachstellenList();
         this.updateInstitutionenList();
+        this.updateActiveGesuchsperiodenList();
     }
 
     /**
@@ -61,12 +63,20 @@ export default class GesuchModelManager {
      * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
      */
     public isGesuchsteller2Required(): boolean {
-        if ((this.familiensituation && this.familiensituation.familienstatus)) {
-            return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
-            && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+        if (this.gesuch && this.getFamiliensituation() && this.getFamiliensituation().familienstatus) {
+            return !(((this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND)
+                    || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
+                    && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         } else {
             return false;
         }
+    }
+
+    public getFamiliensituation(): TSFamiliensituation {
+        if (this.gesuch) {
+            return this.gesuch.familiensituation;
+        }
+        return undefined;
     }
 
     public updateFachstellenList(): void {
@@ -84,31 +94,50 @@ export default class GesuchModelManager {
         });
     }
 
-    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        //testen ob aktuelles familiensituation schon gespeichert ist
-        if (this.familiensituation.timestampErstellt) {
-            return this.familiensituationRS.update(this.familiensituation).then((familienResponse: any) => {
-                return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
-            });
-        } else {
-            //todo team. Fall und Gesuch sollten in ihren eigenen Services gespeichert werden
-            //todo homa beim review das sollte nicht so verschachtelt sein imho ist aber nur temporaer so gedacht
-            return this.fallRS.create(this.fall).then((fallResponse: any) => {
-                this.fall = this.ebeguRestUtil.parseFall(this.fall, fallResponse.data);
-                this.gesuch.fall = angular.copy(this.fall);
-                return this.gesuchRS.create(this.gesuch).then((gesuchResponse: any) => {
-                    this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    this.familiensituation.gesuch = angular.copy(this.gesuch);
-                    return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
-                        return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
-                    });
+    public updateActiveGesuchsperiodenList(): void {
+        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+            this.activeGesuchsperiodenList = angular.copy(response);
+        });
+    }
+
+    /**
+     * Wenn das Gesuch schon gespeichert ist (timestampErstellt != null), wird dieses nur aktualisiert. Wenn es um ein neues Gesuch handelt
+     * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
+     * @returns {IPromise<TSGesuch>}
+     */
+    public saveGesuchAndFall(): IPromise<TSGesuch> {
+        if (this.gesuch && this.gesuch.timestampErstellt) { //update
+            return this.updateGesuch();
+        } else { //create
+            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: any) => {
+                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse.data);
+                this.gesuch.fall = angular.copy(parsedFall);
+                return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
+                    return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
                 });
             });
         }
     }
 
+    public updateFamiliensituation(): IPromise<TSFamiliensituation> {
+        //testen ob aktuelles familiensituation schon gespeichert ist
+        if (this.getFamiliensituation().timestampErstellt) {
+            return this.familiensituationRS.update(this.getFamiliensituation()).then((familienResponse: any) => {
+                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+            });
+        } else {
+            return this.familiensituationRS.create(this.getFamiliensituation()).then((familienResponse: any) => {
+                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+            });
+        }
+    }
+
+    /**
+     * Update das Gesuch
+     * @returns {IPromise<TSGesuch>}
+     */
     public updateGesuch(): IPromise<TSGesuch> {
-        return this.gesuchRS.update(this.gesuch).then((gesuchResponse: any) => {
+        return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
         });
     }
@@ -120,14 +149,14 @@ export default class GesuchModelManager {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
             return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
         } else {
             return this.gesuchstellerRS.create(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
@@ -179,6 +208,10 @@ export default class GesuchModelManager {
         }
     }
 
+    public getAllActiveGesuchsperioden(): Array<TSGesuchsperiode> {
+        return this.activeGesuchsperiodenList;
+    }
+
     public getStammdatenToWorkWith(): TSGesuchsteller {
         if (this.gesuchstellerNumber === 2) {
             return this.gesuch.gesuchsteller2;
@@ -207,24 +240,39 @@ export default class GesuchModelManager {
 
     public initFinanzielleSituation(): void {
         this.initStammdaten();
-        if (!this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
+        if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
-        if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
+        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = 2015;
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
         }
     }
 
+    /**
+     * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
+     * Wenn force werden Gesuch und Fall immer erstellt.
+     * @param forced
+     */
+    public initGesuch(forced: boolean) {
+        if (forced || (!forced && !this.gesuch)) {
+            this.gesuch = new TSGesuch();
+            this.gesuch.fall = new TSFall();
+        }
+    }
+
+    public initFamiliensituation() {
+        if (!this.getFamiliensituation()) {
+            this.gesuch.familiensituation = new TSFamiliensituation();
+        }
+    }
+
     public initKinder(): void {
-        if (!this.gesuch.kindContainer) {
-            this.gesuch.kindContainer = [];
+        if (!this.gesuch.kindContainers) {
+            this.gesuch.kindContainers = [];
         }
     }
 
@@ -250,15 +298,37 @@ export default class GesuchModelManager {
         }
     }
 
+    /**
+     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
+     * @returns {number}
+     */
     public getBasisjahr(): number {
-        //TODO (team) muss aufgrund Gesuchsperiode ermittelt werden!
-        return 2015;
+        if (this.getGesuchsperiodeBegin()) {
+            return this.getGesuchsperiodeBegin().year() - 1;
+        }
+        return undefined;
     }
 
+    /**
+     * Gibt das gesamte Objekt Gesuchsperiode zurueck, das zum Gesuch gehoert.
+     * @returns {any}
+     */
+    public getGesuchsperiode(): TSGesuchsperiode {
+        if (this.gesuch) {
+            return this.gesuch.gesuchsperiode;
+        }
+        return undefined;
+    }
 
-    getGesuchsperiode(): any {
-        //todo betrperiode
-        return {gueltigAb: '01.08.2016', gueltigBis: '31.07.2017'};
+    /**
+     * Gibt den Anfang der Gesuchsperiode als Moment zurueck
+     * @returns {any}
+     */
+    public getGesuchsperiodeBegin(): moment.Moment {
+        if (this.getGesuchsperiode() && this.getGesuchsperiode().gueltigkeit) {
+            return this.gesuch.gesuchsperiode.gueltigkeit.gueltigAb;
+        }
+        return undefined;
     }
 
 
@@ -297,7 +367,7 @@ export default class GesuchModelManager {
 
     public getKinderList(): Array<TSKindContainer> {
         if (this.gesuch) {
-            return this.gesuch.kindContainer;
+            return this.gesuch.kindContainers;
         }
         return [];
     }
@@ -308,8 +378,8 @@ export default class GesuchModelManager {
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch && this.gesuch.kindContainer) {
-            this.gesuch.kindContainer.forEach((kind) => {
+        if (this.gesuch && this.gesuch.kindContainers) {
+            this.gesuch.kindContainers.forEach((kind) => {
                 if (kind.kindJA.familienErgaenzendeBetreuung) {
                     listResult.push(kind);
                 }
@@ -319,8 +389,8 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
-        this.kindNumber = this.gesuch.kindContainer.length;
+        this.gesuch.kindContainers.push(new TSKindContainer(undefined, new TSKind()));
+        this.kindNumber = this.gesuch.kindContainers.length;
     }
 
     /**
@@ -357,14 +427,14 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getKindToWorkWith();
                 });
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.update(this.gesuch).then(() => {
+                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getKindToWorkWith();
                 });
             });
@@ -372,8 +442,8 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch && this.gesuch.kindContainer && this.gesuch.kindContainer.length >= this.kindNumber) {
-            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt mit 1 an
+        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
+            return this.gesuch.kindContainers[this.kindNumber - 1]; //kindNumber faengt mit 1 an
         }
         return undefined;
     }
@@ -397,7 +467,7 @@ export default class GesuchModelManager {
      * @returns {TSKindContainer}
      */
     private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
-        return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
+        return this.gesuch.kindContainers[this.kindNumber - 1] = kind;
     }
 
     /**
@@ -414,7 +484,7 @@ export default class GesuchModelManager {
      * Entfernt das aktuelle Kind von der Liste aber nicht von der DB.
      */
     public removeKindFromList() {
-        this.gesuch.kindContainer.splice(this.kindNumber - 1, 1);
+        this.gesuch.kindContainers.splice(this.kindNumber - 1, 1);
         this.setKindNumber(undefined); //by default auf undefined setzen
         //todo beim Auch KindRS.removeKind aufrufen???????
     }
@@ -440,13 +510,22 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Check whether the Gesuch is already saved in the database.
+     * Case yes the fields shouldn't be editable anymore
+     */
+    public isGesuchSaved(): boolean {
+        return this.gesuch && (this.gesuch.timestampErstellt !== undefined)
+            && (this.gesuch.timestampErstellt !== null);
+    }
+
+    /**
      * Sucht das gegebene KindContainer in der List von KindContainer, erstellt es als KindToWorkWith
      * und gibt die Position in der Array zurueck. Gibt -1 zurueck wenn das Kind nicht gefunden wurde.
      * @param kind
      */
     public findKind(kind: TSKindContainer): number {
-        if (this.gesuch.kindContainer.indexOf(kind) >= 0) {
-            return this.kindNumber = this.gesuch.kindContainer.indexOf(kind) + 1;
+        if (this.gesuch.kindContainers.indexOf(kind) >= 0) {
+            return this.kindNumber = this.gesuch.kindContainers.indexOf(kind) + 1;
         }
         return -1;
     }
@@ -454,7 +533,7 @@ export default class GesuchModelManager {
     public removeKind(): IPromise<TSKindContainer> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
-            return this.gesuchRS.update(this.gesuch);
+            return this.gesuchRS.updateGesuch(this.gesuch);
         });
     }
 

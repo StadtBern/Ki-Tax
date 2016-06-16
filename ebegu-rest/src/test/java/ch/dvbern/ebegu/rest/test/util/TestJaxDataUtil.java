@@ -111,7 +111,9 @@ public class TestJaxDataUtil {
 	public static JaxGesuch createTestJaxGesuch() {
 		JaxGesuch jaxGesuch = new JaxGesuch();
 		jaxGesuch.setFall(createTestJaxFall());
+		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
+		jaxGesuch.setEingangsdatum(LocalDate.now());
 		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
 		testJaxGesuchsteller.setNachname("Gesuchsteller2");
 		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
@@ -136,8 +138,7 @@ public class TestJaxDataUtil {
 		jaxKind.setBemerkungen("Notizen");
 		jaxKind.setMutterspracheDeutsch(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
-		jaxKind.setUnterstuetzungspflicht(true);
-		jaxKind.setWohnhaftImGleichenHaushalt(75);
+		jaxKind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		return jaxKind;
 	}
 
@@ -157,17 +158,23 @@ public class TestJaxDataUtil {
 		return jaxKindContainer;
 	}
 
-	public static JaxBetreuungspensum createTestJaxBetreuungspensum(){
+	public static JaxBetreuungspensum createTestJaxBetreuungspensum(LocalDate from, LocalDate to){
 		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
-		jaxBetreuungspensum.setGueltigAb(LocalDate.now());
+		jaxBetreuungspensum.setGueltigAb(from);
+		jaxBetreuungspensum.setGueltigBis(to);
+
 		jaxBetreuungspensum.setPensum(40);
 		return jaxBetreuungspensum;
 	}
 
-	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(){
+	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(int year){
+
+		LocalDate from = LocalDate.of(year, 8, 1);
+		LocalDate to = LocalDate.of(year  + 1 , 7, 31);
+
 		JaxBetreuungspensumContainer jaxBetrPenCnt = new JaxBetreuungspensumContainer();
-		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum());
-		jaxBetrPenCnt.setBetreuungspensumGS(createTestJaxBetreuungspensum());
+		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum(from, to));
+		jaxBetrPenCnt.setBetreuungspensumGS(createTestJaxBetreuungspensum(from, to));
 		return jaxBetrPenCnt;
 	}
 
@@ -188,5 +195,13 @@ public class TestJaxDataUtil {
 		institutionStammdaten.setGueltigAb(LocalDate.now());
 		institutionStammdaten.setOeffnungstage(new BigDecimal(250));
 		return institutionStammdaten;
+	}
+
+	public static JaxGesuchsperiode createTestJaxGesuchsperiode() {
+		JaxGesuchsperiode jaxGesuchsperiode = new JaxGesuchsperiode();
+		jaxGesuchsperiode.setGueltigAb(LocalDate.now());
+		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
+		jaxGesuchsperiode.setActive(true);
+		return jaxGesuchsperiode;
 	}
 }

@@ -37,6 +37,10 @@
       {
         "name": "ebeguWeb.gesuch",
         "file": "src/gesuch/gesuch.module.ts"
+      },
+      {
+        "name": "ebeguWeb.pendenzen",
+        "file": "src/pendenzen/pendenzen.module.ts"
       }
     ]
   }

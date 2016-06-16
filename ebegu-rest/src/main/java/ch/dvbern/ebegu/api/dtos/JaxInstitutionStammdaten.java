@@ -18,39 +18,45 @@ import java.math.BigDecimal;
 public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 
 	private static final long serialVersionUID = -1893677808323618626L;
-
-	@NotNull
+	@Nullable
 	private String iban;
-	@NotNull
+	@Nullable
 	private BigDecimal oeffnungstage;
-	@NotNull
+	@Nullable
 	private BigDecimal oeffnungsstunden;
 	@Nullable
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 	@NotNull
 	private JaxInstitution institution;
 
+
+	@NotNull
+	private JaxAdresse adresse;
+
+	@Nullable
 	public String getIban() {
 		return iban;
 	}
 
-	public void setIban(String iban) {
+	public void setIban(@Nullable String iban) {
 		this.iban = iban;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungstage() {
 		return oeffnungstage;
 	}
 
-	public void setOeffnungstage(BigDecimal oeffnungstage) {
+	public void setOeffnungstage(@Nullable BigDecimal oeffnungstage) {
 		this.oeffnungstage = oeffnungstage;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungsstunden() {
 		return oeffnungsstunden;
 	}
 
-	public void setOeffnungsstunden(BigDecimal oeffnungsstunden) {
+	public void setOeffnungsstunden(@Nullable BigDecimal oeffnungsstunden) {
 		this.oeffnungsstunden = oeffnungsstunden;
 	}
 
@@ -70,4 +76,13 @@ public class JaxInstitutionStammdaten extends JaxAbstractDateRangedDTO {
 	public void setInstitution(JaxInstitution institution) {
 		this.institution = institution;
 	}
+
+	public JaxAdresse getAdresse() {
+		return adresse;
+	}
+
+	public void setAdresse(JaxAdresse adresse) {
+		this.adresse = adresse;
+	}
+
 }

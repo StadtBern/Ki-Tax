@@ -1,10 +1,13 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
 describe('finanzielleSituationStartView', function () {
+
+    let gesuchModelManager: GesuchModelManager;
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
@@ -14,9 +17,14 @@ describe('finanzielleSituationStartView', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
+        gesuchModelManager = $injector.get('GesuchModelManager');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
+
+    beforeEach(function () {
+        gesuchModelManager.initGesuch(false);
+    });
 
     it('should be defined', function () {
         /*

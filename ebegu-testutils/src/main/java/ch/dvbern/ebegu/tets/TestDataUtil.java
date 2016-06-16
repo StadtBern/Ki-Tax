@@ -2,8 +2,6 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -32,6 +30,17 @@ public final class TestDataUtil {
 		return gesuchstellerAdresse;
 	}
 
+	public  static Adresse createDefaultAdresse() {
+		Adresse adresse = new Adresse();
+		adresse.setStrasse("Nussbaumstrasse");
+		adresse.setHausnummer("21");
+		adresse.setZusatzzeile("c/o Uwe Untermieter");
+		adresse.setPlz("3014");
+		adresse.setOrt("Bern");
+		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		return adresse;
+	}
+
 	public static Gesuchsteller createDefaultGesuchsteller(){
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984,12,12));
@@ -52,13 +61,15 @@ public final class TestDataUtil {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
-		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;
 	}
 
 	public static Gesuch createDefaultGesuch() {
 		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
+		gesuch.setEingangsdatum(LocalDate.now());
+		gesuch.setFamiliensituation(createDefaultFamiliensituation());
 		return gesuch;
 	}
 
@@ -115,6 +126,7 @@ public final class TestDataUtil {
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
 	public static Kind createDefaultKind() {
@@ -123,11 +135,10 @@ public final class TestDataUtil {
 		kind.setVorname("Kind_Max");
 		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
-		kind.setWohnhaftImGleichenHaushalt(50);
+		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
-		kind.setUnterstuetzungspflicht(true);
 		kind.setMutterspracheDeutsch(true);
 		return kind;
 	}
@@ -179,5 +190,34 @@ public final class TestDataUtil {
 		betreuung.setKind(createDefaultKindContainer());
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
+	}
+
+	public static BetreuungspensumContainer createBetPensContainer(Betreuung betreuung) {
+		BetreuungspensumContainer container = new BetreuungspensumContainer();
+		container.setBetreuung(betreuung);
+		container.setBetreuungspensumGS(TestDataUtil.createBetreuungspensum());
+		container.setBetreuungspensumJA(TestDataUtil.createBetreuungspensum());
+		return container;
+	}
+
+	private static Betreuungspensum createBetreuungspensum() {
+		Betreuungspensum betreuungspensum = new Betreuungspensum();
+		betreuungspensum.setPensum(80);
+		return betreuungspensum;
+	}
+
+	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return gesuchsperiode;
+	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return instStammdaten;
 	}
 }

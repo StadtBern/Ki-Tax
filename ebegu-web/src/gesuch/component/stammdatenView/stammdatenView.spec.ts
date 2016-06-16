@@ -1,10 +1,13 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
 
 describe('stammdatenView', function () {
+
+    let gesuchModelManager: GesuchModelManager;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
@@ -14,9 +17,14 @@ describe('stammdatenView', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
+        gesuchModelManager = $injector.get('GesuchModelManager');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));
+
+    beforeEach(function () {
+        gesuchModelManager.initGesuch(false);
+    });
 
     it('should be defined', function () {
         /*

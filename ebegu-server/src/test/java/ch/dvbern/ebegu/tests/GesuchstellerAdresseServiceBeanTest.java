@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.services.AdresseService;
+import ch.dvbern.ebegu.services.GesuchstellerAdresseService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,7 +27,7 @@ import java.util.Optional;
 public class GesuchstellerAdresseServiceBeanTest extends AbstractEbeguTest {
 
 	@Inject
-	private AdresseService adresseService;
+	private GesuchstellerAdresseService adresseService;
 
 	@Inject
 	private Persistence<GesuchstellerAdresse> persistence;

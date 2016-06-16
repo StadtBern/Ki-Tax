@@ -6,7 +6,7 @@ let gesuchTpl = require('./gesuch.html');
 gesuchRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
+    routerHelper.configureStates(getStates(), '/gesuch/fallcreation');
 }
 
 //array mit allen States
@@ -23,7 +23,8 @@ function getStates(): IState[] {
         new EbeguErwerbspensenListState(),
         new EbeguErwerbspensumState(),
         new EbeguBetreuungListState(),
-        new EbeguBetreuungState()
+        new EbeguBetreuungState(),
+        new EbeguNewFallState()
     ];
 }
 
@@ -37,6 +38,12 @@ export class EbeguGesuchState implements IState {
     abstract = true;
     controller = GesuchRouteController;
     controllerAs = 'vm';
+}
+
+export class EbeguNewFallState implements IState {
+    name = 'gesuch.fallcreation';
+    template = '<fall-creation-view>';
+    url = '/fall/:createNew';
 }
 
 export class EbeguFamiliensituationState implements IState {
@@ -80,13 +87,11 @@ export class EbeguErwerbspensenListState implements IState {
     url = '/erwerbspensen';
 }
 
-
 export class EbeguErwerbspensumState implements IState {
     name = 'gesuch.erwerbsPensum';
     template = '<erwerbspensum-view>';
     url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum';
 }
-
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
@@ -113,6 +118,10 @@ export class IStammdatenStateParams implements IStateParamsService {
 
 export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
+}
+
+export class INewFallStateParams implements IStateParamsService {
+    createNew: boolean;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {
