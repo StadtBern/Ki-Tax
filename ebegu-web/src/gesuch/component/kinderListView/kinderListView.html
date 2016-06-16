@@ -13,6 +13,7 @@
                         <th st-sort="kindJA.vorname" class="sortable"  data-translate="VORNAME" ></th>
                         <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME" ></th>
                         <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
+                        <th data-translate="KIND_ANDERERFALL"></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -22,6 +23,7 @@
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td>TODO anderer Fall</td>
                         <td ng-click="$event.stopPropagation()">
                             <button type="button" ng-click="vm.removeKind(row)" class="btn btn-sm">
                                 <i class="fa fa-minus">

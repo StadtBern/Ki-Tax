@@ -135,11 +135,10 @@ public final class TestDataUtil {
 		kind.setVorname("Kind_Max");
 		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
-		kind.setWohnhaftImGleichenHaushalt(50);
+		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
-		kind.setUnterstuetzungspflicht(true);
 		kind.setMutterspracheDeutsch(true);
 		return kind;
 	}

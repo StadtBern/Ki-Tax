@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.api.dtos;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.validation.Persisted;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;

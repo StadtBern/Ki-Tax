@@ -16,10 +16,11 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _umzugAdresse: TSAdresse;
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
+    private _diplomatenstatus: boolean;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
-                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>) {
+                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
@@ -28,6 +29,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._umzug = umzug;
         this._finanzielleSituationContainer = finanzielleSituation;
         this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
+        this._diplomatenstatus = diplomatenstatus;
     }
 
     public get mail(): string {
@@ -102,12 +104,19 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._finanzielleSituationContainer = value;
     }
 
-
     get erwerbspensenContainer(): Array<TSErwerbspensumContainer> {
         return this._erwerbspensenContainer;
     }
 
     set erwerbspensenContainer(value: Array<TSErwerbspensumContainer>) {
         this._erwerbspensenContainer = value;
+    }
+
+    get diplomatenstatus(): boolean {
+        return this._diplomatenstatus;
+    }
+
+    set diplomatenstatus(value: boolean) {
+        this._diplomatenstatus = value;
     }
 }

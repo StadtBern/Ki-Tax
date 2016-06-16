@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
-import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;

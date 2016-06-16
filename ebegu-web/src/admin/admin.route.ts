@@ -1,8 +1,6 @@
 import {IState} from 'angular-ui-router';
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
-
-import TSInstitution from '../models/TSInstitution';
 import {InstitutionRS} from '../core/service/institutionRS.rest';
 import {TraegerschaftRS} from '../core/service/traegerschaftRS.rest';
 import {MandantRS} from '../core/service/mandantRS.rest';

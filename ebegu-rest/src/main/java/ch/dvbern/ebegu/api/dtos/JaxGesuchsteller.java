@@ -54,6 +54,8 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
+	private boolean diplomatenstatus;
+
 
 	public String getMail() {
 		return mail;
@@ -133,5 +135,13 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setErwerbspensenContainers(Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
 		this.erwerbspensenContainers = erwerbspensenContainers;
+	}
+
+	public boolean isDiplomatenstatus() {
+		return diplomatenstatus;
+	}
+
+	public void setDiplomatenstatus(boolean diplomatenstatus) {
+		this.diplomatenstatus = diplomatenstatus;
 	}
 }

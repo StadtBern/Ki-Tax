@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AdresseService;
 import io.swagger.annotations.Api;
