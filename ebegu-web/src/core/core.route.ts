@@ -1,9 +1,9 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
 import ListResourceRS from './service/listResourceRS.rest';
+import {MandantRS} from './service/mandantRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
-import {MandantRS} from './service/mandantRS.rest';
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys', '$timeout'];
 

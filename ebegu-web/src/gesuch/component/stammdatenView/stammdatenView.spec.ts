@@ -1,9 +1,9 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
-import GesuchModelManager from '../../service/gesuchModelManager';
 
 describe('stammdatenView', function () {
 

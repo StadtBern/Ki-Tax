@@ -11,9 +11,9 @@ import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
+import {IStateService} from 'angular-ui-router';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
-import {IStateService} from 'angular-ui-router';
 
 export class PendenzenListViewComponentConfig implements IComponentOptions {
     transclude = false;
