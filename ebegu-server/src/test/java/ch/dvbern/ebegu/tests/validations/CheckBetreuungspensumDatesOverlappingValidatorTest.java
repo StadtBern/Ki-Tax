@@ -64,6 +64,4 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 		betreuung.setBetreuungspensumContainers(containerSet);
 		return betreuung;
 	}
-
-
 }

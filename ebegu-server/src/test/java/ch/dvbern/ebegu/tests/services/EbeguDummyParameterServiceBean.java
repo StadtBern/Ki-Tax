@@ -17,14 +17,12 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.AbstractBaseService;
 import ch.dvbern.ebegu.services.EbeguParameterService;
-import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Alternative;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
@@ -48,7 +46,6 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 		dummyObjects.put(PARAM_PENSUM_KITA_MIN, new EbeguParameter(PARAM_PENSUM_KITA_MIN, "10"));
 		dummyObjects.put(PARAM_PENSUM_TAGESELTERN_MIN, new EbeguParameter(PARAM_PENSUM_TAGESELTERN_MIN, "20"));
 		dummyObjects.put(PARAM_PENSUM_TAGESSCHULE_MIN, new EbeguParameter(PARAM_PENSUM_TAGESSCHULE_MIN, "0"));
-
 	}
 
 	@Override
@@ -96,7 +93,6 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nonnull
 	public Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr) {
-
 		return dummyObjects.values();
 	}
 
@@ -109,28 +105,5 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 			return Optional.of(mockParameter);
 		}
 		return Optional.empty();
-	}
-
-	private void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
-		// Die Parameter des letzten Jahres suchen (datumAb -1 Tag)
-		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
-		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
-			EbeguParameter newParameter = lastYearParameter.copy(gesuchsperiode.getGueltigkeit());
-			saveEbeguParameter(newParameter);
-		});
-	}
-
-	/**
-	 * searches all parameters that were valid at the first of january of the jahr-1. Then go through those parameters and if
-	 * the parameter is set "per Gesuchsperiode" then copy it from the previous year and set the daterange for the current year
-	 *
-	 * @param jahr
-	 */
-	private void createEbeguParameterListForJahr(@Nonnull Integer jahr) {
-		Collection<EbeguParameter> paramsOfYear = getAllEbeguParameterByDate(LocalDate.of(jahr - 1, Month.JANUARY, 1));
-		paramsOfYear.stream().filter(lastYearParameter -> !lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {
-			EbeguParameter newParameter = lastYearParameter.copy(new DateRange(jahr));
-			saveEbeguParameter(newParameter);
-		});
 	}
 }

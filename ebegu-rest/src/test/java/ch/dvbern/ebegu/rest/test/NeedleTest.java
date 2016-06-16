@@ -29,7 +29,6 @@ import org.junit.Test;
 public class NeedleTest {
 
 
-
     @Rule
     public NeedleRule needleRule = new NeedleRule();
 
@@ -58,7 +57,6 @@ public class NeedleTest {
 				Assert.assertEquals(Constants.END_OF_TIME,adrEntity.getGueltigkeit().getGueltigBis());
     }
 
-
 	/**
 	 * Testet das Umzugadresse konvertiert wird
 	 */
@@ -76,7 +74,5 @@ public class NeedleTest {
 		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresse::getAdresseTyp);
 		Adresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertTrue(altAdr.isSame(converter.adresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
-
 	}
-
 }

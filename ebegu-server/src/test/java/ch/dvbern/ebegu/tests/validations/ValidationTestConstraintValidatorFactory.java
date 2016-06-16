@@ -14,6 +14,7 @@ import javax.validation.Validation;
  * This Factory allows us to initialize the Validator ourself, giving us the oppurtunity to use a DummyService for the validotr
  */
 public class ValidationTestConstraintValidatorFactory implements ConstraintValidatorFactory {
+
 	@Override
 	public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
 		if (key == CheckBetreuungspensumValidator.class) {
@@ -21,7 +22,6 @@ public class ValidationTestConstraintValidatorFactory implements ConstraintValid
 			EbeguParameterService dummyParamService = new EbeguDummyParameterServiceBean();
 			return (T) new CheckBetreuungspensumValidator(dummyParamService);
 		}
-//		LogFactory.getLog(this.getClass()).info("delegating creation of ConstraintValidator to default ConstraintValidatorFactory");
 		ConstraintValidatorFactory delegate = Validation.byDefaultProvider().configure().getDefaultConstraintValidatorFactory();
 		return delegate.getInstance(key);
 	}

@@ -106,7 +106,6 @@ public class CheckBetreuungspensumValidatorTest {
 		assertNotViolated(CheckBetreuungspensum.class, betreuung, customFactory, "betreuungspensumContainers[0].betreuungspensumJA.pensum");
 	}
 
-
 	/**
 	 * Fuer Tagesschule gibt es keinen Minimalwert
 	 */
