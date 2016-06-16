@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Institution_;
+import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -13,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,9 +34,16 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Nonnull
 	@Override
-	public Institution saveInstitution(@Nonnull Institution institution) {
+	public Institution updateInstitution(@Nonnull Institution institution) {
 		Objects.requireNonNull(institution);
 		return persistence.merge(institution);
+	}
+
+	@Nonnull
+	@Override
+	public Institution createInstitution(@Nonnull Institution institution) {
+		Objects.requireNonNull(institution);
+		return persistence.persist(institution);
 	}
 
 	@Nonnull
@@ -46,7 +55,17 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	}
 
 	@Override
-	public void removeInstitution(@Nonnull String institutionId) {
+	public void setInstitutionInactive(@Nonnull String institutionId) {
+		Validate.notNull(institutionId);
+		Optional<Institution> institutionToRemove = findInstitution(institutionId);
+
+		Institution institution = institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
+		institution.setActive(false);
+		persistence.merge(institution);
+	}
+
+	@Override
+	public void deleteInstitution(@Nonnull String institutionId) {
 		Validate.notNull(institutionId);
 		Optional<Institution> institutionToRemove = findInstitution(institutionId);
 		institutionToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, institutionId));
@@ -58,6 +77,18 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	public Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId) {
 		Traegerschaft traegerschaft = persistence.find(Traegerschaft.class, traegerschaftId);
 		return criteriaQueryHelper.getEntitiesByAttribute(Institution.class, traegerschaft, Institution_.traegerschaft);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Institution> getAllActiveInstitutionen() {
+		return criteriaQueryHelper.getEntitiesByAttribute(Institution.class, true, Institution_.active);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Institution> getAllInstitutionen() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
 	}
 
 }

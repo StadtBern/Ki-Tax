@@ -12,7 +12,43 @@
 <body class="ebegu">
 
 <div id="Intro" class="logo-bern">
+
+    <md-menu-bar class="userMenu ebegu-md-menu-bar">
+        <md-menu class="ebegu-md-menu" >
+            <md-button ng-click="$mdOpenMenu()">
+                Janett Hohmann
+                <i class="fa fa-angle-down"></i>
+            </md-button>
+            <md-menu-content>
+                <md-menu-item>
+                    <md-button  ui-sref-active="active"  ui-sref="admin">
+                        <a href="javascript:void(0)" data-translate="ADMIN"></a>
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button  ui-sref-active="active"  ui-sref="parameter">
+                        <a href="javascript:void(0)">Parameter</a>
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button  ui-sref-active="active"  ui-sref="institution">
+                        <a href="javascript:void(0)" data-translate="INSTITUTION"></a>
+                    </md-button>
+                </md-menu-item>
+
+                <md-menu-divider></md-menu-divider>
+
+                <md-menu-item>
+                    <md-button>
+                        Ausloggen
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+    </md-menu-bar>
+
     <p class="logo-text">E-BEGU</p>
+
 </div>
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -30,7 +66,8 @@
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active"><a href="#">Home</a></li>
                 <li ui-sref-active="active"><a ui-sref="admin">Admin</a></li>
-                <li><a ui-sref="gesuch.fallcreation" data-translate="MENU_FALL_EROEFFNEN"></a></li>
+                <li ui-sref-active="active"><a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a></li>
+                <li ui-sref-active="active"><a ui-sref="gesuch.fallcreation({createNew: true})" data-translate="MENU_FALL_EROEFFNEN"></a></li>
                 <li ui-sref-active="active"><a href="#contact">Kontakt</a></li>
             </ul>
         </div><!--/.nav-collapse -->
@@ -40,6 +77,12 @@
 
 
 <div class="container-fluid">
+    <!--ErrorPabel exists exactly once on the main page-->
+    <div class="row">
+        <div class="col-md-12">
+            <dvb-error-messages-panel></dvb-error-messages-panel>
+        </div>
+    </div>
     <div id="content" class="row" >
 
         <div ui-view class="col-md-12"></div>

@@ -2,8 +2,7 @@ import TSAbstractEntity from './TSAbstractEntity';
 import {TSTraegerschaft} from './TSTraegerschaft';
 import {TSMandant} from './TSMandant';
 
-export class TSInstitution extends TSAbstractEntity {
-
+export default class TSInstitution extends TSAbstractEntity {
     private _name: string;
     private _traegerschaft: TSTraegerschaft;
     private _mandant: TSMandant;

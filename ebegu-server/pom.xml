@@ -93,6 +93,19 @@
             <scope>test</scope>
         </dependency>
 
+        <!--Abklaren: Es gibt auch needle4j.org welches neuer zu sein scheint ... Kitadmin hat aber dies hier-->
+        <dependency>
+            <groupId>de.akquinet.jbosscc</groupId>
+            <artifactId>jbosscc-needle</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 

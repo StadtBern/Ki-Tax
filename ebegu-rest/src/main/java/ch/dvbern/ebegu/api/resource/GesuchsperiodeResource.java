@@ -99,6 +99,7 @@ public class GesuchsperiodeResource {
 
 		return gesuchsperiodeService.getAllGesuchsperioden().stream()
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
+			.sorted()
 			.collect(Collectors.toList());
 	}
 
@@ -110,6 +111,19 @@ public class GesuchsperiodeResource {
 	public List<JaxGesuchsperiode> getAllActiveGesuchsperioden() {
 		return gesuchsperiodeService.getAllActiveGesuchsperioden().stream()
 			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
+			.sorted()
+			.collect(Collectors.toList());
+	}
+
+	@Nonnull
+	@GET
+	@Path("/unclosed")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxGesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden() {
+		return gesuchsperiodeService.getAllNichtAbgeschlosseneGesuchsperioden().stream()
+			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
+			.sorted()
 			.collect(Collectors.toList());
 	}
 }

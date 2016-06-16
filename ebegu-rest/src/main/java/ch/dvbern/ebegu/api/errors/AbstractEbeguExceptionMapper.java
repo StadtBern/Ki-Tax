@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.api.errors;
 
-import ch.dvbern.ebegu.config.config.EbeguConfiguration;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.util.Constants;
 import org.jboss.resteasy.api.validation.Validation;
 import org.slf4j.Logger;

@@ -248,7 +248,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
-                <version>1.5.7</version>
+                <version>1.5.9</version>
             </dependency>
             <!--hibernate 5 mit java 8 support-->
             <dependency>
@@ -268,6 +268,18 @@
                 <groupId>javax.el</groupId>
                 <artifactId>javax.el-api</artifactId>
                 <version>2.2.4</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.akquinet.jbosscc</groupId>
+                <artifactId>jbosscc-needle</artifactId>
+                <version>2.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

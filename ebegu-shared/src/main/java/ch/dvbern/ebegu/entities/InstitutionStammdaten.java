@@ -17,24 +17,24 @@ import java.math.BigDecimal;
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = "adresse_id", name = "UK_institution_stammdaten_adresse_id")
+)
 public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = -8403411439882700618L;
 
-	@Column(nullable = false)
-	@NotNull
+	@Column(nullable = true)
 	private IBAN iban;
 
-	@NotNull
 	@DecimalMin("0.00")
 	@DecimalMax("365.00")
-	@Column(nullable = false)
+	@Nullable
 	private BigDecimal oeffnungstage;
 
-	@NotNull
 	@DecimalMin("0.00")
 	@DecimalMax("24.00")
-	@Column(nullable = false)
+	@Nullable
 	private BigDecimal oeffnungsstunden;
 
 	@Enumerated(value = EnumType.STRING)
@@ -42,7 +42,12 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_institution_id"), nullable = false)
 	private Institution institution;
+
+	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_stammdaten_adresse_id"), nullable = false)
+	private Adresse adresse;
 
 	public InstitutionStammdaten() {
 	}
@@ -86,5 +91,13 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 
 	public void setInstitution(Institution institution) {
 		this.institution = institution;
+	}
+
+	public Adresse getAdresse() {
+		return adresse;
+	}
+
+	public void setAdresse(Adresse adresse) {
+		this.adresse = adresse;
 	}
 }

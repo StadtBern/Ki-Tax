@@ -1,6 +1,6 @@
 import {IHttpService, ILogService, IPromise, IHttpPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {TSInstitution} from '../../models/TSInstitution';
+import TSInstitution from '../../models/TSInstitution';
 
 export class InstitutionRS {
     serviceURL: string;
@@ -25,15 +25,7 @@ export class InstitutionRS {
             });
     }
 
-    public createInstitution(institution: TSInstitution): IPromise<TSInstitution> {
-        return this.saveInstitution(institution);
-    }
-
     public updateInstitution(institution: TSInstitution): IPromise<TSInstitution> {
-        return this.saveInstitution(institution);
-    }
-
-    private saveInstitution(institution: TSInstitution): IPromise<TSInstitution> {
         let restInstitution = {};
         restInstitution = this.ebeguRestUtil.institutionToRestObject(restInstitution, institution);
         return this.http.put(this.serviceURL, restInstitution, {
@@ -46,12 +38,32 @@ export class InstitutionRS {
         });
     }
 
-    public removeInstitution(institutionID: string): IHttpPromise<TSInstitution> {
+    public createInstitution(institution: TSInstitution): IPromise<TSInstitution> {
+        let _institution = {};
+        _institution = this.ebeguRestUtil.institutionToRestObject(_institution, institution);
+        return this.http.post(this.serviceURL, _institution, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING institution REST object ', response.data);
+            return this.ebeguRestUtil.parseInstitution(new TSInstitution(), response.data);
+        });
+
+    }
+
+    public removeInstitution(institutionID: string): IHttpPromise<any> {
         return this.http.delete(this.serviceURL + '/' + encodeURIComponent(institutionID));
     }
 
     public getAllInstitutionen(): IPromise<TSInstitution[]> {
         return this.http.get(this.serviceURL).then((response: any) => {
+            this.log.debug('PARSING institutionen REST array object', response.data);
+            return this.ebeguRestUtil.parseInstitutionen(response.data);
+        });
+    }
+    public getAllActiveInstitutionen(): IPromise<TSInstitution[]> {
+        return this.http.get(this.serviceURL + '/' + 'active').then((response: any) => {
             this.log.debug('PARSING institutionen REST array object', response.data);
             return this.ebeguRestUtil.parseInstitutionen(response.data);
         });

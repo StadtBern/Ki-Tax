@@ -48,4 +48,15 @@ public class MandantResource {
 		return converter.mandantToJAX(optional.get());
 	}
 
+	@Nullable
+	@GET
+	@Path("/first")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxMandant getFirst() throws EbeguException {
+
+		Mandant mandant = mandantService.getFirst();
+		return converter.mandantToJAX(mandant);
+	}
+
 }

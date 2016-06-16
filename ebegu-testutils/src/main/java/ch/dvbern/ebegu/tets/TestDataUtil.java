@@ -30,6 +30,17 @@ public final class TestDataUtil {
 		return gesuchstellerAdresse;
 	}
 
+	public  static Adresse createDefaultAdresse() {
+		Adresse adresse = new Adresse();
+		adresse.setStrasse("Nussbaumstrasse");
+		adresse.setHausnummer("21");
+		adresse.setZusatzzeile("c/o Uwe Untermieter");
+		adresse.setPlz("3014");
+		adresse.setOrt("Bern");
+		adresse.setGueltigkeit(new DateRange(LocalDate.now(), Constants.END_OF_TIME));
+		return adresse;
+	}
+
 	public static Gesuchsteller createDefaultGesuchsteller(){
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1984,12,12));
@@ -50,7 +61,6 @@ public final class TestDataUtil {
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		familiensituation.setBemerkungen("DVBern");
-		familiensituation.setGesuch(createDefaultGesuch());
 		return familiensituation;
 	}
 
@@ -59,6 +69,7 @@ public final class TestDataUtil {
 		gesuch.setGesuchsperiode(createDefaultGesuchsperiode());
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
+		gesuch.setFamiliensituation(createDefaultFamiliensituation());
 		return gesuch;
 	}
 
@@ -115,6 +126,7 @@ public final class TestDataUtil {
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
 	public static Kind createDefaultKind() {
@@ -199,5 +211,13 @@ public final class TestDataUtil {
 		gesuchsperiode.setActive(true);
 		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return gesuchsperiode;
+	}
+
+	public static EbeguParameter createDefaultEbeguParameter() {
+		EbeguParameter instStammdaten = new EbeguParameter();
+		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
+		instStammdaten.setValue("Wert");
+		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return instStammdaten;
 	}
 }

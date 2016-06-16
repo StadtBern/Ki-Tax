@@ -36,8 +36,4 @@ export default class FamiliensituationRS {
         });
     }
 
-    public findFamiliensituation(familiensituationID: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(familiensituationID));
-    }
-
 }

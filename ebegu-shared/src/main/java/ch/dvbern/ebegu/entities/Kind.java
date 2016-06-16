@@ -34,6 +34,7 @@ public class Kind extends AbstractPersonEntity {
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_pensum_fachstelle_id"), nullable = true)
 	private PensumFachstelle pensumFachstelle;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)

@@ -23,7 +23,7 @@ import {FachstelleRS} from '../../core/service/fachstelleRS.rest';
 import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import ErwerbspensumRS from '../../core/service/erwerbspensumRS.rest';
 import TSBetreuung from '../../models/TSBetreuung';
-import {TSInstitutionStammdaten} from '../../models/TSInstitutionStammdaten';
+import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
 import BetreuungRS from '../../core/service/betreuungRS';
@@ -34,7 +34,6 @@ import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
-    familiensituation: TSFamiliensituation;
     gesuchstellerNumber: number = 1;
     private kindNumber: number;
     private betreuungNumber: number;
@@ -64,12 +63,20 @@ export default class GesuchModelManager {
      * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
      */
     public isGesuchsteller2Required(): boolean {
-        if ((this.familiensituation && this.familiensituation.familienstatus)) {
-            return !(((this.familiensituation.familienstatus === TSFamilienstatus.ALLEINERZIEHEND) || (this.familiensituation.familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
-            && (this.familiensituation.gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+        if (this.gesuch && this.getFamiliensituation() && this.getFamiliensituation().familienstatus) {
+            return !(((this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND)
+                    || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
+                    && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         } else {
             return false;
         }
+    }
+
+    public getFamiliensituation(): TSFamiliensituation {
+        if (this.gesuch) {
+            return this.gesuch.familiensituation;
+        }
+        return undefined;
     }
 
     public updateFachstellenList(): void {
@@ -98,7 +105,7 @@ export default class GesuchModelManager {
      * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
      * @returns {IPromise<TSGesuch>}
      */
-    public saveGesuchAndFall(): IPromise<TSFall> {
+    public saveGesuchAndFall(): IPromise<TSGesuch> {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create
@@ -114,14 +121,13 @@ export default class GesuchModelManager {
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
         //testen ob aktuelles familiensituation schon gespeichert ist
-        if (this.familiensituation.timestampErstellt) {
-            return this.familiensituationRS.update(this.familiensituation).then((familienResponse: any) => {
-                return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
+        if (this.getFamiliensituation().timestampErstellt) {
+            return this.familiensituationRS.update(this.getFamiliensituation()).then((familienResponse: any) => {
+                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
             });
         } else {
-            this.familiensituation.gesuch = angular.copy(this.gesuch);
-            return this.familiensituationRS.create(this.familiensituation).then((familienResponse: any) => {
-                return this.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.familiensituation, familienResponse.data);
+            return this.familiensituationRS.create(this.getFamiliensituation()).then((familienResponse: any) => {
+                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
             });
         }
     }
@@ -234,38 +240,39 @@ export default class GesuchModelManager {
 
     public initFinanzielleSituation(): void {
         this.initStammdaten();
-        if (!this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
+        if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV.nettolohn = 12345;
         }
-        if (this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
-            //TODO (hefr) Dummy Daten!
+        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
         }
     }
 
-
-    public initGesuch() {
-        if (!this.gesuch) {
+    /**
+     * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
+     * Wenn force werden Gesuch und Fall immer erstellt.
+     * @param forced
+     */
+    public initGesuch(forced: boolean) {
+        if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
         }
     }
 
     public initFamiliensituation() {
-        if (!this.familiensituation) {
-            this.familiensituation = new TSFamiliensituation();
+        if (!this.getFamiliensituation()) {
+            this.gesuch.familiensituation = new TSFamiliensituation();
         }
     }
 
     public initKinder(): void {
-        if (!this.gesuch.kindContainer) {
-            this.gesuch.kindContainer = [];
+        if (!this.gesuch.kindContainers) {
+            this.gesuch.kindContainers = [];
         }
     }
 
@@ -360,7 +367,7 @@ export default class GesuchModelManager {
 
     public getKinderList(): Array<TSKindContainer> {
         if (this.gesuch) {
-            return this.gesuch.kindContainer;
+            return this.gesuch.kindContainers;
         }
         return [];
     }
@@ -371,8 +378,8 @@ export default class GesuchModelManager {
      */
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
         let listResult: Array<TSKindContainer> = [];
-        if (this.gesuch && this.gesuch.kindContainer) {
-            this.gesuch.kindContainer.forEach((kind) => {
+        if (this.gesuch && this.gesuch.kindContainers) {
+            this.gesuch.kindContainers.forEach((kind) => {
                 if (kind.kindJA.familienErgaenzendeBetreuung) {
                     listResult.push(kind);
                 }
@@ -382,8 +389,8 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        this.gesuch.kindContainer.push(new TSKindContainer(undefined, new TSKind()));
-        this.kindNumber = this.gesuch.kindContainer.length;
+        this.gesuch.kindContainers.push(new TSKindContainer(undefined, new TSKind()));
+        this.kindNumber = this.gesuch.kindContainers.length;
     }
 
     /**
@@ -435,8 +442,8 @@ export default class GesuchModelManager {
     }
 
     public getKindToWorkWith(): TSKindContainer {
-        if (this.gesuch && this.gesuch.kindContainer && this.gesuch.kindContainer.length >= this.kindNumber) {
-            return this.gesuch.kindContainer[this.kindNumber - 1]; //kindNumber faengt mit 1 an
+        if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
+            return this.gesuch.kindContainers[this.kindNumber - 1]; //kindNumber faengt mit 1 an
         }
         return undefined;
     }
@@ -460,7 +467,7 @@ export default class GesuchModelManager {
      * @returns {TSKindContainer}
      */
     private setKindToWorkWith(kind: TSKindContainer): TSKindContainer {
-        return this.gesuch.kindContainer[this.kindNumber - 1] = kind;
+        return this.gesuch.kindContainers[this.kindNumber - 1] = kind;
     }
 
     /**
@@ -477,7 +484,7 @@ export default class GesuchModelManager {
      * Entfernt das aktuelle Kind von der Liste aber nicht von der DB.
      */
     public removeKindFromList() {
-        this.gesuch.kindContainer.splice(this.kindNumber - 1, 1);
+        this.gesuch.kindContainers.splice(this.kindNumber - 1, 1);
         this.setKindNumber(undefined); //by default auf undefined setzen
         //todo beim Auch KindRS.removeKind aufrufen???????
     }
@@ -517,8 +524,8 @@ export default class GesuchModelManager {
      * @param kind
      */
     public findKind(kind: TSKindContainer): number {
-        if (this.gesuch.kindContainer.indexOf(kind) >= 0) {
-            return this.kindNumber = this.gesuch.kindContainer.indexOf(kind) + 1;
+        if (this.gesuch.kindContainers.indexOf(kind) >= 0) {
+            return this.kindNumber = this.gesuch.kindContainers.indexOf(kind) + 1;
         }
         return -1;
     }
