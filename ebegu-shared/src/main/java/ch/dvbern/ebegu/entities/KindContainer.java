@@ -21,14 +21,17 @@ public class KindContainer extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_gesuch_id"), nullable = false)
 	private Gesuch gesuch;
 
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindgs_id"), nullable = true)
 	private Kind kindGS;
 
 	@Valid
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
 	private Kind kindJA;
 
 	@Nullable

@@ -2,8 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -15,6 +14,9 @@ import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = "name", name = "UK_application_property_name")
+)
 public class ApplicationProperty extends AbstractEntity {
 
 	private static final long serialVersionUID = -7687645920282879260L;

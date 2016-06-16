@@ -18,6 +18,7 @@ public class AbstractAntragEntity extends AbstractEntity {
 	private static final long serialVersionUID = -8203487739884704615L;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
 	private Fall fall;
 
 	@ManyToOne(optional = false)
@@ -28,8 +29,6 @@ public class AbstractAntragEntity extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private LocalDate eingangsdatum;
-
-
 
 	public Fall getFall() {
 		return fall;
