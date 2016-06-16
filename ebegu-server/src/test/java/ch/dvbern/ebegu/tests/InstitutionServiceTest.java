@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.lib.beanvalidation.CompareTo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,11 +13,9 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Optional;
@@ -68,7 +65,6 @@ public class InstitutionServiceTest extends AbstractEbeguTest {
 	// This test gives a really strange Error java.lang.NoSuchMethodError: ch.dvbern.ebegu.entities.Institution.setActive(Ljava/lang/Boolean;)V
 	// but the method in the entity is definitely there!
 	@Test
-	@Ignore
 	public void inactiveInstitution(){
 		Assert.assertNotNull(institutionService);
 		Institution institution = insertInstitution();
