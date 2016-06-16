@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -45,7 +46,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String zpvNumber; //todo team, es ist noch offen was das genau fuer ein identifier ist
 
-	@Nonnull
+	@Nullable
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private FinanzielleSituationContainer finanzielleSituationContainer;
@@ -61,6 +62,9 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	// es handelt sich um eine "private" Relation, das heisst Adressen koennen nie einer anderen Gesuchsteller zugeordnet werden
 	@OneToMany(mappedBy = "gesuchsteller", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<GesuchstellerAdresse> adressen = new ArrayList<>();
+
+	@NotNull
+	private boolean diplomatenstatus;
 
 	public boolean addAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
 		gesuchstellerAdresse.setGesuchsteller(this);
@@ -116,19 +120,29 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.adressen = adressen;
 	}
 
+	@Nullable
 	public FinanzielleSituationContainer getFinanzielleSituationContainer() {
 		return finanzielleSituationContainer;
 	}
 
+	@Nonnull
 	public Set<ErwerbspensumContainer> getErwerbspensenContainers() {
 		return erwerbspensenContainers;
 	}
 
-	public void setErwerbspensenContainers(Set<ErwerbspensumContainer> erwerbspensenContainers) {
+	public void setErwerbspensenContainers(@Nonnull Set<ErwerbspensumContainer> erwerbspensenContainers) {
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 
-	public void setFinanzielleSituationContainer(FinanzielleSituationContainer finanzielleSituationContainer) {
+	public boolean isDiplomatenstatus() {
+		return diplomatenstatus;
+	}
+
+	public void setDiplomatenstatus(boolean diplomatenstatus) {
+		this.diplomatenstatus = diplomatenstatus;
+	}
+
+	public void setFinanzielleSituationContainer(@Nullable FinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 		if (finanzielleSituationContainer != null &&
 			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {

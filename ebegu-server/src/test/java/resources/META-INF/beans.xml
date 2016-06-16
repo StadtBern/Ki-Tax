@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                           http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+	   version="1.1" bean-discovery-mode="annotated">
+
+
+	<alternatives>
+     <!--Fuer Tests koennten wir wenn gewuenscht die alternativen services benutzten, aktuell nicht der Fall-->
+     <!--<class>ch.dvbern.ebegu.tests.services.EbeguDummyParameterServiceBean</class>-->
+	</alternatives>
+</beans>

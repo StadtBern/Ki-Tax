@@ -1,23 +1,21 @@
 import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import {TSPensumFachstelle} from './TSPensumFachstelle';
+import {TSKinderabzug} from './enums/TSKinderabzug';
 
 export default class TSKind extends TSAbstractPersonEntity {
 
-    private _wohnhaftImGleichenHaushalt: number;
-    private _unterstuetzungspflicht: boolean;
+    private _kinderabzug: TSKinderabzug;
     private _familienErgaenzendeBetreuung: boolean;
     private _mutterspracheDeutsch: boolean;
     private _pensumFachstelle: TSPensumFachstelle;
     private _bemerkungen: string;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
-                wohnhaftImGleichenHaushalt?: number, unterstuetzungspflicht?: boolean, familienErgaenzendeBetreuung?: boolean,
+                kinderabzug?: TSKinderabzug, familienErgaenzendeBetreuung?: boolean,
                 mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
 
         super(vorname, nachname, geburtsdatum, geschlecht);
-        this._wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
-        this._unterstuetzungspflicht = unterstuetzungspflicht;
         this._familienErgaenzendeBetreuung = familienErgaenzendeBetreuung;
         this._mutterspracheDeutsch = mutterspracheDeutsch;
         this._pensumFachstelle = pensumFachstelle;
@@ -25,20 +23,12 @@ export default class TSKind extends TSAbstractPersonEntity {
     }
 
 
-    get wohnhaftImGleichenHaushalt(): number {
-        return this._wohnhaftImGleichenHaushalt;
+    get kinderabzug(): TSKinderabzug {
+        return this._kinderabzug;
     }
 
-    set wohnhaftImGleichenHaushalt(value: number) {
-        this._wohnhaftImGleichenHaushalt = value;
-    }
-
-    get unterstuetzungspflicht(): boolean {
-        return this._unterstuetzungspflicht;
-    }
-
-    set unterstuetzungspflicht(value: boolean) {
-        this._unterstuetzungspflicht = value;
+    set kinderabzug(value: TSKinderabzug) {
+        this._kinderabzug = value;
     }
 
     get familienErgaenzendeBetreuung(): boolean {

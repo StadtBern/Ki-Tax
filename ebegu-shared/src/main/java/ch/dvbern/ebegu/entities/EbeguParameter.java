@@ -33,6 +33,13 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String value;
 
+	public EbeguParameter() {
+	}
+
+	public EbeguParameter(EbeguParameterKey name, String value) {
+		this.name = name;
+		this.value = value;
+	}
 
 	@Nonnull
 	public EbeguParameterKey getName() {

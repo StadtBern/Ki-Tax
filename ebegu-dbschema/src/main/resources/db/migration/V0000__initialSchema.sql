@@ -507,6 +507,7 @@ CREATE TABLE gesuchsteller
   version            BIGINT       NOT NULL,
   geburtsdatum       DATE         NOT NULL,
   geschlecht         VARCHAR(255) NOT NULL,
+  diplomatenstatus   BIT          NOT NULL,
   mail               VARCHAR(255) NOT NULL,
   mobile             VARCHAR(255),
   nachname           VARCHAR(255) NOT NULL,
@@ -537,6 +538,7 @@ CREATE TABLE gesuchsteller_aud
   user_mutiert       VARCHAR(36),
   geburtsdatum       DATE,
   geschlecht         VARCHAR(255),
+  diplomatenstatus   BIT,
   mail               VARCHAR(255),
   mobile             VARCHAR(255),
   nachname           VARCHAR(255),
@@ -639,17 +641,16 @@ CREATE TABLE kind
   vorname                        VARCHAR(255) NOT NULL,
   bemerkungen                    VARCHAR(1000),
   familien_ergaenzende_betreuung BIT          NOT NULL,
+  kinderabzug                    VARCHAR(255) NOT NULL,
   muttersprache_deutsch          BIT,
-  unterstuetzungspflicht         BIT,
-  wohnhaft_im_gleichen_haushalt  INTEGER      NOT NULL,
   pensum_fachstelle_id           VARCHAR(36),
   PRIMARY KEY (id)
 );
 
 CREATE TABLE kind_aud
 (
-  id                             VARCHAR(36) NOT NULL,
-  rev                            INTEGER     NOT NULL,
+  id                             VARCHAR(36)  NOT NULL,
+  rev                            INTEGER      NOT NULL,
   revtype                        TINYINT,
   timestamp_erstellt             DATETIME,
   timestamp_mutiert              DATETIME,
@@ -661,9 +662,8 @@ CREATE TABLE kind_aud
   vorname                        VARCHAR(255),
   bemerkungen                    VARCHAR(1000),
   familien_ergaenzende_betreuung BIT,
+  kinderabzug                    VARCHAR(255),
   muttersprache_deutsch          BIT,
-  unterstuetzungspflicht         BIT,
-  wohnhaft_im_gleichen_haushalt  INTEGER,
   pensum_fachstelle_id           VARCHAR(36),
   PRIMARY KEY (id, rev)
 );

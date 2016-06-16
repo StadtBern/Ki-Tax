@@ -80,6 +80,14 @@ public final class ValidationTestHelper {
 		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", propertyPaths);
 	}
 
+
+	public static <T> void assertNotViolated(final @Nonnull Class<? extends Annotation> clazz,
+											 final @Nonnull T bean,
+											 final @Nonnull ValidatorFactory factory,
+											 final @Nonnull String... propertyPaths) {
+		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", factory, propertyPaths);
+	}
+
 	/**
 	 * Stellt sicher dass keine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
@@ -146,6 +154,14 @@ public final class ValidationTestHelper {
 										  final @Nonnull String... propertyPaths) {
 		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", propertyPaths);
 	}
+
+	public static <T> void assertViolated(final @Nonnull Class<? extends Annotation> clazz,
+										  final @Nonnull T bean,
+										  final @Nonnull ValidatorFactory factory,
+										  final @Nonnull String... propertyPaths) {
+		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", factory, propertyPaths);
+	}
+
 
 	/**
 	 * Stellt sicher dass eine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
@@ -234,9 +250,26 @@ public final class ValidationTestHelper {
 		}
 	}
 
+	private static <T> void assertViolation(@Nullable final Class<? extends Annotation> clazz, final T bean,
+											final boolean expectedMatching, final String messageFormat,
+											final ValidatorFactory factory,
+											@Nullable final String[] properties, Class<?>... groups) {
+		if (properties != null) {
+			for (String property : properties) {
+				assertViolation(clazz, bean, property, expectedMatching, messageFormat, factory, groups);
+			}
+		}
+	}
+
 	private static <T> void assertViolation(@Nullable final Class<? extends Annotation> clazz, final T bean, @Nullable final String property,
 											final boolean expectedMatching, final String messageFormat, Class... groups) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		assertViolation(clazz, bean, property, expectedMatching, messageFormat, factory, groups);
+
+	}
+
+	private static <T> void assertViolation(@Nullable final Class<? extends Annotation> clazz, final T bean, @Nullable final String property,
+											final boolean expectedMatching, final String messageFormat, final ValidatorFactory factory, Class... groups) {
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<T>> violations = null;
 		if (groups == null || groups.length == 0) {

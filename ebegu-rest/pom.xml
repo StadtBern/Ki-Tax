@@ -136,7 +136,19 @@
           <groupId>io.swagger</groupId>
           <artifactId>swagger-jaxrs</artifactId>
         </dependency>
-    </dependencies>
 
+        <!--Test dep-->
+        <dependency>
+            <groupId>de.akquinet.jbosscc</groupId>
+            <artifactId>jbosscc-needle</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

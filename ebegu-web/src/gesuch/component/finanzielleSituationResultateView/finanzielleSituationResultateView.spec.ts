@@ -1,10 +1,10 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebGesuch} from '../../gesuch.module';
-import IInjectorService = angular.auto.IInjectorService;
-import IHttpBackendService = angular.IHttpBackendService;
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
+import IInjectorService = angular.auto.IInjectorService;
+import IHttpBackendService = angular.IHttpBackendService;
 
 describe('finanzielleSituationResultateView', function () {
 

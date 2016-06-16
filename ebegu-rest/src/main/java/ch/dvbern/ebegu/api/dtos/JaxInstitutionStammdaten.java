@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 import javax.annotation.Nullable;
