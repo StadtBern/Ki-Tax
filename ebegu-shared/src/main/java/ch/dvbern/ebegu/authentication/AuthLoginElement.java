@@ -9,9 +9,12 @@
  */
 package ch.dvbern.ebegu.authentication;
 
+import ch.dvbern.ebegu.enums.UserRole;
+
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Wrapper fuer einen Login Request
@@ -24,10 +27,26 @@ public class AuthLoginElement implements Serializable {
 	private String username = "";
 	@Nonnull
 	private String plainTextPassword = "";
+	@Nonnull
+	private String userId = "";
+	@Nonnull
+	private String nachname = "";
+	@Nonnull
+	private String vorname = "";
+	@Nonnull
+	private String email = "";
+	@Nonnull
+	private Set<UserRole> roles;
 
-	public AuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword) {
+	public AuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword, @Nonnull String  userId, @Nonnull String nachname,
+							@Nonnull String vorname, @Nonnull String email, @Nonnull Set<UserRole> roles) {
 		this.username = Objects.requireNonNull(username);
 		this.plainTextPassword = Objects.requireNonNull(plainTextpassword);
+		this.userId = Objects.requireNonNull(userId);
+		this.nachname = Objects.requireNonNull(nachname);
+		this.vorname = Objects.requireNonNull(vorname);
+		this.email = Objects.requireNonNull(email);
+		this.roles = Objects.requireNonNull(roles);
 	}
 
 	@Nonnull
@@ -46,5 +65,50 @@ public class AuthLoginElement implements Serializable {
 
 	public void setPlainTextPassword(@Nonnull final String password) {
 		this.plainTextPassword = password;
+	}
+
+	@Nonnull
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(@Nonnull String userId) {
+		this.userId = userId;
+	}
+
+	@Nonnull
+	public String getNachname() {
+		return nachname;
+	}
+
+	public void setNachname(@Nonnull String nachname) {
+		this.nachname = nachname;
+	}
+
+	@Nonnull
+	public String getVorname() {
+		return vorname;
+	}
+
+	public void setVorname(@Nonnull String vorname) {
+		this.vorname = vorname;
+	}
+
+	@Nonnull
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(@Nonnull String email) {
+		this.email = email;
+	}
+
+	@Nonnull
+	public Set<UserRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(@Nonnull Set<UserRole> roles) {
+		this.roles = roles;
 	}
 }

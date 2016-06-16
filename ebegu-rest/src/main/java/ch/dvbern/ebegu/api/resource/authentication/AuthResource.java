@@ -77,7 +77,8 @@ public class AuthResource {
 			if (!containerLogin(loginElement)) {
 				return Response.status(Response.Status.UNAUTHORIZED).build();
 			}
-			AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword());
+			AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(), loginElement.getUserId(),
+				loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRoles());
 
 			accessElement = authService.login(login);
 			if (!accessElement.isPresent()) {

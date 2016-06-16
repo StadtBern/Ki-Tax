@@ -25,6 +25,7 @@ export class AuthenticationListViewController {
         this.usersList.push(new TSUser('jemu', 'Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', [TSRole.SACHBEARBEITER_JA]));
         this.usersList.push(new TSUser('beso', 'Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch', [TSRole.SACHBEARBEITER_INSTITUTION]));
         this.usersList.push(new TSUser('blku', 'Kurt', 'Blaser', 'blku', 'password4', 'kurt.blaser@bern.ch', [TSRole.ADMIN]));
+        this.usersList.push(new TSUser('blku', 'Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', [TSRole.GESUCHSTELLER]));
     }
 
     public logIn(user: TSUser): void {

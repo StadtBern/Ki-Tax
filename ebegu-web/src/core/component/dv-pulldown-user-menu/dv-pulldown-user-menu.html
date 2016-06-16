@@ -7,8 +7,8 @@ Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
 
 <md-menu-bar ng-if="vm.getPrincipal()" class="userMenu">
     <md-menu>
-        <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().username}}">
-            <span ng-bind="vm.getPrincipal().username"></span>
+        <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
+            <span ng-bind="vm.getPrincipal().getFullName()"></span>
             <i class="fa fa-angle-down"></i>
         </md-button>
         <md-menu-content>

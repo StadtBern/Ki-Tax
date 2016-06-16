@@ -1098,7 +1098,8 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxAuthAccessElement authAccessElementToResource(@Nonnull final AuthAccessElement access) {
-		Set<UserRole> rollen = new HashSet<>(); //access.getRoles().stream().map(this::BenutzerRolleToResource).collect(Collectors.toSet());
-		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUserId()), rollen);
+		Set<UserRole> rollen = access.getRoles();
+		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUserId()), String.valueOf(access.getUsername()),
+			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), rollen);
 	}
 }

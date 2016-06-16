@@ -10,11 +10,11 @@ export default class TSUser {
     private _email: string;
     private _roles: Array<TSRole>;
 
-    constructor(userId?: string, nachname?: string, vorname?: string, username?: string,
+    constructor(userId?: string, vorname?: string, nachname?: string, username?: string,
                 password?: string, email?: string, roles?: Array<TSRole>) {
         this._userId = userId;
-        this._nachname = nachname;
         this._vorname = vorname;
+        this._nachname = nachname;
         this._username = username;
         this._password = password;
         this._email = email;
@@ -76,5 +76,9 @@ export default class TSUser {
 
     set roles(value: Array<TSRole>) {
         this._roles = value;
+    }
+
+    public getFullName(): string {
+        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
     }
 }

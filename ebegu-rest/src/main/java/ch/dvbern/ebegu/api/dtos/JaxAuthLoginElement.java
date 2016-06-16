@@ -9,10 +9,14 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.enums.UserRole;
+
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Wrapper fuer einen Login Request
@@ -26,6 +30,18 @@ public class JaxAuthLoginElement implements Serializable {
 	private String username = "";
 	@Nonnull
 	private String password = "";
+	@Nonnull
+	private String userId = "";
+	@Nonnull
+	private String nachname = "";
+	@Nonnull
+	private String vorname = "";
+	@Nonnull
+	private String email = "";
+	@Nonnull
+	private Set<UserRole> roles;
+
+
 
 	private JaxAuthLoginElement() {
 		// fuer Jaxb/JaxRS
@@ -41,7 +57,7 @@ public class JaxAuthLoginElement implements Serializable {
 		return username;
 	}
 
-	public void setUsername(@Nonnull final String username) {
+	public void setUsername(@Nonnull String username) {
 		this.username = username;
 	}
 
@@ -50,7 +66,52 @@ public class JaxAuthLoginElement implements Serializable {
 		return password;
 	}
 
-	public void setPassword(@Nonnull final String password) {
+	public void setPassword(@Nonnull String password) {
 		this.password = password;
+	}
+
+	@Nonnull
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(@Nonnull String userId) {
+		this.userId = userId;
+	}
+
+	@Nonnull
+	public String getNachname() {
+		return nachname;
+	}
+
+	public void setNachname(@Nonnull String nachname) {
+		this.nachname = nachname;
+	}
+
+	@Nonnull
+	public String getVorname() {
+		return vorname;
+	}
+
+	public void setVorname(@Nonnull String vorname) {
+		this.vorname = vorname;
+	}
+
+	@Nonnull
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(@Nonnull String email) {
+		this.email = email;
+	}
+
+	@Nonnull
+	public Set<UserRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(@Nonnull Set<UserRole> roles) {
+		this.roles = roles;
 	}
 }

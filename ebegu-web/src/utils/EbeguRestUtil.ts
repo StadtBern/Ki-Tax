@@ -916,6 +916,11 @@ export default class EbeguRestUtil {
     public userToRestObject(user: any, userTS: TSUser): any {
         user.username = userTS.username;
         user.password = userTS.password;
+        user.nachname = userTS.nachname;
+        user.vorname = userTS.vorname;
+        user.email = userTS.email;
+        user.roles = userTS.roles;
+        user.userId = userTS.userId;
         return user;
     }
 }

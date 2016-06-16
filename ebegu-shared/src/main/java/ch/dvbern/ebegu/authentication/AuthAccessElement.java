@@ -31,15 +31,29 @@ public class AuthAccessElement implements Serializable {
 	private final String authToken;
 	@Nonnull
 	private final String xsrfToken;
-//	@Nonnull
-//	private final Set<UserRole> roles;
+	@Nonnull
+	private final String username;
+	@Nonnull
+	private final String nachname;
+	@Nonnull
+	private final String vorname;
+	@Nonnull
+	private final String email;
+	@Nonnull
+	private final Set<UserRole> roles;
 
 	public AuthAccessElement(@Nonnull String authId, @Nonnull String authToken, @Nonnull String xsrfToken,
-							 @Nonnull String userId) {
+							 @Nonnull String userId, @Nonnull String username, @Nonnull String nachname, @Nonnull String vorname,
+							 @Nonnull String email, @Nonnull Set<UserRole> roles) {
 		this.authId = Objects.requireNonNull(authId);
 		this.userId = Objects.requireNonNull(userId);
 		this.authToken = Objects.requireNonNull(authToken);
 		this.xsrfToken = Objects.requireNonNull(xsrfToken);
+		this.username = Objects.requireNonNull(username);
+		this.nachname = Objects.requireNonNull(nachname);
+		this.vorname = Objects.requireNonNull(vorname);
+		this.email = Objects.requireNonNull(email);
+		this.roles = Objects.requireNonNull(roles);
 	}
 
 	@Nonnull
@@ -62,8 +76,28 @@ public class AuthAccessElement implements Serializable {
 		return xsrfToken;
 	}
 
-//	@Nonnull
-//	public Set<UserRole> getRoles() {
-//		return roles;
-//	}
+	@Nonnull
+	public String getUsername() {
+		return username;
+	}
+
+	@Nonnull
+	public String getNachname() {
+		return nachname;
+	}
+
+	@Nonnull
+	public String getVorname() {
+		return vorname;
+	}
+
+	@Nonnull
+	public String getEmail() {
+		return email;
+	}
+
+	@Nonnull
+	public Set<UserRole> getRoles() {
+		return roles;
+	}
 }

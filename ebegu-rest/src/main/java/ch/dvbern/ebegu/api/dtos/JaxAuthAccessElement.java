@@ -31,7 +31,14 @@ public class JaxAuthAccessElement implements Serializable {
 
 	@Nonnull
 	private String userId = "";
-
+	@Nonnull
+	private String username = "";
+	@Nonnull
+	private String nachname = "";
+	@Nonnull
+	private String vorname = "";
+	@Nonnull
+	private String email = "";
 	@Nonnull
 	private Set<UserRole> roles = EnumSet.noneOf(UserRole.class);
 
@@ -39,9 +46,14 @@ public class JaxAuthAccessElement implements Serializable {
 		// jaxb/jaxrs only
 	}
 
-	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String userId, @Nonnull Set<UserRole> roles) {
+	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String userId, @Nonnull String username, @Nonnull String nachname,
+								@Nonnull String vorname, @Nonnull String email, @Nonnull Set<UserRole> roles) {
 		this.authId = Objects.requireNonNull(authId);
 		this.userId = Objects.requireNonNull(userId);
+		this.username = Objects.requireNonNull(username);
+		this.nachname = Objects.requireNonNull(nachname);
+		this.vorname = Objects.requireNonNull(vorname);
+		this.email = Objects.requireNonNull(email);
 		this.roles = Objects.requireNonNull(roles);
 	}
 
@@ -61,6 +73,42 @@ public class JaxAuthAccessElement implements Serializable {
 
 	public void setUserId(@Nonnull String userId) {
 		this.userId = userId;
+	}
+
+	@Nonnull
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(@Nonnull String username) {
+		this.username = username;
+	}
+
+	@Nonnull
+	public String getNachname() {
+		return nachname;
+	}
+
+	public void setNachname(@Nonnull String nachname) {
+		this.nachname = nachname;
+	}
+
+	@Nonnull
+	public String getVorname() {
+		return vorname;
+	}
+
+	public void setVorname(@Nonnull String vorname) {
+		this.vorname = vorname;
+	}
+
+	@Nonnull
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(@Nonnull String email) {
+		this.email = email;
 	}
 
 	@Nonnull

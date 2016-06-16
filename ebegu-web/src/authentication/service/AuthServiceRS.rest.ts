@@ -37,13 +37,12 @@ export default class AuthServiceRS {
     };
 
     public initWithCookie(): boolean {
-        var authIdbase64 = this.$cookies.get('authId');
+        let authIdbase64 = this.$cookies.get('authId');
         if (authIdbase64) {
             try {
-                var authData = angular.fromJson(this.$base64.decode(authIdbase64));
-                this.principal = new TSUser();
-                this.principal.username = authData.authId;
-                this.principal.userId = authData.userId;
+                let authData = angular.fromJson(this.$base64.decode(authIdbase64));
+                console.log('user_data', authData);
+                this.principal = new TSUser(authData.userId, authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.roles);
                 if (authData.roles) {
                     this.principal.roles = authData.roles;
                 }

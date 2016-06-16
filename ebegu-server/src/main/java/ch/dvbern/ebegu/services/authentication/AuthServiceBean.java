@@ -64,7 +64,12 @@ public class AuthServiceBean implements AuthService {
 			authorisierterBenutzer.getAuthId(),
 			authorisierterBenutzer.getAuthToken(),
 			UUID.randomUUID().toString(), // XSRF-Token (no need to persist)
-			authorisierterBenutzer.getAuthId()));
+			authorisierterBenutzer.getAuthId(),
+			loginElement.getUsername(),
+			loginElement.getNachname(),
+			loginElement.getVorname(),
+			loginElement.getEmail(),
+			loginElement.getRoles()));
 	}
 
 	@Override
