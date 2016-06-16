@@ -2,7 +2,7 @@
     <div class="col-md-8 col-md-offset-2">
         <h1 data-translate="INSTITUTION"></h1>
 
-        <form ng-submit="" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+        <form role="form" name="form" class="" unsaved-warning-form novalidate>
 
             <div class="row">
 
@@ -48,7 +48,7 @@
                     <div class="col-md-6">
                         <dv-input-container class="form-group">
                             <!--Knopf zum hinzufügen neuer Institutionen-->
-                            <button type="button" ng-click="vm.createInstitution()" class="btn btn-sm btn-success">
+                            <button type="button" ng-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()" class="btn btn-sm btn-success">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_HINZUFUEGEN"></span>
                             </button>
@@ -57,7 +57,7 @@
                     <div class="col-md-6">
                         <dv-input-container class="form-group secondColumn">
                             <!--Knopf zum speichern der ausgewählen oder neuer Institution-->
-                            <button type="button" ng-click="vm.saveInstitution()" class="btn btn-sm btn-success"
+                            <button type="submit" ng-click="vm.saveInstitution(form)" class="btn btn-sm btn-success"
                                     ng-disabled="!vm.isSelectedInstitution()">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_SPEICHERN"></span>
@@ -91,7 +91,7 @@
                                     <select name="traegerschaft_ID" id="traegerschaft_ID" class="form-control"
                                             ng-model="vm.getSelectedInstitution().traegerschaft"
                                             ng-options="traegerschaft as traegerschaft.name for traegerschaft in vm.getTreagerschaftList() track by traegerschaft.id"
-                                            ng-required="true">
+                                            ng-required="false">
                                     </select>
                                     <dv-error-messages for="form.traegerschaft_ID.$error"
                                                        class="error"></dv-error-messages>
@@ -158,7 +158,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
-                                                <button type="button" ng-click="vm.createInstitutionStammdaten()"
+                                                <button type="button" ng-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
                                                         class="btn btn-sm btn-success">
                                                     <i class="glyphicon glyphicon-plus"></i>
                                                     <span data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
@@ -168,7 +168,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group secondColumn">
                                                 <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
-                                                <button type="button" ng-click="vm.saveInstitutionStammdaten()"
+                                                <button type="submit" ng-click="vm.saveInstitutionStammdaten(form)"
                                                         class="btn btn-sm btn-success"
                                                         ng-disabled="!vm.isSelectedInstitutionStammdaten()">
                                                     <i class="glyphicon glyphicon-plus"></i>

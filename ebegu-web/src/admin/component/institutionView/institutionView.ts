@@ -10,6 +10,7 @@ import TSAdresse from '../../../models/TSAdresse';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import IPromise = angular.IPromise;
+import IFormController = angular.IFormController;
 let template = require('./institutionView.html');
 let style = require('./institutionView.less');
 
@@ -110,22 +111,24 @@ export class InstitutionViewController {
         this.instStammdatenList = [];
     }
 
-    saveInstitution(): void {
-        this.isSelected = false;
+    saveInstitution(form: IFormController): void {
+        if (form.$valid) {
+            this.isSelected = false;
 
-        if (this.isCreateInstitutionsMode() === true) {
-            this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                this.institutionen.push(institution);
-            });
-        } else {
-            this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
-                var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
-                if (index > -1) {
-                    this.institutionen[index] = institution;
-                }
-            });
+            if (this.isCreateInstitutionsMode() === true) {
+                this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
+                    this.institutionen.push(institution);
+                });
+            } else {
+                this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
+                    var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
+                    if (index > -1) {
+                        this.institutionen[index] = institution;
+                    }
+                });
+            }
+            this.selectedInstitution = null;
         }
-        this.selectedInstitution = null;
 
     }
 
@@ -154,23 +157,25 @@ export class InstitutionViewController {
         this.isSelectedStammdaten = true;
     }
 
-    saveInstitutionStammdaten(): void {
-        this.isSelectedStammdaten = false;
-        this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
+    saveInstitutionStammdaten(form: IFormController): void {
+        if (form.$valid) {
+            this.isSelectedStammdaten = false;
+            this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
 
-        if (this.isCreateStammdatenMode()) {
-            this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
-                this.instStammdatenList.push(institutionStammdaten);
-            });
-        } else {
-            this.institutionStammdatenRS.updateInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
-                var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
-                if (index > -1) {
-                    this.instStammdatenList[index] = institutionStammdaten;
-                }
-            });
+            if (this.isCreateStammdatenMode()) {
+                this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
+                    this.instStammdatenList.push(institutionStammdaten);
+                });
+            } else {
+                this.institutionStammdatenRS.updateInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
+                    var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
+                    if (index > -1) {
+                        this.instStammdatenList[index] = institutionStammdaten;
+                    }
+                });
+            }
+            this.selectedInstitutionStammdaten = null;
         }
-        this.selectedInstitutionStammdaten = null;
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {
