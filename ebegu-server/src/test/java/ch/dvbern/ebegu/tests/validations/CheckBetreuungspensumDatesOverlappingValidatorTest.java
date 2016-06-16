@@ -2,35 +2,48 @@ package ch.dvbern.ebegu.tests.validations;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.tests.util.ValidationTestHelper;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+import javax.validation.Configuration;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertNotViolated;
-import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertViolated;
-
 /**
  * Test fuer {@link ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlappingValidator}
  */
-@Ignore //todo homa mock param service for this test
+
 public class CheckBetreuungspensumDatesOverlappingValidatorTest {
+
+
+	private ValidatorFactory customFactory;
+
+	@Before
+	public void setUp() throws Exception {
+		// see https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bootstrapping.html#_constraintvalidatorfactory
+		Configuration<?> config = Validation.byDefaultProvider().configure();
+		config.constraintValidatorFactory(new ValidationTestConstraintValidatorFactory());
+		this.customFactory = config.buildValidatorFactory();
+	}
+
 
 	@Test
 	public void testCheckBetreuungspensumDatesOverlapping() {
 		Betreuung betreuung = createBetreuungWithOverlappedDates(true); //overlapping
-		assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, "");
+		ValidationTestHelper.assertViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory ,"" );
 	}
 
 	@Test
 	public void testCheckBetreuungspensumDatesNotOverlapping() {
 		Betreuung betreuung = createBetreuungWithOverlappedDates(false); // not overlapping
-		assertNotViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, "");
+		ValidationTestHelper.assertNotViolated(CheckBetreuungspensumDatesOverlapping.class, betreuung, customFactory, "");
 	}
 
 	@Nonnull
@@ -51,5 +64,4 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 		betreuung.setBetreuungspensumContainers(containerSet);
 		return betreuung;
 	}
-
 }
