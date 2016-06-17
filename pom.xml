@@ -608,8 +608,7 @@
                                  File f = null;
                                  if (p != null) {
                                      def _max_child_poms = 0
-                                     while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; }
-                                         p = "../" + p;
+                                     while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; } p = "../" + p;
                                      }
                                  }
                                  if (f != null) {
