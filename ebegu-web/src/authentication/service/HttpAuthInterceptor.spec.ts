@@ -1,13 +1,14 @@
-import {IDeferred, IRootScopeService, IQService} from 'angular';
+import {IWindowService, IRootScopeService} from 'angular';
 import HttpAuthInterceptor from './HttpAuthInterceptor';
 import {EbeguAuthentication} from '../authentication.module';
 import {EbeguWebCore} from '../../core/core.module';
+import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 
 describe('HttpAuthInterceptor', function () {
 
     let httpAuthInterceptor: HttpAuthInterceptor;
     let $rootScope: IRootScopeService;
-    let $q: IQService;
+    let $window: IWindowService;
 
     let authErrorResponse: any = {
         status: 401,
@@ -15,34 +16,29 @@ describe('HttpAuthInterceptor', function () {
         statusText: 'Unauthorized'
     };
 
-    // beforeEach(angular.mock.module(EbeguWebCore.name));
+    beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguAuthentication.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         httpAuthInterceptor = $injector.get('HttpAuthInterceptor');
         $rootScope = $injector.get('$rootScope');
-        $q = $injector.get('$q');
+        $window = $injector.get('$window');
+        window.onbeforeunload = () => 'Oh no!';
+        spyOn($rootScope, '$broadcast').and.callFake(() => {});
     }));
 
     describe('Public API', function () {
-        // it('should include a responseError() function', function () {
-        //     expect(httpAuthInterceptor.responseError).toBeDefined();
-        // });
+        it('should include a responseError() function', function () {
+            expect(httpAuthInterceptor.responseError).toBeDefined();
+        });
     });
 
     describe('API usage', function () {
-        // it('should reject the response with a validation report', function () {
-        //     let deferred: IDeferred<any>;
-        //     httpAuthInterceptor.responseError(authErrorResponse).then(function () {
-        //         deferred.resolve();
-        //     }, function (errors) {
-        //         deferred.reject(errors);
-        //     });
-        //
-        //     // let errors: Array<TSExceptionReport> = [(TSExceptionReport.createFromViolation('PARAMETER',
-        //     //     'Die Länge des Feldes muss zwischen 36 und 36 sein', 'markAsRead.arg1', '8a146418-ab12-456f-9b17-aad6990f51'))];
-        //     // $rootScope.$digest();
-        //     // expect(errorHandler).toHaveBeenCalledWith(errors);
-        // });
+        beforeEach(function () {
+            httpAuthInterceptor.responseError(authErrorResponse);
+        });
+        it('should capture and broadcast "AUTH_EVENTS.notAuthenticated" on 401', function () {
+            expect($rootScope.$broadcast).toHaveBeenCalledWith(TSAuthEvent.NOT_AUTHENTICATED, authErrorResponse);
+        });
     });
 });

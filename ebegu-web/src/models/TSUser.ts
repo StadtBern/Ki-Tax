@@ -2,6 +2,7 @@ import {TSRole} from './enums/TSRole';
 
 export default class TSUser {
 
+    //todo team Hier muessen wir schauen ob alle diese Felder benoetigt werden, dafuer brauchen wir aber zuerst die Daten von IAM
     private _userId: string;
     private _nachname: string;
     private _vorname: string;

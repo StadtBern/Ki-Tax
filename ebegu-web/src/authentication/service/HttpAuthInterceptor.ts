@@ -1,13 +1,12 @@
-import {IQService}  from 'angular';
-import IRootScopeService = angular.IRootScopeService;
-import IHttpInterceptor = angular.IHttpInterceptor;
+import {IHttpInterceptor, IRootScopeService, IQService}  from 'angular';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
+import IWindowService = angular.IWindowService;
 
 export default class HttpAuthInterceptor implements IHttpInterceptor {
 
     static $inject = ['$rootScope', '$q', 'CONSTANTS', '$window'];
     /* @ngInject */
-    constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any, private $window: any) {
+    constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any, private $window: IWindowService) {
     }
 
 
