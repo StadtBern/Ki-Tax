@@ -86,7 +86,7 @@ public class AuthResource {
 		if (optBenutzer.isPresent()) {
 			benutzer = optBenutzer.get();
 		}
-		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzer, loginElement));
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
 		accessElement = authService.login(login);
 		if (!accessElement.isPresent()) {
