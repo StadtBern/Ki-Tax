@@ -12,8 +12,6 @@ import java.util.Optional;
  */
 public interface AuthService {
 
-	String ERROR_USERNAME_INVALID = "G\u00fcltige E-Mail-Adresse eingeben.";
-
 	/**
 	 * Verifiziert die User Credentials
 	 *
@@ -21,7 +19,6 @@ public interface AuthService {
 	 * @return Authentication Response, falls das Login erfolgriech war, sonst NULL
 	 */
 	@Nonnull
-//	Optional<AuthAccessElement> login(@Nonnull AuthLoginElement loginElement) throws RuleViolationException;
 	Optional<AuthAccessElement> login(@Nonnull AuthLoginElement loginElement);
 
 	/**
@@ -44,20 +41,4 @@ public interface AuthService {
 	 */
 	boolean verifyToken(@Nonnull BenutzerCredentials credentials);
 
-//	/**
-//	 * Holt das Salt vom User und erzeugt damit ein gehashtes Passwort.
-//	 * @throws RuleViolationException Wenn der Username nicht gefunden wurde
-//	 * @throws PasswordPreReqsException Wenn die Voraussetzungen fuer die Passwort-Verschluesselung nicht gegeben sind (z.B. Passwort zu lange)
-//	 */
-//	@Nonnull
-//	HashedPassword encryptPassword(@Nonnull String username, @Nonnull String plaintextPassword) throws PasswordPreReqsException, RuleViolationException;
-//
-//	/**
-//	 * Erzeugt ein neues gehashtes Passwort
-//	 * @throws PasswordPreReqsException Wenn die Voraussetzungen fuer die Passwort-Verschluesselung nicht gegeben sind (z.B. Passwort zu lange)
-//	 */
-//	@Nonnull
-//	HashedPassword createPassword(@Nonnull String plaintextPassword) throws PasswordPreReqsException;
-//
-//	boolean checkPassword(@Nonnull String oldEncryptedPassword, @Nonnull String newEncryptedPassword) throws PasswordPreReqsException;
 }

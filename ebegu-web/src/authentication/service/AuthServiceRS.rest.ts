@@ -1,17 +1,18 @@
-import {IPromise, IHttpService, IQService, ITimeoutService} from 'angular';
+import {IRequestConfig, IPromise, IHttpService, IQService, ITimeoutService} from 'angular';
 import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import ICookiesService = angular.cookies.ICookiesService;
+import HttpBuffer from './HttpBuffer';
 
 export default class AuthServiceRS {
 
     private principal: TSUser;
 
 
-    static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', 'base64', 'EbeguRestUtil'];
+    static $inject = ['$http', 'CONSTANTS', '$q', '$timeout', '$cookies', 'base64', 'EbeguRestUtil', 'httpBuffer'];
     /* @ngInject */
     constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
-                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil) {
+                private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
     }
 
     public getPrincipal() {
@@ -23,9 +24,9 @@ export default class AuthServiceRS {
             return this.$http.post(this.CONSTANTS.REST_API + 'auth/login', this.ebeguRestUtil.userToRestObject({}, userCredentials))
                 .then((response: any) => {
                     // try to reload buffered requests
-                    // httpBuffer.retryAll(function (config) {
-                    //     return config;
-                    // });
+                    this.httpBuffer.retryAll((config: IRequestConfig) => {
+                        return config;
+                    });
                     return this.$timeout((): any => { // Response cookies are not immediately accessible, so lets wait for a bit
                         try {
                             this.initWithCookie();

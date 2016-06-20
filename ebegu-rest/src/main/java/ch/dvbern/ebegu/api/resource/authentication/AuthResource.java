@@ -51,16 +51,13 @@ public class AuthResource {
 	@Inject
 	private JaxBConverter converter;
 
-	private boolean containerLogin(@Nonnull JaxAuthLoginElement loginElement) { //throws RuleViolationException {
+	private boolean containerLogin(@Nonnull JaxAuthLoginElement loginElement) {
 		try {
 			// zuallererst einloggen, damit die SQL-Statements in den Services auch den richtigen Mandant haben...
-//			HashedPassword hashedPassword = authService.encryptPassword(loginElement.getUsername(), loginElement.getPassword());
 			request.login(loginElement.getUsername(), loginElement.getPassword());
 			return true;
 		} catch (ServletException ignored) {
 			return false;
-//		} catch (PasswordPreReqsException ignored) {
-//			return false;
 		}
 	}
 
@@ -76,8 +73,7 @@ public class AuthResource {
 	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
 
 		Optional<AuthAccessElement> accessElement;
-//		try {
-			// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
+		// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
 		if (!containerLogin(loginElement)) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
@@ -96,13 +92,6 @@ public class AuthResource {
 		if (!accessElement.isPresent()) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
-//		} catch (RuleViolationException e) {
-//			return JaxErrorResponse.fromBusinessException(e);
-//		}
-//		} catch (Exception e) {
-//			return null; //JaxErrorResponse.fromBusinessException(e);
-//		}
-
 		AuthAccessElement access = accessElement.get();
 		JaxAuthAccessElement element = converter.authAccessElementToResource(access);
 

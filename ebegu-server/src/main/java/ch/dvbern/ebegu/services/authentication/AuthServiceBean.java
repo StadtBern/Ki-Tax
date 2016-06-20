@@ -44,14 +44,6 @@ public class AuthServiceBean implements AuthService {
 			return Optional.empty();
 		}
 
-//		HashedPassword passwordEncrypted;
-//		try {
-//			passwordEncrypted = encryptPassword(loginElement.getUsername(), loginElement.getPlainTextPassword());
-//		} catch (PasswordPreReqsException ignored) {
-//			// Wenn die Password-Requirements nicht erfuellt sind, kann's kein gueltiges Passwort sein
-//			return Optional.empty();
-//		}
-
 		Optional<Benutzer> benutzer = benutzerService.findBenutzer(loginElement.getUsername());
 		if (!benutzer.isPresent()) {
 			return Optional.empty();
@@ -163,79 +155,4 @@ public class AuthServiceBean implements AuthService {
 		}
 	}
 
-//	@Override
-//	@Nonnull
-//	public HashedPassword encryptPassword(@Nonnull String username, @Nonnull String plaintextPassword) throws PasswordPreReqsException, RuleViolationException {
-//		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//
-//		ParameterExpression<String> paramUserName = cb.parameter(String.class, "username");
-//
-//		CriteriaQuery<String> cq = cb.createQuery(String.class);
-//		Root<Benutzer> root = cq.from(Benutzer.class);
-//		cq.select(root.get(Benutzer_.passwordSalt));
-//		cq.where(cb.equal(root.get(Benutzer_.username), paramUserName), cb.isNull(root.get(Benutzer_.geloescht)));
-//
-//		String saltText;
-//		try {
-//			saltText = entityManager.createQuery(cq)
-//				.setParameter(paramUserName, username)
-//				.getSingleResult();
-//		} catch (NoResultException ignored) {
-//			throw new RuleViolationException(ERROR_USERNAME_INVALID); // NOPMD.PreserveStackTrace - hier brauchts keinen Stacktrace
-//		}
-//
-//		return hashPasswordBCrypt(plaintextPassword, HashedPassword.decodeBase64(saltText));
-//	}
-//
-//
-//	@Override
-//	@Nonnull
-//	public HashedPassword createPassword(@Nonnull String plaintextPassword) throws PasswordPreReqsException {
-//		long start = System.currentTimeMillis();
-//		byte salt[] = new byte[BCRYPT_SALT_SIZE];
-//		SECURE_RANDOM.get().nextBytes(salt);
-//
-//		HashedPassword hashedPassword = hashPasswordBCrypt(plaintextPassword, salt);
-//
-//		long duration = System.currentTimeMillis() - start;
-//		if (duration > 1000) {
-//			LOG.error("Hashing password took too long: {}", duration);
-//		}
-//		return hashedPassword;
-//	}
-//
-//	@Nonnull
-//	HashedPassword hashPasswordBCrypt(@Nonnull String plaintextPassword, @Nonnull byte salt[]) throws PasswordPreReqsException {
-//		Objects.requireNonNull(plaintextPassword);
-//		Objects.requireNonNull(salt);
-//		if (plaintextPassword.isEmpty()) {
-//			throw new IllegalArgumentException("plaintextPassword may not be empty");
-//		}
-//
-//		// TODO add password security constraints
-//
-//		byte passwordBytes[] = plaintextPassword.getBytes(StandardCharsets.UTF_8);
-//
-//		if (passwordBytes.length > BCRYPT_MAX_PASSWORD_BYTES) {
-//			throw new PasswordPreReqsException(PreReqFailure.TOO_LONG);
-//		}
-//
-//		byte[] hashedPassword;
-//		synchronized (BCrypt.class) {
-//			hashedPassword = BCrypt.generate(passwordBytes, salt, BCRYPT_COST_ROUNDS);
-//		}
-//
-//		return new HashedPassword(hashedPassword, salt);
-//	}
-//
-//	@Override
-//	public boolean checkPassword(@Nonnull String oldEncryptedPassword, @Nonnull String newEncryptedPassword) throws PasswordPreReqsException {
-//		Objects.requireNonNull(oldEncryptedPassword);
-//		Objects.requireNonNull(newEncryptedPassword);
-//
-//		if (!oldEncryptedPassword.equals(newEncryptedPassword)) {
-//			throw new PasswordPreReqsException(PreReqFailure.CONFIRMATION_FAILURE);
-//		}
-//		return true;
-//	}
 }

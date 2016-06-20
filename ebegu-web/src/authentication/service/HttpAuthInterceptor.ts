@@ -1,12 +1,13 @@
-import {IHttpInterceptor, IRootScopeService, IQService}  from 'angular';
+import {IWindowService, IHttpInterceptor, IRootScopeService, IQService}  from 'angular';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
-import IWindowService = angular.IWindowService;
+import HttpBuffer from './HttpBuffer';
 
 export default class HttpAuthInterceptor implements IHttpInterceptor {
 
-    static $inject = ['$rootScope', '$q', 'CONSTANTS', '$window'];
+    static $inject = ['$rootScope', '$q', 'CONSTANTS', '$window', 'httpBuffer'];
     /* @ngInject */
-    constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any, private $window: IWindowService) {
+    constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any,
+                private $window: IWindowService, private httpBuffer: HttpBuffer) {
     }
 
 
@@ -18,10 +19,11 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                     return this.$q.reject(response);
                 }
                 // all requests that failed due to notAuthenticated are appsended to httpBuffer. Use httpBuffer.retryAll to submit them.
-                // this.httpBuffer.append(response.config, deferred);
+                let deferred = this.$q.defer();
+                this.httpBuffer.append(response.config, deferred);
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], response);
                 this.$window.location.href = '/#/src/authentication/dummyAuthentication.html';
-                return this.$q.defer().promise;
+                return deferred.promise;
         }
         return this.$q.reject(response);
     };
