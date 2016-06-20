@@ -428,10 +428,10 @@ public class JaxBConverter {
 		Validate.notNull(fallJAXP);
 		convertAbstractFieldsToEntity(fallJAXP, fall);
 		fall.setFallNummer(fallJAXP.getFallNummer());
-		if (fall.getVerantwortlicher() != null) {
-			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(fallJAXP.getVerantwortlicher().getId());
+		if (fallJAXP.getVerantwortlicher() != null) {
+			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(fallJAXP.getVerantwortlicher().getUsername());
 			if (verantwortlicher.isPresent()) {
-				fall.setVerantwortlicher(authLoginElementToBenutzer(fallJAXP.getVerantwortlicher(), verantwortlicher.get()));
+				fall.setVerantwortlicher(verantwortlicher.get()); // because the user doesn't come from the client but from the server
 			} else {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}

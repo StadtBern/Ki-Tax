@@ -360,6 +360,7 @@ export default class EbeguRestUtil {
         if (fall) {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
+            restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             return restFall;
         }
         return undefined;
@@ -370,6 +371,7 @@ export default class EbeguRestUtil {
         if (fallFromServer) {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
+            fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             return fallTS;
         }
         return undefined;
@@ -914,13 +916,30 @@ export default class EbeguRestUtil {
     }
 
     public userToRestObject(user: any, userTS: TSUser): any {
-        user.username = userTS.username;
-        user.password = userTS.password;
-        user.nachname = userTS.nachname;
-        user.vorname = userTS.vorname;
-        user.email = userTS.email;
-        user.role = userTS.role;
-        user.mandant = this.mandantToRestObject({}, userTS.mandant);
-        return user;
+        if (userTS) {
+            user.username = userTS.username;
+            user.password = userTS.password;
+            user.nachname = userTS.nachname;
+            user.vorname = userTS.vorname;
+            user.email = userTS.email;
+            user.role = userTS.role;
+            user.mandant = this.mandantToRestObject({}, userTS.mandant);
+            return user;
+        }
+        return undefined;
+    }
+
+    private parseUser(userTS: TSUser, userFromServer: any): TSUser {
+        if (userFromServer) {
+            userTS.username = userFromServer.username;
+            userTS.password = userFromServer.password;
+            userTS.nachname = userFromServer.nachname;
+            userTS.vorname = userFromServer.vorname;
+            userTS.email = userFromServer.email;
+            userTS.role = userFromServer.role;
+            userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
+            return userTS;
+        }
+        return undefined;
     }
 }
