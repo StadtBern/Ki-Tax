@@ -1102,4 +1102,15 @@ public class JaxBConverter {
 		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUserId()), String.valueOf(access.getUsername()),
 			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), rollen);
 	}
+
+	public Benutzer authLoginElementToBenutzer(Benutzer benutzer, JaxAuthLoginElement loginElement) {
+		benutzer.setUsername(loginElement.getUsername());
+		benutzer.setEmail(loginElement.getEmail());
+		benutzer.setNachname(loginElement.getNachname());
+		benutzer.setUserId(loginElement.getUserId());
+		benutzer.setVorname(loginElement.getVorname());
+		benutzer.setRoles(loginElement.getRoles());
+		benutzer.setMandant(this.mandantToEntity(loginElement.getMandant(), new Mandant()));
+		return benutzer;
+	}
 }

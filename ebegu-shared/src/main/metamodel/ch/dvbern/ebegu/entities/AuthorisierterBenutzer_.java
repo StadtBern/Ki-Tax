@@ -13,7 +13,7 @@ public abstract class AuthorisierterBenutzer_ extends ch.dvbern.ebegu.entities.A
 	public static volatile SingularAttribute<AuthorisierterBenutzer, String> password;
 	public static volatile SingularAttribute<AuthorisierterBenutzer, LocalDateTime> firstLogin;
 	public static volatile SingularAttribute<AuthorisierterBenutzer, String> authToken;
-	public static volatile SingularAttribute<AuthorisierterBenutzer, String> username;
+	public static volatile SingularAttribute<AuthorisierterBenutzer, Benutzer> benutzer;
 
 }
 

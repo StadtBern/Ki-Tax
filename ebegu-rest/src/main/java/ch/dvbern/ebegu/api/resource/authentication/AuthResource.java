@@ -5,7 +5,9 @@ import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ public class AuthResource {
 
 	@Context
 	private HttpServletRequest request;
+	@Inject
+	private BenutzerService benutzerService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -72,24 +76,32 @@ public class AuthResource {
 	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
 
 		Optional<AuthAccessElement> accessElement;
-		try {
+//		try {
 			// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
-			if (!containerLogin(loginElement)) {
-				return Response.status(Response.Status.UNAUTHORIZED).build();
-			}
-			AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(), loginElement.getUserId(),
-				loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRoles());
+		if (!containerLogin(loginElement)) {
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		}
+		AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(), loginElement.getUserId(),
+			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRoles());
 
-			accessElement = authService.login(login);
-			if (!accessElement.isPresent()) {
-				return Response.status(Response.Status.UNAUTHORIZED).build();
-			}
+		// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
+		Benutzer benutzer = new Benutzer();
+		Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
+		if (optBenutzer.isPresent()) {
+			benutzer = optBenutzer.get();
+		}
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzer, loginElement));
+
+		accessElement = authService.login(login);
+		if (!accessElement.isPresent()) {
+			return Response.status(Response.Status.UNAUTHORIZED).build();
+		}
 //		} catch (RuleViolationException e) {
 //			return JaxErrorResponse.fromBusinessException(e);
 //		}
-		} catch (Exception e) {
-			return null; //JaxErrorResponse.fromBusinessException(e);
-		}
+//		} catch (Exception e) {
+//			return null; //JaxErrorResponse.fromBusinessException(e);
+//		}
 
 		AuthAccessElement access = accessElement.get();
 		JaxAuthAccessElement element = converter.authAccessElementToResource(access);

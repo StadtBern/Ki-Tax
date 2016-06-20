@@ -1,4 +1,5 @@
 import {TSRole} from './enums/TSRole';
+import {TSMandant} from './TSMandant';
 
 export default class TSUser {
 
@@ -9,10 +10,11 @@ export default class TSUser {
     private _username: string;
     private _password: string;
     private _email: string;
+    private _mandant: TSMandant;
     private _roles: Array<TSRole>;
 
     constructor(userId?: string, vorname?: string, nachname?: string, username?: string,
-                password?: string, email?: string, roles?: Array<TSRole>) {
+                password?: string, email?: string, mandant?: TSMandant, roles?: Array<TSRole>) {
         this._userId = userId;
         this._vorname = vorname;
         this._nachname = nachname;
@@ -69,6 +71,14 @@ export default class TSUser {
 
     set email(value: string) {
         this._email = value;
+    }
+
+    get mandant(): TSMandant {
+        return this._mandant;
+    }
+
+    set mandant(value: TSMandant) {
+        this._mandant = value;
     }
 
     get roles(): Array<TSRole> {

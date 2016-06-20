@@ -920,6 +920,7 @@ export default class EbeguRestUtil {
         user.vorname = userTS.vorname;
         user.email = userTS.email;
         user.roles = userTS.roles;
+        user.mandant = this.mandantToRestObject({}, userTS.mandant);
         user.userId = userTS.userId;
         return user;
     }

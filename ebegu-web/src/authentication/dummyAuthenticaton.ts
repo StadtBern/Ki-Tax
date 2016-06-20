@@ -3,6 +3,7 @@ import TSUser from '../models/TSUser';
 import {TSRole} from '../models/enums/TSRole';
 import {IStateService} from 'angular-ui-router';
 import AuthServiceRS from './service/AuthServiceRS.rest';
+import {TSMandant} from '../models/TSMandant';
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -21,11 +22,14 @@ export class AuthenticationListViewController {
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS) {
         this.usersList = [];
-        this.usersList.push(new TSUser('jobe', 'Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', [TSRole.SACHBEARBEITER_JA]));
-        this.usersList.push(new TSUser('jemu', 'Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', [TSRole.SACHBEARBEITER_JA]));
-        this.usersList.push(new TSUser('beso', 'Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch', [TSRole.SACHBEARBEITER_INSTITUTION]));
-        this.usersList.push(new TSUser('blku', 'Kurt', 'Blaser', 'blku', 'password4', 'kurt.blaser@bern.ch', [TSRole.ADMIN]));
-        this.usersList.push(new TSUser('blku', 'Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', [TSRole.GESUCHSTELLER]));
+        let mandant = new TSMandant();
+        mandant.name = 'TestMandant';
+        mandant.name = 'e3736eb8-6eef-40ef-9e52-96ab48d8f220';
+        this.usersList.push(new TSUser('jobe', 'Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', mandant, [TSRole.SACHBEARBEITER_JA]));
+        this.usersList.push(new TSUser('jemu', 'Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', mandant, [TSRole.SACHBEARBEITER_JA]));
+        this.usersList.push(new TSUser('beso', 'Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch', mandant, [TSRole.SACHBEARBEITER_INSTITUTION]));
+        this.usersList.push(new TSUser('blku', 'Kurt', 'Blaser', 'blku', 'password4', 'kurt.blaser@bern.ch', mandant, [TSRole.ADMIN]));
+        this.usersList.push(new TSUser('blku', 'Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', mandant, [TSRole.GESUCHSTELLER]));
     }
 
     public logIn(user: TSUser): void {
@@ -33,4 +37,5 @@ export class AuthenticationListViewController {
             this.$state.go('pendenzen');
         });
     }
+
 }

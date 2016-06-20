@@ -20,7 +20,8 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 @Entity
 @Table(indexes = {
-	@Index(columnList = "authToken,username", name = "IX_authorisierter_benutzer")
+	@Index(columnList = "benutzer_id", name = "IX_authorisierter_benutzer"),
+	@Index(columnList = "authToken,benutzer_id", name = "IX_authorisierter_benutzer_token")
 })
 public class AuthorisierterBenutzer extends AbstractEntity {
 
@@ -32,9 +33,9 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDateTime lastLogin = LocalDateTime.now();
 
-	@NotNull
-	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	private String username = null;
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_authorisierter_benutzer_id"))
+	private Benutzer benutzer = null;
 
 	// todo team Dieses Feld muss aus Sicherheitsgrunden entfernt werden wenn das dummylogin nicht mehr benoetigt wird
 	@Nullable
@@ -55,15 +56,15 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 
 	@Nonnull
 	public String getAuthId() {
-		return String.valueOf(this.username);
+		return String.valueOf(this.benutzer.getUsername());
 	}
 
-	public String getUsername() {
-		return username;
+	public Benutzer getBenutzer() {
+		return benutzer;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setBenutzer(Benutzer benutzer) {
+		this.benutzer = benutzer;
 	}
 
 	@Nullable

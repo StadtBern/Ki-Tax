@@ -5,7 +5,10 @@ import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.services.AuthService;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
@@ -26,11 +30,11 @@ import java.util.UUID;
 @PermitAll
 public class AuthServiceBean implements AuthService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AuthServiceBean.class);
-
 
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	private EntityManager entityManager;
+	@Inject
+	private BenutzerService benutzerService;
 
 
 	@Nonnull
@@ -50,13 +54,13 @@ public class AuthServiceBean implements AuthService {
 //			return Optional.empty();
 //		}
 
-//		Optional<Benutzer> benutzer = benutzerService.findByUsernameAndEncryptedPassword(loginElement.getUsername(), passwordEncrypted);
-//		if (!benutzer.isPresent()) {
-//			return Optional.empty();
-//		}
+		Optional<Benutzer> benutzer = benutzerService.findBenutzer(loginElement.getUsername());
+		if (!benutzer.isPresent()) {
+			return Optional.empty();
+		}
 
 		AuthorisierterBenutzer authorisierterBenutzer = new AuthorisierterBenutzer();
-		authorisierterBenutzer.setUsername(loginElement.getUsername());
+		authorisierterBenutzer.setBenutzer(benutzer.get());
 		authorisierterBenutzer.setPassword(loginElement.getPlainTextPassword());
 		authorisierterBenutzer.setAuthToken(UUID.randomUUID().toString());
 		entityManager.persist(authorisierterBenutzer);
@@ -85,7 +89,8 @@ public class AuthServiceBean implements AuthService {
 
 		CriteriaQuery<String> query = cb.createQuery(String.class);
 		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-		Predicate usernamePredicate = cb.equal(root.get(AuthorisierterBenutzer_.username), usernameParam);
+		Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
+		Predicate usernamePredicate = cb.equal(join.get(Benutzer_.username), usernameParam);
 		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
 		query.where(usernamePredicate, authTokenPredicate);
 		//todo team hier muessen wir einen anderen Weg finden, um das Password zu holen. Dieses gilt nur jetzt bei dummy users und ist gar nicht sicher
@@ -133,7 +138,8 @@ public class AuthServiceBean implements AuthService {
 
 		CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
 		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-		Predicate usernamePredicate = cb.equal(root.get(AuthorisierterBenutzer_.username), usernameParam);
+		Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
+		Predicate usernamePredicate = cb.equal(join.get(Benutzer_.username), usernameParam);
 		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
 		query.where(cb.and(usernamePredicate, authTokenPredicate));
 
