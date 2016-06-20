@@ -50,10 +50,10 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	}
 
 	@Override
-	public void removeBenutzer(@Nonnull String benutzerId) {
-		Objects.requireNonNull(benutzerId);
-		Optional<Benutzer> benutzerToRemove = findBenutzer(benutzerId);
-		benutzerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, benutzerId));
+	public void removeBenutzer(@Nonnull String username) {
+		Objects.requireNonNull(username);
+		Optional<Benutzer> benutzerToRemove = findBenutzer(username);
+		benutzerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBenutzer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
 		persistence.remove(benutzerToRemove.get());
 	}
 }

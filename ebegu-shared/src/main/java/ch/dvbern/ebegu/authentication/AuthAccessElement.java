@@ -26,8 +26,6 @@ public class AuthAccessElement implements Serializable {
 	@Nonnull
 	private final String authId;
 	@Nonnull
-	private final String userId;
-	@Nonnull
 	private final String authToken;
 	@Nonnull
 	private final String xsrfToken;
@@ -40,30 +38,24 @@ public class AuthAccessElement implements Serializable {
 	@Nonnull
 	private final String email;
 	@Nonnull
-	private final Set<UserRole> roles;
+	private final UserRole role;
 
 	public AuthAccessElement(@Nonnull String authId, @Nonnull String authToken, @Nonnull String xsrfToken,
-							 @Nonnull String userId, @Nonnull String username, @Nonnull String nachname, @Nonnull String vorname,
-							 @Nonnull String email, @Nonnull Set<UserRole> roles) {
+							 @Nonnull String username, @Nonnull String nachname, @Nonnull String vorname,
+							 @Nonnull String email, @Nonnull UserRole role) {
 		this.authId = Objects.requireNonNull(authId);
-		this.userId = Objects.requireNonNull(userId);
 		this.authToken = Objects.requireNonNull(authToken);
 		this.xsrfToken = Objects.requireNonNull(xsrfToken);
 		this.username = Objects.requireNonNull(username);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
 		this.email = Objects.requireNonNull(email);
-		this.roles = Objects.requireNonNull(roles);
+		this.role = Objects.requireNonNull(role);
 	}
 
 	@Nonnull
 	public String getAuthId() {
 		return authId;
-	}
-
-	@Nonnull
-	public String getUserId() {
-		return userId;
 	}
 
 	@Nonnull
@@ -97,7 +89,7 @@ public class AuthAccessElement implements Serializable {
 	}
 
 	@Nonnull
-	public Set<UserRole> getRoles() {
-		return roles;
+	public UserRole getRole() {
+		return role;
 	}
 }

@@ -28,25 +28,22 @@ public class AuthLoginElement implements Serializable {
 	@Nonnull
 	private String plainTextPassword = "";
 	@Nonnull
-	private String userId = "";
-	@Nonnull
 	private String nachname = "";
 	@Nonnull
 	private String vorname = "";
 	@Nonnull
 	private String email = "";
 	@Nonnull
-	private Set<UserRole> roles;
+	private UserRole role;
 
-	public AuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword, @Nonnull String  userId, @Nonnull String nachname,
-							@Nonnull String vorname, @Nonnull String email, @Nonnull Set<UserRole> roles) {
+	public AuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword, @Nonnull String nachname,
+							@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
 		this.username = Objects.requireNonNull(username);
 		this.plainTextPassword = Objects.requireNonNull(plainTextpassword);
-		this.userId = Objects.requireNonNull(userId);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
 		this.email = Objects.requireNonNull(email);
-		this.roles = Objects.requireNonNull(roles);
+		this.role = Objects.requireNonNull(role);
 	}
 
 	@Nonnull
@@ -65,15 +62,6 @@ public class AuthLoginElement implements Serializable {
 
 	public void setPlainTextPassword(@Nonnull final String password) {
 		this.plainTextPassword = password;
-	}
-
-	@Nonnull
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(@Nonnull String userId) {
-		this.userId = userId;
 	}
 
 	@Nonnull
@@ -104,11 +92,11 @@ public class AuthLoginElement implements Serializable {
 	}
 
 	@Nonnull
-	public Set<UserRole> getRoles() {
-		return roles;
+	public UserRole getRole() {
+		return role;
 	}
 
-	public void setRoles(@Nonnull Set<UserRole> roles) {
-		this.roles = roles;
+	public void setRole(@Nonnull UserRole role) {
+		this.role = role;
 	}
 }

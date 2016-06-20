@@ -69,7 +69,6 @@ describe('betreuungView', function () {
         });
         describe('getInstitutionenSDList', () => {
             beforeEach(function () {
-                // gesuchModelManager.getInstitutionenList() = [];
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));

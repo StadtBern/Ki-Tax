@@ -81,8 +81,8 @@ public class AuthResource {
 		if (!containerLogin(loginElement)) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
-		AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(), loginElement.getUserId(),
-			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRoles());
+		AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(),
+			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRole());
 
 		// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
 		Benutzer benutzer = new Benutzer();

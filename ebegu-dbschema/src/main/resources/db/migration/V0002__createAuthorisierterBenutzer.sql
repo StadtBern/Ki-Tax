@@ -14,25 +14,19 @@ CREATE TABLE authorisierter_benutzer (
 );
 
 CREATE TABLE benutzer (
-  id                 VARCHAR(36) NOT NULL,
-  timestamp_erstellt DATETIME    NOT NULL,
-  timestamp_mutiert  DATETIME    NOT NULL,
-  user_erstellt      VARCHAR(36) NOT NULL,
-  user_mutiert       VARCHAR(36) NOT NULL,
-  version            BIGINT      NOT NULL,
-  email              VARCHAR(255),
-  nachname           VARCHAR(255),
-  user_id            VARCHAR(255),
-  username           VARCHAR(255),
-  vorname            VARCHAR(255),
-  mandant_id         VARCHAR(36) NOT NULL,
+  id                 VARCHAR(36)  NOT NULL,
+  timestamp_erstellt DATETIME     NOT NULL,
+  timestamp_mutiert  DATETIME     NOT NULL,
+  user_erstellt      VARCHAR(36)  NOT NULL,
+  user_mutiert       VARCHAR(36)  NOT NULL,
+  version            BIGINT       NOT NULL,
+  email              VARCHAR(255) NOT NULL,
+  nachname           VARCHAR(255) NOT NULL,
+  role               VARCHAR(255) NOT NULL,
+  username           VARCHAR(255) NOT NULL,
+  vorname            VARCHAR(255) NOT NULL,
+  mandant_id         VARCHAR(36)  NOT NULL,
   PRIMARY KEY (id)
-);
-
-CREATE TABLE benutzer_roles (
-  benutzer_id VARCHAR(36)  NOT NULL,
-  roles       VARCHAR(255) NOT NULL,
-  PRIMARY KEY (benutzer_id, roles)
 );
 
 CREATE INDEX IX_authorisierter_benutzer ON authorisierter_benutzer (benutzer_id);
@@ -50,8 +44,3 @@ ALTER TABLE benutzer
   ADD CONSTRAINT FK_benutzer_mandant_id
 FOREIGN KEY (mandant_id)
 REFERENCES mandant (id);
-
-ALTER TABLE benutzer_roles
-  ADD CONSTRAINT FK_benutzer_roles_benutzer_id
-FOREIGN KEY (benutzer_id)
-REFERENCES benutzer (id);

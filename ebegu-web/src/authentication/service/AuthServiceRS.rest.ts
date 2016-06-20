@@ -44,7 +44,7 @@ export default class AuthServiceRS {
         if (authIdbase64) {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
-                this.principal = new TSUser(authData.userId, authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.roles);
+                this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
                 return true;
             } catch (e) {
                 console.log('cookie decoding failed');

@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -1098,18 +1097,16 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxAuthAccessElement authAccessElementToResource(@Nonnull final AuthAccessElement access) {
-		Set<UserRole> rollen = access.getRoles();
-		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUserId()), String.valueOf(access.getUsername()),
-			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), rollen);
+		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUsername()),
+			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
 	}
 
 	public Benutzer authLoginElementToBenutzer(Benutzer benutzer, JaxAuthLoginElement loginElement) {
 		benutzer.setUsername(loginElement.getUsername());
 		benutzer.setEmail(loginElement.getEmail());
 		benutzer.setNachname(loginElement.getNachname());
-		benutzer.setUserId(loginElement.getUserId());
 		benutzer.setVorname(loginElement.getVorname());
-		benutzer.setRoles(loginElement.getRoles());
+		benutzer.setRole(loginElement.getRole());
 		benutzer.setMandant(this.mandantToEntity(loginElement.getMandant(), new Mandant()));
 		return benutzer;
 	}

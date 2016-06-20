@@ -14,7 +14,6 @@ import ch.dvbern.ebegu.enums.UserRole;
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,9 +27,6 @@ public class JaxAuthAccessElement implements Serializable {
 
 	@Nonnull
 	private String authId = "";
-
-	@Nonnull
-	private String userId = "";
 	@Nonnull
 	private String username = "";
 	@Nonnull
@@ -40,21 +36,20 @@ public class JaxAuthAccessElement implements Serializable {
 	@Nonnull
 	private String email = "";
 	@Nonnull
-	private Set<UserRole> roles = EnumSet.noneOf(UserRole.class);
+	private UserRole role;
 
 	public JaxAuthAccessElement() {
 		// jaxb/jaxrs only
 	}
 
-	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String userId, @Nonnull String username, @Nonnull String nachname,
-								@Nonnull String vorname, @Nonnull String email, @Nonnull Set<UserRole> roles) {
+	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String username, @Nonnull String nachname,
+								@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
 		this.authId = Objects.requireNonNull(authId);
-		this.userId = Objects.requireNonNull(userId);
 		this.username = Objects.requireNonNull(username);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
 		this.email = Objects.requireNonNull(email);
-		this.roles = Objects.requireNonNull(roles);
+		this.role = Objects.requireNonNull(role);
 	}
 
 	@Nonnull
@@ -64,15 +59,6 @@ public class JaxAuthAccessElement implements Serializable {
 
 	public void setAuthId(@Nonnull final String authId) {
 		this.authId = authId;
-	}
-
-	@Nonnull
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(@Nonnull String userId) {
-		this.userId = userId;
 	}
 
 	@Nonnull
@@ -112,11 +98,11 @@ public class JaxAuthAccessElement implements Serializable {
 	}
 
 	@Nonnull
-	public Set<UserRole> getRoles() {
-		return roles;
+	public UserRole getRole() {
+		return role;
 	}
 
-	public void setRoles(@Nonnull Set<UserRole> roles) {
-		this.roles = roles;
+	public void setRole(@Nonnull UserRole role) {
+		this.role = role;
 	}
 }

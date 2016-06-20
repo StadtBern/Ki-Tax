@@ -36,8 +36,8 @@ public interface BenutzerService {
 
 	/**
 	 * entfernt die Benutzer aus der Database
-	 * @param benutzerId die Benutzer als DTO
+	 * @param username die Benutzer als DTO
 	 */
-	void removeBenutzer(@Nonnull String benutzerId);
+	void removeBenutzer(@Nonnull String username);
 
 }

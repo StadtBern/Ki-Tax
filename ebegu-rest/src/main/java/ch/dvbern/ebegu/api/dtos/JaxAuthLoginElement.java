@@ -12,12 +12,9 @@ package ch.dvbern.ebegu.api.dtos;
 import ch.dvbern.ebegu.enums.UserRole;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Wrapper fuer einen Login Request
@@ -32,16 +29,13 @@ public class JaxAuthLoginElement implements Serializable {
 	@Nonnull
 	private String password = "";
 	@Nonnull
-	private String userId = "";
-	@Nonnull
 	private String nachname = "";
 	@Nonnull
 	private String vorname = "";
 	@Nonnull
 	private String email = "";
 	@Nonnull
-	private Set<UserRole> roles = new HashSet<>();
-	@NotNull
+	private UserRole role;
 	private JaxMandant mandant;
 
 
@@ -74,15 +68,6 @@ public class JaxAuthLoginElement implements Serializable {
 	}
 
 	@Nonnull
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(@Nonnull String userId) {
-		this.userId = userId;
-	}
-
-	@Nonnull
 	public String getNachname() {
 		return nachname;
 	}
@@ -110,12 +95,12 @@ public class JaxAuthLoginElement implements Serializable {
 	}
 
 	@Nonnull
-	public Set<UserRole> getRoles() {
-		return roles;
+	public UserRole getRole() {
+		return role;
 	}
 
-	public void setRoles(@Nonnull Set<UserRole> roles) {
-		this.roles = roles;
+	public void setRole(@Nonnull UserRole role) {
+		this.role = role;
 	}
 
 	public JaxMandant getMandant() {

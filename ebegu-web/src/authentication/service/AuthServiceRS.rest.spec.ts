@@ -38,7 +38,7 @@ describe('AuthServiceRS', function () {
             expect($http.post).not.toHaveBeenCalled();
         });
         it('receives a loginRequest and handles the incoming cookie', function () {
-            let user: TSUser = new TSUser('blku', 'Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', [TSRole.GESUCHSTELLER]);
+            let user: TSUser = new TSUser('Emma', 'Gerber', 'geem', 'password5', 'emma.gerber@myemail.ch', undefined, TSRole.GESUCHSTELLER);
             let encodedUser = base64.encode(JSON.stringify(user).split('_').join(''));
             spyOn($cookies, 'get').and.returnValue(encodedUser);
 
@@ -50,12 +50,11 @@ describe('AuthServiceRS', function () {
             $timeout.flush();
 
             expect($http.post).toHaveBeenCalled();
-            expect(cookieUser.userId).toEqual(user.userId);
             expect(cookieUser.vorname).toEqual(user.vorname);
             expect(cookieUser.nachname).toEqual(user.nachname);
             expect(cookieUser.password).toEqual('');
             expect(cookieUser.email).toEqual(user.email);
-            expect(cookieUser.roles).toEqual(user.roles);
+            expect(cookieUser.role).toEqual(user.role);
         });
         it('sends a logrequest to server', () => {
             authServiceRS.logoutRequest();

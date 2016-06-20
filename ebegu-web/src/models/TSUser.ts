@@ -4,35 +4,25 @@ import {TSMandant} from './TSMandant';
 export default class TSUser {
 
     //todo team Hier muessen wir schauen ob alle diese Felder benoetigt werden, dafuer brauchen wir aber zuerst die Daten von IAM
-    private _userId: string;
     private _nachname: string;
     private _vorname: string;
     private _username: string;
     private _password: string;
     private _email: string;
     private _mandant: TSMandant;
-    private _roles: Array<TSRole>;
+    private _role: TSRole;
 
-    constructor(userId?: string, vorname?: string, nachname?: string, username?: string,
-                password?: string, email?: string, mandant?: TSMandant, roles?: Array<TSRole>) {
-        this._userId = userId;
+    constructor(vorname?: string, nachname?: string, username?: string,
+                password?: string, email?: string, mandant?: TSMandant, role?: TSRole) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
         this._password = password;
         this._email = email;
         this._mandant = mandant;
-        this._roles = roles;
+        this._role = role;
     }
 
-
-    get userId(): string {
-        return this._userId;
-    }
-
-    set userId(value: string) {
-        this._userId = value;
-    }
 
     get nachname(): string {
         return this._nachname;
@@ -82,12 +72,12 @@ export default class TSUser {
         this._mandant = value;
     }
 
-    get roles(): Array<TSRole> {
-        return this._roles;
+    get role(): TSRole {
+        return this._role;
     }
 
-    set roles(value: Array<TSRole>) {
-        this._roles = value;
+    set role(value: TSRole) {
+        this._role = value;
     }
 
     public getFullName(): string {

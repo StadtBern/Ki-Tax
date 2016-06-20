@@ -919,9 +919,8 @@ export default class EbeguRestUtil {
         user.nachname = userTS.nachname;
         user.vorname = userTS.vorname;
         user.email = userTS.email;
-        user.roles = userTS.roles;
+        user.role = userTS.role;
         user.mandant = this.mandantToRestObject({}, userTS.mandant);
-        user.userId = userTS.userId;
         return user;
     }
 }

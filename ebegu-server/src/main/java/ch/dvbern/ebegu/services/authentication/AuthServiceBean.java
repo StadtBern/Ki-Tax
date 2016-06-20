@@ -11,8 +11,6 @@ import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -68,12 +66,11 @@ public class AuthServiceBean implements AuthService {
 			authorisierterBenutzer.getAuthId(),
 			authorisierterBenutzer.getAuthToken(),
 			UUID.randomUUID().toString(), // XSRF-Token (no need to persist)
-			authorisierterBenutzer.getAuthId(),
 			loginElement.getUsername(),
 			loginElement.getNachname(),
 			loginElement.getVorname(),
 			loginElement.getEmail(),
-			loginElement.getRoles()));
+			loginElement.getRole()));
 	}
 
 	@Override
