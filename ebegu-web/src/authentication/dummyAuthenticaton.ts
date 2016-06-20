@@ -24,7 +24,7 @@ export class AuthenticationListViewController {
         this.usersList = [];
         let mandant = new TSMandant();
         mandant.name = 'TestMandant';
-        mandant.name = 'e3736eb8-6eef-40ef-9e52-96ab48d8f220';
+        mandant.id = 'e3736eb8-6eef-40ef-9e52-96ab48d8f220';
         this.usersList.push(new TSUser('jobe', 'Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', mandant, [TSRole.SACHBEARBEITER_JA]));
         this.usersList.push(new TSUser('jemu', 'Jennifer', 'Müller', 'jemu', 'password2', 'jenniver.mueller@bern.ch', mandant, [TSRole.SACHBEARBEITER_JA]));
         this.usersList.push(new TSUser('beso', 'Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch', mandant, [TSRole.SACHBEARBEITER_INSTITUTION]));

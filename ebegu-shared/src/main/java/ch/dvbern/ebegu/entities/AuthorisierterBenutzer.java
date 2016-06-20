@@ -34,7 +34,7 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	private LocalDateTime lastLogin = LocalDateTime.now();
 
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_authorisierter_benutzer_id"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_authorisierter_benutzer_benutzer_id"))
 	private Benutzer benutzer = null;
 
 	// todo team Dieses Feld muss aus Sicherheitsgrunden entfernt werden wenn das dummylogin nicht mehr benoetigt wird

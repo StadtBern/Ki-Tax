@@ -21,6 +21,7 @@ export default class TSUser {
         this._username = username;
         this._password = password;
         this._email = email;
+        this._mandant = mandant;
         this._roles = roles;
     }
 
