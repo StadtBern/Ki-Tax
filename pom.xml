@@ -607,8 +607,11 @@
                                  String p = "basepath_marker";
                                  File f = null;
                                  if (p != null) {
-                                     def _max_child_poms = 0
-                                     while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; } p = "../" + p; } }
+                                   def _max_child_poms = 0
+                                   while (_max_child_poms++ < 5) { f = new File(p); if (f.exists()) { break; }
+                                       p = "../" + p;
+                                   }
+                                 }
                                  if (f != null) {
                                      String basePath = f.getCanonicalPath();
                                      basePath = basePath.substring(0, basePath.lastIndexOf(File.separator));
