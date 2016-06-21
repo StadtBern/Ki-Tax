@@ -45,4 +45,13 @@ export class GesuchToolbarController {
             this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
         }
     }
+
+    /**
+     * 
+     * @param user
+     * @returns {boolean} true if the given user is already the verantwortlicher of the current fall
+     */
+    public isCurrentVerantwortlicher(user: TSUser): boolean {
+        return (user && this.gesuchModelManager.getFallVerantwortlicher() && this.gesuchModelManager.getFallVerantwortlicher().username === user.username);
+    }
 }

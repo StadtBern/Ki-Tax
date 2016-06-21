@@ -6,6 +6,7 @@
             <md-menu-bar>
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
+                        <i class="fa fa-user" aria-hidden="true"></i>
                         <span ng-bind="vm.getVerantwortlicherFullName()"></span>
                         <i class="ellipsis-icon fa fa-ellipsis-v"></i>
                     </md-button>
@@ -15,7 +16,10 @@
                         </md-menu-item>
                         <md-menu-item  ng-repeat="user in vm.userList | orderBy: 'getFullName()'" ng-value="user.username">
                             <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}">
-                                <a class="toolbar-submenu-a" href="javascript:void(0)">{{user.getFullName()}}</a>
+                                <span>
+                                    <i ng-if="vm.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"></i>
+                                    <a class="toolbar-submenu-a" href="javascript:void(0)">{{user.getFullName()}}</a>
+                                </span>
                             </md-button>
                         </md-menu-item>
                     </md-menu-content>

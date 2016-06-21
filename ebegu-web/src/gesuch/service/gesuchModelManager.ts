@@ -623,4 +623,11 @@ export default class GesuchModelManager {
             this.gesuch.fall.verantwortlicher = user;
         }
     }
+
+    public getFallVerantwortlicher(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
 }
