@@ -220,4 +220,15 @@ public final class TestDataUtil {
 		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return instStammdaten;
 	}
+
+	public static Benutzer createDefaultBenutzer() {
+		Benutzer user = new Benutzer();
+		user.setUsername("jula");
+		user.setNachname("Julio");
+		user.setVorname("Iglesias");
+		user.setEmail("email@server.ch");
+		user.setMandant(createDefaultMandant());
+		user.setRole(UserRole.ADMIN);
+		return user;
+	}
 }

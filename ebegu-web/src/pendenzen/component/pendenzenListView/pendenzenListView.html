@@ -21,9 +21,9 @@
                         <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
                         <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
                         <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
-                        <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICHER_UPPER"></th>
                         <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
+                        <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICHER_UPPER"></th>
                     </tr>
                     <tr>
                         <th><input st-search="fallNummer" class="form-control" type="text"/></th>
@@ -44,7 +44,6 @@
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                         <th><input st-search="status" class="form-control" type="text"/></th>
-                        <th><input st-search="verantwortlicher" class="form-control" type="text"/></th>
                         <th>
                             <select st-input-event="change" name="angebote" id="angebote" st-search="angebote" class="form-control"
                                     ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
@@ -56,6 +55,13 @@
                             <select st-input-event="change" name="institutionen" id="institutionen" st-search="institutionen" class="form-control"
                                     ng-options="institution.name for institution in vm.institutionenList track by institution.name"
                                     ng-model="vm.selectedInstitution">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select st-input-event="change" name="verantwortlicher" id="verantwortlicher" st-search="verantwortlicher" class="form-control"
+                                    ng-options="user.getFullName() for user in vm.userList track by user.getFullName()"
+                                    ng-model="vm.selectedUser">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
                         </th>
@@ -73,11 +79,11 @@
                         <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}" ng-bind="row.verantwortlicher"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                             ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                         </td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.institutionen}}" ng-bind="row.institutionen"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}" ng-bind="row.verantwortlicher"></td>
                     </tr>
                     </tbody>
                     <tfoot>

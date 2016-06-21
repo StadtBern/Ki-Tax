@@ -931,7 +931,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseUser(userTS: TSUser, userFromServer: any): TSUser {
+    public parseUser(userTS: TSUser, userFromServer: any): TSUser {
         if (userFromServer) {
             userTS.username = userFromServer.username;
             userTS.password = userFromServer.password;
@@ -943,5 +943,17 @@ export default class EbeguRestUtil {
             return userTS;
         }
         return undefined;
+    }
+
+    public parseUserList(data: any): TSUser[] {
+        var users: TSUser[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                users[i] = this.parseUser(new TSUser(), data[i]);
+            }
+        } else {
+            users[0] = this.parseUser(new TSUser(), data);
+        }
+        return users;
     }
 }

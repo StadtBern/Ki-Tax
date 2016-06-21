@@ -12,7 +12,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
-import TSUser from '../../../models/TSUser';
+import UserRS from '../../../core/service/userRS.rest';
 
 describe('pendenzenListView', function () {
 
@@ -27,6 +27,7 @@ describe('pendenzenListView', function () {
     let $httpBackend: IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
+    let userRS: UserRS;
 
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -42,6 +43,7 @@ describe('pendenzenListView', function () {
         $httpBackend = $injector.get('$httpBackend');
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
+        userRS = $injector.get('UserRS');
     }));
 
     describe('API Usage', function () {
@@ -50,7 +52,7 @@ describe('pendenzenListView', function () {
                 let mockPendenz: TSPendenzJA = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, userRS);
 
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
@@ -79,7 +81,7 @@ describe('pendenzenListView', function () {
                 mockRestCalls();
                 spyOn($state, 'go');
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, userRS);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
@@ -106,6 +108,7 @@ describe('pendenzenListView', function () {
     function mockRestCalls(): void {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         $httpBackend.when('GET', '/ebegu/api/v1/institutionen').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/benutzer').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
     }
 });

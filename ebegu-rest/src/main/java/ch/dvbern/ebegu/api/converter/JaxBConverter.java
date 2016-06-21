@@ -1126,7 +1126,7 @@ public class JaxBConverter {
 		return benutzer;
 	}
 
-	private JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer verantwortlicher) {
+	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer verantwortlicher) {
 		JaxAuthLoginElement loginElement = new JaxAuthLoginElement();
 		loginElement.setVorname(verantwortlicher.getVorname());
 		loginElement.setNachname(verantwortlicher.getNachname());
