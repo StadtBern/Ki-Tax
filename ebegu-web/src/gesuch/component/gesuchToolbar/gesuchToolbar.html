@@ -1,0 +1,27 @@
+<md-content class="small-toolbar">
+    <md-toolbar class="small-toolbar">
+        <div class="md-toolbar-tools">
+            <span flex=""></span>
+
+            <md-menu-bar>
+                <md-menu>
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
+                        <span ng-bind="vm.getVerantwortlicherFullName()"></span>
+                        <i class="ellipsis-icon fa fa-ellipsis-v"></i>
+                    </md-button>
+                    <md-menu-content class="toolbar-submenu">
+                        <md-menu-item class="toolbar-submenu-item">
+                            <span data-translate="VERANTWORTLICH_UPPER"></span>
+                        </md-menu-item>
+                        <md-menu-item  ng-repeat="user in vm.userList | orderBy: 'getFullName()'" ng-value="user.username">
+                            <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}">
+                                <a class="toolbar-submenu-a" href="javascript:void(0)">{{user.getFullName()}}</a>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </md-menu-bar>
+
+        </div>
+    </md-toolbar>
+</md-content>
