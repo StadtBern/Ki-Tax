@@ -97,4 +97,8 @@ public class Benutzer extends AbstractEntity {
 	public void setMandant(Mandant mandant) {
 		this.mandant = mandant;
 	}
+
+	public String getFullName() {
+		return (this.vorname != null && this.vorname != "" ? this.vorname :  "")  + " " + (this.nachname != null && this.nachname != "" ?  this.nachname : "");
+	}
 }

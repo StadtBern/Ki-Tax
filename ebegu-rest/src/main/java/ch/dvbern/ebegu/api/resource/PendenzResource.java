@@ -56,6 +56,7 @@ public class PendenzResource {
 				pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
 				pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 				pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
+				pendenz.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 
 				pendenzenList.add(pendenz);
 			}

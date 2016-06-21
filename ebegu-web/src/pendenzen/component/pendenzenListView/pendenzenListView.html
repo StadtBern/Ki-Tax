@@ -21,7 +21,7 @@
                         <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
                         <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
                         <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
-                        <th st-sort="bearbeiter" class="sortable" data-translate="BEARBEITER_UPPER"></th>
+                        <th st-sort="verantwortlicher" class="sortable" data-translate="VERANTWORTLICHER_UPPER"></th>
                         <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
@@ -44,7 +44,7 @@
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                         <th><input st-search="status" class="form-control" type="text"/></th>
-                        <th><input st-search="bearbeiter" class="form-control" type="text"/></th>
+                        <th><input st-search="verantwortlicher" class="form-control" type="text"/></th>
                         <th>
                             <select st-input-event="change" name="angebote" id="angebote" st-search="angebote" class="form-control"
                                     ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
@@ -73,7 +73,7 @@
                         <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.bearbeiter}}" ng-bind="row.bearbeiter"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}" ng-bind="row.verantwortlicher"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                             ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                         </td>
