@@ -13,6 +13,7 @@ export default class AuthServiceRS {
     /* @ngInject */
     constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
                 private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
+        this.initWithCookie();
     }
 
     public getPrincipal() {
@@ -42,9 +43,11 @@ export default class AuthServiceRS {
 
     private initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
+        console.log('from cookieas', authIdbase64);
         if (authIdbase64) {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
+                console.log('real data', authData);
                 this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
                 return true;
             } catch (e) {
