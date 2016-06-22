@@ -54,11 +54,11 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private FallResource fallResource;
 	@Inject
+	private BenutzerResource benutzerResource;
+	@Inject
 	private FachstelleResource fachstelleResource;
 	@Inject
 	private PensumFachstelleService pensumFachstelleService;
-	@Inject
-	private MandantResource mandantResource;
 	@Inject
 	private JaxBConverter converter;
 	@Inject
@@ -131,7 +131,8 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	private KindContainer persistKindAndDependingObjects(UriInfo uri) throws EbeguException {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
-		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+//		benutzerResource.saveUser(jaxGesuch.getFall().getVerantwortlicher());
+		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		jaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null));
 		jaxGesuch.setFall(returnedFall);
 		JaxGesuch returnedGesuch = (JaxGesuch) gesuchResource.create(jaxGesuch, uri, null).getEntity();

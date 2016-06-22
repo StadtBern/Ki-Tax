@@ -43,6 +43,7 @@ export class GesuchToolbarController {
     public setVerantwortlicher(verantwortlicher: TSUser): void {
         if (verantwortlicher) {
             this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+            this.gesuchModelManager.updateFall();
         }
     }
 

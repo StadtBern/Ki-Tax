@@ -105,7 +105,21 @@ public class TestJaxDataUtil {
 	}
 
 	public static JaxFall createTestJaxFall() {
-		return new JaxFall();
+		JaxFall jaxFall = new JaxFall();
+		jaxFall.setFallNummer(1);
+		jaxFall.setVerantwortlicher(createTestJaxBenutzer());
+		return jaxFall;
+	}
+
+	private static JaxAuthLoginElement createTestJaxBenutzer() {
+		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
+		jaxBenutzer.setRole(UserRole.ADMIN);
+		jaxBenutzer.setUsername("TestUser");
+		jaxBenutzer.setPassword("1234");
+		jaxBenutzer.setEmail("e@e.ch");
+		jaxBenutzer.setNachname("NachnameTest");
+		jaxBenutzer.setVorname("VornameTest");
+		return jaxBenutzer;
 	}
 
 	public static JaxGesuch createTestJaxGesuch() {

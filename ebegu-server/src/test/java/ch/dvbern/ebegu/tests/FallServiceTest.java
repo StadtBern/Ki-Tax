@@ -40,7 +40,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 	public void createFall() {
 		Assert.assertNotNull(fallService);
 		Fall fall = TestDataUtil.createDefaultFall();
-		fallService.createFall(fall);
+		fallService.saveFall(fall);
 
 		Collection<Fall> allFalle = fallService.getAllFalle();
 		Assert.assertEquals(1, allFalle.size());
@@ -50,7 +50,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 	public void removeFallTest() {
 		Assert.assertNotNull(fallService);
 		Fall fall = TestDataUtil.createDefaultFall();
-		fallService.createFall(fall);
+		fallService.saveFall(fall);
 		Assert.assertEquals(1, fallService.getAllFalle().size());
 
 		fallService.removeFall(fall);

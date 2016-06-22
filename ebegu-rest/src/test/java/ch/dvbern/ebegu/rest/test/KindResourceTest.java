@@ -53,7 +53,7 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 	public void createKindTest() throws EbeguException {
 		UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
-		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		JaxGesuchsperiode returnedGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null);
 		jaxGesuch.setFall(returnedFall);
 		jaxGesuch.setGesuchsperiode(returnedGesuchsperiode);

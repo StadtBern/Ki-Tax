@@ -145,6 +145,17 @@ export default class GesuchModelManager {
     }
 
     /**
+     * Update den Fall
+     * @returns {IPromise<TSFall>}
+     */
+    public updateFall(): IPromise<TSFall> {
+        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+            return this.gesuch.fall = angular.copy(parsedFall);
+        });
+    }
+
+    /**
      * Speichert den StammdatenToWorkWith.
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
