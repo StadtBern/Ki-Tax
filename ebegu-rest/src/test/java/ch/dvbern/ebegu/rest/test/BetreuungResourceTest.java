@@ -3,12 +3,10 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.api.resource.*;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.PensumFachstelle;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -54,7 +52,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private FallResource fallResource;
 	@Inject
-	private BenutzerResource benutzerResource;
+	private BenutzerService benutzerService;
 	@Inject
 	private FachstelleResource fachstelleResource;
 	@Inject
@@ -123,7 +121,6 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 		updatedBetr = betreuungResource.saveBetreuung(converter.toJaxId(initialBetr.getKind()), updatedBetr, RESTEASY_URI_INFO, null);
 		Assert.assertEquals(1, updatedBetr.getBetreuungspensumContainers().size());
 
-
 	}
 
 
@@ -131,7 +128,9 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	private KindContainer persistKindAndDependingObjects(UriInfo uri) throws EbeguException {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
-//		benutzerResource.saveUser(jaxGesuch.getFall().getVerantwortlicher());
+		Mandant persistedMandant = persistence.persist(converter.mandantToEntity(TestJaxDataUtil.createTestMandant(), new Mandant()));
+		jaxGesuch.getFall().getVerantwortlicher().setMandant(converter.mandantToJAX(persistedMandant));
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()));
 		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		jaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null));
 		jaxGesuch.setFall(returnedFall);

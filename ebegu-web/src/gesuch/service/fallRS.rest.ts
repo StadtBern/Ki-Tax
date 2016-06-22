@@ -42,4 +42,8 @@ export default class FallRS {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(fallID));
     }
 
+    public getServiceName(): string {
+        return 'FallRS';
+    }
+
 }

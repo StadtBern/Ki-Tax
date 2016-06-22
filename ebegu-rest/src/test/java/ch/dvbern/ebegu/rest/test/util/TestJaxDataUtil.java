@@ -218,4 +218,10 @@ public class TestJaxDataUtil {
 		jaxGesuchsperiode.setActive(true);
 		return jaxGesuchsperiode;
 	}
+
+	public static JaxMandant createTestMandant() {
+		JaxMandant mandant = new JaxMandant();
+		mandant.setName("TestMandant");
+		return mandant;
+	}
 }

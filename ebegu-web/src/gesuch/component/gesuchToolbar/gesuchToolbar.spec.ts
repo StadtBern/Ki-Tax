@@ -35,14 +35,18 @@ describe('betreuungView', function () {
     describe('setVerantwortlicher()', () => {
         it('does nothing if the passed user is empty', () => {
             spyOn(gesuchModelManager, 'setUserAsFallVerantwortlicher');
+            spyOn(gesuchModelManager, 'updateFall');
             gesuchToolbarController.setVerantwortlicher(undefined);
             expect(gesuchModelManager.setUserAsFallVerantwortlicher).not.toHaveBeenCalled();
+            expect(gesuchModelManager.updateFall).not.toHaveBeenCalled();
         });
         it('sets the user as the verantwortlicher of the current fall', () => {
             spyOn(gesuchModelManager, 'setUserAsFallVerantwortlicher');
+            spyOn(gesuchModelManager, 'updateFall');
             let user: TSUser = new TSUser('Emiliano', 'Camacho');
             gesuchToolbarController.setVerantwortlicher(user);
             expect(gesuchModelManager.setUserAsFallVerantwortlicher).toHaveBeenCalledWith(user);
+            expect(gesuchModelManager.updateFall).toHaveBeenCalled();
         });
     });
 
