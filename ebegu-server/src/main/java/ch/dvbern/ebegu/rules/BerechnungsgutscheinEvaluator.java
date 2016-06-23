@@ -49,7 +49,7 @@ public class BerechnungsgutscheinEvaluator {
 
 
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
-			List<BGPensumZeitabschnitt> zeitabschnitte = new ArrayList<>();
+			List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
 
 			//Betreuungen werden einzeln berechnet

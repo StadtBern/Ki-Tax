@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.BGPensumZeitabschnitt;
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -19,8 +20,7 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule{
 	}
 
 	@Override
-	public List<BGPensumZeitabschnitt> calculate(Gesuch antrag) {
-
+	public List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		BetreuungspensumContainer betreuungspensum = new BetreuungspensumContainer();
 		betreuungspensum.getBetreuung().getKind().getGesuch();
 
