@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.validators.CheckDateRange;
 import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -61,11 +63,18 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 		this(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis());
 	}
 
+
 	/**
 	 * DateRange für ein ganzes Kalender-Jahr
      */
 	public DateRange(@Nonnull Integer jahr) {
 		this(LocalDate.of(jahr, Month.JANUARY, 1), LocalDate.of(jahr, Month.DECEMBER, 31));
+	}
+	/**
+	 * true, when the other DateRange is completely contained in this DateRange
+	 */
+	public boolean contains(@Nonnull DateRange other) {
+		return !gueltigAb.isAfter(other.getGueltigAb()) && !gueltigBis.isBefore(other.getGueltigBis());
 	}
 
 	/**
@@ -88,6 +97,21 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	public boolean isAfter(@Nonnull ChronoLocalDate date) {
 		return getGueltigAb().isAfter(date) && getGueltigBis().isAfter(date);
 	}
+
+	/**
+	 * gueltigAb == date + 1 Day
+	 */
+	public boolean startsDayAfter(@Nonnull ChronoLocalDate date) {
+		return getGueltigAb().equals(date.plus(1, ChronoUnit.DAYS));
+	}
+
+	/**
+	 * gueltigAb == other.gueltigBis + 1 Day
+	 */
+	public boolean startsDayAfter(@Nonnull DateRange other) {
+		return startsDayAfter(other.getGueltigBis());
+	}
+
 
 	/**
 	 * gueltigBis == date - 1 Day
@@ -123,13 +147,12 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	 * Neue DateRange, mit gueltigAb auf den vorherigen Montag und gueltigBis auf den naechsten Sonntag setzt.
 	 * Use-Case z.B.: einen Stichtag auf die ganze Woche ausdehnen.
 	 */
+	@Nonnull
 	public DateRange withFullWeeks() {
 		LocalDate montag = getGueltigAb().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 		LocalDate sonntag = getGueltigBis().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 		return new DateRange(montag, sonntag);
 	}
-
-
 
 	@Nonnull
 	public List<DateRange> toFullWeekRanges() {
@@ -151,7 +174,6 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 			// gueltigAb & gueltigBis are in two adjacent weeks
 			return Arrays.asList(gueltigAbWeek, gueltigBisWeek);
 		}
-
 
 		LocalDate ab = gueltigAb.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
 		LocalDate bis = gueltigBis.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -243,7 +265,7 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@Nullable Object o) {
 		if (this == o) {
 			return true;
 		}
@@ -264,8 +286,12 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	@Override
+	@Nonnull
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("gueltigAb",gueltigAb).add("gueltigBis", gueltigBis).toString();
+		return MoreObjects.toStringHelper(this)
+			.add("gueltigAb", gueltigAb)
+			.add("gueltigBis", gueltigBis)
+			.toString();
 	}
 
 	/**
@@ -280,5 +306,22 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 			cmp = getGueltigBis().compareTo(o.getGueltigBis());
 		}
 		return cmp;
+	}
+
+	/**
+	 * Convenience: {@link Stream#of(Object)} {@link #getGueltigAb()}, {@link #getGueltigBis()}
+	 */
+	@Nonnull
+	public Stream<LocalDate> stream() {
+		return Stream.of(getGueltigAb(), getGueltigBis());
+	}
+
+	/**
+	 * Ein Stichtag ist der Tag, ab dem eine Aenderung aktiv wird.
+	 * Der erste Stichtag einer DateRange ist also gueltigAb und der Zweite Stichtag ist der Tag <b>nach</b> gueltigBis
+	 */
+	@Nonnull
+	public Stream<LocalDate> streamStichtage() {
+		return Stream.of(getGueltigAb(), getGueltigBis().plusDays(1));
 	}
 }
