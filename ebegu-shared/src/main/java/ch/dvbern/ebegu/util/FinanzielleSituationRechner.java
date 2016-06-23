@@ -49,7 +49,7 @@ public class FinanzielleSituationRechner {
 				familiengroesse++;
 			}
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
-				if (kindContainer.getKindJA() != null && kindContainer.getKindJA().getGeburtsdatum().isAfter(date)) {
+				if (kindContainer.getKindJA() != null && kindContainer.getKindJA().getGeburtsdatum().isBefore(date)) {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
 						familiengroesse += 0.5;
 					}
@@ -64,30 +64,25 @@ public class FinanzielleSituationRechner {
 
 	public BigDecimal calculateAbzugAufgrundFamiliengroesse(LocalDate stichtag, double familiengroesse) {
 		BigDecimal abzugProPerson = BigDecimal.ZERO;
-		if (familiengroesse < 3) {
-			abzugProPerson = BigDecimal.ZERO;
-		} else if (familiengroesse < 4) {
-			Optional<EbeguParameter> famSize3 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
-			if (famSize3.isPresent()) {
-				abzugProPerson = famSize3.get().getAsBigDecimal();
-			}
-		} else if (familiengroesse < 5) {
-			Optional<EbeguParameter> famSize4 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
-			if (famSize4.isPresent()) {
-				abzugProPerson = famSize4.get().getAsBigDecimal();
-			}
-		} else if (familiengroesse < 6) {
-			Optional<EbeguParameter> famSize5 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
-			if (famSize5.isPresent()) {
-				abzugProPerson = famSize5.get().getAsBigDecimal();
-			}
-		} else { // >=6
-			Optional<EbeguParameter> famSize6 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
-			if (famSize6.isPresent()) {
-				abzugProPerson = famSize6.get().getAsBigDecimal();
-			}
+		Optional<EbeguParameter> abzugFromServer = Optional.empty();
+		if (familiengroesse < 4) {
+			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
 		}
-		return new BigDecimal(familiengroesse).multiply(abzugProPerson);
+		else if (familiengroesse < 5) {
+			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
+		}
+		else if (familiengroesse < 6) {
+			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
+		}
+		else if (familiengroesse >= 6) {
+			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
+		}
+		if (abzugFromServer.isPresent()) {
+			abzugProPerson = abzugFromServer.get().getAsBigDecimal();
+		}
+		// Ein Bigdecimal darf nicht aus einem double erzeugt werden, da das Ergebnis nicht genau die gegebene Nummer waere
+		// deswegen muss man hier familiengroesse als String uebergeben. Sonst bekommen wir PMD rule AvoidDecimalLiteralsInBigDecimalConstructor
+		return new BigDecimal(String.valueOf(familiengroesse)).multiply(abzugProPerson);
 	}
 
 }

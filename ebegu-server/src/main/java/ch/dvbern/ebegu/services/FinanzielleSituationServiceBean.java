@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -16,7 +15,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -73,24 +71,13 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, calculateEndOfPreviousYear(gesuch.getGesuchsperiode()));
-		BigDecimal abzugAufgrundFamiliengroesse = finSitRechner
-			.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-		return new FinanzielleSituationResultateDTO(gesuch, familiengroesse, abzugAufgrundFamiliengroesse);
-	}
-
-	/**
-	 * Gibt 31.12.XXXX zurueck, wo XXXX ist das Vorjahr vom Wert gueltigAb der Gesuchsperiode. Sollte etwas nicht stimmen gibt null zurueck.
-	 * @param gesuchsperiode
-	 * @return
-     */
-	private LocalDate calculateEndOfPreviousYear(Gesuchsperiode gesuchsperiode) {
-		if (gesuchsperiode != null) {
-			LocalDate endOfPreviousYear = gesuchsperiode.getGueltigkeit().getGueltigAb();
-			endOfPreviousYear = endOfPreviousYear.minusYears(1).withMonth(12).withDayOfMonth(31);
-			return endOfPreviousYear;
+		if (gesuch.getGesuchsperiode() != null) {
+			double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
+			BigDecimal abzugAufgrundFamiliengroesse = finSitRechner
+				.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
+			return new FinanzielleSituationResultateDTO(gesuch, familiengroesse, abzugAufgrundFamiliengroesse);
 		}
-		return null;
+		return new FinanzielleSituationResultateDTO(gesuch, 0, BigDecimal.ZERO);
 	}
 
 }
