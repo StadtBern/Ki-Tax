@@ -4,12 +4,14 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {VerfuegenListViewController} from './verfuegenListView';
 import TSBetreuung from '../../../models/TSBetreuung';
+import TSKindContainer from '../../../models/TSKindContainer';
 
 describe('verfuegenListViewTest', function () {
 
     let verfuegenListView: VerfuegenListViewController;
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
+    let tsKindContainer: TSKindContainer;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
@@ -17,7 +19,9 @@ describe('verfuegenListViewTest', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
-        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager);
+        tsKindContainer = new TSKindContainer();
+        spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
+        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, undefined);
     }));
 
     describe('Public API', function () {
@@ -31,12 +35,10 @@ describe('verfuegenListViewTest', function () {
 
     describe('Usage API', function () {
         it('should call gesuchModelManager.getBetreuungenList() and return it back', function () {
-            let tsBetreuung = new TSBetreuung();
-            spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsBetreuung]);
-            let betreuungenList = verfuegenListView.getKinderWithBetreuungList();
-            expect(betreuungenList).toBeDefined();
-            expect(betreuungenList.length).toBe(1);
-            expect(betreuungenList[0]).toBe(tsBetreuung);
+            let kinderWithetreuungList = verfuegenListView.getKinderWithBetreuungList();
+            expect(kinderWithetreuungList).toBeDefined();
+            expect(kinderWithetreuungList.length).toBe(1);
+            expect(kinderWithetreuungList[0]).toBe(tsKindContainer);
         });
     });
 

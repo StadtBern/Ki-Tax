@@ -4,6 +4,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -17,12 +18,12 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'EbeguUtil'];
     private kinderWithBetreuungList: Array<TSKindContainer>;
 
 
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil) {
         super(state, gesuchModelManager, undefined);
         this.initViewModel();
     }
@@ -39,9 +40,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     }
 
-    public calculateBetreuungsId(kindContainer: TSKindContainer, betreuung: TSBetreuung): string {
-        // console.log('kindContainer', kindContainer);
-        // console.log('betreuung', betreuung);
-        return 'EErrdFF';
+    public getFall() {
+        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
+            return this.gesuchModelManager.gesuch.fall;
+        }
+        return undefined;
     }
+
+    public getGesuchsperiode() {
+        if (this.gesuchModelManager) {
+            return this.gesuchModelManager.getGesuchsperiode();
+        }
+        return undefined;
+    }
+
 }

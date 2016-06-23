@@ -24,7 +24,7 @@
                             ng-click="vm.openVerfuegung(betreuung)">
                             <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                             <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
-                            <td ng-bind="vm.calculateBetreuungsId(kindContainer, betreuung)"></td>
+                            <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), $parent.$index + 1, $index + 1)"></td>
                             <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
                         </tr>
                     </tbody>
