@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface AuthService {
 
 	/**
-	 * Verifiziert die User Credentials
+	 * Verifiziert die User Credentials, Wenn erfolgreich wird das login als authorisierter_benutzer persisstiert
 	 *
 	 * @param loginElement beinhaltet die User Credentials
 	 * @return Authentication Response, falls das Login erfolgriech war, sonst NULL

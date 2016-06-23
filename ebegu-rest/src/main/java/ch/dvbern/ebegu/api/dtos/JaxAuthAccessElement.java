@@ -15,10 +15,9 @@ import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 /**
- * Response Element fuer einen erfolgreichen Login Request
+ * Response DTO Element fuer einen erfolgreichen Login Request
  */
 @XmlRootElement(name = "authAccessElement")
 public class JaxAuthAccessElement implements Serializable {

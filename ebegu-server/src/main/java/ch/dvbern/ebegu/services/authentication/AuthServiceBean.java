@@ -44,6 +44,7 @@ public class AuthServiceBean implements AuthService {
 			return Optional.empty();
 		}
 
+		//Benutzer muss in jedem Fall bekannt sein (wird bei erfolgreichem container login angelegt)
 		Optional<Benutzer> benutzer = benutzerService.findBenutzer(loginElement.getUsername());
 		if (!benutzer.isPresent()) {
 			return Optional.empty();
@@ -52,7 +53,7 @@ public class AuthServiceBean implements AuthService {
 		AuthorisierterBenutzer authorisierterBenutzer = new AuthorisierterBenutzer();
 		authorisierterBenutzer.setBenutzer(benutzer.get());
 		authorisierterBenutzer.setPassword(loginElement.getPlainTextPassword());
-		authorisierterBenutzer.setAuthToken(UUID.randomUUID().toString());
+		authorisierterBenutzer.setAuthToken(UUID.randomUUID().toString());  //auth token generieren
 		entityManager.persist(authorisierterBenutzer);
 		return Optional.of(new AuthAccessElement(
 			authorisierterBenutzer.getAuthId(),

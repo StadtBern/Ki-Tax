@@ -29,6 +29,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * This resource has functions to login or logout
+ */
 @Stateless
 @Path("auth")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +65,7 @@ public class AuthResource {
 	}
 
 	/**
+	 * extrahiert die Daten aus dem DTO und versucht einzuloggen.
 	 * {@link AuthSecurityInterceptor}
 	 * @param loginElement Benutzer Identifikation (Benutzername/Passwort)
 	 * @return im Erfolgsfall eine HTTP Response mit Cookies
@@ -93,11 +97,11 @@ public class AuthResource {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 		AuthAccessElement access = accessElement.get();
-		JaxAuthAccessElement element = converter.authAccessElementToResource(access);
+		JaxAuthAccessElement element = converter.authAccessElementToJax(access);
 
 		boolean cookieSecure = isCookieSecure();
 
-		// HTTP-Only Cookie --> Protection from XSS
+		// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
 		NewCookie authCookie = new NewCookie(AuthDataUtil.COOKIE_AUTH_TOKEN, access.getAuthToken(),
 			COOKIE_PATH, COOKIE_DOMAIN, "authentication", Constants.COOKIE_TIMEOUT_SECONDS, cookieSecure, true);
 		// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)

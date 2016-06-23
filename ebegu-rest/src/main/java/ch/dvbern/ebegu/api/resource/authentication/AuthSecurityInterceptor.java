@@ -29,6 +29,9 @@ import javax.ws.rs.ext.Provider;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Interceptor fuer jaxRS der prueft ob das Login korrekt ist
+ */
 @Provider
 @PreMatching
 public class AuthSecurityInterceptor implements ContainerRequestFilter {
@@ -45,16 +48,16 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		try {
-			// nur zur Sicherheit...
+			// nur zur Sicherheit container logout...
 			request.logout();
 		} catch (ServletException e) {
-			LOG.error("Unexpected", e);
+			LOG.error("Unexpected exception during Logout", e);
 			setResponseUnauthorised(requestContext);
 			return;
 		}
 
 		String path = requestContext.getUriInfo().getPath();
-		if (path.startsWith("/auth/login") || path.startsWith("/application.wadl") || "OPTIONS".equals(requestContext.getMethod())) {
+		if (path.startsWith("/auth/login") || path.startsWith("/swagger.json") || "OPTIONS".equals(requestContext.getMethod())) {
 			// Beim Login Request gibt es noch nichts abzufangen
 			return;
 		}
@@ -65,18 +68,17 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
 			&& xsrfTokenCookie != null
 			&& RestUtil.isFileDownloadRequest(requestContext);
-		if (!request.getRequestURI().contains("/migration/")) {
+		if (!request.getRequestURI().contains("/migration/")) { //migration ist ausgenommen
 			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, requestContext)) {
 				setResponseUnauthorised(requestContext);
 				return;
 			}
 		}
-
 		try {
 			// Get AuthId and AuthToken from Cookies.
 			String authId = AuthDataUtil.getAuthAccessElement(requestContext).get().getAuthId();
 			String authToken = AuthDataUtil.getAuthToken(requestContext).get();
-
+			//use token to authorize the request
 			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
 			if (!loginWithToken.isPresent()) {
 				setResponseUnauthorised(requestContext);

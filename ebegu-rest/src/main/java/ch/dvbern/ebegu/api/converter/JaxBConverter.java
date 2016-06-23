@@ -1096,7 +1096,7 @@ public class JaxBConverter {
 	}
 
 	@Nonnull
-	public JaxAuthAccessElement authAccessElementToResource(@Nonnull final AuthAccessElement access) {
+	public JaxAuthAccessElement authAccessElementToJax(@Nonnull final AuthAccessElement access) {
 		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUsername()),
 			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
 	}

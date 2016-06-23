@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Wrapper fuer einen Login Request
+ * Wrapper DTO fuer einen Login Request
  */
 @XmlRootElement(name = "authLoginElement")
 public class JaxAuthLoginElement implements Serializable {
