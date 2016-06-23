@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.getBetreuungenList()"
+                <table st-table="displayedCollection" st-safe-src="vm.getKinderWithBetreuungList()"
                        class="table table-striped table-hover" st-delay="20">
                     <thead>
                     <tr>
@@ -19,17 +19,19 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.openVerfuegung(row)">
-                        <td ng-bind="row.kindJA.vorname"></td>
-                        <td ng-bind="row.kindJA.nachname"></td>
-                        <td ng-bind="row.kindJA.geburtsdatum"></td>
-                        <td ng-bind="row.kindJA.geburtsdatum"></td>
-                    </tr>
-                    <tr ng-if="vm.getBetreuungenList().length === 0">
-                        <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
-                    </tr>
+                    <tbody ng-repeat="kindContainer in displayedCollection" >
+                        <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung" st-select-mode="single"
+                            ng-click="vm.openVerfuegung(betreuung)">
+                            <td ng-bind="kindContainer.kindJA.getFullName()"></td>
+                            <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
+                            <td ng-bind="vm.calculateBetreuungsId(kindContainer, betreuung)"></td>
+                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
+                        <tr>
+                            <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -38,12 +40,12 @@
         <br>
         <div class="row">
             <div class="col-md-6 text-right">
-                <md-button class="md-raised md-primary">
+                <md-button class="md-raised md-primary" aria-label="{{DOKUMENTE_VOLLSTAENDIG_UPPER | translate}}">
                     <span data-translate="DOKUMENTE_VOLLSTAENDIG_UPPER"></span>
                 </md-button>
             </div>
             <div class="col-md-6">
-                <md-button class="md-raised md-warn md-hue-2">
+                <md-button class="md-raised md-warn md-hue-2" aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
                     <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
                 </md-button>
             </div>

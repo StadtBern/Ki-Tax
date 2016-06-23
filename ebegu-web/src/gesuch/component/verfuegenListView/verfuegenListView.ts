@@ -3,6 +3,7 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSBetreuung from '../../../models/TSBetreuung';
+import TSKindContainer from '../../../models/TSKindContainer';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -17,6 +18,9 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$state', 'GesuchModelManager'];
+    private kinderWithBetreuungList: Array<TSKindContainer>;
+
+
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager) {
         super(state, gesuchModelManager, undefined);
@@ -24,13 +28,20 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel(): void {
+        this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
     }
 
-    public getBetreuungenList(): Array<TSBetreuung> {
-        return new Array<TSBetreuung>();
+    public getKinderWithBetreuungList(): Array<TSKindContainer> {
+        return this.kinderWithBetreuungList;
     }
 
-    public openVerfuegung(): void {
+    public openVerfuegung(betreuung: TSBetreuung): void {
 
+    }
+
+    public calculateBetreuungsId(kindContainer: TSKindContainer, betreuung: TSBetreuung): string {
+        // console.log('kindContainer', kindContainer);
+        // console.log('betreuung', betreuung);
+        return 'EErrdFF';
     }
 }
