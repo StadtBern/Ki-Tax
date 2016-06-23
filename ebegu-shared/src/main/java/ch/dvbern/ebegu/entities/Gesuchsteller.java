@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -51,6 +52,11 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
 	private FinanzielleSituationContainer finanzielleSituationContainer;
 
+	@Nullable
+	@Valid
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
+	private EinkommensverschlechterungContainer einkommensverschlechterungContainer;
+
 	@Nonnull
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuchsteller")
@@ -66,7 +72,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@NotNull
 	private boolean diplomatenstatus;
 
-	public boolean addAdresse(@Nonnull GesuchstellerAdresse gesuchstellerAdresse) {
+	public boolean addAdresse(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		gesuchstellerAdresse.setGesuchsteller(this);
 		return !adressen.contains(gesuchstellerAdresse) && adressen.add(gesuchstellerAdresse);
 	}
@@ -75,7 +81,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return mail;
 	}
 
-	public void setMail(String mail) {
+	public void setMail(final String mail) {
 		this.mail = mail;
 	}
 
@@ -83,7 +89,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return mobile;
 	}
 
-	public void setMobile(String mobile) {
+	public void setMobile(final String mobile) {
 		this.mobile = mobile;
 	}
 
@@ -91,7 +97,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return telefon;
 	}
 
-	public void setTelefon(String telefon) {
+	public void setTelefon(final String telefon) {
 		this.telefon = telefon;
 	}
 
@@ -99,7 +105,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return telefonAusland;
 	}
 
-	public void setTelefonAusland(String telefonAusland) {
+	public void setTelefonAusland(final String telefonAusland) {
 		this.telefonAusland = telefonAusland;
 	}
 
@@ -107,7 +113,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return zpvNumber;
 	}
 
-	public void setZpvNumber(String zpvNumber) {
+	public void setZpvNumber(final String zpvNumber) {
 		this.zpvNumber = zpvNumber;
 	}
 
@@ -116,7 +122,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return adressen;
 	}
 
-	public void setAdressen(@Nonnull List<GesuchstellerAdresse> adressen) {
+	public void setAdressen(@Nonnull final List<GesuchstellerAdresse> adressen) {
 		this.adressen = adressen;
 	}
 
@@ -130,7 +136,7 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return erwerbspensenContainers;
 	}
 
-	public void setErwerbspensenContainers(@Nonnull Set<ErwerbspensumContainer> erwerbspensenContainers) {
+	public void setErwerbspensenContainers(@Nonnull final Set<ErwerbspensumContainer> erwerbspensenContainers) {
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 
@@ -138,11 +144,11 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		return diplomatenstatus;
 	}
 
-	public void setDiplomatenstatus(boolean diplomatenstatus) {
+	public void setDiplomatenstatus(final boolean diplomatenstatus) {
 		this.diplomatenstatus = diplomatenstatus;
 	}
 
-	public void setFinanzielleSituationContainer(@Nullable FinanzielleSituationContainer finanzielleSituationContainer) {
+	public void setFinanzielleSituationContainer(@Nullable final FinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 		if (finanzielleSituationContainer != null &&
 			(finanzielleSituationContainer.getGesuchsteller() == null || !finanzielleSituationContainer.getGesuchsteller().equals(this))) {
@@ -150,9 +156,22 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		}
 	}
 
-	public boolean addErwerbspensumContainer(ErwerbspensumContainer erwerbspensumToAdd) {
+	public boolean addErwerbspensumContainer(final ErwerbspensumContainer erwerbspensumToAdd) {
 		erwerbspensumToAdd.setGesuchsteller(this);
 		return !erwerbspensenContainers.contains(erwerbspensumToAdd) &&
 			erwerbspensenContainers.add(erwerbspensumToAdd);
+	}
+
+	@Nullable
+	public EinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
+		return einkommensverschlechterungContainer;
+	}
+
+	public void setEinkommensverschlechterungContainer(@Nullable final EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
+		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
+		if (einkommensverschlechterungContainer != null &&
+			(einkommensverschlechterungContainer.getGesuchsteller() == null || !einkommensverschlechterungContainer.getGesuchsteller().equals(this))) {
+			einkommensverschlechterungContainer.setGesuchsteller(this);
+		}
 	}
 }
