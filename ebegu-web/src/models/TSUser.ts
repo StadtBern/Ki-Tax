@@ -1,4 +1,4 @@
-import {TSRole} from './enums/TSRole';
+import {TSRole, rolePrefix} from './enums/TSRole';
 import {TSMandant} from './TSMandant';
 
 export default class TSUser {
@@ -81,6 +81,10 @@ export default class TSUser {
     }
 
     public getFullName(): string {
-        return (this.vorname ? this.vorname :  '')  + ' ' + (this.nachname ?  this.nachname : '');
+        return (this.vorname ? this.vorname : '') + ' ' + (this.nachname ? this.nachname : '');
+    }
+
+    getRoleKey(): string {
+        return rolePrefix() + this.role;
     }
 }

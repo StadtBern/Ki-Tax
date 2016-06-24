@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
- * Wrapper fuer einen Login Request
+ * Wrapper DTO fuer einen Login Request
  */
 @XmlRootElement(name = "authLoginElement")
 public class JaxAuthLoginElement extends JaxAbstractDTO {

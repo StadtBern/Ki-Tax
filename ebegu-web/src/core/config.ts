@@ -44,5 +44,4 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     //Configuration of $http service
     $httpProvider.interceptors.push('HttpErrorInterceptor');
     $httpProvider.interceptors.push('HttpAuthInterceptor');
-
 }

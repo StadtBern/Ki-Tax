@@ -23,6 +23,9 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
 
+/**
+ * Util welches aus Requests die cookies extrahiert und aus den Cookies zum Beispiel den Principal
+ */
 public final class AuthDataUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthDataUtil.class);
@@ -45,7 +48,7 @@ public final class AuthDataUtil {
 		if (StringUtils.isEmpty(encodedPrincipalJson)) {
 			return Optional.empty();
 		}
-
+		//Decode from Json (Json is Base64 encoded)
 		try {
 			Gson gson = new Gson();
 			return Optional.of(gson.fromJson(
@@ -59,6 +62,10 @@ public final class AuthDataUtil {
 		}
 	}
 
+	/**
+	 * @param requestContext context to extract cookie from
+	 * @return Optional containing the authToken if present
+	 */
 	@Nonnull
 	public static Optional<String> getAuthToken(@Nonnull ContainerRequestContext requestContext) {
 		String authToken = requestContext.getCookies().get(AuthDataUtil.COOKIE_AUTH_TOKEN).getValue();
@@ -69,6 +76,12 @@ public final class AuthDataUtil {
 		return Optional.of(authToken);
 	}
 
+	/**
+	 * checks that the passed xsrfTokenParam matches the token stored in the cookie
+	 * @param xsrfTokenParam token to check
+	 * @param requestContext request to get Cookie from
+	 * @return true if the tokens match; false otherweise
+	 */
 	public static boolean isValidXsrfParam(@Nonnull String xsrfTokenParam, @Nonnull ContainerRequestContext requestContext) {
 		Cookie xsrfTokenCookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_XSRF_TOKEN);
 		return !StringUtils.isEmpty(xsrfTokenParam) && xsrfTokenCookie != null && StringUtils.equals(StringUtils.trimToNull(xsrfTokenCookie.getValue()), StringUtils.trimToNull(xsrfTokenParam));
