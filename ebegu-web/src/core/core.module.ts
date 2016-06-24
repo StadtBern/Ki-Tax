@@ -34,6 +34,8 @@ import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import {EbeguErrors} from './errors/errors';
 import EbeguUtil from '../utils/EbeguUtil';
+import {EbeguAuthentication} from '../authentication/authentication.module';
+import {DvPulldownUserMenuComponentConfig} from './component/dv-pulldown-user-menu/dv-pulldown-user-menu';
 
 let dynamicDependencies = function (): string[] {
 
@@ -55,6 +57,7 @@ const dependencies: string[] = [
     /* shared DVBern modules */
     router.name,
     EbeguErrors.name,
+    EbeguAuthentication.name,
     /* 3rd-party modules */
     'ui.bootstrap',
     'smart-table',
@@ -110,4 +113,5 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
+    .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());

@@ -1,0 +1,11 @@
+<div class="dummyAuthenticationView row">
+    <h3 class="col-md-4 col-md-offset-4">
+        Wählen Sie bitte einen Benutzer aus.
+    </h3>
+    <div class="col-md-4 col-md-offset-4">
+        <div class="first-row panel panel-default" ng-repeat="user in vm.usersList">
+            <div class="mark-hover panel-body" ng-click="vm.logIn(user)"
+                 ng-bind="user.vorname + ' ' + user.nachname + ', ' + user.email + ', ' + 'Rolle ' + (user.getRoleKey() | translate)"></div>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@ import 'angular-unsavedchanges';
 import {ITranslateProvider} from 'angular-translate';
 import 'angular-hotkeys';
 import HttpErrorInterceptor from './errors/service/HttpErrorInterceptor';
+import HttpAuthInterceptor from '../authentication/service/HttpAuthInterceptor';
 import IInjectorService = angular.auto.IInjectorService;
 import IThemingProvider = angular.material.IThemingProvider;
 import IHttpProvider = angular.IHttpProvider;
@@ -42,5 +43,5 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
 
     //Configuration of $http service
     $httpProvider.interceptors.push('HttpErrorInterceptor');
-
+    $httpProvider.interceptors.push('HttpAuthInterceptor');
 }
