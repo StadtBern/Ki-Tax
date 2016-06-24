@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -29,6 +29,9 @@ import javax.ws.rs.ext.Provider;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Interceptor fuer jaxRS der prueft ob das Login korrekt ist
+ */
 @Provider
 @PreMatching
 public class AuthSecurityInterceptor implements ContainerRequestFilter {
@@ -38,23 +41,23 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@Context
 	private HttpServletRequest request;
 
-	@EJB
+	@Inject //@EJB
 	private AuthService authService;
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		try {
-			// nur zur Sicherheit...
+			// nur zur Sicherheit container logout...
 			request.logout();
 		} catch (ServletException e) {
-			LOG.error("Unexpected", e);
+			LOG.error("Unexpected exception during Logout", e);
 			setResponseUnauthorised(requestContext);
 			return;
 		}
 
 		String path = requestContext.getUriInfo().getPath();
-		if (path.startsWith("/auth/login") || path.startsWith("/application.wadl") || "OPTIONS".equals(requestContext.getMethod())) {
+		if (path.startsWith("/auth/login") || path.startsWith("/swagger.json") || "OPTIONS".equals(requestContext.getMethod())) {
 			// Beim Login Request gibt es noch nichts abzufangen
 			return;
 		}
@@ -65,18 +68,17 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 		boolean isValidFileDownload = StringUtils.isEmpty(xsrfTokenHeader)
 			&& xsrfTokenCookie != null
 			&& RestUtil.isFileDownloadRequest(requestContext);
-		if (!request.getRequestURI().contains("/migration/")) {
+		if (!request.getRequestURI().contains("/migration/")) { //migration ist ausgenommen
 			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, requestContext)) {
 				setResponseUnauthorised(requestContext);
 				return;
 			}
 		}
-
 		try {
 			// Get AuthId and AuthToken from Cookies.
 			String authId = AuthDataUtil.getAuthAccessElement(requestContext).get().getAuthId();
 			String authToken = AuthDataUtil.getAuthToken(requestContext).get();
-
+			//use token to authorize the request
 			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
 			if (!loginWithToken.isPresent()) {
 				setResponseUnauthorised(requestContext);
@@ -88,11 +90,12 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 				// EJB Container Login
 				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
-				// Login Failed
+				// Container Login Failed
 				setResponseUnauthorised(requestContext);
 				return;
 			}
 
+			//check if the token is still valid
 			if (!authService.verifyToken(credentials)) {
 				// Token Verification Failed
 				setResponseUnauthorised(requestContext);

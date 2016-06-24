@@ -334,6 +334,7 @@
 					</authentication>
                 </security-domain>
 				<security-domain name="ebegu">
+					<!--Im Moment verwenden wir hier nur ein dummy loginmodul-->
 					<authentication>
 						<login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
 							<module-option name="usersProperties" value="dummylogin-users.properties"/>

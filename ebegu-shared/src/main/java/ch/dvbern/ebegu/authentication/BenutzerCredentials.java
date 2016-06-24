@@ -11,6 +11,9 @@ package ch.dvbern.ebegu.authentication;
 
 import javax.annotation.Nonnull;
 
+/**
+ * DTO fuer Credentials
+ */
 public class BenutzerCredentials {
 
 	@Nonnull

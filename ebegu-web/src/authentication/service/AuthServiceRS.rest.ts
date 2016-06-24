@@ -1,8 +1,8 @@
 import {IRequestConfig, IPromise, IHttpService, IQService, ITimeoutService} from 'angular';
 import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import ICookiesService = angular.cookies.ICookiesService;
 import HttpBuffer from './HttpBuffer';
+import ICookiesService = angular.cookies.ICookiesService;
 
 export default class AuthServiceRS {
 
@@ -41,7 +41,7 @@ export default class AuthServiceRS {
         return undefined;
     };
 
-    private initWithCookie(): boolean {
+    public initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
         console.log('from cookieas', authIdbase64);
         if (authIdbase64) {

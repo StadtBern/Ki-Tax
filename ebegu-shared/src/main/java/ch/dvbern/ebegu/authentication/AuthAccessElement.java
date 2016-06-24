@@ -14,7 +14,6 @@ import ch.dvbern.ebegu.enums.UserRole;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Response Element fuer einen erfolgreichen Login Request
