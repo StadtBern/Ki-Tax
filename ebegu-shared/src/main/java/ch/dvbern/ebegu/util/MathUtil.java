@@ -19,8 +19,9 @@ import java.util.Optional;
 public enum MathUtil {
 
 	GANZZAHL(19, 0, RoundingMode.HALF_UP),
-	DEFAULT(19, 2, RoundingMode.HALF_UP),// Am Schluss muss immer mit diesem gerechnet werden, da sonst nicht in DB gespeichert werden kann!
-	EXACT(30, 10, RoundingMode.HALF_UP);		// Für Zwischenresultate
+	EINE_NACHKOMMASTELLE(19, 1, RoundingMode.HALF_UP),
+	DEFAULT(19, 2, RoundingMode.HALF_UP),	// Am Schluss muss immer mit diesem gerechnet werden, da sonst nicht in DB gespeichert werden kann!
+	EXACT(30, 10, RoundingMode.HALF_UP);	// Für Zwischenresultate
 
 	private final int precision;
 	private final int scale;

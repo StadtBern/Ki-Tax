@@ -22,6 +22,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 	private BigDecimal elternbeitrag;
 	private BigDecimal abzugFamGroesse;
 	private BigDecimal massgebendesEinkommen;
+	private BigDecimal betreuungsstunden;
 
 	private List<String> bemerkungen;
 
@@ -106,6 +107,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public BigDecimal getBetreuungsstunden() {
+		return betreuungsstunden;
+	}
+
+	public void setBetreuungsstunden(BigDecimal betreuungsstunden) {
+		this.betreuungsstunden = betreuungsstunden;
 	}
 
 	/**

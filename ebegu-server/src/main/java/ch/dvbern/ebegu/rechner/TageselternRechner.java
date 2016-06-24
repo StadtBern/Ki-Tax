@@ -45,6 +45,7 @@ public class TageselternRechner extends AbstractBGRechner {
 		// Runden und auf Zeitabschnitt zurückschreiben
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkosten));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitrag));
+		verfuegungZeitabschnitt.setBetreuungsstunden(MathUtil.EINE_NACHKOMMASTELLE.from(betreuungsstundenIntervall));
 		return verfuegungZeitabschnitt;
 	}
 }

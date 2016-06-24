@@ -27,6 +27,7 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("15.30"), calculate.getVollkosten());
 		Assert.assertEquals(new BigDecimal("3.35"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("11.95"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("1.7"), calculate.getBetreuungsstunden());
 	}
 
 	@Test
@@ -39,6 +40,7 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("713.95"), calculate.getVollkosten());
 		Assert.assertEquals(new BigDecimal("313.05"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("400.90"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("77.9"), calculate.getBetreuungsstunden());
 	}
 
 	@Test
@@ -51,5 +53,6 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("2141.90"), calculate.getVollkosten());
 		Assert.assertEquals(new BigDecimal("175.40"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("1966.50"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("233.8"), calculate.getBetreuungsstunden());
 	}
 }
