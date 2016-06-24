@@ -384,6 +384,7 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
+        restGesuch.nextNumberKind = gesuch.nextNumberKind;
         return restGesuch;
     }
 
@@ -395,6 +396,7 @@ export default class EbeguRestUtil {
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
+            gesuchTS.nextNumberKind = gesuchFromServer.nextNumberKind;
             return gesuchTS;
         }
         return undefined;
@@ -756,6 +758,7 @@ export default class EbeguRestUtil {
                 restBetreuung.betreuungspensumContainers.push(this.betreuungspensumContainerToRestObject({}, betPensCont));
             });
         }
+        restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
 
@@ -795,6 +798,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
+            betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             return betreuungTS;
         }
         return undefined;

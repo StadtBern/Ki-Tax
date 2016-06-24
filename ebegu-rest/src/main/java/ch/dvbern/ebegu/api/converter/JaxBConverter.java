@@ -533,6 +533,7 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
 			}
 		}
+		gesuch.setNextNumberKind(gesuchJAXP.getNextNumberKind());
 
 		return gesuch;
 	}
@@ -556,6 +557,7 @@ public class JaxBConverter {
 		if (persistedGesuch.getEinkommensverschlechterungInfo() != null) {
 			jaxGesuch.setEinkommensverschlechterungInfo(this.einkommensverschlechterungInfoToJAX(persistedGesuch.getEinkommensverschlechterungInfo()));
 		}
+		jaxGesuch.setNextNumberKind(persistedGesuch.getNextNumberKind());
 
 		return jaxGesuch;
 	}
@@ -788,6 +790,8 @@ public class JaxBConverter {
 			jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
 		}
 		jaxKindContainer.setBetreuungen(betreuungListToJax(persistedKind.getBetreuungen()));
+		jaxKindContainer.setKindNummer(persistedKind.getKindNummer());
+		jaxKindContainer.setNextNumberBetreuung(persistedKind.getNextNumberBetreuung());
 		return jaxKindContainer;
 	}
 
@@ -828,6 +832,8 @@ public class JaxBConverter {
 			}
 			kindContainer.setKindJA(kindToEntity(kindContainerJAXP.getKindJA(), kindJA));
 		}
+		kindContainer.setKindNummer(kindContainerJAXP.getKindNummer());
+		kindContainer.setNextNumberBetreuung(kindContainerJAXP.getNextNumberBetreuung());
 		return kindContainer;
 	}
 
@@ -1145,6 +1151,7 @@ public class JaxBConverter {
 				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, instStammdatenID));
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
+		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		return betreuung;
 	}
 
@@ -1236,6 +1243,7 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
 		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+		jaxBetreuung.setBetreuungNummer(persistedBetreuung.getBetreuungNummer());
 		return jaxBetreuung;
 	}
 

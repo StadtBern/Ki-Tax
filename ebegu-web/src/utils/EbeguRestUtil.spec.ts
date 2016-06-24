@@ -151,6 +151,7 @@ describe('EbeguRestUtil', function () {
                 let myGesuch = new TSGesuch();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
                 myGesuch.einkommensverschlechterung = true;
+                myGesuch.nextNumberKind = 2;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 myGesuch.fall = fall;
@@ -231,7 +232,7 @@ describe('EbeguRestUtil', function () {
                 let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumContainer);
                 let betContainers: Array<TSBetreuungspensumContainer> = [tsBetreuungspensumContainer];
-                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen', true);
+                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen', true, 2);
                 TestDataUtil.setAbstractFieldsUndefined(betreuung);
 
                 let restBetreuung = ebeguRestUtil.betreuungToRestObject({}, betreuung);
@@ -255,6 +256,7 @@ describe('EbeguRestUtil', function () {
                 expect(transformedBetreuung.bemerkungen).toEqual(betreuung.bemerkungen);
                 expect(transformedBetreuung.schulpflichtig).toEqual(betreuung.schulpflichtig);
                 expect(transformedBetreuung.betreuungsstatus).toEqual(betreuung.betreuungsstatus);
+                expect(transformedBetreuung.betreuungNummer).toEqual(betreuung.betreuungNummer);
                 expect(transformedBetreuung.betreuungspensumContainers[0]).toEqual(betreuung.betreuungspensumContainers[0]);
             });
         });
