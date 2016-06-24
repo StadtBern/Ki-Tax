@@ -16,6 +16,7 @@ export default class TSKind extends TSAbstractPersonEntity {
                 mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
 
         super(vorname, nachname, geburtsdatum, geschlecht);
+        this._kinderabzug = kinderabzug;
         this._familienErgaenzendeBetreuung = familienErgaenzendeBetreuung;
         this._mutterspracheDeutsch = mutterspracheDeutsch;
         this._pensumFachstelle = pensumFachstelle;
