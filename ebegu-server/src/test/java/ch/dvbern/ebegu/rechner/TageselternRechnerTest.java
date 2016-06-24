@@ -55,4 +55,13 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("1966.50"), calculate.getVerguenstigung());
 		Assert.assertEquals(new BigDecimal("233.8"), calculate.getBetreuungsstunden());
 	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void testZeitraumUeberMonatsende() {
+		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
+			LocalDate.of(2016, Month.JANUARY, 10), LocalDate.of(2016, Month.FEBRUARY, 5),
+			100, new BigDecimal("27750"));
+
+		tageselternRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
+	}
 }

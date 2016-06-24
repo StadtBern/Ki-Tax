@@ -6,7 +6,6 @@ import ch.dvbern.ebegu.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * Berechnet die Vollkosten, den Elternbeitrag und die Vergünstigung für einen Zeitabschnitt (innerhalb eines Monats)
@@ -24,10 +23,7 @@ public class TageselternRechner extends AbstractBGRechner {
 		BigDecimal massgebendesEinkommen = verfuegungZeitabschnitt.getMassgebendesEinkommen();
 
 		// Inputdaten validieren
-		Objects.requireNonNull(von, "von darf nicht null sein");
-		Objects.requireNonNull(bis, "bis darf nicht null sein");
-		Objects.requireNonNull(anspruch, "anspruch darf nicht null sein");
-		Objects.requireNonNull(massgebendesEinkommen, "massgebendesEinkommen darf nicht null sein");
+		checkArguments(von, bis, anspruch, massgebendesEinkommen);
 
 		// Zwischenresultate
 		BigDecimal anteilMonat = calculateAnteilMonat(von, bis);

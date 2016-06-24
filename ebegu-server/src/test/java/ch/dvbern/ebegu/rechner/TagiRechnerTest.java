@@ -52,4 +52,13 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("105.00"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("1562.40"), calculate.getVerguenstigung());
 	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void testZeitraumUeberMonatsende() {
+		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
+			LocalDate.of(2016, Month.JANUARY, 10), LocalDate.of(2016, Month.FEBRUARY, 5),
+			100, new BigDecimal("27750"));
+
+		tagiRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
+	}
 }

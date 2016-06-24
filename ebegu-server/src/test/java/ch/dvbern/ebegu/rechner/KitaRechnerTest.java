@@ -17,6 +17,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 	private BGRechnerParameterDTO parameterDTO = getParameter();
 	private KitaRechner kitaRechner = new KitaRechner();
 
+
 	@Test
 	public void testHalberMonatHohesEinkommenKitaLangeOffenAnspruch15() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
@@ -67,5 +68,15 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("2321.85"), calculate.getVollkosten());
 		Assert.assertEquals(new BigDecimal("137.25"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("2184.60"), calculate.getVerguenstigung());
+	}
+
+	@Test (expected = IllegalArgumentException.class)
+	public void testZeitraumUeberMonatsende() {
+		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
+			new BigDecimal("244"), new BigDecimal("11.5"),
+			LocalDate.of(2016, Month.JANUARY, 10), LocalDate.of(2016, Month.FEBRUARY, 5),
+			100, new BigDecimal("27750"));
+
+		kitaRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
 	}
 }

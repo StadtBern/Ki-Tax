@@ -7,6 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -19,6 +20,22 @@ public class AbstractBGRechner {
 	protected static final BigDecimal NEUN = MathUtil.EXACT.from(9L);
 	protected static final BigDecimal ZWANZIG = MathUtil.EXACT.from(20L);
 	protected static final BigDecimal ZWEIHUNDERTVIERZIG = MathUtil.EXACT.from(240L);
+
+	/**
+	 * Checkt die für alle Angebote benötigten Argumente auf Null.
+	 * Stellt sicher, dass der Zeitraum innerhalb eines Monates liegt
+     */
+	protected void checkArguments(LocalDate von, LocalDate bis, BigDecimal anspruch, BigDecimal massgebendesEinkommen) {
+		// Inputdaten validieren
+		Objects.requireNonNull(von, "von darf nicht null sein");
+		Objects.requireNonNull(bis, "bis darf nicht null sein");
+		Objects.requireNonNull(anspruch, "anspruch darf nicht null sein");
+		Objects.requireNonNull(massgebendesEinkommen, "massgebendesEinkommen darf nicht null sein");
+		// Max. 1 Monat
+		if (!von.getMonth().equals(bis.getMonth())) {
+			throw new IllegalArgumentException("BG Rechner dürfen nicht für monatsübergreifende Zeitabschnitte verwendet werden!");
+		}
+	}
 
 	/**
 	 * Berechnet den Anteil des Zeitabschnittes am gesamten Monat

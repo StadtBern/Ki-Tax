@@ -27,13 +27,10 @@ public class KitaRechner extends AbstractBGRechner {
 		BigDecimal massgebendesEinkommen = verfuegungZeitabschnitt.getMassgebendesEinkommen();
 
 		// Inputdaten validieren
-		Objects.requireNonNull(von, "von darf nicht null sein");
-		Objects.requireNonNull(bis, "bis darf nicht null sein");
+		checkArguments(von, bis, anspruch, massgebendesEinkommen);
 		Objects.requireNonNull(geburtsdatum, "geburtsdatum darf nicht null sein");
 		Objects.requireNonNull(oeffnungsstunden, "oeffnungsstunden darf nicht null sein");
 		Objects.requireNonNull(oeffnungstage, "oeffnungstage darf nicht null sein");
-		Objects.requireNonNull(anspruch, "anspruch darf nicht null sein");
-		Objects.requireNonNull(massgebendesEinkommen, "massgebendesEinkommen darf nicht null sein");
 
 		// Zwischenresultate
 		BigDecimal faktor = von.isAfter(geburtsdatum.plusMonths(parameterDTO.getBabyAlterInMonaten()).with(TemporalAdjusters.lastDayOfMonth())) ? FAKTOR_KIND : parameterDTO.getBabyFaktor();
