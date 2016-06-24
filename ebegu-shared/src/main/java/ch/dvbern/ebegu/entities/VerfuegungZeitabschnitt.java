@@ -20,7 +20,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 	private int anspruchberechtigtesPensum;
 	private BigDecimal vollkosten;
 	private BigDecimal elternbeitrag;
-	private BigDecimal verguenstigung;
 	private BigDecimal abzugFamGroesse;
 	private BigDecimal massgebendesEinkommen;
 
@@ -31,7 +30,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 
 	/**
 	 * Erstellt einen Zeitabschnitt mit der gegebenen gueltigkeitsdauer
-	 * @param gueltigkeit
 	 */
 	public VerfuegungZeitabschnitt(DateRange gueltigkeit) {
 		this.setGueltigkeit(new DateRange(gueltigkeit));
@@ -78,14 +76,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 		this.elternbeitrag = elternbeitrag;
 	}
 
-	public BigDecimal getVerguenstigung() {
-		return verguenstigung;
-	}
-
-	public void setVerguenstigung(BigDecimal verguenstigung) {
-		this.verguenstigung = verguenstigung;
-	}
-
 	public BigDecimal getAbzugFamGroesse() {
 		return abzugFamGroesse;
 	}
@@ -116,5 +106,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	/**
+	 * Gibt den Betrag des Gutscheins zurück.
+     */
+	public BigDecimal getVerguenstigung() {
+		return vollkosten.subtract(elternbeitrag);
 	}
 }
