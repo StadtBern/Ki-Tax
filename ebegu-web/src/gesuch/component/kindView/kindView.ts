@@ -48,6 +48,9 @@ export class KindViewController extends AbstractGesuchViewController {
         if (this.getPensumFachstelle() && this.getPensumFachstelle().fachstelle) {
             this.fachstelleId = this.getPensumFachstelle().fachstelle.id;
         }
+        if (this.gesuchModelManager.getFachstellenList() || this.gesuchModelManager.getFachstellenList().length <= 0) {
+            this.gesuchModelManager.updateFachstellenList();
+        }
     }
 
     submit(form: IFormController) {
@@ -101,7 +104,7 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     public getFachstellenList() {
-        return this.gesuchModelManager.fachstellenList;
+        return this.gesuchModelManager.getFachstellenList();
     }
 
     public getModel(): TSKind {

@@ -219,7 +219,8 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseBetreuung()', () => {
             it('should transform TSBetreuung to REST object and back', () => {
-                let instStam: TSInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, createInstitution(), undefined, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                let instStam: TSInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA,
+                    createInstitution(), undefined, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(instStam);
 
                 let tsBetreuungspensumGS: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
