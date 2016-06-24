@@ -13,7 +13,6 @@ export default class AuthServiceRS {
     /* @ngInject */
     constructor(private $http: IHttpService, private CONSTANTS: any, private $q: IQService, private $timeout: ITimeoutService,
                 private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
-        this.initWithCookie();
     }
 
     public getPrincipal() {
