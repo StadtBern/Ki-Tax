@@ -27,7 +27,7 @@ public interface AuthService {
 	 * @return BenutzerCredentials mit der angegebenen Identifikation
 	 */
 	@Nonnull
-	Optional<BenutzerCredentials> loginWithToken(@Nonnull final String username, @Nonnull final String authToken);
+	Optional<BenutzerCredentials> loginWithToken(@Nonnull final String username,  @Nonnull final String authToken);
 
 	/**
 	 * @param authToken Authentifizierungs Token Identifikation

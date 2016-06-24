@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -43,7 +42,7 @@ public class AuthResource {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthResource.class);
 
-	@EJB
+	@Inject // @EJB
 	private AuthService authService;
 
 	@Context

@@ -52,8 +52,6 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 		lastLogin = LocalDateTime.now();
 	}
 
-
-
 	@Nonnull
 	public String getAuthId() {
 		return String.valueOf(this.benutzer.getUsername());

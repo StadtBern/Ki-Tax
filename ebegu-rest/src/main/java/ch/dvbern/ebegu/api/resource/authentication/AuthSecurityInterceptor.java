@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -41,7 +41,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@Context
 	private HttpServletRequest request;
 
-	@EJB
+	@Inject //@EJB
 	private AuthService authService;
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
@@ -90,11 +90,12 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 				// EJB Container Login
 				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
-				// Login Failed
+				// Container Login Failed
 				setResponseUnauthorised(requestContext);
 				return;
 			}
 
+			//check if the token is still valid
 			if (!authService.verifyToken(credentials)) {
 				// Token Verification Failed
 				setResponseUnauthorised(requestContext);

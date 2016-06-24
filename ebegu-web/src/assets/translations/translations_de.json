@@ -503,6 +503,13 @@
     "KEINE_STEUERERKLAERUNG": "Keine Steuererklärung",
     "AUSLOGGEN": "Ausloggen",
     "EINLOGGEN": "Einloggen",
-    "PARAMETER": "Parameter"
+    "PARAMETER": "Parameter",
+    "TSRole_ADMIN": "",
+    "TSRole_SACHBEARBEITER_JA": "Sachbearbeiter Jugendamt",
+    "TSRole_SACHBEARBEITER_INSTITUTION": "Sachbearbetier Institution",
+    "TSRole_GESUCHSTELLER": "Gesuchsteller",
+    "TSRole_JURIST": "Jurist",
+    "TSRole_REVISOR": "Revisor",
+    "TSRole_STEUERAMT": "SteueramtT"
 }
 
