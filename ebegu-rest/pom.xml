@@ -36,6 +36,10 @@
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-testutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.validation</groupId>

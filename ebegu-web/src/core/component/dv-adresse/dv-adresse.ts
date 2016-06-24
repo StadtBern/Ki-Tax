@@ -56,7 +56,6 @@ export  class DvAdresseController {
 
     openPopup() {     //todo team welchen datepicker wollen wir
         this.popup.opened = true;
-        console.log(this.popup.opened);
     }
 
 }

@@ -5,7 +5,7 @@ import {IState} from 'angular-ui-router';
 pendenzRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function pendenzRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/gesuch/familiensituation');
+    routerHelper.configureStates(getStates(), '/pendenzen');
 }
 
 function getStates(): IState[] {

@@ -36,6 +36,9 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         if (this.gesuchModelManager.getGesuchsperiode()) {
             this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
         }
+        if (this.gesuchModelManager.getAllActiveGesuchsperioden() || this.gesuchModelManager.getAllActiveGesuchsperioden().length <= 0) {
+            this.gesuchModelManager.updateActiveGesuchsperiodenList();
+        }
     }
 
     public getGesuchModel(): TSGesuch {
