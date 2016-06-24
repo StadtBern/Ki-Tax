@@ -17,7 +17,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     let translProp = require('../assets/translations/translations_de.json');
 
     // In case you have issues with double-escaped parameters, check out this issue: https://github.com/angular-translate/angular-translate/issues/1101
-    $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+    $translateProvider.useSanitizeValueStrategy('escapeParameters');
 
     $translateProvider
         .translations('de', translProp)
