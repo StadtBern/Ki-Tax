@@ -13,14 +13,13 @@ import ch.dvbern.ebegu.enums.UserRole;
 
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-import java.util.Objects;
+
 
 /**
  * Wrapper DTO fuer einen Login Request
  */
 @XmlRootElement(name = "authLoginElement")
-public class JaxAuthLoginElement implements Serializable {
+public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = 2769899329796452129L;
 
@@ -40,14 +39,6 @@ public class JaxAuthLoginElement implements Serializable {
 
 
 
-	private JaxAuthLoginElement() {
-		// fuer Jaxb/JaxRS
-	}
-
-	public JaxAuthLoginElement(@Nonnull String username, @Nonnull String plainTextpassword) {
-		this.username = Objects.requireNonNull(username);
-		this.password = Objects.requireNonNull(plainTextpassword);
-	}
 
 	@Nonnull
 	public String getUsername() {

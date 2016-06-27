@@ -32,7 +32,7 @@ public interface BenutzerService {
 	 * @return Liste aller Benutzern aus der DB
 	 */
 	@Nonnull
-	Collection<Benutzer> getAllBenutzern();
+	Collection<Benutzer> getAllBenutzer();
 
 	/**
 	 * entfernt die Benutzer aus der Database

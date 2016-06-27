@@ -19,6 +19,10 @@ public class JaxFall extends JaxAbstractDTO {
 	@NotNull
 	private int fallNummer;
 
+	@NotNull
+	private JaxAuthLoginElement verantwortlicher;
+
+
 	@Nullable
 	public int getFallNummer() {
 		return fallNummer;
@@ -26,5 +30,13 @@ public class JaxFall extends JaxAbstractDTO {
 
 	public void setFallNummer(@Nullable int fallNummer) {
 		this.fallNummer = fallNummer;
+	}
+
+	public JaxAuthLoginElement getVerantwortlicher() {
+		return verantwortlicher;
+	}
+
+	public void setVerantwortlicher(JaxAuthLoginElement verantwortlicher) {
+		this.verantwortlicher = verantwortlicher;
 	}
 }
