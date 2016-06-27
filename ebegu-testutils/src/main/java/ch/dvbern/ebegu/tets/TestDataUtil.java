@@ -58,17 +58,17 @@ public final class TestDataUtil {
 	public static EinkommensverschlechterungContainer createDefaultEinkommensverschlechterungsContainer() {
 		EinkommensverschlechterungContainer einkommensverschlechterungContainer = new EinkommensverschlechterungContainer();
 
-		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus1(createDefaultEinkommensverschlechterungs());
+		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus1(createDefaultEinkommensverschlechterung());
 
-		final Einkommensverschlechterung ekvGSBasisJahrPlus2 = createDefaultEinkommensverschlechterungs();
+		final Einkommensverschlechterung ekvGSBasisJahrPlus2 = createDefaultEinkommensverschlechterung();
 		ekvGSBasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(2));
 		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus2(ekvGSBasisJahrPlus2);
 
-		final Einkommensverschlechterung ekvJABasisJahrPlus1 = createDefaultEinkommensverschlechterungs();
+		final Einkommensverschlechterung ekvJABasisJahrPlus1 = createDefaultEinkommensverschlechterung();
 		ekvJABasisJahrPlus1.setNettolohnJan(BigDecimal.valueOf(3));
 		einkommensverschlechterungContainer.setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
 
-		final Einkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultEinkommensverschlechterungs();
+		final Einkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultEinkommensverschlechterung();
 		ekvJABasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(4));
 		einkommensverschlechterungContainer.setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
 
@@ -76,7 +76,7 @@ public final class TestDataUtil {
 		return einkommensverschlechterungContainer;
 	}
 
-	public static Einkommensverschlechterung createDefaultEinkommensverschlechterungs() {
+	public static Einkommensverschlechterung createDefaultEinkommensverschlechterung() {
 		Einkommensverschlechterung einkommensverschlechterung = new Einkommensverschlechterung();
 		createDefaultAbstractFinanzielleSituation(einkommensverschlechterung);
 		einkommensverschlechterung.setNettolohnJan(BigDecimal.ONE);

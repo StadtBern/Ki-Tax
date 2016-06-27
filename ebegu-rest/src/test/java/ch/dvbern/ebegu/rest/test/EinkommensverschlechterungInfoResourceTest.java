@@ -32,7 +32,7 @@ import static ch.dvbern.ebegu.rest.test.AbstractEbeguRestTest.createTestArchive;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungResourceTest {
+public class EinkommensverschlechterungInfoResourceTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {

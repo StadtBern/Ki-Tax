@@ -46,7 +46,7 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
 
-		einkommensverschlechterungContainerService.createEinkommensverschlechterungContainer(container);
+		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
 
 		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer();
 		Assert.assertEquals(1, allEinkommensverschlechterungContainer.size());
@@ -58,7 +58,7 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		gesuchsteller = persistence.persist(gesuchsteller);
 
-		final Einkommensverschlechterung einkommensverschlechterung = TestDataUtil.createDefaultEinkommensverschlechterungs();
+		final Einkommensverschlechterung einkommensverschlechterung = TestDataUtil.createDefaultEinkommensverschlechterung();
 
 		EinkommensverschlechterungContainer container = TestDataUtil.createDefaultEinkommensverschlechterungsContainer();
 		container.setGesuchsteller(gesuchsteller);
@@ -81,14 +81,14 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
 
-		einkommensverschlechterungContainerService.createEinkommensverschlechterungContainer(container);
+		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
 
 		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer();
 		EinkommensverschlechterungContainer einkommensverschlechterungContainer = allEinkommensverschlechterungContainer.iterator().next();
 
 		einkommensverschlechterungContainer.getEkvGSBasisJahrPlus1().setNettolohnJan(BigDecimal.TEN);
 
-		einkommensverschlechterungContainerService.updateEinkommensverschlechterungContainer(einkommensverschlechterungContainer);
+		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(einkommensverschlechterungContainer);
 
 		final Optional<EinkommensverschlechterungContainer> einkommensverschlechterungContainerUpdated = einkommensverschlechterungContainerService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainer.getId());
 
@@ -103,7 +103,7 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 		Assert.assertEquals(0, einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer().size());
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
-		einkommensverschlechterungContainerService.createEinkommensverschlechterungContainer(container);
+		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
 		Assert.assertEquals(1, einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer().size());
 
 		einkommensverschlechterungContainerService.removeEinkommensverschlechterungContainer(container);

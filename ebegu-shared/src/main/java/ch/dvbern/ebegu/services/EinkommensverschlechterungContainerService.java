@@ -13,22 +13,13 @@ import java.util.Optional;
 public interface EinkommensverschlechterungContainerService {
 
 	/**
-	 * Erstellt eine neue EinkommensverschlechterungContainerService in der DB, falls der key noch nicht existiert
-	 *
-	 * @param einkommensverschlechterungContainer die EinkommensverschlechterungContainer als DTO
-	 * @return die gespeicherte EinkommensverschlechterungContainer
-	 */
-	@Nonnull
-	EinkommensverschlechterungContainer createEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
-
-	/**
 	 * Aktualisiert idn EinkommensverschlechterungContainer in der DB
 	 *
 	 * @param einkommensverschlechterungContainer die EinkommensverschlechterungContainer als DTO
 	 * @return Die aktualisierte EinkommensverschlechterungContainer
 	 */
 	@Nonnull
-	EinkommensverschlechterungContainer updateEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
+	EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
 
 	/**
 	 * @param key PK (id) der EinkommensverschlechterungContainer

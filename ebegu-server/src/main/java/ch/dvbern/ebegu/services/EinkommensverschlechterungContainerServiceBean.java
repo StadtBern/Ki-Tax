@@ -32,14 +32,7 @@ public class EinkommensverschlechterungContainerServiceBean extends AbstractBase
 
 	@Override
 	@Nonnull
-	public EinkommensverschlechterungContainer createEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
-		Objects.requireNonNull(einkommensverschlechterungContainer);
-		return persistence.persist(einkommensverschlechterungContainer);
-	}
-
-	@Override
-	@Nonnull
-	public EinkommensverschlechterungContainer updateEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
+	public EinkommensverschlechterungContainer saveEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		Objects.requireNonNull(einkommensverschlechterungContainer);
 		return persistence.merge(einkommensverschlechterungContainer);
 	}

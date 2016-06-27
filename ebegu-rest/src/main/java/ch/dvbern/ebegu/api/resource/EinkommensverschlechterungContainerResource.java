@@ -65,7 +65,7 @@ public class EinkommensverschlechterungContainerResource {
 			EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
 			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
 			EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-				einkommensverschlechterungContainerService.updateEinkommensverschlechterungContainer(convertedFinSitCont);
+				einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
 
 			URI uri = uriInfo.getBaseUriBuilder()
 				.path(EinkommensverschlechterungContainerResource.class)
