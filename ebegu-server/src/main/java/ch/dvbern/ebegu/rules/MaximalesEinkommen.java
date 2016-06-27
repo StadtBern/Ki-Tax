@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -25,8 +25,7 @@ public class MaximalesEinkommen extends AbstractEbeguRule {
 	}
 
 
-
-
+	//evtl mal versuchen nur Zeitabschnitte hinzuzufuegen egal was schon in der Liste drin ist
 	@Override
 	public List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer,
 												   @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
@@ -37,26 +36,27 @@ public class MaximalesEinkommen extends AbstractEbeguRule {
 			//Beispiel, einkommensverschlechterung auf Maerz
 			LocalDate from = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
 			LocalDate to = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigBis();
-			VerfuegungZeitabschnitt initialabschnitt = new VerfuegungZeitabschnitt(betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit());
+			VerfuegungZeitabschnitt einkommensabschnitt = new VerfuegungZeitabschnitt(betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit());
+			//wenn massgebendes Einkommen hoeher als Max erlischt der Anspruch
+			if (readMassgebendesEinkommen(finSitResultatDTO).compareTo(maximalesEinkommen) > 0) {
+				einkommensabschnitt.setAnspruchberechtigtesPensum(0);
+			}
+			//else muss nichts gemacht werden
+			zeitabschnitte.add(einkommensabschnitt);
 
 		}
-		if (readMassgebendesEinkommen(finSitResultatDTO).compareTo(maximalesEinkommen) > 0) {
 
-			//todo regel ausfuehren
-		}
 		return zeitabschnitte;
 	}
 
 	/**
 	 * Beim auslesen des Massgebenden Einkommens ist die FinanzielleSituationResultatDTO bzw die
 	 * Einkommensverschlechterung relevant. Das heisst je nach Datum ist das massgebende Einkommen anders
+	 *
 	 * @param finSitResultatDTO
 	 * @return
 	 */
 	private BigDecimal readMassgebendesEinkommen(FinanzielleSituationResultateDTO finSitResultatDTO) {
-//		if(finSitResultatDTO.get)
-
-
 		return finSitResultatDTO.getMassgebendesEinkommen();
 	}
 }
