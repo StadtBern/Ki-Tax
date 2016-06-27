@@ -56,10 +56,22 @@ public class BetreuungResource {
 
 		Optional<KindContainer> kind = kindService.findKind(kindId.getId());
 		if (kind.isPresent()) {
+			// wir aktualisieren die BetreuungNummer erst hier im Server, damit es immer unabhaengig vom Client gemacht wird
+			KindContainer kindContainer = kind.get();
+			Integer nextNumberBetreuung = kindContainer.getNextNumberBetreuung();
+			betreuungJAXP.setBetreuungNummer(nextNumberBetreuung);
+
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
-			convertedBetreuung.setKind(kind.get());
+			convertedBetreuung.setKind(kindContainer);
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
-			return converter.betreuungToJAX(persistedBetreuung);
+			JaxBetreuung jaxBetreuung = converter.betreuungToJAX(persistedBetreuung);
+
+			// todo beim Sollen wir lieber eine neue Methode im Service (increaseNextNumberBetreuung) ?????
+			// wir aktualisieren jetzt das Kind mit der neuen NextNumberBetreuung
+			kindContainer.setNextNumberBetreuung(nextNumberBetreuung + 1);
+			kindService.saveKind(kindContainer);
+
+			return jaxBetreuung;
 		}
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
 	}

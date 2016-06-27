@@ -55,6 +55,11 @@ public class KindResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
+			// wir aktualisieren die kindNummer erst hier im Server, damit es immer unabhaengig vom Client gemacht wird
+			Gesuch gesuchObject = gesuch.get();
+			Integer nextNumberKind = gesuchObject.getNextNumberKind();
+			kindContainerJAXP.setKindNummer(nextNumberKind);
+
 			KindContainer kindToMerge = new KindContainer();
 			if (kindContainerJAXP.getId() != null) {
 				Optional<KindContainer> optional = kindService.findKind(kindContainerJAXP.getId());
@@ -63,7 +68,14 @@ public class KindResource {
 			KindContainer convertedKind = converter.kindContainerToEntity(kindContainerJAXP, kindToMerge);
 			convertedKind.setGesuch(gesuch.get());
 			KindContainer persistedKind = this.kindService.saveKind(convertedKind);
-			return converter.kindContainerToJAX(persistedKind);
+			JaxKindContainer jaxKindContainer = converter.kindContainerToJAX(persistedKind);
+
+			// todo beim Sollen wir lieber eine neue Methode im Service (increaseNextNumberBetreuung) ?????
+			// wir aktualisieren jetzt das Kind mit der neuen NextNumberBetreuung
+			gesuchObject.setNextNumberKind(nextNumberKind + 1);
+			gesuchService.updateGesuch(gesuchObject);
+
+			return jaxKindContainer;
 		}
 		throw new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}

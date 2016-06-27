@@ -533,7 +533,10 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
 			}
 		}
-		gesuch.setNextNumberKind(gesuchJAXP.getNextNumberKind());
+
+		if (gesuchJAXP.getNextNumberKind() != null) {
+			gesuch.setNextNumberKind(gesuchJAXP.getNextNumberKind());
+		}
 
 		return gesuch;
 	}
