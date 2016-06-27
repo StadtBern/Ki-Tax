@@ -30,7 +30,7 @@ public class BerechnungsgutscheinEvaluator {
 	//todo das hier in einem service zusammenstellen
 	public void useBernerRules() {
 
-		BetreuungsangebotTypRule betreuungsangebotTypRule = new BetreuungsangebotTypRule(defaultGueltigkeit);
+		ErwerbspensumRule betreuungsangebotTypRule = new ErwerbspensumRule(defaultGueltigkeit);
 		rules.put(betreuungsangebotTypRule.getRuleKey(), betreuungsangebotTypRule);
 
 		//todo default gueltikeit mit BetPeriode ersetzten

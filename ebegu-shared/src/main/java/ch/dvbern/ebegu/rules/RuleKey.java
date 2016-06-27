@@ -11,6 +11,6 @@ public enum RuleKey {
 	 * Regel 4.2 definiert dass kein Anspruch besteht wenn das massgebende Einkommen zu hoch ist
 	 */
 	MAXIMALES_EINKOMMEN,
-	BETREUUNGSANGEBOT_TYP, UMZUG_BERN
+	BETREUUNGSANGEBOT_TYP, ERWERBSPENSUM, UMZUG_BERN
 
 }

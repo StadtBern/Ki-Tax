@@ -78,8 +78,13 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 		Validate.notNull(this.getBetreuung().getKind(), "Can not extract Gesuchsperiode because Kind is null");
 		Validate.notNull(this.getBetreuung().getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
 		return this.getBetreuung().getKind().getGesuch().getGesuchsperiode();
-
 	}
+
+	@Transient
+	public Gesuch extractGesuch(){
+		return this.getBetreuung().getKind().getGesuch();
+	}
+
 
 	@Override
 	public int compareTo(BetreuungspensumContainer o) {
