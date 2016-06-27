@@ -17,7 +17,6 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	private static final long serialVersionUID = -1217019901364130097L;
 
-
 	@Nullable
 	private JaxGesuchsteller gesuchsteller1;
 
@@ -30,8 +29,8 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private JaxFamiliensituation familiensituation;
 
-	private Boolean einkommensverschlechterung;
-
+	@Nullable
+	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
@@ -42,7 +41,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable JaxGesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable final JaxGesuchsteller gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
@@ -51,7 +50,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable JaxGesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable final JaxGesuchsteller gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -59,7 +58,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		return kindContainers;
 	}
 
-	public void setKindContainers(Set<JaxKindContainer> kindContainers) {
+	public void setKindContainers(final Set<JaxKindContainer> kindContainers) {
 		this.kindContainers = kindContainers;
 	}
 
@@ -68,16 +67,17 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		return familiensituation;
 	}
 
-	public void setFamiliensituation(@Nullable JaxFamiliensituation familiensituation) {
+	public void setFamiliensituation(@Nullable final JaxFamiliensituation familiensituation) {
 		this.familiensituation = familiensituation;
 	}
 
-	public Boolean getEinkommensverschlechterung() {
-		return einkommensverschlechterung;
+	@Nullable
+	public JaxEinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
+		return einkommensverschlechterungInfo;
 	}
 
-	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
-		this.einkommensverschlechterung = einkommensverschlechterung;
+	public void setEinkommensverschlechterungInfo(@Nullable final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
+		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
 	}
 }
 

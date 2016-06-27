@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -42,20 +43,20 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchService);
 		persistNewEntity();
 
-		Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		Assert.assertEquals(1, allGesuche.size());
 	}
 
 	@Test
 	public void updateGesuch() {
 		Assert.assertNotNull(gesuchService);
-		Gesuch insertedGesuch = persistNewEntity();
+		final Gesuch insertedGesuch = persistNewEntity();
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(insertedGesuch.getId());
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(insertedGesuch.getId());
 		Assert.assertEquals(insertedGesuch.getFall().getId(), gesuch.get().getFall().getId());
 
 		gesuch.get().setFall(persistence.persist(TestDataUtil.createDefaultFall()));
-		Gesuch updated = gesuchService.updateGesuch(gesuch.get());
+		final Gesuch updated = gesuchService.updateGesuch(gesuch.get());
 		Assert.assertEquals(updated.getFall().getId(), gesuch.get().getFall().getId());
 
 	}
@@ -63,18 +64,40 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
-		Gesuch gesuch = persistNewEntity();
+		final Gesuch gesuch = persistNewEntity();
 		Assert.assertEquals(1, gesuchService.getAllGesuche().size());
 
 		gesuchService.removeGesuch(gesuch);
 		Assert.assertEquals(0, gesuchService.getAllGesuche().size());
 	}
 
+	@Test
+	public void createEinkommensverschlechterungsGesuch() {
+		Assert.assertNotNull(gesuchService);
+		persistEinkommensverschlechterungEntity();
+		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
+		Assert.assertEquals(1, allGesuche.size());
+		Gesuch gesuch = allGesuche.iterator().next();
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
+		Assert.assertNotNull(einkommensverschlechterungInfo);
+		Assert.assertTrue(einkommensverschlechterungInfo.getEinkommensverschlechterung());
+		Assert.assertTrue(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus1());
+		Assert.assertFalse(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2());
+	}
+
 
 	// HELP METHOD
 
 	private Gesuch persistNewEntity() {
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
+		gesuch.setFall(persistence.persist(gesuch.getFall()));
+		gesuchService.createGesuch(gesuch);
+		return gesuch;
+	}
+
+	private Gesuch persistEinkommensverschlechterungEntity() {
+		final Gesuch gesuch = TestDataUtil.createDefaultEinkommensverschlechterungsGesuch();
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);

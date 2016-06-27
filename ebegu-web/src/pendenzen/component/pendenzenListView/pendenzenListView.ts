@@ -41,6 +41,7 @@ export class PendenzenListViewController {
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
         'GesuchRS', 'GesuchModelManager', '$state', 'UserRS'];
+
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS, private gesuchRS: GesuchRS,
                 private gesuchModelManager: GesuchModelManager, private $state: IStateService, private userRS: UserRS) {

@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -74,6 +77,36 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(0, gesuchstellerService.getAllGesuchsteller().size());
 	}
 
+	@Test
+	public void createGesuchstellerWithEinkommensverschlechterung() {
+		Assert.assertNotNull(gesuchstellerService);
+		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchstellerWithEinkommensverschlechterung();
+
+		gesuchstellerService.createGesuchsteller(gesuchsteller);
+		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
+		Assert.assertEquals(1, allGesuchsteller.size());
+		
+		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
+		final EinkommensverschlechterungContainer einkommensverschlechterungContainer = nextGesuchsteller.getEinkommensverschlechterungContainer();
+		Assert.assertNotNull(einkommensverschlechterungContainer);
+
+		final Einkommensverschlechterung ekvGSBasisJahrPlus1 = einkommensverschlechterungContainer.getEkvGSBasisJahrPlus1();
+		Assert.assertNotNull(ekvGSBasisJahrPlus1);
+		Assert.assertEquals(0, ekvGSBasisJahrPlus1.getNettolohnJan().compareTo(BigDecimal.ONE));
+
+		final Einkommensverschlechterung ekvGSBasisJahrPlus2 = einkommensverschlechterungContainer.getEkvGSBasisJahrPlus2();
+		Assert.assertNotNull(ekvGSBasisJahrPlus2);
+		Assert.assertEquals(0, ekvGSBasisJahrPlus2.getNettolohnJan().compareTo(BigDecimal.valueOf(2)));
+
+		final Einkommensverschlechterung ekvJABasisJahrPlus1 = einkommensverschlechterungContainer.getEkvJABasisJahrPlus1();
+		Assert.assertNotNull(ekvJABasisJahrPlus1);
+		Assert.assertEquals(0, ekvJABasisJahrPlus1.getNettolohnJan().compareTo(BigDecimal.valueOf(3)));
+
+		final Einkommensverschlechterung ekvJABasisJahrPlus2 = einkommensverschlechterungContainer.getEkvJABasisJahrPlus2();
+		Assert.assertNotNull(ekvJABasisJahrPlus2);
+		Assert.assertEquals(0, ekvJABasisJahrPlus2.getNettolohnJan().compareTo(BigDecimal.valueOf(4)));
+
+	}
 
 
 	// Helper Methods
@@ -83,7 +116,6 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		persistence.persist(gesuchsteller);
 		return gesuchsteller;
 	}
-
 
 
 }
