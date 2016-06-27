@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
-                 version="2.1">
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd"
+				 version="2.1">
 	<entity class="ch.dvbern.ebegu.entities.ApplicationProperty"/>
 	<entity class="ch.dvbern.ebegu.entities.Adresse"/>
 	<entity class="ch.dvbern.ebegu.entities.GesuchstellerAdresse"/>
@@ -29,5 +29,8 @@
 	<entity class="ch.dvbern.ebegu.entities.EbeguParameter"/>
 	<entity class="ch.dvbern.ebegu.entities.Benutzer"/>
 	<entity class="ch.dvbern.ebegu.entities.AuthorisierterBenutzer"/>
+	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo"/>
+	<entity class="ch.dvbern.ebegu.entities.Einkommensverschlechterung"/>
+	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
 
 </entity-mappings>

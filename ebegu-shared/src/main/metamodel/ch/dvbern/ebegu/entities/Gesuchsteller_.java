@@ -18,6 +18,7 @@ public abstract class Gesuchsteller_ extends ch.dvbern.ebegu.entities.AbstractPe
 	public static volatile SingularAttribute<Gesuchsteller, String> telefon;
 	public static volatile SingularAttribute<Gesuchsteller, String> mobile;
 	public static volatile SingularAttribute<Gesuchsteller, Boolean> diplomatenstatus;
+	public static volatile SingularAttribute<Gesuchsteller, EinkommensverschlechterungContainer> einkommensverschlechterungContainer;
 	public static volatile SingularAttribute<Gesuchsteller, String> telefonAusland;
 
 }

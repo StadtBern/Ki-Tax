@@ -15,10 +15,10 @@ import java.util.HashSet;
  */
 public final class TestDataUtil {
 
-	private TestDataUtil(){
+	private TestDataUtil() {
 	}
 
-	public  static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
+	public static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
 		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
 		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
 		gesuchstellerAdresse.setHausnummer("21");
@@ -30,7 +30,7 @@ public final class TestDataUtil {
 		return gesuchstellerAdresse;
 	}
 
-	public  static Adresse createDefaultAdresse() {
+	public static Adresse createDefaultAdresse() {
 		Adresse adresse = new Adresse();
 		adresse.setStrasse("Nussbaumstrasse");
 		adresse.setHausnummer("21");
@@ -41,9 +41,9 @@ public final class TestDataUtil {
 		return adresse;
 	}
 
-	public static Gesuchsteller createDefaultGesuchsteller(){
+	public static Gesuchsteller createDefaultGesuchsteller() {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
-		gesuchsteller.setGeburtsdatum(LocalDate.of(1984,12,12));
+		gesuchsteller.setGeburtsdatum(LocalDate.of(1984, 12, 12));
 		gesuchsteller.setVorname("Tim");
 		gesuchsteller.setNachname("Tester");
 		gesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
@@ -55,7 +55,35 @@ public final class TestDataUtil {
 		return gesuchsteller;
 	}
 
-	public static Familiensituation createDefaultFamiliensituation(){
+	public static EinkommensverschlechterungContainer createDefaultEinkommensverschlechterungsContainer() {
+		EinkommensverschlechterungContainer einkommensverschlechterungContainer = new EinkommensverschlechterungContainer();
+
+		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus1(createDefaultEinkommensverschlechterung());
+
+		final Einkommensverschlechterung ekvGSBasisJahrPlus2 = createDefaultEinkommensverschlechterung();
+		ekvGSBasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(2));
+		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus2(ekvGSBasisJahrPlus2);
+
+		final Einkommensverschlechterung ekvJABasisJahrPlus1 = createDefaultEinkommensverschlechterung();
+		ekvJABasisJahrPlus1.setNettolohnJan(BigDecimal.valueOf(3));
+		einkommensverschlechterungContainer.setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
+
+		final Einkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultEinkommensverschlechterung();
+		ekvJABasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(4));
+		einkommensverschlechterungContainer.setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
+
+
+		return einkommensverschlechterungContainer;
+	}
+
+	public static Einkommensverschlechterung createDefaultEinkommensverschlechterung() {
+		Einkommensverschlechterung einkommensverschlechterung = new Einkommensverschlechterung();
+		createDefaultAbstractFinanzielleSituation(einkommensverschlechterung);
+		einkommensverschlechterung.setNettolohnJan(BigDecimal.ONE);
+		return einkommensverschlechterung;
+	}
+
+	public static Familiensituation createDefaultFamiliensituation() {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
@@ -98,12 +126,18 @@ public final class TestDataUtil {
 	}
 
 	public static FinanzielleSituation createDefaultFinanzielleSituation() {
+
 		FinanzielleSituation finanzielleSituation = new FinanzielleSituation();
-		finanzielleSituation.setSteuerveranlagungErhalten(Boolean.FALSE);
-		finanzielleSituation.setSteuererklaerungAusgefuellt(Boolean.TRUE);
-		finanzielleSituation.setNettolohn(new BigDecimal(100000));
+		createDefaultAbstractFinanzielleSituation(finanzielleSituation);
+		finanzielleSituation.setNettolohn(BigDecimal.valueOf(100000));
 		return finanzielleSituation;
 	}
+
+	public static void createDefaultAbstractFinanzielleSituation(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+		abstractFinanzielleSituation.setSteuerveranlagungErhalten(Boolean.FALSE);
+		abstractFinanzielleSituation.setSteuererklaerungAusgefuellt(Boolean.TRUE);
+	}
+
 	public static Traegerschaft createDefaultTraegerschaft() {
 		Traegerschaft traegerschaft = new Traegerschaft();
 		traegerschaft.setName("Traegerschaft1");
@@ -123,17 +157,18 @@ public final class TestDataUtil {
 		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010,1,1), LocalDate.of(2010,12,31)));
+		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
+
 	public static Kind createDefaultKind() {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
 		kind.setVorname("Kind_Max");
-		kind.setGeburtsdatum(LocalDate.of(2010,12,12));
+		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		kind.setBemerkungen("notizen");
@@ -219,5 +254,29 @@ public final class TestDataUtil {
 		instStammdaten.setValue("Wert");
 		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return instStammdaten;
+	}
+
+	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo(Gesuch gesuch) {
+		final EinkommensverschlechterungInfo einkommensverschlechterungInfo = new EinkommensverschlechterungInfo();
+		einkommensverschlechterungInfo.setEinkommensverschlechterung(true);
+		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus1(true);
+		einkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(LocalDate.now());
+		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
+		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
+		einkommensverschlechterungInfo.setGesuch(gesuch);
+		return einkommensverschlechterungInfo;
+
+	}
+
+	public static Gesuch createDefaultEinkommensverschlechterungsGesuch() {
+		Gesuch gesuch = createDefaultGesuch();
+		gesuch.setEinkommensverschlechterungInfo(createDefaultEinkommensverschlechterungsInfo(gesuch));
+		return gesuch;
+	}
+
+	public static Gesuchsteller createDefaultGesuchstellerWithEinkommensverschlechterung() {
+		final Gesuchsteller gesuchsteller = createDefaultGesuchsteller();
+		gesuchsteller.setEinkommensverschlechterungContainer(createDefaultEinkommensverschlechterungsContainer());
+		return gesuchsteller;
 	}
 }
