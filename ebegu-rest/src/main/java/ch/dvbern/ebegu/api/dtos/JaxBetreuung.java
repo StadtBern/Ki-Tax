@@ -39,7 +39,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private String bemerkungen;
 
 	@Min(1)
-	@NotNull
 	private Integer betreuungNummer;
 
 

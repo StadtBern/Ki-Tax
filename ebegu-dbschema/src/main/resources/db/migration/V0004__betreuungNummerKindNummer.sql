@@ -11,5 +11,8 @@ ALTER TABLE gesuch ADD COLUMN next_number_kind INTEGER NOT NULL;
 ALTER TABLE gesuch_aud ADD COLUMN next_number_kind INTEGER;
 
 
-CREATE INDEX IX_betreuung_kind_betreuung_nummer ON betreuung (betreuung_nummer, kind_id);
-CREATE INDEX IX_kindcontainer_gesuch_kind_nummer ON kind_container (kind_nummer, gesuch_id);
+ALTER TABLE betreuung
+  ADD CONSTRAINT UK_betreuung_kind_betreuung_nummer UNIQUE (betreuung_nummer, kind_id);
+
+ALTER TABLE kind_container
+  ADD CONSTRAINT UK_kindcontainer_gesuch_kind_nummer UNIQUE (kind_nummer, gesuch_id);

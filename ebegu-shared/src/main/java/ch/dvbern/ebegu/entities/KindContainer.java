@@ -16,9 +16,9 @@ import java.util.Set;
  */
 @Audited
 @Entity
-@Table(indexes = {
-	@Index(columnList = "kindNummer,gesuch_id", name = "IX_kindcontainer_gesuch_kind_nummer")
-})
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
+)
 public class KindContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -6784985260190035840L;

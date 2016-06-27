@@ -421,14 +421,12 @@ export default class GesuchModelManager {
         //besteht schon -> update
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
             //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
         }
     }
@@ -437,14 +435,18 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                //muessen das Gesuch holen, da die nextKindNumber im Server geaendert wurde
+                return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse) => {
+                    this.gesuch = gesuchResponse;
                     return this.getKindToWorkWith();
                 });
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                //muessen das Gesuch holen, da die nextKindNumber im Server geaendert wurde
+                return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse) => {
+                    this.gesuch = gesuchResponse;
                     return this.getKindToWorkWith();
                 });
             });

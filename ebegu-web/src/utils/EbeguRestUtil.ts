@@ -660,6 +660,8 @@ export default class EbeguRestUtil {
             restKindContainer.kindJA = this.kindToRestObject({}, kindContainer.kindJA);
         }
         restKindContainer.betreuungen = this.betreuungListToRestObject(kindContainer.betreuungen);
+        restKindContainer.kindNummer = kindContainer.kindNummer;
+        restKindContainer.nextNumberBetreuung = kindContainer.nextNumberBetreuung;
         return restKindContainer;
     }
 
@@ -693,6 +695,8 @@ export default class EbeguRestUtil {
             kindContainerTS.kindGS = this.parseKind(new TSKind(), kindContainerFromServer.kindGS);
             kindContainerTS.kindJA = this.parseKind(new TSKind(), kindContainerFromServer.kindJA);
             kindContainerTS.betreuungen = this.parseBetreuungList(kindContainerFromServer.betreuungen);
+            kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
+            kindContainerTS.nextNumberBetreuung = kindContainerFromServer.nextNumberBetreuung;
             return kindContainerTS;
         }
         return undefined;

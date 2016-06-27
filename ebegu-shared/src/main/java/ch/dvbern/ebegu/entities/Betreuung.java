@@ -23,9 +23,9 @@ import java.util.TreeSet;
 @Entity
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
-@Table(indexes = {
-	@Index(columnList = "betreuungNummer,kind_id", name = "IX_betreuung_kind_betreuung_nummer")
-})
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer")
+)
 public class Betreuung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6776987863150835840L;

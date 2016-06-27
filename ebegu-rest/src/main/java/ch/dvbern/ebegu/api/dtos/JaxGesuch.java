@@ -34,7 +34,6 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 	@Min(1)
-	@NotNull
 	private Integer nextNumberKind;
 
 

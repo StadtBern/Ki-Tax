@@ -28,11 +28,9 @@ public class JaxKindContainer extends JaxAbstractDTO {
 	private Set<JaxBetreuung> betreuungen = new HashSet<>();
 
 	@Min(1)
-	@NotNull
 	private Integer kindNummer;
 
 	@Min(1)
-	@NotNull
 	private Integer nextNumberBetreuung;
 
 
