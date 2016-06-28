@@ -14,13 +14,13 @@ import java.util.List;
 /**
  * Regel die prueft ob das maximal moegliche Einkommen ueberschritten ist
  */
-public class MaximalesEinkommen extends AbstractEbeguRule {
+public class MaximalesEinkommenRule extends AbstractEbeguRule {
 
 
 	private BigDecimal maximalesEinkommen;
 
 
-	public MaximalesEinkommen(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
+	public MaximalesEinkommenRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
 		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.REDUKTIONSREGEL, validityPeriod);
 		this.maximalesEinkommen = maximalesEinkommen;
 	}
@@ -40,7 +40,7 @@ public class MaximalesEinkommen extends AbstractEbeguRule {
 	@Override
 	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
-			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+			verfuegungZeitabschnitt.setAnspruchspensumOriginal(0);
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.MAXIMALES_EINKOMMEN.name() + ": Maximales Einkommen überschritten");
 		}
 	}

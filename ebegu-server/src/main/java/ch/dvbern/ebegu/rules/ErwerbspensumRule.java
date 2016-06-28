@@ -18,6 +18,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL, validityPeriod);
 	}
 
+	@Override
 	@Nonnull
 	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
@@ -31,6 +32,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 		return erwerbspensumAbschnitte;
 	}
 
+	@Override
 	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Objects.requireNonNull(betreuungspensumContainer.extractGesuch(), "Gesuch muss gesetzt sein");
 		Objects.requireNonNull(betreuungspensumContainer.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");

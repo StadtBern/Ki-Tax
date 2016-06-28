@@ -215,7 +215,7 @@ public class AbstractEbeguRuleTest {
 
 	@Test
 	public void testBegrenzungAufGesuchsperiode() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer();
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
 		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
 
@@ -231,7 +231,7 @@ public class AbstractEbeguRuleTest {
 
 	@Test
 	public void testZusammenlegenVonIdentischenPerioden() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer();
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
 		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
 		// 2*20%, direkt gefolgt von 1*40% sollte 1 Abschnitt mit 40% geben

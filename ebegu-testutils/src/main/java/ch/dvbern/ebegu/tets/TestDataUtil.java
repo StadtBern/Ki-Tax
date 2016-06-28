@@ -172,6 +172,16 @@ public final class TestDataUtil {
 		return epCont;
 	}
 
+	public static ErwerbspensumContainer createErwerbspensum(LocalDate von, LocalDate bis, int pensum, int zuschlag) {
+		ErwerbspensumContainer erwerbspensumContainer = new ErwerbspensumContainer();
+		Erwerbspensum erwerbspensum = new Erwerbspensum();
+		erwerbspensum.setPensum(pensum);
+		erwerbspensum.setZuschlagsprozent(zuschlag);
+		erwerbspensum.setGueltigkeit(new DateRange(von, bis));
+		erwerbspensumContainer.setErwerbspensumJA(erwerbspensum);
+		return erwerbspensumContainer;
+	}
+
 	public static Erwerbspensum createErwerbspensumData() {
 		Erwerbspensum ep = new Erwerbspensum();
 		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
@@ -229,23 +239,29 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static BetreuungspensumContainer createGesuchWithBetreuungspensumContainer() {
+	public static BetreuungspensumContainer createGesuchWithBetreuungspensumContainer(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		gesuch.setFamiliensituation(new Familiensituation());
 		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		if (zweiGesuchsteller) {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-		gesuch.setGesuchsteller2(new Gesuchsteller());
-		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-
+		if (zweiGesuchsteller) {
+			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		}
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
 		betreuungspensumContainer.setBetreuung(new Betreuung());
 		betreuungspensumContainer.getBetreuung().setKind(new KindContainer());
 		betreuungspensumContainer.getBetreuung().getKind().setGesuch(gesuch);
+		betreuungspensumContainer.getBetreuung().setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		return betreuungspensumContainer;
 	}
 }

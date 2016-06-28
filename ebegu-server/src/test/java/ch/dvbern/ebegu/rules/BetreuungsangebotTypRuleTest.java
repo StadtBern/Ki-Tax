@@ -1,0 +1,94 @@
+package ch.dvbern.ebegu.rules;
+
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Testet die BetreuungsangebotTyp Regel
+ */
+public class BetreuungsangebotTypRuleTest {
+
+	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+	private final BetreuungsangebotTypRule betreuungsangebotTypRule = new BetreuungsangebotTypRule(defaultGueltigkeit);
+	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
+
+	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
+	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
+
+	@Test
+	public void testAngebotKita() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.KITA, betreuungspensumContainer, dto);
+
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
+	}
+
+	@Test
+	public void testAngebotTagi() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGI, betreuungspensumContainer, dto);
+
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
+	}
+
+	@Test
+	public void testAngebotTageseltern() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESELTERN, betreuungspensumContainer, dto);
+
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
+	}
+
+	@Test
+	public void testAngebotTagesschule() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESSCHULE, betreuungspensumContainer, dto);
+
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
+	}
+
+	private List<VerfuegungZeitabschnitt> prepareData(BetreuungsangebotTyp betreuungsangebotTyp, BetreuungspensumContainer betreuungspensumContainer, FinanzielleSituationResultateDTO dto) {
+		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+		betreuungspensumContainer.getBetreuung().getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		return erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), dto);
+	}
+}

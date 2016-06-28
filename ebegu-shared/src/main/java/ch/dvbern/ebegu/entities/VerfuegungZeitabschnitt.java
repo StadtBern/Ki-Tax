@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,7 +31,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private BigDecimal abzugFamGroesse;
 	private BigDecimal massgebendesEinkommen;
 
-	private List<String> bemerkungen;
+	@Nonnull
+	private List<String> bemerkungen = new ArrayList<>();
 
 	private String status;
 
@@ -122,11 +124,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.massgebendesEinkommen = massgebendesEinkommen;
 	}
 
+	@Nonnull
 	public List<String> getBemerkungen() {
 		return bemerkungen;
 	}
 
-	public void setBemerkungen(List<String> bemerkungen) {
+	public void setBemerkungen(@Nonnull List<String> bemerkungen) {
 		this.bemerkungen = bemerkungen;
 	}
 
@@ -146,15 +149,20 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
+		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
+		if (this.getMassgebendesEinkommen() != null) {
+			massgebendesEinkommen = massgebendesEinkommen.add(this.getMassgebendesEinkommen());
+		}
+		if (other.getMassgebendesEinkommen() != null) {
+			massgebendesEinkommen = massgebendesEinkommen.add(other.getMassgebendesEinkommen());
+		}
+		this.setMassgebendesEinkommen(massgebendesEinkommen);
 	}
 
 	/**
 	 * Fügt eine Bemerkung zur Liste hinzu
      */
 	public void addBemerkung(String bemerkung) {
-		if (bemerkungen == null) {
-			bemerkungen = new ArrayList<>();
-		}
 		bemerkungen.add(bemerkung);
 	}
 
@@ -163,9 +171,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 */
 	public void addAllBemerkungen(@Nullable List<String> bemerkungenList) {
 		if (bemerkungenList != null) {
-			if (bemerkungen == null) {
-				bemerkungen = new ArrayList<>();
-			}
 			bemerkungen.addAll(bemerkungenList);
 		}
 	}

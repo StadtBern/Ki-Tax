@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,92 +14,83 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by hefr on 27.06.16.
+ * Tests für ErwerbspensumRule
  */
 public class ErwerbspensumRuleTest {
 
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
 
-	private final LocalDate DATUM_1 = LocalDate.of(2016, Month.APRIL, 1);
-	private final LocalDate DATUM_2 = LocalDate.of(2016, Month.SEPTEMBER, 1);
-	private final LocalDate DATUM_3 = LocalDate.of(2016, Month.OCTOBER, 1);
-	private final LocalDate DATUM_4 = LocalDate.of(2016, Month.DECEMBER, 1);
+	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
+	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 
 	@Test
-	public void createVerfuegungsZeitabschnitte() throws Exception {
+	public void testKeinErwerbspensum() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
 
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.size());
+	}
+
+	@Test
+	public void testNormalfallZweiGesuchsteller() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
+		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 40, 0));
+
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(40, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
+	}
+
+	@Test
+	public void testNormalfallEinGesuchsteller() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(60, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
 	@Test
 	public void testNurEinErwerbspensumBeiZweiGesuchstellern() throws Exception {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer();
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
 		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
 
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(createErwerbspensum(Constants.START_OF_TIME, Constants.END_OF_TIME, 80, 10));
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(createErwerbspensum(DATUM_2, DATUM_4, 60, 0));
-
-//		Betreuung defaultBetreuung = TestDataUtil.createDefaultBetreuung();
-//		BetreuungspensumContainer betPensContainer = TestDataUtil.createBetPensContainer(defaultBetreuung);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
-		for (VerfuegungZeitabschnitt zeitabschnitt : result) {
-			System.out.println(zeitabschnitt);
-		};
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
-
 		Assert.assertNotNull(result);
-		Assert.assertEquals(3, result.size());
-		VerfuegungZeitabschnitt first = result.get(0);
-		VerfuegungZeitabschnitt second = result.get(1);
-		VerfuegungZeitabschnitt third = result.get(2);
-		Assert.assertEquals(DATUM_1, first.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(DATUM_2.minusDays(1), first.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(DATUM_2, second.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(DATUM_3, second.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(DATUM_3.plusDays(1), third.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(DATUM_4, third.getGueltigkeit().getGueltigBis());
-		Assert.assertEquals(40, first.getErwerbspensumGS1());
-		Assert.assertEquals(100, second.getErwerbspensumGS1());
-		Assert.assertEquals(60, third.getErwerbspensumGS1());
-
-
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
+	@Test
+	public void testMehrAls100ProzentBeiEinemGesuchsteller() {
+		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
+		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
 
-//	private BetreuungspensumContainer createGesuchWithBetreuungspensumContainer() {
-//		Gesuch gesuch = new Gesuch();
-//		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-//		gesuch.setFamiliensituation(new Familiensituation());
-//		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
-//		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
-//		gesuch.setGesuchsteller1(new Gesuchsteller());
-//		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-//		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-//		gesuch.setGesuchsteller2(new Gesuchsteller());
-//		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-//		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-//
-//		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
-//		betreuungspensumContainer.setBetreuung(new Betreuung());
-//		betreuungspensumContainer.getBetreuung().setKind(new KindContainer());
-//		betreuungspensumContainer.getBetreuung().getKind().setGesuch(gesuch);
-//		return betreuungspensumContainer;
-//	}
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
 
-	private ErwerbspensumContainer createErwerbspensum(LocalDate von, LocalDate bis, int pensum, int zuschlag) {
-		ErwerbspensumContainer erwerbspensumContainer = new ErwerbspensumContainer();
-		Erwerbspensum erwerbspensum = new Erwerbspensum();
-		erwerbspensum.setPensum(pensum);
-		erwerbspensum.setZuschlagsprozent(zuschlag);
-		erwerbspensum.setGueltigkeit(new DateRange(von, bis));
-		erwerbspensumContainer.setErwerbspensumJA(erwerbspensum);
-		return erwerbspensumContainer;
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
-
 }

@@ -34,7 +34,7 @@ public class BerechnungsgutscheinEvaluator {
 		rules.put(betreuungsangebotTypRule.getRuleKey(), betreuungsangebotTypRule);
 
 		//todo default gueltikeit mit BetPeriode ersetzten
-		MaximalesEinkommen maxEinkommenRule = new MaximalesEinkommen(defaultGueltigkeit, new BigDecimal(158000));
+		MaximalesEinkommenRule maxEinkommenRule = new MaximalesEinkommenRule(defaultGueltigkeit, new BigDecimal(158000));
 		rules.put(maxEinkommenRule.getRuleKey(), maxEinkommenRule);
 
 		//todo alle weiteren rules hinzufuegen
