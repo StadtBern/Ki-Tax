@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -34,6 +35,11 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	@Inject
 	private Persistence<Kind> persistence;
 
+	private Gesuch gesuch;
+
+	@Inject
+	private GesuchService gesuchService;
+
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
 		return createTestArchive();
@@ -55,7 +61,9 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 		Optional<KindContainer> updatedKind= kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(updatedKind.isPresent());
 		Assert.assertEquals("Neuer Name", updatedKind.get().getKindGS().getNachname());
-
+		Assert.assertEquals(new Integer(1), updatedKind.get().getNextNumberBetreuung());
+		Assert.assertEquals(new Integer(1), updatedKind.get().getKindNummer());
+		Assert.assertEquals(new Integer(2), gesuchService.findGesuch(gesuch.getId()).get().getNextNumberKind());
 	}
 
 	@Test
@@ -74,7 +82,7 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 
 	@Nonnull
 	private KindContainer persistKind() {
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch = TestDataUtil.createDefaultGesuch();
 		persistence.persist(gesuch.getGesuchsperiode());
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch);
