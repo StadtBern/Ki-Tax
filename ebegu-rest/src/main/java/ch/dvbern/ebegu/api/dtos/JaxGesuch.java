@@ -34,7 +34,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 	@Min(1)
-	private Integer nextNumberKind;
+	private Integer nextNumberKind = 1;
 
 
 	public static long getSerialVersionUID() {
