@@ -112,19 +112,32 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 		return startsDayAfter(other.getGueltigBis());
 	}
 
+	/**
+	 * gueltigAb < other.gueltigAb
+	 */
+	public boolean startsBefore(@Nonnull DateRange other) {
+		return getGueltigAb().isBefore(other.getGueltigAb());
+	}
+
+	/**
+	 * gueltigAb == other.gueltigAb
+     */
+	public boolean startsSameDay(@Nonnull DateRange other) {
+		return getGueltigAb().isEqual(other.getGueltigAb());
+	}
+
+	/**
+	 * gueltigBis > other.gueltigBis
+	 */
+	public boolean endsAfter(@Nonnull DateRange other) {
+		return getGueltigBis().isAfter(other.getGueltigBis());
+	}
 
 	/**
 	 * gueltigBis == date - 1 Day
 	 */
 	public boolean endsDayBefore(@Nonnull ChronoLocalDate date) {
 		return getGueltigBis().equals(date.minus(1, ChronoUnit.DAYS));
-	}
-
-	/**
-	 * gueltigBis == gueltigAb
-	 */
-	public boolean isStichtag() {
-		return getGueltigAb().equals(getGueltigBis());
 	}
 
 	/**
@@ -135,12 +148,38 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	/**
+	 * gueltigBis < other.gueltigBis
+	 */
+	public boolean endsBefore(@Nonnull DateRange other) {
+		return this.getGueltigBis().isBefore(other.getGueltigBis());
+	}
+
+	/**
+	 * gueltigBis == other.gueltigBis
+	 */
+	public boolean endsSameDay(@Nonnull DateRange other) {
+		return this.getGueltigBis().isEqual(other.getGueltigBis());
+	}
+
+	/**
+	 * gueltigBis == gueltigAb
+	 */
+	public boolean isStichtag() {
+		return getGueltigAb().equals(getGueltigBis());
+	}
+
+	/**
 	 * setzt das gueltig bis einer Range auf den Tag vor dem datum von der "other" range
-	 * @param other
 	 */
 	public void endOnDayBefore(@Nonnull DateRange other){
 		this.setGueltigBis(other.gueltigAb.minusDays(1));
+	}
 
+	/**
+	 * Setzt das GueltigAb auf das GueltigBis + 1 des "other"
+     */
+	public void startOnDayAfter(@Nonnull DateRange other) {
+		this.setGueltigAb(other.getGueltigBis().plusDays(1));
 	}
 
 	/**

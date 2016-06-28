@@ -7,7 +7,8 @@ import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,37 +25,29 @@ public class MaximalesEinkommen extends AbstractEbeguRule {
 		this.maximalesEinkommen = maximalesEinkommen;
 	}
 
-
-	//evtl mal versuchen nur Zeitabschnitte hinzuzufuegen egal was schon in der Liste drin ist
+	@Nonnull
 	@Override
-	public List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer,
-												   @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
-												   @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+		// TODO Einkommensverschlechterung(en) berücksichtigen mit deren Stichdatum (immer 1. des Monats)
+		// TODO Gehen wir hier davon aus, dass die "EinkommensverschlechterungsRegel" schon die Schnitze für anderes Einkommen gemacht hat?
+		List<VerfuegungZeitabschnitt> einkommensAbschnitte = new ArrayList<>();
+		VerfuegungZeitabschnitt finanzielleSituationAbschnitt = new VerfuegungZeitabschnitt(betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit());
+		finanzielleSituationAbschnitt.setMassgebendesEinkommen(readMassgebendesEinkommen(finSitResultatDTO));
+		einkommensAbschnitte.add(finanzielleSituationAbschnitt);
+		return einkommensAbschnitte;
+	}
 
-		//immer wenn das massgebende Einkommen aendert muss ein neuer Zeitabschnitt definiert werden
-		for (int i = 0; i < 1; i++) { //todo hier ueber finanzielleSituation sowie Verschlechterungen iterieren und jeweils das ereignisdatum verwenden um einen zeitabschnitt zu machen
-			//Beispiel, einkommensverschlechterung auf Maerz
-			LocalDate from = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
-			LocalDate to = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigBis();
-			VerfuegungZeitabschnitt einkommensabschnitt = new VerfuegungZeitabschnitt(betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit());
-			//wenn massgebendes Einkommen hoeher als Max erlischt der Anspruch
-			if (readMassgebendesEinkommen(finSitResultatDTO).compareTo(maximalesEinkommen) > 0) {
-				einkommensabschnitt.setAnspruchberechtigtesPensum(0);
-			}
-			//else muss nichts gemacht werden
-			zeitabschnitte.add(einkommensabschnitt);
-
+	@Override
+	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
+			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.MAXIMALES_EINKOMMEN.name() + ": Maximales Einkommen überschritten");
 		}
-
-		return zeitabschnitte;
 	}
 
 	/**
 	 * Beim auslesen des Massgebenden Einkommens ist die FinanzielleSituationResultatDTO bzw die
 	 * Einkommensverschlechterung relevant. Das heisst je nach Datum ist das massgebende Einkommen anders
-	 *
-	 * @param finSitResultatDTO
-	 * @return
 	 */
 	private BigDecimal readMassgebendesEinkommen(FinanzielleSituationResultateDTO finSitResultatDTO) {
 		return finSitResultatDTO.getMassgebendesEinkommen();

@@ -8,6 +8,7 @@ import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashSet;
 
 /**
@@ -213,11 +214,38 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
+	public static Gesuchsperiode createGesuchsperiode1617() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
+		return gesuchsperiode;
+	}
+
 	public static EbeguParameter createDefaultEbeguParameter() {
 		EbeguParameter instStammdaten = new EbeguParameter();
 		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		instStammdaten.setValue("Wert");
 		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return instStammdaten;
+	}
+
+	public static BetreuungspensumContainer createGesuchWithBetreuungspensumContainer() {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setFamiliensituation(new Familiensituation());
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		gesuch.setGesuchsteller1(new Gesuchsteller());
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		gesuch.setGesuchsteller2(new Gesuchsteller());
+		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+
+		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
+		betreuungspensumContainer.setBetreuung(new Betreuung());
+		betreuungspensumContainer.getBetreuung().setKind(new KindContainer());
+		betreuungspensumContainer.getBetreuung().getKind().setGesuch(gesuch);
+		return betreuungspensumContainer;
 	}
 }

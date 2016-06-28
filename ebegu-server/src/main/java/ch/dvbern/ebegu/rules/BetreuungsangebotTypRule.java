@@ -6,12 +6,12 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * User: homa
- * Date: 17.06.16
- * comments homa
+ * Regel für Betreuungsangebot: Es werden nur die Nicht-Schulamt-Angebote berechnet.
  */
 public class BetreuungsangebotTypRule extends AbstractEbeguRule{
 
@@ -19,11 +19,18 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule{
 		super(RuleKey.BETREUUNGSANGEBOT_TYP, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
+	@Nonnull
 	@Override
-	public List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
-		BetreuungspensumContainer betreuungspensum = new BetreuungspensumContainer();
-		betreuungspensum.getBetreuung().getKind().getGesuch();
+	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+		return new ArrayList<>();
+	}
 
-		return null;
+	@Override
+	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		if (betreuungspensumContainer.getBetreuung().getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
+			// TODO Es braucht noch eine, die für Tagesschule und Tagi immer den gewünschten Anspruch setzt. Evt. im BetreuungspensumRule?
+			verfuegungZeitabschnitt.setAnspruchspensumOriginal(0);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP.name() + ": Betreuungsangebot Schulamt");
+		}
 	}
 }

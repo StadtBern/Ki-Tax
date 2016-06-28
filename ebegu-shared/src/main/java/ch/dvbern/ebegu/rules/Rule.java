@@ -9,19 +9,23 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * User: homa
- * Date: 17.06.16
- * comments homa
+ * Interface für alle Berechnungs-Regeln in E-BEGU.
  */
 public interface Rule {
 
+	@Nonnull
 	LocalDate validFrom();
+
+	@Nonnull
 	LocalDate validTo();
 
+	@Nonnull
 	RuleType getRuleType();
+
+	@Nonnull
 	RuleKey getRuleKey();
 
-
+	@Nonnull
 	List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer,
 											@Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
 											@Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
