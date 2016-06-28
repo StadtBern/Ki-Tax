@@ -5,7 +5,6 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,16 +48,6 @@ public class Gesuch extends AbstractAntragEntity {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
-
-	/**
-	 * nextNumberKind ist die Nummer, die das naechste Kind bekommen wird. Aus diesem Grund ist es by default 1
-	 * Dieses Feld darf nicht mit der Anzahl der Kinder verwechselt werden, da sie sehr unterschiedlich sein koennen falls mehrere Kinder geloescht wurden
-	 */
-	@NotNull
-	@Min(1)
-	@Column(nullable = false)
-	private Integer nextNumberKind = 1;
-
 
 
 	@Nullable
@@ -108,13 +97,5 @@ public class Gesuch extends AbstractAntragEntity {
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
-	}
-
-	public Integer getNextNumberKind() {
-		return nextNumberKind;
-	}
-
-	public void setNextNumberKind(Integer nextNumberKind) {
-		this.nextNumberKind = nextNumberKind;
 	}
 }

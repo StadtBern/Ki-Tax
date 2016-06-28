@@ -361,6 +361,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.nextNumberKind = fall.nextNumberKind;
             return restFall;
         }
         return undefined;
@@ -372,6 +373,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
+            fallTS.nextNumberKind = fallFromServer.nextNumberKind;
             return fallTS;
         }
         return undefined;
@@ -384,7 +386,6 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
-        restGesuch.nextNumberKind = gesuch.nextNumberKind;
         return restGesuch;
     }
 
@@ -396,7 +397,6 @@ export default class EbeguRestUtil {
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
-            gesuchTS.nextNumberKind = gesuchFromServer.nextNumberKind;
             return gesuchTS;
         }
         return undefined;

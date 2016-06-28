@@ -437,13 +437,13 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                this.getGesuchFromServer();
+                this.getFallFromServer();
                 return this.getKindToWorkWith();
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                this.getGesuchFromServer();
+                this.getFallFromServer();
                 return this.getKindToWorkWith();
             });
         }
@@ -463,9 +463,9 @@ export default class GesuchModelManager {
      * Sucht das Gesuch im Server und aktualisiert es mit dem bekommenen Daten
      * @returns {IPromise<TResult>}
      */
-    private getGesuchFromServer(): IPromise<TSGesuch> {
-        return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse) => {
-            return this.gesuch = gesuchResponse;
+    private getFallFromServer(): IPromise<TSFall> {
+        return this.fallRS.findFall(this.gesuch.fall.id).then((fallResponse) => {
+            return this.gesuch.fall = fallResponse;
         });
     }
 

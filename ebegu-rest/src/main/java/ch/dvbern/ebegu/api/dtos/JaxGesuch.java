@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,8 +32,6 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
-	@Min(1)
-	private Integer nextNumberKind = 1;
 
 
 	public static long getSerialVersionUID() {
@@ -85,12 +82,5 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
 	}
 
-	public Integer getNextNumberKind() {
-		return nextNumberKind;
-	}
-
-	public void setNextNumberKind(Integer nextNumberKind) {
-		this.nextNumberKind = nextNumberKind;
-	}
 }
 

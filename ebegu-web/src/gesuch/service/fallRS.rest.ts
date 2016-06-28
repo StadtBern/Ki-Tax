@@ -1,4 +1,4 @@
-import {IHttpPromise, IHttpService} from 'angular';
+import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFall from '../../models/TSFall';
 
@@ -7,9 +7,9 @@ export default class FallRS {
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService) {
         this.serviceURL = REST_API + 'falle';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -35,8 +35,12 @@ export default class FallRS {
         });
     }
 
-    public findFall(fallID: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fallID));
+    public findFall(fallID: string): IPromise<any> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(fallID))
+            .then((response: any) => {
+                this.$log.debug('PARSING fall REST object ', response.data);
+                return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
+            });
     }
 
 }

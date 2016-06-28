@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FallService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * Resource fuer Fall
@@ -78,9 +80,16 @@ public class FallResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFall findFall(
-			@Nonnull @NotNull JaxId fallJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) throws EbeguException {
+		Validate.notNull(fallJAXPId.getId());
+		String fallID = converter.toEntityId(fallJAXPId);
+		Optional<Fall> fallOptional = fallService.findFall(fallID);
 
-		return null;
+		if (!fallOptional.isPresent()) {
+			return null;
+		}
+		Fall fallToReturn = fallOptional.get();
+		return converter.fallToJAX(fallToReturn);
 	}
 
 }

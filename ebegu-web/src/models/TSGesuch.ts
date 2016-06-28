@@ -10,7 +10,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
     private _einkommensverschlechterung: boolean;
-    private _nextNumberKind: number;
 
 
 
@@ -52,13 +51,5 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set einkommensverschlechterung(value: boolean) {
         this._einkommensverschlechterung = value;
-    }
-
-    get nextNumberKind(): number {
-        return this._nextNumberKind;
-    }
-
-    set nextNumberKind(value: number) {
-        this._nextNumberKind = value;
     }
 }

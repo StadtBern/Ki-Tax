@@ -6,9 +6,9 @@ ALTER TABLE kind_container ADD COLUMN next_number_betreuung INTEGER NOT NULL;
 ALTER TABLE kind_container_aud ADD COLUMN kind_nummer INTEGER;
 ALTER TABLE kind_container_aud ADD COLUMN next_number_betreuung INTEGER;
 
-ALTER TABLE gesuch ADD COLUMN next_number_kind INTEGER NOT NULL;
+ALTER TABLE fall ADD COLUMN next_number_kind INTEGER NOT NULL;
 
-ALTER TABLE gesuch_aud ADD COLUMN next_number_kind INTEGER;
+ALTER TABLE fall_aud ADD COLUMN next_number_kind INTEGER;
 
 
 ALTER TABLE betreuung

@@ -481,6 +481,9 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}
 		}
+		if (fallJAXP.getNextNumberKind() != null) {
+			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
+		}
 		return fall;
 	}
 
@@ -491,6 +494,7 @@ public class JaxBConverter {
 		if (persistedFall.getVerantwortlicher() != null) {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
+		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
 		return jaxFall;
 	}
 
@@ -534,10 +538,6 @@ public class JaxBConverter {
 			}
 		}
 
-		if (gesuchJAXP.getNextNumberKind() != null) {
-			gesuch.setNextNumberKind(gesuchJAXP.getNextNumberKind());
-		}
-
 		return gesuch;
 	}
 
@@ -560,7 +560,6 @@ public class JaxBConverter {
 		if (persistedGesuch.getEinkommensverschlechterungInfo() != null) {
 			jaxGesuch.setEinkommensverschlechterungInfo(this.einkommensverschlechterungInfoToJAX(persistedGesuch.getEinkommensverschlechterungInfo()));
 		}
-		jaxGesuch.setNextNumberKind(persistedGesuch.getNextNumberKind());
 
 		return jaxGesuch;
 	}

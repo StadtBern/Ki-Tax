@@ -151,9 +151,9 @@ describe('EbeguRestUtil', function () {
                 let myGesuch = new TSGesuch();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
                 myGesuch.einkommensverschlechterung = true;
-                myGesuch.nextNumberKind = 2;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
+                fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
                 let gesuchsteller: TSGesuchsteller = createGesuchsteller();
                 myGesuch.gesuchsteller1 = gesuchsteller;
