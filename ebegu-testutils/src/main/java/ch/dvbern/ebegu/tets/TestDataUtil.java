@@ -239,7 +239,7 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static BetreuungspensumContainer createGesuchWithBetreuungspensumContainer(boolean zweiGesuchsteller) {
+	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		gesuch.setFamiliensituation(new Familiensituation());
@@ -257,11 +257,10 @@ public final class TestDataUtil {
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
 		}
-		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
-		betreuungspensumContainer.setBetreuung(new Betreuung());
-		betreuungspensumContainer.getBetreuung().setKind(new KindContainer());
-		betreuungspensumContainer.getBetreuung().getKind().setGesuch(gesuch);
-		betreuungspensumContainer.getBetreuung().setInstitutionStammdaten(createDefaultInstitutionStammdaten());
-		return betreuungspensumContainer;
+		Betreuung betreuung = new Betreuung();
+		betreuung.setKind(new KindContainer());
+		betreuung.getKind().setGesuch(gesuch);
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
+		return betreuung;
 	}
 }

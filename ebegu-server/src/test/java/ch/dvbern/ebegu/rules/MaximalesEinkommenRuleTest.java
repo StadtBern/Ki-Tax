@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -31,13 +31,13 @@ public class MaximalesEinkommenRuleTest {
 
 	@Test
 	public void testNormalfall() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		dto.setMassgebendesEinkommen(new BigDecimal("50000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("50000"), result.get(0).getMassgebendesEinkommen());
@@ -47,13 +47,13 @@ public class MaximalesEinkommenRuleTest {
 
 	@Test
 	public void testEinkommenZuHoch() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		dto.setMassgebendesEinkommen(new BigDecimal("180000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("180000"), result.get(0).getMassgebendesEinkommen());
@@ -61,9 +61,9 @@ public class MaximalesEinkommenRuleTest {
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
-	private List<VerfuegungZeitabschnitt> prepareData(BetreuungspensumContainer betreuungspensumContainer, FinanzielleSituationResultateDTO dto) {
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+	private List<VerfuegungZeitabschnitt> prepareData(Betreuung betreuung, FinanzielleSituationResultateDTO dto) {
+		Gesuch gesuch = betreuung.extractGesuch();
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
-		return erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), dto);
+		return erwerbspensumRule.calculate(betreuung, new ArrayList<>(), dto);
 	}
 }

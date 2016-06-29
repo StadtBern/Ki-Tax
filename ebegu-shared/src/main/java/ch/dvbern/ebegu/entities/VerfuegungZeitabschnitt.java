@@ -25,11 +25,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int betreuungspensum;
 	private int anspruchspensumOriginal;
 	private int anspruchberechtigtesPensum;
-	private BigDecimal vollkosten;
-	private BigDecimal elternbeitrag;
-	private BigDecimal verguenstigung;
-	private BigDecimal abzugFamGroesse;
-	private BigDecimal massgebendesEinkommen;
+	private BigDecimal vollkosten = BigDecimal.ZERO;
+	private BigDecimal elternbeitrag = BigDecimal.ZERO;
+	private BigDecimal verguenstigung = BigDecimal.ZERO;
+	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
+	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 
 	@Nonnull
 	private List<String> bemerkungen = new ArrayList<>();

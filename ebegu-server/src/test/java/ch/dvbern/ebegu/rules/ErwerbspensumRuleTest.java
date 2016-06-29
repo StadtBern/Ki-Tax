@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -30,22 +30,22 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testKeinErwerbspensum() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(0, result.size());
 	}
 
 	@Test
 	public void testNormalfallZweiGesuchsteller() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
 		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 40, 0));
 
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(40, result.get(0).getAnspruchspensumOriginal());
@@ -54,12 +54,12 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testNormalfallEinGesuchsteller() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(60, result.get(0).getAnspruchspensumOriginal());
@@ -68,12 +68,12 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testNurEinErwerbspensumBeiZweiGesuchstellern() throws Exception {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
@@ -82,12 +82,12 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testMehrAls100ProzentBeiEinemGesuchsteller() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
 
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000")));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());

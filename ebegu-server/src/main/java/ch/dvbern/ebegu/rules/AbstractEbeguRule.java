@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
@@ -67,24 +67,24 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 	 */
 	@Nonnull
-	protected abstract Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
+	protected abstract Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
 
 	/**
 	 * Fuehrt die eigentliche Rule auf einem einzelnen Zeitabschnitt aus.
 	 * Hier kann ich davon ausgehen, dass die Zeitabschnitte schon validiert und gemergt sind.
 	 */
-	protected abstract void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt);
+	protected abstract void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt);
 
 	/**
 	 * Hauptmethode der Regelberechnung. Diese wird von Aussen aufgerufen
      */
 	@Nonnull
 	@Override
-	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 
 		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
 		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
-		Collection<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = createVerfuegungsZeitabschnitte(betreuungspensumContainer, zeitabschnitte, finSitResultatDTO);
+		Collection<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
 
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden
 		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, (List<VerfuegungZeitabschnitt>) erwerbspensumAbschnitte);
@@ -92,12 +92,12 @@ public abstract class AbstractEbeguRule implements Rule {
 		// Die Zeitabschnitte (jetzt ohne Überschneidungen) validieren:
 		// - Muss innerhalb Gesuchsperiode sein
 		// - Müssen sich unterscheiden (d.h. 20+20 vs 40 soll nur einen Schnitz geben)
-		Gesuchsperiode gesuchsperiode = betreuungspensumContainer.extractGesuchsperiode();
+		Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
 		List<VerfuegungZeitabschnitt> validZeitabschnitte = validateZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
 
 		// Die eigentliche Rule anwenden
 		for (VerfuegungZeitabschnitt zeitabschnitt : validZeitabschnitte) {
-			executeRule(betreuungspensumContainer, zeitabschnitt);
+			executeRule(betreuung, zeitabschnitt);
 		}
 		return validZeitabschnitte;
 	}

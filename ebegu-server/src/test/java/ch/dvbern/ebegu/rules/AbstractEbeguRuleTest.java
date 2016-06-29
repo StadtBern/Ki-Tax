@@ -215,13 +215,13 @@ public class AbstractEbeguRuleTest {
 
 	@Test
 	public void testBegrenzungAufGesuchsperiode() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 
 		List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 		zeitabschnitte.add(createErwerbspensum(Constants.START_OF_TIME, Constants.END_OF_TIME, 80));
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, zeitabschnitte, dto);
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, zeitabschnitte, dto);
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
@@ -231,21 +231,37 @@ public class AbstractEbeguRuleTest {
 
 	@Test
 	public void testZusammenlegenVonIdentischenPerioden() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(true);
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		// 2*20%, direkt gefolgt von 1*40% sollte 1 Abschnitt mit 40% geben
 		List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_3, 20));
 		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_3, 20));
 		zeitabschnitte.add(createErwerbspensum(DATUM_3.plusDays(1), DATUM_4, 40));
-		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuungspensumContainer, zeitabschnitte, dto);
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, zeitabschnitte, dto);
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(DATUM_2, result.get(0).getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(DATUM_4, result.get(0).getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(40, result.get(0).getErwerbspensumGS1());
+	}
+
+	@Test
+	public void testNichtZusammenlegenVonIdentischenPeriodenMitAbstand() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
+		// 2*20%, direkt gefolgt von 1*40% sollte 1 Abschnitt mit 40% geben
+		List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
+		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_3, 20));
+		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_3, 20));
+		zeitabschnitte.add(createErwerbspensum(DATUM_3.plusDays(2), DATUM_4, 40));
+		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, zeitabschnitte, dto);
+
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
 	}
 
 	private VerfuegungZeitabschnitt createErwerbspensum(LocalDate von, LocalDate bis, int pensum) {

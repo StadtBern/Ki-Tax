@@ -120,4 +120,17 @@ public class Betreuung extends AbstractEntity {
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
 		return bemSame && pensenSame && statusSame && stammdatenSame;
 	}
+
+	@Transient
+	public Gesuchsperiode extractGesuchsperiode(){
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
+		return this.getKind().getGesuch().getGesuchsperiode();
+	}
+
+	@Transient
+	public Gesuch extractGesuch() {
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		return this.getKind().getGesuch();
+	}
 }

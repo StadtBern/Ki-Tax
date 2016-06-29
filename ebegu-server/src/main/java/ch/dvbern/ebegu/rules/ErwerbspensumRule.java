@@ -30,9 +30,9 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 
 	@Override
 	@Nonnull
-	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
-		Gesuch gesuch =  betreuungspensumContainer.extractGesuch();
+		Gesuch gesuch =  betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
 			erwerbspensumAbschnitte.addAll(getErwerbspensumAbschnittForGesuchsteller(gesuch.getGesuchsteller1(), false));
 		}
@@ -43,10 +43,10 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 	}
 
 	@Override
-	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		Objects.requireNonNull(betreuungspensumContainer.extractGesuch(), "Gesuch muss gesetzt sein");
-		Objects.requireNonNull(betreuungspensumContainer.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");
-		boolean hasSecondGesuchsteller = betreuungspensumContainer.extractGesuch().getFamiliensituation().hasSecondGesuchsteller();
+	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
+		Objects.requireNonNull(betreuung.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");
+		boolean hasSecondGesuchsteller = betreuung.extractGesuch().getFamiliensituation().hasSecondGesuchsteller();
 		int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
 		// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
 		// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden

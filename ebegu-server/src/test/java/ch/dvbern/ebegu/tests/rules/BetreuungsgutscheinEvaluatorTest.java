@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,8 @@ public class BetreuungsgutscheinEvaluatorTest {
 	@Before
 	public void setUpCalcuator() {
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
+		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
+		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
 		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
 		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
 		evaluator = new BetreuungsgutscheinEvaluator(rules);
@@ -55,6 +58,7 @@ public class BetreuungsgutscheinEvaluatorTest {
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = new Gesuch();
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(testgesuch);
 	}
 

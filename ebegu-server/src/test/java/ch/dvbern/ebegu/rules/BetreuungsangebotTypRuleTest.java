@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -31,12 +31,12 @@ public class BetreuungsangebotTypRuleTest {
 
 	@Test
 	public void testAngebotKita() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.KITA, betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.KITA, betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
@@ -45,12 +45,12 @@ public class BetreuungsangebotTypRuleTest {
 
 	@Test
 	public void testAngebotTagi() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGI, betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGI, betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
@@ -59,12 +59,12 @@ public class BetreuungsangebotTypRuleTest {
 
 	@Test
 	public void testAngebotTageseltern() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESELTERN, betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESELTERN, betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
@@ -73,22 +73,22 @@ public class BetreuungsangebotTypRuleTest {
 
 	@Test
 	public void testAngebotTagesschule() {
-		BetreuungspensumContainer betreuungspensumContainer = TestDataUtil.createGesuchWithBetreuungspensumContainer(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuungspensumContainer.extractGesuch(), 4, new BigDecimal("10000"));
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESSCHULE, betreuungspensumContainer, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESSCHULE, betreuung, dto);
 
-		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuungspensumContainer, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
-	private List<VerfuegungZeitabschnitt> prepareData(BetreuungsangebotTyp betreuungsangebotTyp, BetreuungspensumContainer betreuungspensumContainer, FinanzielleSituationResultateDTO dto) {
-		Gesuch gesuch = betreuungspensumContainer.extractGesuch();
-		betreuungspensumContainer.getBetreuung().getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
+	private List<VerfuegungZeitabschnitt> prepareData(BetreuungsangebotTyp betreuungsangebotTyp, Betreuung betreuung, FinanzielleSituationResultateDTO dto) {
+		Gesuch gesuch = betreuung.extractGesuch();
+		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
-		return erwerbspensumRule.calculate(betreuungspensumContainer, new ArrayList<>(), dto);
+		return erwerbspensumRule.calculate(betreuung, new ArrayList<>(), dto);
 	}
 }

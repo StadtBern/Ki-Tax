@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
@@ -28,7 +28,6 @@ public interface Rule {
 	RuleKey getRuleKey();
 
 	@Nonnull
-	List<VerfuegungZeitabschnitt> calculate(@Nonnull BetreuungspensumContainer betreuungspensumContainer,
-											@Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
+	List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
 											@Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
 }

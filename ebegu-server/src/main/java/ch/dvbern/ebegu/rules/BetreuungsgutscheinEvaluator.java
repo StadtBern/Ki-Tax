@@ -32,16 +32,16 @@ public class BetreuungsgutscheinEvaluator {
 				//TODO (hefr) Müsste die Rule nicht für alle Betreuungspensen einer Betreuung sein? Sonst gibt es ja pro Rule nur einen Abschnitt. Und wir können nicht aufgrund Eingangsdatum verschieben!
 
 
-				for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
+//				for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
 					List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 					for (Rule rule : rulesToRun) {
-						zeitabschnitte = rule.calculate(betreuungspensumContainer, zeitabschnitte, finSitResultatDTO);
+						zeitabschnitte = rule.calculate(betreuung, zeitabschnitte, finSitResultatDTO);
 					}
 					//TODO (hefr) Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen und die eigentliche Verfügung machen
 					Verfuegung verfuegung = new Verfuegung();
 					verfuegung.setZeitabschnitte(zeitabschnitte);
-					verfuegung.setBetreuung(betreuungspensumContainer.getBetreuung());
-				}
+					verfuegung.setBetreuung(betreuung);
+//				}
 			}
 		}
 	}
