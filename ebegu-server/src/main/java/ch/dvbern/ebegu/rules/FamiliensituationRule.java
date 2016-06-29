@@ -20,7 +20,7 @@ import java.util.List;
  * - Nicht möglich ist die Änderung des Gesuchstellers 2. Gesuchsteller 1 muss immer die angemeldete Person sein.
  * 		Der Name und Vorname wird aus dem IAM übernommen. Innerhalb einer Periode kann die Anzahl der Gesuchsteller
  * 		nur einmal angepasst werden.
- * 	- Bei einem Wechsel von einem Gesuchsteller auf zwei Gesuchsteller werden bei der Mutation die Stammdaten des
+ * - Bei einem Wechsel von einem Gesuchsteller auf zwei Gesuchsteller werden bei der Mutation die Stammdaten des
  * 		Gesuchstellers 2 entfernt. Das Erwerbspensum bleibt bestehen und wird bis hin zum Ereignis (z.B. Scheidung) berücksichtigt.
  * - Bei der Berechnung des neuen Anspruchs gelten die Regeln immer auf den Eintritt des Ereignisses der Änderung der Familiensituation!
  * - Unabhängig von Einreichungsdatum
