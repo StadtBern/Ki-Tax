@@ -381,7 +381,7 @@
     "INSTITUTION": "Institution",
     "INSTITUTION_UPPER": "INSTITUTION",
     "ANGEBOT_UPPER": "ANGEBOT",
-    "VERANTWORTLICHER_UPPER": "VERANTWORTLICHER",
+    "BEARBEITER_UPPER": "BEARBEITER",
     "STATUS_UPPER": "STATUS",
     "EINGANG_UPPER": "EINGANG",
     "PERIODE_UPPER": "PERIODE",
@@ -510,6 +510,26 @@
     "TSRole_GESUCHSTELLER": "Gesuchsteller",
     "TSRole_JURIST": "Jurist",
     "TSRole_REVISOR": "Revisor",
-    "TSRole_STEUERAMT": "SteueramtT"
+    "TSRole_STEUERAMT": "SteueramtT",
+
+    "JANUARY": "Januar",
+    "FEBRUARY": "Februar",
+    "MARCH": "März",
+    "APRIL": "April",
+    "MAY": "Mai",
+    "JUNE": "Juni",
+    "JULY": "Juli",
+    "AUGUST": "August",
+    "SEPTEMBER": "September",
+    "OCTOBER": "Oktober",
+    "NOVEMBER": "November",
+    "DECEMBER": "Dezember",
+
+    "EKVI_EINKOMMENSVERSCHLECHTERUNG": "Einkommensverschlechterung",
+    "EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN": "Möchten Sie eine Einkommensverschlechterung geltend machen?",
+    "EKVI_FUER_JAHR": "für {{basisjahr}}",
+    "EKVI_MONAT_DES_EREIGNISSES": "Monat des Ereignisses",
+    "EKVI_GRUND_DES_EREIGNISSES": "Grund des Ereignisses"
+
 }
 

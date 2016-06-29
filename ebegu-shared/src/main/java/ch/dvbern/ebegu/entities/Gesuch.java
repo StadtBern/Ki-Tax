@@ -91,6 +91,7 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+		this.einkommensverschlechterungInfo.setGesuch(this);
 	}
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {

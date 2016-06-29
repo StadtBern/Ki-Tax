@@ -14,19 +14,22 @@ import {ErwerbspensumViewComponentConfig} from './component/erwerbspensumView/er
 import {FinanzielleSituationStartViewComponentConfig} from './component/finanzielleSituationStartView/finanzielleSituationStartView';
 import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
 import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
+import {EinkommensverschlechterungInfoViewComponentConfig} from './component/einkommensverschlechterungInfoView/einkommensverschlechterungInfoView';
+
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
-    .run(gesuchRun)
-    .component('familiensituationView', new FamiliensituationViewComponentConfig())
-    .component('stammdatenView', new StammdatenViewComponentConfig)
-    .component('kinderListView', new KinderListViewComponentConfig())
-    .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
-    .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
-    .component('finanzielleSituationResultateView', new FinanzielleSituationResultateViewComponentConfig())
-    .component('kindView', new KindViewComponentConfig())
-    .component('betreuungListView', new BetreuungListViewComponentConfig())
-    .component('betreuungView', new BetreuungViewComponentConfig())
-    .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
-    .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
-    .component('fallCreationView', new FallCreationViewComponentConfig());
+        .run(gesuchRun)
+        .component('familiensituationView', new FamiliensituationViewComponentConfig())
+        .component('stammdatenView', new StammdatenViewComponentConfig)
+        .component('kinderListView', new KinderListViewComponentConfig())
+        .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
+        .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
+        .component('finanzielleSituationResultateView', new FinanzielleSituationResultateViewComponentConfig())
+        .component('kindView', new KindViewComponentConfig())
+        .component('betreuungListView', new BetreuungListViewComponentConfig())
+        .component('betreuungView', new BetreuungViewComponentConfig())
+        .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
+        .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
+        .component('fallCreationView', new FallCreationViewComponentConfig())
+        .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig());

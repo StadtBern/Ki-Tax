@@ -525,12 +525,16 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFamiliensituation().getId());
 			}
 		}
-		if (gesuchJAXP.getEinkommensverschlechterungInfo() != null && gesuchJAXP.getEinkommensverschlechterungInfo().getId() != null) {
-			final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(gesuchJAXP.getEinkommensverschlechterungInfo().getId());
-			if (evkiSituation.isPresent()) {
-				gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+		if (gesuchJAXP.getEinkommensverschlechterungInfo() != null) {
+			if (gesuchJAXP.getEinkommensverschlechterungInfo().getId() != null) {
+				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				if (evkiSituation.isPresent()) {
+					gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+				} else {
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				}
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
 			}
 		}
 

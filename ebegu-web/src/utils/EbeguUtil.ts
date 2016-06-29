@@ -3,7 +3,7 @@ import {IFilterService} from 'angular';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 
 /**
- * Klasse die allgemeine utils Methoden implementiert 
+ * Klasse die allgemeine utils Methoden implementiert
  */
 export default class EbeguUtil {
 
@@ -20,6 +20,17 @@ export default class EbeguUtil {
         if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
             return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
                 + gesuchsperiode.gueltigkeit.gueltigBis.year();
+        }
+        return undefined;
+    }
+
+    /**
+     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
+     * @returns {any}
+     */
+    public getBasisJahrPlusAsString(gesuchsperiode: TSGesuchsperiode, plusJahr: number): string {
+        if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
+            return String(gesuchsperiode.gueltigkeit.gueltigAb.year() + plusJahr);
         }
         return undefined;
     }

@@ -24,7 +24,8 @@ function getStates(): IState[] {
         new EbeguErwerbspensumState(),
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
-        new EbeguNewFallState()
+        new EbeguNewFallState(),
+        new EbeguEinkommensverschlechterungInfoState()
     ];
 }
 
@@ -105,10 +106,17 @@ export class EbeguFinanzielleSituationStartState implements IState {
     url = '/finanzielleSituationStart';
 }
 
+
 export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
     template = '<finanzielle-situation-resultate-view>';
     url = '/finanzielleSituationResultate';
+}
+
+export class EbeguEinkommensverschlechterungInfoState implements IState {
+    name = 'gesuch.einkommensverschlechterungInfo';
+    template = '<einkommensverschlechterung-info-view>';
+    url = '/einkommensverschlechterungInfo';
 }
 
 //PARAMS

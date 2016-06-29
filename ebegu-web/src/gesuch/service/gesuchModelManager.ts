@@ -31,6 +31,7 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 
 
 export default class GesuchModelManager {
@@ -260,6 +261,17 @@ export default class GesuchModelManager {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
         }
     }
+
+    public initEinkommensverschlechterungInfo(): void {
+        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
+            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
+            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
+            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
+
+        }
+    }
+
+
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist

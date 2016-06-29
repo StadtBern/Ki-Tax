@@ -34,6 +34,7 @@ import TSPendenzJA from '../models/TSPendenzJA';
 import EbeguUtil from './EbeguUtil';
 import TSKindContainer from '../models/TSKindContainer';
 import TSUser from '../models/TSUser';
+import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechterungInfo';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -344,6 +345,23 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public einkommensverschlechterungInfoToRestObject(restEinkommensverschlechterungInfo: any, einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo): TSEinkommensverschlechterungInfo {
+        if (einkommensverschlechterungInfo) {
+            this.abstractEntityToRestObject(restEinkommensverschlechterungInfo, einkommensverschlechterungInfo);
+            restEinkommensverschlechterungInfo.einkommensverschlechterung = einkommensverschlechterungInfo.einkommensverschlechterung;
+            restEinkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+            restEinkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+            restEinkommensverschlechterungInfo.grundFuerBasisJahrPlus1 = einkommensverschlechterungInfo.grundFuerBasisJahrPlus1;
+            restEinkommensverschlechterungInfo.grundFuerBasisJahrPlus2 = einkommensverschlechterungInfo.grundFuerBasisJahrPlus2;
+            restEinkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1 = DateUtil.momentToLocalDate(einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1);
+            restEinkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2 = DateUtil.momentToLocalDate(einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2);
+
+            return restEinkommensverschlechterungInfo;
+        }
+        return undefined;
+    }
+
+
     public parseFamiliensituation(familiensituation: TSFamiliensituation, familiensituationFromServer: any): TSFamiliensituation {
         if (familiensituationFromServer) {
             this.parseAbstractEntity(familiensituation, familiensituationFromServer);
@@ -355,6 +373,22 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
+
+    public parseEinkommensverschlechterungInfo(einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer: any): TSEinkommensverschlechterungInfo {
+        if (einkommensverschlechterungInfoFromServer) {
+            this.parseAbstractEntity(einkommensverschlechterungInfo, einkommensverschlechterungInfoFromServer);
+            einkommensverschlechterungInfo.einkommensverschlechterung = einkommensverschlechterungInfoFromServer.einkommensverschlechterung;
+            einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = einkommensverschlechterungInfoFromServer.ekvFuerBasisJahrPlus1;
+            einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = einkommensverschlechterungInfoFromServer.ekvFuerBasisJahrPlus2;
+            einkommensverschlechterungInfo.grundFuerBasisJahrPlus1 = einkommensverschlechterungInfoFromServer.grundFuerBasisJahrPlus1;
+            einkommensverschlechterungInfo.grundFuerBasisJahrPlus2 = einkommensverschlechterungInfoFromServer.grundFuerBasisJahrPlus2;
+            einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1 = DateUtil.localDateToMoment(einkommensverschlechterungInfoFromServer.stichtagFuerBasisJahrPlus1);
+            einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2 = DateUtil.localDateToMoment(einkommensverschlechterungInfoFromServer.stichtagFuerBasisJahrPlus2);
+            return einkommensverschlechterungInfo;
+        }
+        return undefined;
+    }
+
 
     public fallToRestObject(restFall: any, fall: TSFall): TSFall {
         if (fall) {
@@ -380,7 +414,7 @@ export default class EbeguRestUtil {
 
     public gesuchToRestObject(restGesuch: any, gesuch: TSGesuch): TSGesuch {
         this.abstractAntragEntityToRestObject(restGesuch, gesuch);
-        restGesuch.einkommensverschlechterung = gesuch.einkommensverschlechterung;
+        restGesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfoToRestObject({}, gesuch.einkommensverschlechterungInfo);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
@@ -390,7 +424,7 @@ export default class EbeguRestUtil {
     public parseGesuch(gesuchTS: TSGesuch, gesuchFromServer: any): TSGesuch {
         if (gesuchFromServer) {
             this.parseAbstractAntragEntity(gesuchTS, gesuchFromServer);
-            gesuchTS.einkommensverschlechterung = gesuchFromServer.einkommensverschlechterung;
+            gesuchTS.einkommensverschlechterungInfo = this.parseEinkommensverschlechterungInfo(new TSEinkommensverschlechterungInfo(), gesuchFromServer.einkommensverschlechterungInfo);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
