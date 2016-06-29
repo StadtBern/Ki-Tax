@@ -360,6 +360,7 @@ export default class EbeguRestUtil {
         if (fall) {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
+            restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
             return restFall;
         }
         return undefined;
@@ -370,6 +371,7 @@ export default class EbeguRestUtil {
         if (fallFromServer) {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
+            fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
             return fallTS;
         }
         return undefined;
@@ -884,8 +886,9 @@ export default class EbeguRestUtil {
         restPendenz.angebote = pendenz.angebote;
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
-        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject(new TSGesuchsperiode(), pendenz.gesuchsperiode);
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.institutionen = pendenz.institutionen;
+        restPendenz.verantwortlicher = pendenz.verantwortlicher;
         return restPendenz;
     }
 
@@ -898,6 +901,7 @@ export default class EbeguRestUtil {
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
+        pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         return pendenzTS;
     }
 
@@ -914,13 +918,42 @@ export default class EbeguRestUtil {
     }
 
     public userToRestObject(user: any, userTS: TSUser): any {
-        user.username = userTS.username;
-        user.password = userTS.password;
-        user.nachname = userTS.nachname;
-        user.vorname = userTS.vorname;
-        user.email = userTS.email;
-        user.role = userTS.role;
-        user.mandant = this.mandantToRestObject({}, userTS.mandant);
-        return user;
+        if (userTS) {
+            user.username = userTS.username;
+            user.password = userTS.password;
+            user.nachname = userTS.nachname;
+            user.vorname = userTS.vorname;
+            user.email = userTS.email;
+            user.role = userTS.role;
+            user.mandant = this.mandantToRestObject({}, userTS.mandant);
+            return user;
+        }
+        return undefined;
+    }
+
+    public parseUser(userTS: TSUser, userFromServer: any): TSUser {
+        if (userFromServer) {
+            userTS.username = userFromServer.username;
+            userTS.password = userFromServer.password;
+            userTS.nachname = userFromServer.nachname;
+            userTS.vorname = userFromServer.vorname;
+            userTS.email = userFromServer.email;
+            userTS.role = userFromServer.role;
+            userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
+            return userTS;
+        }
+        return undefined;
+    }
+
+    public parseUserList(data: any): TSUser[] {
+        var users: TSUser[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                users[i] = this.parseUser(new TSUser(), data[i]);
+            }
+        } else {
+            users[0] = this.parseUser(new TSUser(), data);
+        }
+        return users;
     }
 }

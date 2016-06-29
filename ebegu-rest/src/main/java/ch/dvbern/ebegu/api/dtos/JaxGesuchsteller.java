@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.util.Constants;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -52,6 +53,10 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	@Valid
 	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
 
+	@Valid
+	@Nullable
+	private JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer;
+
 	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
 	private boolean diplomatenstatus;
@@ -61,7 +66,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return mail;
 	}
 
-	public void setMail(String mail) {
+	public void setMail(final String mail) {
 		this.mail = mail;
 	}
 
@@ -69,7 +74,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return mobile;
 	}
 
-	public void setMobile(String mobile) {
+	public void setMobile(final String mobile) {
 		this.mobile = mobile;
 	}
 
@@ -77,7 +82,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return telefon;
 	}
 
-	public void setTelefon(String telefon) {
+	public void setTelefon(final String telefon) {
 		this.telefon = telefon;
 	}
 
@@ -85,7 +90,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return telefonAusland;
 	}
 
-	public void setTelefonAusland(String telefonAusland) {
+	public void setTelefonAusland(final String telefonAusland) {
 		this.telefonAusland = telefonAusland;
 	}
 
@@ -93,7 +98,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return zpvNumber;
 	}
 
-	public void setZpvNumber(String zpvNumber) {
+	public void setZpvNumber(final String zpvNumber) {
 		this.zpvNumber = zpvNumber;
 	}
 
@@ -101,7 +106,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return wohnAdresse;
 	}
 
-	public void setWohnAdresse(JaxAdresse wohnAdresse) {
+	public void setWohnAdresse(final JaxAdresse wohnAdresse) {
 		this.wohnAdresse = wohnAdresse;
 	}
 
@@ -109,7 +114,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return alternativeAdresse;
 	}
 
-	public void setAlternativeAdresse(JaxAdresse alternativeAdresse) {
+	public void setAlternativeAdresse(final JaxAdresse alternativeAdresse) {
 		this.alternativeAdresse = alternativeAdresse;
 	}
 
@@ -117,7 +122,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return umzugAdresse;
 	}
 
-	public void setUmzugAdresse(JaxAdresse umzugAdresse) {
+	public void setUmzugAdresse(final JaxAdresse umzugAdresse) {
 		this.umzugAdresse = umzugAdresse;
 	}
 
@@ -125,7 +130,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return finanzielleSituationContainer;
 	}
 
-	public void setFinanzielleSituationContainer(JaxFinanzielleSituationContainer finanzielleSituationContainer) {
+	public void setFinanzielleSituationContainer(final JaxFinanzielleSituationContainer finanzielleSituationContainer) {
 		this.finanzielleSituationContainer = finanzielleSituationContainer;
 	}
 
@@ -133,7 +138,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return erwerbspensenContainers;
 	}
 
-	public void setErwerbspensenContainers(Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
+	public void setErwerbspensenContainers(final Collection<JaxErwerbspensumContainer> erwerbspensenContainers) {
 		this.erwerbspensenContainers = erwerbspensenContainers;
 	}
 
@@ -141,7 +146,16 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		return diplomatenstatus;
 	}
 
-	public void setDiplomatenstatus(boolean diplomatenstatus) {
+	public void setDiplomatenstatus(final boolean diplomatenstatus) {
 		this.diplomatenstatus = diplomatenstatus;
+	}
+
+	@Nullable
+	public JaxEinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
+		return jaxEinkommensverschlechterungContainer;
+	}
+
+	public void setEinkommensverschlechterungContainer(@Nullable final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer) {
+		this.jaxEinkommensverschlechterungContainer = jaxEinkommensverschlechterungContainer;
 	}
 }

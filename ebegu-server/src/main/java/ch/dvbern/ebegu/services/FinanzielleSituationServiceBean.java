@@ -1,13 +1,12 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -16,7 +15,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -36,7 +34,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
-	private EbeguParameterService ebeguParameterService;
+	private FinanzielleSituationRechner finSitRechner;
 
 	@Nonnull
 	@Override
@@ -73,36 +71,13 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		int familiengroesse = 5; //TODO (team) später aus Daten berechnen, sobald das neue Feld auf Kindern wegen Abzug vorhanden ist.
-		BigDecimal abzugAufgrundFamiliengroesse = calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-		return new FinanzielleSituationResultateDTO(gesuch, familiengroesse, abzugAufgrundFamiliengroesse);
+		if (gesuch.getGesuchsperiode() != null) {
+			double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
+			BigDecimal abzugAufgrundFamiliengroesse = finSitRechner
+				.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
+			return new FinanzielleSituationResultateDTO(gesuch, familiengroesse, abzugAufgrundFamiliengroesse);
+		}
+		return new FinanzielleSituationResultateDTO(gesuch, 0, BigDecimal.ZERO);
 	}
 
-	private BigDecimal calculateAbzugAufgrundFamiliengroesse(LocalDate stichtag, int familiengroesse) {
-		BigDecimal abzugProPerson = BigDecimal.ZERO;
-		if (familiengroesse <= 2) {
-			abzugProPerson = BigDecimal.ZERO;
-		} else if (familiengroesse == 3) {
-			Optional<EbeguParameter> famSize3 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
-			if (famSize3.isPresent()) {
-				abzugProPerson = famSize3.get().getAsBigDecimal();
-			}
-		} else if (familiengroesse == 4) {
-			Optional<EbeguParameter> famSize4 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
-			if (famSize4.isPresent()) {
-				abzugProPerson = famSize4.get().getAsBigDecimal();
-			}
-		} else if (familiengroesse == 5) {
-			Optional<EbeguParameter> famSize5 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
-			if (famSize5.isPresent()) {
-				abzugProPerson = famSize5.get().getAsBigDecimal();
-			}
-		} else {
-			Optional<EbeguParameter> famSize6 = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
-			if (famSize6.isPresent()) {
-				abzugProPerson = famSize6.get().getAsBigDecimal();
-			}
-		}
-		return new BigDecimal(familiengroesse).multiply(abzugProPerson);
-	}
 }
