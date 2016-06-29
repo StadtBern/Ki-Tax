@@ -65,6 +65,8 @@ public class JaxBConverter {
 	@Inject
 	private InstitutionService institutionService;
 	@Inject
+	private BenutzerService benutzerService;
+	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
@@ -198,6 +200,7 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsperiode().getId());
 			}
 		}
+
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
 	}
 
@@ -470,6 +473,14 @@ public class JaxBConverter {
 		Validate.notNull(fallJAXP);
 		convertAbstractFieldsToEntity(fallJAXP, fall);
 		fall.setFallNummer(fallJAXP.getFallNummer());
+		if (fallJAXP.getVerantwortlicher() != null) {
+			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(fallJAXP.getVerantwortlicher().getUsername());
+			if (verantwortlicher.isPresent()) {
+				fall.setVerantwortlicher(verantwortlicher.get()); // because the user doesn't come from the client but from the server
+			} else {
+				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
+			}
+		}
 		return fall;
 	}
 
@@ -477,6 +488,9 @@ public class JaxBConverter {
 		final JaxFall jaxFall = new JaxFall();
 		convertAbstractFieldsToJAX(persistedFall, jaxFall);
 		jaxFall.setFallNummer(persistedFall.getFallNummer());
+		if (persistedFall.getVerantwortlicher() != null) {
+			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
+		}
 		return jaxFall;
 	}
 
@@ -1282,7 +1296,7 @@ public class JaxBConverter {
 			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
 	}
 
-	public Benutzer authLoginElementToBenutzer(Benutzer benutzer, JaxAuthLoginElement loginElement) {
+	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement loginElement, Benutzer benutzer) {
 		benutzer.setUsername(loginElement.getUsername());
 		benutzer.setEmail(loginElement.getEmail());
 		benutzer.setNachname(loginElement.getNachname());
@@ -1291,4 +1305,18 @@ public class JaxBConverter {
 		benutzer.setMandant(this.mandantToEntity(loginElement.getMandant(), new Mandant()));
 		return benutzer;
 	}
+
+	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer verantwortlicher) {
+		JaxAuthLoginElement loginElement = new JaxAuthLoginElement();
+		loginElement.setVorname(verantwortlicher.getVorname());
+		loginElement.setNachname(verantwortlicher.getNachname());
+		loginElement.setEmail(verantwortlicher.getEmail());
+		if (verantwortlicher.getMandant() != null) {
+			loginElement.setMandant(mandantToJAX(verantwortlicher.getMandant()));
+		}
+		loginElement.setUsername(verantwortlicher.getUsername());
+		loginElement.setRole(verantwortlicher.getRole());
+		return loginElement;
+	}
+
 }

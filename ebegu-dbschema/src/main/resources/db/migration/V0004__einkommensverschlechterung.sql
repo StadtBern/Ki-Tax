@@ -3,7 +3,7 @@
 -- ---------------------------------------------------------------------------------------------------------------------
 CREATE TABLE einkommensverschlechterung (
 	id VARCHAR(36) NOT NULL,
-	timesamp_erstellt DATETIME NOT NULL,
+	timestamp_erstellt DATETIME NOT NULL,
 	timestamp_mutiert DATETIME NOT NULL,
 	user_erstellt VARCHAR(36) NOT NULL,
 	user_mutiert VARCHAR(36) NOT NULL,

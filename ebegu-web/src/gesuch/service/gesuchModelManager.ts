@@ -30,6 +30,7 @@ import BetreuungRS from '../../core/service/betreuungRS';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 
 
 export default class GesuchModelManager {
@@ -43,12 +44,12 @@ export default class GesuchModelManager {
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
-        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log'];
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private ebeguRestUtil: EbeguRestUtil, private log: ILogService) {
+                private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -269,6 +270,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.setCurrentUserAsFallVerantwortlicher();
         }
     }
 
@@ -604,5 +606,14 @@ export default class GesuchModelManager {
                 });
         }
 
+    }
+
+    /**
+     * Takes current user and sets it as the verantwortlicher of Fall
+     */
+    private setCurrentUserAsFallVerantwortlicher() {
+        if (this.authServiceRS) {
+            this.gesuch.fall.verantwortlicher = this.authServiceRS.getPrincipal();
+        }
     }
 }

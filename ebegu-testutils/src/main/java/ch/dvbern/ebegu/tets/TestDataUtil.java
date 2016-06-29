@@ -279,4 +279,15 @@ public final class TestDataUtil {
 		gesuchsteller.setEinkommensverschlechterungContainer(createDefaultEinkommensverschlechterungsContainer());
 		return gesuchsteller;
 	}
+
+	public static Benutzer createDefaultBenutzer() {
+		Benutzer user = new Benutzer();
+		user.setUsername("jula");
+		user.setNachname("Julio");
+		user.setVorname("Iglesias");
+		user.setEmail("email@server.ch");
+		user.setMandant(createDefaultMandant());
+		user.setRole(UserRole.ADMIN);
+		return user;
+	}
 }
