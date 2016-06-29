@@ -20,10 +20,10 @@ public class FinanzielleSituationResultateDTO {
 	private BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
 	private BigDecimal totalAbzuege = BigDecimal.ZERO;
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
-	private Integer familiengroesse;
+	private Double familiengroesse;
 
 
-	public FinanzielleSituationResultateDTO(Gesuch gesuch, Integer familiengroesse, BigDecimal famGroesseAbz) {
+	public FinanzielleSituationResultateDTO(Gesuch gesuch, double familiengroesse, BigDecimal famGroesseAbz) {
 		this.familiengroesse = familiengroesse;
 		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
 		if (gesuch != null) {
@@ -210,11 +210,11 @@ public class FinanzielleSituationResultateDTO {
 		this.massgebendesEinkommen = massgebendesEinkommen;
 	}
 
-	public Integer getFamiliengroesse() {
+	public Double getFamiliengroesse() {
 		return familiengroesse;
 	}
 
-	public void setFamiliengroesse(Integer familiengroesse) {
+	public void setFamiliengroesse(Double familiengroesse) {
 		this.familiengroesse = familiengroesse;
 	}
 }
