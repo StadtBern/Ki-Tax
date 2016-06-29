@@ -11,12 +11,16 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Regel für Betreuungsangebot: Es werden nur die Nicht-Schulamt-Angebote berechnet.
+ * Regel für Wohnsitz in Bern (Zuzug und Wegzug):
+ * - Durch Adresse definiert
+ * - Anspruch vom ersten Tag des Zuzugs
+ * - Anspruch bis 2 Monate nach Wegzug, auf Ende Monat
  */
-public class BetreuungsangebotTypRule extends AbstractEbeguRule {
+public class WohnsitzRule extends AbstractEbeguRule {
 
-	public BetreuungsangebotTypRule(DateRange validityPeriod) {
-		super(RuleKey.BETREUUNGSANGEBOT_TYP, RuleType.REDUKTIONSREGEL, validityPeriod);
+
+	public WohnsitzRule(@Nonnull DateRange validityPeriod) {
+		super(RuleKey.WOHNSITZ, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
 	@Nonnull
@@ -27,9 +31,6 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule {
 
 	@Override
 	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuungspensumContainer.getBetreuung().getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
-			verfuegungZeitabschnitt.setAnspruchspensumOriginal(0);
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP.name() + ": Betreuungsangebot Schulamt");
-		}
+
 	}
 }

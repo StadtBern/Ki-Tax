@@ -11,12 +11,15 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Regel für Betreuungsangebot: Es werden nur die Nicht-Schulamt-Angebote berechnet.
+ * Regel für die Betreuungspensen. Sie beachtet:
+ * - Anspruch aus Betreuungspensum darf nicht höher sein als Erwerbspensum
+ * - Nur relevant für Kita, Tageseltern-Kleinkinder, die anderen bekommen so viel wie sie wollen
+ * - Falls Kind eine Fachstelle hat, gilt das Pensum der Fachstelle
  */
-public class BetreuungsangebotTypRule extends AbstractEbeguRule {
+public class BetreuungspensumRule extends AbstractEbeguRule {
 
-	public BetreuungsangebotTypRule(DateRange validityPeriod) {
-		super(RuleKey.BETREUUNGSANGEBOT_TYP, RuleType.REDUKTIONSREGEL, validityPeriod);
+	public BetreuungspensumRule(@Nonnull DateRange validityPeriod) {
+		super(RuleKey.BETREUUNGSPENSUM, RuleType.GRUNDREGEL, validityPeriod);
 	}
 
 	@Nonnull
@@ -27,9 +30,6 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule {
 
 	@Override
 	protected void executeRule(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuungspensumContainer.getBetreuung().getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
-			verfuegungZeitabschnitt.setAnspruchspensumOriginal(0);
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP.name() + ": Betreuungsangebot Schulamt");
-		}
+
 	}
 }

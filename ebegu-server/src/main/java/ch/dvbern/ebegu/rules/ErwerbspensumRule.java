@@ -18,6 +18,16 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL, validityPeriod);
 	}
 
+	//TODO (hefR) Achtung, es muss ncoh das Eingangsdatum beachtet werden!
+//	Eine Änderung des Arbeitspensums ist rechtzeitig, falls die Änderung im Vormonat gemeldet wird. In
+//	diesem Fall wird der Anspruch zusammen mit dem Ereigniseintritt des Arbeitspensums angepasst.
+
+//	Wird die Änderung des Arbeitspensums im Monat des Ereignis oder noch später gemeldet, erfolgt
+//	eine ERHÖHUNG des Anspruchs erst auf den Folgemonat:
+
+//	Im Falle einer Herabsetzung des Arbeitspensums, wird der Anspruch zusammen mit dem
+//	Ereigniseintritt angepasst
+
 	@Override
 	@Nonnull
 	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull BetreuungspensumContainer betreuungspensumContainer, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {

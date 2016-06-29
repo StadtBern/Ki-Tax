@@ -19,6 +19,8 @@ public interface Rule {
 	@Nonnull
 	LocalDate validTo();
 
+	boolean isValid(@Nonnull LocalDate stichtag);
+
 	@Nonnull
 	RuleType getRuleType();
 

@@ -45,6 +45,10 @@ public abstract class AbstractEbeguRule implements Rule {
 		return validityPeriod.getGueltigBis();
 	}
 
+	@Override
+	public boolean isValid(@Nonnull LocalDate stichtag) {
+		return validityPeriod.contains(stichtag);
+	}
 
 	@Override
 	@Nonnull
