@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ public class FamiliensituationRule extends AbstractEbeguRule {
 
 	@Nonnull
 	@Override
-	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		return new ArrayList<>();
 	}
 

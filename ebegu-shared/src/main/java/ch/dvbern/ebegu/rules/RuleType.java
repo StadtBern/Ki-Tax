@@ -7,6 +7,7 @@ package ch.dvbern.ebegu.rules;
  */
 public enum RuleType {
 
+	NO_RULE,
 	GRUNDREGEL,
 	REDUKTIONSREGEL
 

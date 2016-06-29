@@ -329,6 +329,7 @@ public final class TestDataUtil {
 		}
 		Betreuung betreuung = new Betreuung();
 		betreuung.setKind(new KindContainer());
+		betreuung.getKind().setKindJA(new Kind());
 		betreuung.getKind().setGesuch(gesuch);
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		return betreuung;

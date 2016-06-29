@@ -30,7 +30,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 
 	@Override
 	@Nonnull
-	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
 		Gesuch gesuch =  betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
@@ -66,6 +66,10 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Anspruch wurde aufgrund Erwerbspensum auf 0% gesetzt");
 		}
 		verfuegungZeitabschnitt.setAnspruchspensumOriginal(anspruch);
+		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) {
+			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
+			verfuegungZeitabschnitt.setAnspruchspensumRest(anspruch);
+		}
 	}
 
 	@Nonnull
@@ -83,9 +87,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Erwerbspensum erwerbspensum, boolean gs2) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(erwerbspensum.getGueltigkeit());
 		int erwerbspensumTotal = 0;
-		if (erwerbspensum.getPensum() != null) {
-			erwerbspensumTotal += erwerbspensum.getPensum();
-		}
+		erwerbspensumTotal += erwerbspensum.getPensum();
 		if (erwerbspensum.getZuschlagsprozent() != null) {
 			erwerbspensumTotal += erwerbspensum.getZuschlagsprozent();
 		}

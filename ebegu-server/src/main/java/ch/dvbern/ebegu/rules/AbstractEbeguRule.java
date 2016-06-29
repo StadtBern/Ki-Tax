@@ -67,7 +67,7 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 	 */
 	@Nonnull
-	protected abstract Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
+	protected abstract List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
 
 	/**
 	 * Fuehrt die eigentliche Rule auf einem einzelnen Zeitabschnitt aus.

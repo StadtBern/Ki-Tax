@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.types.DateRange;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ public class MaximalesEinkommenRule extends AbstractEbeguRule {
 
 	@Nonnull
 	@Override
-	protected Collection<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 		// TODO Einkommensverschlechterung(en) berücksichtigen mit deren Stichdatum (immer 1. des Monats)
 		// TODO Gehen wir hier davon aus, dass die "EinkommensverschlechterungsRegel" schon die Schnitze für anderes Einkommen gemacht hat?
 		List<VerfuegungZeitabschnitt> einkommensAbschnitte = new ArrayList<>();

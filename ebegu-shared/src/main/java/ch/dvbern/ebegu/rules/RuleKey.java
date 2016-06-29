@@ -7,6 +7,8 @@ package ch.dvbern.ebegu.rules;
  */
 public enum RuleKey {
 
+	NO_RULE, // Verwendet für diverse Verarbeitungsschritte (z.B. Monatsschnitte machen)
+
 	ERWERBSPENSUM,
 	BETREUUNGSPENSUM,
 	/**

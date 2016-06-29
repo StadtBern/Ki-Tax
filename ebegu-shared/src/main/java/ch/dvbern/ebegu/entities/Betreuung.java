@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
@@ -132,5 +133,16 @@ public class Betreuung extends AbstractEntity {
 	public Gesuch extractGesuch() {
 		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
 		return this.getKind().getGesuch();
+	}
+
+	@Transient
+	public boolean isAngebotKita() {
+		return BetreuungsangebotTyp.KITA.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+	}
+
+	@Transient
+	public boolean isAngebotTageselternKleinkinder() {
+		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
+			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
 	}
 }

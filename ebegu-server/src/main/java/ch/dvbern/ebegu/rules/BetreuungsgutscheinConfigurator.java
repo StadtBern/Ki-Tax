@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 public class BetreuungsgutscheinConfigurator {
 
-	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+	private final DateRange defaultGueltigkeit = Constants.DEFAULT_GUELTIGKEIT;
 
 	private List<Rule> rules = new LinkedList<>();
 

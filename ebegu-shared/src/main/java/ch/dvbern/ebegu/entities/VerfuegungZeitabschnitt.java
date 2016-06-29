@@ -23,8 +23,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int erwerbspensumGS1;
 	private int erwerbspensumGS2;
 	private int betreuungspensum;
-	private int anspruchspensumOriginal;
-	private int anspruchberechtigtesPensum;
+	private int anspruchspensumRest;
+	private int anspruchspensumOriginal; // = Gesamtanspruch für alle Kitas TODO (hefr) brauchts wohl eher nicht...
+	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 	private BigDecimal vollkosten = BigDecimal.ZERO;
 	private BigDecimal elternbeitrag = BigDecimal.ZERO;
 	private BigDecimal verguenstigung = BigDecimal.ZERO;
@@ -66,6 +67,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setBetreuungspensum(int betreuungspensum) {
 		this.betreuungspensum = betreuungspensum;
+	}
+
+	public int getAnspruchspensumRest() {
+		return anspruchspensumRest;
+	}
+
+	public void setAnspruchspensumRest(int anspruchspensumRest) {
+		this.anspruchspensumRest = anspruchspensumRest;
 	}
 
 	public int getAnspruchspensumOriginal() {
@@ -147,6 +156,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
+		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
+		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
 		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
@@ -193,6 +204,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			erwerbspensumGS2 == that.erwerbspensumGS2 &&
 			betreuungspensum == that.betreuungspensum &&
 			anspruchspensumOriginal == that.anspruchspensumOriginal &&
+			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);

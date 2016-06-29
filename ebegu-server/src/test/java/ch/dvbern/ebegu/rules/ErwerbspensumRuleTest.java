@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,8 +20,7 @@ import java.util.List;
  */
 public class ErwerbspensumRuleTest {
 
-	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
+	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(Constants.DEFAULT_GUELTIGKEIT);
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
