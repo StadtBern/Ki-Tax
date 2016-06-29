@@ -125,9 +125,21 @@
                             </dv-input-container>
                         </div>
                     </div>
+
+                    <!--Betreuungspensum entfernen-->
+                    <div class="row" ng-if="($index > 0) || (vm.getBetreuungspensen().length > 1)">
+                        <div class="col-md-12">
+                            <button type="button" ng-click="vm.removeBetreuungspensum(betpen)" class="btn btn-sm btn-warning"
+                                    ng-disabled="!vm.isEnabled()">
+                                <i class="glyphicon glyphicon-minus"></i>
+                                <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!--Dieses div wird fuer alle status ausser AUSSTEHEND ausgeblendet-->
+                <br>
                 <div ng-if="vm.isEnabled()">
                     <!--Neues Betreuungspensum hinzufuegen-->
                     <div class="row">
