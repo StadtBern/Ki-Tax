@@ -55,6 +55,9 @@ public class Betreuung extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Transient
+	private Verfuegung verfuegung;
+
 
 	public KindContainer getKind() {
 		return kind;
@@ -104,6 +107,14 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public Verfuegung getVerfuegung() {
+		return verfuegung;
+	}
+
+	public void setVerfuegung(Verfuegung verfuegung) {
+		this.verfuegung = verfuegung;
 	}
 
 	public boolean isSame(Betreuung otherBetreuung) {

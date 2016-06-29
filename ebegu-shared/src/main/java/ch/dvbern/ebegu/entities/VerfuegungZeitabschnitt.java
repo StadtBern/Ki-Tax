@@ -23,6 +23,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int erwerbspensumGS1;
 	private int erwerbspensumGS2;
 	private int betreuungspensum;
+	private int fachstellenpensum;
 	private int anspruchspensumRest;
 	private int anspruchspensumOriginal; // = Gesamtanspruch für alle Kitas TODO (hefr) brauchts wohl eher nicht...
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
@@ -67,6 +68,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setBetreuungspensum(int betreuungspensum) {
 		this.betreuungspensum = betreuungspensum;
+	}
+
+	public int getFachstellenpensum() {
+		return fachstellenpensum;
+	}
+
+	public void setFachstellenpensum(int fachstellenpensum) {
+		this.fachstellenpensum = fachstellenpensum;
 	}
 
 	public int getAnspruchspensumRest() {
@@ -155,6 +164,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
      */
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
+		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
 		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
 		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
 		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
@@ -203,6 +213,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		return erwerbspensumGS1 == that.erwerbspensumGS1 &&
 			erwerbspensumGS2 == that.erwerbspensumGS2 &&
 			betreuungspensum == that.betreuungspensum &&
+			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumOriginal == that.anspruchspensumOriginal &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&

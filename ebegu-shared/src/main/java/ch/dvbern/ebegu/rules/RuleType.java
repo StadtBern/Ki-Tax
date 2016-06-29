@@ -8,7 +8,8 @@ package ch.dvbern.ebegu.rules;
 public enum RuleType {
 
 	NO_RULE,
-	GRUNDREGEL,
+	GRUNDREGEL_DATA,
+	GRUNDREGEL_CALC,
 	REDUKTIONSREGEL
 
 }

@@ -49,6 +49,7 @@ public class BetreuungsgutscheinEvaluator {
                 Verfuegung verfuegung = new Verfuegung();
                 verfuegung.setZeitabschnitte(zeitabschnitte);
                 verfuegung.setBetreuung(betreuung);
+				betreuung.setVerfuegung(verfuegung);
 			}
 		}
 	}

@@ -37,8 +37,15 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(erwerbspensumRule);
 
 		// 2. Betreuungspensum
-		BetreuungspensumRule betreuungspensumRule = new BetreuungspensumRule(defaultGueltigkeit);
-		rules.add(betreuungspensumRule);
+		// - Daten Fachstelle
+		FachstelleDataRule fachstelleDataRule = new FachstelleDataRule(defaultGueltigkeit);
+		rules.add(fachstelleDataRule);
+		// - Daten Betreuung
+		BetreuungspensumDataRule betreuungspensumDataRule = new BetreuungspensumDataRule(defaultGueltigkeit);
+		rules.add(betreuungspensumDataRule);
+		// - Berechnen
+		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
+		rules.add(betreuungspensumCalcRule);
 
 		// 3. Einkommen / Einkommensverschlechterung / Maximales Einkommen
 		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX);
@@ -67,10 +74,5 @@ public class BetreuungsgutscheinConfigurator {
 		// Einreichungsfrist
 		EinreichungsfristRule einreichungsfristRule = new EinreichungsfristRule(defaultGueltigkeit);
 		rules.add(einreichungsfristRule);
-
-		// Familiensituation
-		FamiliensituationRule familiensituationRule = new FamiliensituationRule(defaultGueltigkeit);
-		rules.add(familiensituationRule);
-
 	}
 }

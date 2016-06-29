@@ -15,7 +15,7 @@ import java.util.*;
 public class ErwerbspensumRule extends AbstractEbeguRule{
 
 	public ErwerbspensumRule(DateRange validityPeriod) {
-		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL, validityPeriod);
+		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
 	}
 
 	//TODO (hefR) Achtung, es muss ncoh das Eingangsdatum beachtet werden!

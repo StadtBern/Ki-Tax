@@ -22,7 +22,9 @@ import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialen
 public class BetreuungspensumRuleTest {
 
 	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(Constants.DEFAULT_GUELTIGKEIT);
-	private final BetreuungspensumRule betreuungspensumRule = new BetreuungspensumRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final FachstelleDataRule fachstelleDataRule = new FachstelleDataRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final BetreuungspensumDataRule betreuungspensumDataRule = new BetreuungspensumDataRule(Constants.DEFAULT_GUELTIGKEIT);
+	private final BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 	private final RestanspruchEvaluator restanspruchEvaluator = new RestanspruchEvaluator(Constants.DEFAULT_GUELTIGKEIT);
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
@@ -34,7 +36,8 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
@@ -50,7 +53,8 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
@@ -66,7 +70,8 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
@@ -84,7 +89,8 @@ public class BetreuungspensumRuleTest {
 		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung1, createInitialenRestanspruch(), dto);
 		// Nach Kita 1: 20% Rest
-		result = betreuungspensumRule.calculate(betreuung1, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung1, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung1, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
@@ -97,7 +103,8 @@ public class BetreuungspensumRuleTest {
 		// Kita 2: Reicht nicht mehr ganz
 		betreuung2.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		result = erwerbspensumRule.calculate(betreuung2, result, dto);
-		result = betreuungspensumRule.calculate(betreuung2, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung2, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung2, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
@@ -113,7 +120,8 @@ public class BetreuungspensumRuleTest {
 		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.TAGESELTERN, 80);
 		betreuung.setSchulpflichtig(Boolean.TRUE);
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
-		List<VerfuegungZeitabschnitt> result = betreuungspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
+		List<VerfuegungZeitabschnitt> result = betreuungspensumDataRule.calculate(betreuung, createInitialenRestanspruch(), dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, result.get(0).getErwerbspensumGS1());
@@ -131,7 +139,8 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
@@ -149,7 +158,9 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = fachstelleDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
@@ -167,7 +178,9 @@ public class BetreuungspensumRuleTest {
 		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 40, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(), dto);
-		result = betreuungspensumRule.calculate(betreuung, result, dto);
+		result = fachstelleDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumDataRule.calculate(betreuung, result, dto);
+		result = betreuungspensumCalcRule.calculate(betreuung, result, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(40, result.get(0).getErwerbspensumGS1());
