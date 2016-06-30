@@ -31,6 +31,7 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../models/TSUser';
 
 
 export default class GesuchModelManager {
@@ -140,6 +141,17 @@ export default class GesuchModelManager {
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+        });
+    }
+
+    /**
+     * Update den Fall
+     * @returns {IPromise<TSFall>}
+     */
+    public updateFall(): IPromise<TSFall> {
+        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+            return this.gesuch.fall = angular.copy(parsedFall);
         });
     }
 
@@ -613,7 +625,20 @@ export default class GesuchModelManager {
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS) {
-            this.gesuch.fall.verantwortlicher = this.authServiceRS.getPrincipal();
+            this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
+    }
+
+    public setUserAsFallVerantwortlicher(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicher = user;
+        }
+    }
+
+    public getFallVerantwortlicher(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
     }
 }
