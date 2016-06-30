@@ -472,7 +472,7 @@ public class JaxBConverter {
 		Validate.notNull(fall);
 		Validate.notNull(fallJAXP);
 		convertAbstractFieldsToEntity(fallJAXP, fall);
-		fall.setFallNummer(fallJAXP.getFallNummer());
+		//Fall nummer wird auf server bzw DB verwaltet und daher hier nicht gesetzt
 		if (fallJAXP.getVerantwortlicher() != null) {
 			Optional<Benutzer> verantwortlicher = benutzerService.findBenutzer(fallJAXP.getVerantwortlicher().getUsername());
 			if (verantwortlicher.isPresent()) {

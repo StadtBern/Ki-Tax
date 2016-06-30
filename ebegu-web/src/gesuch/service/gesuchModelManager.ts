@@ -111,9 +111,8 @@ export default class GesuchModelManager {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create
-            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: any) => {
-                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse.data);
-                this.gesuch.fall = angular.copy(parsedFall);
+            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
+                this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
                 });
