@@ -10,7 +10,7 @@ import {TSMonth, getTSMonthValues} from '../../../models/enums/TSMonth';
 import TSGesuch from '../../../models/TSGesuch';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import IFormController = angular.IFormController;
-import scriptElement = ts.ScriptElementKind.scriptElement;
+
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
 
@@ -92,11 +92,11 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     previousStep() {
-        this.state.go('gesuch.kinder');
+        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
     }
 
     nextStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+        this.state.go('gesuch.einkommensverschlechterungSteuern');
     }
 
     submit(form: IFormController) {

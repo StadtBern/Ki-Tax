@@ -3,6 +3,7 @@ import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 import TSErwerbspensumContainer from './TSErwerbspensumContainer';
+import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -17,6 +18,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _diplomatenstatus: boolean;
+    private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
@@ -119,4 +121,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     set diplomatenstatus(value: boolean) {
         this._diplomatenstatus = value;
     }
+
+    get einkommensverschlechterungContainer(): TSEinkommensverschlechterungContainer {
+        return this._einkommensverschlechterungContainer;
+    }
+
+    set einkommensverschlechterungContainer(value: TSEinkommensverschlechterungContainer) {
+        this._einkommensverschlechterungContainer = value;
+    }
+
 }
+

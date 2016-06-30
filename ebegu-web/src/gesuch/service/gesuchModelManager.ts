@@ -14,6 +14,8 @@ import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
+import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterung from '../../models/TSEinkommensverschlechterung';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
@@ -67,8 +69,8 @@ export default class GesuchModelManager {
     public isGesuchsteller2Required(): boolean {
         if (this.gesuch && this.getFamiliensituation() && this.getFamiliensituation().familienstatus) {
             return !(((this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND)
-                    || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
-                    && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+            || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
+            && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         } else {
             return false;
         }
@@ -271,6 +273,23 @@ export default class GesuchModelManager {
         }
     }
 
+    public initEinkommensverschlechterungContainer(beideHalbjahre: boolean): void {
+        this.initStammdaten();
+        if (this.gesuch && !this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
+            this.gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+            this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            if (beideHalbjahre) {
+                this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            }
+        }
+        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
+            this.gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+            this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            if (beideHalbjahre) {
+                this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            }
+        }
+    }
 
 
     /**
@@ -327,6 +346,17 @@ export default class GesuchModelManager {
     public getBasisjahr(): number {
         if (this.getGesuchsperiodeBegin()) {
             return this.getGesuchsperiodeBegin().year() - 1;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
+     * @returns {number}
+     */
+    public getBasisjahrPlus(plus: number): number {
+        if (this.getGesuchsperiodeBegin()) {
+            return this.getGesuchsperiodeBegin().year() - 1 + plus;
         }
         return undefined;
     }

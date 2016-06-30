@@ -529,7 +529,8 @@
     "EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN": "Möchten Sie eine Einkommensverschlechterung geltend machen?",
     "EKVI_FUER_JAHR": "für {{basisjahr}}",
     "EKVI_MONAT_DES_EREIGNISSES": "Monat des Ereignisses",
-    "EKVI_GRUND_DES_EREIGNISSES": "Grund des Ereignisses"
+    "EKVI_GRUND_DES_EREIGNISSES": "Grund des Ereignisses",
+    "EKVI_ZUSAETZLICHE_FRAGEN": "Zusätzliche Fragen für die Einkommensberschlechterung zum Jahr {{basisjahr}}"
 
 }
 

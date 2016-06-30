@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +30,12 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 
 	@NotNull
 	private Boolean ekvFuerBasisJahrPlus2;
+
+	@Nullable
+	private Boolean gemeinsameSteuererklaerung_BjP1;
+
+	@Nullable
+	private Boolean gemeinsameSteuererklaerung_BjP2;
 
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nullable
@@ -104,5 +111,23 @@ public class JaxEinkommensverschlechterungInfo extends JaxAbstractDTO {
 
 	public void setStichtagFuerBasisJahrPlus2(@Nullable final LocalDate stichtagFuerBasisJahrPlus2) {
 		this.stichtagFuerBasisJahrPlus2 = stichtagFuerBasisJahrPlus2;
+	}
+
+	@Nullable
+	public Boolean getGemeinsameSteuererklaerung_BjP1() {
+		return gemeinsameSteuererklaerung_BjP1;
+	}
+
+	public void setGemeinsameSteuererklaerung_BjP1(@Nullable Boolean gemeinsameSteuererklaerung_BjP1) {
+		this.gemeinsameSteuererklaerung_BjP1 = gemeinsameSteuererklaerung_BjP1;
+	}
+
+	@Nullable
+	public Boolean getGemeinsameSteuererklaerung_BjP2() {
+		return gemeinsameSteuererklaerung_BjP2;
+	}
+
+	public void setGemeinsameSteuererklaerung_BjP2(@Nullable Boolean gemeinsameSteuererklaerung_BjP2) {
+		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
 	}
 }

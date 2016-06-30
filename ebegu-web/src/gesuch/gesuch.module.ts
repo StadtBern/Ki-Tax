@@ -15,6 +15,7 @@ import {FinanzielleSituationStartViewComponentConfig} from './component/finanzie
 import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
 import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 import {EinkommensverschlechterungInfoViewComponentConfig} from './component/einkommensverschlechterungInfoView/einkommensverschlechterungInfoView';
+import {EinkommensverschlechterungSteuernViewComponentConfig} from './component/einkommensverschlechterungSteuernView/einkommensverschlechterungSteuernView';
 
 
 export const EbeguWebGesuch =
@@ -32,4 +33,5 @@ export const EbeguWebGesuch =
         .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
         .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
         .component('fallCreationView', new FallCreationViewComponentConfig())
-        .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig());
+        .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig())
+        .component('einkommensverschlechterungSteuernView', new EinkommensverschlechterungSteuernViewComponentConfig());
