@@ -42,11 +42,9 @@ export default class AuthServiceRS {
 
     public initWithCookie(): boolean {
         let authIdbase64 = this.$cookies.get('authId');
-        console.log('from cookieas', authIdbase64);
         if (authIdbase64) {
             try {
                 let authData = angular.fromJson(this.base64.decode(authIdbase64));
-                console.log('real data', authData);
                 this.principal = new TSUser(authData.vorname, authData.nachname, authData.authId, '', authData.email, authData.mandant, authData.role);
                 return true;
             } catch (e) {

@@ -8,8 +8,11 @@ import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungInfoResource;
 import ch.dvbern.ebegu.api.resource.FallResource;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
 import ch.dvbern.ebegu.api.resource.GesuchsperiodeResource;
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -54,6 +57,11 @@ public class EinkommensverschlechterungInfoResourceTest {
 	@Inject
 	private JaxBConverter converter;
 
+	@Inject
+	private Persistence<Benutzer> persistence;
+
+
+
 	@Test
 	public void createEinkommensverschlechterungInfoTest() throws EbeguException {
 
@@ -74,10 +82,15 @@ public class EinkommensverschlechterungInfoResourceTest {
 	}
 
 	private JaxGesuch crateJaxGesuch(UriInfo uri) throws EbeguException {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		verantwortlicher = persistence.persist(verantwortlicher);
+
 		JaxGesuch testJaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
+		testJaxGesuch.getFall().setVerantwortlicher(converter.benutzerToAuthLoginElement(verantwortlicher));
 
 
-		JaxFall returnedFall = (JaxFall) fallResource.create(testJaxGesuch.getFall(), uri, null).getEntity();
+		JaxFall returnedFall = (JaxFall) fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuch.getGesuchsperiode(), uri, null));
 		testJaxGesuch.setFall(returnedFall);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
