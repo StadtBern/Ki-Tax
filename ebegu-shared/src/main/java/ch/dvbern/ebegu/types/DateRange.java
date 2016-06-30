@@ -210,6 +210,15 @@ public class DateRange implements Serializable, Comparable<DateRange> {
 	}
 
 	/**
+	 * Gibt 31.12.XXXX zurueck, wo XXXX ist das Vorjahr von gueltigAb.
+	 * @return
+	 */
+	public LocalDate calculateEndOfPreviousYear() {
+		int year = this.getGueltigAb().getYear();
+		return LocalDate.of(year - 1, 12, 31);
+	}
+
+	/**
 	 * {@link #getOverlap(DateRange)}.isPresent()
 	 */
 	public boolean intersects(@Nonnull DateRange other) {
