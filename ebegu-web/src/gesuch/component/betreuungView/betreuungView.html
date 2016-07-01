@@ -126,8 +126,8 @@
                         </div>
                     </div>
 
-                    <!--Betreuungspensum entfernen-->
-                    <div class="row" ng-if="($index > 0) || (vm.getBetreuungspensen().length > 1)">
+                    <!--Betreuungspensum entfernen. Wird nur angezeigt wenn status=AUSSTEHEND und es mehrere Betreuungspensen gibt-->
+                    <div class="row" ng-if="vm.isEnabled() && (($index > 0) || (vm.getBetreuungspensen().length > 1))">
                         <div class="col-md-12">
                             <button type="button" ng-click="vm.removeBetreuungspensum(betpen)" class="btn btn-sm btn-warning"
                                     ng-disabled="!vm.isEnabled()">
@@ -138,8 +138,8 @@
                     </div>
                 </div>
 
-                <!--Dieses div wird fuer alle status ausser AUSSTEHEND ausgeblendet-->
                 <br>
+                <!--Dieses div wird fuer alle status ausser AUSSTEHEND ausgeblendet-->
                 <div ng-if="vm.isEnabled()">
                     <!--Neues Betreuungspensum hinzufuegen-->
                     <div class="row">
