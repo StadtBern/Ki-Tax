@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Gueltigkeit;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 @MappedSuperclass
 @Audited
-public class AbstractDateRangedEntity extends AbstractEntity {
+public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigkeit {
 
 	private static final long serialVersionUID = -7541083148864749528L;
 
