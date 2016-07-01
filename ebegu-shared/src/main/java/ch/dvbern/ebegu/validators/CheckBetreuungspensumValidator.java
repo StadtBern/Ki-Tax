@@ -42,8 +42,9 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 * Constructor fuer tests damit service reingegeben werden kann
 	 * @param service service zum testen
 	 */
-	public CheckBetreuungspensumValidator(EbeguParameterService service){
+	public CheckBetreuungspensumValidator(EbeguParameterService service, EntityManagerFactory entityManagerFactory){
 		this.ebeguParameterService = service;
+		this.entityManagerFactory = entityManagerFactory;
 	}
 
 	@Override
