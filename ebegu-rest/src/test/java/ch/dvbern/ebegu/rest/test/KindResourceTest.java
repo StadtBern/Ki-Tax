@@ -3,10 +3,14 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.api.resource.*;
+import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -44,16 +48,23 @@ public class KindResourceTest extends AbstractEbeguRestTest {
 	private FachstelleResource fachstelleResource;
 	@Inject
 	private PensumFachstelleService pensumFachstelleService;
+	@Inject
+	private BenutzerService benutzerService;
 
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private Persistence<?> persistence;
 
 
 	@Test
 	public void createKindTest() throws EbeguException {
 		UriInfo uri = new ResteasyUriInfo("test", "test", "test");
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
-		JaxFall returnedFall = (JaxFall) fallResource.create(jaxGesuch.getFall(), uri, null).getEntity();
+		Mandant persistedMandant = persistence.persist(converter.mandantToEntity(TestJaxDataUtil.createTestMandant(), new Mandant()));
+		jaxGesuch.getFall().getVerantwortlicher().setMandant(converter.mandantToJAX(persistedMandant));
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()));
+		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		JaxGesuchsperiode returnedGesuchsperiode = gesuchsperiodeResource.saveGesuchsperiode(jaxGesuch.getGesuchsperiode(), uri, null);
 		jaxGesuch.setFall(returnedFall);
 		jaxGesuch.setGesuchsperiode(returnedGesuchsperiode);

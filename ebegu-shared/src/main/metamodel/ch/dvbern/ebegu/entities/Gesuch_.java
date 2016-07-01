@@ -13,7 +13,7 @@ public abstract class Gesuch_ extends ch.dvbern.ebegu.entities.AbstractAntragEnt
 	public static volatile SingularAttribute<Gesuch, Familiensituation> familiensituation;
 	public static volatile SingularAttribute<Gesuch, Gesuchsteller> gesuchsteller1;
 	public static volatile SingularAttribute<Gesuch, Gesuchsteller> gesuchsteller2;
-	public static volatile SingularAttribute<Gesuch, Boolean> einkommensverschlechterung;
+	public static volatile SingularAttribute<Gesuch, EinkommensverschlechterungInfo> einkommensverschlechterungInfo;
 
 }
 

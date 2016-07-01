@@ -7,6 +7,9 @@ import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import TestDataUtil from '../../utils/TestDataUtil';
 import DateUtil from '../../utils/DateUtil';
+import TSGesuch from '../../models/TSGesuch';
+import TSUser from '../../models/TSUser';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 
 describe('gesuchModelManager', function () {
 
@@ -17,6 +20,7 @@ describe('gesuchModelManager', function () {
     let scope: IScope;
     let $httpBackend: IHttpBackendService;
     let $q: IQService;
+    let authServiceRS: AuthServiceRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -28,6 +32,7 @@ describe('gesuchModelManager', function () {
         gesuchRS = $injector.get('GesuchRS');
         scope = $injector.get('$rootScope').$new();
         $q = $injector.get('$q');
+        authServiceRS = $injector.get('AuthServiceRS');
     }));
 
     describe('Public API', function () {
@@ -105,6 +110,65 @@ describe('gesuchModelManager', function () {
 
                 scope.$apply();
                 expect(gesuchRS.updateGesuch).toHaveBeenCalled();
+            });
+        });
+        describe('initGesuch', () => {
+            beforeEach(() => {
+                expect(gesuchModelManager.gesuch).toBeUndefined();
+            });
+            it('links the fall with the undefined user', () => {
+                spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
+
+                gesuchModelManager.initGesuch(false);
+
+                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.gesuch.fall).toBeDefined();
+                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(undefined);
+            });
+            it('links the fall with the current user', () => {
+                let currentUser: TSUser = new TSUser('Test', 'User', 'username');
+                spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
+
+                gesuchModelManager.initGesuch(false);
+
+                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.gesuch.fall).toBeDefined();
+                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(currentUser);
+            });
+            it('does not force to create a new fall and gesuch', () => {
+                gesuchModelManager.initGesuch(false);
+                expect(gesuchModelManager.gesuch).toBeDefined();
+            });
+            it('does force to create a new fall and gesuch', () => {
+                gesuchModelManager.initGesuch(true);
+                expect(gesuchModelManager.gesuch).toBeDefined();
+            });
+            it('forces to create a new gesuch and fall even though one already exists', () => {
+                gesuchModelManager.initGesuch(false);
+                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
+                expect(gesuchModelManager.gesuch).toBeDefined();
+
+                gesuchModelManager.initGesuch(true);
+                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(oldGesuch).not.toBe(gesuchModelManager.gesuch);
+            });
+            it('does not force to create a new gesuch and fall and the old ones will remain', () => {
+                gesuchModelManager.initGesuch(false);
+                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
+                expect(gesuchModelManager.gesuch).toBeDefined();
+
+                gesuchModelManager.initGesuch(false);
+                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(oldGesuch).toBe(gesuchModelManager.gesuch);
+            });
+        });
+        describe('setUserAsFallVerantwortlicher', () => {
+            it('puts the given user as the verantwortlicher for the fall', () => {
+                gesuchModelManager.initGesuch(false);
+                spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
+                let user: TSUser = new TSUser('Emiliano', 'Camacho');
+                gesuchModelManager.setUserAsFallVerantwortlicher(user);
+                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(user);
             });
         });
     });

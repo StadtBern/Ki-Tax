@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.types;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.DayOfWeek;
@@ -307,5 +308,29 @@ public class DateRangeTest {
 
 		DateRange expectedEndWeeks = new DateRange(LocalDate.of(2016, 4, 11), LocalDate.of(2016, 5, 1));
 		assertEquals(expectedEndWeeks, actualRanges.get(1));
+	}
+
+	@Test
+	public void testCalculateEndOfPreviousYear() {
+		DateRange range = new DateRange(LocalDate.of(2016, 8, 1), LocalDate.of(2017, 7, 31));
+		Assert.assertEquals(LocalDate.of(2015, 12, 31), range.calculateEndOfPreviousYear());
+	}
+
+	@Test
+	public void testCalculateEndOfPreviousYearJanuar() {
+		DateRange range = new DateRange(LocalDate.of(2016, 1, 1), LocalDate.of(2017, 7, 31));
+		Assert.assertEquals(LocalDate.of(2015, 12, 31), range.calculateEndOfPreviousYear());
+	}
+
+	@Test
+	public void testCalculateEndOfPreviousYearDezember() {
+		DateRange range = new DateRange(LocalDate.of(2016, 12, 31), LocalDate.of(2017, 7, 31));
+		Assert.assertEquals(LocalDate.of(2015, 12, 31), range.calculateEndOfPreviousYear());
+	}
+
+	@Test
+	public void testCalculateEndOfPreviousYearYearZero() {
+		DateRange range = new DateRange(LocalDate.of(0, 12, 31), LocalDate.of(2017, 7, 31));
+		Assert.assertEquals(LocalDate.of(-1, 12, 31), range.calculateEndOfPreviousYear());
 	}
 }

@@ -4,6 +4,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -25,11 +26,27 @@ public class Fall extends AbstractEntity {
 	@Column(columnDefinition = "integer auto_increment")
 	private int fallNummer;
 
+	@Nullable
+	@ManyToOne(optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_verantwortlicher_id"))
+	private Benutzer verantwortlicher = null;
+
+
+
 	public int getFallNummer() {
 		return fallNummer;
 	}
 
 	public void setFallNummer(int fallNummer) {
 		this.fallNummer = fallNummer;
+	}
+
+	@Nullable
+	public Benutzer getVerantwortlicher() {
+		return verantwortlicher;
+	}
+
+	public void setVerantwortlicher(@Nullable Benutzer verantwortlicher) {
+		this.verantwortlicher = verantwortlicher;
 	}
 }

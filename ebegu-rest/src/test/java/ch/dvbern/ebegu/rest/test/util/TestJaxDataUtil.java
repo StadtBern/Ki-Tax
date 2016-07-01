@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class TestJaxDataUtil {
 
-	public static JaxGesuchsteller createTestJaxGesuchsteller(){
+	public static JaxGesuchsteller createTestJaxGesuchsteller() {
 
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		jaxGesuchsteller.setNachname("Jaxter");
@@ -33,7 +33,7 @@ public class TestJaxDataUtil {
 
 	}
 
-	public static JaxGesuchsteller createTestJaxGesuchstellerWithUmzug(){
+	public static JaxGesuchsteller createTestJaxGesuchstellerWithUmzug() {
 		JaxGesuchsteller jaxGesuchsteller = createTestJaxGesuchsteller();
 		JaxAdresse umzugAdr = new JaxAdresse();
 		umzugAdr.setAdresseTyp(AdresseTyp.WOHNADRESSE);
@@ -69,7 +69,7 @@ public class TestJaxDataUtil {
 
 	}
 
-	public static JaxErwerbspensumContainer createTestJaxErwerbspensumContainer(){
+	public static JaxErwerbspensumContainer createTestJaxErwerbspensumContainer() {
 		JaxErwerbspensum testJaxErwerbspensum = createTestJaxErwerbspensum();
 		JaxErwerbspensumContainer container = new JaxErwerbspensumContainer();
 		container.setErwerbspensumGS(testJaxErwerbspensum);
@@ -77,7 +77,7 @@ public class TestJaxDataUtil {
 	}
 
 
-	public static JaxErwerbspensum createTestJaxErwerbspensum(){
+	public static JaxErwerbspensum createTestJaxErwerbspensum() {
 		JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
 		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
 		jaxErwerbspensum.setGesundheitlicheEinschraenkungen(true);
@@ -90,22 +90,36 @@ public class TestJaxDataUtil {
 
 	}
 
-	public static JaxAdresse createTestJaxAdr(@Nullable String postfix){
+	public static JaxAdresse createTestJaxAdr(@Nullable String postfix) {
 		postfix = StringUtils.isEmpty(postfix) ? "" : postfix;
 		JaxAdresse jaxAdresse = new JaxAdresse();
 		jaxAdresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
-		jaxAdresse.setGemeinde("Bern"+postfix);
-		jaxAdresse.setHausnummer("1"+postfix);
+		jaxAdresse.setGemeinde("Bern" + postfix);
+		jaxAdresse.setHausnummer("1" + postfix);
 		jaxAdresse.setLand(Land.CH);
-		jaxAdresse.setOrt("Bern"+postfix);
-		jaxAdresse.setPlz("3014"+postfix);
-		jaxAdresse.setZusatzzeile("Test"+postfix);
-		jaxAdresse.setStrasse("Nussbaumstrasse"+postfix);
+		jaxAdresse.setOrt("Bern" + postfix);
+		jaxAdresse.setPlz("3014" + postfix);
+		jaxAdresse.setZusatzzeile("Test" + postfix);
+		jaxAdresse.setStrasse("Nussbaumstrasse" + postfix);
 		return jaxAdresse;
 	}
 
 	public static JaxFall createTestJaxFall() {
-		return new JaxFall();
+		JaxFall jaxFall = new JaxFall();
+		jaxFall.setFallNummer(1);
+		jaxFall.setVerantwortlicher(createTestJaxBenutzer());
+		return jaxFall;
+	}
+
+	private static JaxAuthLoginElement createTestJaxBenutzer() {
+		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
+		jaxBenutzer.setRole(UserRole.ADMIN);
+		jaxBenutzer.setUsername("TestUser");
+		jaxBenutzer.setPassword("1234");
+		jaxBenutzer.setEmail("e@e.ch");
+		jaxBenutzer.setNachname("NachnameTest");
+		jaxBenutzer.setVorname("VornameTest");
+		return jaxBenutzer;
 	}
 
 	public static JaxGesuch createTestJaxGesuch() {
@@ -158,7 +172,7 @@ public class TestJaxDataUtil {
 		return jaxKindContainer;
 	}
 
-	public static JaxBetreuungspensum createTestJaxBetreuungspensum(LocalDate from, LocalDate to){
+	public static JaxBetreuungspensum createTestJaxBetreuungspensum(LocalDate from, LocalDate to) {
 		JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
 		jaxBetreuungspensum.setGueltigAb(from);
 		jaxBetreuungspensum.setGueltigBis(to);
@@ -167,10 +181,10 @@ public class TestJaxDataUtil {
 		return jaxBetreuungspensum;
 	}
 
-	public static  JaxBetreuungspensumContainer createBetreuungspensumContainer(int year){
+	public static JaxBetreuungspensumContainer createBetreuungspensumContainer(int year) {
 
 		LocalDate from = LocalDate.of(year, 8, 1);
-		LocalDate to = LocalDate.of(year  + 1 , 7, 31);
+		LocalDate to = LocalDate.of(year + 1, 7, 31);
 
 		JaxBetreuungspensumContainer jaxBetrPenCnt = new JaxBetreuungspensumContainer();
 		jaxBetrPenCnt.setBetreuungspensumJA(createTestJaxBetreuungspensum(from, to));
@@ -203,5 +217,55 @@ public class TestJaxDataUtil {
 		jaxGesuchsperiode.setGueltigBis(LocalDate.now().plusMonths(1));
 		jaxGesuchsperiode.setActive(true);
 		return jaxGesuchsperiode;
+	}
+
+	public static JaxEinkommensverschlechterungInfo createTestJaxEinkommensverschlechterungInfo() {
+		JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfo = new JaxEinkommensverschlechterungInfo();
+		jaxEinkommensverschlechterungInfo.setEinkommensverschlechterung(true);
+		jaxEinkommensverschlechterungInfo.setEkvFuerBasisJahrPlus1(true);
+		jaxEinkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(LocalDate.now());
+		jaxEinkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
+		jaxEinkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
+		return jaxEinkommensverschlechterungInfo;
+	}
+
+
+	public static JaxEinkommensverschlechterungContainer createTestJaxEinkommensverschlechterungContianer() {
+		JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer = new JaxEinkommensverschlechterungContainer();
+
+		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus1(createDefaultJaxEinkommensverschlechterungs());
+
+		final JaxEinkommensverschlechterung ekvGSBasisJahrPlus2 = createDefaultJaxEinkommensverschlechterungs();
+		ekvGSBasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(2));
+		einkommensverschlechterungContainer.setEkvGSBasisJahrPlus2(ekvGSBasisJahrPlus2);
+
+		final JaxEinkommensverschlechterung ekvJABasisJahrPlus1 = createDefaultJaxEinkommensverschlechterungs();
+		ekvJABasisJahrPlus1.setNettolohnJan(BigDecimal.valueOf(3));
+		einkommensverschlechterungContainer.setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
+
+		final JaxEinkommensverschlechterung ekvJABasisJahrPlus2 = createDefaultJaxEinkommensverschlechterungs();
+		ekvJABasisJahrPlus2.setNettolohnJan(BigDecimal.valueOf(4));
+		einkommensverschlechterungContainer.setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
+
+
+		return einkommensverschlechterungContainer;
+	}
+
+	public static JaxEinkommensverschlechterung createDefaultJaxEinkommensverschlechterungs() {
+		JaxEinkommensverschlechterung einkommensverschlechterung = new JaxEinkommensverschlechterung();
+		createDefaultAbstractFinanzielleSituation(einkommensverschlechterung);
+		einkommensverschlechterung.setNettolohnJan(BigDecimal.ONE);
+		return einkommensverschlechterung;
+	}
+
+	public static void createDefaultAbstractFinanzielleSituation(JaxAbstractFinanzielleSituation abstractFinanzielleSituation) {
+		abstractFinanzielleSituation.setSteuerveranlagungErhalten(Boolean.FALSE);
+		abstractFinanzielleSituation.setSteuererklaerungAusgefuellt(Boolean.TRUE);
+	}
+
+	public static JaxMandant createTestMandant() {
+		JaxMandant mandant = new JaxMandant();
+		mandant.setName("TestMandant");
+		return mandant;
 	}
 }

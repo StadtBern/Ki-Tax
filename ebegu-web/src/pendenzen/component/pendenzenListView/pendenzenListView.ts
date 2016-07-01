@@ -12,6 +12,8 @@ import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
+import TSUser from '../../../models/TSUser';
+import UserRS from '../../../core/service/userRS.rest';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -29,26 +31,35 @@ export class PendenzenListViewController {
     selectedAntragTyp: string;
     selectedInstitution: string;
     selectedGesuchsperiode: string;
+    selectedUser: string;
     institutionenList: Array<TSInstitution>;
+    userList: Array<TSUser>;
     activeGesuchsperiodenList: Array<string>;
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', '$state'];
+        'GesuchRS', 'GesuchModelManager', '$state', 'UserRS'];
+
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService) {
+                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS, private gesuchRS: GesuchRS,
+                private gesuchModelManager: GesuchModelManager, private $state: IStateService, private userRS: UserRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
+        this.updateUserList();
         this.updatePendenzenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
     }
 
+    private updateUserList() {
+        this.userRS.getAllUsers().then((response: any) => {
+            this.userList = angular.copy(response);
+        });
+    }
 
     private updatePendenzenList() {
         this.pendenzRS.getPendenzenList().then((response: any) => {
