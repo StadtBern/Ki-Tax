@@ -24,6 +24,7 @@ public class AbstractBGRechner {
 	/**
 	 * Checkt die für alle Angebote benötigten Argumente auf Null.
 	 * Stellt sicher, dass der Zeitraum innerhalb eines Monates liegt
+	 * Wenn nicht wird eine Exception geworfen
      */
 	protected void checkArguments(LocalDate von, LocalDate bis, BigDecimal anspruch, BigDecimal massgebendesEinkommen) {
 		// Inputdaten validieren
@@ -38,7 +39,8 @@ public class AbstractBGRechner {
 	}
 
 	/**
-	 * Berechnet den Anteil des Zeitabschnittes am gesamten Monat
+	 * Berechnet den Anteil des Zeitabschnittes am gesamten Monat als dezimalzahl von 0 bis 1
+	 * Dabei werden nur Werktage (d.h. sa do werden ignoriert) beruecksichtigt
      */
 	protected BigDecimal calculateAnteilMonat(LocalDate von, LocalDate bis) {
 		LocalDate monatsanfang = von.with(TemporalAdjusters.firstDayOfMonth());

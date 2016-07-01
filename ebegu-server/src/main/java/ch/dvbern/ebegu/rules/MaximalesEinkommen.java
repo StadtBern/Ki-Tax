@@ -1,13 +1,12 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -35,15 +34,15 @@ public class MaximalesEinkommen extends AbstractEbeguRule {
 		//immer wenn das massgebende Einkommen aendert muss ein neuer Zeitabschnitt definiert werden
 		for (int i = 0; i < 1; i++) { //todo hier ueber finanzielleSituation sowie Verschlechterungen iterieren und jeweils das ereignisdatum verwenden um einen zeitabschnitt zu machen
 			//Beispiel, einkommensverschlechterung auf Maerz
-			LocalDate from = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
-			LocalDate to = betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit().getGueltigBis();
 			VerfuegungZeitabschnitt initialabschnitt = new VerfuegungZeitabschnitt(betreuungspensumContainer.extractGesuchsperiode().getGueltigkeit());
+			if (readMassgebendesEinkommen(finSitResultatDTO).compareTo(maximalesEinkommen) > 0) {
+				initialabschnitt.setAnspruchberechtigtesPensum(0); //todo korrekte regel implementieren
+			}
+			zeitabschnitte.add(initialabschnitt); //
 
 		}
-		if (readMassgebendesEinkommen(finSitResultatDTO).compareTo(maximalesEinkommen) > 0) {
 
-			//todo regel ausfuehren
-		}
+
 		return zeitabschnitte;
 	}
 

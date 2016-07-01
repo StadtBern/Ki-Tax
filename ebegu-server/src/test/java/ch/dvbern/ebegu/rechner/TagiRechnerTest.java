@@ -18,7 +18,7 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 	private TagiRechner tagiRechner = new TagiRechner();
 
 	@Test
-	public void testHalberMonatHohesEinkommenAnspruch15() {
+	public void testEinTagHohesEinkommenAnspruch15() {
 		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 21),
 			15, new BigDecimal("234567"));
@@ -30,7 +30,7 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 	}
 
 	@Test
-	public void testHalberMonatMittleresEinkommen() {
+	public void testTeilmonatMittleresEinkommen() {
 		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 31),
 			100, new BigDecimal("87654"));

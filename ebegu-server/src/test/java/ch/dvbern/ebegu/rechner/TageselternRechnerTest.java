@@ -18,7 +18,7 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 	private TageselternRechner tageselternRechner = new TageselternRechner();
 
 	@Test
-	public void testHalberMonatHohesEinkommenAnspruch15() {
+	public void testEinTagMonatHohesEinkommenAnspruch15() {
 		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 21),
 			15, new BigDecimal("234567"));
@@ -31,7 +31,7 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 	}
 
 	@Test
-	public void testHalberMonatMittleresEinkommen() {
+	public void testTeilmonatMittleresEinkommen() {
 		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 31),
 			100, new BigDecimal("87654"));

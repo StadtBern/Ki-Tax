@@ -22,15 +22,16 @@ public class BerechnungsgutscheinEvaluatorTest {
 
 
 
-/**    Idee. Wir iterieren der Reihe nach zuerst ueber alle Kinder dann ueber deren Betreeungspensen. Fuer jedes
- * Betreuungspensum stossen wir die Berechnung an. Der output einer solchen Berechnung ist eine Liste von
- * Zeitabschnitten mit dem
- *
- */
+
 
 
 	}
 
+	/**    Idee. Wir iterieren der Reihe nach zuerst ueber alle Kinder dann ueber deren Betreeungspensen. Fuer jedes
+	 * Betreuungspensum stossen wir die Berechnung an. Der output einer solchen Berechnung ist eine Liste von
+	 * Zeitabschnitten mit dem
+	 *
+	 */
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = new Gesuch();

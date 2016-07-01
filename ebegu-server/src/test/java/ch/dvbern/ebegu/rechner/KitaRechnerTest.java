@@ -19,7 +19,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 
 
 	@Test
-	public void testHalberMonatHohesEinkommenKitaLangeOffenAnspruch15() {
+	public void testEinTagHohesEinkommenKitaLangeOffenAnspruch15() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2014, Month.AUGUST, 1),
 			new BigDecimal("260"), new BigDecimal("13"),
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 21),
@@ -32,7 +32,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 	}
 
 	@Test
-	public void testHalberMonatHohesEinkommenKitaLangeOffenBabyAnspruch80() {
+	public void testTeilmonatHohesEinkommenKitaLangeOffenBabyAnspruch80() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2015, Month.AUGUST, 1),
 			new BigDecimal("260"), new BigDecimal("13"),
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 27),
@@ -45,7 +45,7 @@ public class KitaRechnerTest extends AbstractBGRechnerTest {
 	}
 
 	@Test
-	public void testHalberMonatMittleresEinkommenBaby() {
+	public void testTeilmonatMittleresEinkommenBaby() {
 		Verfuegung verfuegung = prepareVerfuegungKita(LocalDate.of(2015, Month.AUGUST, 1),
 			new BigDecimal("200"), new BigDecimal("9"),
 			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 31),

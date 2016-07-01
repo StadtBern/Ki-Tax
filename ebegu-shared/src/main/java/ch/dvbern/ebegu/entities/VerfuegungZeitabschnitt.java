@@ -30,7 +30,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private BigDecimal betreuungsstunden;
 	private BigDecimal vollkosten = BigDecimal.ZERO;
 	private BigDecimal elternbeitrag = BigDecimal.ZERO;
-	private BigDecimal verguenstigung = BigDecimal.ZERO;
 	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 
@@ -125,14 +124,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setElternbeitrag(BigDecimal elternbeitrag) {
 		this.elternbeitrag = elternbeitrag;
-	}
-
-	public BigDecimal getVerguenstigung() {
-		return verguenstigung;
-	}
-
-	public void setVerguenstigung(BigDecimal verguenstigung) {
-		this.verguenstigung = verguenstigung;
 	}
 
 	public BigDecimal getAbzugFamGroesse() {
@@ -238,5 +229,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);
+	}
+
+
+	/**
+	 * Gibt den Betrag des Gutscheins zurück.
+     */
+	public BigDecimal getVerguenstigung() {
+		if (vollkosten != null && elternbeitrag != null) {
+			return vollkosten.subtract(elternbeitrag);
+		}
+		return BigDecimal.ZERO;
 	}
 }

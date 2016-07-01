@@ -6,10 +6,7 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Berechnungsgutschein
@@ -69,7 +66,7 @@ public class BerechnungsgutscheinEvaluator {
 	}
 
 	private Map<RuleKey, Rule> findRulesToRunForPeriode(Gesuchsperiode gesuchsperiode) {
-
+		Objects.requireNonNull(gesuchsperiode, "Gesuchsperiode muss gesetzt sein");
 
 		//bes
 		return rules;

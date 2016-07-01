@@ -72,6 +72,11 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 			getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
 	}
 
+	/**
+	 *
+	 * @return geht durch die internen Datenstrukturen hoch bis zur Gesuchsperiode und gibt diese zureuck
+	 * @throws IllegalArgumentException wenn einer der benoetigten Pfade null ist
+	 */
 	@Transient
 	public Gesuchsperiode extractGesuchsperiode(){
 		Validate.notNull(this.getBetreuung(), "Can not extract Gesuchsperiode because Betreuung is null");

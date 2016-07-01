@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Berechnet die Vollkosten, den Elternbeitrag und die Vergünstigung für einen Zeitabschnitt (innerhalb eines Monats)
+ * Berechnet die Vollkosten, den Elternbeitrag und die Verguenstigung für einen Zeitabschnitt (innerhalb eines Monats)
  * einer Betreuung für das Angebot TAGI (Tagesstätte für Schulkinder).
  */
 public class TagiRechner extends AbstractBGRechner {
