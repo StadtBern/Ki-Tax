@@ -9,6 +9,9 @@ import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
@@ -25,6 +28,12 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private EbeguParameterService ebeguParameterService;
+
+	// We need to pass to EbeguParameterService a new EntityManager to avoid errors like ConcurrentModificatinoException. So we create it here
+	// and pass it to the methods of EbeguParameterService we need to call.
+	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
+	private EntityManagerFactory entityManagerFactory;
+
 
 	public CheckBetreuungspensumValidator() {
 	}
@@ -44,17 +53,22 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
+		final EntityManager em = entityManagerFactory.createEntityManager(); // creates a new EntityManager
 		int index = 0;
 		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
 			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
 				betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb(),
-				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), em);
+
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
 				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
+
+				em.close();
 				return false;
 			}
 			index++;
 		}
+		em.close();
 		return true;
 	}
 
@@ -64,7 +78,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't match any
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
      */
-	private int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp) {
+	private int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp, final EntityManager em) {
 		EbeguParameterKey key = null;
 		if (betreuungsangebotTyp == BetreuungsangebotTyp.KITA) {
 			key = EbeguParameterKey.PARAM_PENSUM_KITA_MIN;
@@ -79,7 +93,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
 		}
 		if (key != null) {
-			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag);
+			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
 				return parameter.get().getAsInteger();
 			}

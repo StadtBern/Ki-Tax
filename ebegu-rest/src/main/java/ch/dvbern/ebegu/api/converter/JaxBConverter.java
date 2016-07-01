@@ -1189,6 +1189,8 @@ public class JaxBConverter {
 		}
 
 		//change the existing collection to reflect changes
+		// Already tested: All existing Betreuungspensen of the list remain as they were, that means their data are actualised
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
 		existingBetreuungspensen.clear();
 		existingBetreuungspensen.addAll(transformedBetPenContainers);
 	}

@@ -23,8 +23,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.Month;
@@ -38,12 +37,12 @@ import java.util.stream.Collectors;
 @Local(EbeguParameterService.class)
 public class EbeguParameterServiceBean extends AbstractBaseService implements EbeguParameterService {
 
-
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
 
 	@Override
 	@Nonnull
@@ -56,7 +55,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Nonnull
 	public Optional<EbeguParameter> findEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		EbeguParameter a =  persistence.find(EbeguParameter.class, id);
+		EbeguParameter a = persistence.find(EbeguParameter.class, id);
 		return Optional.ofNullable(a);
 	}
 
@@ -111,7 +110,13 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Override
 	@Nonnull
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
+	}
+
+	@Override
+	@Nonnull
+	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
 		Root<EbeguParameter> root = query.from(EbeguParameter.class);
 		query.select(root);
@@ -125,7 +130,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		Predicate keyPredicate = cb.equal(root.get(EbeguParameter_.name), keyParam);
 
 		query.where(intervalPredicate, keyPredicate);
-		TypedQuery<EbeguParameter> q = persistence.getEntityManager().createQuery(query);
+		TypedQuery<EbeguParameter> q = em.createQuery(query);
 		q.setParameter(dateParam, date);
 		q.setParameter(keyParam, key);
 		List<EbeguParameter> resultList = q.getResultList();

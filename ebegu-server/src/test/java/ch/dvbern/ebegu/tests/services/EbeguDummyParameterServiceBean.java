@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Alternative;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -96,10 +97,16 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 		return dummyObjects.values();
 	}
 
-	//wird von validator gebraucht
 	@Override
 	@Nonnull
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
+		return getEbeguParameterByKeyAndDate(key, date, null);
+	}
+
+	//wird von validator gebraucht
+	@Override
+	@Nonnull
+	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {
 		EbeguParameter mockParameter = this.dummyObjects.get(key);
 		if (mockParameter != null) {
 			return Optional.of(mockParameter);
