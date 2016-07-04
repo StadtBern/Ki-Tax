@@ -34,11 +34,13 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
+import getEnv = jasmine.getEnv;
 
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
     gesuchstellerNumber: number = 1;
+    basisJahrPlusNumber: number = 1;
     private kindNumber: number;
     private betreuungNumber: number;
     private fachstellenList: Array<TSFachstelle>;
@@ -189,6 +191,18 @@ export default class GesuchModelManager {
     }
 
     /**
+     * BasisJahrPlus nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
+     * @param bjpNumber
+     */
+    public setBasisJahrPlusNumber(bjpNumber: number) {
+        if (bjpNumber === 1 || bjpNumber === 2) {
+            this.basisJahrPlusNumber = bjpNumber;
+        } else {
+            this.basisJahrPlusNumber = 1;
+        }
+    }
+
+    /**
      * Kind nummer geht von 1 bis unendlich. Fuer 0 oder negative Nummer wird kindNumber als 1 gesetzt.
      * @param kindNumber
      */
@@ -229,6 +243,39 @@ export default class GesuchModelManager {
             return this.gesuch.gesuchsteller2;
         } else {
             return this.gesuch.gesuchsteller1;
+        }
+    }
+
+    public getEinkommensverschlechterungToWorkWith(): TSEinkommensverschlechterung {
+        let gesuchsteller: TSGesuchsteller;
+        if (this.gesuchstellerNumber === 2) {
+            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller2);
+        } else {
+            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller1);
+        }
+    }
+
+    public getEkvFromGesuchstellerOfBsj_JA(gesuchsteller: TSGesuchsteller): TSEinkommensverschlechterung {
+        if (this.basisJahrPlusNumber === 2) {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus2;
+        } else {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
+        }
+    }
+
+    public getEkvFuerBasisJahrPlusToWorkWith(): boolean {
+        return this.getEkvFuerBasisJahrPlus(this.basisJahrPlusNumber);
+    }
+
+    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+        if (!this.gesuch.einkommensverschlechterungInfo) {
+            this.initEinkommensverschlechterungInfo();
+        }
+
+        if (basisJahrPlus) {
+            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+        } else {
+            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
         }
     }
 

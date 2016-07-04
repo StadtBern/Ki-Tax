@@ -76,11 +76,11 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     previousStep() {
-        this.state.go('gesuch.kinder');
+        this.state.go('gesuch.einkommensverschlechterungInfo');
     }
 
     nextStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
     }
 
     submit(form: IFormController) {

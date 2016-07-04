@@ -96,7 +96,12 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     nextStep() {
-        this.state.go('gesuch.einkommensverschlechterungSteuern');
+
+        if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            this.state.go('gesuch.einkommensverschlechterungSteuern');
+        } else {
+            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+        }
     }
 
     submit(form: IFormController) {

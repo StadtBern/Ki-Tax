@@ -26,7 +26,8 @@ function getStates(): IState[] {
         new EbeguBetreuungState(),
         new EbeguNewFallState(),
         new EbeguEinkommensverschlechterungInfoState(),
-        new EbeguEinkommensverschlechterungSteuernState()
+        new EbeguEinkommensverschlechterungSteuernState(),
+        new EbeguEinkommensverschlechterungState()
     ];
 }
 
@@ -126,6 +127,12 @@ export class EbeguEinkommensverschlechterungSteuernState implements IState {
     url = '/einkommensverschlechterungSteuern';
 }
 
+export class EbeguEinkommensverschlechterungState implements IState {
+    name = 'gesuch.einkommensverschlechterung';
+    template = '<einkommensverschlechterung-view>';
+    url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus';
+}
+
 //PARAMS
 export class IStammdatenStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
@@ -142,4 +149,9 @@ export class INewFallStateParams implements IStateParamsService {
 export class IErwerbspensumStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
     erwerbspensumNum: string;
+}
+
+export class IEinkommensverschlechterungStateParams implements IStateParamsService {
+    gesuchstellerNumber: string;
+    basisjahrPlus: string;
 }
