@@ -481,6 +481,9 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException("fallToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fallJAXP.getVerantwortlicher());
 			}
 		}
+		if (fallJAXP.getNextNumberKind() != null) {
+			fall.setNextNumberKind(fallJAXP.getNextNumberKind());
+		}
 		return fall;
 	}
 
@@ -491,6 +494,7 @@ public class JaxBConverter {
 		if (persistedFall.getVerantwortlicher() != null) {
 			jaxFall.setVerantwortlicher(benutzerToAuthLoginElement(persistedFall.getVerantwortlicher()));
 		}
+		jaxFall.setNextNumberKind(persistedFall.getNextNumberKind());
 		return jaxFall;
 	}
 
@@ -788,6 +792,8 @@ public class JaxBConverter {
 			jaxKindContainer.setKindJA(kindToJAX(persistedKind.getKindJA()));
 		}
 		jaxKindContainer.setBetreuungen(betreuungListToJax(persistedKind.getBetreuungen()));
+		jaxKindContainer.setKindNummer(persistedKind.getKindNummer());
+		jaxKindContainer.setNextNumberBetreuung(persistedKind.getNextNumberBetreuung());
 		return jaxKindContainer;
 	}
 
@@ -827,6 +833,10 @@ public class JaxBConverter {
 				kindJA = kindContainer.getKindJA();
 			}
 			kindContainer.setKindJA(kindToEntity(kindContainerJAXP.getKindJA(), kindJA));
+		}
+		kindContainer.setKindNummer(kindContainerJAXP.getKindNummer());
+		if (kindContainerJAXP.getNextNumberBetreuung() != null) {
+			kindContainer.setNextNumberBetreuung(kindContainerJAXP.getNextNumberBetreuung());
 		}
 		return kindContainer;
 	}
@@ -1145,6 +1155,7 @@ public class JaxBConverter {
 				optInstStammdaten.orElseThrow(() -> new EbeguEntityNotFoundException("betreuungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, instStammdatenID));
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
+		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		return betreuung;
 	}
 
@@ -1238,6 +1249,7 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
 		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
+		jaxBetreuung.setBetreuungNummer(persistedBetreuung.getBetreuungNummer());
 		return jaxBetreuung;
 	}
 

@@ -432,14 +432,14 @@ export default class GesuchModelManager {
         //besteht schon -> update
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                this.getKindFromServer();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
-            //neu -> create
+        //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                this.getKindFromServer();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
         }
     }
@@ -448,19 +448,38 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getKindToWorkWith();
-                });
+                this.getFallFromServer();
+                return this.getKindToWorkWith();
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getKindToWorkWith();
-                });
+                this.getFallFromServer();
+                return this.getKindToWorkWith();
             });
         }
     }
+
+    /**
+     * Sucht das KindToWorkWith im Server und aktualisiert es mit dem bekommenen Daten
+     * @returns {IPromise<TSKindContainer>}
+     */
+    private getKindFromServer(): IPromise<TSKindContainer> {
+        return this.kindRS.findKind(this.getKindToWorkWith().id).then((kindResponse) => {
+            return this.setKindToWorkWith(kindResponse);
+        });
+    }
+
+    /**
+     * Sucht das Gesuch im Server und aktualisiert es mit dem bekommenen Daten
+     * @returns {IPromise<TResult>}
+     */
+    private getFallFromServer(): IPromise<TSFall> {
+        return this.fallRS.findFall(this.gesuch.fall.id).then((fallResponse) => {
+            return this.gesuch.fall = fallResponse;
+        });
+    }
+
 
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {

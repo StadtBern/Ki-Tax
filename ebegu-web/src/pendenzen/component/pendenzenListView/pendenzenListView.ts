@@ -40,11 +40,10 @@ export class PendenzenListViewController {
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', '$state', 'UserRS'];
-
+        'GesuchRS', 'GesuchModelManager', '$state', 'CONSTANTS', 'UserRS'];
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS, private gesuchRS: GesuchRS,
-                private gesuchModelManager: GesuchModelManager, private $state: IStateService, private userRS: UserRS) {
+                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService, private CONSTANTS: any, private userRS: UserRS) {
         this.initViewModel();
     }
 
@@ -105,7 +104,7 @@ export class PendenzenListViewController {
      * @param fallnummer
      */
     public addZerosToFallnummer(fallnummer: number): string {
-        return this.ebeguUtil.addZerosToNumber(fallnummer, 6);
+        return this.ebeguUtil.addZerosToNumber(fallnummer, this.CONSTANTS.FALLNUMMER_LENGTH);
     }
 
     public translateBetreuungsangebotTypList(betreuungsangebotTypList: Array<TSBetreuungsangebotTyp>): string {

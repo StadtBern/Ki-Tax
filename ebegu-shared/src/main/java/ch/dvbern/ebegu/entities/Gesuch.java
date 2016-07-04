@@ -49,6 +49,7 @@ public class Gesuch extends AbstractAntragEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
+
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
 		return gesuchsteller1;
@@ -97,5 +98,4 @@ public class Gesuch extends AbstractAntragEntity {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
-
 }
