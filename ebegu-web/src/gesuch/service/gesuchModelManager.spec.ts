@@ -171,6 +171,15 @@ describe('gesuchModelManager', function () {
                 expect(oldGesuch).toBe(gesuchModelManager.gesuch);
             });
         });
+        describe('setUserAsFallVerantwortlicher', () => {
+            it('puts the given user as the verantwortlicher for the fall', () => {
+                gesuchModelManager.initGesuch(false);
+                spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
+                let user: TSUser = new TSUser('Emiliano', 'Camacho');
+                gesuchModelManager.setUserAsFallVerantwortlicher(user);
+                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(user);
+            });
+        });
     });
 
 

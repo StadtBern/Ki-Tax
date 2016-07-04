@@ -15,6 +15,7 @@ import {FinanzielleSituationStartViewComponentConfig} from './component/finanzie
 import {FinanzielleSituationResultateViewComponentConfig} from './component/finanzielleSituationResultateView/finanzielleSituationResultateView';
 import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 import {VerfuegenListViewComponentConfig} from './component/verfuegenListView/verfuegenListView';
+import {GesuchToolbarComponentConfig} from './component/gesuchToolbar/gesuchToolbar';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -32,3 +33,4 @@ export const EbeguWebGesuch =
     .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
     .component('fallCreationView', new FallCreationViewComponentConfig())
     .component('verfuegenListView', new VerfuegenListViewComponentConfig());
+    .component('gesuchToolbar', new GesuchToolbarComponentConfig());

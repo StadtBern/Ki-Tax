@@ -15,11 +15,11 @@ import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Optional;
@@ -39,39 +39,25 @@ public class FallResource {
 
 
 	@ApiOperation(value = "Creates a new Fall in the database. The transfer object also has a relation to Gesuch " +
-			"which is stored in the database as well.")
-	@Nullable
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(
-		@Nonnull @NotNull JaxFall fallJAXP,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
-
-		Fall convertedFall = converter.fallToEntity(fallJAXP, new Fall());
-		Fall persistedFall = this.fallService.createFall(convertedFall);
-
-		URI uri = uriInfo.getBaseUriBuilder()
-			.path(FallResource.class)
-			.path("/" + persistedFall.getId())
-			.build();
-
-		JaxFall jaxFall = converter.fallToJAX(persistedFall);
-
-		return Response.created(uri).entity(jaxFall).build();
-	}
-
+		"which is stored in the database as well.")
 	@Nullable
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxFall update(
-		@Nonnull @NotNull JaxFall fallJAXP,
+	public JaxFall saveFall(
+		@Nonnull @NotNull @Valid JaxFall fallJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		return null;
+		Fall  fall = new Fall();
+		if (fallJAXP.getId() != null) {
+			Optional<Fall> optional = fallService.findFall(fallJAXP.getId());
+			fall = optional.orElse(new Fall());
+		}
+		Fall convertedFall = converter.fallToEntity(fallJAXP, fall);
+
+		Fall persistedFall = this.fallService.saveFall(convertedFall);
+		return converter.fallToJAX(persistedFall);
 	}
 
 	@Nullable

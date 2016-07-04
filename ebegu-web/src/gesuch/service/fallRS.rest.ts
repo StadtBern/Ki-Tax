@@ -15,23 +15,26 @@ export default class FallRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public createFall(fall: TSFall): IHttpPromise<any> {
-        let returnedFall = {};
-        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
-        return this.http.post(this.serviceURL, returnedFall, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    public createFall(fall: TSFall): IPromise<any> {
+        return this.saveFall(fall);
     }
 
-    public updateFall(fall: TSFall): IHttpPromise<any> {
-        let returnedFall = {};
-        returnedFall = this.ebeguRestUtil.fallToRestObject(returnedFall, fall);
-        return this.http.put(this.serviceURL, returnedFall, {
+    public updateFall(fall: TSFall): IPromise<any> {
+        return this.saveFall(fall);
+    }
+
+    private saveFall(fall: TSFall): IPromise<TSFall> {
+        let fallObject = {};
+        fallObject = this.ebeguRestUtil.fallToRestObject(fallObject, fall);
+
+        return this.http.put(this.serviceURL, fallObject, {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }).then((response: any) => {
+            this.$log.debug('PARSING fall REST object ', response.data);
+            this.$log.debug('PARSed fall REST object ', this.ebeguRestUtil.parseFall(new TSFall(), response.data));
+            return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
         });
     }
 
@@ -41,6 +44,10 @@ export default class FallRS {
                 this.$log.debug('PARSING fall REST object ', response.data);
                 return this.ebeguRestUtil.parseFall(new TSFall(), response.data);
             });
+    }
+
+    public getServiceName(): string {
+        return 'FallRS';
     }
 
 }
