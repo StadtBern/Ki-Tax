@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -69,6 +70,20 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 
 		return getBetreuungspensumGS().isSame(otherBetreuungspensumContainer.getBetreuungspensumGS()) &&
 			getBetreuungspensumJA().isSame(otherBetreuungspensumContainer.getBetreuungspensumJA());
+	}
+
+	/**
+	 *
+	 * @return geht durch die internen Datenstrukturen hoch bis zur Gesuchsperiode und gibt diese zureuck
+	 * @throws IllegalArgumentException wenn einer der benoetigten Pfade null ist
+	 */
+	@Transient
+	public Gesuchsperiode extractGesuchsperiode(){
+		Validate.notNull(this.getBetreuung(), "Can not extract Gesuchsperiode because Betreuung is null");
+		Validate.notNull(this.getBetreuung().getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Validate.notNull(this.getBetreuung().getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
+		return this.getBetreuung().getKind().getGesuch().getGesuchsperiode();
+
 	}
 
 	@Override
