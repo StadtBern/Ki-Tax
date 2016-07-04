@@ -32,6 +32,8 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
+
+
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -79,5 +81,6 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	public void setEinkommensverschlechterungInfo(@Nullable final JaxEinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
 	}
+
 }
 

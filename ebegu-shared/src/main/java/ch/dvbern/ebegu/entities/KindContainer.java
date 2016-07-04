@@ -5,16 +5,20 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Container-Entity für die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln geführt werden,
- * damit die Veränderungen / Korrekturen angezeigt werden können.
+ * Container-Entity fuer die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln gefuehrt werden,
+ * damit die Veraenderungen / Korrekturen angezeigt werden koennen.
  */
 @Audited
 @Entity
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
+)
 public class KindContainer extends AbstractEntity {
 
 	private static final long serialVersionUID = -6784985260190035840L;
@@ -33,6 +37,20 @@ public class KindContainer extends AbstractEntity {
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_container_kindja_id"), nullable = true)
 	private Kind kindJA;
+
+	@NotNull
+	@Min(1)
+	@Column(nullable = false)
+	private Integer kindNummer = 1;
+
+	/**
+	 * nextNumberBetreuung ist die Nummer, die die naechste Betreuung bekommen wird. Aus diesem Grund ist es by default 1
+	 * Dieses Feld darf nicht mit der Anzahl der Betreuungen verwechselt werden, da sie sehr unterschiedlich sein koennen falls mehrere Betreuungen geloescht wurden
+	 */
+	@NotNull
+	@Min(1)
+	@Column(nullable = false)
+	private Integer nextNumberBetreuung = 1;
 
 	@Nullable
 	@Valid
@@ -62,6 +80,22 @@ public class KindContainer extends AbstractEntity {
 
 	public void setKindJA(Kind kindJA) {
 		this.kindJA = kindJA;
+	}
+
+	public Integer getKindNummer() {
+		return kindNummer;
+	}
+
+	public void setKindNummer(Integer kindNummer) {
+		this.kindNummer = kindNummer;
+	}
+
+	public Integer getNextNumberBetreuung() {
+		return nextNumberBetreuung;
+	}
+
+	public void setNextNumberBetreuung(Integer nextNumberBetreuung) {
+		this.nextNumberBetreuung = nextNumberBetreuung;
 	}
 
 	public Set<Betreuung> getBetreuungen() {

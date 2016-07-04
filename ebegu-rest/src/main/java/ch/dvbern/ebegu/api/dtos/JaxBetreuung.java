@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +37,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	private String bemerkungen;
+
+	@Min(1)
+	private Integer betreuungNummer = 1;
 
 
 
@@ -79,5 +83,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public Integer getBetreuungNummer() {
+		return betreuungNummer;
+	}
+
+	public void setBetreuungNummer(Integer betreuungNummer) {
+		this.betreuungNummer = betreuungNummer;
 	}
 }

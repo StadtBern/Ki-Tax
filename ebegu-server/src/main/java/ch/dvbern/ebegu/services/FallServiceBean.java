@@ -43,7 +43,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 
 	@Nonnull
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Optional<Fall> findFall(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Fall a =  persistence.find(Fall.class, key);

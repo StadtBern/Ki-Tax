@@ -71,9 +71,9 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         }
     }
 
-    removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+    public removeBetreuung(kind: TSKindContainer, betreuung: TSBetreuung): void {
         this.gesuchModelManager.findKind(kind);
-        var remTitleText = this.$translate.instant('BETREUUNG_LOESCHEN', {
+        var remTitleText: any = this.$translate.instant('BETREUUNG_LOESCHEN', {
             kindname: this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName(),
             betreuungsangebottyp: this.ebeguUtil.translateString(TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp])
         });

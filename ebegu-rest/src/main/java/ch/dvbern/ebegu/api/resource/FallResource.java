@@ -21,6 +21,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -65,8 +66,7 @@ public class FallResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxFall findFall(
-			@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) throws EbeguException {
-
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) throws EbeguException {
 		Validate.notNull(fallJAXPId.getId());
 		String fallID = converter.toEntityId(fallJAXPId);
 		Optional<Fall> fallOptional = fallService.findFall(fallID);

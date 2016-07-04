@@ -24,7 +24,8 @@ function getStates(): IState[] {
         new EbeguErwerbspensumState(),
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
-        new EbeguNewFallState()
+        new EbeguNewFallState(),
+        new EbeguVerfuegenListState()
     ];
 }
 
@@ -109,6 +110,12 @@ export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
     template = '<finanzielle-situation-resultate-view>';
     url = '/finanzielleSituationResultate';
+}
+
+export class EbeguVerfuegenListState implements IState {
+    name = 'gesuch.verfuegen';
+    template = '<verfuegen-list-view>';
+    url = '/verfuegen';
 }
 
 //PARAMS
