@@ -53,7 +53,7 @@ describe('fallRS', function () {
 
                 let foundFall: TSFall;
                 fallRS.findFall(mockFall.id).then((result) => {
-                    foundFall = result.data;
+                    foundFall = result;
                 });
                 $httpBackend.flush();
                 expect(foundFall).toBeDefined();
@@ -65,10 +65,9 @@ describe('fallRS', function () {
                 let createdFall: TSFall;
                 $httpBackend.expectPUT(fallRS.serviceURL, mockFallRest).respond(mockFallRest);
 
-                fallRS.createFall(mockFall)
-                    .then((result) => {
-                        createdFall = result;
-                    });
+                fallRS.createFall(mockFall).then((result) => {
+                    createdFall = result;
+                });
                 $httpBackend.flush();
                 expect(createdFall).toBeDefined();
                 expect(createdFall.fallNummer).toEqual(mockFall.fallNummer);
