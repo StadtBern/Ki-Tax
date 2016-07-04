@@ -49,17 +49,17 @@ public class BerechnungsgutscheinEvaluator {
 			List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
 
-			//Betreuungen werden einzeln berechnet
-			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
-
-					for (Rule rule : rulesToRun.values()) {
-						zeitabschnitte = rule.calculate(betreuungspensumContainer, zeitabschnitte, finSitResultatDTO);
-					}
-
-				}
-
-			}
+//			//Betreuungen werden einzeln berechnet
+//			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+//				for (BetreuungspensumContainer betreuungspensumContainer : betreuung.getBetreuungspensumContainers()) {
+//
+//					for (Rule rule : rulesToRun.values()) {
+//						zeitabschnitte = rule.calculate(betreuungspensumContainer, zeitabschnitte, finSitResultatDTO);
+//					}
+//
+//				}
+//
+//			}
 		}
 
 
