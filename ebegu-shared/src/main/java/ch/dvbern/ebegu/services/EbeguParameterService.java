@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 
 import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
@@ -64,4 +65,11 @@ public interface EbeguParameterService {
 	 */
 	@Nonnull
 	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date);
+
+	/**
+	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
+	 * Ein externes EntityManager wird uebergeben. Damit vermeiden wir Fehler  ConcurrentModificationException in hibernate
+	 */
+	@Nonnull
+	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em);
 }

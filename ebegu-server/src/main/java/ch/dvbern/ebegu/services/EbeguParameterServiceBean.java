@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -38,12 +39,12 @@ import java.util.stream.Collectors;
 @Local(EbeguParameterService.class)
 public class EbeguParameterServiceBean extends AbstractBaseService implements EbeguParameterService {
 
-
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
 
 	@Override
 	@Nonnull
@@ -56,7 +57,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Nonnull
 	public Optional<EbeguParameter> findEbeguParameter(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		EbeguParameter a =  persistence.find(EbeguParameter.class, id);
+		EbeguParameter a = persistence.find(EbeguParameter.class, id);
 		return Optional.ofNullable(a);
 	}
 
@@ -111,7 +112,23 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 	@Override
 	@Nonnull
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
+	}
+
+	/**
+	 * Methode zum laden von EEGU Parametern
+	 * @param key Key des property das geladen werden soll
+	 * @param date stichtag zu dem der Wert des property gelesen werden soll
+	 * @param em wir geben hier einen entity manager mit weil wir diese Methode aus dem validator aufrufen
+	 *           im Validator darf man nicht einfach direkt den entity manager injecten weil dieser nicht in
+	 *           der gleiche sein darf wie in den services (sonst gibt es eine concurrentModificationException in hibernate)
+	 *           http://stackoverflow.com/questions/18267269/correct-way-to-do-an-entitymanager-query-during-hibernate-validation
+	 * @return EbeguParameter
+	 */
+	@Override
+	@Nonnull
+	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguParameter> query = cb.createQuery(EbeguParameter.class);
 		Root<EbeguParameter> root = query.from(EbeguParameter.class);
 		query.select(root);
@@ -125,7 +142,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		Predicate keyPredicate = cb.equal(root.get(EbeguParameter_.name), keyParam);
 
 		query.where(intervalPredicate, keyPredicate);
-		TypedQuery<EbeguParameter> q = persistence.getEntityManager().createQuery(query);
+		TypedQuery<EbeguParameter> q = em.createQuery(query);
 		q.setParameter(dateParam, date);
 		q.setParameter(keyParam, key);
 		List<EbeguParameter> resultList = q.getResultList();
