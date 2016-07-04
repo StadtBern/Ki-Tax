@@ -23,7 +23,9 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.Month;
@@ -113,6 +115,16 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		return getEbeguParameterByKeyAndDate(key, date, persistence.getEntityManager());
 	}
 
+	/**
+	 * Methode zum laden von EEGU Parametern
+	 * @param key Key des property das geladen werden soll
+	 * @param date stichtag zu dem der Wert des property gelesen werden soll
+	 * @param em wir geben hier einen entity manager mit weil wir diese Methode aus dem validator aufrufen
+	 *           im Validator darf man nicht einfach direkt den entity manager injecten weil dieser nicht in
+	 *           der gleiche sein darf wie in den services (sonst gibt es eine concurrentModificationException in hibernate)
+	 *           http://stackoverflow.com/questions/18267269/correct-way-to-do-an-entitymanager-query-during-hibernate-validation
+	 * @return EbeguParameter
+	 */
 	@Override
 	@Nonnull
 	public Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em) {

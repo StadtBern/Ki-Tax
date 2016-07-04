@@ -2,23 +2,13 @@ package ch.dvbern.ebegu.tests.validations;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.tests.AbstractEbeguTest;
 import ch.dvbern.ebegu.tests.util.ValidationTestHelper;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.annotation.Nonnull;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import javax.validation.Configuration;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -29,26 +19,18 @@ import java.util.Set;
 /**
  * Test fuer {@link ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlappingValidator}
  */
-@RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
-@Transactional(TransactionMode.DISABLED)
-public class CheckBetreuungspensumDatesOverlappingValidatorTest extends AbstractEbeguTest {
+
+public class CheckBetreuungspensumDatesOverlappingValidatorTest {
+
 
 	private ValidatorFactory customFactory;
-
-	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
-	private EntityManagerFactory entityManagerFactory;
-
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Before
 	public void setUp() throws Exception {
 		// see https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bootstrapping.html#_constraintvalidatorfactory
 		Configuration<?> config = Validation.byDefaultProvider().configure();
-		config.constraintValidatorFactory(new ValidationTestConstraintValidatorFactory(entityManagerFactory));
+		//wir verwenden dummy service daher geben wir hier null als em mit
+		config.constraintValidatorFactory(new ValidationTestConstraintValidatorFactory(null));
 		this.customFactory = config.buildValidatorFactory();
 	}
 

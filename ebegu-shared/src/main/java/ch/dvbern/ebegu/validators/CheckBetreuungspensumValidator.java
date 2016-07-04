@@ -31,6 +31,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	// We need to pass to EbeguParameterService a new EntityManager to avoid errors like ConcurrentModificatinoException. So we create it here
 	// and pass it to the methods of EbeguParameterService we need to call.
+	//http://stackoverflow.com/questions/18267269/correct-way-to-do-an-entitymanager-query-during-hibernate-validation
 	@PersistenceUnit(unitName = "ebeguPersistenceUnit")
 	private EntityManagerFactory entityManagerFactory;
 
@@ -54,7 +55,8 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	@Override
 	public boolean isValid(Betreuung betreuung, ConstraintValidatorContext context) {
-		final EntityManager em = entityManagerFactory.createEntityManager(); // creates a new EntityManager
+
+		final EntityManager em = createEntityManager();
 		int index = 0;
 		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
 			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
@@ -64,13 +66,26 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
 				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {
 
-				em.close();
+				closeEntityManager(em);
 				return false;
 			}
 			index++;
 		}
-		em.close();
+		closeEntityManager(em);
 		return true;
+	}
+
+	private EntityManager createEntityManager() {
+		if (entityManagerFactory != null) {
+			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
+		}
+		return null;
+	}
+
+	private void closeEntityManager(EntityManager em) {
+		if (em != null) {
+			em.close();
+		}
 	}
 
 	/**

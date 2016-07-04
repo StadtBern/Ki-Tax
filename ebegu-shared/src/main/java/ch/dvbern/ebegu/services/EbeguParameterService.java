@@ -68,7 +68,7 @@ public interface EbeguParameterService {
 
 	/**
 	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
-	 * Ein externes EntityManager wird uebergeben. Damit vermeiden wir Fehler wir ConcurrentModificationException
+	 * Ein externes EntityManager wird uebergeben. Damit vermeiden wir Fehler  ConcurrentModificationException in hibernate
 	 */
 	@Nonnull
 	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em);
