@@ -139,9 +139,9 @@ describe('betreuungView', function () {
                 betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
                 expect(betreuungView.getBetreuungspensen().length).toEqual(0);
                 betreuungView.createBetreuungspensum();
-                expect(betreuungView.getBetreuungspensen().length).toEqual(2);
-                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
                 expect(betreuungView.getBetreuungspensen().length).toEqual(1);
+                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
+                expect(betreuungView.getBetreuungspensen().length).toEqual(0);
             });
         });
     });
