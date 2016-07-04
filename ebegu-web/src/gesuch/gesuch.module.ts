@@ -32,5 +32,5 @@ export const EbeguWebGesuch =
     .component('erwerbspensumListView', new ErwerbspensumListViewComponentConfig())
     .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
     .component('fallCreationView', new FallCreationViewComponentConfig())
-    .component('verfuegenListView', new VerfuegenListViewComponentConfig());
+    .component('verfuegenListView', new VerfuegenListViewComponentConfig())
     .component('gesuchToolbar', new GesuchToolbarComponentConfig());

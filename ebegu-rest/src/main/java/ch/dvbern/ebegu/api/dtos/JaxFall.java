@@ -16,24 +16,19 @@ public class JaxFall extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = -1297019901664130597L;
 
-	@Nullable
-	@NotNull
 	private int fallNummer;
 
 	@NotNull
 	private JaxAuthLoginElement verantwortlicher;
 
-
 	@Min(1)
 	private Integer nextNumberKind = 1;
 
-
-	@Nullable
 	public int getFallNummer() {
 		return fallNummer;
 	}
 
-	public void setFallNummer(@Nullable int fallNummer) {
+	public void setFallNummer(int fallNummer) {
 		this.fallNummer = fallNummer;
 	}
 
