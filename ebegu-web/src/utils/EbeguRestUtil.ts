@@ -361,6 +361,7 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFall, fall);
             restFall.fallNummer = fall.fallNummer;
             restFall.verantwortlicher = this.userToRestObject({}, fall.verantwortlicher);
+            restFall.nextNumberKind = fall.nextNumberKind;
             return restFall;
         }
         return undefined;
@@ -372,6 +373,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(fallTS, fallFromServer);
             fallTS.fallNummer = fallFromServer.fallNummer;
             fallTS.verantwortlicher = this.parseUser(new TSUser(), fallFromServer.verantwortlicher);
+            fallTS.nextNumberKind = fallFromServer.nextNumberKind;
             return fallTS;
         }
         return undefined;
@@ -658,6 +660,8 @@ export default class EbeguRestUtil {
             restKindContainer.kindJA = this.kindToRestObject({}, kindContainer.kindJA);
         }
         restKindContainer.betreuungen = this.betreuungListToRestObject(kindContainer.betreuungen);
+        restKindContainer.kindNummer = kindContainer.kindNummer;
+        restKindContainer.nextNumberBetreuung = kindContainer.nextNumberBetreuung;
         return restKindContainer;
     }
 
@@ -691,6 +695,8 @@ export default class EbeguRestUtil {
             kindContainerTS.kindGS = this.parseKind(new TSKind(), kindContainerFromServer.kindGS);
             kindContainerTS.kindJA = this.parseKind(new TSKind(), kindContainerFromServer.kindJA);
             kindContainerTS.betreuungen = this.parseBetreuungList(kindContainerFromServer.betreuungen);
+            kindContainerTS.kindNummer = kindContainerFromServer.kindNummer;
+            kindContainerTS.nextNumberBetreuung = kindContainerFromServer.nextNumberBetreuung;
             return kindContainerTS;
         }
         return undefined;
@@ -756,6 +762,7 @@ export default class EbeguRestUtil {
                 restBetreuung.betreuungspensumContainers.push(this.betreuungspensumContainerToRestObject({}, betPensCont));
             });
         }
+        restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
 
@@ -795,6 +802,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
+            betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             return betreuungTS;
         }
         return undefined;

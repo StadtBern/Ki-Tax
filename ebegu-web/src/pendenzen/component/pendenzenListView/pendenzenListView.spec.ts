@@ -27,6 +27,7 @@ describe('pendenzenListView', function () {
     let $httpBackend: IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
+    let CONSTANTS: any;
     let userRS: UserRS;
 
 
@@ -44,6 +45,7 @@ describe('pendenzenListView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         userRS = $injector.get('UserRS');
+        CONSTANTS = $injector.get('CONSTANTS');
     }));
 
     describe('API Usage', function () {
@@ -52,7 +54,7 @@ describe('pendenzenListView', function () {
                 let mockPendenz: TSPendenzJA = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, userRS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, CONSTANTS, userRS);
 
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
@@ -81,7 +83,7 @@ describe('pendenzenListView', function () {
                 mockRestCalls();
                 spyOn($state, 'go');
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, userRS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, CONSTANTS, userRS);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));

@@ -10,6 +10,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -23,6 +24,9 @@ import java.util.TreeSet;
 @Entity
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
+@Table(
+	uniqueConstraints = @UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer")
+)
 public class Betreuung extends AbstractEntity {
 
 	private static final long serialVersionUID = -6776987863150835840L;
@@ -54,6 +58,11 @@ public class Betreuung extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
+
+	@NotNull
+	@Min(1)
+	@Column(nullable = false)
+	private Integer betreuungNummer = 1;
 
 	@Transient
 	private Verfuegung verfuegung;
@@ -107,6 +116,14 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public Integer getBetreuungNummer() {
+		return betreuungNummer;
+	}
+
+	public void setBetreuungNummer(Integer betreuungNummer) {
+		this.betreuungNummer = betreuungNummer;
 	}
 
 	public Verfuegung getVerfuegung() {

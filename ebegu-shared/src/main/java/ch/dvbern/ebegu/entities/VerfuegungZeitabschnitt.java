@@ -27,9 +27,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int anspruchspensumRest;
 	private int anspruchspensumOriginal; // = Gesamtanspruch für alle Kitas TODO (hefr) brauchts wohl eher nicht...
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
+	private BigDecimal betreuungsstunden;
 	private BigDecimal vollkosten = BigDecimal.ZERO;
 	private BigDecimal elternbeitrag = BigDecimal.ZERO;
-	private BigDecimal verguenstigung = BigDecimal.ZERO;
 	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 
@@ -102,6 +102,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.anspruchberechtigtesPensum = anspruchberechtigtesPensum;
 	}
 
+	public BigDecimal getBetreuungsstunden() {
+		return betreuungsstunden;
+	}
+
+	public void setBetreuungsstunden(BigDecimal betreuungsstunden) {
+		this.betreuungsstunden = betreuungsstunden;
+	}
+
 	public BigDecimal getVollkosten() {
 		return vollkosten;
 	}
@@ -116,14 +124,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setElternbeitrag(BigDecimal elternbeitrag) {
 		this.elternbeitrag = elternbeitrag;
-	}
-
-	public BigDecimal getVerguenstigung() {
-		return verguenstigung;
-	}
-
-	public void setVerguenstigung(BigDecimal verguenstigung) {
-		this.verguenstigung = verguenstigung;
 	}
 
 	public BigDecimal getAbzugFamGroesse() {
@@ -161,13 +161,21 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
-     */
+	 */
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
 		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
 		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
 		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
+		BigDecimal newBetreuungsstunden = BigDecimal.ZERO;
+		if (this.getBetreuungsstunden() != null) {
+			newBetreuungsstunden = newBetreuungsstunden.add(this.getBetreuungsstunden());
+		}
+		if (other.getBetreuungsstunden() != null) {
+			newBetreuungsstunden = newBetreuungsstunden.add(other.getBetreuungsstunden());
+		}
+		this.setBetreuungsstunden(newBetreuungsstunden);
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
 		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
@@ -182,7 +190,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	/**
 	 * Fügt eine Bemerkung zur Liste hinzu
-     */
+	 */
 	public void addBemerkung(String bemerkung) {
 		bemerkungen.add(bemerkung);
 	}
@@ -209,7 +217,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	}
 
 	public boolean isSame(VerfuegungZeitabschnitt that) {
-		if (this == that) return true;
+		if (this == that) {
+			return true;
+		}
 		return erwerbspensumGS1 == that.erwerbspensumGS1 &&
 			erwerbspensumGS2 == that.erwerbspensumGS2 &&
 			betreuungspensum == that.betreuungspensum &&
@@ -219,5 +229,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);
+	}
+
+
+	/**
+	 * Gibt den Betrag des Gutscheins zurück.
+     */
+	public BigDecimal getVerguenstigung() {
+		if (vollkosten != null && elternbeitrag != null) {
+			return vollkosten.subtract(elternbeitrag);
+		}
+		return BigDecimal.ZERO;
 	}
 }

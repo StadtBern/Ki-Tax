@@ -31,6 +31,7 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSUser from '../../models/TSUser';
 
 
 export default class GesuchModelManager {
@@ -110,9 +111,8 @@ export default class GesuchModelManager {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create
-            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: any) => {
-                let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse.data);
-                this.gesuch.fall = angular.copy(parsedFall);
+            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
+                this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
                 });
@@ -140,6 +140,17 @@ export default class GesuchModelManager {
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
             return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+        });
+    }
+
+    /**
+     * Update den Fall
+     * @returns {IPromise<TSFall>}
+     */
+    public updateFall(): IPromise<TSFall> {
+        return this.fallRS.updateFall(this.gesuch.fall).then((fallResponse: any) => {
+            let parsedFall = this.ebeguRestUtil.parseFall(this.gesuch.fall, fallResponse);
+            return this.gesuch.fall = angular.copy(parsedFall);
         });
     }
 
@@ -421,14 +432,14 @@ export default class GesuchModelManager {
         //besteht schon -> update
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                this.getKindFromServer();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
-            //neu -> create
+        //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.setBetreuungToWorkWith(betreuungResponse);
-                return this.getBetreuungToWorkWith();
+                this.getKindFromServer();
+                return this.setBetreuungToWorkWith(betreuungResponse);
             });
         }
     }
@@ -437,19 +448,38 @@ export default class GesuchModelManager {
         if (this.getKindToWorkWith().timestampErstellt) {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getKindToWorkWith();
-                });
+                this.getFallFromServer();
+                return this.getKindToWorkWith();
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getKindToWorkWith();
-                });
+                this.getFallFromServer();
+                return this.getKindToWorkWith();
             });
         }
     }
+
+    /**
+     * Sucht das KindToWorkWith im Server und aktualisiert es mit dem bekommenen Daten
+     * @returns {IPromise<TSKindContainer>}
+     */
+    private getKindFromServer(): IPromise<TSKindContainer> {
+        return this.kindRS.findKind(this.getKindToWorkWith().id).then((kindResponse) => {
+            return this.setKindToWorkWith(kindResponse);
+        });
+    }
+
+    /**
+     * Sucht das Gesuch im Server und aktualisiert es mit dem bekommenen Daten
+     * @returns {IPromise<TResult>}
+     */
+    private getFallFromServer(): IPromise<TSFall> {
+        return this.fallRS.findFall(this.gesuch.fall.id).then((fallResponse) => {
+            return this.gesuch.fall = fallResponse;
+        });
+    }
+
 
     public getKindToWorkWith(): TSKindContainer {
         if (this.gesuch && this.gesuch.kindContainers && this.gesuch.kindContainers.length >= this.kindNumber) {
@@ -613,7 +643,20 @@ export default class GesuchModelManager {
      */
     private setCurrentUserAsFallVerantwortlicher() {
         if (this.authServiceRS) {
-            this.gesuch.fall.verantwortlicher = this.authServiceRS.getPrincipal();
+            this.setUserAsFallVerantwortlicher(this.authServiceRS.getPrincipal());
         }
+    }
+
+    public setUserAsFallVerantwortlicher(user: TSUser) {
+        if (this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicher = user;
+        }
+    }
+
+    public getFallVerantwortlicher(): TSUser {
+        if (this.gesuch && this.gesuch.fall) {
+            return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
     }
 }

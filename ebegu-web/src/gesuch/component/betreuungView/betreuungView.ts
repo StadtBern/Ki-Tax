@@ -163,6 +163,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(undefined, new TSDateRange())));
     }
 
+    public removeBetreuungspensum(betreuungspensumToDelete: TSBetreuungspensumContainer): void {
+        let position: number = this.getBetreuungspensen().indexOf(betreuungspensumToDelete);
+        if (position > -1) {
+            this.getBetreuungspensen().splice(position, 1);
+        }
+    }
+
     public setSelectedInstitutionStammdaten(): void {
         let instStamList = this.gesuchModelManager.getInstitutionenList();
         for (let i: number = 0; i < instStamList.length; i++) {

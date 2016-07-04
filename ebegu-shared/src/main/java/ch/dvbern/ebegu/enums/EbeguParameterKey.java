@@ -62,6 +62,15 @@ public enum EbeguParameterKey {
 	// Max Abwesenheit
 	PARAM_MAX_TAGE_ABWESENHEIT,
 
+	// Eine Einkommensverschlechterung wird nur berücksichtigt, wenn diese höher als 20% des Ausgangswertes ist.
+	PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG,
+
+	// Baby-Faktor
+	PARAM_BABY_FAKTOR,
+
+	// Baby-Faktor bis N – Monate
+	PARAM_BABY_ALTER_IN_MONATEN,
+
 	// Abgeltung des Kantons pro Tag (Achtung: Kann auf den 1.1. aendern! Im Gegensatz zu den anderen Parametern)
 	PARAM_ABGELTUNG_PRO_TAG_KANTON(Boolean.FALSE);
 

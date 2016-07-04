@@ -10,15 +10,17 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _betreuungspensumContainers: Array<TSBetreuungspensumContainer>;
     private _schulpflichtig: boolean;
     private _bemerkungen: string;
+    private _betreuungNummer: number;
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
-                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string, schulpflichtig?: boolean) {
+                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string, schulpflichtig?: boolean, betreuungNummer?: number) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
         this._betreuungspensumContainers = betreuungspensumContainers ? betreuungspensumContainers : [];
         this._bemerkungen = bemerkungen;
         this._schulpflichtig = schulpflichtig;
+        this._betreuungNummer = betreuungNummer;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -59,5 +61,13 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set bemerkungen(value: string) {
         this._bemerkungen = value;
+    }
+
+    get betreuungNummer(): number {
+        return this._betreuungNummer;
+    }
+
+    set betreuungNummer(value: number) {
+        this._betreuungNummer = value;
     }
 }

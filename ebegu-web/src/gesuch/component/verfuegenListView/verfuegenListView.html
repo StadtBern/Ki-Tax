@@ -1,0 +1,55 @@
+<div class="verfuegenListView row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 data-translate="VERFUEGUNGEN_UPPER"></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+
+                <table st-table="displayedCollection" st-safe-src="vm.getKinderWithBetreuungList()"
+                       class="table table-striped table-hover" st-delay="20">
+                    <thead>
+                    <tr>
+                        <th data-translate="KIND_UPPER" ></th>
+                        <th data-translate="BETREUUNG_UPPER" ></th>
+                        <th data-translate="ID_UPPER"></th>
+                        <th data-translate="STATUS_UPPER"></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody ng-repeat="kindContainer in displayedCollection" >
+                        <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung" st-select-mode="single"
+                            ng-click="vm.openVerfuegung(betreuung)">
+                            <td ng-bind="kindContainer.kindJA.getFullName()"></td>
+                            <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
+                            <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
+                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
+                        <tr>
+                            <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6 text-right">
+                <md-button class="md-raised md-primary" aria-label="{{BEREIT_VERFUEGUNG_UPPER | translate}}">
+                    <span data-translate="BEREIT_VERFUEGUNG_UPPER"></span>
+                </md-button>
+            </div>
+            <div class="col-md-6">
+                <md-button class="md-raised md-warn md-hue-2" aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
+                    <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
+                </md-button>
+            </div>
+        </div>
+    </div>
+
+</div>
