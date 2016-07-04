@@ -131,6 +131,19 @@ describe('betreuungView', function () {
                 expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
             });
         });
+        describe('removeBetreuungspensum', () => {
+            it('should remove the betreuungspensum from the list', () => {
+                betreuungView.getBetreuungModel().betreuungspensumContainers = [];
+                betreuungView.createBetreuungspensum();
+                expect(betreuungView.getBetreuungspensen().length).toEqual(1);
+                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
+                expect(betreuungView.getBetreuungspensen().length).toEqual(0);
+                betreuungView.createBetreuungspensum();
+                expect(betreuungView.getBetreuungspensen().length).toEqual(2);
+                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
+                expect(betreuungView.getBetreuungspensen().length).toEqual(1);
+            });
+        });
     });
 
     function createInstitutionStammdaten(iban: string, betAngTyp: TSBetreuungsangebotTyp) {
