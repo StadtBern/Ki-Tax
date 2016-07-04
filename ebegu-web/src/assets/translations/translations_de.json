@@ -373,6 +373,7 @@
     "BETREUUNGSANGEBOT_NUMBER": "{{kindname}} / Betreuungsangebot {{betreuungnumber}}",
     "BETREUUNGSPENSUM": "Betreuungspensum {{betreuungspensumnumber}}",
     "BETREUUNGSPENSUM_ERFASSEN": "weiteres Betreuungspensum erfassen",
+    "BETREUUNGSPENSUM_ENTFERNEN": "Betreuungspensum entfernen",
     "BETREUUNGSPENSUM_HINT1": "Das Gesuch können Sie nur an das Jugendamt freigeben, wenn die Kita Ihnen den Platz bestätigt. Nach Anforderung der Bestätigung können diese Daten nicht mehr verändert werden.",
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",

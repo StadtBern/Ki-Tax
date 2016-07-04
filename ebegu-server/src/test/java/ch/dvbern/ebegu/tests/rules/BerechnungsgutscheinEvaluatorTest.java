@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests.rules;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.rules.BerechnungsgutscheinEvaluator;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,6 +36,7 @@ public class BerechnungsgutscheinEvaluatorTest {
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = new Gesuch();
+		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
 		evaluator.evaluate(testgesuch);
 	}
 
