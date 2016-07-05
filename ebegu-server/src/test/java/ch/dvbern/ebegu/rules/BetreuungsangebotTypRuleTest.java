@@ -39,7 +39,7 @@ public class BetreuungsangebotTypRuleTest {
 		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -53,7 +53,7 @@ public class BetreuungsangebotTypRuleTest {
 		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -67,7 +67,7 @@ public class BetreuungsangebotTypRuleTest {
 		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -81,7 +81,7 @@ public class BetreuungsangebotTypRuleTest {
 		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 

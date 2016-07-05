@@ -51,8 +51,8 @@ public class BetreuungspensumCalcRule extends AbstractEbeguRule {
 		}
 		// Kita und Tageseltern-Kleinkinder: Anspruch ist das kleinere von Betreuungspensum und Erwerbspensum
 		else if (betreuung.isAngebotKita() || betreuung.isAngebotTageselternKleinkinder()) {
-			if (verfuegungZeitabschnitt.getAnspruchspensumOriginal() < betreuungberechnet) {
-				betreuungberechnet = verfuegungZeitabschnitt.getAnspruchspensumOriginal();
+			if (verfuegungZeitabschnitt.getAnspruchberechtigtesPensum() < betreuungberechnet) {
+				betreuungberechnet = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 			}
 			// Ausserdem: Nur soviel, wie noch nicht von einer anderen Kita oder Tageseltern Kleinkinder verwendet wurde:
 			if (verfuegungZeitabschnitt.getAnspruchspensumRest() < betreuungberechnet) {

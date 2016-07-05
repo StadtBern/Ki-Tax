@@ -65,7 +65,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 			anspruch = 0;
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Anspruch wurde aufgrund Erwerbspensum auf 0% gesetzt");
 		}
-		verfuegungZeitabschnitt.setAnspruchspensumOriginal(anspruch);
+		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
 		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) {
 			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
 			verfuegungZeitabschnitt.setAnspruchspensumRest(anspruch);

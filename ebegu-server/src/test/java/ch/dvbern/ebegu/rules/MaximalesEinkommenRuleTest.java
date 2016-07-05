@@ -41,7 +41,7 @@ public class MaximalesEinkommenRuleTest {
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("50000"), result.get(0).getMassgebendesEinkommen());
-		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -57,7 +57,7 @@ public class MaximalesEinkommenRuleTest {
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("180000"), result.get(0).getMassgebendesEinkommen());
-		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 

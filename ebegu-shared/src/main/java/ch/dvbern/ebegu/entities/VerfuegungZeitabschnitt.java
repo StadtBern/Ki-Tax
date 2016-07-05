@@ -24,7 +24,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int betreuungspensum;
 	private int fachstellenpensum;
 	private int anspruchspensumRest;
-	private int anspruchspensumOriginal; // = Gesamtanspruch für alle Kitas TODO (hefr) brauchts wohl eher nicht...
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 	private BigDecimal betreuungsstunden;
 	private BigDecimal vollkosten = BigDecimal.ZERO;
@@ -83,14 +82,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setAnspruchspensumRest(int anspruchspensumRest) {
 		this.anspruchspensumRest = anspruchspensumRest;
-	}
-
-	public int getAnspruchspensumOriginal() {
-		return anspruchspensumOriginal;
-	}
-
-	public void setAnspruchspensumOriginal(int anspruchspensumOriginal) {
-		this.anspruchspensumOriginal = anspruchspensumOriginal;
 	}
 
 	public int getAnspruchberechtigtesPensum() {
@@ -164,7 +155,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
-		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
 		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
 		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
 		BigDecimal newBetreuungsstunden = BigDecimal.ZERO;
@@ -223,7 +213,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			erwerbspensumGS2 == that.erwerbspensumGS2 &&
 			betreuungspensum == that.betreuungspensum &&
 			fachstellenpensum == that.fachstellenpensum &&
-			anspruchspensumOriginal == that.anspruchspensumOriginal &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&

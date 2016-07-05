@@ -27,7 +27,7 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule {
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
-			verfuegungZeitabschnitt.setAnspruchspensumOriginal(0);
+			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP.name() + ": Betreuungsangebot Schulamt");
 		}
 	}

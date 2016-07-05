@@ -46,7 +46,7 @@ public class ErwerbspensumRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(40, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(40, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -60,7 +60,7 @@ public class ErwerbspensumRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -74,7 +74,7 @@ public class ErwerbspensumRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(0, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -88,7 +88,7 @@ public class ErwerbspensumRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, new ArrayList<>(), new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000")));
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchspensumOriginal());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 }
