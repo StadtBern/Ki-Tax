@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -206,14 +205,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-			.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
-			.append("erwerbspensumGS1", erwerbspensumGS1)
-			.append("erwerbspensumGS2", erwerbspensumGS2)
-			.append("betreuungspensum", betreuungspensum)
-			.append("anspruchspensumOriginal", anspruchspensumOriginal)
-			.append("bemerkungen", bemerkungen)
-			.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
+			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
+			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
+			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" Bemerkungen: ").append(bemerkungen);
+		return sb.toString();
 	}
 
 	public boolean isSame(VerfuegungZeitabschnitt that) {

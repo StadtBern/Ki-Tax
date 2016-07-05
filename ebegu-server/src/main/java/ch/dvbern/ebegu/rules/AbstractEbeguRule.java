@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
@@ -84,10 +83,10 @@ public abstract class AbstractEbeguRule implements Rule {
 
 		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
 		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
-		Collection<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
 
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden
-		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, (List<VerfuegungZeitabschnitt>) erwerbspensumAbschnitte);
+		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, abschnitteCreatedInRule);
 
 		// Die Zeitabschnitte (jetzt ohne Überschneidungen) validieren:
 		// - Muss innerhalb Gesuchsperiode sein
@@ -192,95 +191,40 @@ public abstract class AbstractEbeguRule implements Rule {
 	 *     40          100                60
 	 */
 	@Nonnull
-	protected List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt>  entitiesUnmerged) {
-		// Resultat-Set, damit eventuell veränderte Elemente einfach wieder draufgelegt werden können
-		Set<VerfuegungZeitabschnitt> entitiesWithoutUeberschneidungen = new LinkedHashSet<>();
-		// Die Zeitabschnitte sortieren nach DatumVon und DatumBis
-		Collections.sort(entitiesUnmerged, new VerfuegungZeitabschnittComparator());
-
-		VerfuegungZeitabschnitt last = null;
-		for (Iterator<VerfuegungZeitabschnitt> iterator = entitiesUnmerged.iterator(); iterator.hasNext(); ) {
-			VerfuegungZeitabschnitt next = iterator.next();
-
-			if (last != null && next.getGueltigkeit().getGueltigAb().isBefore(last.getGueltigkeit().getGueltigBis())) {
-				// Wir haben in irgendeiner Form eine Überschneidung
-				// Next kann gleichzeitig beginnen
-				if (next.getGueltigkeit().startsSameDay(last.getGueltigkeit())) {
-					// Next kann gleichzeitig enden oder später (früher geht nicht, wegen sortierung)
-					if (next.getGueltigkeit().endsSameDay(last.getGueltigkeit())) {
-						last.add(next); // Next wird ganz weggelassen bzw. geht in last auf
-						entitiesWithoutUeberschneidungen.add(last); // Hat geändert
-					} else {
-						// Next endet später: Es müssen zwei Elemente gebildet werden
-						last.add(next); // Last behält seine Gültigkeit, erhält aber zusätzlich die Daten von Next
-						next.getGueltigkeit().startOnDayAfter(last.getGueltigkeit());
-						entitiesWithoutUeberschneidungen.add(last); // Hat geändert
-						entitiesWithoutUeberschneidungen.add(next); // ist neu
-						last = next;
-					}
-				} else {
-					// Oder next beginnt später. (früher geht nicht, wurde ja vorher sortiert)
-					// Dann kann es immer noch gleichzeitig enden oder früher oder später
-					if (next.getGueltigkeit().endsSameDay(last.getGueltigkeit())) {
-						// Next startet später, sie hören aber gleichzeitig auf
-						next.add(last);
-						last.getGueltigkeit().endOnDayBefore(next.getGueltigkeit());
-						entitiesWithoutUeberschneidungen.add(last); // Hat geändert
-						entitiesWithoutUeberschneidungen.add(next); // ist neu
-					} else {
-						// Entweder Schnittmenge oder "klassische" Überschneidung
-						LocalDate ueberschneidungStart = max(last.getGueltigkeit().getGueltigAb(), next.getGueltigkeit().getGueltigAb());
-						LocalDate ueberschneidungEnde = min(last.getGueltigkeit().getGueltigBis(), next.getGueltigkeit().getGueltigBis());
-
-						if (next.getGueltigkeit().endsBefore(last.getGueltigkeit())) {
-							// Klassische Schnittmenge
-							next.add(last); // Next ist die Mitte und erhält das Total, die Dates bleiben gleich
-							// Am Ende wird ein neues mit denselben Daten wir "last" erstellt
-							VerfuegungZeitabschnitt zeitabschnittUeberschneidung = new VerfuegungZeitabschnitt(new DateRange(ueberschneidungEnde.plusDays(1), last.getGueltigkeit().getGueltigBis()));
-							zeitabschnittUeberschneidung.add(last);
-							// Last beenden
-							last.getGueltigkeit().endOnDayBefore(next.getGueltigkeit());
-							entitiesWithoutUeberschneidungen.add(last); // Hat geändert
-							entitiesWithoutUeberschneidungen.add(next); // ist neu
-							entitiesWithoutUeberschneidungen.add(zeitabschnittUeberschneidung); // ist neu
-						} else {
-							// Klassische Überschneidung: Der mittlere wird neu erstellt aus dem Total der beiden bestehenden
-							VerfuegungZeitabschnitt zeitabschnittUeberschneidung = new VerfuegungZeitabschnitt(new DateRange(ueberschneidungStart, ueberschneidungEnde));
-							zeitabschnittUeberschneidung.add(last);
-							zeitabschnittUeberschneidung.add(next);
-
-							last.getGueltigkeit().endOnDayBefore(zeitabschnittUeberschneidung.getGueltigkeit());
-							next.getGueltigkeit().startOnDayAfter(zeitabschnittUeberschneidung.getGueltigkeit());
-
-							entitiesWithoutUeberschneidungen.add(last); // Hat geändert
-							entitiesWithoutUeberschneidungen.add(next); // ist neu
-							entitiesWithoutUeberschneidungen.add(zeitabschnittUeberschneidung); // ist neu
-							last = next;
-						}
-					}
+	protected List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> entitiesToMerge) {
+		List<VerfuegungZeitabschnitt> result = new ArrayList<>();
+		Set<LocalDate> setOfPotentialZeitraumGrenzen = createSetOfPotentialZeitraumGrenzen(entitiesToMerge);
+		if (setOfPotentialZeitraumGrenzen.isEmpty()) {
+			return result;
+		}
+		Iterator<LocalDate> iterator = setOfPotentialZeitraumGrenzen.iterator();
+		LocalDate datumVon = iterator.next();
+		while (iterator.hasNext()) {
+			LocalDate datumBis = iterator.next().minusDays(1);
+			VerfuegungZeitabschnitt mergedZeitabschnitt = new VerfuegungZeitabschnitt(new DateRange(datumVon, datumBis));
+			// Alle Zeitabschnitte suchen, die zwischen diesem Range liegen
+			boolean foundOverlapping = false;
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : entitiesToMerge) {
+				Optional<DateRange> optionalOverlap = verfuegungZeitabschnitt.getGueltigkeit().getOverlap(mergedZeitabschnitt.getGueltigkeit());
+				if (optionalOverlap.isPresent()) {
+					mergedZeitabschnitt.add(verfuegungZeitabschnitt);
+					foundOverlapping = true;
 				}
-			} else {
-				// Es ist entweder das erste Element oder es gibt keine Üerschneidung
-				last = next;
-				entitiesWithoutUeberschneidungen.add(next);
 			}
+			if (foundOverlapping) {
+				result.add(mergedZeitabschnitt);
+			}
+			datumVon = datumBis.plusDays(1);
 		}
-		return new ArrayList<>(entitiesWithoutUeberschneidungen);
+		return result;
 	}
 
-	@Nonnull
-	private LocalDate min(@Nonnull LocalDate date1, @Nonnull LocalDate date2) {
-		if (date1.isBefore(date2)) {
-			return date1;
+	private Set<LocalDate> createSetOfPotentialZeitraumGrenzen(@Nonnull List<VerfuegungZeitabschnitt>  entitiesUnmerged) {
+		Set<LocalDate> setOfDates = new TreeSet<>();
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : entitiesUnmerged) {
+			setOfDates.add(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
+			setOfDates.add(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis().plusDays(1));
 		}
-		return date2;
-	}
-
-	@Nonnull
-	private LocalDate max(@Nonnull LocalDate date1, @Nonnull LocalDate date2) {
-		if (date1.isAfter(date2)) {
-			return date1;
-		}
-		return date2;
+		return setOfDates;
 	}
 }

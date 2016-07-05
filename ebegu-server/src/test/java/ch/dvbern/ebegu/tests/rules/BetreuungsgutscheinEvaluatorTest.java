@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static ch.dvbern.ebegu.tets.TestDataUtil.createDefaultInstitutionStammdaten;
+
 /**
  * Test der als Proof of Concept dienen soll fuer das Regelsystem
  * Testfall, welcher möglichst viele Regeln abhandeln soll:
@@ -50,6 +52,8 @@ public class BetreuungsgutscheinEvaluatorTest {
 	private DateRange erwerbspensumGS1_1 = new DateRange(LocalDate.of(2010, Month.FEBRUARY, 2), LocalDate.of(2017, Month.MARCH, 20));
 	private DateRange erwerbspensumGS1_2 = new DateRange(LocalDate.of(2017, Month.JANUARY, 1), LocalDate.of(2017, Month.JULY, 31));
 
+	private DateRange fachstelleGueltigkeit = new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.APRIL, 30));
+
 	private DateRange gesuchsperiode = new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 
 
@@ -68,6 +72,11 @@ public class BetreuungsgutscheinEvaluatorTest {
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(testgesuch);
+		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				System.out.println(betreuung.getVerfuegung());
+			}
+		}
 	}
 
 	private Gesuch createGesuch() {
@@ -86,16 +95,30 @@ public class BetreuungsgutscheinEvaluatorTest {
 		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
 		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(gesuchsperiode.getGueltigAb(), gesuchsperiode.getGueltigBis(), 90, 10));
+		// Kind 1
+		Betreuung betreuungKind1 = createBetreuungWithPensum(gesuch, BetreuungsangebotTyp.KITA, gesuchsperiode, 60);
+		betreuungKind1.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
+		betreuungKind1.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(fachstelleGueltigkeit);
+		betreuungKind1.getKind().getKindJA().getPensumFachstelle().setPensum(80);
 		return gesuch;
 	}
 
-	private Betreuung createBetreuungWithPensum(BetreuungsangebotTyp angebot, int pensum) {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+
+	private Betreuung createBetreuungWithPensum(Gesuch gesuch, BetreuungsangebotTyp angebot, DateRange gueltigkeit, int pensum) {
+		Betreuung betreuung = new Betreuung();
+		KindContainer kindContainer = new KindContainer();
+		betreuung.setKind(kindContainer);
+		kindContainer.getBetreuungen().add(betreuung);
+		betreuung.getKind().setKindJA(new Kind());
+		betreuung.getKind().setGesuch(gesuch);
+		gesuch.getKindContainers().add(betreuung.getKind());
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
 		betreuungspensumContainer.setBetreuung(betreuung);
 		betreuungspensumContainer.setBetreuungspensumJA(new Betreuungspensum());
+		betreuungspensumContainer.getBetreuungspensumJA().setGueltigkeit(gueltigkeit);
 		betreuungspensumContainer.getBetreuungspensumJA().setPensum(pensum);
 		betreuung.getBetreuungspensumContainers().add(betreuungspensumContainer);
 		return betreuung;

@@ -38,8 +38,8 @@ public class BetreuungspensumCalcRule extends AbstractEbeguRule {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
 		}
 		// Fachstelle: Überschreibt alles
-		if (betreuung.getKind().getKindJA().getPensumFachstelle() != null) {
-			int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
+		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
+		if (pensumFachstelle > 0) {
 			// Anspruch ist immer genau das Pensum der Fachstelle
 			betreuungberechnet = pensumFachstelle;
 			// Den neuen "AnspruchRest" bestimmen:

@@ -32,7 +32,7 @@ public class BetreuungsgutscheinEvaluator {
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
 			// Pro Kind werden (je nach Angebot) die Anspruchspensen aufsummiert. Wir müssen uns also nach jeder Betreuung
 			// den "Restanspruch" merken für die Berechnung der nächsten Betreuung
-			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch();
+			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(testgesuch.getGesuchsperiode());
 
 			// Betreuungen werden einzeln berechnet
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
@@ -50,6 +50,7 @@ public class BetreuungsgutscheinEvaluator {
                 verfuegung.setZeitabschnitte(zeitabschnitte);
                 verfuegung.setBetreuung(betreuung);
 				betreuung.setVerfuegung(verfuegung);
+
 			}
 		}
 	}
@@ -64,9 +65,9 @@ public class BetreuungsgutscheinEvaluator {
 		return rulesForGesuchsperiode;
 	}
 
-	public static List<VerfuegungZeitabschnitt> createInitialenRestanspruch() {
+	public static List<VerfuegungZeitabschnitt> createInitialenRestanspruch(Gesuchsperiode gesuchsperiode) {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = new ArrayList<>();
-		VerfuegungZeitabschnitt initialerRestanspruch = new VerfuegungZeitabschnitt(Constants.DEFAULT_GUELTIGKEIT);
+		VerfuegungZeitabschnitt initialerRestanspruch = new VerfuegungZeitabschnitt(gesuchsperiode.getGueltigkeit());
 		initialerRestanspruch.setAnspruchspensumRest(-1); // Damit wir erkennen, ob schon einmal ein "Rest" durch eine Rule gesetzt wurde
 		restanspruchZeitabschnitte.add(initialerRestanspruch);
 		return restanspruchZeitabschnitte;

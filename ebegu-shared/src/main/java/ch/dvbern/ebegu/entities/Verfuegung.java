@@ -7,11 +7,11 @@ import java.util.List;
  */
 public class Verfuegung {
 
-	String automatischeInitialisiertteBemerkungen ;
-	String manuelleBemerkungen;
+	private String automatischeInitialisiertteBemerkungen;
+	private String manuelleBemerkungen;
 
-	List<VerfuegungZeitabschnitt> zeitabschnitte;
-	Betreuung betreuung;
+	private List<VerfuegungZeitabschnitt> zeitabschnitte;
+	private Betreuung betreuung;
 
 
 	public String getAutomatischeInitialisiertteBemerkungen() {
@@ -44,5 +44,14 @@ public class Verfuegung {
 
 	public void setBetreuung(Betreuung betreuung) {
 		this.betreuung = betreuung;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder("Verfuegung");
+		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
+			sb.append("\n");
+			sb.append(zeitabschnitt);
+		}
+		return sb.toString();
 	}
 }
