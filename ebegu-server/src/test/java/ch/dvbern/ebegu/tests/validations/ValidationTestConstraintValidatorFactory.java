@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tests.services.EbeguDummyParameterServiceBean;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumValidator;
 
+import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.Validation;
@@ -15,12 +16,18 @@ import javax.validation.Validation;
  */
 public class ValidationTestConstraintValidatorFactory implements ConstraintValidatorFactory {
 
+	EntityManagerFactory entityManagerFactory;
+
+	public ValidationTestConstraintValidatorFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
+	}
+
 	@Override
 	public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
 		if (key == CheckBetreuungspensumValidator.class) {
 			//Mock Service for Parameters
 			EbeguParameterService dummyParamService = new EbeguDummyParameterServiceBean();
-			return (T) new CheckBetreuungspensumValidator(dummyParamService);
+			return (T) new CheckBetreuungspensumValidator(dummyParamService, entityManagerFactory);
 		}
 		ConstraintValidatorFactory delegate = Validation.byDefaultProvider().configure().getDefaultConstraintValidatorFactory();
 		return delegate.getInstance(key);

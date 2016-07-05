@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,8 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	private static final long serialVersionUID = -8403411439882700618L;
 
 	@Column(nullable = true)
+	@Embedded
+	@Valid
 	private IBAN iban;
 
 	@DecimalMin("0.00")
