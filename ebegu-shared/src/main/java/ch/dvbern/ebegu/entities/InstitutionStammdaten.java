@@ -62,19 +62,21 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.iban = iban;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungstage() {
 		return oeffnungstage;
 	}
 
-	public void setOeffnungstage(BigDecimal oeffnungstage) {
+	public void setOeffnungstage(@Nullable BigDecimal oeffnungstage) {
 		this.oeffnungstage = oeffnungstage;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungsstunden() {
 		return oeffnungsstunden;
 	}
 
-	public void setOeffnungsstunden(BigDecimal oeffnungsstunden) {
+	public void setOeffnungsstunden(@Nullable BigDecimal oeffnungsstunden) {
 		this.oeffnungsstunden = oeffnungsstunden;
 	}
 
