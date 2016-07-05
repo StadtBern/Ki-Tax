@@ -520,6 +520,10 @@
     "TSRole_GESUCHSTELLER": "Gesuchsteller",
     "TSRole_JURIST": "Jurist",
     "TSRole_REVISOR": "Revisor",
-    "TSRole_STEUERAMT": "SteueramtT"
+    "TSRole_STEUERAMT": "SteueramtT",
+    "PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG": "Minimale Einkommenveschlechterung (%)",
+    "PARAM_BABY_FAKTOR": "Baby Faktor",
+    "PARAM_BABY_ALTER_IN_MONATEN": "Maximales Alter für Baby Faktor",
+    "{ungueltige.iban}": "IBAN ist ungültig"
 }
 

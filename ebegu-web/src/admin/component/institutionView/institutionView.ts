@@ -28,8 +28,6 @@ export class InstitutionViewComponentConfig implements IComponentOptions {
 
 export class InstitutionViewController {
 
-    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS'];
-
     institutionRS: InstitutionRS;
     institutionStammdatenRS: InstitutionStammdatenRS;
     ebeguUtil: EbeguUtil;
@@ -41,11 +39,11 @@ export class InstitutionViewController {
     isSelected: boolean = false;
     selectedInstitutionStammdaten: TSInstitutionStammdaten = null;
     isSelectedStammdaten: boolean = false;
-
     betreuungsangebotValues: Array<any>;
     selectedInstitutionStammdatenBetreuungsangebot: any = null;
 
-    //
+
+    static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS'];
     /* @ngInject */
     constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS) {
         this.institutionRS = institutionRS;
@@ -113,23 +111,27 @@ export class InstitutionViewController {
 
     saveInstitution(form: IFormController): void {
         if (form.$valid) {
-            this.isSelected = false;
-
             if (this.isCreateInstitutionsMode() === true) {
                 this.institutionRS.createInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     this.institutionen.push(institution);
+                    this.resetInstitutionSelection();
                 });
             } else {
                 this.institutionRS.updateInstitution(this.selectedInstitution).then((institution: TSInstitution) => {
                     var index = EbeguUtil.getIndexOfElementwithID(institution, this.institutionen);
                     if (index > -1) {
                         this.institutionen[index] = institution;
+                        this.resetInstitutionSelection();
                     }
                 });
             }
-            this.selectedInstitution = null;
         }
 
+    }
+
+    private resetInstitutionSelection() {
+        this.selectedInstitution = null;
+        this.isSelected = false;
     }
 
     getSelectedInstitutionStammdatenList(): TSInstitutionStammdaten[] {
@@ -159,23 +161,28 @@ export class InstitutionViewController {
 
     saveInstitutionStammdaten(form: IFormController): void {
         if (form.$valid) {
-            this.isSelectedStammdaten = false;
             this.selectedInstitutionStammdaten.betreuungsangebotTyp = this.selectedInstitutionStammdatenBetreuungsangebot.key;
 
             if (this.isCreateStammdatenMode()) {
                 this.institutionStammdatenRS.createInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
                     this.instStammdatenList.push(institutionStammdaten);
+                    this.resetInstitutionStammdatenSelection();
                 });
             } else {
                 this.institutionStammdatenRS.updateInstitutionStammdaten(this.selectedInstitutionStammdaten).then((institutionStammdaten: TSInstitutionStammdaten) => {
                     var index = EbeguUtil.getIndexOfElementwithID(institutionStammdaten, this.instStammdatenList);
                     if (index > -1) {
                         this.instStammdatenList[index] = institutionStammdaten;
+                        this.resetInstitutionStammdatenSelection();
                     }
                 });
             }
-            this.selectedInstitutionStammdaten = null;
         }
+    }
+
+    private resetInstitutionStammdatenSelection() {
+        this.selectedInstitutionStammdaten = null;
+        this.isSelectedStammdaten = false;
     }
 
     removeInstitutionStammdaten(institutionStammdaten: TSInstitutionStammdaten): void {

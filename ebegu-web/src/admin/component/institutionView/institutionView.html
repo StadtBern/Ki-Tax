@@ -98,16 +98,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <!--Auswahl des Mandanten. Heute immer fix-->
-                                <dv-input-container class="form-group col-md-6">
-                                    <label data-translate="MANDANT" for="mandant_ID"></label>
-                                    <output id="mandant_ID" type="text" name="mandant_ID"
-                                            ng-model="vm.getSelectedInstitution().mandant.name"
-                                            dv-max-length class="form-control" required disabled="true"></output>
-                                </dv-input-container>
-                            </div>
-
                             <!--Wird nur Angegeigt, wenn neue Institution erstellt wird:-->
                             <div ng-if="!vm.isCreateInstitutionsMode()" class="row">
                                 <div class="col-md-12">
@@ -255,9 +245,9 @@
                                                 <dv-input-container class="form-group">
                                                     <label data-translate="OEFFNUNGSTAGE"
                                                            for="oeffnungstage"></label>
-                                                    <input id="oeffnungstage" type="text" name="oeffnungstage"
+                                                    <input id="oeffnungstage" type="number" name="oeffnungstage"
                                                            ng-model="vm.getSelectedInstitutionStammdaten().oeffnungstage"
-                                                           dv-max-length class="form-control" required
+                                                           class="form-control" required max="365" min="0"
                                                            ng-disabled="!vm.isCreateStammdatenMode()">
                                                     <dv-error-messages for="form.oeffnungstage.$error"
                                                                        class="error"></dv-error-messages>
@@ -267,9 +257,9 @@
                                                 <dv-input-container class="form-group secondColumn">
                                                     <label data-translate="OEFFNUNGSSTUNDEN"
                                                            for="oeffnungsstunden"></label>
-                                                    <input id="oeffnungsstunden" type="text" name="oeffnungsstunden"
+                                                    <input id="oeffnungsstunden" type="number" name="oeffnungsstunden"
                                                            ng-model="vm.getSelectedInstitutionStammdaten().oeffnungsstunden"
-                                                           dv-max-length class="form-control" required
+                                                           class="form-control" required max="24" min="0"
                                                            ng-disabled="!vm.isCreateStammdatenMode()">
                                                     <dv-error-messages for="form.oeffnungsstunden.$error"
                                                                        class="error"></dv-error-messages>
