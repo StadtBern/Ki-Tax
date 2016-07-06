@@ -1,13 +1,13 @@
-import {IWindowService, IHttpInterceptor, IRootScopeService, IQService} from 'angular';
+import {ILocationService, IHttpInterceptor, IRootScopeService, IQService} from 'angular';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';
 import HttpBuffer from './HttpBuffer';
 
 export default class HttpAuthInterceptor implements IHttpInterceptor {
 
-    static $inject = ['$rootScope', '$q', 'CONSTANTS', '$window', 'httpBuffer'];
+    static $inject = ['$rootScope', '$q', 'CONSTANTS', '$location', 'httpBuffer'];
     /* @ngInject */
     constructor(private $rootScope: IRootScopeService, private $q: IQService, private CONSTANTS: any,
-                private $window: IWindowService, private httpBuffer: HttpBuffer) {
+                private $location: ILocationService, private httpBuffer: HttpBuffer) {
     }
 
 
@@ -22,7 +22,8 @@ export default class HttpAuthInterceptor implements IHttpInterceptor {
                 let deferred = this.$q.defer();
                 this.httpBuffer.append(response.config, deferred);
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], response);
-                this.$window.location.href = '/#/src/authentication/dummyAuthentication.html';
+                //hier spater auf die richtige login Seite, evtl auch mit $state?
+                this.$location.path('/#/src/authentication/dummyAuthentication.html').replace();
                 return deferred.promise;
         }
         return this.$q.reject(response);
