@@ -6,6 +6,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
@@ -24,6 +25,8 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	private static final long serialVersionUID = -8403411439882700618L;
 
 	@Column(nullable = true)
+	@Embedded
+	@Valid
 	private IBAN iban;
 
 	@DecimalMin("0.00")
@@ -59,19 +62,21 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.iban = iban;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungstage() {
 		return oeffnungstage;
 	}
 
-	public void setOeffnungstage(BigDecimal oeffnungstage) {
+	public void setOeffnungstage(@Nullable BigDecimal oeffnungstage) {
 		this.oeffnungstage = oeffnungstage;
 	}
 
+	@Nullable
 	public BigDecimal getOeffnungsstunden() {
 		return oeffnungsstunden;
 	}
 
-	public void setOeffnungsstunden(BigDecimal oeffnungsstunden) {
+	public void setOeffnungsstunden(@Nullable BigDecimal oeffnungsstunden) {
 		this.oeffnungsstunden = oeffnungsstunden;
 	}
 
