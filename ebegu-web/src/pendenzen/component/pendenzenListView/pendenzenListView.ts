@@ -14,6 +14,8 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TSUser from '../../../models/TSUser';
 import UserRS from '../../../core/service/userRS.rest';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -31,7 +33,7 @@ export class PendenzenListViewController {
     selectedAntragTyp: string;
     selectedInstitution: string;
     selectedGesuchsperiode: string;
-    selectedUser: string;
+    selectedUser: TSUser;
     institutionenList: Array<TSInstitution>;
     userList: Array<TSUser>;
     activeGesuchsperiodenList: Array<string>;
@@ -40,10 +42,12 @@ export class PendenzenListViewController {
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', '$state', 'CONSTANTS', 'UserRS'];
+        'GesuchRS', 'GesuchModelManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
+
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService, private CONSTANTS: any, private userRS: UserRS) {
+                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService,
+                private CONSTANTS: any, private userRS: UserRS, private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
@@ -52,6 +56,14 @@ export class PendenzenListViewController {
         this.updatePendenzenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+    }
+
+    $onInit() {
+        let currentPrincipal: TSUser = this.authServiceRS.getPrincipal();
+        if (currentPrincipal) {
+            //smart table braucht browser event um suche zu triggern
+        //    this.selectedUser = currentPrincipal;
+        }
     }
 
     private updateUserList() {
