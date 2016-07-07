@@ -17,10 +17,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
     routerHelper.configureStates(getStates(), '/pendenzen');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert
-    if (ENV !== 'test') {
-        listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
-        mandantRS.getFirst();
-    }
+
     $rootScope.$on('$viewContentLoaded', function () {
         angular.element('html, body').animate({scrollTop: 0}, 200);
         //    oder so  $anchorScroll('top') mit einem <div id="top">;
@@ -28,7 +25,10 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
         //do stuff if needed
-        console.log('logged in event received');
+        if (ENV !== 'test') {
+            listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
+            mandantRS.getFirst();
+        }
     });
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
