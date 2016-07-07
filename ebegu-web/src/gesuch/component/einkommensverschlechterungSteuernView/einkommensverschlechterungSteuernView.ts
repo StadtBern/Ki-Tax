@@ -80,7 +80,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     nextStep() {
-        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
     }
 
     submit(form: IFormController) {
@@ -115,22 +115,24 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
     private gemeinsameStekClicked_BjP1(): void {
         // Wenn neu NEIN -> Fragen loeschen
-        // if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
-        //     this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer = undefined;
-        //     this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer = undefined;
-        // } else {
-        //     this.gesuchModelManager.initEinkommensverschlechterungContainer(this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2);
-        // }
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
+        } else {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+        }
     }
 
     private gemeinsameStekClicked_BjP2(): void {
         // Wenn neu NEIN -> Fragen loeschen
-        // if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
-        //     this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer = undefined;
-        //     this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer = undefined;
-        // } else {
-        //     this.gesuchModelManager.initEinkommensverschlechterungContainer(this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2);
-        // }
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+        } else {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+        }
     }
 
     private steuerveranlagungClicked_BjP1(): void {

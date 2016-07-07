@@ -14,12 +14,14 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
     private _nettolohnOkt: number;
     private _nettolohnNov: number;
     private _nettolohnDez: number;
+    private _nettolohnZus: number;
 
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean,
                 nettolohnJan?: number, nettolohnFeb?: number, nettolohnMrz?: number,
                 nettolohnApr?: number, nettolohnMai?: number, nettolohnJun?: number,
                 nettolohnJul?: number, nettolohnAug?: number, nettolohnSep?: number,
                 nettolohnOkt?: number, nettolohnNov?: number, nettolohnDez?: number,
+                nettolohnZus?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
                 schulden?: number, selbstaendig?: boolean, geschaeftsgewinnBasisjahrMinus2?: number,
                 geschaeftsgewinnBasisjahrMinus1?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
@@ -40,6 +42,7 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
         this._nettolohnOkt = nettolohnOkt;
         this._nettolohnNov = nettolohnNov;
         this._nettolohnDez = nettolohnDez;
+        this._nettolohnZus = nettolohnZus;
 
 
     }
@@ -139,5 +142,14 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
 
     set nettolohnDez(value: number) {
         this._nettolohnDez = value;
+    }
+
+
+    get nettolohnZus(): number {
+        return this._nettolohnZus;
+    }
+
+    set nettolohnZus(value: number) {
+        this._nettolohnZus = value;
     }
 }

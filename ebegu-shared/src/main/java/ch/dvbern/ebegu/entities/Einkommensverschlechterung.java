@@ -55,6 +55,9 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	@Column(nullable = true)
 	private BigDecimal nettolohnDez;
 
+	@Column(nullable = true)
+	private BigDecimal nettolohnZus;
+
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;
 	}
@@ -150,4 +153,8 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 	public void setNettolohnDez(final BigDecimal nettolohnDez) {
 		this.nettolohnDez = nettolohnDez;
 	}
+
+	public BigDecimal getNettolohnZus() { return nettolohnZus; }
+
+	public void setNettolohnZus(BigDecimal nettolohnZus) { this.nettolohnZus = nettolohnZus; }
 }

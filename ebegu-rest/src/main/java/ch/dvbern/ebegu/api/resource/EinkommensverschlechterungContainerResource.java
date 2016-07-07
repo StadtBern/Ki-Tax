@@ -2,8 +2,12 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.dto.AbstractFinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -16,6 +20,8 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +52,10 @@ public class EinkommensverschlechterungContainerResource {
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
+
+	@Resource
+	private EJBContext context;    //fuer rollback
+
 
 	@ApiOperation(value = "Create a new EinkommensverschlechterungContainer in the database. The transfer object also has a relation to EinkommensverschlechterungContainer, " +
 		"it is stored in the database as well.")
@@ -96,5 +106,26 @@ public class EinkommensverschlechterungContainerResource {
 		}
 		EinkommensverschlechterungContainer einkommensverschlechterungContainerToReturn = optional.get();
 		return converter.einkommensverschlechterungContainerToJAX(einkommensverschlechterungContainerToReturn);
+	}
+
+	@Nullable
+	@POST
+	@Path("/calculate/{basisJahrPlusID}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response calculateEinkommensverschlechterung (
+		@Nonnull @NotNull @PathParam("basisJahrPlusID") JaxId basisJahrPlusID,
+		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(basisJahrPlusID.getId());
+		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
+
+		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		AbstractFinanzielleSituationResultateDTO abstractFinanzielleSituationResultateDTO = einkommensverschlechterungContainerService.calculateResultate(gesuch, basisJahrPlus);
+		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
+		context.setRollbackOnly();
+		return Response.ok(abstractFinanzielleSituationResultateDTO).build();
 	}
 }

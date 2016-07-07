@@ -27,7 +27,9 @@ function getStates(): IState[] {
         new EbeguNewFallState(),
         new EbeguEinkommensverschlechterungInfoState(),
         new EbeguEinkommensverschlechterungSteuernState(),
-        new EbeguEinkommensverschlechterungState()
+        new EbeguEinkommensverschlechterungState(),
+        new EbeguEinkommensverschlechterungResultateState(),
+        new EbeguVerfuegenListState()
     ];
 }
 
@@ -115,6 +117,12 @@ export class EbeguFinanzielleSituationResultateState implements IState {
     url = '/finanzielleSituationResultate';
 }
 
+export class EbeguVerfuegenListState implements IState {
+    name = 'gesuch.verfuegen';
+    template = '<verfuegen-list-view>';
+    url = '/verfuegen';
+}
+
 export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
     template = '<einkommensverschlechterung-info-view>';
@@ -131,6 +139,12 @@ export class EbeguEinkommensverschlechterungState implements IState {
     name = 'gesuch.einkommensverschlechterung';
     template = '<einkommensverschlechterung-view>';
     url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus';
+}
+
+export class EbeguEinkommensverschlechterungResultateState implements IState {
+    name = 'gesuch.einkommensverschlechterungResultate';
+    template = '<einkommensverschlechterung-resultate-view>';
+    url = '/einkommensverschlechterungResultate/:basisjahrPlus';
 }
 
 //PARAMS
@@ -153,5 +167,9 @@ export class IErwerbspensumStateParams implements IStateParamsService {
 
 export class IEinkommensverschlechterungStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
+    basisjahrPlus: string;
+}
+
+export class IEinkommensverschlechterungResultateStateParams implements IStateParamsService {
     basisjahrPlus: string;
 }

@@ -3,6 +3,8 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import DateUtil from '../utils/DateUtil';
 import {EbeguWebCore} from '../core/core.module';
 import EbeguUtil from './EbeguUtil';
+import * as moment from 'moment';
+import TSFall from '../models/TSFall';
 
 describe('EbeguUtil', function () {
 
@@ -65,6 +67,24 @@ describe('EbeguUtil', function () {
         });
         it('returns the given number as string if its length is greather than 6', () => {
             expect(ebeguUtil.addZerosToNumber(1234567, 6)).toEqual('1234567');
+        });
+    });
+    describe('calculateBetreuungsId', () => {
+        it ('it returns empty string for undefined objects', () => {
+            expect(ebeguUtil.calculateBetreuungsId(undefined, undefined, 0, 0)).toBe('');
+        });
+        it ('it returns empty string for undefined kindContainer', () => {
+            let fall: TSFall = new TSFall();
+            expect(ebeguUtil.calculateBetreuungsId(undefined, fall, 0, 0)).toBe('');
+        });
+        it ('it returns empty string for undefined betreuung', () => {
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode();
+            expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, undefined, 0, 0)).toBe('');
+        });
+        it ('it returns the right ID: YY(gesuchsperiodeBegin).fallNummer.Kind.Betreuung', () => {
+            let fall: TSFall = new TSFall(254);
+            let gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY')));
+            expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, fall, 1, 1)).toBe('16.000254.1.1');
         });
     });
 });

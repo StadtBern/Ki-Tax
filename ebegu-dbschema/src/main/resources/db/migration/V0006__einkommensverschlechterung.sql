@@ -32,6 +32,7 @@ CREATE TABLE einkommensverschlechterung (
 	nettolohn_nov DECIMAL(19, 2),
 	nettolohn_okt DECIMAL(19, 2),
 	nettolohn_sep DECIMAL(19, 2),
+	nettolohn_zus DECIMAL(19, 2),
 	PRIMARY KEY (id)
 	);
 
@@ -67,6 +68,7 @@ CREATE TABLE einkommensverschlechterung_aud (
 	nettolohn_nov DECIMAL(19, 2),
 	nettolohn_okt DECIMAL(19, 2),
 	nettolohn_sep DECIMAL(19, 2),
+	nettolohn_zus DECIMAL(19, 2),
 	PRIMARY KEY (
 		id
 		,rev

@@ -1,15 +1,16 @@
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {IFilterService} from 'angular';
 import TSAbstractEntity from '../models/TSAbstractEntity';
+import TSFall from '../models/TSFall';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
  */
 export default class EbeguUtil {
 
-    static $inject = ['$filter'];
+    static $inject = ['$filter', 'CONSTANTS'];
     /* @ngInject */
-    constructor(private $filter: IFilterService) {
+    constructor(private $filter: IFilterService, private CONSTANTS: any) {
     }
 
     /**
@@ -83,6 +84,17 @@ export default class EbeguUtil {
             }
         }
         return -1;
+    }
 
+    public calculateBetreuungsId(gesuchsperiode: TSGesuchsperiode, fall: TSFall, kindContainerNumber: number, betreuungNumber: number): string {
+        let betreuungsId: string = '';
+        if (gesuchsperiode && fall) {
+            betreuungsId =
+                gesuchsperiode.gueltigkeit.gueltigAb.year().toString().substring(2)
+                + '.' + this.addZerosToNumber(fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH)
+                + '.' + kindContainerNumber
+                + '.' + betreuungNumber;
+        }
+        return betreuungsId;
     }
 }

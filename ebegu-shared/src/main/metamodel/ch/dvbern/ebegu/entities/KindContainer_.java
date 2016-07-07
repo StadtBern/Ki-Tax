@@ -12,6 +12,8 @@ public abstract class KindContainer_ extends ch.dvbern.ebegu.entities.AbstractEn
 	public static volatile SingularAttribute<KindContainer, Kind> kindGS;
 	public static volatile SetAttribute<KindContainer, Betreuung> betreuungen;
 	public static volatile SingularAttribute<KindContainer, Kind> kindJA;
+	public static volatile SingularAttribute<KindContainer, Integer> kindNummer;
+	public static volatile SingularAttribute<KindContainer, Integer> nextNumberBetreuung;
 	public static volatile SingularAttribute<KindContainer, Gesuch> gesuch;
 
 }

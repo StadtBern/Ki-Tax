@@ -30,18 +30,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-	@Nonnull
-	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Fall createFall(@Nonnull Fall fall) {
-		Objects.requireNonNull(fall);
-		return persistence.persist(fall);
-	}
 
+	// damit fallNummer sicher schon gesetzt wird machen
+	// das in einer eigenen Transaktion
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Nonnull
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Fall updateFall(@Nonnull Fall fall) {
+	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		return persistence.merge(fall);
 	}
