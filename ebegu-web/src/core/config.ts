@@ -4,6 +4,7 @@ import 'angular-unsavedchanges';
 import {ITranslateProvider} from 'angular-translate';
 import 'angular-hotkeys';
 import HttpErrorInterceptor from './errors/service/HttpErrorInterceptor';
+import HttpAuthInterceptor from '../authentication/service/HttpAuthInterceptor';
 import IInjectorService = angular.auto.IInjectorService;
 import IThemingProvider = angular.material.IThemingProvider;
 import IHttpProvider = angular.IHttpProvider;
@@ -16,7 +17,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     let translProp = require('../assets/translations/translations_de.json');
 
     // In case you have issues with double-escaped parameters, check out this issue: https://github.com/angular-translate/angular-translate/issues/1101
-    $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+    $translateProvider.useSanitizeValueStrategy('escapeParameters');
 
     $translateProvider
         .translations('de', translProp)
@@ -42,5 +43,5 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
 
     //Configuration of $http service
     $httpProvider.interceptors.push('HttpErrorInterceptor');
-
+    $httpProvider.interceptors.push('HttpAuthInterceptor');
 }

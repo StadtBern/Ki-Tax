@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.KindService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -32,6 +33,8 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 
 	@Inject
 	private Persistence<Betreuung> persistence;
+	@Inject
+	private KindService kindService;
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -54,6 +57,9 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
 		Assert.assertEquals("Neue Bemerkung", updatedBetreuung.get().getBemerkungen());
+
+		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
+		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
 	}
 
 	@Test

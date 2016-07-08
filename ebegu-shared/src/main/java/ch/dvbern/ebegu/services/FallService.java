@@ -12,20 +12,12 @@ import java.util.Optional;
 public interface FallService {
 
 	/**
-	 * Erstellt einen neuen Fall in der DB, falls der key noch nicht existiert
+	 * Erstellt einen neuen Fall in der DB, falls der key noch nicht existiert. Sollte es existieren, aktualisiert es den Inhalt
 	 * @param fall der Fall als DTO
 	 * @return den gespeicherten Fall
 	 */
 	@Nonnull
-	Fall createFall(@Nonnull Fall fall);
-
-	/**
-	 * Aktualisiert den Fall in der DB
-	 * @param fall der Fall als DTO
-	 * @return Den aktualisierten Fall
-	 */
-	@Nonnull
-	Fall updateFall(@Nonnull Fall fall);
+	Fall saveFall(@Nonnull Fall fall);
 
 	/**
 	 *

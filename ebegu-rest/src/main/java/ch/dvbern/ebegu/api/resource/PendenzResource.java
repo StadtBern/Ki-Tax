@@ -46,16 +46,19 @@ public class PendenzResource {
 
 		List<JaxPendenzJA> pendenzenList = new ArrayList<>();
 		for (Gesuch gesuch : gesucheList) {
-			if (gesuch.getFall() != null && gesuch.getGesuchsteller1() != null) {
+			if (gesuch.getFall() != null) {
 				JaxPendenzJA pendenz = new JaxPendenzJA();
 				pendenz.setAntragId(gesuch.getId());
 				pendenz.setFallNummer(gesuch.getFall().getFallNummer());
-				pendenz.setFamilienName(gesuch.getGesuchsteller1().getNachname());
+				pendenz.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
 				pendenz.setEingangsdatum(gesuch.getEingangsdatum());
 				pendenz.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 				pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
 				pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 				pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
+				if (gesuch.getFall().getVerantwortlicher() != null) {
+					pendenz.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
+				}
 
 				pendenzenList.add(pendenz);
 			}

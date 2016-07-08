@@ -2,19 +2,23 @@ var webpack = require('webpack');
 var helpers = require('./helpers');
 var loaders = require('./loaders');
 
+
+var parsedversion = JSON.stringify(require("../package.json").version) || "unkown";
+var currentTime = new Date(); 
 /**
  * Webpack Plugins
  */
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
-
 /**
  * Webpack Constants
  */
 const METADATA = {
     title: 'ebegu Webpack from DV Bern',
-    baseUrl: '/'
+    baseUrl: '/',
+    version: parsedversion,
+    buildtstamp: currentTime.toISOString() || ''
 };
 
 /**

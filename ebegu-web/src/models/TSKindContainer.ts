@@ -7,12 +7,16 @@ export default class TSKindContainer extends TSAbstractEntity {
     private _kindGS: TSKind;
     private _kindJA: TSKind;
     private _betreuungen: Array<TSBetreuung>;
+    private _kindNummer: number;
+    private _nextNumberBetreuung: number;
 
-    constructor(kindGS?: TSKind, kindJA?: TSKind, betreuungen?: Array<TSBetreuung>) {
+    constructor(kindGS?: TSKind, kindJA?: TSKind, betreuungen?: Array<TSBetreuung>, kindNummer?: number, nextNumberBetreuung?: number) {
         super();
         this._kindGS = kindGS;
         this._kindJA = kindJA;
         this._betreuungen = betreuungen ? betreuungen : [];
+        this._kindNummer = kindNummer;
+        this._nextNumberBetreuung = nextNumberBetreuung;
     }
 
 
@@ -38,5 +42,21 @@ export default class TSKindContainer extends TSAbstractEntity {
 
     set betreuungen(value: Array<TSBetreuung>) {
         this._betreuungen = value;
+    }
+
+    get kindNummer(): number {
+        return this._kindNummer;
+    }
+
+    set kindNummer(value: number) {
+        this._kindNummer = value;
+    }
+
+    get nextNumberBetreuung(): number {
+        return this._nextNumberBetreuung;
+    }
+
+    set nextNumberBetreuung(value: number) {
+        this._nextNumberBetreuung = value;
     }
 }

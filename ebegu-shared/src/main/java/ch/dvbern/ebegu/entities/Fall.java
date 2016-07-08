@@ -4,7 +4,9 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,6 +27,23 @@ public class Fall extends AbstractEntity {
 	@Column(columnDefinition = "integer auto_increment")
 	private int fallNummer;
 
+	@Nullable
+	@ManyToOne(optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_verantwortlicher_id"))
+	private Benutzer verantwortlicher = null;
+
+
+
+	/**
+	 * nextNumberKind ist die Nummer, die das naechste Kind bekommen wird. Aus diesem Grund ist es by default 1
+	 * Dieses Feld darf nicht mit der Anzahl der Kinder verwechselt werden, da sie sehr unterschiedlich sein koennen falls mehrere Kinder geloescht wurden
+	 */
+	@NotNull
+	@Min(1)
+	@Column(nullable = false)
+	private Integer nextNumberKind = 1;
+
+
 	public int getFallNummer() {
 		return fallNummer;
 	}
@@ -32,4 +51,22 @@ public class Fall extends AbstractEntity {
 	public void setFallNummer(int fallNummer) {
 		this.fallNummer = fallNummer;
 	}
+
+	@Nullable
+	public Benutzer getVerantwortlicher() {
+		return verantwortlicher;
+	}
+
+	public void setVerantwortlicher(@Nullable Benutzer verantwortlicher) {
+		this.verantwortlicher = verantwortlicher;
+	}
+
+	public Integer getNextNumberKind() {
+		return nextNumberKind;
+	}
+
+	public void setNextNumberKind(Integer nextNumberKind) {
+		this.nextNumberKind = nextNumberKind;
+	}
+
 }

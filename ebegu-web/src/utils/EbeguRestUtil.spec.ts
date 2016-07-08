@@ -30,6 +30,7 @@ import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSUser from '../models/TSUser';
 
 describe('EbeguRestUtil', function () {
 
@@ -120,11 +121,16 @@ describe('EbeguRestUtil', function () {
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
                 var myGesuchsteller = createGesuchsteller();
+                myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden 
                 let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
                 let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
                 expect(transformedPers).toBeDefined();
                 expect(myGesuchsteller.nachname).toEqual(transformedPers.nachname);
+
+                expect(transformedPers.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
+                transformedPers.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
+
                 expect(myGesuchsteller).toEqual(transformedPers);
 
             });
@@ -152,6 +158,7 @@ describe('EbeguRestUtil', function () {
                 myGesuch.einkommensverschlechterung = true;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
+                fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
                 let gesuchsteller: TSGesuchsteller = createGesuchsteller();
                 myGesuch.gesuchsteller1 = gesuchsteller;
@@ -219,7 +226,8 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseBetreuung()', () => {
             it('should transform TSBetreuung to REST object and back', () => {
-                let instStam: TSInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA, createInstitution(), undefined, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                let instStam: TSInstitutionStammdaten = new TSInstitutionStammdaten('iban', 250, 12, TSBetreuungsangebotTyp.KITA,
+                    createInstitution(), undefined, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(instStam);
 
                 let tsBetreuungspensumGS: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
@@ -229,7 +237,7 @@ describe('EbeguRestUtil', function () {
                 let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumContainer);
                 let betContainers: Array<TSBetreuungspensumContainer> = [tsBetreuungspensumContainer];
-                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen', true);
+                let betreuung: TSBetreuung = new TSBetreuung(instStam, TSBetreuungsstatus.AUSSTEHEND, betContainers, 'bemerkungen', true, 2);
                 TestDataUtil.setAbstractFieldsUndefined(betreuung);
 
                 let restBetreuung = ebeguRestUtil.betreuungToRestObject({}, betreuung);
@@ -253,6 +261,7 @@ describe('EbeguRestUtil', function () {
                 expect(transformedBetreuung.bemerkungen).toEqual(betreuung.bemerkungen);
                 expect(transformedBetreuung.schulpflichtig).toEqual(betreuung.schulpflichtig);
                 expect(transformedBetreuung.betreuungsstatus).toEqual(betreuung.betreuungsstatus);
+                expect(transformedBetreuung.betreuungNummer).toEqual(betreuung.betreuungNummer);
                 expect(transformedBetreuung.betreuungspensumContainers[0]).toEqual(betreuung.betreuungspensumContainers[0]);
             });
         });
@@ -337,7 +346,7 @@ describe('EbeguRestUtil', function () {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
                 let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
-                DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2']);
+                DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
                 let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();

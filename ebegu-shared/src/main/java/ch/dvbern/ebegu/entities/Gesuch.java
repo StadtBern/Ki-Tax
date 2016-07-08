@@ -43,9 +43,11 @@ public class Gesuch extends AbstractAntragEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_id"))
 	private Familiensituation familiensituation;
 
-	@Column(nullable = true)
-	private Boolean einkommensverschlechterung;
-
+	@Valid
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
+	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
 
 	@Nullable
@@ -53,7 +55,7 @@ public class Gesuch extends AbstractAntragEntity {
 		return gesuchsteller1;
 	}
 
-	public void setGesuchsteller1(@Nullable Gesuchsteller gesuchsteller1) {
+	public void setGesuchsteller1(@Nullable final Gesuchsteller gesuchsteller1) {
 		this.gesuchsteller1 = gesuchsteller1;
 	}
 
@@ -62,7 +64,7 @@ public class Gesuch extends AbstractAntragEntity {
 		return gesuchsteller2;
 	}
 
-	public void setGesuchsteller2(@Nullable Gesuchsteller gesuchsteller2) {
+	public void setGesuchsteller2(@Nullable final Gesuchsteller gesuchsteller2) {
 		this.gesuchsteller2 = gesuchsteller2;
 	}
 
@@ -70,7 +72,7 @@ public class Gesuch extends AbstractAntragEntity {
 		return kindContainers;
 	}
 
-	public void setKindContainers(Set<KindContainer> kindContainers) {
+	public void setKindContainers(final Set<KindContainer> kindContainers) {
 		this.kindContainers = kindContainers;
 	}
 
@@ -79,21 +81,21 @@ public class Gesuch extends AbstractAntragEntity {
 		return familiensituation;
 	}
 
-	public void setFamiliensituation(@Nullable Familiensituation familiensituation) {
+	public void setFamiliensituation(@Nullable final Familiensituation familiensituation) {
 		this.familiensituation = familiensituation;
 	}
 
-	public Boolean getEinkommensverschlechterung() {
-		return einkommensverschlechterung;
+	@Nullable
+	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
+		return einkommensverschlechterungInfo;
 	}
 
-	public void setEinkommensverschlechterung(Boolean einkommensverschlechterung) {
-		this.einkommensverschlechterung = einkommensverschlechterung;
+	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
+		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
 	}
 
-	public boolean addKindContainer(@NotNull KindContainer kindContainer) {
+	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
 	}
-
 }

@@ -9,6 +9,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Fall_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
 	public static volatile SingularAttribute<Fall, Integer> fallNummer;
+	public static volatile SingularAttribute<Fall, Integer> nextNumberKind;
+	public static volatile SingularAttribute<Fall, Benutzer> verantwortlicher;
 
 }
 

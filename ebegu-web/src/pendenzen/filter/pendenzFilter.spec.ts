@@ -5,6 +5,7 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
+import TSUser from '../../models/TSUser';
 
 describe('pendenzFilter', function () {
 
@@ -26,15 +27,15 @@ describe('pendenzFilter', function () {
 
         pendenzArray = [];
         pendenz1 = new TSPendenzJA('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.KITA], ['Instit1']);
+            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado');
         pendenzArray.push(pendenz1);
 
         pendenz2 = new TSPendenzJA('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.TAGESELTERN], ['Instit2']);
+            [TSBetreuungsangebotTyp.TAGESELTERN], ['Instit2'], 'Antonio Jimenez');
         pendenzArray.push(pendenz2);
 
         pendenz3 = new TSPendenzJA('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN], ['Instit1', 'Instit2']);
+            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
         pendenzArray.push(pendenz3);
 
     }));

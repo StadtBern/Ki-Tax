@@ -69,11 +69,10 @@ describe('betreuungView', function () {
         });
         describe('getInstitutionenSDList', () => {
             beforeEach(function () {
-                gesuchModelManager.institutionenList = [];
-                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
-                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
-                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
-                gesuchModelManager.institutionenList.push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
             });
             it('should return an empty list if betreuungsangebot is not yet defined', () => {
                 let list: Array<TSInstitutionStammdaten> = betreuungView.getInstitutionenSDList();
@@ -130,6 +129,19 @@ describe('betreuungView', function () {
                 betreuungView.platzAnfordern(form);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.WARTEN);
                 expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+            });
+        });
+        describe('removeBetreuungspensum', () => {
+            it('should remove the betreuungspensum from the list', () => {
+                betreuungView.getBetreuungModel().betreuungspensumContainers = [];
+                betreuungView.createBetreuungspensum();
+                expect(betreuungView.getBetreuungspensen().length).toEqual(1);
+                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
+                expect(betreuungView.getBetreuungspensen().length).toEqual(0);
+                betreuungView.createBetreuungspensum();
+                expect(betreuungView.getBetreuungspensen().length).toEqual(1);
+                betreuungView.removeBetreuungspensum(betreuungView.getBetreuungspensen()[0]);
+                expect(betreuungView.getBetreuungspensen().length).toEqual(0);
             });
         });
     });

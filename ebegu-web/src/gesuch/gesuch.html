@@ -1,5 +1,7 @@
 <div class="row">
 
+    <gesuch-toolbar ng-if="vm.isJugendamt()"></gesuch-toolbar>
+
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
             <li ui-sref-active="active" ui-sref="gesuch.fallcreation">
@@ -16,6 +18,7 @@
             <li><a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a></li>
             <li><a data-translate="MENU_DOKUMENTE"></a></li>
             <li><a data-translate="MENU_FREIGABEQUITTUNG"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.verfuegen"><a data-translate="MENU_VERFUEGEN"></a></li>
         </ul>
     </div>
     <div ui-view class="col-md-5"></div>

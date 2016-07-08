@@ -34,6 +34,10 @@ import {DvTooltipComponentConfig} from './component/dv-tooltip/dv-tooltip';
 import GesuchsperiodeRS from './service/gesuchsperiodeRS.rest';
 import {EbeguErrors} from './errors/errors';
 import EbeguUtil from '../utils/EbeguUtil';
+import {EbeguAuthentication} from '../authentication/authentication.module';
+import {DvPulldownUserMenuComponentConfig} from './component/dv-pulldown-user-menu/dv-pulldown-user-menu';
+import UserRS from './service/userRS.rest';
+import {DVUserselect} from './directive/dv-userselect/dv-userselect';
 
 let dynamicDependencies = function (): string[] {
 
@@ -55,6 +59,7 @@ const dependencies: string[] = [
     /* shared DVBern modules */
     router.name,
     EbeguErrors.name,
+    EbeguAuthentication.name,
     /* 3rd-party modules */
     'ui.bootstrap',
     'smart-table',
@@ -78,6 +83,7 @@ export const EbeguWebCore: angular.IModule = angular
         name: 'EBEGU',
         REST_API: '/ebegu/api/v1/',
         MAX_LENGTH: 255,
+        FALLNUMMER_LENGTH: 6,
         PATTERN_BETRAG: '([0-9]{0,12})',
         PATTERN_PERCENTAGE: '^[0-9][0-9]?$|^100$'     //todo team kann nach mergen des tasks ueber inputmaske gemact werden
     })
@@ -100,8 +106,10 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DvDialog', DvDialog)
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
+    .service('UserRS', UserRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
+    .directive('dvUserselect', DVUserselect.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .component('dvAdresse', new AdresseComponentConfig())
@@ -110,4 +118,5 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvInputContainer', new DvInputContainerComponentConfig())
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
+    .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig());

@@ -37,14 +37,15 @@ public class JaxPendenzJA {
 	@NotNull
 	private JaxGesuchsperiode gesuchsperiode;
 
+	@NotNull
+	private String verantwortlicher;
+
 	@Nullable
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
 
 //	@NotNull
 //	private PendenzStatus pendenzStatus;
-
-//	private User bearbeiter;
 
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
@@ -91,6 +92,14 @@ public class JaxPendenzJA {
 
 	public void setGesuchsperiode(JaxGesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	public String getVerantwortlicher() {
+		return verantwortlicher;
+	}
+
+	public void setVerantwortlicher(String verantwortlicher) {
+		this.verantwortlicher = verantwortlicher;
 	}
 
 	@Nullable

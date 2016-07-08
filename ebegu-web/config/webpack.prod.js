@@ -103,6 +103,8 @@ module.exports = webpackMerge(commonConfig, {
         new DefinePlugin({
             'ENV': JSON.stringify(METADATA.ENV),
             'HMR': METADATA.HMR,
+            'VERSION': METADATA.version,
+            'BUILDTSTAMP': METADATA.buildtstamp, 
             'process.env': {
                 'ENV': JSON.stringify(METADATA.ENV),
                 'NODE_ENV': JSON.stringify(METADATA.ENV),
