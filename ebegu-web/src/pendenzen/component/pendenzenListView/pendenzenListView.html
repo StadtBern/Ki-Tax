@@ -59,11 +59,7 @@
                             </select>
                         </th>
                         <th>
-                            <select st-input-event="change" name="verantwortlicher" id="verantwortlicher" st-search="verantwortlicher" class="form-control"
-                                    ng-options="user.getFullName() for user in vm.userList track by user.getFullName()"
-                                    ng-model="vm.selectedUser">
-                                <option value="">{{"ALLE" | translate}}</option>
-                            </select>
+                            <dv-userselect input-id="verantwortlicher" dv-usersearch="verantwortlicher"></dv-userselect>
                         </th>
                     </tr>
                     </thead>
@@ -94,6 +90,7 @@
                     </tr>
                     </tfoot>
                 </table>
+
 
             </div>
 
