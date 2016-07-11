@@ -1,4 +1,4 @@
-import {IDirective, IDirectiveFactory, IScope} from 'angular';
+import {IDirective, IDirectiveFactory} from 'angular';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import UserRS from '../../service/userRS.rest';
@@ -6,8 +6,6 @@ import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 let template = require('./dv-userselect.html');
 
-export interface UserselectScope extends IScope { updateModelValue: Function; date: Date;
-}
 
 export class DVUserselect implements IDirective {
     restrict = 'E';

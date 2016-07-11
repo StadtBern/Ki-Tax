@@ -38,6 +38,7 @@ import {EbeguAuthentication} from '../authentication/authentication.module';
 import {DvPulldownUserMenuComponentConfig} from './component/dv-pulldown-user-menu/dv-pulldown-user-menu';
 import UserRS from './service/userRS.rest';
 import {DVUserselect} from './directive/dv-userselect/dv-userselect';
+import {DVLoading} from './directive/dv-loading/dv-loading';
 
 let dynamicDependencies = function (): string[] {
 
@@ -110,6 +111,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvLoading', DVLoading.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .component('dvAdresse', new AdresseComponentConfig())
