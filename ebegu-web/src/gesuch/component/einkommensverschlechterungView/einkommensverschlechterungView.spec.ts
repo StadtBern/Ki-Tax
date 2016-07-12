@@ -1,38 +1,56 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
-import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import {IStateService} from 'angular-ui-router';
+import TSBetreuung from '../../../models/TSBetreuung';
+import {EbeguWebCore} from '../../../core/core.module';
+import DateUtil from '../../../utils/DateUtil';
+import {EinkommensverschlechterungViewController} from './einkommensverschlechterungView';
+import {IEinkommensverschlechterungStateParams} from '../../gesuch.route';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import BerechnungsManager from '../../service/berechnungsManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 
-describe('finanzielleSituationView', function () {
+describe('einkommensverschlechterungView', function () {
+
 
     let gesuchModelManager: GesuchModelManager;
-    let berechnungsManager: BerechnungsManager;
+    let stateParams: IEinkommensverschlechterungStateParams;
+    let $state: IStateService;
+    let berechnungsmanager: BerechnungsManager;
+    let $q: IQService;
+    let betreuung: TSBetreuung;
+    let $rootScope: IScope;
+    let $httpBackend: IHttpBackendService;
+    let $errorService: ErrorService;
+    let einkommensverschlechterungViewController: EinkommensverschlechterungViewController;
 
-    beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
-        $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
-        berechnungsManager = $injector.get('BerechnungsManager');
-        let $rootScope = $injector.get('$rootScope');
-        scope = $rootScope.$new();
+        $state = $injector.get('$state');
+        berechnungsmanager = $injector.get('BerechnungsManager');
+        $httpBackend = $injector.get('$httpBackend');
+        $errorService = $injector.get('ErrorService');
+        $q = $injector.get('$q');
+        betreuung = new TSBetreuung();
+        betreuung.timestampErstellt = DateUtil.today();
+        spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
+        $rootScope = $injector.get('$rootScope');
+        stateParams = new IEinkommensverschlechterungStateParams;
+        stateParams.basisjahrPlus = '1';
+        stateParams.gesuchstellerNumber = '1';
+        einkommensverschlechterungViewController = new EinkommensverschlechterungViewController(stateParams, $state, gesuchModelManager, berechnungsmanager, $injector.get('CONSTANTS'),
+            $injector.get('ErrorService'));
     }));
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
     });
 
-    it('should be defined', function () {
-        spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
-        var bindings: {};
-        component = $componentController('finanzielleSituationView', {$scope: scope}, bindings);
-        expect(component).toBeDefined();
-    });
 });

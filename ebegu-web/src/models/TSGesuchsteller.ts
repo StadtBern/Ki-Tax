@@ -22,7 +22,8 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
-                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean) {
+                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean,
+                einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
@@ -32,6 +33,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._finanzielleSituationContainer = finanzielleSituation;
         this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
         this._diplomatenstatus = diplomatenstatus;
+        this._einkommensverschlechterungContainer = einkommensverschlechterungContainer;
     }
 
     public get mail(): string {

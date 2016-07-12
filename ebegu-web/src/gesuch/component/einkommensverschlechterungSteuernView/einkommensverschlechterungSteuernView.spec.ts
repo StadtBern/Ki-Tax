@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
-describe('finanzielleSituationStartView', function () {
+describe('einkommensverschlechterungSteuernView', function () {
 
     let gesuchModelManager: GesuchModelManager;
 
@@ -32,7 +32,7 @@ describe('finanzielleSituationStartView', function () {
          pass them to $componentController.
          */
         var bindings: {};
-        component = $componentController('finanzielleSituationStartView', {$scope: scope}, bindings);
+        component = $componentController('einkommensverschlechterungSteuernView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

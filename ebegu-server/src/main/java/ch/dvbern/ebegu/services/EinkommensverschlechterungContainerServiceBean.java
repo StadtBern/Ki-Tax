@@ -16,7 +16,6 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -76,7 +75,6 @@ public class EinkommensverschlechterungContainerServiceBean extends AbstractBase
 	public AbstractFinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus) {
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
 		if (gesuch.getGesuchsperiode() != null) {
-			final LocalDate stichtag;
 
 			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhältnisse berücksichtigt
 			// (nicht Stand 31.12. des Vorjahres)!

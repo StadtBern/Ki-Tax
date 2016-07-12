@@ -74,8 +74,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return this.ebeguUtil.getBasisJahrPlusAsString(this.gesuchModelManager.gesuch.gesuchsperiode, jahr);
     }
 
+    /**
+     * Gibt den Tag (Moment) anhand des Jahres und Monat enum zurück
+     * @param monat
+     * @param jahr
+     * @returns {any}
+     */
     getStichtagFromMonat(monat: TSMonth, jahr: number): moment.Moment {
-
         if (monat) {
             return moment([jahr, this.monthsStichtage.indexOf(monat)]);
         } else {
@@ -83,6 +88,11 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         }
     }
 
+    /**
+     * Gibt den Monat enum anhand des Stichtages zurück
+     * @param stichtag
+     * @returns {any}
+     */
     getMonatFromStichtag(stichtag: moment.Moment): TSMonth {
         if (stichtag) {
             return this.monthsStichtage[stichtag.month()];
@@ -91,10 +101,16 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         }
     }
 
+    /**
+     * Navigation back
+     */
     previousStep() {
         this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
     }
 
+    /**
+     * Navigation forward
+     */
     nextStep() {
 
         if (this.gesuchModelManager.isGesuchsteller2Required()) {

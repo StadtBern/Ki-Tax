@@ -38,17 +38,10 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber() === 2);
+        this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
+            this.gesuchModelManager.getGesuchstellerNumber());
         this.gesuchModelManager.copyEkvGeschaeftsgewinnFromFS();
     }
-
-    getGesuch(): TSGesuch {
-        if (!this.gesuchModelManager.gesuch) {
-            this.gesuchModelManager.initGesuch(false);
-        }
-        return this.gesuchModelManager.gesuch;
-    }
-
 
     showSteuerveranlagung(): boolean {
         return !this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() || this.gesuchModelManager.getGemeinsameSteuererklaerungToWorkWith() === false;
@@ -180,26 +173,4 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         return this.berechnungsManager.getEinkommensverschlechterungResultate(this.gesuchModelManager.getBasisJahrPlusNumber());
     }
 
-    private getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.gesuchModelManager.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
-    // private getResultViewBasisJahrPlus() {
-    //     let ekvFuerBasisJahrPlus1 = this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 && this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === true;
-    //     let ekvFuerBasisJahrPlus2 = this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 && this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === true;
-    //
-    //     if (ekvFuerBasisJahrPlus1 && ekvFuerBasisJahrPlus2) {
-    //         // Wenn für beide Jahre eine Einkommensverschlechterung geltent gemacht werden soll, wird zuerst das Resultat für das BasisJahr 1 angezeigt
-    //         return 1;
-    //     } else if (ekvFuerBasisJahrPlus1) {
-    //         // Wenn nur für bjp1 eine Einkommensverschlechterung geltent gemacht werden soll, wird zuerst das Resultat für das BasisJahr 1 angezeigt
-    //         return 1;
-    //     } else if (ekvFuerBasisJahrPlus2) {
-    //         // Wenn nur für bjp2 eine Einkommensverschlechterung geltent gemacht werden soll, wird zuerst das Resultat für das BasisJahr 2 angezeigt
-    //         return 2;
-    //     }
-    // }
 }

@@ -381,40 +381,43 @@ export default class GesuchModelManager {
         }
     }
 
-    public initEinkommensverschlechterungContainer(beideHalbjahre: boolean): void {
+    public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
         this.initStammdaten();
 
         if (!this.gesuch) {
             this.initGesuch(false);
         }
 
-        if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
-            this.gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
-        }
+        if (gesuchstellerNumber === 1 && this.gesuch.gesuchsteller1) {
+            if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
+                this.gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+            }
 
-        if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
-            this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
-        }
+            if (basisjahrPlus === 1) {
+                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
+                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+                }
+            }
 
-        // only if there are beide Halbjahre required!
-        if (beideHalbjahre) {
-            if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
-                this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+            if (basisjahrPlus === 2) {
+                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
+                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+                }
             }
         }
 
-        // only if there are 2 Gesuchstellter required!
-        if (this.isGesuchsteller2Required()) {
+        if (gesuchstellerNumber === 2 && this.gesuch.gesuchsteller2) {
             if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
                 this.gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
             }
 
-            if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
-                this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+            if (basisjahrPlus === 1) {
+                if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
+                    this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+                }
             }
 
-            // only if there are beide Halbjahre required!
-            if (beideHalbjahre) {
+            if (basisjahrPlus === 2) {
                 if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
                     this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
                 }
@@ -423,6 +426,12 @@ export default class GesuchModelManager {
     }
 
     public copyEkvGeschaeftsgewinnFromFS(): void {
+        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
+            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
+            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
+            return;
+        }
+
         let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
         let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
         if (fs.selbstaendig && !ekv.selbstaendig) {
@@ -437,9 +446,7 @@ export default class GesuchModelManager {
                 ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
                 ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
             }
-
         }
-
     }
 
 

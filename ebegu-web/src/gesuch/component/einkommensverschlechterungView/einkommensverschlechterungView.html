@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <div class="finanzielleSituation row">
     <div class="col-md-12">
 
@@ -14,9 +15,9 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                             translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
-                        <dv-radio-container name="steuerveranlagung"    class="input-element"
+                        <dv-radio-container name="steuerveranlagung"
                                             ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten"
-                                            ng-required="true" class="radio" ng-change="vm.steuerveranlagungClicked()">
+                                            ng-required="true" class="radio input-element" ng-change="vm.steuerveranlagungClicked()">
                         </dv-radio-container>
                         <dv-error-messages  for="form.steuerveranlagung.$error" class="error"></dv-error-messages>
                     </div>
@@ -29,9 +30,9 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                             translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></h4>
-                        <dv-radio-container name="steuererklaerung"   class="input-element"
+                        <dv-radio-container name="steuererklaerung"
                                             ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuererklaerungAusgefuellt"
-                                            ng-required="true" class="radio">
+                                            ng-required="true" class="radio input-element">
                         </dv-radio-container>
                         <dv-error-messages  for="form.steuererklaerung.$error" class="error"></dv-error-messages>
                     </div>
@@ -44,7 +45,7 @@
 
             <!-- Gesuchsteller -->
             <h5 class="subTitle">
-                <span>{{vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}}</span><!--{{vm.gesuchModelManager.gesuchstellerNumber}}-->
+                <span>{{vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}}</span>
             </h5>
 
             <!-- Nettolohn Jan-->
@@ -58,7 +59,7 @@
                         <dv-error-messages  for="form.nettolohn_Jan.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJan"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJan"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJan""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJan"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -74,7 +75,7 @@
                         <dv-error-messages  for="form.nettolohn_Feb.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnFeb"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnFeb"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnFeb""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnFeb"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -90,7 +91,7 @@
                         <dv-error-messages  for="form.nettolohn_Mrz.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnMrz"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMrz"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMrz""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMrz"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -106,7 +107,7 @@
                         <dv-error-messages  for="form.nettolohn_Apr.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnApr"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnApr"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnApr""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnApr"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -122,7 +123,7 @@
                         <dv-error-messages  for="form.nettolohn_Mai.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnMai"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMai"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMai""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnMai"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -138,7 +139,7 @@
                         <dv-error-messages  for="form.nettolohn_Jun.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJun"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJun"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJun""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJun"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -154,7 +155,7 @@
                         <dv-error-messages  for="form.nettolohn_Jul.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnJul"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJul"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJul""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnJul"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -170,7 +171,7 @@
                         <dv-error-messages  for="form.nettolohn_Aug.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnAug"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnAug"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnAug""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnAug"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -186,7 +187,7 @@
                         <dv-error-messages  for="form.nettolohn_Sep.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnSep"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnSep"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnSep""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnSep"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -202,7 +203,7 @@
                         <dv-error-messages  for="form.nettolohn_Okt.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnOkt"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnOkt"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnOkt""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnOkt"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -218,7 +219,7 @@
                         <dv-error-messages  for="form.nettolohn_Nov.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnNov"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnNov"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnNov""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnNov"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -234,7 +235,7 @@
                         <dv-error-messages  for="form.nettolohn_Dez.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnDez"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnDez"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnDez""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnDez"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -243,14 +244,14 @@
             <div class="row">
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
-                        <label data-translate="EKVI_NETTOLOHN_ZUS" for="nettolohn_Dez"></label>
-                        <input id="nettolohn_Dez" type="text" name="nettolohn_Zus" ui-number-mask="0"
+                        <label data-translate="EKVI_NETTOLOHN_ZUS" for="nettolohn_Zus"></label>
+                        <input id="nettolohn_Zus" type="text" name="nettolohn_Zus" ui-number-mask="0"
                                ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus"
                                dv-max-length max="999999999999" class="form-control">
                         <dv-error-messages  for="form.nettolohn_Zus.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().nettolohnZus"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus""></dv-bisher>
+                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().nettolohnZus"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -341,12 +342,9 @@
                         <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1" for="geschaeftsgewinnBasisjahrMinus1"
                                translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-1}}}"></label>
                         <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1" ng-blur="vm.calculate()"
+                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1"
                                dv-max-length max="999999999999" class="form-control" disabled>
                         <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus1.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahrMinus1"
-                                   ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -358,12 +356,9 @@
                         <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2" for="geschaeftsgewinnBasisjahrMinus2"
                                translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-2}}}"></label>
                         <input id="geschaeftsgewinnBasisjahrMinus2" type="text" name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2" ng-blur="vm.calculate()"
+                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2"
                                dv-max-length max="999999999999" class="form-control" disabled>
                         <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus2.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahrMinus2"
-                                   ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
@@ -403,6 +398,7 @@
                     </dv-input-container>
                 </div>
             </div>
+
             <!--Buttons-->
             <div class="row">
                 <div class="col-md-4 ">
@@ -424,10 +420,6 @@
             </div>
 
         </form>
-
-        <!--<pre>{{ vm.getModel() |json}}</pre>-->
-
-        <!--<pre>{{ vm.getResultate() |json}}</pre>-->
 
     </div>
 

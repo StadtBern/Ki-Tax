@@ -32,7 +32,15 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initEinkommensverschlechterungContainer(this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2);
+        // Basis Jahr 1 braucht es immer
+        this.gesuchModelManager.initEinkommensverschlechterungContainer(1, 1);
+        this.gesuchModelManager.initEinkommensverschlechterungContainer(1, 2);
+
+        // Basis Jahr 2 braucht nur wenn gewünscht
+        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2) {
+            this.gesuchModelManager.initEinkommensverschlechterungContainer(2, 1);
+            this.gesuchModelManager.initEinkommensverschlechterungContainer(2, 2);
+        }
     }
 
     getGesuch(): TSGesuch {
@@ -85,6 +93,7 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
 
     submit(form: IFormController) {
         if (form.$valid) {
+            this.removeNotNeededEKV();
             // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
@@ -132,6 +141,19 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         } else {
             this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
             this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+        }
+    }
+
+    private removeNotNeededEKV(): void {
+        // Wenn keine gemeinsame Steuererklärung, können hier die zusätzlichen Fragen noch gelöscht werden
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 === false) {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = undefined;
+        }
+
+        if (this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 === false) {
+            this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
+            this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = undefined;
         }
     }
 

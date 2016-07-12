@@ -1,7 +1,7 @@
 <div class="einkommensverschlechterungSteuern row">
     <div class="col-md-12">
 
-        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form novalidate>
 
             <!-- -----------------------------------------BasisJahr+1----------------------------------------------- -->
 
@@ -20,9 +20,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
-                            <dv-radio-container name="gemeinsameSteuererklaerung_BjP1" class="input-element"
+                            <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
                                                 ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.gemeinsameStekClicked_BjP1()">
                             </dv-radio-container>
                             <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP1.$error"
@@ -37,9 +37,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
-                            <dv-radio-container name="steuerveranlagung_BjP1" class="input-element"
+                            <dv-radio-container name="steuerveranlagung_BjP1"
                                                 ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.steuerveranlagungClicked_BjP1()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuerveranlagung_BjP1.$error"
@@ -54,9 +54,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                 translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h4>
-                            <dv-radio-container name="steuererklaerung_BjP1" class="input-element"
+                            <dv-radio-container name="steuererklaerung_BjP1"
                                                 ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.steuererklaerungClicked_BjP1()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuererklaerung_BjP1.$error"
@@ -81,9 +81,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
-                            <dv-radio-container name="gemeinsameSteuererklaerung_BjP2" class="input-element"
+                            <dv-radio-container name="gemeinsameSteuererklaerung_BjP2"
                                                 ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.gemeinsameStekClicked_BjP2()">
                             </dv-radio-container>
                             <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP2.$error"
@@ -98,9 +98,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                 translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
-                            <dv-radio-container name="steuerveranlagung_BjP2" class="input-element"
+                            <dv-radio-container name="steuerveranlagung_BjP2"
                                                 ng-model="vm.getEkv_GS1_Bjp2().steuerveranlagungErhalten"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.steuerveranlagungClicked_BjP2()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuerveranlagung_BjP2.$error"
@@ -115,9 +115,9 @@
                         <div class="form-group">
                             <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
                                 translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></h4>
-                            <dv-radio-container name="steuererklaerung_BjP2" class="input-element"
+                            <dv-radio-container name="steuererklaerung_BjP2"
                                                 ng-model="vm.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt"
-                                                ng-required="true" class="radio"
+                                                ng-required="true" class="radio input-element"
                                                 ng-change="vm.steuererklaerungClicked_BjP2()">
                             </dv-radio-container>
                             <dv-error-messages for="form.steuererklaerung_BjP2.$error"

@@ -9,17 +9,15 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
-                        <dv-radio-container name="einkommensverschlechterung" class="input-element"
+                        <dv-radio-container name="einkommensverschlechterung"
                                             ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung"
-                                            ng-required="true" class="radio">
+                                            ng-required="true" class="radio input-element">
                         </dv-radio-container>
                         <dv-error-messages for="form.einkommensverschlechterung.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
-
-
 
             <!-- Auswahl Basisjahr Plus 1 -->
             <div class="row">
@@ -37,17 +35,16 @@
                 </div>
             </div>
 
-            <!--<pre>{{vm.monthsStichtage |json}}</pre>-->
             <!--Auswahl des Stichtages für BasisJahr plus 1-->
             <div class="row">
                 <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
-                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus1_ID"></label>
-                    <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1_ID" class="form-control"
+                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus1"></label>
+                    <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
                             ng-model="vm.selectedStichtagBjP1"
                             ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                            ng-required="true" required>
+                            ng-required="true">
                     </select>
-                    <dv-error-messages for="form.stichtagBasisJahrPlus1_ID.$error"
+                    <dv-error-messages for="form.stichtagBasisJahrPlus1.$error"
                                        class="error"></dv-error-messages>
                 </div>
             </div>
@@ -56,13 +53,14 @@
             <div class="row">
                 <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                     <dv-input-container class="form-group">
-                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus1_ID"></label>
-                        <input id="grundFuerBasisJahrPlus1_ID" type="text" name="grundFuerBasisJahrPlus1"
+                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus1"></label>
+                        <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
                                ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.grundFuerBasisJahrPlus1"
                                class="form-control" required>
+                        <dv-error-messages for="form.grundFuerBasisJahrPlus1.$error"
+                                           class="error"></dv-error-messages>
                     </dv-input-container>
-                    <dv-error-messages for="form.grundFuerBasisJahrPlus1_ID.$error"
-                                       class="error"></dv-error-messages>
+
                 </div>
             </div>
 
@@ -86,13 +84,13 @@
             <!--Auswahl des Stichtages für BasisJahr plus 2-->
             <div class="row">
                 <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
-                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus2_ID"></label>
-                    <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2_ID" class="form-control"
+                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus2"></label>
+                    <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
                             ng-model="vm.selectedStichtagBjP2"
                             ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
-                            ng-required="true" required>
+                            ng-required="true">
                     </select>
-                    <dv-error-messages for="form.stichtagBasisJahrPlus2_ID.$error"
+                    <dv-error-messages for="form.stichtagBasisJahrPlus2.$error"
                                        class="error"></dv-error-messages>
                 </div>
             </div>
@@ -101,16 +99,16 @@
             <div class="row">
                 <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                     <dv-input-container class="form-group">
-                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus2_ID"></label>
-                        <input id="grundFuerBasisJahrPlus2_ID" type="text" name="grundFuerBasisJahrPlus2"
+                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus2"></label>
+                        <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
                                ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.grundFuerBasisJahrPlus2"
                                class="form-control" required>
+                        <dv-error-messages for="form.grundFuerBasisJahrPlus2.$error"
+                                           class="error"></dv-error-messages>
                     </dv-input-container>
-                    <dv-error-messages for="form.grundFuerBasisJahrPlus2_ID.$error"
-                                       class="error"></dv-error-messages>
+
                 </div>
             </div>
-
 
             <!--Buttons-->
             <div class="row">
@@ -131,9 +129,7 @@
                     </button>
                 </div>
             </div>
-
         </form>
-
     </div>
 
 </div>

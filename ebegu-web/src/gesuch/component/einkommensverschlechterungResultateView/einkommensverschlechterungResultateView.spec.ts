@@ -6,7 +6,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
-describe('finanzielleSituationResultateView', function () {
+describe('einkommensverschlechterungResultateView', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let berechnungsManager: BerechnungsManager;
@@ -30,9 +30,9 @@ describe('finanzielleSituationResultateView', function () {
     });
 
     it('should be defined', function () {
-        spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
+        spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
         var bindings: {};
-        component = $componentController('finanzielleSituationResultateView', {$scope: scope}, bindings);
+        component = $componentController('einkommensverschlechterungResultateView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });
