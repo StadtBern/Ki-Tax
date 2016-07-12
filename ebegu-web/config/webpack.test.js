@@ -1,4 +1,5 @@
 var helpers = require('./helpers');
+var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
 
 /**
  * Webpack Plugins
@@ -10,6 +11,13 @@ var DefinePlugin = require('webpack/lib/DefinePlugin');
  * Webpack Constants
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
+const METADATA = webpackMerge(commonConfig.metadata, {
+    host: HOST,
+    port: PORT,
+    ENV: ENV,
+    HMR: false
+});
+
 
 /**
  * Webpack configuration
@@ -170,6 +178,8 @@ module.exports = {
     new DefinePlugin({
       'ENV': JSON.stringify(ENV),
       'HMR': false,
+      'VERSION': METADATA.version,
+      'BUILDTSTAMP': METADATA.buildtstamp, 
       'process.env': {
         'ENV': JSON.stringify(ENV),
         'NODE_ENV': JSON.stringify(ENV),

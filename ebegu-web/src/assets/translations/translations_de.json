@@ -514,7 +514,7 @@
     "AUSLOGGEN": "Ausloggen",
     "EINLOGGEN": "Einloggen",
     "PARAMETER": "Parameter",
-    "TSRole_ADMIN": "",
+    "TSRole_ADMIN": "Administrator",
     "TSRole_SACHBEARBEITER_JA": "Sachbearbeiter Jugendamt",
     "TSRole_SACHBEARBEITER_INSTITUTION": "Sachbearbetier Institution",
     "TSRole_GESUCHSTELLER": "Gesuchsteller",
@@ -523,7 +523,6 @@
     "TSRole_STEUERAMT": "SteueramtT",
     "PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG": "Minimale Einkommenveschlechterung (%)",
     "PARAM_BABY_FAKTOR": "Baby Faktor",
-    "PARAM_BABY_ALTER_IN_MONATEN": "Maximales Alter für Baby Faktor",
-    "{ungueltige.iban}": "IBAN ist ungültig"
+    "PARAM_BABY_ALTER_IN_MONATEN": "Maximales Alter für Baby Faktor"
 }
 

@@ -6,8 +6,7 @@ let template = require('./dv-pulldown-user-menu.html');
 
 export class DvPulldownUserMenuComponentConfig implements IComponentOptions {
     transclude = false;
-    bindings: any = {
-    };
+    bindings: any = {};
     template = template;
     controller = DvPulldownUserMenuController;
     controllerAs = 'vm';
@@ -29,4 +28,9 @@ export class DvPulldownUserMenuController {
     public getPrincipal() {
         return this.authServiceRS.getPrincipal();
     }
+
+    public getVersion(): string {
+        return VERSION;
+    }
+    
 }
