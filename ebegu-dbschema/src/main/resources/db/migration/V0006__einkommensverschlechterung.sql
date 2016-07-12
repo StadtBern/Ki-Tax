@@ -32,7 +32,6 @@ CREATE TABLE einkommensverschlechterung (
 	nettolohn_nov DECIMAL(19, 2),
 	nettolohn_okt DECIMAL(19, 2),
 	nettolohn_sep DECIMAL(19, 2),
-	nettolohn_zus DECIMAL(19, 2),
 	PRIMARY KEY (id)
 	);
 
@@ -68,7 +67,6 @@ CREATE TABLE einkommensverschlechterung_aud (
 	nettolohn_nov DECIMAL(19, 2),
 	nettolohn_okt DECIMAL(19, 2),
 	nettolohn_sep DECIMAL(19, 2),
-	nettolohn_zus DECIMAL(19, 2),
 	PRIMARY KEY (
 		id
 		,rev
@@ -109,8 +107,6 @@ CREATE TABLE einkommensverschlechterung_info_aud (
 	grund_fuer_basis_jahr_plus2 VARCHAR(255),
 	stichtag_fuer_basis_jahr_plus1 date,
 	stichtag_fuer_basis_jahr_plus2 date,
-    gemeinsame_steuererklaerung_bjp1 bit,
-    gemeinsame_steuererklaerung_bjp2 bit,
 	PRIMARY KEY (
 		id
 		,rev
@@ -146,8 +142,6 @@ CREATE TABLE einkommensverschlechterung_info (
 	grund_fuer_basis_jahr_plus2 VARCHAR(255),
 	stichtag_fuer_basis_jahr_plus1 date,
 	stichtag_fuer_basis_jahr_plus2 date,
-	gemeinsame_steuererklaerung_bjp1 bit,
-    gemeinsame_steuererklaerung_bjp2 bit,
 	PRIMARY KEY (id)
 	);
 

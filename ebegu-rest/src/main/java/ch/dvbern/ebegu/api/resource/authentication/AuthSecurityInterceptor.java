@@ -87,7 +87,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			BenutzerCredentials credentials = loginWithToken.get();
 
 			try {
-				// EJB Container Login
+				// EJB Container Login todo team evtl mit request.authenticate
 				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
 				// Container Login Failed

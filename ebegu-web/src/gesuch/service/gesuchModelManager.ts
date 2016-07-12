@@ -36,8 +36,6 @@ import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
-import getEnv = jasmine.getEnv;
-
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
@@ -629,7 +627,7 @@ export default class GesuchModelManager {
                 this.getKindFromServer();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
-            //neu -> create
+        //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();

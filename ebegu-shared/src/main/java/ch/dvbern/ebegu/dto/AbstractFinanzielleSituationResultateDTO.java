@@ -28,22 +28,24 @@ public class AbstractFinanzielleSituationResultateDTO {
 	}
 
 	BigDecimal calcGeschaeftsgewinnDurchschnitt(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		BigDecimal total = BigDecimal.ZERO;
-		BigDecimal anzahlJahre = BigDecimal.ZERO;
-		if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null) {
-			total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null) {
-			total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null) {
-			total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
-			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-		}
-		if (anzahlJahre.intValue() > 0) {
-			return total.divide(anzahlJahre, RoundingMode.HALF_UP);
+		if (abstractFinanzielleSituation != null) {
+			BigDecimal total = BigDecimal.ZERO;
+			BigDecimal anzahlJahre = BigDecimal.ZERO;
+			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null) {
+				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
+				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
+			}
+			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null) {
+				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
+				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
+			}
+			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null) {
+				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
+				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
+			}
+			if (anzahlJahre.intValue() > 0) {
+				return total.divide(anzahlJahre, RoundingMode.HALF_UP);
+			}
 		}
 		return null;
 	}

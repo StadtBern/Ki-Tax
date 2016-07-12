@@ -120,11 +120,16 @@ describe('EbeguRestUtil', function () {
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
                 var myGesuchsteller = createGesuchsteller();
+                myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden 
                 let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
                 let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
                 expect(transformedPers).toBeDefined();
                 expect(myGesuchsteller.nachname).toEqual(transformedPers.nachname);
+
+                expect(transformedPers.telefon).toBeUndefined(); // der leere String wurde in undefined umgewandelt deswegen muessen wir hier undefined zurueckbekommen
+                transformedPers.telefon = ''; // um das Objekt zu validieren, muessen wird das Telefon wieder auf '' setzen
+
                 expect(myGesuchsteller).toEqual(transformedPers);
 
             });

@@ -3,6 +3,7 @@ Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
 
 <md-button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="userMenu" aria-label="{{'EINLOGGEN' | translate}}">
     <a href="javascript:void(0)"  data-translate="EINLOGGEN"></a>
+    <span style="visibility: hidden" ng-bind="vm.getVersion()"></span>
 </md-button>
 
 <md-menu-bar ng-if="vm.getPrincipal()" class="userMenu">

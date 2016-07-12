@@ -245,9 +245,9 @@ export default class EbeguRestUtil {
         if (gesuchsteller) {
             this.abstractPersonEntitytoRestObject(restGesuchsteller, gesuchsteller);
             restGesuchsteller.mail = gesuchsteller.mail;
-            restGesuchsteller.mobile = gesuchsteller.mobile;
-            restGesuchsteller.telefon = gesuchsteller.telefon;
-            restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland;
+            restGesuchsteller.mobile = gesuchsteller.mobile || undefined;
+            restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
+            restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.umzug = gesuchsteller.umzug;
             restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
             restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);

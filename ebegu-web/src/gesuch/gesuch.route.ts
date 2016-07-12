@@ -25,11 +25,11 @@ function getStates(): IState[] {
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
         new EbeguNewFallState(),
+        new EbeguVerfuegenListState(),
         new EbeguEinkommensverschlechterungInfoState(),
         new EbeguEinkommensverschlechterungSteuernState(),
         new EbeguEinkommensverschlechterungState(),
-        new EbeguEinkommensverschlechterungResultateState(),
-        new EbeguVerfuegenListState()
+        new EbeguEinkommensverschlechterungResultateState()
     ];
 }
 
@@ -110,7 +110,6 @@ export class EbeguFinanzielleSituationStartState implements IState {
     url = '/finanzielleSituationStart';
 }
 
-
 export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
     template = '<finanzielle-situation-resultate-view>';
@@ -122,7 +121,6 @@ export class EbeguVerfuegenListState implements IState {
     template = '<verfuegen-list-view>';
     url = '/verfuegen';
 }
-
 export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
     template = '<einkommensverschlechterung-info-view>';
