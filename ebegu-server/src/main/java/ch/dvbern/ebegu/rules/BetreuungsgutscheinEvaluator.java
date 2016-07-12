@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.rechner.KitaRechner;
 import ch.dvbern.ebegu.util.Constants;
 
 import java.math.BigDecimal;
@@ -46,11 +48,17 @@ public class BetreuungsgutscheinEvaluator {
 				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
 
 				//TODO (hefr) Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen und die eigentliche Verfügung machen
+
+				// TODO (team) Den richtigen Rechner anwerfen
+				if (BetreuungsangebotTyp.KITA.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp())) {
+					KitaRechner kitaRechner = new KitaRechner();
+//					kitaRechner.calculate()
+				}
+
                 Verfuegung verfuegung = new Verfuegung();
                 verfuegung.setZeitabschnitte(zeitabschnitte);
                 verfuegung.setBetreuung(betreuung);
 				betreuung.setVerfuegung(verfuegung);
-
 			}
 		}
 	}
