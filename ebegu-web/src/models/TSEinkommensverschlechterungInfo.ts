@@ -16,25 +16,6 @@ export default class TSEinkommensverschlechterungInfo extends TSAbstractEntity {
     private _gemeinsameSteuererklaerung_BjP1: boolean;
     private _gemeinsameSteuererklaerung_BjP2: boolean;
 
-
-    //
-    // constructor(einkommensverschlechterung?: boolean,
-    //             ekvFuerBasisJahrPlus1?: boolean,
-    //             ekvFuerBasisJahrPlus2?: boolean,
-    //             grundFuerBasisJahrPlus1?: string,
-    //             grundFuerBasisJahrPlus2?: string,
-    //             stichtagFuerBasisJahrPlus1?: moment.Moment,
-    //             stichtagFuerBasisJahrPlus2?: moment.Moment) {
-    //     super();
-    //     this._einkommensverschlechterung = einkommensverschlechterung;
-    //     this._ekvFuerBasisJahrPlus1 = ekvFuerBasisJahrPlus1;
-    //     this._ekvFuerBasisJahrPlus2 = ekvFuerBasisJahrPlus2;
-    //     this._grundFuerBasisJahrPlus1 = grundFuerBasisJahrPlus1;
-    //     this._grundFuerBasisJahrPlus2 = grundFuerBasisJahrPlus2;
-    //     this._stichtagFuerBasisJahrPlus1 = stichtagFuerBasisJahrPlus1;
-    //     this._stichtagFuerBasisJahrPlus2 = stichtagFuerBasisJahrPlus2;
-    // }
-
     get einkommensverschlechterung(): boolean {
         return this._einkommensverschlechterung;
     }
