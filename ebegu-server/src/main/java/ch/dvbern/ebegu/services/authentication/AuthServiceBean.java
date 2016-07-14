@@ -11,6 +11,8 @@ import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -28,6 +30,7 @@ import java.util.UUID;
 @PermitAll
 public class AuthServiceBean implements AuthService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AuthServiceBean.class);
 
 	@PersistenceContext(unitName = "ebeguPersistenceUnit")
 	private EntityManager entityManager;
@@ -144,14 +147,18 @@ public class AuthServiceBean implements AuthService {
 			LocalDateTime now = LocalDateTime.now();
 			LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
 			if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
+				LOG.debug("Token is no longer valid: " +credentials.getAuthToken());
 				return false;
 			}
 			authUser.setLastLogin(now);
 			entityManager.persist(authUser);
 			entityManager.flush();
+			LOG.trace("Valid auth Token was refreshed ");
 			return true;
 
 		} catch (NoResultException ignored) {
+			LOG.debug("Could not load Authorisierterbenutzer for username '" + credentials.getUsername() + "' and token '" +
+			credentials.getAuthToken() +"'");
 			return false;
 		}
 	}
