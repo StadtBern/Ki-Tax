@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
- * Interceptor fuer jaxRS der prueft ob das Login korrekt ist
+ * Interceptor fuer JAX-RS der prueft ob das Login korrekt ist
  */
 @Provider
 @PreMatching
@@ -81,6 +81,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			//use token to authorize the request
 			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
 			if (!loginWithToken.isPresent()) {
+				LOG.debug("Could not load authorisierter_benutzer with username" + authId + " token " + authToken );
 				setResponseUnauthorised(requestContext);
 				return;
 			}
@@ -91,6 +92,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
 			} catch (ServletException e) {
 				// Container Login Failed
+				LOG.debug("Container login failed" + credentials.getUsername());
 				setResponseUnauthorised(requestContext);
 				return;
 			}
@@ -98,6 +100,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			//check if the token is still valid
 			if (!authService.verifyToken(credentials)) {
 				// Token Verification Failed
+				LOG.debug("Token verification failed for " + credentials.getUsername());
 				setResponseUnauthorised(requestContext);
 			}
 
