@@ -53,7 +53,7 @@ public final class AuthDataUtil {
 			Gson gson = new Gson();
 			return Optional.of(gson.fromJson(
 				new String(
-					Base64.getDecoder().decode(encodedPrincipalJson), Charset.defaultCharset()
+					Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
 				),
 				JaxAuthAccessElement.class));
 		} catch (JsonSyntaxException | IllegalArgumentException e) {
