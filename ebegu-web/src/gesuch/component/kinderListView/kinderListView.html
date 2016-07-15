@@ -25,10 +25,10 @@
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td>TODO anderer Fall</td>
                         <td ng-click="$event.stopPropagation()">
-                            <button type="button" ng-click="vm.removeKind(row)" class="btn btn-sm">
+                            <dv-loading-button type="button" ng-click="vm.removeKind(row)" button-class="btn btn-sm">
                                 <i class="fa fa-minus">
                                 </i>
-                            </button>
+                            </dv-loading-button>
                         </td>
                     </tr>
                     <tr ng-if="vm.getKinderList().length === 0">
@@ -39,11 +39,7 @@
 
             </div>
             <div class="col-md-12" style="margin-bottom: 20px">
-                <button type="button" ng-click="vm.createKind()" class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    <span data-translate="KIND_HINZUFUEGEN"></span>
-                </button>
-                <dv-loading-button type="button" button-class="btn btn-sm btn-success">
+                <dv-loading-button type="button" ng-click="vm.createKind()"  button-class="btn btn-sm btn-success">
                     <i class="glyphicon glyphicon-plus"></i>
                   <span data-translate="KIND_HINZUFUEGEN"></span>
                 </dv-loading-button>
@@ -54,16 +50,16 @@
         <!--Buttons-->
         <div class="row">
             <div class="col-md-6">
-                <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                <dv-loading-button ng-click="vm.previousStep()" button-class="btn btn-link previous">
                     <span class="fa fa-chevron-left"></span>
                     <span data-translate="ZURUECK_UPPER"></span>
-                </button>
+                </dv-loading-button>
             </div>
             <div class="col-md-6 text-right">
-                <button ng-click="vm.nextStep()" class="btn btn-link next">
+                <dv-loading-button ng-click="vm.nextStep()" button-class="btn btn-link next">
                     <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
-                </button>
+                </dv-loading-button>
             </div>
         </div>
     </div>

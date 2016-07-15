@@ -1,5 +1,5 @@
-<div class="dvb-loading-button" ng-disabled="vm.buttonDisabled">
-    <button type="{{vm.type}}" class="{{vm.buttonClass}}" ng-click="vm.buttonClicked()" ng-disabled="vm.buttonDisabled">
+<div class="dvb-loading-button" ng-disabled="vm.buttonDisabled || vm.isDisabled">
+    <button type="{{vm.type}}" class="{{vm.buttonClass}}" ng-click="vm.buttonClicked()" ng-disabled="vm.buttonDisabled || vm.isDisabled">
         <ng-transclude></ng-transclude>
     </button>
 </div>

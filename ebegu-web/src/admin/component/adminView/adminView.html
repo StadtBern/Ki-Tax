@@ -31,10 +31,10 @@
                         <td ng-bind="row.value"></td>
                         <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td>
-                            <button type="button" ng-click="vm.removeRow(row)" class="btn btn-sm btn-danger">
+                            <dv-loading-button type="button" ng-click="vm.removeRow(row)" button-class="btn btn-sm btn-danger">
                                 <i class="fa fa-trash-o">
                                 </i>
-                            </button>
+                            </dv-loading-button>
                         </td>
                     </tr>
                     </tbody>
@@ -42,10 +42,10 @@
 
             </div>
             <div class="col-md-12" style="margin-bottom: 20px">
-                <button type="button" ng-click="vm.createItem()" class="btn btn-sm btn-success">
+                <dv-loading-button type="button" ng-click="vm.createItem()" button-class="btn btn-sm btn-success">
                     <i class="glyphicon glyphicon-plus">
                     </i> add item
-                </button>
+                </dv-loading-button>
             </div>
 
         </div>
@@ -79,8 +79,9 @@
             </div>
             <div class="row" style="margin-top:25px">
                 <div class="col-md-1">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE">
-                    </button>
+                    <dv-loading-button class="btn btn-primary" type="submit" >
+                        <span data-translate="SAVE"></span>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-4 ">
                                   <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
