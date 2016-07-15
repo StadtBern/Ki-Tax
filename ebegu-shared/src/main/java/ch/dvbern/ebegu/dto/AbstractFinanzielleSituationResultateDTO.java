@@ -27,7 +27,7 @@ public class AbstractFinanzielleSituationResultateDTO {
 		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
 	}
 
-	BigDecimal calcGeschaeftsgewinnDurchschnitt(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+	protected BigDecimal calcGeschaeftsgewinnDurchschnitt(AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		if (abstractFinanzielleSituation != null) {
 			BigDecimal total = BigDecimal.ZERO;
 			BigDecimal anzahlJahre = BigDecimal.ZERO;
@@ -60,7 +60,7 @@ public class AbstractFinanzielleSituationResultateDTO {
 		return total;
 	}
 
-	BigDecimal add(BigDecimal value1, BigDecimal value2) {
+	protected BigDecimal add(BigDecimal value1, BigDecimal value2) {
 		value1 = value1 != null ? value1 : BigDecimal.ZERO;
 		value2 = value2 != null ? value2 : BigDecimal.ZERO;
 		return value1.add(value2);

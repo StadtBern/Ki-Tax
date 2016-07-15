@@ -2,7 +2,6 @@ import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
-import {IStammdatenStateParams} from '../../gesuch.route';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
@@ -22,9 +21,9 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
 
 export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
         super($state, gesuchModelManager, berechnungsManager);
 

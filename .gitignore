@@ -13,5 +13,3 @@ ebegu-runconfig/wildfly_9.0.2/build.properties
 ebegu-runconfig/wildfly_10.0.0.Final/build.properties
 /*/~/.m2
 ~/.m2
-ebegu-shared/src/main/metamodel/ch/dvbern/ebegu/entities/*
-

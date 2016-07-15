@@ -201,6 +201,10 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
+    /**
+     * 
+     * @returns {string} Veraenderung im Prozent im vergleich zum Vorjahr 
+     */
     public getResultatProzent(): string {
         if (this.resultatVorjahr) {
 

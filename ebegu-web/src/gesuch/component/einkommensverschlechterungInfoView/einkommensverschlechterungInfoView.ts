@@ -2,7 +2,6 @@ import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
-import {IStammdatenStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -25,12 +24,12 @@ export class EinkommensverschlechterungInfoViewComponentConfig implements ICompo
 export class EinkommensverschlechterungInfoViewController extends AbstractGesuchViewController {
 
     monthsStichtage: Array<TSMonth>;
-    selectedStichtagBjP1: TSMonth = null;
-    selectedStichtagBjP2: TSMonth = null;
+    selectedStichtagBjP1: TSMonth = undefined;
+    selectedStichtagBjP2: TSMonth = undefined;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil) {
         super($state, gesuchModelManager, berechnungsManager);
 

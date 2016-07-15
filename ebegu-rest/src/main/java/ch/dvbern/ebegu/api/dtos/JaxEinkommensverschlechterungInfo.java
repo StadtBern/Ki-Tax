@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;

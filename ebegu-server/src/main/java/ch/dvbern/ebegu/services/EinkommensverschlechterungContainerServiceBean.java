@@ -44,7 +44,6 @@ public class EinkommensverschlechterungContainerServiceBean extends AbstractBase
 		return persistence.merge(einkommensverschlechterungContainer);
 	}
 
-
 	@Override
 	@Nonnull
 	public Optional<EinkommensverschlechterungContainer> findEinkommensverschlechterungContainer(@Nonnull String key) {
@@ -76,7 +75,7 @@ public class EinkommensverschlechterungContainerServiceBean extends AbstractBase
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
 		if (gesuch.getGesuchsperiode() != null) {
 
-			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhältnisse berücksichtigt
+			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhältnisse beruecksichtigt
 			// (nicht Stand 31.12. des Vorjahres)!
 
 			double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, null);

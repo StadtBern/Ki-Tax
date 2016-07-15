@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Validate;
 import java.math.BigDecimal;
 
 /**
- * DTO für die Resultate der Berechnungen der Finanziellen Situation
+ * DTO für die Resultate der Berechnungen der Einkommensverschlechterung
  */
 public class EinkommensverschlechterungResultateDTO extends AbstractFinanzielleSituationResultateDTO {
 

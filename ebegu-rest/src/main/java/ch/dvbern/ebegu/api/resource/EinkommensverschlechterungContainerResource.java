@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.dto.AbstractFinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
@@ -44,7 +43,7 @@ import java.util.Optional;
 public class EinkommensverschlechterungContainerResource {
 
 	@Inject
-	private EinkommensverschlechterungContainerService einkommensverschlechterungContainerService;
+	private EinkommensverschlechterungContainerService einkVerschlService;
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
@@ -75,7 +74,7 @@ public class EinkommensverschlechterungContainerResource {
 			EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
 			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
 			EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-				einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
+				einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
 
 			URI uri = uriInfo.getBaseUriBuilder()
 				.path(EinkommensverschlechterungContainerResource.class)
@@ -99,7 +98,7 @@ public class EinkommensverschlechterungContainerResource {
 
 		Validate.notNull(einkommensverschlechterungContainerId.getId());
 		String einkommensverschlechterungContainerID = converter.toEntityId(einkommensverschlechterungContainerId);
-		Optional<EinkommensverschlechterungContainer> optional = einkommensverschlechterungContainerService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainerID);
+		Optional<EinkommensverschlechterungContainer> optional = einkVerschlService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainerID);
 
 		if (!optional.isPresent()) {
 			return null;
@@ -123,9 +122,9 @@ public class EinkommensverschlechterungContainerResource {
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
-		AbstractFinanzielleSituationResultateDTO abstractFinanzielleSituationResultateDTO = einkommensverschlechterungContainerService.calculateResultate(gesuch, basisJahrPlus);
+		AbstractFinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();
-		return Response.ok(abstractFinanzielleSituationResultateDTO).build();
+		return Response.ok(abstFinSitResultateDTO).build();
 	}
 }

@@ -427,6 +427,7 @@ export default class GesuchModelManager {
         if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
             || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
+            console.log('Fehler: FinSit muss existieren');
             return;
         }
 
