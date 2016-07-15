@@ -28,6 +28,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     gesuchsteller2EkvCont: TSEinkommensverschlechterungContainer;
     parsedBasisJahrPlusNum: number;
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
+    resultatProzent: string;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
@@ -193,19 +194,22 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         if (this.parsedBasisJahrPlusNum === 2) {
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
+                this.resultatProzent = this.calculateVeraenderung();
             });
         } else {
             this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
+                this.resultatProzent = this.calculateVeraenderung();
             });
         }
     }
 
+
     /**
-     * 
-     * @returns {string} Veraenderung im Prozent im vergleich zum Vorjahr 
+     *
+     * @returns {string} Veraenderung im Prozent im vergleich zum Vorjahr
      */
-    public getResultatProzent(): string {
+    public calculateVeraenderung(): string {
         if (this.resultatVorjahr) {
 
             let massgebendesEinkommen = this.getResultate().massgebendesEinkommen;

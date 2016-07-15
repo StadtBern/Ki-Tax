@@ -27,7 +27,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     selectedStichtagBjP1: TSMonth = undefined;
     selectedStichtagBjP2: TSMonth = undefined;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'];
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil) {
@@ -111,7 +111,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      * Navigation forward
      */
     nextStep() {
-
+         //todo gapa muesste hier nicht vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung verwendet werden
+        this.getEinkommensverschlechterungsInfo().einkommensverschlechterung; // was muss hier sein?
         if (this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.einkommensverschlechterungSteuern');
         } else {

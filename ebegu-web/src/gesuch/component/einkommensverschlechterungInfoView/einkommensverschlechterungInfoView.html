@@ -9,7 +9,7 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
                         <dv-radio-container name="einkommensverschlechterung"
-                                            ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung"
+                                            ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
                                             ng-required="true" class="radio input-element">
                         </dv-radio-container>
                         <dv-error-messages for="form.einkommensverschlechterung.$error"
@@ -24,7 +24,7 @@
                     <hr/>
                     <div class="dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus1"
-                                     ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1"
+                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
                                      aria-label="{vm.getBasisJahrPlusAsString(0)}">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
@@ -54,7 +54,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus1"></label>
                         <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
-                               ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.grundFuerBasisJahrPlus1"
+                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
                                class="form-control" required>
                         <dv-error-messages for="form.grundFuerBasisJahrPlus1.$error"
                                            class="error"></dv-error-messages>
@@ -70,7 +70,7 @@
                     <hr/>
                     <div class="dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus2"
-                                     ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2"
+                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
                                      aria-label="{vm.getBasisJahrPlusAsString(1)}">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
@@ -100,7 +100,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus2"></label>
                         <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
-                               ng-model="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.grundFuerBasisJahrPlus2"
+                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
                                class="form-control" required>
                         <dv-error-messages for="form.grundFuerBasisJahrPlus2.$error"
                                            class="error"></dv-error-messages>
