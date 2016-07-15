@@ -15,6 +15,7 @@ import ch.dvbern.ebegu.services.AuthService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -37,6 +38,8 @@ import java.util.Optional;
 public class AuthSecurityInterceptor implements ContainerRequestFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthSecurityInterceptor.class);
+	private static final String LOG_MDC_EBEGUUSER = "ebeguuser";
+	private static final String LOG_MDC_AUTHUSERID = "ebeguauthuserid";
 
 	@Context
 	private HttpServletRequest request;
@@ -47,9 +50,12 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
+		MDC.put(LOG_MDC_EBEGUUSER, "unknown");
+		MDC.put(LOG_MDC_AUTHUSERID, "unknown");
 		try {
 			// nur zur Sicherheit container logout...
 			request.logout();
+			LOG.warn("Logout from interceptor");
 		} catch (ServletException e) {
 			LOG.error("Unexpected exception during Logout", e);
 			setResponseUnauthorised(requestContext);
@@ -78,6 +84,9 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			// Get AuthId and AuthToken from Cookies.
 			String authId = AuthDataUtil.getAuthAccessElement(requestContext).get().getAuthId();
 			String authToken = AuthDataUtil.getAuthToken(requestContext).get();
+
+			MDC.put(LOG_MDC_EBEGUUSER, authId);
+
 			//use token to authorize the request
 			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
 			if (!loginWithToken.isPresent()) {
@@ -98,12 +107,15 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			}
 
 			//check if the token is still valid
-			if (!authService.verifyToken(credentials)) {
+			Optional<String> loginId = authService.verifyToken(credentials);
+			if (loginId.isPresent()) {
+				MDC.put(LOG_MDC_AUTHUSERID, String.valueOf(loginId.get()));
+				LOG.debug("successfully logged in user: " + credentials.getUsername());
+			} else {
 				// Token Verification Failed
 				LOG.debug("Token verification failed for " + credentials.getUsername());
 				setResponseUnauthorised(requestContext);
 			}
-			LOG.debug("successfully logged in user: " + credentials.getUsername());
 
 
 		} catch (NoSuchElementException e) {

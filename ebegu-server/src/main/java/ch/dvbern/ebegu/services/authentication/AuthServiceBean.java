@@ -122,7 +122,7 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
-	public boolean verifyToken(@Nonnull BenutzerCredentials credentials) {
+	public  Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials) {
 		Objects.requireNonNull(credentials);
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -148,18 +148,18 @@ public class AuthServiceBean implements AuthService {
 			LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
 			if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
 				LOG.debug("Token is no longer valid: " +credentials.getAuthToken());
-				return false;
+				return Optional.empty();
 			}
 			authUser.setLastLogin(now);
 			entityManager.persist(authUser);
 			entityManager.flush();
 			LOG.trace("Valid auth Token was refreshed ");
-			return true;
+			return Optional.of(authUser.getId());
 
 		} catch (NoResultException ignored) {
 			LOG.debug("Could not load Authorisierterbenutzer for username '" + credentials.getUsername() + "' and token '" +
 			credentials.getAuthToken() +"'");
-			return false;
+			return Optional.empty();
 		}
 	}
 
