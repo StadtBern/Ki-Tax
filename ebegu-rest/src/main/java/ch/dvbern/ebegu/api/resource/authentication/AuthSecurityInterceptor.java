@@ -30,6 +30,7 @@ import javax.ws.rs.ext.Provider;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+
 /**
  * Interceptor fuer JAX-RS der prueft ob das Login korrekt ist
  */
@@ -55,7 +56,6 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 		try {
 			// nur zur Sicherheit container logout...
 			request.logout();
-			LOG.warn("Logout from interceptor");
 		} catch (ServletException e) {
 			LOG.error("Unexpected exception during Logout", e);
 			setResponseUnauthorised(requestContext);
@@ -76,6 +76,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			&& RestUtil.isFileDownloadRequest(requestContext);
 		if (!request.getRequestURI().contains("/migration/")) { //migration ist ausgenommen
 			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, requestContext)) {
+				LOG.debug("Could not match XSRF Token from Header and Cookie. Header:" +xsrfTokenHeader +  " cookie " +xsrfTokenCookie );
 				setResponseUnauthorised(requestContext);
 				return;
 			}
