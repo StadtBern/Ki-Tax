@@ -103,6 +103,8 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 				LOG.debug("Token verification failed for " + credentials.getUsername());
 				setResponseUnauthorised(requestContext);
 			}
+			LOG.debug("successfully logged in user: " + credentials.getUsername());
+
 
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);

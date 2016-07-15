@@ -68,16 +68,17 @@ public final class AuthDataUtil {
 	 */
 	@Nonnull
 	public static Optional<String> getAuthToken(@Nonnull ContainerRequestContext requestContext) {
-		String authToken = requestContext.getCookies().get(AuthDataUtil.COOKIE_AUTH_TOKEN).getValue();
+		Cookie cookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_AUTH_TOKEN);
+		String authToken = cookie != null ? cookie.getValue() : null;
 		if (StringUtils.isEmpty(authToken)) {
 			return Optional.empty();
 		}
-
 		return Optional.of(authToken);
 	}
 
 	/**
 	 * checks that the passed xsrfTokenParam matches the token stored in the cookie
+	 *
 	 * @param xsrfTokenParam token to check
 	 * @param requestContext request to get Cookie from
 	 * @return true if the tokens match; false otherweise
