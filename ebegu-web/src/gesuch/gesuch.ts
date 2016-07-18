@@ -17,9 +17,6 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         return !!this.gesuchModelManager.isGesuchsteller2Required();
     }
 
-    showEinkommensverschlechterungInfoStart(): boolean {
-        return true;
-    }
 
     public getDateErstgesuch(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {

@@ -11,7 +11,7 @@ import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.EinkommensverschlechterungContainerService;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,13 +37,13 @@ import java.util.Optional;
 /**
  * REST Resource fuer EinkommensverschlechterungContainer
  */
-@Path("einkommensverschlechterungContainer")
+@Path("einkommensverschlechterung")
 @Stateless
 @Api
-public class EinkommensverschlechterungContainerResource {
+public class EinkommensverschlechterungResource {
 
 	@Inject
-	private EinkommensverschlechterungContainerService einkVerschlService;
+	private EinkommensverschlechterungService einkVerschlService;
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
@@ -77,7 +77,7 @@ public class EinkommensverschlechterungContainerResource {
 				einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
 
 			URI uri = uriInfo.getBaseUriBuilder()
-				.path(EinkommensverschlechterungContainerResource.class)
+				.path(EinkommensverschlechterungResource.class)
 				.path("/" + persistedEinkommensverschlechterungContainer.getId())
 				.build();
 

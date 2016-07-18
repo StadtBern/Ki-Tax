@@ -111,12 +111,15 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      * Navigation forward
      */
     nextStep() {
-         //todo gapa muesste hier nicht vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung verwendet werden
-        this.getEinkommensverschlechterungsInfo().einkommensverschlechterung; // was muss hier sein?
-        if (this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.einkommensverschlechterungSteuern');
+        //todo gapa muesste hier nicht vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung verwendet werden
+        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.einkommensverschlechterungSteuern');
+            } else {
+                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+            }
         } else {
-            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+            alert('goto dokumente');
         }
     }
 

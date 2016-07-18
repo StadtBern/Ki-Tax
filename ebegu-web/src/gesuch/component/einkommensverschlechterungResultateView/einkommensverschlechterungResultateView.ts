@@ -119,7 +119,15 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     calculate() {
-        this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.parsedBasisJahrPlusNum);
+        if (this.gesuchModelManager.gesuch && this.parsedBasisJahrPlusNum) {
+            this.berechnungsManager
+                .calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.parsedBasisJahrPlusNum)
+                .then(() => {
+                    this.resultatProzent = this.calculateVeraenderung();
+                });
+        } else {
+            console.log('No gesuch and Basisjahr to calculate');
+        }
     }
 
     resetForm() {

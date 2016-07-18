@@ -57,7 +57,7 @@ public class JaxBConverter {
 	@Inject
 	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 	@Inject
-	private EinkommensverschlechterungContainerService einkommensverschlechterungContainerService;
+	private EinkommensverschlechterungService einkommensverschlechterungService;
 	@Inject
 	private MandantService mandantService;
 	@Inject
@@ -729,7 +729,7 @@ public class JaxBConverter {
 		Validate.notNull(containerJAX);
 		EinkommensverschlechterungContainer containerToMergeWith = new EinkommensverschlechterungContainer();
 		if (containerJAX.getId() != null) {
-			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungContainerService.findEinkommensverschlechterungContainer(containerJAX.getId());
+			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungService.findEinkommensverschlechterungContainer(containerJAX.getId());
 			if (existingEkvC.isPresent()) {
 				containerToMergeWith = existingEkvC.get();
 			}

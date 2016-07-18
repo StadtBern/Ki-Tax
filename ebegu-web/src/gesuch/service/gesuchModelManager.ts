@@ -380,11 +380,11 @@ export default class GesuchModelManager {
     }
 
     public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
-        this.initStammdaten();
-
         if (!this.gesuch) {
             this.initGesuch(false);
         }
+
+        this.initStammdaten();
 
         if (gesuchstellerNumber === 1 && this.gesuch.gesuchsteller1) {
             if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {

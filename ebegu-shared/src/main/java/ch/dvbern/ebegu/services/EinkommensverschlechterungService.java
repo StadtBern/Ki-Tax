@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Service zum Verwalten von EinkommensverschlechterungContainerService
  */
-public interface EinkommensverschlechterungContainerService {
+public interface EinkommensverschlechterungService {
 
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungContainer in der DB

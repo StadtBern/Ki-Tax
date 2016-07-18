@@ -13,9 +13,9 @@ describe('einkommensverschlechterungResultateView', function () {
 
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
-    var component : any;
-    var scope : angular.IScope;
-    var $componentController : any;
+    var component: any;
+    var scope: angular.IScope;
+    var $componentController: any;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
@@ -27,6 +27,8 @@ describe('einkommensverschlechterungResultateView', function () {
 
     beforeEach(function () {
         gesuchModelManager.initGesuch(false);
+        gesuchModelManager.initFamiliensituation();
+        gesuchModelManager.initFinanzielleSituation();
     });
 
     it('should be defined', function () {

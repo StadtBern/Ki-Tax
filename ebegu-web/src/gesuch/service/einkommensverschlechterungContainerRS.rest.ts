@@ -17,7 +17,7 @@ export default class EinkommensverschlechterungContainerRS {
     static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
     /* @ngInject */
     constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
-        this.serviceURL = REST_API + 'einkommensverschlechterungContainer';
+        this.serviceURL = REST_API + 'einkommensverschlechterung';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
         this.log = $log;

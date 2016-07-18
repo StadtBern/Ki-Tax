@@ -25,8 +25,8 @@ import java.util.Optional;
  * Service fuer FinanzielleSituation
  */
 @Stateless
-@Local(EinkommensverschlechterungContainerService.class)
-public class EinkommensverschlechterungContainerServiceBean extends AbstractBaseService implements EinkommensverschlechterungContainerService {
+@Local(EinkommensverschlechterungService.class)
+public class EinkommensverschlechterungServiceBean extends AbstractBaseService implements EinkommensverschlechterungService {
 	@Inject
 	private Persistence<EinkommensverschlechterungContainer> persistence;
 
@@ -75,7 +75,7 @@ public class EinkommensverschlechterungContainerServiceBean extends AbstractBase
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
 		if (gesuch.getGesuchsperiode() != null) {
 
-			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhältnisse beruecksichtigt
+			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhaeltnisse beruecksichtigt
 			// (nicht Stand 31.12. des Vorjahres)!
 
 			double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, null);
