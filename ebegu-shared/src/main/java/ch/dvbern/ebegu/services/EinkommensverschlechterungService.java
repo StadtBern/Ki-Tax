@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 
+import ch.dvbern.ebegu.dto.AbstractFinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -10,7 +12,7 @@ import java.util.Optional;
 /**
  * Service zum Verwalten von EinkommensverschlechterungContainerService
  */
-public interface EinkommensverschlechterungContainerService {
+public interface EinkommensverschlechterungService {
 
 	/**
 	 * Aktualisiert idn EinkommensverschlechterungContainer in der DB
@@ -43,4 +45,9 @@ public interface EinkommensverschlechterungContainerService {
 	 */
 	void removeEinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer einkommensverschlechterungContainer);
 
+	/**
+	 * Berechnet die Einkomensverschlechterung beider Gesuchsteller für das entsprechende BasisJahr 1 oder 2
+	 */
+	@Nonnull
+	AbstractFinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus);
 }

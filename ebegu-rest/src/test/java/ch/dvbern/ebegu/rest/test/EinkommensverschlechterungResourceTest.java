@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
-import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungContainerResource;
+import ch.dvbern.ebegu.api.resource.EinkommensverschlechterungResource;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungContainerResourceTest extends AbstractEbeguRestTest {
+public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTest {
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -36,7 +36,7 @@ public class EinkommensverschlechterungContainerResourceTest extends AbstractEbe
 	private GesuchstellerResource gesuchstellerResource;
 
 	@Inject
-	private EinkommensverschlechterungContainerResource einkommensverschlechterungContainerResource;
+	private EinkommensverschlechterungResource einkommensverschlechterungResource;
 
 	@Inject
 	private JaxBConverter converter;
@@ -52,13 +52,13 @@ public class EinkommensverschlechterungContainerResourceTest extends AbstractEbe
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = TestJaxDataUtil.createTestJaxEinkommensverschlechterungContianer();
 
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainerReturned =
-			(JaxEinkommensverschlechterungContainer) einkommensverschlechterungContainerResource.
+			(JaxEinkommensverschlechterungContainer) einkommensverschlechterungResource.
 				saveEinkommensverschlechterungContainer(converter.toJaxId(jaxGesuchsteller), jaxEinkommensverschlechterungContainer, uri, null).getEntity();
 
 		Assert.assertNotNull(jaxEinkommensverschlechterungContainerReturned);
 
 		final JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerFound =
-			einkommensverschlechterungContainerResource.findEinkommensverschlechterungContainer(
+			einkommensverschlechterungResource.findEinkommensverschlechterungContainer(
 				converter.toJaxId(jaxEinkommensverschlechterungContainerReturned));
 		Assert.assertNotNull(einkommensverschlechterungContainerFound);
 

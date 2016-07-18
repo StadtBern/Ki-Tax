@@ -40,6 +40,14 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@Column(nullable = false)
 	private Boolean ekvFuerBasisJahrPlus2;
 
+	@Nullable
+	@Column(nullable = true)
+	private Boolean gemeinsameSteuererklaerung_BjP1;
+
+	@Nullable
+	@Column(nullable = true)
+	private Boolean gemeinsameSteuererklaerung_BjP2;
+
 	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
@@ -137,4 +145,21 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 		}
 	}
 
+	@Nullable
+	public Boolean getGemeinsameSteuererklaerung_BjP1() {
+		return gemeinsameSteuererklaerung_BjP1;
+	}
+
+	public void setGemeinsameSteuererklaerung_BjP1(@Nullable Boolean gemeinsameSteuererklaerung_BjP1) {
+		this.gemeinsameSteuererklaerung_BjP1 = gemeinsameSteuererklaerung_BjP1;
+	}
+
+	@Nullable
+	public Boolean getGemeinsameSteuererklaerung_BjP2() {
+		return gemeinsameSteuererklaerung_BjP2;
+	}
+
+	public void setGemeinsameSteuererklaerung_BjP2(@Nullable Boolean gemeinsameSteuererklaerung_BjP2) {
+		this.gemeinsameSteuererklaerung_BjP2 = gemeinsameSteuererklaerung_BjP2;
+	}
 }

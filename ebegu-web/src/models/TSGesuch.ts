@@ -2,15 +2,14 @@ import TSGesuchsteller from './TSGesuchsteller';
 import TSKindContainer from './TSKindContainer';
 import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
-
+import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 export default class TSGesuch extends TSAbstractAntragEntity {
 
     private _gesuchsteller1: TSGesuchsteller;
     private _gesuchsteller2: TSGesuchsteller;
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
-    private _einkommensverschlechterung: boolean;
-
+    private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
 
 
     public get gesuchsteller1(): TSGesuchsteller {
@@ -45,11 +44,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._familiensituation = value;
     }
 
-    get einkommensverschlechterung(): boolean {
-        return this._einkommensverschlechterung;
+    get einkommensverschlechterungInfo(): TSEinkommensverschlechterungInfo {
+        return this._einkommensverschlechterungInfo;
     }
 
-    set einkommensverschlechterung(value: boolean) {
-        this._einkommensverschlechterung = value;
+    set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
+        this._einkommensverschlechterungInfo = value;
     }
+
 }
+
+
