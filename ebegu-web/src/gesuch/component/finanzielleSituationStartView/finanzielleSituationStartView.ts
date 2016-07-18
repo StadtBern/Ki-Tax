@@ -76,6 +76,8 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false) {
             this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer = undefined;
             this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer = undefined;
+        } else {
+            this.gesuchModelManager.initFinanzielleSituation();
         }
     }
 

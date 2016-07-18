@@ -1,0 +1,134 @@
+<div class="finanzielleSituation row">
+    <div class="col-md-12">
+
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+
+            <!--Einkommensverschlechterung-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
+                        <dv-radio-container name="einkommensverschlechterung"
+                                            ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
+                                            ng-required="true" class="radio input-element">
+                        </dv-radio-container>
+                        <dv-error-messages for="form.einkommensverschlechterung.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auswahl Basisjahr Plus 1 -->
+            <div class="row">
+                <div class="form-group col-md-6" ng-if="vm.showEkvi()">
+                    <hr/>
+                    <div class="dv-radio-container">
+                        <md-checkbox name="ekvFuerBasisJahrPlus1"
+                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
+                                     aria-label="{vm.getBasisJahrPlusAsString(0)}">
+                            <span data-translate="EKVI_FUER_JAHR"
+                                  translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
+                        </md-checkbox>
+
+                    </div>
+                </div>
+            </div>
+
+            <!--Auswahl des Stichtages für BasisJahr plus 1-->
+            <div class="row">
+                <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus1"></label>
+                    <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
+                            ng-model="vm.selectedStichtagBjP1"
+                            ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                            ng-required="true">
+                    </select>
+                    <dv-error-messages for="form.stichtagBasisJahrPlus1.$error"
+                                       class="error"></dv-error-messages>
+                </div>
+            </div>
+
+            <!--Grund für BasisJahr plus 1-->
+            <div class="row">
+                <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                    <dv-input-container class="form-group">
+                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus1"></label>
+                        <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
+                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
+                               class="form-control" required>
+                        <dv-error-messages for="form.grundFuerBasisJahrPlus1.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+
+                </div>
+            </div>
+
+
+            <!-- Auswahl Basisjahr Plus 2 -->
+            <div class="row">
+                <div class="form-group col-md-6" ng-if="vm.showEkvi()">
+                    <hr/>
+                    <div class="dv-radio-container">
+                        <md-checkbox name="ekvFuerBasisJahrPlus2"
+                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
+                                     aria-label="{vm.getBasisJahrPlusAsString(1)}">
+                            <span data-translate="EKVI_FUER_JAHR"
+                                  translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
+                        </md-checkbox>
+
+                    </div>
+                </div>
+            </div>
+
+            <!--Auswahl des Stichtages für BasisJahr plus 2-->
+            <div class="row">
+                <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
+                    <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus2"></label>
+                    <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
+                            ng-model="vm.selectedStichtagBjP2"
+                            ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
+                            ng-required="true">
+                    </select>
+                    <dv-error-messages for="form.stichtagBasisJahrPlus2.$error"
+                                       class="error"></dv-error-messages>
+                </div>
+            </div>
+
+            <!--Grund für BasisJahr plus 2-->
+            <div class="row">
+                <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
+                    <dv-input-container class="form-group">
+                        <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus2"></label>
+                        <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
+                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
+                               class="form-control" required>
+                        <dv-error-messages for="form.grundFuerBasisJahrPlus2.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+
+                </div>
+            </div>
+
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>

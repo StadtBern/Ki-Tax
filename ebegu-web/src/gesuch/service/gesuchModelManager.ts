@@ -14,7 +14,10 @@ import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituation from '../../models/TSFinanzielleSituation';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
+import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterung from '../../models/TSEinkommensverschlechterung';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
+import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
 import KindRS from '../../core/service/kindRS.rest';
@@ -31,12 +34,13 @@ import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
-
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
     gesuchstellerNumber: number = 1;
+    basisJahrPlusNumber: number = 1;
     private kindNumber: number;
     private betreuungNumber: number;
     private fachstellenList: Array<TSFachstelle>;
@@ -45,12 +49,13 @@ export default class GesuchModelManager {
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
-        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS'];
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS', 'EinkommensverschlechterungContainerRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS) {
+                private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
+                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -67,11 +72,15 @@ export default class GesuchModelManager {
     public isGesuchsteller2Required(): boolean {
         if (this.gesuch && this.getFamiliensituation() && this.getFamiliensituation().familienstatus) {
             return !(((this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND)
-                    || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
-                    && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+            || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
+            && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
         } else {
             return false;
         }
+    }
+
+    public isBasisJahr2Required(): boolean {
+        return this.getEkvFuerBasisJahrPlus(2);
     }
 
     public getFamiliensituation(): TSFamiliensituation {
@@ -184,6 +193,15 @@ export default class GesuchModelManager {
             });
     }
 
+    public saveEinkommensverschlechterungContainer(): IPromise<TSEinkommensverschlechterungContainer> {
+        return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
+            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith())
+            .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
+                this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
+                return ekvContRespo;
+            });
+    }
+
     /**
      * Gesuchsteller nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
      * @param gsNumber
@@ -193,6 +211,18 @@ export default class GesuchModelManager {
             this.gesuchstellerNumber = gsNumber;
         } else {
             this.gesuchstellerNumber = 1;
+        }
+    }
+
+    /**
+     * BasisJahrPlus nummer darf nur 1 oder 2 sein. Wenn die uebergebene Nummer nicht 1 oder 2 ist, wird dann 1 gesetzt
+     * @param bjpNumber
+     */
+    public setBasisJahrPlusNumber(bjpNumber: number) {
+        if (bjpNumber === 1 || bjpNumber === 2) {
+            this.basisJahrPlusNumber = bjpNumber;
+        } else {
+            this.basisJahrPlusNumber = 1;
         }
     }
 
@@ -240,6 +270,74 @@ export default class GesuchModelManager {
         }
     }
 
+    public getEinkommensverschlechterungToWorkWith(): TSEinkommensverschlechterung {
+        let gesuchsteller: TSGesuchsteller;
+        if (this.gesuchstellerNumber === 2) {
+            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller2);
+        } else {
+            return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller1);
+        }
+    }
+
+    public getEinkommensverschlechterungToWorkWith_GS(): TSEinkommensverschlechterung {
+        let gesuchsteller: TSGesuchsteller;
+        if (this.gesuchstellerNumber === 2) {
+            return this.getEkvFromGesuchstellerOfBsj_GS(this.gesuch.gesuchsteller2);
+        } else {
+            return this.getEkvFromGesuchstellerOfBsj_GS(this.gesuch.gesuchsteller1);
+        }
+    }
+
+    public getEkvFromGesuchstellerOfBsj_JA(gesuchsteller: TSGesuchsteller): TSEinkommensverschlechterung {
+        if (this.basisJahrPlusNumber === 2) {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus2;
+        } else {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
+        }
+    }
+
+    private getEkvFromGesuchstellerOfBsj_GS(gesuchsteller: TSGesuchsteller): TSEinkommensverschlechterung {
+        if (this.basisJahrPlusNumber === 2) {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvGSBasisJahrPlus2;
+        } else {
+            return gesuchsteller.einkommensverschlechterungContainer.ekvGSBasisJahrPlus1;
+        }
+    }
+
+    public getEkvFuerBasisJahrPlusToWorkWith(): boolean {
+        return this.getEkvFuerBasisJahrPlus(this.basisJahrPlusNumber);
+    }
+
+    public getEkvFuerBasisJahrPlus(basisJahrPlus: number): boolean {
+        if (!this.gesuch.einkommensverschlechterungInfo) {
+            this.initEinkommensverschlechterungInfo();
+        }
+
+        if (basisJahrPlus === 2) {
+            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2;
+        } else {
+            return this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1;
+        }
+    }
+
+    public getGemeinsameSteuererklaerungToWorkWith(): boolean {
+        return this.getGemeinsameSteuererklaerungToWorkWith_2(this.basisJahrPlusNumber);
+    }
+
+
+    private getGemeinsameSteuererklaerungToWorkWith_2(basisJahrPlus: number): boolean {
+        if (!this.gesuch.einkommensverschlechterungInfo) {
+            this.initEinkommensverschlechterungInfo();
+        }
+
+        if (basisJahrPlus === 2) {
+            return this.gesuch.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP2;
+        } else {
+            return this.gesuch.einkommensverschlechterungInfo.gemeinsameSteuererklaerung_BjP1;
+        }
+    }
+
+
     public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
         // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
         this.calculateShowDatumFlags(gesuchsteller);
@@ -271,6 +369,85 @@ export default class GesuchModelManager {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
         }
     }
+
+    public initEinkommensverschlechterungInfo(): void {
+        if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
+            this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
+            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 = false;
+            this.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 = false;
+
+        }
+    }
+
+    public initEinkommensverschlechterungContainer(basisjahrPlus: number, gesuchstellerNumber: number): void {
+        if (!this.gesuch) {
+            this.initGesuch(false);
+        }
+
+        this.initStammdaten();
+
+        if (gesuchstellerNumber === 1 && this.gesuch.gesuchsteller1) {
+            if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
+                this.gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+            }
+
+            if (basisjahrPlus === 1) {
+                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
+                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+                }
+            }
+
+            if (basisjahrPlus === 2) {
+                if (!this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
+                    this.gesuch.gesuchsteller1.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+                }
+            }
+        }
+
+        if (gesuchstellerNumber === 2 && this.gesuch.gesuchsteller2) {
+            if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
+                this.gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+            }
+
+            if (basisjahrPlus === 1) {
+                if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1) {
+                    this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus1 = new TSEinkommensverschlechterung();
+                }
+            }
+
+            if (basisjahrPlus === 2) {
+                if (!this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2) {
+                    this.gesuch.gesuchsteller2.einkommensverschlechterungContainer.ekvJABasisJahrPlus2 = new TSEinkommensverschlechterung();
+                }
+            }
+        }
+    }
+
+    public copyEkvGeschaeftsgewinnFromFS(): void {
+        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
+            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
+            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
+            console.log('Fehler: FinSit muss existieren');
+            return;
+        }
+
+        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
+        let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
+        if (fs.selbstaendig && !ekv.selbstaendig) {
+
+            ekv.selbstaendig = true;
+            if (this.basisJahrPlusNumber === 1) {
+                ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
+                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
+            } else {
+                //basisjahr Plus 2
+                let ekvP1: TSEinkommensverschlechterung = this.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
+                ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
+                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+            }
+        }
+    }
+
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
@@ -328,6 +505,22 @@ export default class GesuchModelManager {
             return this.getGesuchsperiodeBegin().year() - 1;
         }
         return undefined;
+    }
+
+    /**
+     * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
+     * @returns {number}
+     */
+    public getBasisjahrPlus(plus: number): number {
+        if (this.getGesuchsperiodeBegin()) {
+            return this.getGesuchsperiodeBegin().year() - 1 + plus;
+        }
+        return undefined;
+    }
+
+
+    public getBasisjahrToWorkWith(): number {
+        return this.getBasisjahrPlus(this.basisJahrPlusNumber);
     }
 
     /**
@@ -547,6 +740,10 @@ export default class GesuchModelManager {
 
     public getGesuchstellerNumber(): number {
         return this.gesuchstellerNumber;
+    }
+
+    public getBasisJahrPlusNumber(): number {
+        return this.basisJahrPlusNumber;
     }
 
     /**

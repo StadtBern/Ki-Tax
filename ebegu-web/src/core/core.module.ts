@@ -14,6 +14,7 @@ import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.rest';
+import EinkommensverschlechterungContainerRS from '../gesuch/service/einkommensverschlechterungContainerRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
@@ -97,6 +98,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
+    .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
     .service('MandantRS', MandantRS)
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
