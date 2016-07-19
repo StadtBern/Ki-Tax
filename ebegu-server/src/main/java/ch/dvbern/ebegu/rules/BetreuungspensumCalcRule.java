@@ -1,13 +1,10 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Regel für die Betreuungspensen. Sie beachtet:
@@ -16,16 +13,10 @@ import java.util.List;
  * - Falls Kind eine Fachstelle hat, gilt das Pensum der Fachstelle
  * Verweis 16.9.3
  */
-public class BetreuungspensumCalcRule extends AbstractEbeguRule {
+public class BetreuungspensumCalcRule extends AbstractCalcRule {
 
 	public BetreuungspensumCalcRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.BETREUUNGSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
-	}
-
-	@Nonnull
-	@Override
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
-		return new ArrayList<>();   //calc rule macht keine Zeitabschnitte
 	}
 
 	@Override

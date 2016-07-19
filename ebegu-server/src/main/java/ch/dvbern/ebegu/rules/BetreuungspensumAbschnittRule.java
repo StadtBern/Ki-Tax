@@ -16,9 +16,9 @@ import java.util.Set;
  * Regel für die Erstellung der Zeitabschnitte der Betreuungspensen
  * Verweis 16.9.3
  */
-public class BetreuungspensumDataRule extends AbstractEbeguRule {
+public class BetreuungspensumAbschnittRule extends AbstractAbschnittRule {
 
-	public BetreuungspensumDataRule(@Nonnull DateRange validityPeriod) {
+	public BetreuungspensumAbschnittRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.BETREUUNGSPENSUM, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 
@@ -34,9 +34,6 @@ public class BetreuungspensumDataRule extends AbstractEbeguRule {
 		return betreuungspensumAbschnitte;
 	}
 
-	@Override
-	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-	}
 
 	/**
 	 * @param betreuungspensum zu konvertiertendes Betreuungspensum

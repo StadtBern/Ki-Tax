@@ -19,11 +19,12 @@ import java.util.List;
 /**
  * Testet die MaximalesEinkommen-Regel
  */
-public class MaximalesEinkommenRuleTest {
+public class MaximalesEinkommenCalcRuleTest {
 
 	private BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final MaximalesEinkommenRule maximalesEinkommenRule = new MaximalesEinkommenRule(defaultGueltigkeit, MAX_EINKOMMEN);
+	private final MaximalesEinkommenAbschnittRule maximalesEinkommenAbschnittRule = new MaximalesEinkommenAbschnittRule(defaultGueltigkeit);
+	private final MaximalesEinkommenCalcRule maximalesEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, MAX_EINKOMMEN);
 	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
@@ -36,8 +37,8 @@ public class MaximalesEinkommenRuleTest {
 		dto.setMassgebendesEinkommen(new BigDecimal("50000"));
 
 		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
-
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("50000"), result.get(0).getMassgebendesEinkommen());
@@ -52,8 +53,8 @@ public class MaximalesEinkommenRuleTest {
 		dto.setMassgebendesEinkommen(new BigDecimal("180000"));
 
 		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
-
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte, dto);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(new BigDecimal("180000"), result.get(0).getMassgebendesEinkommen());

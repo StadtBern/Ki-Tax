@@ -41,17 +41,21 @@ public class BetreuungsgutscheinConfigurator {
 		FachstelleDataRule fachstelleDataRule = new FachstelleDataRule(defaultGueltigkeit);
 		rules.add(fachstelleDataRule);
 		// - Daten Betreuung
-		BetreuungspensumDataRule betreuungspensumDataRule = new BetreuungspensumDataRule(defaultGueltigkeit);
-		rules.add(betreuungspensumDataRule);
+		BetreuungspensumAbschnittRule betreuungspensumAbschnittRule = new BetreuungspensumAbschnittRule(defaultGueltigkeit);
+		rules.add(betreuungspensumAbschnittRule);
 		// - Berechnen
 		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
 		rules.add(betreuungspensumCalcRule);
 
 		// 3. Einkommen / Einkommensverschlechterung / Maximales Einkommen
+
+		MaximalesEinkommenAbschnittRule einkommenAbschnittRule = new MaximalesEinkommenAbschnittRule(defaultGueltigkeit);
+		rules.add(einkommenAbschnittRule);
+
 		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX);
 		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
-		MaximalesEinkommenRule maxEinkommenRule = new MaximalesEinkommenRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getAsBigDecimal());
-		rules.add(maxEinkommenRule);
+		MaximalesEinkommenCalcRule maxEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getAsBigDecimal());
+		rules.add(maxEinkommenCalcRule);
 
 		// REDUKTIONSREGELN
 

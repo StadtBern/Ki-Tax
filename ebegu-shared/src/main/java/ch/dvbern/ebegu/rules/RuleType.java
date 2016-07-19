@@ -9,6 +9,9 @@ public enum RuleType {
 	 * Typ fuer Regeln die nicht im normalen Regelsystem laufen sondern ausserhalb angestossen werden
 	 */
 	NO_RULE,
+	/**
+	 * Regel die dazu verwendet wird die Daten die fuer die Anspruch-Berechnung relevant sind zu setzen
+	 */
 	GRUNDREGEL_DATA,
 	GRUNDREGEL_CALC,
 	/**

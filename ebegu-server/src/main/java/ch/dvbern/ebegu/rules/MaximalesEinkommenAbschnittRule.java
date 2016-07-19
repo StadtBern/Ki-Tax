@@ -14,18 +14,15 @@ import java.util.List;
  * Setzt fuer die Zeitabschnitte das Massgebende Einkommen. Sollte der Maximalwert uebschritte werden so wird das Pensum auf 0 gesetzt
  * ACHTUNG: Diese Regel gilt nicht fuer Kita und Tageseltern Kleinkinder.  Bei Tageseltern Schulkinder und Tagesstaetten
  * gibt es keine Reduktion des Anspruchs.
- * TODO aufteilen in data rule und calc
  * Regel 16.7 Maximales Einkommen
  */
-public class MaximalesEinkommenRule extends AbstractEbeguRule {
+public class MaximalesEinkommenAbschnittRule extends AbstractAbschnittRule {
 
 
-	private BigDecimal maximalesEinkommen;
 
 
-	public MaximalesEinkommenRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
-		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.REDUKTIONSREGEL, validityPeriod);
-		this.maximalesEinkommen = maximalesEinkommen;
+	public MaximalesEinkommenAbschnittRule(DateRange validityPeriod) {
+		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 
 	@Nonnull
@@ -38,14 +35,6 @@ public class MaximalesEinkommenRule extends AbstractEbeguRule {
 		finanzielleSituationAbschnitt.setMassgebendesEinkommen(readMassgebendesEinkommen(finSitResultatDTO));
 		einkommensAbschnitte.add(finanzielleSituationAbschnitt);
 		return einkommensAbschnitte;
-	}
-
-	@Override
-	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
-			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.MAXIMALES_EINKOMMEN.name() + ": Maximales Einkommen überschritten");
-		}
 	}
 
 	/**

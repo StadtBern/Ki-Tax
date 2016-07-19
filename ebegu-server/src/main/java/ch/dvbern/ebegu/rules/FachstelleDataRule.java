@@ -15,7 +15,7 @@ import java.util.List;
  * Zeitabschnitt generiert
  * Verweis 16.13 Fachstelle
  */
-public class FachstelleDataRule extends AbstractEbeguRule {
+public class FachstelleDataRule extends AbstractAbschnittRule {
 
 	public FachstelleDataRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.FACHSTELLE, RuleType.GRUNDREGEL_DATA, validityPeriod);
@@ -32,9 +32,6 @@ public class FachstelleDataRule extends AbstractEbeguRule {
 		return betreuungspensumAbschnitte;
 	}
 
-	@Override
-	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-	}
 
 	@Nonnull
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull PensumFachstelle pensumFachstelle) {
