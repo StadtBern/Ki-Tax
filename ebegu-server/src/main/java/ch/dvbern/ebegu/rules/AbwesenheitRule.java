@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Regel für Betreuungsangebot: Es werden nur die Nicht-Schulamt-Angebote berechnet.
+ * Regel für Abwesenheiten. Sie beachtet:
+ * - Ab dem 31. Tag einer Abwesenheit (Krankheit oder Unfall des Kinds und bei Mutterschaft ausgeschlossen) entfällt der Gutschein.
+ * 		Der Anspruch bleibt in dieser Zeit bestehen. D.h. ab dem 31. Tag einer Abwesenheit, wird den Eltern der Volltarif verrechnet.
+ * - Hier wird mit Tagen und nicht mit Nettoarbeitstage gerechnet. D.h. eine Abwesenheit von 30 Tagen ist ok. Beim 31. Tag entfällt der Gutschein.
+ * - Wann dieses Ereignis gemeldet wird, spielt keine Rolle.
  */
-public class BetreuungsangebotTypRule extends AbstractEbeguRule {
+public class AbwesenheitRule extends AbstractEbeguRule {
 
-	public BetreuungsangebotTypRule(DateRange validityPeriod) {
-		super(RuleKey.BETREUUNGSANGEBOT_TYP, RuleType.REDUKTIONSREGEL, validityPeriod);
+	public AbwesenheitRule(@Nonnull DateRange validityPeriod) {
+		super(RuleKey.ABWESENHEIT, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
 	@Nonnull
@@ -26,9 +30,6 @@ public class BetreuungsangebotTypRule extends AbstractEbeguRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
-			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP.name() + ": Betreuungsangebot Schulamt");
-		}
+
 	}
 }

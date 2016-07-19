@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +24,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private int betreuungspensum;
 	private int fachstellenpensum;
 	private int anspruchspensumRest;
-	private int anspruchspensumOriginal; // = Gesamtanspruch für alle Kitas TODO (hefr) brauchts wohl eher nicht...
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 	private BigDecimal betreuungsstunden;
 	private BigDecimal vollkosten = BigDecimal.ZERO;
@@ -84,14 +82,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setAnspruchspensumRest(int anspruchspensumRest) {
 		this.anspruchspensumRest = anspruchspensumRest;
-	}
-
-	public int getAnspruchspensumOriginal() {
-		return anspruchspensumOriginal;
-	}
-
-	public void setAnspruchspensumOriginal(int anspruchspensumOriginal) {
-		this.anspruchspensumOriginal = anspruchspensumOriginal;
 	}
 
 	public int getAnspruchberechtigtesPensum() {
@@ -165,7 +155,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	public void add(VerfuegungZeitabschnitt other) {
 		this.setBetreuungspensum(this.getBetreuungspensum() + other.getBetreuungspensum());
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
-		this.setAnspruchspensumOriginal(this.getAnspruchspensumOriginal() + other.getAnspruchspensumOriginal());
 		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
 		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
 		BigDecimal newBetreuungsstunden = BigDecimal.ZERO;
@@ -206,14 +195,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this)
-			.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
-			.append("erwerbspensumGS1", erwerbspensumGS1)
-			.append("erwerbspensumGS2", erwerbspensumGS2)
-			.append("betreuungspensum", betreuungspensum)
-			.append("anspruchspensumOriginal", anspruchspensumOriginal)
-			.append("bemerkungen", bemerkungen)
-			.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
+			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
+			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
+			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
+			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" Bemerkungen: ").append(bemerkungen);
+		return sb.toString();
 	}
 
 	public boolean isSame(VerfuegungZeitabschnitt that) {
@@ -224,7 +213,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			erwerbspensumGS2 == that.erwerbspensumGS2 &&
 			betreuungspensum == that.betreuungspensum &&
 			fachstellenpensum == that.fachstellenpensum &&
-			anspruchspensumOriginal == that.anspruchspensumOriginal &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&

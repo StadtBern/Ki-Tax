@@ -2,7 +2,6 @@ import TSAbstractEntity from './TSAbstractEntity';
 import TSEinkommensverschlechterung from './TSEinkommensverschlechterung';
 
 
-
 export default class TSEinkommensverschlechterungContainer extends TSAbstractEntity {
 
     private _ekvGSBasisJahrPlus1: TSEinkommensverschlechterung;

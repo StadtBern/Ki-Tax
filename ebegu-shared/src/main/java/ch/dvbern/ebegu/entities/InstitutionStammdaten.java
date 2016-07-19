@@ -4,11 +4,13 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 
@@ -40,7 +42,8 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 	private BigDecimal oeffnungsstunden;
 
 	@Enumerated(value = EnumType.STRING)
-	@Nullable
+	@NotNull
+	@Column(nullable = false)
 	private BetreuungsangebotTyp betreuungsangebotTyp;
 
 	@ManyToOne(optional = false)
@@ -80,7 +83,7 @@ public class InstitutionStammdaten extends AbstractDateRangedEntity {
 		this.oeffnungsstunden = oeffnungsstunden;
 	}
 
-	@Nullable
+	@Nonnull
 	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
 		return betreuungsangebotTyp;
 	}
