@@ -97,6 +97,12 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
 		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		return pensumIsSame && taetigkeitSame &&  zuschlagSame && gesundhSame;
+		return pensumIsSame && taetigkeitSame && zuschlagSame && gesundhSame;
+	}
+
+	// Todo: Es wäre besser jedem Erwerbspensum einen Name zu geben. z.B Firmename oder name der Schule.
+	// Auf diese Weise wäre es einfacher später die Dokumente dem Pensum zuordnen zu können
+	public String getName() {
+		return taetigkeit + " " + getPensum() + "%";
 	}
 }

@@ -72,4 +72,8 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		this.geburtsdatum = geburtsdatum;
 	}
 
+	public String getFullName(){
+		return vorname +" "+ nachname;
+	}
+
 }
