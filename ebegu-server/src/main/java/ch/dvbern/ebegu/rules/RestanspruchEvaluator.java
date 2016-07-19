@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Sonderregel die nach der eigentlich Berechnung angewendet wird um den Restanspruch zu uebernehmen.
  * Ermittelt des Restanspruch aus den übergebenen Zeitabschnitten und erstellt neue Abschnitte mit nur dieser Information
  * für die Berechnung der nächsten Betreuung.
  */

@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.rechner.KitaRechner;
 import ch.dvbern.ebegu.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Berechnungsgutschein
+ * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
  */
 public class BetreuungsgutscheinEvaluator {
 
@@ -24,6 +26,9 @@ public class BetreuungsgutscheinEvaluator {
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;
 	}
+
+
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 	public void evaluate(Gesuch testgesuch) {
 
@@ -52,6 +57,8 @@ public class BetreuungsgutscheinEvaluator {
 				// TODO (team) Den richtigen Rechner anwerfen
 				if (BetreuungsangebotTyp.KITA.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp())) {
 					KitaRechner kitaRechner = new KitaRechner();
+					kitaRechner.toString();
+					//todo richtige Parameter mitgeben(abgeltung des Kantons Berns ist jahresabhaengig)
 //					kitaRechner.calculate()
 				}
 
@@ -68,6 +75,9 @@ public class BetreuungsgutscheinEvaluator {
 		for (Rule rule : rules) {
 			if (rule.isValid(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
 				rulesForGesuchsperiode.add(rule);
+			} else{
+				LOG.debug("Rule did not aply to Gesuchsperiode " + rule);
+
 			}
 		}
 		return rulesForGesuchsperiode;

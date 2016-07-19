@@ -76,27 +76,7 @@ public final class GueltigkeitsUtil {
 		return newEntity;
 	}
 
-	/**
-	 * Aktualisiert gueltigAb/gueltigBis eines neuen Entities und gegebenenfalls der Collection von existingEntities.
-	 *
-	 * <p>Definition neachst-gueltiges Entity: min(entity.gueltigAb) where entity.gueltigAb > newEntity.gueltigAb und entity in existingEntities.</p>
-	 * <p>Definition vorher-gueltiges Entity: max(entity.gueltigAb) where entity.gueltigAb < newEntity.gueltigAb und entity in existingEntities.</p>
-	 * <ol>
-	 *     <li>Falls es ein existing Entity gibt mit gueltigAb = newEntity.gueltigAb,
-	 *     so werden die Properties von newEntity in existing Entity gemerged und existing Entity zurueck gegeben.
-	 *     Der Merge Prozess ist durch die mergeFunction definiert.</li>
-	 *
-	 *     <li>gueltigBis von newEntity wird reduziert auf (gueltigAb - 1) des naechst-gueltigen Entities.
-	 *     Falls es kein nachst-gueltiges Entity gibt, so ist gueltigAb = END_OF_TIME (unlimitiert).</li>
-	 *
-	 *     <li>Falls es ein vorher-gueltiges Entity gibt, welches gueltigBis > newEntity.gueltigAb,
-	 *     so wird gueltigBis des vorher-gueltigen Entities reduziert auf (newEntity.gueltigAb - 1).</li>
-	 * </ol>
-	 */
-	@Nonnull
-	public static <T extends Gueltigkeit> Collection<? extends T> updateGueltigkeit(@Nonnull final Collection<? extends T> existingEntities, @Nonnull Collection<? extends T>  newEntities, @Nonnull BiFunction<T, T, T> mergeFunction) {
-		return null;
-	}
+
 
 	/**
 	 * Verlängert das gueltigBis Datum von {@code updateEntity} unter berücksichtigung von {@code existingEntities},

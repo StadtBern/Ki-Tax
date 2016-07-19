@@ -24,7 +24,7 @@ public class BetreuungspensumCalcRule extends AbstractEbeguRule {
 	@Nonnull
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
-		return new ArrayList<>();
+		return new ArrayList<>();   //calc rule macht keine Zeitabschnitte
 	}
 
 	@Override
@@ -48,24 +48,17 @@ public class BetreuungspensumCalcRule extends AbstractEbeguRule {
 			} else {
 				anspruchRest = 0;
 			}
-		}
-		// Kita und Tageseltern-Kleinkinder: Anspruch ist das kleinere von Betreuungspensum und Erwerbspensum
-		else if (betreuung.isAngebotKita() || betreuung.isAngebotTageselternKleinkinder()) {
-			if (verfuegungZeitabschnitt.getAnspruchberechtigtesPensum() < betreuungberechnet) {
-				betreuungberechnet = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
-			}
+		} else if (betreuung.isAngebotKita() || betreuung.isAngebotTageselternKleinkinder()) {
+			// Kita und Tageseltern-Kleinkinder: Anspruch ist das kleinere von Betreuungspensum und Erwerbspensum
+			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
+
 			// Ausserdem: Nur soviel, wie noch nicht von einer anderen Kita oder Tageseltern Kleinkinder verwendet wurde:
-			if (verfuegungZeitabschnitt.getAnspruchspensumRest() < betreuungberechnet) {
-				betreuungberechnet = verfuegungZeitabschnitt.getAnspruchspensumRest();
-			}
+			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchspensumRest());
 			// Den neuen "AnspruchRest" bestimmen:
 			anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest() - betreuungberechnet;
 		}
 		// Den berechneten Wert setzen, sowie den Restanspruch aktualisieren
 		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungberechnet);
-		if (anspruchRest <= 0) {
-			anspruchRest = 0;
-		}
 		verfuegungZeitabschnitt.setAnspruchspensumRest(anspruchRest);
 	}
 }

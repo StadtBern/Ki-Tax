@@ -5,11 +5,14 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * Berechnet die hoehe des Betreeungspensum einer bestimmten Betreuung.
- * Diese Rule muss immer am Anfang kommen, d.h. sie setzt das gewünschte Betreuungspensum mal als Anspruchberechtigt.
+ * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums
+ * Diese Rule muss immer am Anfang kommen, d.h. sie setzt den initialen Anspruch
  * Die weiteren Rules müssen diesen Wert gegebenenfalls korrigieren.
  */
 public class ErwerbspensumRule extends AbstractEbeguRule{
@@ -18,7 +21,7 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
 	}
 
-	//TODO (hefR) Achtung, es muss ncoh das Eingangsdatum beachtet werden!
+	//TODO (hefr) Achtung, es muss ncoh das Eingangsdatum beachtet werden!
 //	Eine Änderung des Arbeitspensums ist rechtzeitig, falls die Änderung im Vormonat gemeldet wird. In
 //	diesem Fall wird der Anspruch zusammen mit dem Ereigniseintritt des Arbeitspensums angepasst.
 
@@ -66,23 +69,36 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Anspruch wurde aufgrund Erwerbspensum auf 0% gesetzt");
 		}
 		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
-		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) {
+		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) { //wurde schon mal ein Rest berechnet?
 			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
 			verfuegungZeitabschnitt.setAnspruchspensumRest(anspruch);
 		}
 	}
 
+	/**
+	 * geht durch die Erwerpspensen des Gesuchstellers und gibt Abschnitte zurueck
+	 * @param gesuchsteller Der Gesuchsteller dessen Erwerbspensumcontainers zu Abschnitte konvertiert werden
+	 * @param gs2 handelt es sich um gesuchsteller1 -> false oder gesuchsteller2 -> true
+	 * @return
+	 */
 	@Nonnull
 	private List<VerfuegungZeitabschnitt> getErwerbspensumAbschnittForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, boolean gs2) {
-		List<VerfuegungZeitabschnitt> erwerbspensumAbschnitte = new ArrayList<>();
-		Set<ErwerbspensumContainer> erwerbspensenContainersGS1 = gesuchsteller.getErwerbspensenContainers();
-		for (ErwerbspensumContainer erwerbspensumContainer : erwerbspensenContainersGS1) {
+		List<VerfuegungZeitabschnitt> ewpAbschnitte = new ArrayList<>();
+		Set<ErwerbspensumContainer> ewpContainers = gesuchsteller.getErwerbspensenContainers();
+		for (ErwerbspensumContainer erwerbspensumContainer : ewpContainers) {
 			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
-			erwerbspensumAbschnitte.add(toVerfuegungZeitabschnitt(erwerbspensumJA, gs2));
+			ewpAbschnitte.add(toVerfuegungZeitabschnitt(erwerbspensumJA, gs2));
 		}
-		return erwerbspensumAbschnitte;
+		return ewpAbschnitte;
 	}
 
+	/**
+	 * Konvertiert ein Erwerbspensum in einen Zeitabschnitt von entsprechender dauer und erwerbspensumGS1 (falls gs2=false)
+	 * oder erwerpspensuGS2 (falls gs2=true)
+	 * @param erwerbspensum
+	 * @param gs2
+	 * @return
+	 */
 	@Nonnull
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Erwerbspensum erwerbspensum, boolean gs2) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(erwerbspensum.getGueltigkeit());

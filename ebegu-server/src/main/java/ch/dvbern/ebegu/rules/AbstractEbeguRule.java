@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
@@ -63,42 +65,47 @@ public abstract class AbstractEbeguRule implements Rule {
 
 	/**
 	 * Zuerst muessen die neuen Zeitabschnitte aus den Daten der aktuellen Rule zusammengestellt werden:
-	 * In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 	 */
 	@Nonnull
 	protected abstract List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
 
 	/**
 	 * Fuehrt die eigentliche Rule auf einem einzelnen Zeitabschnitt aus.
-	 * Hier kann ich davon ausgehen, dass die Zeitabschnitte schon validiert und gemergt sind.
+	 * Hier kann man davon ausgehen, dass die Zeitabschnitte schon validiert und gemergt sind.
 	 */
 	protected abstract void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt);
 
 	/**
 	 * Hauptmethode der Regelberechnung. Diese wird von Aussen aufgerufen
-     */
+	 */
 	@Nonnull
 	@Override
 	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
 
-		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
-		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
-		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+		Collections.sort(zeitabschnitte, new VerfuegungZeitabschnittComparator());
 
+		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
+
+		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+		Collections.sort(abschnitteCreatedInRule, new VerfuegungZeitabschnittComparator());
+
+
+		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden
 		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, abschnitteCreatedInRule);
+		Collections.sort(mergedZeitabschnitte, new VerfuegungZeitabschnittComparator());
 
-		// Die Zeitabschnitte (jetzt ohne Überschneidungen) validieren:
+		// Die Zeitabschnitte (jetzt ohne Überschneidungen) normalisieren:
 		// - Muss innerhalb Gesuchsperiode sein
 		// - Müssen sich unterscheiden (d.h. 20+20 vs 40 soll nur einen Schnitz geben)
 		Gesuchsperiode gesuchsperiode = betreuung.extractGesuchsperiode();
-		List<VerfuegungZeitabschnitt> validZeitabschnitte = validateZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
+		List<VerfuegungZeitabschnitt> normalizedZeitabschn = normalizeZeitabschnitte(mergedZeitabschnitte, gesuchsperiode);
 
 		// Die eigentliche Rule anwenden
-		for (VerfuegungZeitabschnitt zeitabschnitt : validZeitabschnitte) {
+		for (VerfuegungZeitabschnitt zeitabschnitt : normalizedZeitabschn) {
 			executeRule(betreuung, zeitabschnitt);
 		}
-		return validZeitabschnitte;
+		return normalizedZeitabschn;
 	}
 
 	/**
@@ -106,47 +113,44 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * Zeitschnitze weg, welche ganz ausserhalb der Periode liegen)
 	 * Stellt ausserdem sicher, dass zwei aufeinander folgende Zeitabschnitte nie dieselben Daten haben. Falls
 	 * dies der Fall wäre, werden sie zu einem neuen Schnitz gemergt.
-     */
+	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> validateZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
-		List<VerfuegungZeitabschnitt> validZeitabschnitte = new LinkedList<>();
+	private List<VerfuegungZeitabschnitt> normalizeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
+		List<VerfuegungZeitabschnitt> normalizedZeitabschnitte = new LinkedList<>();
 		for (VerfuegungZeitabschnitt zeitabschnitt : mergedZeitabschnitte) {
 			// Zuerst überprüfen, ob der Zeitabschnitt innerhalb der Gesuchsperiode liegt
 			boolean startsBefore = zeitabschnitt.getGueltigkeit().startsBefore(gesuchsperiode.getGueltigkeit());
 			boolean endsAfter = zeitabschnitt.getGueltigkeit().endsAfter(gesuchsperiode.getGueltigkeit());
 			if (startsBefore || endsAfter) {
 				boolean zeitabschnittInPeriode = false;
-				if (startsBefore) {
+				if (startsBefore && zeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
 					// Datum Von liegt vor der Periode
 					// Falls Datum Bis ebenfalls vor der Periode liegt, kann der Abschnitt gelöscht werden, ansonsten muss er verkürzt werden
-					if (zeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
-						zeitabschnitt.getGueltigkeit().setGueltigAb(gesuchsperiode.getGueltigkeit().getGueltigAb());
-						zeitabschnittInPeriode = true;
-					}
+					zeitabschnitt.getGueltigkeit().setGueltigAb(gesuchsperiode.getGueltigkeit().getGueltigAb());
+					zeitabschnittInPeriode = true;
 				}
-				if (endsAfter) {
+
+				if (endsAfter && zeitabschnitt.getGueltigkeit().getGueltigAb().isBefore(gesuchsperiode.getGueltigkeit().getGueltigBis())) {
 					// Datum Bis liegt nach der Periode
 					// Falls Datum Von auch schon nach der Periode lag, kann der Abschnitt gelöscht werden, ansonsten muss er verkürzt werden
-					if (zeitabschnitt.getGueltigkeit().getGueltigAb().isBefore(gesuchsperiode.getGueltigkeit().getGueltigBis())) {
-						zeitabschnitt.getGueltigkeit().setGueltigBis(gesuchsperiode.getGueltigkeit().getGueltigBis());
-						zeitabschnittInPeriode = true;
-					}
+					zeitabschnitt.getGueltigkeit().setGueltigBis(gesuchsperiode.getGueltigkeit().getGueltigBis());
+					zeitabschnittInPeriode = true;
 				}
 				if (zeitabschnittInPeriode) {
-					addToValidatedZeitabschnitte(validZeitabschnitte, zeitabschnitt);
+					addToNormalizedZeitabschnitte(normalizedZeitabschnitte, zeitabschnitt);
 				}
 			} else {
-				addToValidatedZeitabschnitte(validZeitabschnitte, zeitabschnitt);
+				addToNormalizedZeitabschnitte(normalizedZeitabschnitte, zeitabschnitt);
 			}
 		}
-		return validZeitabschnitte;
+		return normalizedZeitabschnitte;
 	}
 
 	/**
 	 * Stellt sicher, dass zwei aufeinander folgende Zeitabschnitte nie dieselben Daten haben. Falls
 	 * dies der Fall wäre, werden sie zu einem neuen Schnitz gemergt.
-     */
-	private void addToValidatedZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> validZeitabschnitte, @Nonnull VerfuegungZeitabschnitt zeitabschnitt) {
+	 */
+	private void addToNormalizedZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> validZeitabschnitte, @Nonnull VerfuegungZeitabschnitt zeitabschnitt) {
 		// Zuerst vergleichen, ob sich der neue Zeitabschnitt vom letzt hinzugefügten (und angrenzenden) unterscheidet
 		int indexOfLast = validZeitabschnitte.size() - 1;
 		if (indexOfLast >= 0) {
@@ -170,7 +174,7 @@ public abstract class AbstractEbeguRule implements Rule {
 
 	/**
 	 * Mergt zwei Listen von Verfuegungszeitschnitten.
-     */
+	 */
 	@Nonnull
 	private List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> bestehendeEntities, @Nonnull List<VerfuegungZeitabschnitt> neueEntities) {
 		List<VerfuegungZeitabschnitt> alles = new ArrayList<>();
@@ -183,12 +187,12 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * Erstellt aus der übergebenen Liste von VerfuegungsZeitabschnitten eine neue Liste, die keine Überschneidungen mehr
 	 * enthält. Überschneiden sich zwei Entitäten in der Ursprungsliste, so werden daraus drei Zeiträume erstellt:
 	 * |------------------------|
-	 *          40
-	 *             |-------------------------------------|
-	 *                               60
+	 * 40
+	 * |-------------------------------------|
+	 * 60
 	 * ergibt:
 	 * |-----------|------------|------------------------|
-	 *     40          100                60
+	 * 40          100                60
 	 */
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> entitiesToMerge) {
@@ -200,31 +204,48 @@ public abstract class AbstractEbeguRule implements Rule {
 		Iterator<LocalDate> iterator = setOfPotentialZeitraumGrenzen.iterator();
 		LocalDate datumVon = iterator.next();
 		while (iterator.hasNext()) {
-			LocalDate datumBis = iterator.next().minusDays(1);
+			LocalDate datumBis = iterator.next().minusDays(1);   //wir haben bei den Bis Daten jeweils einen Tag hinzugefuegt
 			VerfuegungZeitabschnitt mergedZeitabschnitt = new VerfuegungZeitabschnitt(new DateRange(datumVon, datumBis));
-			// Alle Zeitabschnitte suchen, die zwischen diesem Range liegen
+			// Alle Zeitabschnitte suchen, die mit  diesem Range ueberlappen
 			boolean foundOverlapping = false;
 			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : entitiesToMerge) {
 				Optional<DateRange> optionalOverlap = verfuegungZeitabschnitt.getGueltigkeit().getOverlap(mergedZeitabschnitt.getGueltigkeit());
 				if (optionalOverlap.isPresent()) {
-					mergedZeitabschnitt.add(verfuegungZeitabschnitt);
+					mergedZeitabschnitt.add(verfuegungZeitabschnitt); //Zeitabschnitt hinzumergen
 					foundOverlapping = true;
 				}
 			}
 			if (foundOverlapping) {
 				result.add(mergedZeitabschnitt);
 			}
-			datumVon = datumBis.plusDays(1);
+			datumVon = datumBis.plusDays(1); //nachestes vondaumt
 		}
 		return result;
 	}
 
-	private Set<LocalDate> createSetOfPotentialZeitraumGrenzen(@Nonnull List<VerfuegungZeitabschnitt>  entitiesUnmerged) {
+	/**
+	 * Sammelt alle Start und Enddaten aus der Liste der Zeitabschnitte zusammen.
+	 * Dabei ist es so, dass das bis Datum der Zeitabschnitte inklusiv - inklusiv ist. Wir moechten aber die Daten jeweils
+	 * inklusv - exklusive enddatum. Daher wird zum endtaum jeweils ein Tag hinzugezaehlt
+	 *
+	 * @param entitiesUnmerged liste der Abschnitte
+	 * @return Liste aller Dates die potentiell als Zeitraumgrenze dienen werden
+	 */
+	private Set<LocalDate> createSetOfPotentialZeitraumGrenzen(@Nonnull List<VerfuegungZeitabschnitt> entitiesUnmerged) {
 		Set<LocalDate> setOfDates = new TreeSet<>();
 		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : entitiesUnmerged) {
 			setOfDates.add(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
 			setOfDates.add(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis().plusDays(1));
 		}
 		return setOfDates;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("ruleKey", ruleKey)
+			.append("ruleType", ruleType)
+			.append("validityPeriod", validityPeriod)
+			.toString();
 	}
 }

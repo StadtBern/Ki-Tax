@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Regel für die Betreuungspensen. Sie beachtet:
- * - Anspruch aus Betreuungspensum darf nicht höher sein als Erwerbspensum
- * - Nur relevant für Kita, Tageseltern-Kleinkinder, die anderen bekommen so viel wie sie wollen
- * - Falls Kind eine Fachstelle hat, gilt das Pensum der Fachstelle
+ * Regel für die Fachstelle. Sucht das PensumFachstelle falls vorhanden und wenn ja wird ein entsprechender
+ * Zeitabschnitt generiert
  */
 public class FachstelleDataRule extends AbstractEbeguRule {
 

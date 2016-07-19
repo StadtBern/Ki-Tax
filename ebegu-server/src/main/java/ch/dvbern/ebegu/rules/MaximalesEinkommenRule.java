@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Regel die prueft ob das maximal moegliche Einkommen ueberschritten ist
+ * Setzt fuer die Zeitabschnitte das Massgebende Einkommen. Sollte der Maximalwert uebschritte werden so wird das Pensum auf 0 gesetzt
+ * TODO aufteilen in data rule und calc
  */
 public class MaximalesEinkommenRule extends AbstractEbeguRule {
 

@@ -13,10 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Regel für die Betreuungspensen. Sie beachtet:
- * - Anspruch aus Betreuungspensum darf nicht höher sein als Erwerbspensum
- * - Nur relevant für Kita, Tageseltern-Kleinkinder, die anderen bekommen so viel wie sie wollen
- * - Falls Kind eine Fachstelle hat, gilt das Pensum der Fachstelle
+ * Regel für die Erstellung der Zeitabschnitte der Betreuungspensen
  */
 public class BetreuungspensumDataRule extends AbstractEbeguRule {
 
@@ -40,6 +37,10 @@ public class BetreuungspensumDataRule extends AbstractEbeguRule {
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 	}
 
+	/**
+	 * @param betreuungspensum zu konvertiertendes Betreuungspensum
+	 * @return VerfuegungZeitabschnitt mit gleicher gueltigkeit und uebernommenem betreuungspensum
+	 */
 	@Nonnull
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Betreuungspensum betreuungspensum) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(betreuungspensum.getGueltigkeit());

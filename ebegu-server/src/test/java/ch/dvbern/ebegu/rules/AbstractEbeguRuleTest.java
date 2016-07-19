@@ -1,11 +1,12 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,7 +51,6 @@ public class AbstractEbeguRuleTest {
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(alles);
 		// 01.01.1900 - DATUM1-1, DATUM1 - DATUM2-1, DATUM2 - DATUM3, DATUM3+1 - DATUM 4,  DATUM4+1 - 31.12.9999
 
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(5, result.size());
@@ -109,7 +108,6 @@ public class AbstractEbeguRuleTest {
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_3, 40));
 		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_4, 60));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(zeitabschnitte);
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(3, result.size());
@@ -133,7 +131,6 @@ public class AbstractEbeguRuleTest {
 		zeitabschnitte.add(createBetreuungspensum(Constants.START_OF_TIME, Constants.END_OF_TIME, 50));
 		zeitabschnitte.add(createBetreuungspensum(DATUM_2, DATUM_4, 20));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(zeitabschnitte);
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(3, result.size());
@@ -157,7 +154,6 @@ public class AbstractEbeguRuleTest {
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_4, 80));
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_2, 40));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(zeitabschnitte);
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		// Es sollte neu zwei geben
 		Assert.assertNotNull(result);
@@ -179,7 +175,6 @@ public class AbstractEbeguRuleTest {
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_4, 80));
 		zeitabschnitte.add(createErwerbspensum(DATUM_2, DATUM_4, 40));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(zeitabschnitte);
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		// Es sollte neu zwei geben
 		Assert.assertNotNull(result);
@@ -201,7 +196,6 @@ public class AbstractEbeguRuleTest {
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_4, 80));
 		zeitabschnitte.add(createErwerbspensum(DATUM_1, DATUM_4, 40));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.mergeZeitabschnitte(zeitabschnitte);
-		Collections.sort(result, new VerfuegungZeitabschnittComparator());
 
 		// Es sollte neu zwei geben
 		Assert.assertNotNull(result);

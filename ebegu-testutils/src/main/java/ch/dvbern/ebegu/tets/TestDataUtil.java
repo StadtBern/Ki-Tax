@@ -220,6 +220,7 @@ public final class TestDataUtil {
 	public static Erwerbspensum createErwerbspensumData() {
 		Erwerbspensum ep = new Erwerbspensum();
 		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		ep.setPensum(50);
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);

@@ -122,7 +122,7 @@ public class BetreuungspensumRuleTest {
 		Assert.assertEquals(0, result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(0, result.get(0).getAnspruchspensumRest());
+		Assert.assertEquals(-1, result.get(0).getAnspruchspensumRest());
 	}
 
 	@Test
