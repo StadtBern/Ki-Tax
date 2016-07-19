@@ -14,6 +14,7 @@ import java.util.List;
  * - Anspruch aus Betreuungspensum darf nicht höher sein als Erwerbspensum
  * - Nur relevant für Kita, Tageseltern-Kleinkinder, die anderen bekommen so viel wie sie wollen
  * - Falls Kind eine Fachstelle hat, gilt das Pensum der Fachstelle
+ * Verweis 16.9.3
  */
 public class BetreuungspensumCalcRule extends AbstractEbeguRule {
 

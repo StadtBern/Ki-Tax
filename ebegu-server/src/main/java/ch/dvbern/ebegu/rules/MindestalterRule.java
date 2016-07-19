@@ -13,6 +13,8 @@ import java.util.List;
  * Regel für Mindestalter des Kindes:
  * - Erst ab dem 3. Monat besteht ein Anspruch. Ein Kita-Platz kann aber schon vor dem dritten Monat
  * 		beansprucht werden. In diesem Fall wird die Zeit vor dem 3. Monat zum Privattarif berechnet.
+ *
+ * 	Verweis 16.12.1 Mindestalter
  */
 public class MindestalterRule extends AbstractEbeguRule {
 

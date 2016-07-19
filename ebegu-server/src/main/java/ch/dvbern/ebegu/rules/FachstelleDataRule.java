@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * Regel für die Fachstelle. Sucht das PensumFachstelle falls vorhanden und wenn ja wird ein entsprechender
  * Zeitabschnitt generiert
+ * Verweis 16.13 Fachstelle
  */
 public class FachstelleDataRule extends AbstractEbeguRule {
 

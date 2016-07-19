@@ -15,6 +15,7 @@ import java.util.List;
  * ACHTUNG: Diese Regel gilt nicht fuer Kita und Tageseltern Kleinkinder.  Bei Tageseltern Schulkinder und Tagesstaetten
  * gibt es keine Reduktion des Anspruchs.
  * TODO aufteilen in data rule und calc
+ * Regel 16.7 Maximales Einkommen
  */
 public class MaximalesEinkommenRule extends AbstractEbeguRule {
 

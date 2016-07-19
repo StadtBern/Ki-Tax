@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * Regel für die Erstellung der Zeitabschnitte der Betreuungspensen
+ * Verweis 16.9.3
  */
 public class BetreuungspensumDataRule extends AbstractEbeguRule {
 

@@ -14,6 +14,7 @@ import java.util.Set;
  * Berechnet die hoehe des ErwerbspensumRule eines bestimmten Erwerbspensums
  * Diese Rule muss immer am Anfang kommen, d.h. sie setzt den initialen Anspruch
  * Die weiteren Rules müssen diesen Wert gegebenenfalls korrigieren.
+ * Verweis 16.9.2
  */
 public class ErwerbspensumRule extends AbstractEbeguRule{
 

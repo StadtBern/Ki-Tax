@@ -14,6 +14,7 @@ import java.util.List;
  * - Durch Adresse definiert
  * - Anspruch vom ersten Tag des Zuzugs
  * - Anspruch bis 2 Monate nach Wegzug, auf Ende Monat
+ * Verweis 16.8 Der zivilrechtliche Wohnsitz
  */
 public class WohnsitzRule extends AbstractEbeguRule {
 
