@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * Setzt fuer die Zeitabschnitte das Massgebende Einkommen. Sollte der Maximalwert uebschritte werden so wird das Pensum auf 0 gesetzt
+ * ACHTUNG: Diese Regel gilt nicht fuer Kita und Tageseltern Kleinkinder.  Bei Tageseltern Schulkinder und Tagesstaetten
+ * gibt es keine Reduktion des Anspruchs.
  * TODO aufteilen in data rule und calc
  */
 public class MaximalesEinkommenRule extends AbstractEbeguRule {
