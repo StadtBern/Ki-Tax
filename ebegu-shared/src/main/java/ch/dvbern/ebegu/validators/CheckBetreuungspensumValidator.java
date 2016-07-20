@@ -59,8 +59,12 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		final EntityManager em = createEntityManager();
 		int index = 0;
 		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
+			LocalDate betreuungAb = betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb();
+			LocalDate gesuchsperiodeStart = betPenContainer.extractGesuchsperiode().getGueltigkeit().getGueltigAb();
+			//Wir laden  die Parameter von Start-Gesuchsperiode falls Betreuung schon laenger als Gesuchsperiode besteht
+			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
 			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
-				betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb(),
+				stichtagParameter,
 				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), em);
 
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
@@ -90,10 +94,12 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 
 	/**
 	 * Returns the corresponding minimum value for the given betreuungsangebotTyp.
+	 *
 	 * @param betreuungsangebotTyp betreuungsangebotTyp
+	 * @param stichtag defines which parameter to load. We only look for params that are valid on this day
 	 * @return The minimum value for the betreuungsangebotTyp. Default value is -1: This means if the given betreuungsangebotTyp doesn't match any
 	 * recorded type, the min value will be 0 and any positive value will be then accepted
-     */
+	 */
 	private int getMinValueFromBetreuungsangebotTyp(LocalDate stichtag, BetreuungsangebotTyp betreuungsangebotTyp, final EntityManager em) {
 		EbeguParameterKey key = null;
 		if (betreuungsangebotTyp == BetreuungsangebotTyp.KITA) {
@@ -126,8 +132,8 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 	 * @param index the index of the Betreuungspensum inside the betreuungspensum container
 	 * @param objectType JA or GS
 	 * @param context the context
-     * @return true if the value resides inside the permitted range. False otherwise
-     */
+	 * @return true if the value resides inside the permitted range. False otherwise
+	 */
 	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String objectType, ConstraintValidatorContext context) {
 		// todo homa in Review. Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
 		if(betreuungspensum != null && betreuungspensum.getPensum() < pensumMin) {
