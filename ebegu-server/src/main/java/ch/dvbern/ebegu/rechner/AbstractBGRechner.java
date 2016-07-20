@@ -60,7 +60,7 @@ public class AbstractBGRechner {
 		BigDecimal massgebendesEinkommenMaxMinusMin = MathUtil.EXACT.subtract(parameterDTO.getMassgebendesEinkommenMaximal(), parameterDTO.getMassgebendesEinkommenMinimal());
 		BigDecimal massgebendesEinkommenMinusMin = MathUtil.EXACT.subtract(massgebendesEinkommenBerechnet, parameterDTO.getMassgebendesEinkommenMinimal());
 		BigDecimal zwischenresultat1 = MathUtil.EXACT.divide(kostenProStundeMaxMinusMin, massgebendesEinkommenMaxMinusMin);
-		BigDecimal zwischenresultat2 = MathUtil.EXACT.multiply(anspruch, zwischenresultat1, massgebendesEinkommenMinusMin);
+		BigDecimal zwischenresultat2 = MathUtil.EXACT.multiply(zwischenresultat1, massgebendesEinkommenMinusMin);
 		return MathUtil.EXACT.add(zwischenresultat2, parameterDTO.getKostenProStundeMinimal());
 	}
 
