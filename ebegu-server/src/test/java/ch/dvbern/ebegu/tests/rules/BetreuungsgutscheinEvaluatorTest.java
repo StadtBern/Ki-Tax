@@ -2,22 +2,15 @@ package ch.dvbern.ebegu.tests.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
-import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createDefaultInstitutionStammdaten;
 
@@ -44,10 +37,8 @@ import static ch.dvbern.ebegu.tets.TestDataUtil.createDefaultInstitutionStammdat
  * Kind4                     |---------------- Kita 30 ---------------------------------|
  *                                 |---- - - Kind 3 Monate alt - - -
  */
-public class BetreuungsgutscheinEvaluatorTest {
+public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 
-
-	private BetreuungsgutscheinEvaluator evaluator;
 
 	private DateRange erwerbspensumGS1_1 = new DateRange(LocalDate.of(2010, Month.FEBRUARY, 2), LocalDate.of(2017, Month.MARCH, 20));
 	private DateRange erwerbspensumGS1_2 = new DateRange(LocalDate.of(2017, Month.JANUARY, 1), LocalDate.of(2017, Month.JULY, 31));
@@ -57,21 +48,11 @@ public class BetreuungsgutscheinEvaluatorTest {
 	private DateRange gesuchsperiode = new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 
 
-	@Before
-	public void setUpCalcuator() {
-		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
-		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
-		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
-		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
-		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
-		evaluator = new BetreuungsgutscheinEvaluator(rules);
-	}
-
 	@Test
 	public void doTestEvaluation(){
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		evaluator.evaluate(testgesuch);
+		evaluator.evaluate(testgesuch, getParameter());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				System.out.println(betreuung.getVerfuegung());
@@ -111,6 +92,7 @@ public class BetreuungsgutscheinEvaluatorTest {
 		kindContainer.getBetreuungen().add(betreuung);
 		betreuung.getKind().setKindJA(new Kind());
 		betreuung.getKind().setGesuch(gesuch);
+		betreuung.getKind().getKindJA().setGeburtsdatum(LocalDate.now().minusYears(4));
 		gesuch.getKindContainers().add(betreuung.getKind());
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);

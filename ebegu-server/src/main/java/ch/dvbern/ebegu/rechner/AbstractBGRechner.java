@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.rechner;
 
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.MathUtil;
 
 import java.math.BigDecimal;
@@ -13,13 +15,19 @@ import java.util.stream.Stream;
 /**
  * Superklasse für BG-Rechner
  */
-public class AbstractBGRechner {
+public abstract class AbstractBGRechner {
 
 	protected static final BigDecimal FAKTOR_KIND = MathUtil.EXACT.from(1);
 	protected static final BigDecimal ZWOELF = MathUtil.EXACT.from(12L);
 	protected static final BigDecimal NEUN = MathUtil.EXACT.from(9L);
 	protected static final BigDecimal ZWANZIG = MathUtil.EXACT.from(20L);
 	protected static final BigDecimal ZWEIHUNDERTVIERZIG = MathUtil.EXACT.from(240L);
+
+
+	/**
+	 * Diese Methode muss von den Subklassen überschrieben werden und berechnet die übergebenen Verfügungsabschnitte.
+     */
+	public abstract VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
 
 	/**
 	 * Checkt die für alle Angebote benötigten Argumente auf Null.

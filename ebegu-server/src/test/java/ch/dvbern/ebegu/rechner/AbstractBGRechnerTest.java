@@ -1,17 +1,37 @@
 package ch.dvbern.ebegu.rechner;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.rules.Rule;
 import ch.dvbern.ebegu.types.DateRange;
+import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Superklasse für BG-Rechner-Tests
  */
 public class AbstractBGRechnerTest {
+
+
+	protected BetreuungsgutscheinEvaluator evaluator;
+
+	@Before
+	public void setUpCalcuator() {
+		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
+		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
+		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
+		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
+		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
+		evaluator = new BetreuungsgutscheinEvaluator(rules);
+	}
 
 	/**
 	 * Stellt alle für die Berechnung benötigten Parameter zusammen

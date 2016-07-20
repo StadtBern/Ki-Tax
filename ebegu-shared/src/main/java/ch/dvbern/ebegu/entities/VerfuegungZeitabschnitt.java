@@ -201,6 +201,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
 			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" Vollkosten: ").append(vollkosten).append("\t")
+			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
 			.append(" Bemerkungen: ").append(bemerkungen);
 		return sb.toString();
 	}
