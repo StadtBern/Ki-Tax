@@ -26,6 +26,17 @@ export default class EbeguUtil {
     }
 
     /**
+     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
+     * @returns {any}
+     */
+    public getBasisJahrPlusAsString(gesuchsperiode: TSGesuchsperiode, plusJahr: number): string {
+        if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
+            return String(gesuchsperiode.gueltigkeit.gueltigAb.year() + plusJahr);
+        }
+        return undefined;
+    }
+
+    /**
      * Translates the given string using the angular-translate filter
      * @param toTranslate word to translate
      * @returns {any} translated word

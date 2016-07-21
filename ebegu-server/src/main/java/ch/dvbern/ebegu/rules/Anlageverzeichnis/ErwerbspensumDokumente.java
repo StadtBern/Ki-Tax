@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
@@ -67,17 +67,17 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum> {
 
 		for (ErwerbspensumContainer erwerbspensenContainer : erwerbspensenContainers) {
 			final Erwerbspensum erwerbspensumJA = erwerbspensenContainer.getErwerbspensumJA();
-			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_RAV, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.BESTÄTIGUNG_ARZT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_RAV, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 
-			add(getDokument(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), AnlageGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 		}
 	}
 
@@ -89,13 +89,13 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum> {
 					// Todo: Wird nur bei Mutation des Erwerbspensums Angestellt verlangt oder bei Neueintritt im Job. Neueintritt = DatumVon >= Periodenstart
 					// Mutation ist noch nicht implementiert...
 					return false;
-				case NACHWEIS_SELBSTÄNDIGKEIT:
+				case NACHWEIS_SELBSTAENDIGKEIT:
 					return erwerbspensum.getTaetigkeit() == Taetigkeit.SELBSTAENDIG;
 				case NACHWEIS_AUSBILDUNG:
 					return erwerbspensum.getTaetigkeit() == Taetigkeit.AUSBILDUNG;
 				case NACHWEIS_RAV:
 					return erwerbspensum.getTaetigkeit() == Taetigkeit.RAV;
-				case BESTÄTIGUNG_ARZT:
+				case BESTAETIGUNG_ARZT:
 					return erwerbspensum.getGesundheitlicheEinschraenkungen();
 				case NACHWEIS_UNREG_ARBEITSZ:
 					return erwerbspensum.getZuschlagZuErwerbspensum()

@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import java.math.BigDecimal;
@@ -13,26 +13,26 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 
 
 	void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, String fullname, String basisJahr,
-									  boolean gemeinsam, int gesuchstellerNumber, AbstractFinanzielleSituation abstractFinanzielleSituation, AnlageGrundTyp anlageGrundTyp) {
+									  boolean gemeinsam, int gesuchstellerNumber, AbstractFinanzielleSituation abstractFinanzielleSituation, DokumentGrundTyp dokumentGrundTyp) {
 
 		if (gemeinsam) {
 			if (gesuchstellerNumber == 1) {
-				add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, basisJahr, null, anlageGrundTyp), anlageVerzeichnis);
-				add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, basisJahr, null, anlageGrundTyp), anlageVerzeichnis);
+				add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, null, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+				add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, null, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
 			}
 		} else {
-			add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.STEUERVERANLAGUNG, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.STEUERERKLAERUNG, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
 		}
 
-		add(getDokument(DokumentTyp.NACHWEIS_FAMILIENZULAGEN, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_VERMOEGEN, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.NACHWEIS_SCHULDEN, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.UNTERSTÜTZUNGSNACHWEIS, abstractFinanzielleSituation, fullname, basisJahr, anlageGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_FAMILIENZULAGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_VERMOEGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_SCHULDEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.UNTERSTUETZUNGSNACHWEIS, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
 
 	}
 
@@ -86,7 +86,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 							abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null &&
 								abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2().compareTo(BigDecimal.ZERO) > 0
 						));
-				case UNTERSTÜTZUNGSNACHWEIS:
+				case UNTERSTUETZUNGSNACHWEIS:
 					// Todo: Unklar! Punkt doppelt in Liste mit verschiedenen Parameter??????
 					return false;
 				default:

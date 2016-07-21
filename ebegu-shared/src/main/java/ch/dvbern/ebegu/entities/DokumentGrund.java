@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import org.hibernate.envers.Audited;
 
@@ -26,72 +26,72 @@ public class DokumentGrund extends AbstractEntity {
 	public DokumentGrund() {
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp) {
-		this.anlageGrundTyp = anlageGrundTyp;
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp) {
+		this.dokumentGrundTyp = dokumentGrundTyp;
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp, String tag1) {
-		this.anlageGrundTyp = anlageGrundTyp;
-		this.tag1 = tag1;
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname) {
+		this.dokumentGrundTyp = dokumentGrundTyp;
+		this.fullname = fullname;
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp, String tag1, String tag2) {
-		this.anlageGrundTyp = anlageGrundTyp;
-		this.tag1 = tag1;
-		this.tag2 = tag2;
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, String tag) {
+		this.dokumentGrundTyp = dokumentGrundTyp;
+		this.fullname = fullname;
+		this.tag = tag;
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp, DokumentTyp dokumentTyp) {
-		this(anlageGrundTyp);
-		this.anlageDokumente = new HashSet<AnlageDokument>();
-		this.anlageDokumente.add(new AnlageDokument(this, dokumentTyp));
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
+		this(dokumentGrundTyp);
+		this.dokumente = new HashSet<Dokument>();
+		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp, String tag1, DokumentTyp dokumentTyp) {
-		this(anlageGrundTyp, tag1);
-		this.anlageDokumente = new HashSet<AnlageDokument>();
-		this.anlageDokumente.add(new AnlageDokument(this, dokumentTyp));
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, DokumentTyp dokumentTyp) {
+		this(dokumentGrundTyp, fullname);
+		this.dokumente = new HashSet<Dokument>();
+		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
-	public DokumentGrund(AnlageGrundTyp anlageGrundTyp, String tag1, String tag2, DokumentTyp dokumentTyp) {
-		this(anlageGrundTyp, tag1, tag2);
-		this.anlageDokumente = new HashSet<AnlageDokument>();
-		this.anlageDokumente.add(new AnlageDokument(this, dokumentTyp));
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, String tag, DokumentTyp dokumentTyp) {
+		this(dokumentGrundTyp, fullname, tag);
+		this.dokumente = new HashSet<Dokument>();
+		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_analge_grund_gesuch_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokumentGrund_gesuch_id"), nullable = false)
 	private Gesuch gesuch;
 
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
-	private AnlageGrundTyp anlageGrundTyp;
+	private DokumentGrundTyp dokumentGrundTyp;
 
 	//TODO: Es wäre besser dies als Person zu speichern!
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = true)
 	@Nullable
-	private String tag1;
+	private String fullname;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = true)
 	@Nullable
-	private String tag2;
+	private String tag;
 
 	@Nullable
 	@Valid
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "anlageGrund")
-	private Set<AnlageDokument> anlageDokumente = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dokumentGrund")
+	private Set<Dokument> dokumente = new HashSet<>();
 
 
 	@Nullable
-	public Set<AnlageDokument> getAnlageDokumente() {
-		return anlageDokumente;
+	public Set<Dokument> getDokumente() {
+		return dokumente;
 	}
 
-	public void setAnlageDokumente(@Nullable Set<AnlageDokument> anlageDokumente) {
-		this.anlageDokumente = anlageDokumente;
+	public void setDokumente(@Nullable Set<Dokument> dokumente) {
+		this.dokumente = dokumente;
 	}
 
 	public Gesuch getGesuch() {
@@ -102,39 +102,39 @@ public class DokumentGrund extends AbstractEntity {
 		this.gesuch = gesuch;
 	}
 
-	public AnlageGrundTyp getAnlageGrundTyp() {
-		return anlageGrundTyp;
+	public DokumentGrundTyp getDokumentGrundTyp() {
+		return dokumentGrundTyp;
 	}
 
-	public void setAnlageGrundTyp(AnlageGrundTyp anlageGrundTyp) {
-		this.anlageGrundTyp = anlageGrundTyp;
-	}
-
-	@Nullable
-	public String getTag1() {
-		return tag1;
-	}
-
-	public void setTag1(@Nullable String tag1) {
-		this.tag1 = tag1;
+	public void setDokumentGrundTyp(DokumentGrundTyp dokumentGrundTyp) {
+		this.dokumentGrundTyp = dokumentGrundTyp;
 	}
 
 	@Nullable
-	public String getTag2() {
-		return tag2;
+	public String getFullname() {
+		return fullname;
 	}
 
-	public void setTag2(@Nullable String tag2) {
-		this.tag2 = tag2;
+	public void setFullname(@Nullable String fullname) {
+		this.fullname = fullname;
+	}
+
+	@Nullable
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(@Nullable String tag) {
+		this.tag = tag;
 	}
 
 	@Override
 	public String toString() {
 		return "DokumentGrund{" +
-			"anlageGrundTyp=" + anlageGrundTyp +
-			", tag1='" + tag1 + '\'' +
-			", tag2='" + tag2 + '\'' +
-			", anlageDokumente=" + anlageDokumente +
+			"dokumentGrundTyp=" + dokumentGrundTyp +
+			", fullname='" + fullname + '\'' +
+			", year='" + tag + '\'' +
+			", dokumente=" + dokumente +
 			'}';
 	}
 }

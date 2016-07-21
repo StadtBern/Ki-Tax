@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import java.math.BigDecimal;
@@ -69,11 +69,13 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 		}
 
 		final FinanzielleSituationContainer finanzielleSituationContainer = gesuchsteller.getFinanzielleSituationContainer();
-		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationJA();
 
-		super.getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, AnlageGrundTyp.FINANZIELLESITUATION);
+		//TODO: momentan wird zum Ausfüllen die FinanzielleSituationSV benutzt. Später muss jedoch die FinanzielleSituationJA benutzt werden!
+		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationSV();
 
-		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
+		super.getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
+
+		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 
 	}
 

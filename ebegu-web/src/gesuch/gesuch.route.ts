@@ -25,7 +25,12 @@ function getStates(): IState[] {
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
         new EbeguNewFallState(),
-        new EbeguVerfuegenListState()
+        new EbeguVerfuegenListState(),
+        new EbeguEinkommensverschlechterungInfoState(),
+        new EbeguEinkommensverschlechterungSteuernState(),
+        new EbeguEinkommensverschlechterungState(),
+        new EbeguEinkommensverschlechterungResultateState(),
+        new EbeguDokumenteState()
     ];
 }
 
@@ -117,6 +122,35 @@ export class EbeguVerfuegenListState implements IState {
     template = '<verfuegen-list-view>';
     url = '/verfuegen';
 }
+export class EbeguEinkommensverschlechterungInfoState implements IState {
+    name = 'gesuch.einkommensverschlechterungInfo';
+    template = '<einkommensverschlechterung-info-view>';
+    url = '/einkommensverschlechterungInfo';
+}
+
+export class EbeguEinkommensverschlechterungSteuernState implements IState {
+    name = 'gesuch.einkommensverschlechterungSteuern';
+    template = '<einkommensverschlechterung-steuern-view>';
+    url = '/einkommensverschlechterungSteuern';
+}
+
+export class EbeguEinkommensverschlechterungState implements IState {
+    name = 'gesuch.einkommensverschlechterung';
+    template = '<einkommensverschlechterung-view>';
+    url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus';
+}
+
+export class EbeguEinkommensverschlechterungResultateState implements IState {
+    name = 'gesuch.einkommensverschlechterungResultate';
+    template = '<einkommensverschlechterung-resultate-view>';
+    url = '/einkommensverschlechterungResultate/:basisjahrPlus';
+}
+
+export class EbeguDokumenteState implements IState {
+    name = 'gesuch.dokumente';
+    template = '<dokumente-view>';
+    url = '/dokumente/:gesuchstellerNumber';
+}
 
 //PARAMS
 export class IStammdatenStateParams implements IStateParamsService {
@@ -134,4 +168,13 @@ export class INewFallStateParams implements IStateParamsService {
 export class IErwerbspensumStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
     erwerbspensumNum: string;
+}
+
+export class IEinkommensverschlechterungStateParams implements IStateParamsService {
+    gesuchstellerNumber: string;
+    basisjahrPlus: string;
+}
+
+export class IEinkommensverschlechterungResultateStateParams implements IStateParamsService {
+    basisjahrPlus: string;
 }

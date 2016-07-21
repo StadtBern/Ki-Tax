@@ -57,7 +57,7 @@ public class JaxBConverter {
 	@Inject
 	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
 	@Inject
-	private EinkommensverschlechterungContainerService einkommensverschlechterungContainerService;
+	private EinkommensverschlechterungService einkommensverschlechterungService;
 	@Inject
 	private MandantService mandantService;
 	@Inject
@@ -450,6 +450,8 @@ public class JaxBConverter {
 		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus2(einkommensverschlechterungInfoJAXP.getGrundFuerBasisJahrPlus2());
 		einkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(einkommensverschlechterungInfoJAXP.getStichtagFuerBasisJahrPlus1());
 		einkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus2(einkommensverschlechterungInfoJAXP.getStichtagFuerBasisJahrPlus2());
+		einkommensverschlechterungInfo.setGemeinsameSteuererklaerung_BjP1(einkommensverschlechterungInfoJAXP.getGemeinsameSteuererklaerung_BjP1());
+		einkommensverschlechterungInfo.setGemeinsameSteuererklaerung_BjP2(einkommensverschlechterungInfoJAXP.getGemeinsameSteuererklaerung_BjP2());
 		return einkommensverschlechterungInfo;
 	}
 
@@ -464,6 +466,8 @@ public class JaxBConverter {
 		jaxEinkommensverschlechterungInfo.setGrundFuerBasisJahrPlus2(persistedEinkommensverschlechterungInfo.getGrundFuerBasisJahrPlus2());
 		jaxEinkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus1(persistedEinkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1());
 		jaxEinkommensverschlechterungInfo.setStichtagFuerBasisJahrPlus2(persistedEinkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2());
+		jaxEinkommensverschlechterungInfo.setGemeinsameSteuererklaerung_BjP1(persistedEinkommensverschlechterungInfo.getGemeinsameSteuererklaerung_BjP1());
+		jaxEinkommensverschlechterungInfo.setGemeinsameSteuererklaerung_BjP2(persistedEinkommensverschlechterungInfo.getGemeinsameSteuererklaerung_BjP2());
 
 		return jaxEinkommensverschlechterungInfo;
 	}
@@ -529,12 +533,16 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFamiliensituation().getId());
 			}
 		}
-		if (gesuchJAXP.getEinkommensverschlechterungInfo() != null && gesuchJAXP.getEinkommensverschlechterungInfo().getId() != null) {
-			final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(gesuchJAXP.getEinkommensverschlechterungInfo().getId());
-			if (evkiSituation.isPresent()) {
-				gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+		if (gesuchJAXP.getEinkommensverschlechterungInfo() != null) {
+			if (gesuchJAXP.getEinkommensverschlechterungInfo().getId() != null) {
+				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				if (evkiSituation.isPresent()) {
+					gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+				} else {
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				}
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+				gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
 			}
 		}
 
@@ -721,7 +729,7 @@ public class JaxBConverter {
 		Validate.notNull(containerJAX);
 		EinkommensverschlechterungContainer containerToMergeWith = new EinkommensverschlechterungContainer();
 		if (containerJAX.getId() != null) {
-			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungContainerService.findEinkommensverschlechterungContainer(containerJAX.getId());
+			final Optional<EinkommensverschlechterungContainer> existingEkvC = einkommensverschlechterungService.findEinkommensverschlechterungContainer(containerJAX.getId());
 			if (existingEkvC.isPresent()) {
 				containerToMergeWith = existingEkvC.get();
 			}
@@ -1035,6 +1043,7 @@ public class JaxBConverter {
 		einkommensverschlechterung.setNettolohnOkt(einkommensverschlechterungJAXP.getNettolohnOkt());
 		einkommensverschlechterung.setNettolohnNov(einkommensverschlechterungJAXP.getNettolohnNov());
 		einkommensverschlechterung.setNettolohnDez(einkommensverschlechterungJAXP.getNettolohnDez());
+		einkommensverschlechterung.setNettolohnZus(einkommensverschlechterungJAXP.getNettolohnZus());
 		return einkommensverschlechterung;
 	}
 
@@ -1060,6 +1069,7 @@ public class JaxBConverter {
 			jaxEinkommensverschlechterung.setNettolohnOkt(persistedEinkommensverschlechterung.getNettolohnOkt());
 			jaxEinkommensverschlechterung.setNettolohnNov(persistedEinkommensverschlechterung.getNettolohnNov());
 			jaxEinkommensverschlechterung.setNettolohnDez(persistedEinkommensverschlechterung.getNettolohnDez());
+			jaxEinkommensverschlechterung.setNettolohnZus(persistedEinkommensverschlechterung.getNettolohnZus());
 
 			return jaxEinkommensverschlechterung;
 		}
@@ -1333,4 +1343,32 @@ public class JaxBConverter {
 		return loginElement;
 	}
 
+	public JaxDokumente dokumentGruendeToJAX(Set<DokumentGrund> dokumentGrunds) {
+		JaxDokumente jaxDokumente = new JaxDokumente();
+
+		for (DokumentGrund dokumentGrund : dokumentGrunds) {
+			jaxDokumente.getDokumentGruende().add(dokumentGrundToJax(dokumentGrund));
+		}
+
+		return jaxDokumente;
+
+	}
+
+	private JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
+		JaxDokumentGrund jaxDokumentGrund = new JaxDokumentGrund();
+		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
+		jaxDokumentGrund.setFullname(dokumentGrund.getFullname());
+		jaxDokumentGrund.setTag(dokumentGrund.getTag());
+		for (Dokument dokument : dokumentGrund.getDokumente()) {
+			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+		}
+		return jaxDokumentGrund;
+	}
+
+	private JaxDokument dokumentToJax(Dokument dokument) {
+		JaxDokument jaxDokument = new JaxDokument();
+		jaxDokument.setDokumentName(dokument.getDokumentName());
+		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
+		return jaxDokument;
+	}
 }

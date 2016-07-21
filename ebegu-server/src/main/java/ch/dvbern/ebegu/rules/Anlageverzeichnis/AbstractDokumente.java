@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import java.util.Set;
@@ -21,17 +21,9 @@ abstract class AbstractDokumente<T> {
 		}
 	}
 
-	DokumentGrund getDokument(DokumentTyp dokumentTyp, T abstractFinanzielleSituation, String tag1, String tag2, AnlageGrundTyp anlageGrundTyp) {
+	DokumentGrund getDokument(DokumentTyp dokumentTyp, T abstractFinanzielleSituation, String fullname, String tag, DokumentGrundTyp dokumentGrundTyp) {
 		if (isDokumentNeeded(dokumentTyp, abstractFinanzielleSituation)) {
-			if (tag1 != null) {
-				if (tag2 != null) {
-					return new DokumentGrund(anlageGrundTyp, tag1, tag2, dokumentTyp);
-				} else {
-					return new DokumentGrund(anlageGrundTyp, tag1, dokumentTyp);
-				}
-			} else {
-				return new DokumentGrund(anlageGrundTyp, dokumentTyp);
-			}
+			return new DokumentGrund(dokumentGrundTyp, fullname, tag, dokumentTyp);
 		}
 		return null;
 	}

@@ -54,7 +54,7 @@ export class EbeguParameterRS {
     }
 
     public getEbeguParameterByJahr(year: number): IPromise<TSEbeguParameter[]> {
-        return this.http.get(this.serviceURL + '/year/' + year)
+        return this.http.get(this.serviceURL + '/tag/' + year)
             .then((response: any) => {
                 return this.ebeguRestUtil.parseEbeguParameters(response.data);
             });

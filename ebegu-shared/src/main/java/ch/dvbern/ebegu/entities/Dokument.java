@@ -15,14 +15,14 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @Audited
 @Entity
-public class AnlageDokument extends AbstractEntity {
+public class Dokument extends AbstractEntity {
 
 
 	private static final long serialVersionUID = -895840426585785097L;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@Column(nullable = true)
-	@Nullable
+	@Column(nullable = false)
+	@NotNull
 	private String dokumentName;
 
 
@@ -39,13 +39,13 @@ public class AnlageDokument extends AbstractEntity {
 
 	@NotNull
 	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_anlagedokument_anlagegrund_id"), nullable = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokument_dokumentgrund_id"), nullable = false)
 	private DokumentGrund dokumentGrund;
 
-	public AnlageDokument() {
+	public Dokument() {
 	}
 
-	public AnlageDokument(DokumentGrund dokumentGrund, DokumentTyp dokumentTyp) {
+	public Dokument(DokumentGrund dokumentGrund, DokumentTyp dokumentTyp) {
 		this.dokumentGrund = dokumentGrund;
 		this.dokumentTyp = dokumentTyp;
 
@@ -78,7 +78,7 @@ public class AnlageDokument extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return "AnlageDokument{" +
+		return "Dokument{" +
 			"dokumentName='" + dokumentName + '\'' +
 			", dokumentTyp=" + dokumentTyp +
 			'}';

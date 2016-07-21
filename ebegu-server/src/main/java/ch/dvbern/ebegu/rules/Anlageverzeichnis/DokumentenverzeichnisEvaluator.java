@@ -3,10 +3,12 @@ package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@Stateless
 public class DokumentenverzeichnisEvaluator {
 
 	private AbstractDokumente kindAnlagen = new KindDokumente();

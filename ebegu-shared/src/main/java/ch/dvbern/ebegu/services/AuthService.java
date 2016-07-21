@@ -37,8 +37,8 @@ public interface AuthService {
 
 	/**
 	 * @param credentials Token spezifische Credentials
-	 * @return TRUE falls der Token gültig ist, sonst FALSE
+	 * @return {@link AuthorisierterBenutzer#getId()} wenn der Login noch gut ist
 	 */
-	boolean verifyToken(@Nonnull BenutzerCredentials credentials);
+	Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials);
 
 }

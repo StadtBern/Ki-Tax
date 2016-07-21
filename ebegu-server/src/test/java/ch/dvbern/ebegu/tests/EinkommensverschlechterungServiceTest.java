@@ -3,7 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.services.EinkommensverschlechterungContainerService;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,10 +27,10 @@ import java.util.Optional;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeguTest {
+public class EinkommensverschlechterungServiceTest extends AbstractEbeguTest {
 
 	@Inject
-	private EinkommensverschlechterungContainerService einkommensverschlechterungContainerService;
+	private EinkommensverschlechterungService einkommensverschlechterungService;
 
 	@Inject
 	private Persistence<Gesuchsteller> persistence;
@@ -42,13 +42,13 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 
 	@Test
 	public void createEinkommensverschlechterungContainerTest() {
-		Assert.assertNotNull(einkommensverschlechterungContainerService);
+		Assert.assertNotNull(einkommensverschlechterungService);
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
 
-		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
+		einkommensverschlechterungService.saveEinkommensverschlechterungContainer(container);
 
-		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer();
+		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungService.getAllEinkommensverschlechterungContainer();
 		Assert.assertEquals(1, allEinkommensverschlechterungContainer.size());
 		EinkommensverschlechterungContainer einkommensverschlechterungContainer = allEinkommensverschlechterungContainer.iterator().next();
 		Assert.assertEquals(0, einkommensverschlechterungContainer.getEkvGSBasisJahrPlus1().getNettolohnJan().compareTo(BigDecimal.ONE));
@@ -77,20 +77,20 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 	 */
 	@Test
 	public void updateAndFindEinkommensverschlechterungContainerTest() {
-		Assert.assertNotNull(einkommensverschlechterungContainerService);
+		Assert.assertNotNull(einkommensverschlechterungService);
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
 
-		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
+		einkommensverschlechterungService.saveEinkommensverschlechterungContainer(container);
 
-		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer();
+		Collection<EinkommensverschlechterungContainer> allEinkommensverschlechterungContainer = einkommensverschlechterungService.getAllEinkommensverschlechterungContainer();
 		EinkommensverschlechterungContainer einkommensverschlechterungContainer = allEinkommensverschlechterungContainer.iterator().next();
 
 		einkommensverschlechterungContainer.getEkvGSBasisJahrPlus1().setNettolohnJan(BigDecimal.TEN);
 
-		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(einkommensverschlechterungContainer);
+		einkommensverschlechterungService.saveEinkommensverschlechterungContainer(einkommensverschlechterungContainer);
 
-		final Optional<EinkommensverschlechterungContainer> einkommensverschlechterungContainerUpdated = einkommensverschlechterungContainerService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainer.getId());
+		final Optional<EinkommensverschlechterungContainer> einkommensverschlechterungContainerUpdated = einkommensverschlechterungService.findEinkommensverschlechterungContainer(einkommensverschlechterungContainer.getId());
 
 		final EinkommensverschlechterungContainer container1 = einkommensverschlechterungContainerUpdated.get();
 		Assert.assertNotNull(container1);
@@ -99,15 +99,15 @@ public class EinkommensverschlechterungContainerServiceTest extends AbstractEbeg
 
 	@Test
 	public void removeEinkommensverschlechterungContainerTest() {
-		Assert.assertNotNull(einkommensverschlechterungContainerService);
-		Assert.assertEquals(0, einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer().size());
+		Assert.assertNotNull(einkommensverschlechterungService);
+		Assert.assertEquals(0, einkommensverschlechterungService.getAllEinkommensverschlechterungContainer().size());
 
 		EinkommensverschlechterungContainer container = getEinkommensverschlechterungContainer();
-		einkommensverschlechterungContainerService.saveEinkommensverschlechterungContainer(container);
-		Assert.assertEquals(1, einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer().size());
+		einkommensverschlechterungService.saveEinkommensverschlechterungContainer(container);
+		Assert.assertEquals(1, einkommensverschlechterungService.getAllEinkommensverschlechterungContainer().size());
 
-		einkommensverschlechterungContainerService.removeEinkommensverschlechterungContainer(container);
-		Assert.assertEquals(0, einkommensverschlechterungContainerService.getAllEinkommensverschlechterungContainer().size());
+		einkommensverschlechterungService.removeEinkommensverschlechterungContainer(container);
+		Assert.assertEquals(0, einkommensverschlechterungService.getAllEinkommensverschlechterungContainer().size());
 
 	}
 

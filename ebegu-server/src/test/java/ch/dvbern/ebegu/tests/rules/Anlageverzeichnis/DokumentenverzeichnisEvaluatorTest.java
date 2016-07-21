@@ -143,8 +143,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(sämi);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.SORGERECHTSVEREINBARUNG, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.SORGERECHTSVEREINBARUNG, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -160,8 +160,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_SOZ, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_SOZ, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -177,16 +177,16 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_BEH, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_BEH, dokument.getDokumentTyp());
 	}
 
 	private DokumentGrund getDokumentGrund(Kind kind) {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
 		Assert.assertTrue(calculate.size() == 1);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
-		Assert.assertEquals(AnlageGrundTyp.KINDER, dokumentGrund.getAnlageGrundTyp());
-		Assert.assertEquals(kind.getFullName(), dokumentGrund.getTag1());
+		Assert.assertEquals(DokumentGrundTyp.KINDER, dokumentGrund.getDokumentGrundTyp());
+		Assert.assertEquals(kind.getFullName(), dokumentGrund.getFullname());
 		return dokumentGrund;
 	}
 
@@ -194,9 +194,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
 		Assert.assertTrue(calculate.size() == 1);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
-		Assert.assertEquals(AnlageGrundTyp.ERWERBSPENSUM, dokumentGrund.getAnlageGrundTyp());
-		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getTag1());
-		Assert.assertEquals(erwerbspensum.getName(), dokumentGrund.getTag2());
+		Assert.assertEquals(DokumentGrundTyp.ERWERBSPENSUM, dokumentGrund.getDokumentGrundTyp());
+		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getFullname());
+		Assert.assertEquals(erwerbspensum.getName(), dokumentGrund.getTag());
 		return dokumentGrund;
 	}
 
@@ -204,62 +204,62 @@ public class DokumentenverzeichnisEvaluatorTest {
 	public void erwpDokuemntSelbständigTest() {
 		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.SELBSTAENDIG, false, false, null);
 
-		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, erwerbspensum));
+		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_RAV, erwerbspensum));
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTÄTIGUNG_ARZT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensum));
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, dokument.getDokumentTyp());
 	}
 
 	@Test
 	public void erwpDokuemntAusbildung() {
 		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.AUSBILDUNG, false, false, null);
 
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensum));
 		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_RAV, erwerbspensum));
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTÄTIGUNG_ARZT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensum));
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_AUSBILDUNG, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_AUSBILDUNG, dokument.getDokumentTyp());
 	}
 
 	@Test
 	public void erwpDokuemntRAV() {
 		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.RAV, false, false, null);
 
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensum));
 		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_RAV, erwerbspensum));
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTÄTIGUNG_ARZT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensum));
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_RAV, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_RAV, dokument.getDokumentTyp());
 	}
 
 	@Test
 	public void erwpDokuemntArzt() {
 		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.ANGESTELLT, true, false, null);
 
-		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTÄNDIGKEIT, erwerbspensum));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensum));
 		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_RAV, erwerbspensum));
-		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTÄTIGUNG_ARZT, erwerbspensum));
+		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.BESTAETIGUNG_ARZT, erwerbspensum));
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.BESTÄTIGUNG_ARZT, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.BESTAETIGUNG_ARZT, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -275,8 +275,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -292,8 +292,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -309,8 +309,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -326,8 +326,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -343,8 +343,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, anlageDokument.getDokumentTyp());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, dokument.getDokumentTyp());
 	}
 
 
@@ -352,37 +352,37 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Set<DokumentGrund> grunds = new HashSet<DokumentGrund>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
-			if (dokumentGrund.getTag1().equals(gesuchsteller.getFullName())) {
+			if (dokumentGrund.getFullname().equals(gesuchsteller.getFullName())) {
 				grunds.add(dokumentGrund);
 			}
 		}
 		return grunds;
 	}
 
-	private Set<DokumentGrund> getDokumentGrundsForType(DokumentTyp dokumentTyp, Set<DokumentGrund> dokumentGrunds, String tag1, String tag2) {
+	private Set<DokumentGrund> getDokumentGrundsForType(DokumentTyp dokumentTyp, Set<DokumentGrund> dokumentGrunds, String fullname, String year) {
 		Set<DokumentGrund> grunds = new HashSet<DokumentGrund>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
 
-			if (tag1 != null) {
-				if (tag2 != null) {
-					if (!tag1.equals(dokumentGrund.getTag1()) || !tag2.equals(dokumentGrund.getTag2())) {
+			if (fullname != null) {
+				if (year != null) {
+					if (!fullname.equals(dokumentGrund.getFullname()) || !year.equals(dokumentGrund.getTag())) {
 						continue;
 					}
 				} else {
-					if (!tag1.equals(dokumentGrund.getTag1()) || !(dokumentGrund.getTag2() == null)) {
+					if (!fullname.equals(dokumentGrund.getFullname()) || !(dokumentGrund.getTag() == null)) {
 						continue;
 					}
 				}
 			} else {
-				if (!(dokumentGrund.getTag1() == null) || !(dokumentGrund.getTag2() == null)) {
+				if (!(dokumentGrund.getFullname() == null) || !(dokumentGrund.getTag() == null)) {
 					continue;
 				}
 			}
 
-			final Set<AnlageDokument> anlageDokumente = dokumentGrund.getAnlageDokumente();
-			for (AnlageDokument anlageDokument : anlageDokumente) {
-				if (anlageDokument.getDokumentTyp().equals(dokumentTyp)) {
+			final Set<Dokument> dokumente = dokumentGrund.getDokumente();
+			for (Dokument dokument : dokumente) {
+				if (dokument.getDokumentTyp().equals(dokumentTyp)) {
 					grunds.add(dokumentGrund);
 					break;
 				}
@@ -402,10 +402,10 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertEquals(1, dokumentGrunds.size());
 
 		final DokumentGrund dokumentGrund = dokumentGrunds.iterator().next();
-		Assert.assertEquals(AnlageGrundTyp.FINANZIELLESITUATION, dokumentGrund.getAnlageGrundTyp());
-		Assert.assertEquals(null, dokumentGrund.getTag1());
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, anlageDokument.getDokumentTyp());
+		Assert.assertEquals(DokumentGrundTyp.FINANZIELLESITUATION, dokumentGrund.getDokumentGrundTyp());
+		Assert.assertEquals(null, dokumentGrund.getFullname());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, dokument.getDokumentTyp());
 	}
 
 	@Test
@@ -423,11 +423,11 @@ public class DokumentenverzeichnisEvaluatorTest {
 		checkDokumentGrundGS(dokumentGrundGS1);
 
 		final Set<DokumentGrund> dokumentGrundGS2 = getDokumentGrundsForGS(testgesuch.getGesuchsteller2(), dokumentGrunds);
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller2().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller2().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	private void checkDokumentGrundGS(Set<DokumentGrund> dokumentGrundGS1) {
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERVERANLAGUNG, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	@Test
@@ -443,25 +443,25 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final Set<DokumentGrund> dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
 		Assert.assertEquals(2, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 
 		final Set<DokumentGrund> dokumentGrundGS2 = getDokumentGrundsForGS(testgesuch.getGesuchsteller2(), dokumentGrunds);
 		Assert.assertEquals(2, dokumentGrundGS2.size());
 
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS2, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller2().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS2, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller2().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 
-	private void checkType(Set<DokumentGrund> dokumentGrundGS1, DokumentTyp dokumentTyp, String tag1, String tag2, AnlageGrundTyp anlageGrundTyp) {
-		final Set<DokumentGrund> dokumentGrundsForType = getDokumentGrundsForType(dokumentTyp, dokumentGrundGS1, tag1, tag2);
-		Assert.assertEquals("No document with anlageGrundTyp: " + anlageGrundTyp + "; dokumentTyp: " + dokumentTyp + "; tag1: " + tag1 + "; tag2: " + tag2,
+	private void checkType(Set<DokumentGrund> dokumentGrundGS1, DokumentTyp dokumentTyp, String fullname, String year, DokumentGrundTyp dokumentGrundTyp) {
+		final Set<DokumentGrund> dokumentGrundsForType = getDokumentGrundsForType(dokumentTyp, dokumentGrundGS1, fullname, year);
+		Assert.assertEquals("No document with dokumentGrundTyp: " + dokumentGrundTyp + "; dokumentTyp: " + dokumentTyp + "; fullname: " + fullname + "; year: " + year,
 			1, dokumentGrundsForType.size());
 		final DokumentGrund dokumentGrund = dokumentGrundsForType.iterator().next();
-		Assert.assertEquals(tag1, dokumentGrund.getTag1());
-		final AnlageDokument anlageDokument = dokumentGrund.getAnlageDokumente().iterator().next();
-		Assert.assertEquals(dokumentTyp, anlageDokument.getDokumentTyp());
+		Assert.assertEquals(fullname, dokumentGrund.getFullname());
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(dokumentTyp, dokument.getDokumentTyp());
 
 	}
 
@@ -489,13 +489,13 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Set<DokumentGrund> dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
 		Assert.assertEquals(7, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 
 
 		//Test wenn Steuererklärung nicht ausgefüllt ist
@@ -506,14 +506,14 @@ public class DokumentenverzeichnisEvaluatorTest {
 		dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
 		Assert.assertEquals(8, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_VERMOEGEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_SCHULDEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
-		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().getFullName(), null, AnlageGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.JAHRESLOHNAUSWEISE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_FAMILIENZULAGEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERSATZEINKOMMEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_ERHALTENE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_GELEISTETE_ALIMENTE, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_VERMOEGEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_SCHULDEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
+		checkType(dokumentGrundGS1, DokumentTyp.ERFOLGSRECHNUNGEN, testgesuch.getGesuchsteller1().getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION);
 	}
 
 	@Test
@@ -546,20 +546,20 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Set<DokumentGrund> dokumentGrundGS1 = getDokumentGrundsForGS(testgesuch.getGesuchsteller1(), dokumentGrunds);
 		Assert.assertEquals(4, dokumentGrundGS1.size());
 
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller1().getFullName(), "2016", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), "2016", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller1().getFullName(), "2016", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), "2016", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
-		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller1().getFullName(), "2017", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
-		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), "2017", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS1, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller1().getFullName(), "2017", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS1, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller1().getFullName(), "2017", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
 		Set<DokumentGrund> dokumentGrundGS2 = getDokumentGrundsForGS(testgesuch.getGesuchsteller2(), dokumentGrunds);
 		Assert.assertEquals(4, dokumentGrundGS2.size());
 
-		checkType(dokumentGrundGS2, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller2().getFullName(), "2016", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), "2016", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS2, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller2().getFullName(), "2016", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), "2016", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
-		checkType(dokumentGrundGS2, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller2().getFullName(), "2017", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
-		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), "2017", AnlageGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS2, DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, testgesuch.getGesuchsteller2().getFullName(), "2017", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		checkType(dokumentGrundGS2, DokumentTyp.STEUERERKLAERUNG, testgesuch.getGesuchsteller2().getFullName(), "2017", DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
 	}
 

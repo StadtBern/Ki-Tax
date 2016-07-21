@@ -4,7 +4,7 @@ import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.enums.AnlageGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 
@@ -39,9 +39,9 @@ public class KindDokumente extends AbstractDokumente<Kind> {
 		for (KindContainer kindContainer : kindContainers) {
 			final Kind kindJA = kindContainer.getKindJA();
 
-			add(getDokument(DokumentTyp.SORGERECHTSVEREINBARUNG, kindJA,kindJA.getFullName(), null, AnlageGrundTyp.KINDER), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.FACHSTELLENBEST_SOZ, kindJA,kindJA.getFullName(), null, AnlageGrundTyp.KINDER), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.FACHSTELLENBEST_BEH, kindJA,kindJA.getFullName(), null, AnlageGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.SORGERECHTSVEREINBARUNG, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.FACHSTELLENBEST_SOZ, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.FACHSTELLENBEST_BEH, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
 
 		}
 	}

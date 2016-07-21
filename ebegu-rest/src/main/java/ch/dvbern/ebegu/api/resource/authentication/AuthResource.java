@@ -89,6 +89,7 @@ public class AuthResource {
 		if (optBenutzer.isPresent()) {
 			benutzer = optBenutzer.get();
 		}
+		//todo homa imanol fragen ich glaube das sollten wir nach dem container login
 		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
 		accessElement = authService.login(login);
@@ -153,6 +154,6 @@ public class AuthResource {
 	 */
 	private String encodeAuthAccessElement(JaxAuthAccessElement element) {
 		Gson gson = new Gson();
-		return Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.defaultCharset()));
+		return Base64.getEncoder().encodeToString(gson.toJson(element).getBytes(Charset.forName("UTF-8")));
 	}
 }

@@ -1,0 +1,60 @@
+<div class="dokumente row">
+    <div class="col-md-12">
+
+
+        <br/>
+        <span data-translate="DOK_HINT_DOKUMENTE"> </span>
+        <br/>
+        <br/>
+
+        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form="" novalidate>
+
+            <dv-dokumente-list dokumente="vm.dokumenteFamSit" table-id="dokumenteFamSit"
+                               table-title="DOK_FAMILIENSITUATION" title-value="">
+            </dv-dokumente-list>
+
+            <dv-dokumente-list dokumente="vm.dokumenteKinder" table-id="dokumenteKinder"
+                               table-title="DOK_KINDER">
+            </dv-dokumente-list>
+
+            <dv-dokumente-list dokumente="vm.dokumenteFinSit" table-id="dokumenteFinSit"
+                               table-title="DOK_FINANZIELLE_SITUATION"
+                               title-value="vm.gesuchModelManager.getBasisjahr()">
+            </dv-dokumente-list>
+
+            <dv-dokumente-list dokumente="vm.dokumenteErwp" table-id="dokumenteErwp"
+                               table-title="DOK_ERWERBSPENSUM"
+                               tag="DOK_TAETIGKEIT">
+            </dv-dokumente-list>
+
+            <dv-dokumente-list dokumente="vm.dokumenteEkv" table-id="dokumenteEkv"
+                               table-title="EKVI_EINKOMMENSVERSCHLECHTERUNG"
+                               tag="DOK_JAHR">
+            </dv-dokumente-list>
+
+            <!-- -------------------------------------------Navigation--------------------------------------------  -->
+            <!--Buttons-->
+            <div class="row">
+                <div class="col-md-4 ">
+                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                        <span class="fa fa-chevron-left"></span>
+                        <span data-translate="ZURUECK_UPPER"></span>
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="#" id="cancelLink" data-translate="CANCEL"
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
+                </div>
+                <div class="col-md-4 text-right">
+                    <button type="submit" class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
