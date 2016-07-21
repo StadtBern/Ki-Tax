@@ -4,7 +4,8 @@ import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
@@ -51,6 +52,6 @@ public class TestfaelleResource {
 			persistence.persist(gesuch);
 			return Response.ok("Fall Waelti Dagmar erstellt").build();
 		}
-		return Response.serverError().build();
+		return Response.serverError().entity("Unknown fallID").build();
 	}
 }

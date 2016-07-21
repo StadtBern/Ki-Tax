@@ -11,11 +11,9 @@ import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 
 /**
- * Created by hefr on 21.07.16.
+ * Util zum berechnen der abgeleiteten Werte der Finanziellen Sitution
  */
 public class FinanzielleSituationUtil {
-
-
 
 	@Nonnull
 	public static FinanzielleSituationResultateDTO calculateResultate(@Nonnull FinanzielleSituationRechner rechner, @Nonnull Gesuch gesuch) {

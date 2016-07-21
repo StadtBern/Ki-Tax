@@ -25,12 +25,12 @@ public abstract class AbstractBGRechner {
 
 
 	/**
-	 * Diese Methode muss von den Subklassen überschrieben werden und berechnet die übergebenen Verfügungsabschnitte.
+	 * Diese Methode muss von den Subklassen ueberschrieben werden und fuehrt die Berechnung fuer  die uebergebenen Verfuegungsabschnitte durch.
      */
 	public abstract VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
 
 	/**
-	 * Checkt die für alle Angebote benötigten Argumente auf Null.
+	 * Checkt die für alle Angebote benoetigten Argumente auf Null.
 	 * Stellt sicher, dass der Zeitraum innerhalb eines Monates liegt
 	 * Wenn nicht wird eine Exception geworfen
      */
@@ -42,7 +42,7 @@ public abstract class AbstractBGRechner {
 		Objects.requireNonNull(massgebendesEinkommen, "massgebendesEinkommen darf nicht null sein");
 		// Max. 1 Monat
 		if (!von.getMonth().equals(bis.getMonth())) {
-			throw new IllegalArgumentException("BG Rechner dürfen nicht für monatsübergreifende Zeitabschnitte verwendet werden!");
+			throw new IllegalArgumentException("BG Rechner duerfen nicht für monatsuebergreifende Zeitabschnitte verwendet werden!");
 		}
 	}
 

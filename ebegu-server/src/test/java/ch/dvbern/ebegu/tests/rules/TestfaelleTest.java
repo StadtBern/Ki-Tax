@@ -18,7 +18,7 @@ import java.util.List;
 public class TestfaelleTest extends AbstractBGRechnerTest {
 
 
-
+	//todo asserts
 	@Test
 	public void testfall01_WaeltiDagmar() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
