@@ -25,8 +25,8 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 
 		VerfuegungZeitabschnitt calculate = tageselternRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
 		Assert.assertEquals(new BigDecimal("15.30"), calculate.getVollkosten());
-		Assert.assertEquals(new BigDecimal("3.35"), calculate.getElternbeitrag());
-		Assert.assertEquals(new BigDecimal("11.95"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("15.30"), calculate.getElternbeitrag());
+		Assert.assertEquals(new BigDecimal("0.00"), calculate.getVerguenstigung());
 		Assert.assertEquals(new BigDecimal("1.7"), calculate.getBetreuungsstunden());
 	}
 
@@ -41,6 +41,19 @@ public class TageselternRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("313.05"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("400.90"), calculate.getVerguenstigung());
 		Assert.assertEquals(new BigDecimal("77.9"), calculate.getBetreuungsstunden());
+	}
+
+	@Test
+	public void testTeilmonatMittleresEinkommen50() {
+		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
+			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 31),
+			50, new BigDecimal("87654"));
+
+		VerfuegungZeitabschnitt calculate = tageselternRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
+		Assert.assertEquals(new BigDecimal("357.00"), calculate.getVollkosten());
+		Assert.assertEquals(new BigDecimal("156.55"), calculate.getElternbeitrag());
+		Assert.assertEquals(new BigDecimal("200.45"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("39.0"), calculate.getBetreuungsstunden());
 	}
 
 	@Test

@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -118,6 +119,8 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
 				return parameter.get().getAsInteger();
+			} else{
+				LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key);
 			}
 		}
 		return 0;

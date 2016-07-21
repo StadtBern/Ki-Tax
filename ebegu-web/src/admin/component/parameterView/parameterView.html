@@ -72,15 +72,15 @@
 
             <div class="row">
                 <div class="col-md-2" ng-if="!vm.gesuchsperiode">
-                    <button type="button" ng-click="vm.createGesuchsperiode()" class="btn btn-sm btn-success">
+                    <dv-loading-button type="button" ng-click="vm.createGesuchsperiode()" button-class="btn btn-sm btn-success">
                         <i class="glyphicon glyphicon-plus">
                         </i> add item
-                    </button>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                    <button type="button" ng-click="vm.saveGesuchsperiode()" class="btn btn-primary"
-                           ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)">
-                    </button>
+                    <dv-loading-button type="button" ng-click="vm.saveGesuchsperiode()" button-class="btn btn-primary">
+                        <span ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
                     <a href="javascript:;" id="cancelLink" unsaved-warning-clear
@@ -125,11 +125,11 @@
                 <!-- Parameter pro Gesuchsperiode Buttons-->
                 <div class="row col-md-12">
                     <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                        <button type="button" ng-click="vm.saveParameterByGesuchsperiode()" class="btn btn-primary"
-                                ng-bind="(vm.ebeguParameterListGesuchsperiode && vm.ebeguParameterListGesuchsperiode[0].isNew())
-                                 ? ('SAVE' | translate) : ('UPDATE' | translate)">
-                                data-translate="SAVE">
-                        </button>
+                        <dv-loading-button type="button" ng-click="vm.saveParameterByGesuchsperiode()"
+                                           button-class="btn btn-primary">
+                            <span ng-bind="(vm.ebeguParameterListGesuchsperiode && vm.ebeguParameterListGesuchsperiode[0].isNew())
+                                                             ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
+                        </dv-loading-button>
                     </div>
                 </div>
             </div>
@@ -169,9 +169,9 @@
                 <!-- Buttons Parameter pro Jahr -->
                 <div class="row col-md-12">
                     <div class="col-md-2" ng-if="vm.jahr">
-                        <button type="button" ng-click="vm.saveParameterByJahr()" class="btn btn-primary"
-                                data-translate="SAVE">
-                        </button>
+                        <dv-loading-button type="button" ng-click="vm.saveParameterByJahr()" button-class="btn btn-primary">
+                            <span  data-translate="SAVE"></span>
+                        </dv-loading-button>
                     </div>
                 </div>
             </div>
