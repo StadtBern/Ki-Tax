@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,15 +33,13 @@ public class MaximalesEinkommenCalcRuleTest {
 	@Test
 	public void testNormalfall() {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
-		dto.setMassgebendesEinkommen(new BigDecimal("50000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
-		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, MathUtil.DEFAULT.from(50000));
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(new BigDecimal("50000"), result.get(0).getMassgebendesEinkommen());
+		Assert.assertEquals(new BigDecimal("50000.00"), result.get(0).getMassgebendesEinkommen());
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
@@ -49,22 +47,22 @@ public class MaximalesEinkommenCalcRuleTest {
 	@Test
 	public void testEinkommenZuHoch() {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
-		FinanzielleSituationResultateDTO dto = new FinanzielleSituationResultateDTO(betreuung.extractGesuch(), 4, new BigDecimal("10000"));
-		dto.setMassgebendesEinkommen(new BigDecimal("180000"));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, dto);
-		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln, dto);
-		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte, dto);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, MathUtil.DEFAULT.from(180000));
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
+		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(new BigDecimal("180000"), result.get(0).getMassgebendesEinkommen());
+		Assert.assertEquals(new BigDecimal("180000.00"), result.get(0).getMassgebendesEinkommen());
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
-	private List<VerfuegungZeitabschnitt> prepareData(Betreuung betreuung, FinanzielleSituationResultateDTO dto) {
+	private List<VerfuegungZeitabschnitt> prepareData(Betreuung betreuung, BigDecimal massgebendesEinkommen) {
 		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.getFinanzDatenDTO().setMassgebendesEinkommenBasisjahr(massgebendesEinkommen);
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
-		return erwerbspensumRule.calculate(betreuung, new ArrayList<>(), dto);
+		return erwerbspensumRule.calculate(betreuung, new ArrayList<>());
 	}
 }

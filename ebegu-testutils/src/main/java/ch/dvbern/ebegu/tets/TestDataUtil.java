@@ -4,6 +4,9 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
@@ -15,6 +18,11 @@ import java.util.HashSet;
  * comments homa
  */
 public final class TestDataUtil {
+
+	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
+	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
+	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
+	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
 
 	private TestDataUtil() {
 	}
@@ -334,5 +342,12 @@ public final class TestDataUtil {
 		betreuung.getKind().setGesuch(gesuch);
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		return betreuung;
+	}
+
+	public static void calculateFinanzDaten(Gesuch gesuch) {
+		if (gesuch.getGesuchsperiode() == null) {
+			gesuch.setGesuchsperiode(createGesuchsperiode1617());
+		}
+		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
 	}
 }

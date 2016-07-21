@@ -1,14 +1,13 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.rechner.KitaRechner;
+import ch.dvbern.ebegu.rechner.AbstractBGRechner;
+import ch.dvbern.ebegu.rechner.BGRechnerFactory;
+import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +21,7 @@ public class BetreuungsgutscheinEvaluator {
 	private List<Rule> rules = new LinkedList<>();
 
 	private RestanspruchEvaluator restanspruchEvaluator = new RestanspruchEvaluator(Constants.DEFAULT_GUELTIGKEIT);
+	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;
@@ -30,10 +30,12 @@ public class BetreuungsgutscheinEvaluator {
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
-	public void evaluate(Gesuch testgesuch) {
+	public void evaluate(Gesuch testgesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
-		//todo umsetzung berechne FinanzielleSituationResultatDTO, entweder uebergeben oder hier mit service berechnen aus gesuch
-		FinanzielleSituationResultateDTO finSitResultatDTO = new FinanzielleSituationResultateDTO(testgesuch, 5, new BigDecimal(1222));
+		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
+		if (testgesuch.getFinanzDatenDTO() == null) {
+			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationUtil.calculateFinanzDaten()");
+		}
 
 		List<Rule> rulesToRun = findRulesToRunForPeriode(testgesuch.getGesuchsperiode());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
@@ -47,25 +49,28 @@ public class BetreuungsgutscheinEvaluator {
 				// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
                 List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
                 for (Rule rule : rulesToRun) {
-                    zeitabschnitte = rule.calculate(betreuung, zeitabschnitte, finSitResultatDTO);
+                    zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
                 }
                 // Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
-				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
-				//TODO (hefr) Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen und die eigentliche Verfügung machen
+				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
+				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
-				// TODO (team) Den richtigen Rechner anwerfen
-				if (BetreuungsangebotTyp.KITA.equals(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp())) {
-					KitaRechner kitaRechner = new KitaRechner();
-					kitaRechner.toString();
-					//todo richtige Parameter mitgeben(abgeltung des Kantons Berns ist jahresabhaengig)
-//					kitaRechner.calculate()
-				}
-
-                Verfuegung verfuegung = new Verfuegung();
-                verfuegung.setZeitabschnitte(zeitabschnitte);
-                verfuegung.setBetreuung(betreuung);
+				// Die Verfügung erstellen
+				Verfuegung verfuegung = new Verfuegung();
+				verfuegung.setBetreuung(betreuung);
 				betreuung.setVerfuegung(verfuegung);
+
+				// Den richtigen Rechner anwerfen
+				AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
+				if (rechner != null) {
+					for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+						rechner.calculate(verfuegungZeitabschnitt, verfuegung, bgRechnerParameterDTO);
+					}
+				}
+				// Und die Resultate in die Verfügung schreiben
+                verfuegung.setZeitabschnitte(zeitabschnitte);
 			}
 		}
 	}

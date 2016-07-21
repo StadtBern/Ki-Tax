@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.rechner;
 
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.MathUtil;
 
 import java.math.BigDecimal;
@@ -13,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * Superklasse für BG-Rechner
  */
-public class AbstractBGRechner {
+public abstract class AbstractBGRechner {
 
 	protected static final BigDecimal FAKTOR_KIND = MathUtil.EXACT.from(1);
 	protected static final BigDecimal ZWOELF = MathUtil.EXACT.from(12L);
@@ -21,8 +23,14 @@ public class AbstractBGRechner {
 	protected static final BigDecimal ZWANZIG = MathUtil.EXACT.from(20L);
 	protected static final BigDecimal ZWEIHUNDERTVIERZIG = MathUtil.EXACT.from(240L);
 
+
 	/**
-	 * Checkt die für alle Angebote benötigten Argumente auf Null.
+	 * Diese Methode muss von den Subklassen ueberschrieben werden und fuehrt die Berechnung fuer  die uebergebenen Verfuegungsabschnitte durch.
+     */
+	public abstract VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
+
+	/**
+	 * Checkt die für alle Angebote benoetigten Argumente auf Null.
 	 * Stellt sicher, dass der Zeitraum innerhalb eines Monates liegt
 	 * Wenn nicht wird eine Exception geworfen
      */
@@ -34,7 +42,7 @@ public class AbstractBGRechner {
 		Objects.requireNonNull(massgebendesEinkommen, "massgebendesEinkommen darf nicht null sein");
 		// Max. 1 Monat
 		if (!von.getMonth().equals(bis.getMonth())) {
-			throw new IllegalArgumentException("BG Rechner dürfen nicht für monatsübergreifende Zeitabschnitte verwendet werden!");
+			throw new IllegalArgumentException("BG Rechner duerfen nicht für monatsuebergreifende Zeitabschnitte verwendet werden!");
 		}
 	}
 
