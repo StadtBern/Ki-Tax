@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests.validations;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
@@ -147,7 +148,10 @@ public class CheckBetreuungspensumValidatorTest {
 	 */
 	@Nonnull
 	private Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, int pensumGS, int pensumJA) {
+		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		betreuung.getKind().setGesuch(gesuch); // Aktuell nur in 1 Richtung verknuepft
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
 		BetreuungspensumContainer betPensContainer = TestDataUtil.createBetPensContainer(betreuung);
 		Set<BetreuungspensumContainer> containerSet = new HashSet<>();
