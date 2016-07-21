@@ -17,12 +17,15 @@ import java.util.List;
  */
 public class TestfaelleTest extends AbstractBGRechnerTest {
 
+
+
 	@Test
 	public void testfall01_WaeltiDagmar() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {

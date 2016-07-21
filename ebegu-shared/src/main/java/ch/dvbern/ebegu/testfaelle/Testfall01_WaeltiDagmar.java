@@ -31,20 +31,26 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
-		Betreuung betreuung = createBetreuung(BetreuungsangebotTyp.KITA);
-		betreuung.setKind(kind);
-		kind.getBetreuungen().add(betreuung);
-		// Betreuungspensen
-		BetreuungspensumContainer betreuungspensum = createBetreuungspensum(80);
-		betreuungspensum.setBetreuung(betreuung);
-		betreuung.getBetreuungspensumContainers().add(betreuungspensum);
+		// Kita Aaregg
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA);
+		betreuungKitaAaregg.setKind(kind);
+		kind.getBetreuungen().add(betreuungKitaAaregg);
+		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));
+		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
+		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
+		// Kita Brünnen
+		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA);
+		betreuungKitaBruennen.setKind(kind);
+		kind.getBetreuungen().add(betreuungKitaBruennen);
+		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(40, LocalDate.of(2017, Month.FEBRUARY, 1), LocalDate.of(2017, Month.JULY, 31));
+		betreuungspensumKitaBruennen.setBetreuung(betreuungKitaBruennen);
+		betreuungKitaBruennen.getBetreuungspensumContainers().add(betreuungspensumKitaBruennen);
 		// Finanzielle Situation
 		FinanzielleSituationContainer finanzielleSituationContainer = createFinanzielleSituationContainer();
 		finanzielleSituationContainer.getFinanzielleSituationSV().setNettolohn(MathUtil.DEFAULT.from(53265));
 		finanzielleSituationContainer.getFinanzielleSituationSV().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
-
 		return gesuch;
 	}
 }

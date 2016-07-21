@@ -45,4 +45,9 @@ public interface FinanzielleSituationService {
 	@Nonnull
 	FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch);
 
+	/**
+	 * Berechnet die Finanzdaten für die Verfügung, d.h. inklusive allfälliger Einkommensverschlechterungen
+	 * Das Resultat wird direkt dem Gesuch angehängt
+     */
+	void calculateFinanzDaten(@Nonnull Gesuch gesuch);
 }

@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -25,28 +24,15 @@ import java.util.Collection;
 @Stateless
 @Api
 public class TestfaelleResource {
-	@Inject
-	private JaxBConverter converter;
-	@Inject
-	private GesuchService gesuchService;
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
-	private FachstelleService fachstelleService;
-
-	@Inject
 	private Persistence<AbstractEntity> persistence;
 
 	@Inject
-	private MandantService mandantService;
-
-	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
-
-	@Inject
-	private InstitutionService institutionService;
 
 
 	@GET

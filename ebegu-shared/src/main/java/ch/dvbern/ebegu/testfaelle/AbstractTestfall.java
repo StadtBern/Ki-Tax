@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.testfaelle;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.types.DateRange;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -116,6 +117,15 @@ public class AbstractTestfall {
 		Betreuungspensum betreuungspensum = new Betreuungspensum();
 		betreuungspensumContainer.setBetreuungspensumJA(betreuungspensum);
 		betreuungspensum.setGueltigkeit(gesuchsperiode.getGueltigkeit());
+		betreuungspensum.setPensum(pensum);
+		return betreuungspensumContainer;
+	}
+
+	protected BetreuungspensumContainer createBetreuungspensum(int pensum, LocalDate datumVon, LocalDate datumBis) {
+		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
+		Betreuungspensum betreuungspensum = new Betreuungspensum();
+		betreuungspensumContainer.setBetreuungspensumJA(betreuungspensum);
+		betreuungspensum.setGueltigkeit(new DateRange(datumVon, datumBis));
 		betreuungspensum.setPensum(pensum);
 		return betreuungspensumContainer;
 	}

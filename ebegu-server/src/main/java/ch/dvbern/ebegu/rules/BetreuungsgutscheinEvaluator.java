@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
@@ -9,7 +8,6 @@ import ch.dvbern.ebegu.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +32,10 @@ public class BetreuungsgutscheinEvaluator {
 
 	public void evaluate(Gesuch testgesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
-		//todo umsetzung berechne FinanzielleSituationResultatDTO, entweder uebergeben oder hier mit service berechnen aus gesuch
-		FinanzielleSituationResultateDTO finSitResultatDTO = new FinanzielleSituationResultateDTO(testgesuch, 5, new BigDecimal(1222));
+		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
+		if (testgesuch.getFinanzDatenDTO() == null) {
+			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationUtil.calculateFinanzDaten()");
+		}
 
 		List<Rule> rulesToRun = findRulesToRunForPeriode(testgesuch.getGesuchsperiode());
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
@@ -49,13 +49,13 @@ public class BetreuungsgutscheinEvaluator {
 				// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
                 List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
                 for (Rule rule : rulesToRun) {
-                    zeitabschnitte = rule.calculate(betreuung, zeitabschnitte, finSitResultatDTO);
+                    zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
                 }
                 // Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
-				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
-				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 				// Die Verfügung erstellen
 				Verfuegung verfuegung = new Verfuegung();

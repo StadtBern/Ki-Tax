@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -48,6 +49,9 @@ public class Gesuch extends AbstractAntragEntity {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+
+	@Transient
+	private FinanzDatenDTO finanzDatenDTO;
 
 
 	@Nullable
@@ -100,5 +104,13 @@ public class Gesuch extends AbstractAntragEntity {
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO() {
+		return finanzDatenDTO;
+	}
+
+	public void setFinanzDatenDTO(FinanzDatenDTO finanzDatenDTO) {
+		this.finanzDatenDTO = finanzDatenDTO;
 	}
 }
