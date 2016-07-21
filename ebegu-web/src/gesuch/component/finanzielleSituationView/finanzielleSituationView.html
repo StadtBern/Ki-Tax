@@ -12,7 +12,7 @@
                 <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
+                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
                         <dv-radio-container name="steuerveranlagung"    class="input-element"
                                             ng-model="vm.getModel().finanzielleSituationSV.steuerveranlagungErhalten"
                                             ng-required="true" class="radio" ng-change="vm.steuerveranlagungClicked()">
@@ -27,7 +27,7 @@
                 <div class="col-md-6" ng-if="vm.showSteuerveranlagung() && vm.showSteuererklaerung()">
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></h4>
+                            translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
                         <dv-radio-container name="steuererklaerung"   class="input-element"
                                             ng-model="vm.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt"
                                             ng-required="true" class="radio">
@@ -38,8 +38,8 @@
             </div>
 
             <!-- Infotext -->
-            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT1" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></p>
-            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT2" translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></p>
+            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT1" translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></p>
+            <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT2" translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></p>
 
             <!-- Gesuchsteller -->
             <h5 class="subTitle">

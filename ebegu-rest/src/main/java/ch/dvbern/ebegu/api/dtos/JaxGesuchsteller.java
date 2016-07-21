@@ -55,7 +55,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	@Valid
 	@Nullable
-	private JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer;
+	private JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer;
 
 	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
 
@@ -152,10 +152,10 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	@Nullable
 	public JaxEinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
-		return jaxEinkommensverschlechterungContainer;
+		return einkommensverschlechterungContainer;
 	}
 
-	public void setEinkommensverschlechterungContainer(@Nullable final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer) {
-		this.jaxEinkommensverschlechterungContainer = jaxEinkommensverschlechterungContainer;
+	public void setEinkommensverschlechterungContainer(@Nullable JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer) {
+		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
 	}
 }

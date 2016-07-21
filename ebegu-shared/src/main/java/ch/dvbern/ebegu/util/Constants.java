@@ -10,6 +10,8 @@
 
 package ch.dvbern.ebegu.util;
 
+import ch.dvbern.ebegu.types.DateRange;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -42,4 +44,6 @@ public interface Constants {
 
 	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
 	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
+
+	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 }

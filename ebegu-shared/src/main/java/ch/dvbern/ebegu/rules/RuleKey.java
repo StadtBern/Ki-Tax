@@ -7,10 +7,21 @@ package ch.dvbern.ebegu.rules;
  */
 public enum RuleKey {
 
+	NO_RULE, // Verwendet für diverse Verarbeitungsschritte (z.B. Monatsschnitte machen)
+
+	ERWERBSPENSUM,
+	BETREUUNGSPENSUM,
+	FACHSTELLE,
 	/**
 	 * Regel 4.2 definiert dass kein Anspruch besteht wenn das massgebende Einkommen zu hoch ist
 	 */
 	MAXIMALES_EINKOMMEN,
-	BETREUUNGSANGEBOT_TYP, UMZUG_BERN
 
+
+	ABWESENHEIT,
+	BETREUUNGSANGEBOT_TYP,
+	MINDESTALTER,
+	WOHNSITZ,
+	EINREICHUNGSFRIST,
+	FAMILIENSITUATION;
 }

@@ -30,7 +30,6 @@ import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
-import TSUser from '../models/TSUser';
 
 describe('EbeguRestUtil', function () {
 
@@ -155,7 +154,6 @@ describe('EbeguRestUtil', function () {
             it('should transform TSGesuch to REST object and back', () => {
                 let myGesuch = new TSGesuch();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
-                myGesuch.einkommensverschlechterung = true;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
@@ -171,10 +169,10 @@ describe('EbeguRestUtil', function () {
                 TestDataUtil.setAbstractFieldsUndefined(familiensituation);
                 myGesuch.familiensituation = familiensituation;
                 myGesuch.kindContainers = [undefined];
+                myGesuch.einkommensverschlechterungInfo = undefined;  //todo createEinkommensverschlechterungInfo
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();
-                expect(restGesuch.einkommensverschlechterung).toBe(true);
 
                 let transformedGesuch = ebeguRestUtil.parseGesuch(new TSGesuch(), restGesuch);
                 expect(transformedGesuch).toBeDefined();
@@ -346,7 +344,7 @@ describe('EbeguRestUtil', function () {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
                 let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
-                DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+                    DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
                 let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
@@ -386,6 +384,7 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.umzugAdresse = undefined;
         myGesuchsteller.adresse = undefined;
         myGesuchsteller.finanzielleSituationContainer = undefined;
+        myGesuchsteller.einkommensverschlechterungContainer = undefined;
         return myGesuchsteller;
     }
 });

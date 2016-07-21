@@ -2,10 +2,12 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -19,15 +21,16 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 
 	@Max(100)
 	@Min(0)
-	@Nullable
+	@NotNull
+	@Column(nullable = false)
 	private Integer pensum;
 
-	@Nullable
+	@Nonnull
 	public Integer getPensum() {
 		return pensum;
 	}
 
-	public void setPensum(@Nullable Integer pensum) {
+	public void setPensum(@Nonnull Integer pensum) {
 		this.pensum = pensum;
 	}
 
