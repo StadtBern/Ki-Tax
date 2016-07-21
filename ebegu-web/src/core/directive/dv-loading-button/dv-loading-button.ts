@@ -49,16 +49,16 @@ export class DVLoadingButton implements IDirective {
  * By default the button will be disabled till the next REST servicecall returns (not neceserally the one that was triggered
  * by this button) or till 400 ms have expired
 * @example:
- * 
-    <dv-loading-button type="submit" 
-         button-click="vm.mySaveFunction(form)" 
+ *
+    <dv-loading-button type="submit"
+         button-click="vm.mySaveFunction(form)"
          button-class="btn btn-sm btn-success"
          button-disabled="!vm.isButtonDisabled()">
              <i class="glyphicon glyphicon-plus"></i>
              <span data-translate="SAVE"></span>
       </dv-loading-button>
 
- *     
+ *
  */
 export class DVLoadingButtonController implements IDVLoadingButtonController {
     static $inject: string[] = ['$http', '$scope', '$timeout'];
@@ -75,7 +75,7 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
 
         this.buttonClicked = () => {
-            //wenn der button diesabled ist machen wir mal gar nichts
+            //wenn der button disabled ist machen wir mal gar nichts
             if (this.buttonDisabled || this.isDisabled) {
                 return;
             }
@@ -124,11 +124,11 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
                 return parsedNum;
             }
         }
-        return 400;   //default delay = 400 MS
+        return 4000;   //default delay = 400 MS
     }
 
     /**
-     * disabled den Button fuer "delay" milisekunden
+     * disabled den Button fuer "delay" millisekunden
      */
     private disableForDelay(): void {
         this.isDisabled = true;
