@@ -57,4 +57,17 @@ xa-data-source add \
 	] \
 )
 
+
+#Helperskripts
+
+## Mehr Logoutput fuer login
+#/subsystem=logging/logger=org.jboss.security/:add(category=org.jboss.security,level=TRACE,use-parent-handlers=true)
+#/subsystem=logging/logger=org.jboss.as.security/:add(category=org.jboss.as.security,level=TRACE,use-parent-handlers=true)
+#
+#/subsystem=logging/logger=org.jboss.as.ejb3/:add(category=org.jboss.as.ejb3,level=TRACE,use-parent-handlers=true)
+#
+#/subsystem=logging/logger=org.jboss.as.web/:add(category=org.jboss.as.web,level=TRACE,use-parent-handlers=true)
+#
+#/subsystem=logging/logger=org.apache.catalina/:add(category=org.apache.catalina,level=TRACE,use-parent-handlers=true)
+#
 run-batch

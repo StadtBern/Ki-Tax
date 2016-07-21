@@ -30,10 +30,10 @@
                             <td ng-bind="row.name"></td>
 
                             <td ng-click="$event.stopPropagation()">
-                                <button type="button" ng-click="vm.removeInstitution(row)" class="btn btn-sm">
+                                <dv-loading-button type="button" ng-click="vm.removeInstitution(row)" button-class="btn btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
-                                </button>
+                                </dv-loading-button>
                             </td>
                         </tr>
                         <tr ng-if="vm.getInstitutionenList().length === 0">
@@ -48,20 +48,22 @@
                     <div class="col-md-6">
                         <dv-input-container class="form-group">
                             <!--Knopf zum hinzufügen neuer Institutionen-->
-                            <button type="button" ng-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()" class="btn btn-sm btn-success">
+                            <dv-loading-button type="button" ng-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()"
+                                               button-class="btn btn-sm btn-success">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_HINZUFUEGEN"></span>
-                            </button>
+                            </dv-loading-button>
                         </dv-input-container>
                     </div>
                     <div class="col-md-6">
                         <dv-input-container class="form-group secondColumn">
+                            <!--todo disable handeln-->
                             <!--Knopf zum speichern der ausgewählen oder neuer Institution-->
-                            <button type="submit" ng-click="vm.saveInstitution(form)" class="btn btn-sm btn-success"
-                                    ng-disabled="!vm.isSelectedInstitution()">
+                            <dv-loading-button type="submit" button-click="vm.saveInstitution(form)" button-class="btn btn-sm btn-success"
+                                    button-disabled="!vm.isSelectedInstitution()">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="INSTITUTION_SPEICHERN"></span>
-                            </button>
+                            </dv-loading-button>
                         </dv-input-container>
                     </div>
                 </div>
@@ -129,11 +131,11 @@
                                             <td ng-bind="vm.getBetreuungsangebotFromInstitutionList( row.betreuungsangebotTyp).value"></td>
 
                                             <td ng-click="$event.stopPropagation()">
-                                                <button type="button" ng-click="vm.removeInstitutionStammdaten(row)"
-                                                        class="btn btn-sm">
+                                                <dv-loading-button type="button" ng-click="vm.removeInstitutionStammdaten(row)"
+                                                        button-class="btn btn-sm">
                                                     <i class="fa fa-minus">
                                                     </i>
-                                                </button>
+                                                </dv-loading-button>
                                             </td>
                                         </tr>
                                         <tr ng-if="vm.getSelectedInstitutionStammdatenList().length === 0">
@@ -148,22 +150,23 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
-                                                <button type="button" ng-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
-                                                        class="btn btn-sm btn-success">
+                                                <dv-loading-button type="button" ng-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
+                                                        button-class="btn btn-sm btn-success">
                                                     <i class="glyphicon glyphicon-plus"></i>
                                                     <span data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
-                                                </button>
+                                                </dv-loading-button>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group secondColumn">
                                                 <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
-                                                <button type="submit" ng-click="vm.saveInstitutionStammdaten(form)"
-                                                        class="btn btn-sm btn-success"
-                                                        ng-disabled="!vm.isSelectedInstitutionStammdaten()">
+                                                <dv-loading-button type="submit"
+                                                                   button-click="vm.saveInstitutionStammdaten(form)"
+                                                        button-class="btn btn-sm btn-success"
+                                                        button-disabled="!vm.isSelectedInstitutionStammdaten()">
                                                     <i class="glyphicon glyphicon-plus"></i>
                                                     <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>
-                                                </button>
+                                                </dv-loading-button>
                                             </div>
                                         </div>
                                     </div>

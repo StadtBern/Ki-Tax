@@ -25,8 +25,8 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 
 		VerfuegungZeitabschnitt calculate = tagiRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
 		Assert.assertEquals(new BigDecimal("11.90"), calculate.getVollkosten());
-		Assert.assertEquals(new BigDecimal("2.40"), calculate.getElternbeitrag());
-		Assert.assertEquals(new BigDecimal("9.50"), calculate.getVerguenstigung());
+		Assert.assertEquals(new BigDecimal("11.90"), calculate.getElternbeitrag());
+		Assert.assertEquals(new BigDecimal("0.00"), calculate.getVerguenstigung());
 	}
 
 	@Test
@@ -39,6 +39,18 @@ public class TagiRechnerTest extends AbstractBGRechnerTest {
 		Assert.assertEquals(new BigDecimal("555.80"), calculate.getVollkosten());
 		Assert.assertEquals(new BigDecimal("237.30"), calculate.getElternbeitrag());
 		Assert.assertEquals(new BigDecimal("318.50"), calculate.getVerguenstigung());
+	}
+
+	@Test
+	public void testTeilmonatMittleresEinkommen50() {
+		Verfuegung verfuegung = prepareVerfuegungTagiUndTageseltern(
+			LocalDate.of(2016, Month.JANUARY, 21), LocalDate.of(2016, Month.JANUARY, 31),
+			50, new BigDecimal("87654"));
+
+		VerfuegungZeitabschnitt calculate = tagiRechner.calculate(verfuegung.getZeitabschnitte().get(0), verfuegung, parameterDTO);
+		Assert.assertEquals(new BigDecimal("277.90"), calculate.getVollkosten());
+		Assert.assertEquals(new BigDecimal("118.65"), calculate.getElternbeitrag());
+		Assert.assertEquals(new BigDecimal("159.25"), calculate.getVerguenstigung());
 	}
 
 	@Test
