@@ -129,11 +129,11 @@
                     <!--Betreuungspensum entfernen. Wird nur angezeigt wenn status=AUSSTEHEND und es mehrere Betreuungspensen gibt-->
                     <div class="row" ng-if="vm.isEnabled() && (($index > 0) || (vm.getBetreuungspensen().length > 1))">
                         <div class="col-md-12">
-                            <button type="button" ng-click="vm.removeBetreuungspensum(betpen)" class="btn btn-sm btn-warning"
-                                    ng-disabled="!vm.isEnabled()">
+                            <dv-loading-button type="button" ng-click="vm.removeBetreuungspensum(betpen)"
+                                               button-class="btn btn-sm btn-warning">
                                 <i class="glyphicon glyphicon-minus"></i>
                                 <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
-                            </button>
+                            </dv-loading-button>
                         </div>
                     </div>
                 </div>
@@ -144,11 +144,11 @@
                     <!--Neues Betreuungspensum hinzufuegen-->
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" ng-click="vm.createBetreuungspensum()" class="btn btn-sm btn-success"
+                            <dv-loading-button type="button" ng-click="vm.createBetreuungspensum()" button-class="btn btn-sm btn-success"
                                     ng-disabled="!vm.isEnabled()">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span data-translate="BETREUUNGSPENSUM_ERFASSEN"></span>
-                            </button>
+                            </dv-loading-button>
                         </div>
                     </div>
 
@@ -168,11 +168,11 @@
                     <!--Platz anfordern-->
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" ng-click="vm.platzAnfordern(form)" class="btn btn-sm btn-success"
+                            <dv-loading-button type="button" ng-click="vm.platzAnfordern(form)" button-class="btn btn-sm btn-success"
                                     ng-disabled="!vm.isEnabled()">
                         <span data-translate="PLATZBESTAETIGUNG_ANFORDERN">
                         </span>
-                            </button>
+                            </dv-loading-button>
                         </div>
                     </div>
 
@@ -206,15 +206,15 @@
             <!--Buttons-->
             <div class="row">
                 <div class="col-md-6">
-                    <button ng-click="vm.cancel()" class="btn btn-link previous">
+                    <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link previous">
                         <span data-translate="ABBRECHEN_UPPER"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
                 <div ng-if="vm.isEnabled()" class="col-md-6 text-right">
-                    <button type="submit" class="btn btn-link next">
+                    <dv-loading-button  type="submit" button-class="btn btn-link next" type="submit">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
             </div>
         </form>
