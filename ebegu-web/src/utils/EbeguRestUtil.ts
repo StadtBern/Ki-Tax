@@ -325,6 +325,7 @@ export default class EbeguRestUtil {
             erwerbspensum.zuschlagsgrund = erwerbspensumFromServer.zuschlagsgrund;
             erwerbspensum.zuschlagsprozent = erwerbspensumFromServer.zuschlagsprozent;
             erwerbspensum.zuschlagZuErwerbspensum = erwerbspensumFromServer.zuschlagZuErwerbspensum;
+            erwerbspensum.bezeichnung = erwerbspensumFromServer.bezeichnung;
             return erwerbspensum;
         } else {
             return undefined;
@@ -339,6 +340,7 @@ export default class EbeguRestUtil {
             restErwerbspensum.zuschlagsgrund = erwerbspensum.zuschlagsgrund;
             restErwerbspensum.zuschlagsprozent = erwerbspensum.zuschlagsprozent;
             restErwerbspensum.zuschlagZuErwerbspensum = erwerbspensum.zuschlagZuErwerbspensum;
+            restErwerbspensum.bezeichnung = erwerbspensum.bezeichnung;
             return restErwerbspensum;
         }
         return undefined;

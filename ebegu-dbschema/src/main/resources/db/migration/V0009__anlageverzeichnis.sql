@@ -1,4 +1,7 @@
-CREATE TABLE dokument 
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Create new tables for Dokumente
+-- ---------------------------------------------------------------------------------------------------------------------
+CREATE TABLE dokument
   ( 
      id                 VARCHAR(36) NOT NULL, 
      timestamp_erstellt DATETIME NOT NULL, 
@@ -72,4 +75,11 @@ ALTER TABLE dokument_grund_aud
 
 ALTER TABLE dokument_grund 
   ADD CONSTRAINT fk_dokumentgrund_gesuch_id FOREIGN KEY (gesuch_id) REFERENCES 
-  gesuch (id); 
+  gesuch (id);
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- Add bezeichnung zu erwerbspensum
+-- ---------------------------------------------------------------------------------------------------------------------
+ALTER TABLE erwerbspensum ADD COLUMN bezeichnung VARCHAR(255);
+ALTER TABLE erwerbspensum_aud ADD COLUMN bezeichnung VARCHAR(255);
