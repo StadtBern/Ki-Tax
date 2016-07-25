@@ -42,8 +42,6 @@ import java.util.Set;
  * Erfolgsrechnungen der letzten drei Jahre (Basisjahr, Basisjahr-1, Basisjahr-2)
  * Notwendig, wenn keine Steuerveranlagung vorhanden und Summe der Erfolgsrechnungen > 0
  * <p>
- * Unterstützungsnachweis / Bestätigung Sozialdienst (Ersatzeinkommen)
- * Notwendig, wenn keine Steuerveranlagung vorhanden und Nettolohn > 0
  **/
 public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationDokumente {
 
@@ -80,11 +78,14 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 	}
 
 	protected boolean isJahresLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
+		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
+			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
 
-		return !finanzielleSituation.getSteuerveranlagungErhalten() &&
-			finanzielleSituation.getNettolohn() != null &&
-			finanzielleSituation.getNettolohn().compareTo(BigDecimal.ZERO) > 0;
+			return !finanzielleSituation.getSteuerveranlagungErhalten() &&
+				finanzielleSituation.getNettolohn() != null &&
+				finanzielleSituation.getNettolohn().compareTo(BigDecimal.ZERO) > 0;
+		}
+		return false;
 	}
 
 }

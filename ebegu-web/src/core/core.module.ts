@@ -41,6 +41,10 @@ import UserRS from './service/userRS.rest';
 import {DVUserselect} from './directive/dv-userselect/dv-userselect';
 import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
 import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
+import {DVLoading} from './directive/dv-loading/dv-loading';
+import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
+import HttpResponseInterceptor from './service/HttpResponseInterceptor';
+import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 
 let dynamicDependencies = function (): string[] {
 
@@ -115,8 +119,12 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvLoading', DVLoading.factory())
+    .directive('dvLoadingButton', DVLoadingButton.factory())
+    .directive('dvSubmitevent', DVSubmitevent.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
+    .service('HttpResponseInterceptor', HttpResponseInterceptor)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvErwerbspensumList', new DVErwerbspensumListConfig())

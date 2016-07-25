@@ -1357,7 +1357,7 @@ public class JaxBConverter {
 	private JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
 		JaxDokumentGrund jaxDokumentGrund = new JaxDokumentGrund();
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
-		jaxDokumentGrund.setFullname(dokumentGrund.getFullname());
+		jaxDokumentGrund.setFullname(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
 		for (Dokument dokument : dokumentGrund.getDokumente()) {
 			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));

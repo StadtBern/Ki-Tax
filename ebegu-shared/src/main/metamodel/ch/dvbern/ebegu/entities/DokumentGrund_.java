@@ -11,7 +11,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class DokumentGrund_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
 	public static volatile SingularAttribute<DokumentGrund, DokumentGrundTyp> dokumentGrundTyp;
-	public static volatile SingularAttribute<DokumentGrund, String> fullname;
+	public static volatile SingularAttribute<DokumentGrund, String> fullName;
 	public static volatile SingularAttribute<DokumentGrund, String> tag;
 	public static volatile SingularAttribute<DokumentGrund, Gesuch> gesuch;
 	public static volatile SetAttribute<DokumentGrund, Dokument> dokumente;

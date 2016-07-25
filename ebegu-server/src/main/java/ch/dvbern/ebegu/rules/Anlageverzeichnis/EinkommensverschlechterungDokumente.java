@@ -35,7 +35,7 @@ import java.util.Set;
  * Notwendig, wenn Summe der Erfolgsrechnungen > 0
  * <p>
  * Unterstützungsnachweis / Bestätigung Sozialdienst (Ersatzeinkommen)
- * Notwendig, wenn Nettolohn > 0
+ * Notwendig, wenn Nettolohn > 0 => nicht mehr nötig!
  **/
 public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSituationDokumente {
 
@@ -91,24 +91,28 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 	}
 
 	protected boolean isMonatsLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		Einkommensverschlechterung einkommensverschlechterung = (Einkommensverschlechterung) abstractFinanzielleSituation;
+		if (abstractFinanzielleSituation instanceof Einkommensverschlechterung) {
 
-		return !einkommensverschlechterung.getSteuerveranlagungErhalten() &&
-			(
-				einkommensverschlechterung.getNettolohnJan() != null && einkommensverschlechterung.getNettolohnJan().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnFeb() != null && einkommensverschlechterung.getNettolohnFeb().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnMrz() != null && einkommensverschlechterung.getNettolohnMrz().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnApr() != null && einkommensverschlechterung.getNettolohnApr().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnMai() != null && einkommensverschlechterung.getNettolohnMai().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnJun() != null && einkommensverschlechterung.getNettolohnJun().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnJul() != null && einkommensverschlechterung.getNettolohnJul().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnAug() != null && einkommensverschlechterung.getNettolohnAug().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnSep() != null && einkommensverschlechterung.getNettolohnSep().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnOkt() != null && einkommensverschlechterung.getNettolohnOkt().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnNov() != null && einkommensverschlechterung.getNettolohnNov().compareTo(BigDecimal.ZERO) > 0 ||
-					einkommensverschlechterung.getNettolohnDez() != null && einkommensverschlechterung.getNettolohnDez().compareTo(BigDecimal.ZERO) > 0
-				// Todo: 13. Monatslohn / Bonus
-			);
+			Einkommensverschlechterung einkommensverschlechterung = (Einkommensverschlechterung) abstractFinanzielleSituation;
+
+			return !einkommensverschlechterung.getSteuerveranlagungErhalten() &&
+				(
+					einkommensverschlechterung.getNettolohnJan() != null && einkommensverschlechterung.getNettolohnJan().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnFeb() != null && einkommensverschlechterung.getNettolohnFeb().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnMrz() != null && einkommensverschlechterung.getNettolohnMrz().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnApr() != null && einkommensverschlechterung.getNettolohnApr().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnMai() != null && einkommensverschlechterung.getNettolohnMai().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnJun() != null && einkommensverschlechterung.getNettolohnJun().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnJul() != null && einkommensverschlechterung.getNettolohnJul().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnAug() != null && einkommensverschlechterung.getNettolohnAug().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnSep() != null && einkommensverschlechterung.getNettolohnSep().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnOkt() != null && einkommensverschlechterung.getNettolohnOkt().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnNov() != null && einkommensverschlechterung.getNettolohnNov().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnDez() != null && einkommensverschlechterung.getNettolohnDez().compareTo(BigDecimal.ZERO) > 0 ||
+						einkommensverschlechterung.getNettolohnZus() != null && einkommensverschlechterung.getNettolohnZus().compareTo(BigDecimal.ZERO) > 0
+				);
+		}
+		return false;
 	}
 
 }

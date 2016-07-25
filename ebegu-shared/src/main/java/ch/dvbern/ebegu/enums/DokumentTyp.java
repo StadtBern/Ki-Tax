@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.enums;
 
 /**
- * Enum fuer das DTO JaxPendenzXX. Damit weisst man ob es sich um ein Gesuch oder eine Mutation handelt.
+ * Enum fuer den Dokumenten Typ
  */
 public enum DokumentTyp {
 	NACHWEIS_TRENNUNG,
@@ -28,7 +28,6 @@ public enum DokumentTyp {
 	NACHWEIS_VERMOEGEN,
 	NACHWEIS_SCHULDEN,
 	ERFOLGSRECHNUNGEN,
-	UNTERSTUETZUNGSNACHWEIS,
 	//EKV
 	NACHWEIS_EINKOMMENSSITUATION_MONAT,
 	DIV

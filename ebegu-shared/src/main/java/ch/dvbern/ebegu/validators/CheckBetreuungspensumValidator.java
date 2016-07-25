@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -59,6 +60,8 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		final EntityManager em = createEntityManager();
 		int index = 0;
 		for (BetreuungspensumContainer betPenContainer: betreuung.getBetreuungspensumContainers()) {
+			//TODO Team abklaeren: Stichtag muss max von BetPeriode.start und betPen.datumVon sein, kann spaeter mit dem extract helper gemacht werden
+
 			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
 				betPenContainer.getBetreuungspensumJA().getGueltigkeit().getGueltigAb(),
 				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), em);
@@ -112,6 +115,9 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
 				return parameter.get().getAsInteger();
+			} else{
+				LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key);
+
 			}
 		}
 		return 0;
@@ -130,7 +136,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
      */
 	private boolean validateBetreuungspensum(Betreuungspensum betreuungspensum, int pensumMin, int index, String objectType, ConstraintValidatorContext context) {
 		// todo homa in Review. Es waere moeglich, die Messages mit der Klasse HibernateConstraintValidatorContext zu erzeugen. Das waere aber Hibernate-abhaengig. wuerde es Sinn machen??
-		if(betreuungspensum != null && betreuungspensum.getPensum() != null && betreuungspensum.getPensum() < pensumMin) {
+		if(betreuungspensum != null && betreuungspensum.getPensum() < pensumMin) {
 			ResourceBundle rb = ResourceBundle.getBundle("ValidationMessages");
 			String message = rb.getString("invalid_betreuungspensum");
 			message = MessageFormat.format(message, betreuungspensum.getPensum(), pensumMin);

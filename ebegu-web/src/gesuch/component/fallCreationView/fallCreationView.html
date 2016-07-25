@@ -51,11 +51,11 @@
     <!--Buttons-->
         <div class="row">
             <div class="col-md-6 col-md-offset-6">
-                <button type="submit" class="btn btn-link next">
+                <dv-loading-button type="submit" button-class="btn btn-link next">
                     <span ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="SPEICHERN_UPPER"></span>
                     <span ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
-                </button>
+                </dv-loading-button>
             </div>
         </div>
     </form>

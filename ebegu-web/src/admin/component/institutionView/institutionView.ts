@@ -46,7 +46,7 @@ export class InstitutionViewController {
 
     static $inject = ['InstitutionRS', 'EbeguUtil', 'InstitutionStammdatenRS', 'ErrorService'];
     /* @ngInject */
-    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS,  private errorService: ErrorService) {
+    constructor(institutionRS: InstitutionRS, ebeguUtil: EbeguUtil, institutionStammdatenRS: InstitutionStammdatenRS, private errorService: ErrorService) {
         this.institutionRS = institutionRS;
         this.ebeguUtil = ebeguUtil;
         this.institutionStammdatenRS = institutionStammdatenRS;
@@ -216,6 +216,5 @@ export class InstitutionViewController {
             return false;
         }
     }
-
 
 }

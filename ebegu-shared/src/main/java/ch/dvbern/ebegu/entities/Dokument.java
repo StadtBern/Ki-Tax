@@ -48,7 +48,6 @@ public class Dokument extends AbstractEntity {
 	public Dokument(DokumentGrund dokumentGrund, DokumentTyp dokumentTyp) {
 		this.dokumentGrund = dokumentGrund;
 		this.dokumentTyp = dokumentTyp;
-
 	}
 
 	@Nullable

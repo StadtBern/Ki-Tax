@@ -8,7 +8,7 @@
         </h4>
         <hr class="header"/>
 
-        <table st-table="famsit" st-safe-src="vm.dokumente"
+        <table st-table="table" st-safe-src="vm.dokumente"
                class="table table-striped" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
             <thead>
             <tr>
@@ -32,7 +32,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="row in famsit">
+            <tr ng-repeat="row in table">
 
                 <!--without tag-->
                 <td ng-bind="row.dokumente[0].dokumentTyp | translate" width="60%" ng-if="!vm.tag"></td>

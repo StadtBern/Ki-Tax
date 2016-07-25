@@ -42,7 +42,9 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	private LocalDate geburtsdatum;
 
 
-	public String getVorname() { return vorname; }
+	public String getVorname() {
+		return vorname;
+	}
 
 	public void setVorname(String vorname) {
 		this.vorname = vorname;
@@ -72,8 +74,8 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		this.geburtsdatum = geburtsdatum;
 	}
 
-	public String getFullName(){
-		return vorname +" "+ nachname;
+	public String getFullName() {
+		return vorname + " " + nachname;
 	}
 
 }

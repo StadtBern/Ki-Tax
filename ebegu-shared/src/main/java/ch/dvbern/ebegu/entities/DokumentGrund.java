@@ -30,14 +30,14 @@ public class DokumentGrund extends AbstractEntity {
 		this.dokumentGrundTyp = dokumentGrundTyp;
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname) {
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.fullname = fullname;
+		this.fullName = fullName;
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, String tag) {
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
-		this.fullname = fullname;
+		this.fullName = fullName;
 		this.tag = tag;
 	}
 
@@ -47,14 +47,14 @@ public class DokumentGrund extends AbstractEntity {
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, DokumentTyp dokumentTyp) {
-		this(dokumentGrundTyp, fullname);
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
+		this(dokumentGrundTyp, fullName);
 		this.dokumente = new HashSet<Dokument>();
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullname, String tag, DokumentTyp dokumentTyp) {
-		this(dokumentGrundTyp, fullname, tag);
+	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
+		this(dokumentGrundTyp, fullName, tag);
 		this.dokumente = new HashSet<Dokument>();
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
@@ -68,11 +68,10 @@ public class DokumentGrund extends AbstractEntity {
 	@NotNull
 	private DokumentGrundTyp dokumentGrundTyp;
 
-	//TODO: Es wäre besser dies als Person zu speichern!
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = true)
 	@Nullable
-	private String fullname;
+	private String fullName;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = true)
@@ -111,12 +110,12 @@ public class DokumentGrund extends AbstractEntity {
 	}
 
 	@Nullable
-	public String getFullname() {
-		return fullname;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFullname(@Nullable String fullname) {
-		this.fullname = fullname;
+	public void setFullName(@Nullable String fullname) {
+		this.fullName = fullname;
 	}
 
 	@Nullable
@@ -132,7 +131,7 @@ public class DokumentGrund extends AbstractEntity {
 	public String toString() {
 		return "DokumentGrund{" +
 			"dokumentGrundTyp=" + dokumentGrundTyp +
-			", fullname='" + fullname + '\'' +
+			", fullName='" + fullName + '\'' +
 			", year='" + tag + '\'' +
 			", dokumente=" + dokumente +
 			'}';

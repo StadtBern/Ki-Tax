@@ -29,7 +29,7 @@ import java.util.Set;
 public class KindDokumente extends AbstractDokumente<Kind> {
 
 	@Override
-	public void  getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
+	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
 		final Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		if (kindContainers == null || kindContainers.isEmpty()) {
@@ -39,13 +39,12 @@ public class KindDokumente extends AbstractDokumente<Kind> {
 		for (KindContainer kindContainer : kindContainers) {
 			final Kind kindJA = kindContainer.getKindJA();
 
-			add(getDokument(DokumentTyp.SORGERECHTSVEREINBARUNG, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.FACHSTELLENBEST_SOZ, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
-			add(getDokument(DokumentTyp.FACHSTELLENBEST_BEH, kindJA,kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.SORGERECHTSVEREINBARUNG, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.FACHSTELLENBEST_SOZ, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.FACHSTELLENBEST_BEH, kindJA, kindJA.getFullName(), null, DokumentGrundTyp.KINDER), anlageVerzeichnis);
 
 		}
 	}
-
 
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
 		if (kind != null) {

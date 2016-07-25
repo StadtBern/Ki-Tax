@@ -8,6 +8,7 @@ import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashSet;
 
 /**
@@ -206,9 +207,20 @@ public final class TestDataUtil {
 		return epCont;
 	}
 
+	public static ErwerbspensumContainer createErwerbspensum(LocalDate von, LocalDate bis, int pensum, int zuschlag) {
+		ErwerbspensumContainer erwerbspensumContainer = new ErwerbspensumContainer();
+		Erwerbspensum erwerbspensum = new Erwerbspensum();
+		erwerbspensum.setPensum(pensum);
+		erwerbspensum.setZuschlagsprozent(zuschlag);
+		erwerbspensum.setGueltigkeit(new DateRange(von, bis));
+		erwerbspensumContainer.setErwerbspensumJA(erwerbspensum);
+		return erwerbspensumContainer;
+	}
+
 	public static Erwerbspensum createErwerbspensumData() {
 		Erwerbspensum ep = new Erwerbspensum();
 		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		ep.setPensum(50);
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
@@ -245,6 +257,13 @@ public final class TestDataUtil {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
 		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		return gesuchsperiode;
+	}
+
+	public static Gesuchsperiode createGesuchsperiode1617() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
 		return gesuchsperiode;
 	}
 
@@ -289,5 +308,31 @@ public final class TestDataUtil {
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
 		return user;
+	}
+
+	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setFamiliensituation(new Familiensituation());
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		if (zweiGesuchsteller) {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
+		gesuch.setGesuchsteller1(new Gesuchsteller());
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		if (zweiGesuchsteller) {
+			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		}
+		Betreuung betreuung = new Betreuung();
+		betreuung.setKind(new KindContainer());
+		betreuung.getKind().setKindJA(new Kind());
+		betreuung.getKind().setGesuch(gesuch);
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
+		return betreuung;
 	}
 }

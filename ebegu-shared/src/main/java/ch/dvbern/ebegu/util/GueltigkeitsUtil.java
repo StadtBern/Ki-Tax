@@ -76,6 +76,8 @@ public final class GueltigkeitsUtil {
 		return newEntity;
 	}
 
+
+
 	/**
 	 * Verlängert das gueltigBis Datum von {@code updateEntity} unter berücksichtigung von {@code existingEntities},
 	 * so dass gueltigBis = gueltigAb - 1 Tag des nächst gültigen Entities ist.

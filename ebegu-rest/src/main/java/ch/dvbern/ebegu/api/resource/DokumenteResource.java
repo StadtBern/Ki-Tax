@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * REST Resource fuer FinanzielleSituation
+ * REST Resource fuer Dokumente
  */
 @Path("dokumente")
 @Stateless
@@ -35,9 +35,6 @@ public class DokumenteResource {
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
-
-	@Resource
-	private EJBContext context;    //fuer rollback
 
 	@Inject
 	private GesuchService gesuchService;
@@ -58,8 +55,6 @@ public class DokumenteResource {
 
 			final Set<DokumentGrund> dokumentGrunds = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
 
-			// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
-			//context.setRollbackOnly();
 			return converter.dokumentGruendeToJAX(dokumentGrunds);
 		}
 		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());

@@ -8,7 +8,9 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
 import java.math.BigDecimal;
 import java.util.Set;
 
-
+/**
+ * Gemeinsame Basisklasse zum berechnen der benötigten Dokumente für die Finanzielle Situation und die Einkommensverschlechterung
+ */
 abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<AbstractFinanzielleSituation> {
 
 
@@ -32,10 +34,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 		add(getDokument(DokumentTyp.NACHWEIS_VERMOEGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
 		add(getDokument(DokumentTyp.NACHWEIS_SCHULDEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
 		add(getDokument(DokumentTyp.ERFOLGSRECHNUNGEN, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-		add(getDokument(DokumentTyp.UNTERSTUETZUNGSNACHWEIS, abstractFinanzielleSituation, fullname, basisJahr, dokumentGrundTyp), anlageVerzeichnis);
-
 	}
-
 
 
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, AbstractFinanzielleSituation abstractFinanzielleSituation) {
@@ -86,9 +85,6 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 							abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null &&
 								abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2().compareTo(BigDecimal.ZERO) > 0
 						));
-				case UNTERSTUETZUNGSNACHWEIS:
-					// Todo: Unklar! Punkt doppelt in Liste mit verschiedenen Parameter??????
-					return false;
 				default:
 					return false;
 			}

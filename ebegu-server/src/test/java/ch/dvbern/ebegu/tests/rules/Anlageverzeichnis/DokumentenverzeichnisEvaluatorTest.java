@@ -85,7 +85,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final FinanzielleSituation finanzielleSituation = TestDataUtil.createDefaultFinanzielleSituation();
 
 		finanzielleSituation.setSteuerveranlagungErhalten(steuerveranlagungErhalten);
-		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
+		finanzielleSituationContainer.setFinanzielleSituationSV(finanzielleSituation);
 
 		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		gesuchsteller.setNachname("Chavez");
@@ -186,7 +186,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertTrue(calculate.size() == 1);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.KINDER, dokumentGrund.getDokumentGrundTyp());
-		Assert.assertEquals(kind.getFullName(), dokumentGrund.getFullname());
+		Assert.assertEquals(kind.getFullName(), dokumentGrund.getFullName());
 		return dokumentGrund;
 	}
 
@@ -195,7 +195,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertTrue(calculate.size() == 1);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.ERWERBSPENSUM, dokumentGrund.getDokumentGrundTyp());
-		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getFullname());
+		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getFullName());
 		Assert.assertEquals(erwerbspensum.getName(), dokumentGrund.getTag());
 		return dokumentGrund;
 	}
@@ -352,7 +352,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Set<DokumentGrund> grunds = new HashSet<DokumentGrund>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
-			if (dokumentGrund.getFullname().equals(gesuchsteller.getFullName())) {
+			if (dokumentGrund.getFullName().equals(gesuchsteller.getFullName())) {
 				grunds.add(dokumentGrund);
 			}
 		}
@@ -366,16 +366,16 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 			if (fullname != null) {
 				if (year != null) {
-					if (!fullname.equals(dokumentGrund.getFullname()) || !year.equals(dokumentGrund.getTag())) {
+					if (!fullname.equals(dokumentGrund.getFullName()) || !year.equals(dokumentGrund.getTag())) {
 						continue;
 					}
 				} else {
-					if (!fullname.equals(dokumentGrund.getFullname()) || !(dokumentGrund.getTag() == null)) {
+					if (!fullname.equals(dokumentGrund.getFullName()) || !(dokumentGrund.getTag() == null)) {
 						continue;
 					}
 				}
 			} else {
-				if (!(dokumentGrund.getFullname() == null) || !(dokumentGrund.getTag() == null)) {
+				if (!(dokumentGrund.getFullName() == null) || !(dokumentGrund.getTag() == null)) {
 					continue;
 				}
 			}
@@ -403,7 +403,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = dokumentGrunds.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.FINANZIELLESITUATION, dokumentGrund.getDokumentGrundTyp());
-		Assert.assertEquals(null, dokumentGrund.getFullname());
+		Assert.assertEquals(null, dokumentGrund.getFullName());
 		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
 		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, dokument.getDokumentTyp());
 	}
@@ -459,7 +459,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertEquals("No document with dokumentGrundTyp: " + dokumentGrundTyp + "; dokumentTyp: " + dokumentTyp + "; fullname: " + fullname + "; year: " + year,
 			1, dokumentGrundsForType.size());
 		final DokumentGrund dokumentGrund = dokumentGrundsForType.iterator().next();
-		Assert.assertEquals(fullname, dokumentGrund.getFullname());
+		Assert.assertEquals(fullname, dokumentGrund.getFullName());
 		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
 		Assert.assertEquals(dokumentTyp, dokument.getDokumentTyp());
 
@@ -471,7 +471,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		createFinanzielleSituationGS(1, testgesuch, "Sämi", false);
 
-		final FinanzielleSituation finanzielleSituationJA = testgesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA();
+		final FinanzielleSituation finanzielleSituationJA = testgesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV();
 
 		finanzielleSituationJA.setFamilienzulage(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setErsatzeinkommen(BigDecimal.valueOf(100000));
