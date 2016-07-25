@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -67,7 +66,7 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * Zuerst muessen die neuen Zeitabschnitte aus den Daten der aktuellen Rule zusammengestellt werden:
 	 */
 	@Nonnull
-	protected abstract List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
+	protected abstract List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte);
 
 	/**
 	 * Fuehrt die eigentliche Rule auf einem einzelnen Zeitabschnitt aus.
@@ -80,13 +79,13 @@ public abstract class AbstractEbeguRule implements Rule {
 	 */
 	@Nonnull
 	@Override
-	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte, @Nonnull FinanzielleSituationResultateDTO finSitResultatDTO) {
+	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
 		Collections.sort(zeitabschnitte, new VerfuegungZeitabschnittComparator());
 
 		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
 
-		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, finSitResultatDTO);
+		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 		Collections.sort(abschnitteCreatedInRule, new VerfuegungZeitabschnittComparator());
 
 

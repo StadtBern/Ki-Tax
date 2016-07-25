@@ -67,6 +67,9 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			// Beim Login Request gibt es noch nichts abzufangen
 			return;
 		}
+		if (path.startsWith("/testfaelle")) {
+			return;
+		}
 
 		// Verify that XSRF-Token from HTTP-Header matches Cookie-XSRF-Token
 		String xsrfTokenHeader = requestContext.getHeaderString(AuthDataUtil.PARAM_XSRF_TOKEN);

@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
@@ -49,10 +48,8 @@ public interface Rule {
 	 * Diese Methode fuehrt die eigentliche Berechnung durch die von der Regel abgebildet wird
 	 * @param betreuung Die Betreuung fuer die Berechnet wird
 	 * @param zeitabschnitte Die Zeitabschnitte die bereits ermittelt wurden
-	 * @param finSitResultatDTO Die Finanzielle Situation die zu diesem Antrag gehoert
 	 * @return gemergete Liste von bestehenden und neu berechneten Zeitabschnitten
 	 */
 	@Nonnull
-	List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte,
-											@Nonnull FinanzielleSituationResultateDTO finSitResultatDTO);
+	List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte);
 }

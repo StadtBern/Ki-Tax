@@ -21,6 +21,28 @@ import java.util.Optional;
 @Dependent
 public class FinanzielleSituationRechner {
 
+	private BigDecimal abzugFamiliengroesse3;
+	private BigDecimal abzugFamiliengroesse4;
+	private BigDecimal abzugFamiliengroesse5;
+	private BigDecimal abzugFamiliengroesse6;
+
+	/**
+	 * Konstruktor, welcher einen Rechner erstellt, der die Paramter aus der DB liest
+	 */
+	public FinanzielleSituationRechner() {
+
+	}
+
+	/**
+	 * Konstruktor, welcher die Parameter miterhält. Dieser kann in JUnit Tests verwendet werden
+     */
+	public FinanzielleSituationRechner(BigDecimal abzugFamiliengroesse3, BigDecimal abzugFamiliengroesse4, BigDecimal abzugFamiliengroesse5, BigDecimal abzugFamiliengroesse6) {
+		this.abzugFamiliengroesse3 = abzugFamiliengroesse3;
+		this.abzugFamiliengroesse4 = abzugFamiliengroesse4;
+		this.abzugFamiliengroesse5 = abzugFamiliengroesse5;
+		this.abzugFamiliengroesse6 = abzugFamiliengroesse6;
+	}
+
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
@@ -69,14 +91,33 @@ public class FinanzielleSituationRechner {
 	public BigDecimal calculateAbzugAufgrundFamiliengroesse(LocalDate stichtag, double familiengroesse) {
 		BigDecimal abzugProPerson = BigDecimal.ZERO;
 		Optional<EbeguParameter> abzugFromServer = Optional.empty();
-		if (familiengroesse < 4) {
-			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
+		if (familiengroesse < 3) {
+			// Unter 3 Personen gibt es keinen Abzug!
+			abzugFromServer = Optional.empty();
+		} else if (familiengroesse < 4) {
+			if (abzugFamiliengroesse3 != null) {
+				abzugProPerson = abzugFamiliengroesse3;
+			} else {
+				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
+			}
 		} else if (familiengroesse < 5) {
-			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
+			if (abzugFamiliengroesse4 != null) {
+				abzugProPerson = abzugFamiliengroesse4;
+			} else {
+				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
+			}
 		} else if (familiengroesse < 6) {
-			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
+			if (abzugFamiliengroesse5 != null) {
+				abzugProPerson = abzugFamiliengroesse5;
+			} else {
+				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
+			}
 		} else if (familiengroesse >= 6) {
-			abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
+			if (abzugFamiliengroesse6 != null) {
+				abzugProPerson = abzugFamiliengroesse6;
+			} else {
+				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
+			}
 		}
 		if (abzugFromServer.isPresent()) {
 			abzugProPerson = abzugFromServer.get().getAsBigDecimal();

@@ -38,14 +38,14 @@ public class FinanzielleSituationResultateDTO extends AbstractFinanzielleSituati
 	}
 
 	private FinanzielleSituation getFinanzielleSituationGS1(Gesuch gesuch) {
-		if (gesuch.getGesuchsteller1()!= null && gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
+		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
 			return gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV();
 		}
 		return null;
 	}
 
 	private FinanzielleSituation getFinanzielleSituationGS2(Gesuch gesuch) {
-		if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getFinanzielleSituationContainer()!=null) {
+		if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getFinanzielleSituationContainer() != null) {
 			return gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV();
 		}
 		return null;
