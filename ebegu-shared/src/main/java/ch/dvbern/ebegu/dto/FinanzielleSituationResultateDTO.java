@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.dto;
 
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 import java.math.BigDecimal;
 
@@ -15,17 +16,14 @@ public class FinanzielleSituationResultateDTO extends AbstractFinanzielleSituati
 		super(familiengroesse, famGroesseAbz);
 
 		if (gesuch != null) {
-			if (gesuch.getGesuchsteller1() != null) {
-				final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS1(gesuch);
-				setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1));
-				calculateProGesuchsteller(finanzielleSituationGS1, calculateNettoJahresLohn(finanzielleSituationGS1));
-			}
-			if (gesuch.getGesuchsteller2() != null) {
-				final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS2(gesuch);
-				setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2));
-				calculateProGesuchsteller(finanzielleSituationGS2, calculateNettoJahresLohn(finanzielleSituationGS2));
-			}
-			calculateZusammen();
+			final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
+			setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1));
+
+			final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
+			setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2));
+
+			calculateZusammen(finanzielleSituationGS1, calculateNettoJahresLohn(finanzielleSituationGS1),
+				finanzielleSituationGS2, calculateNettoJahresLohn(finanzielleSituationGS2));
 		}
 		initToZero();
 	}
@@ -37,19 +35,11 @@ public class FinanzielleSituationResultateDTO extends AbstractFinanzielleSituati
 		return BigDecimal.ZERO;
 	}
 
-	private FinanzielleSituation getFinanzielleSituationGS1(Gesuch gesuch) {
-		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getFinanzielleSituationContainer() != null) {
-			return gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV();
+	private FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
+		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
+			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationSV();
 		}
 		return null;
 	}
-
-	private FinanzielleSituation getFinanzielleSituationGS2(Gesuch gesuch) {
-		if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getFinanzielleSituationContainer() != null) {
-			return gesuch.getGesuchsteller2().getFinanzielleSituationContainer().getFinanzielleSituationSV();
-		}
-		return null;
-	}
-
 
 }

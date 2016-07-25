@@ -51,8 +51,15 @@ public class AbstractFinanzielleSituationResultateDTO {
 	}
 
 
-	private BigDecimal calcVermoegen5Prozent(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		BigDecimal total = subtract(abstractFinanzielleSituation.getBruttovermoegen(), abstractFinanzielleSituation.getSchulden());
+	private BigDecimal calcVermoegen5Prozent(AbstractFinanzielleSituation abstractFinanzielleSituation1, AbstractFinanzielleSituation abstractFinanzielleSituation2) {
+
+		final BigDecimal totalBruttovermoegen = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
+			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getBruttovermoegen() : BigDecimal.ZERO);
+
+		final BigDecimal totalSchulden = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getSchulden() : BigDecimal.ZERO,
+			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getSchulden() : BigDecimal.ZERO);
+
+		BigDecimal total = subtract(totalBruttovermoegen, totalSchulden);
 		if (total.compareTo(BigDecimal.ZERO) < 0) {
 			total = BigDecimal.ZERO;
 		}
@@ -91,20 +98,34 @@ public class AbstractFinanzielleSituationResultateDTO {
 		return value.max(BigDecimal.ZERO);
 	}
 
-	private BigDecimal calcEinkommen(AbstractFinanzielleSituation abstractFinanzielleSituation, BigDecimal nettoJahresLohn) {
+	private BigDecimal calcEinkommen(AbstractFinanzielleSituation abstractFinanzielleSituation1, BigDecimal nettoJahresLohn1,
+									 AbstractFinanzielleSituation abstractFinanzielleSituation2, BigDecimal nettoJahresLohn2) {
 		BigDecimal total = BigDecimal.ZERO;
-		total = add(total, nettoJahresLohn);
-		total = add(total, abstractFinanzielleSituation.getFamilienzulage());
-		total = add(total, abstractFinanzielleSituation.getErsatzeinkommen());
-		total = add(total, abstractFinanzielleSituation.getErhalteneAlimente());
-		total = add(total, calcGeschaeftsgewinnDurchschnitt(abstractFinanzielleSituation));
+		total = calcEinkommenProGS(abstractFinanzielleSituation1, nettoJahresLohn1, total);
+		total = calcEinkommenProGS(abstractFinanzielleSituation2, nettoJahresLohn2, total);
 		return total;
 	}
 
-	void calculateZusammen() {
-		this.anrechenbaresEinkommen = add(einkommenBeiderGesuchsteller, nettovermoegenFuenfProzent);
-		this.totalAbzuege = add(abzuegeBeiderGesuchsteller, abzugAufgrundFamiliengroesse);
-		this.massgebendesEinkommen = subtract(anrechenbaresEinkommen, totalAbzuege);
+	private BigDecimal calcEinkommenProGS(AbstractFinanzielleSituation abstractFinanzielleSituation, BigDecimal nettoJahresLohn, BigDecimal total) {
+		if (abstractFinanzielleSituation != null) {
+			total = add(total, nettoJahresLohn);
+			total = add(total, abstractFinanzielleSituation.getFamilienzulage());
+			total = add(total, abstractFinanzielleSituation.getErsatzeinkommen());
+			total = add(total, abstractFinanzielleSituation.getErhalteneAlimente());
+			total = add(total, calcGeschaeftsgewinnDurchschnitt(abstractFinanzielleSituation));
+		}
+		return total;
+	}
+
+	private BigDecimal calcAbzuege(AbstractFinanzielleSituation finanzielleSituationGS1, AbstractFinanzielleSituation finanzielleSituationGS2) {
+		BigDecimal totalAbzuege = BigDecimal.ZERO;
+		if (finanzielleSituationGS1 != null ) {
+			totalAbzuege = add(totalAbzuege, finanzielleSituationGS1.getGeleisteteAlimente());
+		}
+		if (finanzielleSituationGS2 != null ) {
+			totalAbzuege = add(totalAbzuege, finanzielleSituationGS2.getGeleisteteAlimente());
+		}
+		return totalAbzuege;
 	}
 
 	void initToZero() {
@@ -122,12 +143,16 @@ public class AbstractFinanzielleSituationResultateDTO {
 	}
 
 
-	void calculateProGesuchsteller(AbstractFinanzielleSituation finanzielleSituationGS, BigDecimal nettoJahresLohn) {
-		if (finanzielleSituationGS != null) {
-			this.einkommenBeiderGesuchsteller = add(einkommenBeiderGesuchsteller, calcEinkommen(finanzielleSituationGS, nettoJahresLohn));
-			this.nettovermoegenFuenfProzent = add(nettovermoegenFuenfProzent, calcVermoegen5Prozent(finanzielleSituationGS));
-			this.abzuegeBeiderGesuchsteller = add(abzuegeBeiderGesuchsteller, finanzielleSituationGS.getGeleisteteAlimente());
-		}
+	void calculateZusammen(AbstractFinanzielleSituation finanzielleSituationGS1, BigDecimal nettoJahresLohn1,
+								   AbstractFinanzielleSituation finanzielleSituationGS2, BigDecimal nettoJahresLohn2) {
+
+		this.einkommenBeiderGesuchsteller = calcEinkommen(finanzielleSituationGS1, nettoJahresLohn1, finanzielleSituationGS2, nettoJahresLohn2);
+		this.nettovermoegenFuenfProzent = calcVermoegen5Prozent(finanzielleSituationGS1, finanzielleSituationGS2);
+		this.abzuegeBeiderGesuchsteller = calcAbzuege(finanzielleSituationGS1, finanzielleSituationGS2);
+
+		this.anrechenbaresEinkommen = add(einkommenBeiderGesuchsteller, nettovermoegenFuenfProzent);
+		this.totalAbzuege = add(abzuegeBeiderGesuchsteller, abzugAufgrundFamiliengroesse);
+		this.massgebendesEinkommen = subtract(anrechenbaresEinkommen, totalAbzuege);
 	}
 
 

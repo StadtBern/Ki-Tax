@@ -88,12 +88,12 @@
                         <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2" for="schulden2"></label>
                         <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
                                aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
-                               ng-model="vm.getEinkommensverschlechterungGS1_JA().schulden"
+                               ng-model="vm.getEinkommensverschlechterungGS2_JA().schulden"
                                dv-max-length max="999999999999" class="form-control" ng-blur="vm.calculate()">
                         <dv-error-messages for="form.schulden.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.getEinkommensverschlechterungGS1_GS().schulden"
-                                   ja="vm.getEinkommensverschlechterungGS1_JA().schulden"
-                                   sv="vm.getEinkommensverschlechterungGS1_JA().schulden"></dv-bisher>
+                        <dv-bisher gs="vm.getEinkommensverschlechterungGS2_GS().schulden"
+                                   ja="vm.getEinkommensverschlechterungGS2_JA().schulden"
+                                   sv="vm.getEinkommensverschlechterungGS2_JA().schulden"></dv-bisher>
                     </dv-input-container>
                 </div>
             </div>
