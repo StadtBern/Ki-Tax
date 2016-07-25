@@ -2,40 +2,100 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Dieses Objekt repraesentiert einen Zeitabschnitt wahrend eines Betreeungsgutscheinantrags waehrend dem die Faktoren
  * die fuer die Berechnung des Gutscheins der Betreuung relevant sind konstant geblieben sind.
  *
  */
+@Entity
+@Audited
 public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int erwerbspensumGS1;
+
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int erwerbspensumGS2;
+
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int betreuungspensum;
+
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int fachstellenpensum;
+
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int anspruchspensumRest;
+
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
+
+
+	@Column(nullable = true)
 	private BigDecimal betreuungsstunden;
+
+	@Column(nullable = true)
 	private BigDecimal vollkosten = BigDecimal.ZERO;
+
+	@Column(nullable = true)
 	private BigDecimal elternbeitrag = BigDecimal.ZERO;
+
+	@Column(nullable = true)
 	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
+
+	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 
-	@Nonnull
-	private List<String> bemerkungen = new ArrayList<>();
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungen ;
 
+	@Transient
 	private String status;
 
+	@NotNull
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
+	private Verfuegung verfuegung;
+
+
+
+	public VerfuegungZeitabschnitt() {
+	}
 
 	/**
 	 * Erstellt einen Zeitabschnitt mit der gegebenen gueltigkeitsdauer
@@ -132,12 +192,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.massgebendesEinkommen = massgebendesEinkommen;
 	}
 
-	@Nonnull
-	public List<String> getBemerkungen() {
+	@Nullable
+	public String getBemerkungen() {
 		return bemerkungen;
 	}
 
-	public void setBemerkungen(@Nonnull List<String> bemerkungen) {
+	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
 	}
 
@@ -147,6 +207,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Verfuegung getVerfuegung() {
+		return verfuegung;
+	}
+
+	public void setVerfuegung(Verfuegung verfuegung) {
+		this.verfuegung = verfuegung;
 	}
 
 	/**
@@ -181,16 +249,19 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 * Fügt eine Bemerkung zur Liste hinzu
 	 */
 	public void addBemerkung(String bemerkung) {
-		bemerkungen.add(bemerkung);
+		StringJoiner sj = new StringJoiner(",");
+	    this.bemerkungen = sj.add(this.bemerkungen).add("bemerkung").toString();
+
 	}
 
 	/**
 	 * Fügt mehrere Bemerkungen zur Liste hinzu
 	 */
 	public void addAllBemerkungen(@Nullable List<String> bemerkungenList) {
-		if (bemerkungenList != null) {
-			bemerkungen.addAll(bemerkungenList);
-		}
+		List<String> listOfStrings = new ArrayList<>();
+		listOfStrings.add(this.bemerkungen);
+		listOfStrings.addAll(bemerkungenList);
+		this.bemerkungen =  String.join(";", listOfStrings);
 	}
 
 	@Override

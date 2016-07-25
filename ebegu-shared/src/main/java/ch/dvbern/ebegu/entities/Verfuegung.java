@@ -1,25 +1,53 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.Constants;
+import org.hibernate.envers.Audited;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Verfuegung pro Betreuung
+ * Verfuegung fuer eine einzelne Betreuung
  */
-public class Verfuegung {
+@Entity
+@Audited
+public class Verfuegung extends AbstractEntity{
 
-	private String automatischeInitialisiertteBemerkungen;
+	private static final long serialVersionUID = -6682874795746487562L;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String generatedBemerkungen;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String manuelleBemerkungen;
 
-	private List<VerfuegungZeitabschnitt> zeitabschnitte;
+	@NotNull
+	@OneToOne (optional = false, mappedBy = "verfuegung", cascade = CascadeType.ALL, orphanRemoval = true )
 	private Betreuung betreuung;
 
 
-	public String getAutomatischeInitialisiertteBemerkungen() {
-		return automatischeInitialisiertteBemerkungen;
+	@Nonnull
+	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "verfuegung")
+	private List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
+
+
+	public String getGeneratedBemerkungen() {
+		return generatedBemerkungen;
 	}
 
-	public void setAutomatischeInitialisiertteBemerkungen(String automatischeInitialisiertteBemerkungen) {
-		this.automatischeInitialisiertteBemerkungen = automatischeInitialisiertteBemerkungen;
+	public void setGeneratedBemerkungen(String automatischeInitialisiertteBemerkungen) {
+		this.generatedBemerkungen = automatischeInitialisiertteBemerkungen;
 	}
 
 	public String getManuelleBemerkungen() {

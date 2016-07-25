@@ -25,7 +25,10 @@ import java.util.TreeSet;
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer")
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
+		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
+	}
 )
 public class Betreuung extends AbstractEntity {
 
@@ -64,7 +67,9 @@ public class Betreuung extends AbstractEntity {
 	@Column(nullable = false)
 	private Integer betreuungNummer = 1;
 
-	@Transient
+	@Valid
+	@OneToOne (optional = true, /*cascade = CascadeType.ALL,*/ orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 
 
