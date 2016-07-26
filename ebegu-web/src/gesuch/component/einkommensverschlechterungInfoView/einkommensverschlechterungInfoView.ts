@@ -119,7 +119,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
                 this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
             }
         } else {
-            alert('goto dokumente');
+            this.state.go('gesuch.dokumente');
         }
     }
 

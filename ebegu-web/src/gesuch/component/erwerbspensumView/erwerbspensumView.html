@@ -9,6 +9,19 @@
 
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
             <br/>
+
+            <!--Bezeichnung-->
+            <div class="row">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="BEZEICHNUNG" for="bezeichnung"></label>
+                        <input id="bezeichnung" type="text" name="bezeichnung"
+                               ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
+                               dv-max-length class="form-control" ng-required="false">
+                    </dv-input-container>
+                </div>
+            </div>
+
             <!--Taetigkeit-->
             <div class="row">
                 <div class="col-md-6">
@@ -63,7 +76,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="BIS" for="taetigkeitBisID">
                         </label>
-                        <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"  placeholder=""
+                        <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
                                        ng-required="false" class="input-element">
                         </dv-datepicker>
@@ -120,7 +133,7 @@
                                dv-max-length class="form-control" max="20"
                                ng-required="true" ng-pattern="vm.patternPercentage">
                         <dv-error-messages for="form.zuschlagsprozent.$error"
-                        class="error hint"></dv-error-messages>
+                                           class="error hint"></dv-error-messages>
                         <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                         <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                     </dv-input-container>

@@ -399,23 +399,23 @@
                 </div>
             </div>
 
-            <!--Buttons-->
+            <!-- -------------------------------------------Navigation--------------------------------------------  -->
             <div class="row">
                 <div class="col-md-4 ">
-                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                    <dv-loading-button button-click="vm.previousStep()" button-class="btn btn-link previous">
                         <span class="fa fa-chevron-left"></span>
                         <span data-translate="ZURUECK_UPPER"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-2">
                     <a href="#" id="cancelLink" data-translate="CANCEL"
                        ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"></a>
                 </div>
                 <div class="col-md-4 text-right">
-                    <button type="submit" class="btn btn-link next">
+                    <dv-loading-button type="submit" button-class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
             </div>
 
