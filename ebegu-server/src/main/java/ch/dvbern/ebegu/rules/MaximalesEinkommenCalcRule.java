@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -28,7 +27,7 @@ public class MaximalesEinkommenCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		BetreuungsangebotTyp typ = betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp();
+//		BetreuungsangebotTyp typ = betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp();
 //todo team Alter Kind pruefen
 //		if (BetreuungsangebotTyp.KITA.equals(typ) || BetreuungsangebotTyp.TAGESELTERN.equals(typ)) {
 			if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {

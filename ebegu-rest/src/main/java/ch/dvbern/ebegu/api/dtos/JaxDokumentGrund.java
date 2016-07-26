@@ -27,7 +27,7 @@ public class JaxDokumentGrund {
 	private String tag;
 
 	@Nullable
-	private Set<JaxDokument> dokumente = new HashSet<JaxDokument>();
+	private Set<JaxDokument> dokumente = new HashSet<>();
 
 	public DokumentGrundTyp getDokumentGrundTyp() {
 		return dokumentGrundTyp;

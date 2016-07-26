@@ -75,7 +75,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
             && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
         if (ekvFuerBasisJahrPlus2) {
             this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-        } else if (ekvFuerBasisJahrPlus2) {
+        } else if (ekvFuerBasisJahrPlus1) {
             this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
         } else {
             this.state.go('gesuch.einkommensverschlechterungInfo');

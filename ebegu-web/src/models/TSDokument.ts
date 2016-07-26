@@ -1,10 +1,6 @@
-import TSGesuchsteller from './TSGesuchsteller';
-import TSKindContainer from './TSKindContainer';
-import TSAbstractAntragEntity from './TSAbstractAntragEntity';
-import TSFamiliensituation from './TSFamiliensituation';
-import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import {TSDokumentTyp} from './enums/TSDokumentTyp';
 import TSAbstractEntity from './TSAbstractEntity';
+
 export default class TSDokument extends TSAbstractEntity {
 
     private _dokumentName: string;

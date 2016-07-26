@@ -1,4 +1,5 @@
 import TSDokumentGrund from '../TSDokumentGrund';
+
 export default class TSDokumenteDTO {
 
     private _dokumentGruende: Array<TSDokumentGrund>;

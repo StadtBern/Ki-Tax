@@ -13,17 +13,17 @@
             <thead>
             <tr>
                 <!--without tag-->
-                <th width="60%" st-sort="dokumentTyp" ng-if="!vm.tag"><span data-translate="DOK_DOKUMENT"> </span>
+                <th width="60%" st-sort="dokumentTyp" class="sortable" ng-if="!vm.tag"><span data-translate="DOK_DOKUMENT"> </span>
                 </th>
 
                 <!--with tag-->
-                <th width="45%" st-sort="dokumentTyp" ng-if="vm.tag"><span data-translate="DOK_DOKUMENT"> </span>
+                <th width="45%" st-sort="dokumentTyp" class="sortable" ng-if="vm.tag"><span data-translate="DOK_DOKUMENT"> </span>
                 </th>
-                <th width="15%" st-sort="tag" ng-if="vm.tag">
+                <th width="15%" st-sort="tag" class="sortable" ng-if="vm.tag">
                     <span data-translate="{{vm.tag}}"></span>
                 </th>
 
-                <th width="30%" st-sort="fullname" st-sort-default="true">
+                <th width="30%" st-sort="fullname" class="sortable" st-sort-default="true">
                     <span data-translate="DOK_FUER"> </span>
                 </th>
 
@@ -34,19 +34,18 @@
             <tbody>
             <tr ng-repeat="row in table">
 
-                <!--without tag-->
-                <td ng-bind="row.dokumente[0].dokumentTyp | translate" width="60%" ng-if="!vm.tag"></td>
+                <!--with and without tag-->
+                <td ng-bind="row.dokumente[0].dokumentTyp | translate"></td>
 
                 <!--with tag-->
-                <td ng-bind="row.dokumente[0].dokumentTyp | translate" width="45%" ng-if="vm.tag"></td>
-                <td ng-bind="row.tag" width="15%" ng-if="vm.tag"></td>
+                <td ng-bind="row.tag" ng-if="vm.tag"></td>
 
-                <td ng-bind="row.fullname" width="30%"></td>
+                <td ng-bind="row.fullname" ></td>
 
-                <td width="5%">
+                <td>
                     <i class="fa fa-circle" aria-hidden="true" style="color: orange"></i>
                 </td>
-                <td width="5%">
+                <td>
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
                 </td>
             </tr>

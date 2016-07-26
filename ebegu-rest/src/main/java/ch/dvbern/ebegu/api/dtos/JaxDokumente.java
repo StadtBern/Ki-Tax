@@ -1,9 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.entities.DokumentGrund;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,7 +15,7 @@ public class JaxDokumente {
 
 	private static final long serialVersionUID = -1297019901664130597L;
 
-	private Set<JaxDokumentGrund> dokumentGruende = new HashSet<JaxDokumentGrund>();
+	private Set<JaxDokumentGrund> dokumentGruende = new HashSet<>();
 
 	public Set<JaxDokumentGrund> getDokumentGruende() {
 		return dokumentGruende;

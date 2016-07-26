@@ -40,6 +40,7 @@ export default class TestDataUtil {
         dummyErwerbspensum.zuschlagZuErwerbspensum = true;
         dummyErwerbspensum.zuschlagsprozent = 20;
         dummyErwerbspensum.zuschlagsgrund = TSZuschlagsgrund.FIXE_ARBEITSZEITEN;
+        dummyErwerbspensum.bezeichnung = undefined;
         this.setAbstractFieldsUndefined(dummyErwerbspensum);
         return dummyErwerbspensum;
     }

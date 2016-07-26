@@ -2,8 +2,6 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

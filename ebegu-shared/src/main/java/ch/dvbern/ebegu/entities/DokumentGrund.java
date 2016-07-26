@@ -15,7 +15,7 @@ import java.util.Set;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
- * Entitaet zum Speichern von Institution in der Datenbank.
+ * Entitaet zum Speichern von DokumentGrund in der Datenbank.
  */
 @Audited
 @Entity
@@ -43,19 +43,19 @@ public class DokumentGrund extends AbstractEntity {
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp);
-		this.dokumente = new HashSet<Dokument>();
+		this.dokumente = new HashSet<>();
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName);
-		this.dokumente = new HashSet<Dokument>();
+		this.dokumente = new HashSet<>();
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName, tag);
-		this.dokumente = new HashSet<Dokument>();
+		this.dokumente = new HashSet<>();
 		this.dokumente.add(new Dokument(this, dokumentTyp));
 	}
 

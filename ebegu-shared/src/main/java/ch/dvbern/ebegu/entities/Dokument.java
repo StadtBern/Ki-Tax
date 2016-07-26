@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
- * Entitaet zum Speichern von Institution in der Datenbank.
+ * Entitaet zum Speichern von Dokumente in der Datenbank.
  */
 @Audited
 @Entity

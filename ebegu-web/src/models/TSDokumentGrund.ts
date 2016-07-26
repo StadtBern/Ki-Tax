@@ -1,6 +1,7 @@
 import TSDokument from './TSDokument';
 import {TSDokumentGrundTyp} from './enums/TSDokumentGrundTyp';
 import TSAbstractEntity from './TSAbstractEntity';
+
 export default class TSDokumentGrund extends TSAbstractEntity {
 
     private _dokumentGrundTyp: TSDokumentGrundTyp;
