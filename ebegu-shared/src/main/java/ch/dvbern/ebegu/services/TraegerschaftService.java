@@ -34,8 +34,21 @@ public interface TraegerschaftService {
 	Collection<Traegerschaft> getAllTraegerschaften();
 
 	/**
+	 *
+	 * @return Liste aller aktiven Traegerschaften aud der DB
+     */
+	@Nonnull
+	Collection<Traegerschaft> getAllActiveTraegerschaften();
+
+	/**
 	 * removes a Traegerschaft from the Databse
 	 * @param traegerschaftId
 	 */
 	void removeTraegerschaft(@Nonnull String traegerschaftId);
+
+	/**
+	 * marks an Traegerschft as inactive on the Database.
+	 * @param traegerschaftId
+	 */
+	void setInactive(@Nonnull String traegerschaftId);
 }

@@ -1,0 +1,90 @@
+<div class="institutionView row">
+    <div class="col-md-8 col-md-offset-2">
+        <h1 data-translate="TRAEGERSCHAFT"></h1>
+
+        <form role="form" name="form" class="" unsaved-warning-form novalidate>
+
+            <div class="row">
+                <!--Tabelle zum anzeigen aller Institutionen-->
+                <div class="col-md-12 table-responsive">
+                    <table st-table="displayedCollection" st-safe-src="vm.getTraegerschaftenList()"
+                           class="table table-striped" st-delay="20">
+                        <thead>
+                        <tr>
+                            <th st-sort="name" class="sortable" data-translate="TRAEGERSCHAFT" width="90%"></th>
+                            <th width="5%"></th>
+                            <th width="5%"></th>
+                        </tr>
+
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection">
+                            <td ng-bind="row.name"></td>
+                            <td></td>
+
+                            <td ng-click="$event.stopPropagation()">
+                                <dv-loading-button type="button" ng-click="vm.removeTraegerschaft(row)"
+                                                   button-class="btn btn-sm">
+                                    <i class="fa fa-minus">
+                                    </i>
+                                </dv-loading-button>
+                            </td>
+                        </tr>
+
+                        <tr ng-if="vm.newTraegerschaft">
+
+                            <td>
+                                <!--Name der Institution-->
+                                <dv-input-container>
+                                    <label data-translate="NAME" for="name_ID"></label>
+                                    <input id="name_ID" type="text" name="name"
+                                           ng-model="vm.newTraegerschaft.name"
+                                           dv-max-length class="form-control" required>
+                                    <dv-error-messages for="form.name_ID.$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+
+                            </td>
+
+                            <td>
+                                <dv-loading-button type="submit" button-click="vm.saveTraegerschaft(form)"
+                                                   button-class="btn btn-sm" style="margin-top: 20px">
+                                    <i class="fa fa-plus"></i>
+                                </dv-loading-button>
+                            </td>
+
+                            <td ng-click="$event.stopPropagation()">
+                                <dv-loading-button type="button" ng-click="vm.clearNewTraegerschaft()"
+                                                   button-class="btn btn-sm" style="margin-top: 20px">
+                                    <i class="fa fa-minus"></i>
+                                </dv-loading-button>
+                            </td>
+
+                        </tr>
+
+                        <tr ng-if="!vm.traegerschaften.length && !vm.newTraegerschaft">
+                            <td colspan="4" class="empty-table" data-translate="TRAEGERSCHAFTEN_NOCH_KEINE"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Knöpfe unterhalb der Tabelle zum anzeigen aller Institutionen-->
+            <div class="row">
+                <div class="col-md-2">
+                    <dv-input-container class="form-group">
+                        <!--Knopf zum hinzufügen neuer Institutionen-->
+                        <dv-loading-button type="button"
+                                           ng-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
+                                           button-class="btn btn-sm btn-success" button-disabled="vm.newTraegerschaft">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>
+                        </dv-loading-button>
+                    </dv-input-container>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

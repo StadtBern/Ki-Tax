@@ -561,7 +561,10 @@
     "EKV_RESULTATE": "Resultate Einkommensverschlechterung {{basisjahr}}",
     "EKV_RESULTATE_PRUEFUNG": "Prüfung Einkommensverschlechterung {{basisjahr}}",
     "EVK_EINKOMMEN_JAHR": "Einkommen {{basisjahr}}",
-    "EVK_IN_PROZENT": "Einkommensverschlechterung in %"
+    "EVK_IN_PROZENT": "Einkommensverschlechterung in %",
+
+    "TRAEGERSCHAFTEN_NOCH_KEINE": "Noch keine Trägerschaften",
+    "TRAEGERSCHAFT_HINZUFUEGEN": "Trägerschaft hinzufügen"
 
 }
 

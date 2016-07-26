@@ -23,6 +23,10 @@ public class Traegerschaft extends AbstractEntity {
 	@NotNull
 	private String name;
 
+	@NotNull
+	@Column(nullable = false)
+	private Boolean active = true;
+
 	public Traegerschaft() {
 	}
 
@@ -32,5 +36,13 @@ public class Traegerschaft extends AbstractEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

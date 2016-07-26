@@ -18,11 +18,22 @@ public class JaxTraegerschaft extends JaxAbstractDTO {
 	@NotNull
 	private String name;
 
+	@NotNull
+	private Boolean active = true;
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

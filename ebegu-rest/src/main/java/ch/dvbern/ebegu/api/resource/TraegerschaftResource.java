@@ -2,11 +2,13 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.TraegerschaftService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -87,7 +89,7 @@ public class TraegerschaftResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(traegerschaftJAXPId.getId());
-		traegerschaftService.removeTraegerschaft(converter.toEntityId(traegerschaftJAXPId));
+		traegerschaftService.setInactive(converter.toEntityId(traegerschaftJAXPId));
 		return Response.ok().build();
 	}
 
@@ -97,6 +99,18 @@ public class TraegerschaftResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxTraegerschaft> getAllTraegerschaften() {
 		return traegerschaftService.getAllTraegerschaften().stream()
+			.map(traegerschaft -> converter.traegerschaftToJAX(traegerschaft))
+			.collect(Collectors.toList());
+	}
+
+	@ApiOperation(value = "Find and return a list of all active Traegerschaften. An active Traegerschaft is a Traegerschaft where the active flag is true")
+	@Nonnull
+	@GET
+	@Path("/active")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxTraegerschaft> getAllActiveTraegerschaften() {
+		return traegerschaftService.getAllActiveTraegerschaften().stream()
 			.map(traegerschaft -> converter.traegerschaftToJAX(traegerschaft))
 			.collect(Collectors.toList());
 	}

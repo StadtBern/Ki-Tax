@@ -36,6 +36,14 @@ function getStates(): IState[] {
             name: 'parameter',
             template: '<dv-parameter-view ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
             url: '/parameter',
+        },
+        {
+            name: 'traegerschaft',
+            template: '<dv-traegerschaft-view traegerschaften="$resolve.traegerschaften" ></dv-traegerschaft-view>',
+            url: '/traegerschaft',
+            resolve: {
+                traegerschaften: getTraegerschaften,
+            }
         }
     ];
 }
@@ -58,7 +66,7 @@ function getInstitutionen(InstitutionRS: InstitutionRS) {
 getTraegerschaften.$inject = ['TraegerschaftRS'];
 /* @ngInject */
 function getTraegerschaften(TraegerschaftRS: TraegerschaftRS) {
-    return TraegerschaftRS.getAllTraegerschaften();
+    return TraegerschaftRS.getAllActiveTraegerschaften();
 }
 
 // FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
