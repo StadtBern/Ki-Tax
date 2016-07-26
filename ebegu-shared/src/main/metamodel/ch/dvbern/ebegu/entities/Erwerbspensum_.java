@@ -12,6 +12,7 @@ public abstract class Erwerbspensum_ extends ch.dvbern.ebegu.entities.AbstractPe
 
 	public static volatile SingularAttribute<Erwerbspensum, Boolean> gesundheitlicheEinschraenkungen;
 	public static volatile SingularAttribute<Erwerbspensum, Boolean> zuschlagZuErwerbspensum;
+	public static volatile SingularAttribute<Erwerbspensum, String> bezeichnung;
 	public static volatile SingularAttribute<Erwerbspensum, Taetigkeit> taetigkeit;
 	public static volatile SingularAttribute<Erwerbspensum, Integer> zuschlagsprozent;
 	public static volatile SingularAttribute<Erwerbspensum, Zuschlagsgrund> zuschlagsgrund;

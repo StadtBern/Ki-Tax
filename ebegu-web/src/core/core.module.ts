@@ -39,6 +39,8 @@ import {EbeguAuthentication} from '../authentication/authentication.module';
 import {DvPulldownUserMenuComponentConfig} from './component/dv-pulldown-user-menu/dv-pulldown-user-menu';
 import UserRS from './service/userRS.rest';
 import {DVUserselect} from './directive/dv-userselect/dv-userselect';
+import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
+import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
 import {DVLoading} from './directive/dv-loading/dv-loading';
 import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
@@ -113,6 +115,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .service('UserRS', UserRS)
+    .service('DokumenteRS', DokumenteRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
@@ -129,4 +132,5 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
-    .component('dvBisher', new DvBisherComponentConfig());
+    .component('dvBisher', new DvBisherComponentConfig())
+    .component('dvDokumenteList', new DVDokumenteListConfig());

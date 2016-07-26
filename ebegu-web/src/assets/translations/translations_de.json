@@ -420,6 +420,7 @@
     "TAGESELTERN": "Tageseltern",
     "TAGI": "Tagesstätte für Schulkinder",
     "TAGESSCHULE": "Tagesschule",
+    "BEZEICHNUNG": "Bezeichnung",
     "TAETIGKEIT_WAEHLEN": "Tätigkeit wählen",
     "TAETIGKEIT_WAEHLEN_HELP": "Bitte wählen Sie hier aus was Sie für eine Tätigkeit während dieser Zeit ausüben. Bitte geben Sie auch an wenn Sie beim RAV gemeldet sind.",
     "UNSAVED_WARNING": "Achtung: Sie haben noch ungespeicherte Änderungen welche verlorengehen wenn Sie die Seite verlassen.",
@@ -561,7 +562,46 @@
     "EKV_RESULTATE": "Resultate Einkommensverschlechterung {{basisjahr}}",
     "EKV_RESULTATE_PRUEFUNG": "Prüfung Einkommensverschlechterung {{basisjahr}}",
     "EVK_EINKOMMEN_JAHR": "Einkommen {{basisjahr}}",
-    "EVK_IN_PROZENT": "Einkommensverschlechterung in %"
+    "EVK_IN_PROZENT": "Einkommensverschlechterung in %",
+
+    "DOK_HINT_DOKUMENTE": "Bitte reichen Sie die ausstehenden Dokumente online oder per Post an das Jugendamt nach.",
+    "DOK_FINANZIELLE_SITUATION": "Finanzielle Situation für {{basisjahr}}",
+    "DOK_KINDER": "Kinder",
+    "DOK_FAMILIENSITUATION": "Familiensituation",
+    "DOK_ERWERBSPENSUM": "Erwerbspensum",
+    "DOK_DOKUMENT": "Dokument ",
+    "DOK_FUER": "für ",
+    "DOK_JAHR": "Jahr ",
+    "DOK_TAETIGKEIT": "Tätigkeit",
+
+    "NACHWEIS_TRENNUNG": "Trennungsvereinbarung / Scheidungsurteil / Sonstiger Nachweis über Trennung / Eheschutzverfahren",
+    "SORGERECHTSVEREINBARUNG": "Sorgerechtsvereinbarung",
+    "FACHSTELLENBEST_SOZ": "Fachstellenbestätigung (soziale Indikation)",
+    "FACHSTELLENBEST_BEH": "Fachstellenbestätigung (Behinderung)",
+    "NACHWEIS_ERWERBSPENSUM": "Arbeitsvertrag / Stundennachweise / sonstiger Nachweis über Erwerbspensum",
+    "NACHWEIS_SELBSTAENDIGKEIT": "Nachweis Selbständigkeit oder AHV-Bestätigung",
+    "NACHWEIS_AUSBILDUNG": "Nachweis über Ausbildung (z.B. Ausbildungsvertrag, Immatrikulationsbestätigung)",
+    "NACHWEIS_RAV": "RAV-Bestätigung oder Nachweis der Vermittelbarkeit",
+    "BESTAETIGUNG_ARZT": "Bestätigung (ärztliche Indikation)",
+    "NACHWEIS_UNREG_ARBEITSZ": "Nachweis über die unregelmässige Arbeitszeit (z.B. ArbG-Bestätigung)",
+    "NACHWEIS_LANG_ARBEITSWEG": "Nachweis über langen Arbeitsweg",
+    "NACHWEIS_SONSTIGEN_ZUSCHLAG": "Grund für sonstigen Zuschlag",
+    "NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT": "Gleiche Arbeitstage bei Teilzeit",
+    "NACHWEIS_FIXE_ARBEITSZEITEN": "Fixe Arbeitszeiten",
+    "STEUERVERANLAGUNG": "Steuerveranlagung",
+    "STEUERERKLAERUNG": "Steuererklärung",
+    "JAHRESLOHNAUSWEISE": "Jahreslohnausweise",
+    "NACHWEIS_FAMILIENZULAGEN": "Nachweis über Familienzulagen (soweit nicht im Nettolohn enthalten)",
+    "NACHWEIS_ERSATZEINKOMMEN": "Nachweis über Ersatzeinkommen",
+    "NACHWEIS_ERHALTENE_ALIMENTE": "Nachweis über erhaltene Alimente (Unterhaltsbeiträge)",
+    "NACHWEIS_GELEISTETE_ALIMENTE": "Nachweis über geleistete Alimente",
+    "NACHWEIS_VERMOEGEN": "Nachweis über das Vermögen, Stand 31.12., (z.B.: Kto.-Auszug, Immobilien, Zinsbestätigung usw.)",
+    "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
+    "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
+    "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
+    "DIV": "Sonstige Nachweise"
+
+
 
 }
 

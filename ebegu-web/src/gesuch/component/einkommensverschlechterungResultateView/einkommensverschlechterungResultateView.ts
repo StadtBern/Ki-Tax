@@ -96,14 +96,14 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     nextStep() {
         if (this.parsedBasisJahrPlusNum === 2) {
-            alert('go to Dokumente Upload');
+            this.state.go('gesuch.dokumente');
         } else {
             let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
                 && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
             if (ekvFuerBasisJahrPlus2) {
                 this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
             } else {
-                alert('go to Dokumente Upload');
+                this.state.go('gesuch.dokumente');
             }
         }
     }
