@@ -74,18 +74,18 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	}
 
-	/**
-	 * Diese Methode initialisiert den Calculator mit den richtigen Parametern und benotigten Regeln fuer den Mandanten der
-	 * gebraucht wird
-	 */
-	private void initCalculator(){
-		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
-		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
-		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
-		//Load Configuration for used
-		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
-		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
-	}
+//	/**
+//	 * Diese Methode initialisiert den Calculator mit den richtigen Parametern und benotigten Regeln fuer den Mandanten der
+//	 * gebraucht wird
+//	 */
+//	private void initCalculator(){
+//		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
+//		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
+//		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
+//		//Load Configuration for used
+//		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
+//		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
+//	}
 
 	@Nonnull
 	@Override

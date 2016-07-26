@@ -14,6 +14,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,6 +64,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(verfuegung, loadedVerf.get());
 	}
 
+	@Ignore
 	@Test
 	public void calculateVerfuegung(){
 		Betreuung betreuung = this.persistBetreuung();

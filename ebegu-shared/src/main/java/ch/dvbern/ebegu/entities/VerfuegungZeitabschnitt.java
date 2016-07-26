@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -250,14 +251,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 */
 	public void addBemerkung(String bemerkung) {
 		StringJoiner sj = new StringJoiner(",");
-	    this.bemerkungen = sj.add(this.bemerkungen).add("bemerkung").toString();
+	    this.bemerkungen = sj.add(this.bemerkungen).add(bemerkung).toString();
 
 	}
 
 	/**
 	 * Fügt mehrere Bemerkungen zur Liste hinzu
 	 */
-	public void addAllBemerkungen(@Nullable List<String> bemerkungenList) {
+	public void addAllBemerkungen(@Nonnull List<String> bemerkungenList) {
 		List<String> listOfStrings = new ArrayList<>();
 		listOfStrings.add(this.bemerkungen);
 		listOfStrings.addAll(bemerkungenList);
