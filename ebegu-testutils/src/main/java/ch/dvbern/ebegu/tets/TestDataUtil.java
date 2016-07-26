@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
@@ -12,7 +13,9 @@ import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * comments homa
@@ -275,6 +278,8 @@ public final class TestDataUtil {
 		return gesuchsperiode;
 	}
 
+
+
 	public static EbeguParameter createDefaultEbeguParameter() {
 		EbeguParameter instStammdaten = new EbeguParameter();
 		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
@@ -349,5 +354,15 @@ public final class TestDataUtil {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
 		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
+	}
+
+	public static Gesuch createTestgesuchDagmar(){
+		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
+		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
+		Gesuch gesuch = testfall.createGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		return gesuch;
 	}
 }

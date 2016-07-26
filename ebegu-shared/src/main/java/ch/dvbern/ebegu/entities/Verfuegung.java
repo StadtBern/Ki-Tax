@@ -32,7 +32,7 @@ public class Verfuegung extends AbstractEntity{
 	private String manuelleBemerkungen;
 
 	@NotNull
-	@OneToOne (optional = false, mappedBy = "verfuegung", cascade = CascadeType.ALL, orphanRemoval = true )
+	@OneToOne (optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
 
 
