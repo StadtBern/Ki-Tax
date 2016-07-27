@@ -5,15 +5,15 @@
         <form role="form" name="form" class="" unsaved-warning-form novalidate>
 
             <div class="row">
-                <!--Tabelle zum anzeigen aller Institutionen-->
+                <!--Tabelle zum anzeigen aller Traegerschaften-->
                 <div class="col-md-12 table-responsive">
                     <table st-table="displayedCollection" st-safe-src="vm.getTraegerschaftenList()"
                            class="table table-striped" st-delay="20">
                         <thead>
                         <tr>
-                            <th st-sort="name" class="sortable" data-translate="TRAEGERSCHAFT" width="90%"></th>
+                            <th st-sort="name" class="sortable" data-translate="TRAEGERSCHAFT" width="95%"></th>
                             <th width="5%"></th>
-                            <th width="5%"></th>
+                            <!--<th width="5%"></th>-->
                         </tr>
 
                         </thead>
@@ -22,13 +22,13 @@
                             <td ng-bind="row.name"></td>
                             <td></td>
 
-                            <td ng-click="$event.stopPropagation()">
-                                <dv-loading-button type="button" ng-click="vm.removeTraegerschaft(row)"
-                                                   button-class="btn btn-sm">
-                                    <i class="fa fa-minus">
-                                    </i>
-                                </dv-loading-button>
-                            </td>
+                            <!--<td>-->
+                                <!--<dv-loading-button type="button" ng-click="vm.removeTraegerschaft(row)"-->
+                                                   <!--button-class="btn btn-sm">-->
+                                    <!--<i class="fa fa-minus">-->
+                                    <!--</i>-->
+                                <!--</dv-loading-button>-->
+                            <!--</td>-->
                         </tr>
 
                         <tr ng-if="vm.newTraegerschaft">
@@ -53,12 +53,12 @@
                                 </dv-loading-button>
                             </td>
 
-                            <td ng-click="$event.stopPropagation()">
-                                <dv-loading-button type="button" ng-click="vm.clearNewTraegerschaft()"
-                                                   button-class="btn btn-sm" style="margin-top: 20px">
-                                    <i class="fa fa-minus"></i>
-                                </dv-loading-button>
-                            </td>
+                            <!--<td>-->
+                                <!--<dv-loading-button type="button" ng-click="vm.clearNewTraegerschaft()"-->
+                                                   <!--button-class="btn btn-sm" style="margin-top: 20px">-->
+                                    <!--<i class="fa fa-minus"></i>-->
+                                <!--</dv-loading-button>-->
+                            <!--</td>-->
 
                         </tr>
 
