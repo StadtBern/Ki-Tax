@@ -105,6 +105,7 @@ describe('EbeguRestUtil', function () {
                 adresse.zusatzzeile = 'co test';
                 adresse.plz = '3014';
                 adresse.id = '1234567';
+                adresse.organisation = 'Test AG';
                 adresse.gueltigkeit = new TSDateRange(today, today);
 
                 let restAdresse: any = ebeguRestUtil.adresseToRestObject({}, adresse);
@@ -120,7 +121,7 @@ describe('EbeguRestUtil', function () {
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
                 var myGesuchsteller = createGesuchsteller();
-                myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden 
+                myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden
                 let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
                 let transformedPers: TSGesuchsteller = ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), restGesuchsteller);
