@@ -119,10 +119,10 @@ public class AbstractFinanzielleSituationResultateDTO {
 
 	private BigDecimal calcAbzuege(AbstractFinanzielleSituation finanzielleSituationGS1, AbstractFinanzielleSituation finanzielleSituationGS2) {
 		BigDecimal totalAbzuege = BigDecimal.ZERO;
-		if (finanzielleSituationGS1 != null ) {
+		if (finanzielleSituationGS1 != null) {
 			totalAbzuege = add(totalAbzuege, finanzielleSituationGS1.getGeleisteteAlimente());
 		}
-		if (finanzielleSituationGS2 != null ) {
+		if (finanzielleSituationGS2 != null) {
 			totalAbzuege = add(totalAbzuege, finanzielleSituationGS2.getGeleisteteAlimente());
 		}
 		return totalAbzuege;
@@ -144,7 +144,7 @@ public class AbstractFinanzielleSituationResultateDTO {
 
 
 	void calculateZusammen(AbstractFinanzielleSituation finanzielleSituationGS1, BigDecimal nettoJahresLohn1,
-								   AbstractFinanzielleSituation finanzielleSituationGS2, BigDecimal nettoJahresLohn2) {
+						   AbstractFinanzielleSituation finanzielleSituationGS2, BigDecimal nettoJahresLohn2) {
 
 		this.einkommenBeiderGesuchsteller = calcEinkommen(finanzielleSituationGS1, nettoJahresLohn1, finanzielleSituationGS2, nettoJahresLohn2);
 		this.nettovermoegenFuenfProzent = calcVermoegen5Prozent(finanzielleSituationGS1, finanzielleSituationGS2);

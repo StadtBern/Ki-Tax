@@ -29,7 +29,7 @@ public class FinanzielleSituationResultateDTO extends AbstractFinanzielleSituati
 	}
 
 	private BigDecimal calculateNettoJahresLohn(FinanzielleSituation finanzielleSituation) {
-		if(finanzielleSituation!= null) {
+		if (finanzielleSituation != null) {
 			return finanzielleSituation.getNettolohn();
 		}
 		return BigDecimal.ZERO;
