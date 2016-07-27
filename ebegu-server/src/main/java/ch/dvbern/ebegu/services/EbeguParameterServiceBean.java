@@ -97,7 +97,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 
 	@Override
 	@Nonnull
-	public Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr) {
+	public Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr) {
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(LocalDate.of(jahr, Month.JANUARY, 1));
 		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> !ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		if (collect.isEmpty()) {
@@ -175,5 +175,15 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 			EbeguParameter newParameter = lastYearParameter.copy(new DateRange(jahr));
 			saveEbeguParameter(newParameter);
 		});
+	}
+
+	@Override
+	public Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode) {
+		Map<EbeguParameterKey, EbeguParameter> result = new HashMap<>();
+		Collection<EbeguParameter> paramsForPeriode = getEbeguParameterByGesuchsperiode(gesuchsperiode);
+		for (EbeguParameter ebeguParameter : paramsForPeriode) {
+			result.put(ebeguParameter.getName(), ebeguParameter);
+		}
+		return result;
 	}
 }

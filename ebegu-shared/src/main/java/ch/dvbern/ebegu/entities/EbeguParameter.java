@@ -37,8 +37,14 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	}
 
 	public EbeguParameter(EbeguParameterKey name, String value) {
+		this(name, value, null);
+	}
+
+
+	public EbeguParameter(EbeguParameterKey name, String value, DateRange gueltigkeit) {
 		this.name = name;
 		this.value = value;
+		this.setGueltigkeit(gueltigkeit);
 	}
 
 	@Nonnull
@@ -71,11 +77,11 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 		return copiedParam;
 	}
 
-	public BigDecimal getAsBigDecimal() {
+	public BigDecimal getValueAsBigDecimal() {
 		return new BigDecimal(value);
 	}
 
-	public Integer getAsInteger() {
+	public Integer getValueAsInteger() {
 		return Integer.valueOf(value);
 	}
 }

@@ -265,11 +265,22 @@ public final class TestDataUtil {
 	}
 
 	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		return createCurrentGesuchsperiode();
+	}
+
+	public static Gesuchsperiode createCurrentGesuchsperiode() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
-		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+
+		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear()  : LocalDate.now().getYear() -1 ;
+		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
+		LocalDate end = LocalDate.of(startyear + 1 , Month.JULY, 31);
+		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
 		return gesuchsperiode;
 	}
+
+
 
 	public static Gesuchsperiode createGesuchsperiode1617() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();

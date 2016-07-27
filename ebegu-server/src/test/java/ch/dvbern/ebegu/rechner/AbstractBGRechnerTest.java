@@ -38,7 +38,8 @@ public class AbstractBGRechnerTest {
      */
 	protected BGRechnerParameterDTO getParameter() {
 		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO();
-		parameterDTO.setBeitragKantonProTag(new BigDecimal("107.19"));
+		parameterDTO.setBeitragKantonProTagJahr1(new BigDecimal("107.19"));
+		parameterDTO.setBeitragKantonProTagJahr2(new BigDecimal("107.19"));
 		parameterDTO.setBeitragStadtProTag(new BigDecimal("7"));
 		parameterDTO.setAnzahlTageMaximal(new BigDecimal("244"));
 		parameterDTO.setAnzahlStundenProTagMaximal(new BigDecimal("11.5"));

@@ -158,7 +158,7 @@ public class EbeguParameterResource {
 	public List<JaxEbeguParameter> getEbeguParameterByJahr (
 		@Nonnull @NotNull @PathParam("year") Integer jahr) {
 
-		return ebeguParameterService.getEbeguParameterByJahr(jahr).stream()
+		return ebeguParameterService.getEbeguParametersByJahr(jahr).stream()
 			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
 			.collect(Collectors.toList());
 	}

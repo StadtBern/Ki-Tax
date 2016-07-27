@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 
@@ -40,12 +39,9 @@ public interface VerfuegungService {
 	void removeVerfuegung(@Nonnull Verfuegung verfuegung);
 
 	/**
-	 * Berechnet die Verfuegung fuer eine einezelne Betreuung
+	 * Berechnet die Verfuegung fuer ein Gesuch
 	 * @return gibt die Betreuung mit der berechneten angehangten Verfuegung zurueck
      */
-	@Nonnull
-	Betreuung calculateVerfuegung(@Nonnull Betreuung betreuung);
-
 	@Nonnull
 	Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch);
 

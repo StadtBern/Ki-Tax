@@ -27,7 +27,7 @@ public abstract class AbstractBGRechner {
 	/**
 	 * Diese Methode muss von den Subklassen ueberschrieben werden und fuehrt die Berechnung fuer  die uebergebenen Verfuegungsabschnitte durch.
      */
-	public abstract VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
+	public abstract VerfuegungZeitabschnitt  calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO);
 
 	/**
 	 * Checkt die für alle Angebote benoetigten Argumente auf Null.

@@ -30,18 +30,18 @@ public class BetreuungsgutscheinEvaluator {
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
-	public void evaluate(Gesuch testgesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
+	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
-		if (testgesuch.getFinanzDatenDTO() == null) {
+		if (gesuch.getFinanzDatenDTO() == null) {
 			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationUtil.calculateFinanzDaten()");
 		}
 
-		List<Rule> rulesToRun = findRulesToRunForPeriode(testgesuch.getGesuchsperiode());
-		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
+		List<Rule> rulesToRun = findRulesToRunForPeriode(gesuch.getGesuchsperiode());
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			// Pro Kind werden (je nach Angebot) die Anspruchspensen aufsummiert. Wir müssen uns also nach jeder Betreuung
 			// den "Restanspruch" merken für die Berechnung der nächsten Betreuung
-			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(testgesuch.getGesuchsperiode());
+			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
 
 			// Betreuungen werden einzeln berechnet
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {

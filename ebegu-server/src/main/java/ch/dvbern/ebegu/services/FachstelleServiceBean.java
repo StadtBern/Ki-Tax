@@ -27,9 +27,6 @@ public class FachstelleServiceBean extends AbstractBaseService implements Fachst
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-
-
-
 	@Nonnull
 	@Override
 	public Fachstelle saveFachstelle(@Nonnull Fachstelle fachstelle) {

@@ -118,7 +118,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		if (key != null) {
 			Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 			if (parameter.isPresent()) {
-				return parameter.get().getAsInteger();
+				return parameter.get().getValueAsInteger();
 			} else{
 				LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key);
 			}
