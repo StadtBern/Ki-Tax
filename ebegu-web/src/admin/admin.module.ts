@@ -9,6 +9,7 @@ import {ApplicationPropertyRS} from './service/applicationPropertyRS.rest';
 import {adminRun} from './admin.route';
 import {InstitutionRS} from '../core/service/institutionRS.rest';
 import {EbeguParameterRS} from './service/ebeguParameterRS.rest';
+import {TraegerschaftViewComponentConfig} from './component/traegerschaftView/traegerschaftView';
 
 export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name, 'smart-table'])
     .service('ApplicationPropertyRS', ApplicationPropertyRS)
@@ -17,6 +18,7 @@ export const EbeguWebAdmin = angular.module('ebeguWeb.admin', [EbeguWebCore.name
     .component('dvAdminView', new AdminViewComponentConfig())
     .component('dvInstitutionView', new InstitutionViewComponentConfig())
     .component('dvParameterView', new ParameterViewComponentConfig())
+    .component('dvTraegerschaftView', new TraegerschaftViewComponentConfig())
     .run(adminRun);
 
 export default EbeguWebAdmin;

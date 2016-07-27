@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Traegerschaft_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
 	public static volatile SingularAttribute<Traegerschaft, String> name;
+	public static volatile SingularAttribute<Traegerschaft, Boolean> active;
 
 }
 
