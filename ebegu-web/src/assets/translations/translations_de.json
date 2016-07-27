@@ -564,6 +564,9 @@
     "EVK_EINKOMMEN_JAHR": "Einkommen {{basisjahr}}",
     "EVK_IN_PROZENT": "Einkommensverschlechterung in %",
 
+    "TRAEGERSCHAFTEN_NOCH_KEINE": "Noch keine Trägerschaften",
+    "TRAEGERSCHAFT_HINZUFUEGEN": "Trägerschaft hinzufügen",
+
     "DOK_HINT_DOKUMENTE": "Bitte reichen Sie die ausstehenden Dokumente online oder per Post an das Jugendamt nach.",
     "DOK_FINANZIELLE_SITUATION": "Finanzielle Situation für {{basisjahr}}",
     "DOK_KINDER": "Kinder",

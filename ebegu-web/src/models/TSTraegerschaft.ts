@@ -4,9 +4,12 @@ export class TSTraegerschaft extends TSAbstractEntity {
 
     private _name: string;
 
-    constructor(name?: string) {
+    private _active: boolean;
+
+    constructor(name?: string, active?: boolean) {
         super();
         this._name = name;
+        this._active = active;
     }
 
 
@@ -16,5 +19,13 @@ export class TSTraegerschaft extends TSAbstractEntity {
 
     public set name(value: string) {
         this._name = value;
+    }
+
+    get active(): boolean {
+        return this._active;
+    }
+
+    set active(value: boolean) {
+        this._active = value;
     }
 }
