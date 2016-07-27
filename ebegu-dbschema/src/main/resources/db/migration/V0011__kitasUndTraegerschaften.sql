@@ -1,27 +1,27 @@
 -- TODO (hefr) evt. Testträgerschaft löschen
 
 -- Traegerschaften
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111111', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'famex');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'famex' ,1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111112', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'Kinderkrippenverein Bümpliz');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'Kinderkrippenverein Bümpliz', 1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111113', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'Stadt Bern');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'Stadt Bern', 1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111114', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'leolea');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'leolea', 1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111115', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'Stiftung Kindertagesstätten Bern');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'Stiftung Kindertagesstätten Bern', 1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111116', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'Verein Kindertagesstätten Murifeld');
-INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name)
+        'Verein Kindertagesstätten Murifeld', 1);
+INSERT INTO traegerschaft (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, active)
 VALUES ('11111111-1111-1111-1111-111111111117', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0,
-        'Verein sgf Bern');
+        'Verein sgf Bern', 1 );
 
 -- Institutionen (nur Kitas)
 INSERT INTO institution (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, user_mutiert, version, name, mandant_id, traegerschaft_id, active) VALUES ('11111111-1111-1111-1111-111111111101', '2016-07-26 00:00:00', '2016-07-26 00:00:00', 'flyway', 'flyway', 0, 'Kita Aaregg', 'e3736eb8-6eef-40ef-9e52-96ab48d8f220', '11111111-1111-1111-1111-111111111113', true);
