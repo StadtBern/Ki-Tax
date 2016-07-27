@@ -507,6 +507,7 @@ export default class EbeguRestUtil {
         if (traegerschaft) {
             this.abstractEntityToRestObject(restTragerschaft, traegerschaft);
             restTragerschaft.name = traegerschaft.name;
+            restTragerschaft.active = traegerschaft.active;
             return restTragerschaft;
         }
         return undefined;
@@ -528,6 +529,7 @@ export default class EbeguRestUtil {
         if (traegerschaftFromServer) {
             this.parseAbstractEntity(traegerschaftTS, traegerschaftFromServer);
             traegerschaftTS.name = traegerschaftFromServer.name;
+            traegerschaftTS.active = traegerschaftFromServer.active;
             return traegerschaftTS;
         }
         return undefined;

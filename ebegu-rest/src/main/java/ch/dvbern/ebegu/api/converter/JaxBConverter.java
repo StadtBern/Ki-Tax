@@ -585,6 +585,7 @@ public class JaxBConverter {
 		final JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
 		convertAbstractFieldsToJAX(persistedTraegerschaft, jaxTraegerschaft);
 		jaxTraegerschaft.setName(persistedTraegerschaft.getName());
+		jaxTraegerschaft.setActive(persistedTraegerschaft.getActive());
 		return jaxTraegerschaft;
 	}
 
@@ -601,6 +602,7 @@ public class JaxBConverter {
 		Validate.notNull(traegerschaftJAXP);
 		convertAbstractFieldsToEntity(traegerschaftJAXP, traegerschaft);
 		traegerschaft.setName(traegerschaftJAXP.getName());
+		traegerschaft.setActive(traegerschaftJAXP.getActive());
 		return traegerschaft;
 	}
 

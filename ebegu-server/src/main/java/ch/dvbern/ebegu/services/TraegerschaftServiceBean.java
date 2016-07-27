@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.Traegerschaft_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -40,8 +41,14 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Override
 	public Optional<Traegerschaft> findTraegerschaft(@Nonnull final String traegerschaftId) {
 		Objects.requireNonNull(traegerschaftId, "id muss gesetzt sein");
-		Traegerschaft a =  persistence.find(Traegerschaft.class, traegerschaftId);
+		Traegerschaft a = persistence.find(Traegerschaft.class, traegerschaftId);
 		return Optional.ofNullable(a);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Traegerschaft> getAllActiveTraegerschaften() {
+		return criteriaQueryHelper.getEntitiesByAttribute(Traegerschaft.class, true, Traegerschaft_.active);
 	}
 
 	@Override
@@ -57,5 +64,16 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 		traegerschaftToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeTraegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
 		persistence.remove(traegerschaftToRemove.get());
 	}
+
+	@Override
+	public void setInactive(@Nonnull String traegerschftId) {
+		Validate.notNull(traegerschftId);
+		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschftId);
+
+		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschftId));
+		traegerschaft.setActive(false);
+		persistence.merge(traegerschaft);
+	}
+
 
 }
