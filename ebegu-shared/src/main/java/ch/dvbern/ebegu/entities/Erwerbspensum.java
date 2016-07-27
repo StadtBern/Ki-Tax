@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,6 +47,10 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	@Column(nullable = false)
 	@NotNull
 	private boolean gesundheitlicheEinschraenkungen;
+
+	@Column(nullable = true)
+	@Nullable
+	private String bezeichnung;
 
 
 	//todo homa Prozent kann wohl aus Pensum geerbt werden
@@ -97,6 +102,24 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
 		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		return pensumIsSame && taetigkeitSame &&  zuschlagSame && gesundhSame;
+		return pensumIsSame && taetigkeitSame && zuschlagSame && gesundhSame;
+	}
+
+	public String getName() {
+
+		if(bezeichnung == null || bezeichnung.isEmpty()){
+			return taetigkeit + " " + getPensum() + "%";
+		}else{
+			return bezeichnung;
+		}
+	}
+
+	@Nullable
+	public String getBezeichnung() {
+		return bezeichnung;
+	}
+
+	public void setBezeichnung(@Nullable String bezeichnung) {
+		this.bezeichnung = bezeichnung;
 	}
 }

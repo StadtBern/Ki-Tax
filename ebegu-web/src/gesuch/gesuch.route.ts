@@ -29,7 +29,8 @@ function getStates(): IState[] {
         new EbeguEinkommensverschlechterungInfoState(),
         new EbeguEinkommensverschlechterungSteuernState(),
         new EbeguEinkommensverschlechterungState(),
-        new EbeguEinkommensverschlechterungResultateState()
+        new EbeguEinkommensverschlechterungResultateState(),
+        new EbeguDokumenteState()
     ];
 }
 
@@ -143,6 +144,12 @@ export class EbeguEinkommensverschlechterungResultateState implements IState {
     name = 'gesuch.einkommensverschlechterungResultate';
     template = '<einkommensverschlechterung-resultate-view>';
     url = '/einkommensverschlechterungResultate/:basisjahrPlus';
+}
+
+export class EbeguDokumenteState implements IState {
+    name = 'gesuch.dokumente';
+    template = '<dokumente-view>';
+    url = '/dokumente/:gesuchstellerNumber';
 }
 
 //PARAMS
