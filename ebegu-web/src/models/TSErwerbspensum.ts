@@ -18,6 +18,8 @@ export default class TSErwerbspensum extends TSAbstractPensumEntity {
 
     private _gesundheitlicheEinschraenkungen: boolean;
 
+    private _bezeichnung: String;
+
 
     constructor(pensum?: number, gueltigkeit?: TSDateRange, taetigkeit?: TSTaetigkeit, zuschlagZuErwerbspensum?: boolean,
                 zuschlagsgrund?: TSZuschlagsgrund, zuschlagsprozent?: number, gesundheitlicheEinschraenkungen?: boolean) {
@@ -68,5 +70,13 @@ export default class TSErwerbspensum extends TSAbstractPensumEntity {
 
     set gesundheitlicheEinschraenkungen(value: boolean) {
         this._gesundheitlicheEinschraenkungen = value;
+    }
+
+    get bezeichnung(): String {
+        return this._bezeichnung;
+    }
+
+    set bezeichnung(value: String) {
+        this._bezeichnung = value;
     }
 }

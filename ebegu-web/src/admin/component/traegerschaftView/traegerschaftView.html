@@ -34,7 +34,7 @@
                         <tr ng-if="vm.newTraegerschaft">
 
                             <td>
-                                <!--Name der Institution-->
+                                <!--Name der Traegerschaft-->
                                 <dv-input-container>
                                     <label data-translate="NAME" for="name_ID"></label>
                                     <input id="name_ID" type="text" name="name"
@@ -70,11 +70,10 @@
                 </div>
             </div>
 
-            <!--Knöpfe unterhalb der Tabelle zum anzeigen aller Institutionen-->
+            <!--Knopf unterhalb der Tabelle zum hinzufügen einer neuen Traegerschaft-->
             <div class="row">
                 <div class="col-md-2">
                     <dv-input-container class="form-group">
-                        <!--Knopf zum hinzufügen neuer Institutionen-->
                         <dv-loading-button type="button"
                                            ng-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
                                            button-class="btn btn-sm btn-success" button-disabled="vm.newTraegerschaft">

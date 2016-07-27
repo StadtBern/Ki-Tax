@@ -20,6 +20,7 @@ import {EinkommensverschlechterungInfoViewComponentConfig} from './component/ein
 import {EinkommensverschlechterungSteuernViewComponentConfig} from './component/einkommensverschlechterungSteuernView/einkommensverschlechterungSteuernView';
 import {EinkommensverschlechterungViewComponentConfig} from './component/einkommensverschlechterungView/einkommensverschlechterungView';
 import {EinkommensverschlechterungResultateViewComponentConfig} from './component/einkommensverschlechterungResultateView/einkommensverschlechterungResultateView';
+import {DokumenteViewComponentConfig} from './component/DokumenteView/dokumenteView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -41,4 +42,5 @@ export const EbeguWebGesuch =
     .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig())
     .component('einkommensverschlechterungSteuernView', new EinkommensverschlechterungSteuernViewComponentConfig())
     .component('einkommensverschlechterungView', new EinkommensverschlechterungViewComponentConfig())
-    .component('einkommensverschlechterungResultateView', new EinkommensverschlechterungResultateViewComponentConfig());
+    .component('einkommensverschlechterungResultateView', new EinkommensverschlechterungResultateViewComponentConfig())
+    .component('dokumenteView', new DokumenteViewComponentConfig());

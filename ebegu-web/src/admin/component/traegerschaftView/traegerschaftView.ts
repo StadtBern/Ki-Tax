@@ -12,8 +12,7 @@ let style = require('./traegerschaftView.less');
 export class TraegerschaftViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
     bindings: any = {
-        traegerschaften: '<',
-        mandant: '<'
+        traegerschaften: '<'
     };
     template: string = template;
     controller: any = TraegerschaftViewController;
@@ -23,33 +22,17 @@ export class TraegerschaftViewComponentConfig implements IComponentOptions {
 export class TraegerschaftViewController {
 
     traegerschaftRS: TraegerschaftRS;
-    ebeguUtil: EbeguUtil;
     traegerschaften: TSTraegerschaft[];
-
-
     newTraegerschaft: TSTraegerschaft = null;
-    isSelected: boolean = false;
 
-
-    static $inject = ['TraegerschaftRS', 'EbeguUtil', 'ErrorService'];
+    static $inject = ['TraegerschaftRS', 'ErrorService'];
     /* @ngInject */
-    constructor(TraegerschaftRS: TraegerschaftRS, ebeguUtil: EbeguUtil, private errorService: ErrorService) {
+    constructor(TraegerschaftRS: TraegerschaftRS, private errorService: ErrorService) {
         this.traegerschaftRS = TraegerschaftRS;
-        this.ebeguUtil = ebeguUtil;
-
-
     }
 
     getTraegerschaftenList(): TSTraegerschaft[] {
         return this.traegerschaften;
-    }
-
-    getSelectedTraegerschaft(): TSTraegerschaft {
-        return this.newTraegerschaft;
-    }
-
-    isSelectedTraegerschaft(): boolean {
-        return this.isSelected;
     }
 
     removeTraegerschaft(traegerschaft: any): void {
@@ -78,15 +61,9 @@ export class TraegerschaftViewController {
 
             this.traegerschaftRS.createTraegerschaft(this.newTraegerschaft).then((Traegerschaft: TSTraegerschaft) => {
                 this.traegerschaften.push(Traegerschaft);
-                this.resetTraegerschaftSelection();
+                this.newTraegerschaft = null;
             });
         }
-
-    }
-
-    private resetTraegerschaftSelection() {
-        this.newTraegerschaft = null;
-        this.isSelected = false;
     }
 
 }

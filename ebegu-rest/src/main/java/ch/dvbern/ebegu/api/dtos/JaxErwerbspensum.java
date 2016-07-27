@@ -36,6 +36,8 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 	@NotNull
 	private boolean gesundheitlicheEinschraenkungen;
 
+	private String bezeichnung;
+
 	public Taetigkeit getTaetigkeit() {
 		return taetigkeit;
 	}
@@ -74,5 +76,13 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 
 	public void setGesundheitlicheEinschraenkungen(boolean gesundheitlicheEinschraenkungen) {
 		this.gesundheitlicheEinschraenkungen = gesundheitlicheEinschraenkungen;
+	}
+
+	public String getBezeichnung() {
+		return bezeichnung;
+	}
+
+	public void setBezeichnung(String bezeichnung) {
+		this.bezeichnung = bezeichnung;
 	}
 }

@@ -4,20 +4,25 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import FinanzielleSituationRS from './finanzielleSituationRS.rest';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 import EinkommensverschlechterungContainerRS from './einkommensverschlechterungContainerRS.rest';
+import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
+import DokumenteRS from './dokumenteRS.rest';
 
 
 export default class BerechnungsManager {
     finanzielleSituationResultate: TSFinanzielleSituationResultateDTO;
     einkommensverschlechterungResultateBjP1: TSFinanzielleSituationResultateDTO;
     einkommensverschlechterungResultateBjP2: TSFinanzielleSituationResultateDTO;
+    dokumente: TSDokumenteDTO;
 
-    static $inject = ['FinanzielleSituationRS', 'EbeguRestUtil', 'EinkommensverschlechterungContainerRS'];
+    static $inject = ['FinanzielleSituationRS', 'EbeguRestUtil', 'EinkommensverschlechterungContainerRS', 'DokumenteRS'];
     /* @ngInject */
     constructor(private finanzielleSituationRS: FinanzielleSituationRS, private ebeguRestUtil: EbeguRestUtil,
-                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS) {
+                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS,
+                private dokumenteRS: DokumenteRS) {
         this.finanzielleSituationResultate = new TSFinanzielleSituationResultateDTO();
         this.einkommensverschlechterungResultateBjP1 = new TSFinanzielleSituationResultateDTO();
         this.einkommensverschlechterungResultateBjP2 = new TSFinanzielleSituationResultateDTO();
+        this.dokumente = new TSDokumenteDTO;
     }
 
     public calculateFinanzielleSituation(gesuch: TSGesuch): IPromise<TSFinanzielleSituationResultateDTO> {
@@ -48,4 +53,14 @@ export default class BerechnungsManager {
         }
         return this.einkommensverschlechterungResultateBjP1;
     }
+
+    public getDokumente(gesuch: TSGesuch): IPromise<TSDokumenteDTO> {
+        return this.dokumenteRS.getDokumente(
+            gesuch)
+            .then((promiseValue: TSDokumenteDTO) => {
+                this.dokumente = promiseValue;
+                return promiseValue;
+            });
+    }
+
 }

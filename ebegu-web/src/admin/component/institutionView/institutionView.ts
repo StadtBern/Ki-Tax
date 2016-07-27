@@ -10,6 +10,7 @@ import TSAdresse from '../../../models/TSAdresse';
 import {getTSBetreuungsangebotTypValues, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSDateRange} from '../../../models/types/TSDateRange';
 import IPromise = angular.IPromise;
 import IFormController = angular.IFormController;
 let template = require('./institutionView.html');
@@ -214,6 +215,14 @@ export class InstitutionViewController {
             return true;
         } else {
             return false;
+        }
+    }
+
+    getDateString(dateRange: TSDateRange, format: string): string {
+        if (!dateRange.gueltigBis) {
+            return dateRange.gueltigAb.format(format);
+        } else {
+            return dateRange.gueltigAb.format(format) + ' - ' + dateRange.gueltigBis.format(format);
         }
     }
 

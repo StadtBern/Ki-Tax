@@ -1129,6 +1129,7 @@ public class JaxBConverter {
 		erwerbspensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
 		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
 		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
+		erwerbspensum.setBezeichnung(jaxErwerbspensum.getBezeichnung());
 		return erwerbspensum;
 	}
 
@@ -1143,6 +1144,7 @@ public class JaxBConverter {
 			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
 			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
 			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
+			jaxErwerbspensum.setBezeichnung(pensum.getBezeichnung());
 			jaxErwerbspensum.setPensum(pensum.getPensum());
 			return jaxErwerbspensum;
 		}
@@ -1345,4 +1347,32 @@ public class JaxBConverter {
 		return loginElement;
 	}
 
+	public JaxDokumente dokumentGruendeToJAX(Set<DokumentGrund> dokumentGrunds) {
+		JaxDokumente jaxDokumente = new JaxDokumente();
+
+		for (DokumentGrund dokumentGrund : dokumentGrunds) {
+			jaxDokumente.getDokumentGruende().add(dokumentGrundToJax(dokumentGrund));
+		}
+
+		return jaxDokumente;
+
+	}
+
+	private JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
+		JaxDokumentGrund jaxDokumentGrund = new JaxDokumentGrund();
+		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
+		jaxDokumentGrund.setFullname(dokumentGrund.getFullName());
+		jaxDokumentGrund.setTag(dokumentGrund.getTag());
+		for (Dokument dokument : dokumentGrund.getDokumente()) {
+			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+		}
+		return jaxDokumentGrund;
+	}
+
+	private JaxDokument dokumentToJax(Dokument dokument) {
+		JaxDokument jaxDokument = new JaxDokument();
+		jaxDokument.setDokumentName(dokument.getDokumentName());
+		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
+		return jaxDokument;
+	}
 }

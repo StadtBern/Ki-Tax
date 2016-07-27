@@ -38,6 +38,9 @@ import TSEinkommensverschlechterungInfo from '../models/TSEinkommensverschlechte
 import TSEinkommensverschlechterungContainer from '../models/TSEinkommensverschlechterungContainer';
 import TSAbstractFinanzielleSituation from '../models/TSAbstractFinanzielleSituation';
 import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung';
+import TSDokumenteDTO from '../models/dto/TSDokumenteDTO';
+import TSDokumentGrund from '../models/TSDokumentGrund';
+import TSDokument from '../models/TSDokument';
 
 
 export default class EbeguRestUtil {
@@ -322,6 +325,7 @@ export default class EbeguRestUtil {
             erwerbspensum.zuschlagsgrund = erwerbspensumFromServer.zuschlagsgrund;
             erwerbspensum.zuschlagsprozent = erwerbspensumFromServer.zuschlagsprozent;
             erwerbspensum.zuschlagZuErwerbspensum = erwerbspensumFromServer.zuschlagZuErwerbspensum;
+            erwerbspensum.bezeichnung = erwerbspensumFromServer.bezeichnung;
             return erwerbspensum;
         } else {
             return undefined;
@@ -336,6 +340,7 @@ export default class EbeguRestUtil {
             restErwerbspensum.zuschlagsgrund = erwerbspensum.zuschlagsgrund;
             restErwerbspensum.zuschlagsprozent = erwerbspensum.zuschlagsprozent;
             restErwerbspensum.zuschlagZuErwerbspensum = erwerbspensum.zuschlagZuErwerbspensum;
+            restErwerbspensum.bezeichnung = erwerbspensum.bezeichnung;
             return restErwerbspensum;
         }
         return undefined;
@@ -1104,5 +1109,57 @@ export default class EbeguRestUtil {
             users[0] = this.parseUser(new TSUser(), data);
         }
         return users;
+    }
+
+    parseDokumenteDTO(dokumenteDTO: TSDokumenteDTO, dokumenteFromServer: any): TSDokumenteDTO {
+        if (dokumenteFromServer) {
+            dokumenteDTO.dokumentGruende = this.parseDokumentGruende(dokumenteFromServer.dokumentGruende);
+            return dokumenteDTO;
+        }
+        return undefined;
+    }
+
+    private parseDokumentGruende(dokumentGruende: Array<any>): TSDokumentGrund[] {
+        let resultList: TSDokumentGrund[] = [];
+        if (dokumentGruende && Array.isArray(dokumentGruende)) {
+            for (var i = 0; i < dokumentGruende.length; i++) {
+                resultList[i] = this.parseDokumentGrund(new TSDokumentGrund(), dokumentGruende[i]);
+            }
+        } else {
+            resultList[0] = this.parseDokumentGrund(new TSDokumentGrund(), dokumentGruende);
+        }
+        return resultList;
+    }
+
+    parseDokumentGrund(dokumentGrund: TSDokumentGrund, dokumentGrundFromServer: any): TSDokumentGrund {
+        if (dokumentGrundFromServer) {
+            dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
+            dokumentGrund.fullname = dokumentGrundFromServer.fullname;
+            dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
+            return dokumentGrund;
+        }
+        return undefined;
+    }
+
+    private parseDokumente(dokumente: Array<any>): TSDokument[] {
+        let resultList: TSDokument[] = [];
+        if (dokumente && Array.isArray(dokumente)) {
+            for (var i = 0; i < dokumente.length; i++) {
+                resultList[i] = this.parseDokument(new TSDokument(), dokumente[i]);
+            }
+        } else {
+            resultList[0] = this.parseDokument(new TSDokument(), dokumente);
+        }
+        return resultList;
+    }
+
+    private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
+        if (dokumentFromServer) {
+            dokument.dokumentName = dokumentFromServer.dokumentName;
+            dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
+            return dokument;
+        }
+        return undefined;
     }
 }

@@ -16,7 +16,8 @@
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                     ng-click="vm.editClicked(row)">
-                    <td ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
+                    <td ng-if="!row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
+                    <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>

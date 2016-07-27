@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -43,7 +41,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Override
 	public Optional<Traegerschaft> findTraegerschaft(@Nonnull final String traegerschaftId) {
 		Objects.requireNonNull(traegerschaftId, "id muss gesetzt sein");
-		Traegerschaft a =  persistence.find(Traegerschaft.class, traegerschaftId);
+		Traegerschaft a = persistence.find(Traegerschaft.class, traegerschaftId);
 		return Optional.ofNullable(a);
 	}
 

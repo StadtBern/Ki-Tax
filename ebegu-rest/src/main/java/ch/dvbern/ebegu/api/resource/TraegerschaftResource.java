@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxTraegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -50,7 +49,7 @@ public class TraegerschaftResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Traegerschaft traegerschaft = new Traegerschaft();;
+		Traegerschaft traegerschaft = new Traegerschaft();
 		if (traegerschaftJAXP.getId() != null) {
 			Optional<Traegerschaft> optional = traegerschaftService.findTraegerschaft(traegerschaftJAXP.getId());
 			traegerschaft = optional.orElse(new Traegerschaft());
