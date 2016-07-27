@@ -11,14 +11,17 @@ import java.util.Set;
 /**
  * Abstrakte Klasse zum berechnen der benötigten Dokumente
  *
- * @param <T>
+ * @param <T1>
  */
-abstract class AbstractDokumente<T> {
+abstract class AbstractDokumente<T1, T2> {
 
 	abstract public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis);
 
-	abstract public boolean isDokumentNeeded(DokumentTyp dokumentTyp, T dataForDocument);
+	abstract public boolean isDokumentNeeded(DokumentTyp dokumentTyp, T1 dataForDocument);
 
+	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, T1 dataForDocument1, T2 dataForDocument2) {
+		return isDokumentNeeded(dokumentTyp, dataForDocument1);
+	}
 
 	void add(DokumentGrund dokumentGrund, Set<DokumentGrund> anlageVerzeichnis) {
 		if (dokumentGrund != null) {
@@ -26,8 +29,15 @@ abstract class AbstractDokumente<T> {
 		}
 	}
 
-	DokumentGrund getDokument(DokumentTyp dokumentTyp, T dataForDocument, String fullName, String tag, DokumentGrundTyp dokumentGrundTyp) {
+	DokumentGrund getDokument(DokumentTyp dokumentTyp, T1 dataForDocument, String fullName, String tag, DokumentGrundTyp dokumentGrundTyp) {
 		if (isDokumentNeeded(dokumentTyp, dataForDocument)) {
+			return new DokumentGrund(dokumentGrundTyp, fullName, tag, dokumentTyp);
+		}
+		return null;
+	}
+
+	DokumentGrund getDokument(DokumentTyp dokumentTyp, T1 dataForDocument1, T2 dataForDocument2, String fullName, String tag, DokumentGrundTyp dokumentGrundTyp) {
+		if (isDokumentNeeded(dokumentTyp, dataForDocument1, dataForDocument2)) {
 			return new DokumentGrund(dokumentGrundTyp, fullName, tag, dokumentTyp);
 		}
 		return null;

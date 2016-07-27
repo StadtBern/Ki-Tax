@@ -34,6 +34,8 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		testgesuch = new Gesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2015, 1, 1));
+		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2016, 1, 1));
 		testgesuch.setKindContainers(new HashSet<KindContainer>());
 	}
 
@@ -69,6 +71,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		erwerbspensumJA.setGesundheitlicheEinschraenkungen(gesundheitlicheEinschraenkungen);
 		erwerbspensumJA.setZuschlagZuErwerbspensum(zuschlagZuErwerbspensum);
 		erwerbspensumJA.setZuschlagsgrund(zuschlagsgrund);
+		erwerbspensumJA.getGueltigkeit().setGueltigAb(LocalDate.of(1980, 1, 1));
 
 		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		gesuchsteller.setNachname("Chavez");
@@ -198,6 +201,32 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getFullName());
 		Assert.assertEquals(erwerbspensum.getName(), dokumentGrund.getTag());
 		return dokumentGrund;
+	}
+
+	@Test
+	public void erwpDokuemntNeueintrittAfterTest() {
+		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.ANGESTELLT, false, false, null);
+
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum));
+
+		erwerbspensum.getGueltigkeit().setGueltigAb(LocalDate.of(2015, 9, 1));
+		Assert.assertTrue(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum, LocalDate.of(2015, 1, 1)));
+
+		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
+		final DokumentGrund dokumentGrund = calculate.iterator().next();
+
+		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
+		Assert.assertEquals(DokumentTyp.NACHWEIS_ERWERBSPENSUM, dokument.getDokumentTyp());
+	}
+
+	@Test
+	public void erwpDokuemntNeueintrittBeforeTest() {
+		final Erwerbspensum erwerbspensum = createErwerbspensum(testgesuch, "Hugo", Taetigkeit.ANGESTELLT, false, false, null);
+
+
+		erwerbspensum.getGueltigkeit().setGueltigAb(LocalDate.of(2000, 7, 1));
+		Assert.assertFalse(erwerbspensumDokumente.isDokumentNeeded(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensum, LocalDate.of(2000, 8, 1)));
+
 	}
 
 	@Test
