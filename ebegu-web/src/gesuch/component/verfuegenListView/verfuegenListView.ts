@@ -36,8 +36,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.kinderWithBetreuungList;
     }
 
-    public openVerfuegung(betreuung: TSBetreuung): void {
-
+    public openVerfuegung(kind: TSKindContainer, betreuung: TSBetreuung): void {
+        let kindNumber: number = this.gesuchModelManager.findKind(kind);
+        if (kindNumber > 0) {
+            this.gesuchModelManager.setKindNumber(kindNumber);
+            let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
+            if (betreuungNumber > 0) {
+                this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+                this.state.go('gesuch.verfuegenView');
+            }
+        }
     }
 
     public getFall() {

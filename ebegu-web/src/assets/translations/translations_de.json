@@ -384,8 +384,9 @@
     "PLATZBESTAETIGUNG_ANFORDERN": "PLATZBESTÄTIGUNG ANFORDERN",
     "SCHULPFLICHTIG": "schulpflichtig per {{anfangsperiode}}",
     "INSTITUTION": "Institution",
-    "BEREIT_VERFUEGUNG_UPPER": "BEREIT ZUR VERFÜGUNG",
+    "GEPRUEFT_UPPER": "GEPRÜFT",
     "ERSTE_MAHNUNG_UPPER": "1. MAHNUNG",
+    "ZURUECK_GESUCHSTELLER_UPPER": "ZURÜCK AN GESUCHSTELLER",
     "INSTITUTION_UPPER": "INSTITUTION",
     "ANGEBOT_UPPER": "ANGEBOT",
     "VERANTWORTLICH_UPPER": "VERANTWORTLICH",
@@ -604,9 +605,10 @@
     "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
-    "DIV": "Sonstige Nachweise"
-
-
-
+    "DIV": "Sonstige Nachweise",
+    "ANSPRUCH": "Anspruch",
+    "VOLLKOSTEN": "Vollkosten",
+    "ELTERNBEITRAG": "Elternbeitrag",
+    "VERGUENSTIGUNG": "Vergünstigung"
 }
 
