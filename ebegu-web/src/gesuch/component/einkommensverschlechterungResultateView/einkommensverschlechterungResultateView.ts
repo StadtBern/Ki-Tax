@@ -233,6 +233,15 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                     sign = '+ ';
                 }
                 return sign + Math.abs(Math.floor(promil / 10)) + '.' + Math.abs(promil % 10) + ' %';
+            } else if (!massgebendesEinkommen && !massgebendesEinkommenVJ) {
+                // case: Kein Einkommen in diesem Jahr und im letzten Jahr
+                return '+ 0 %';
+            } else if (!massgebendesEinkommen) {
+                // case: Kein Einkommen in diesem Jahr aber Einkommen im letzten Jahr
+                return '- 100 %';
+            } else {
+                // case: Kein Einkommen im letzten Jahr aber Einkommen in diesem Jahr
+                return '+ 100 %';
             }
         }
         return '';

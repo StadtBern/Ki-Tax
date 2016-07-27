@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -25,23 +24,14 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Inject
 	private Persistence<Betreuung> persistence;
-	@Inject
-	private KindService kindService;
+//	@Inject
+//	private KindService kindService;
 
 
 	@Override
 	@Nonnull
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
-		if (betreuung.getTimestampErstellt() == null) {
-			// nur wenn die Betreuung erstellt wird, setzen wir die BetruungNummer und aktualisieren nextNumberBetreuung im Kind
-			Optional<KindContainer> optKind = kindService.findKind(betreuung.getKind().getId());
-			if (optKind.isPresent()) {
-				KindContainer kindContainer = optKind.get();
-				betreuung.setBetreuungNummer(kindContainer.getNextNumberBetreuung());
-				kindContainer.setNextNumberBetreuung(kindContainer.getNextNumberBetreuung() + 1);
-			}
-		}
 		return persistence.merge(betreuung);
 	}
 

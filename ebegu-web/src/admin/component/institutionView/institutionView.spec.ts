@@ -25,7 +25,7 @@ describe('adminView', function () {
          pass them to $componentController.
          */
         let bindings = {};
-        component = $componentController('dvAdminView', {$scope: scope}, bindings);
+        component = $componentController('dvInstitutionView', {$scope: scope}, bindings);
         expect(component).toBeDefined();
     });
 });

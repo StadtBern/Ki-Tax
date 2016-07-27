@@ -58,6 +58,13 @@ export class TraegerschaftRS {
         });
     }
 
+    public getAllActiveTraegerschaften(): IPromise<TSTraegerschaft[]> {
+        return this.http.get(this.serviceURL + '/' + 'active').then((response: any) => {
+            this.log.debug('PARSING traegerschaften REST array object', response.data);
+            return this.ebeguRestUtil.parseTraegerschaften(response.data);
+        });
+    }
+
 
     public getServiceName(): string {
         return 'TraegerschaftRS';
