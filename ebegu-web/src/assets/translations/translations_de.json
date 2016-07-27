@@ -609,6 +609,10 @@
     "ANSPRUCH": "Anspruch",
     "VOLLKOSTEN": "Vollkosten",
     "ELTERNBEITRAG": "Elternbeitrag",
-    "VERGUENSTIGUNG": "Vergünstigung"
+    "VERGUENSTIGUNG": "Vergünstigung",
+    "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
+    "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
+    "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
 }
 
