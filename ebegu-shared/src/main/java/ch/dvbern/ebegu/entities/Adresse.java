@@ -60,8 +60,10 @@ public class Adresse extends AbstractDateRangedEntity {
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String gemeinde;
 
-
-
+	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
+	private String organisation;
 
 	public Adresse() {
 	}
@@ -128,7 +130,14 @@ public class Adresse extends AbstractDateRangedEntity {
 		this.land = land;
 	}
 
+	@Nullable
+	public String getOrganisation() {
+		return organisation;
+	}
 
+	public void setOrganisation(@Nullable String organisation) {
+		this.organisation = organisation;
+	}
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
 	public boolean isSame(Adresse otherAdr) {
@@ -145,6 +154,7 @@ public class Adresse extends AbstractDateRangedEntity {
 			Objects.equals(ort, otherAdr.ort) &&
 			land == otherAdr.land &&
 			Objects.equals(gemeinde, otherAdr.gemeinde) &&
+			Objects.equals(organisation, otherAdr.organisation) &&
 			Objects.equals(getGueltigkeit(), otherAdr.getGueltigkeit());
 
 	}

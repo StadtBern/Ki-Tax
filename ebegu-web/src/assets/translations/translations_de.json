@@ -13,6 +13,7 @@
     "ADRESSE_STRASSE": "Strasse",
     "ADRESSE_HAUSNUMMER": "Hausnummer",
     "ADRESSE_ZUSATZZEILE": "Adresszusatz",
+    "ADRESSE_ORGANISATION": "Organisation",
     "ADRESSE_PLZ": "PLZ",
     "ADRESSE_ORT": "Ort",
     "ADRESSE_LAND": "Land",
