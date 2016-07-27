@@ -1255,16 +1255,70 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
-	public JaxBetreuung betreuungToJAX(final Betreuung persistedBetreuung) {
+	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
-		convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
-		jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
-		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
-		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
-		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
-		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
-		jaxBetreuung.setBetreuungNummer(persistedBetreuung.getBetreuungNummer());
+		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
+		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
+		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
+		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
+		jaxBetreuung.setSchulpflichtig(betreuungFromServer.getSchulpflichtig());
+		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
+		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
+
+		if (betreuungFromServer.getVerfuegung() != null) {
+			jaxBetreuung.setJaxVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
+		}
 		return jaxBetreuung;
+	}
+
+	/**
+	 * converts the given verfuegung into a JaxVerfuegung
+	 *
+	 * @param verfuegung
+	 * @return dto with the values of the verfuegung
+	 */
+	private JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
+		if (verfuegung != null) {
+			final JaxVerfuegung jaxVerfuegung = new JaxVerfuegung();
+			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
+			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
+			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
+
+			if (verfuegung.getZeitabschnitte() != null) {
+				jaxVerfuegung.getZeitabschnitte().addAll(
+					verfuegung.getZeitabschnitte()
+						.stream()
+						.map(this::verfuegungZeitabschnittToJax)
+						.collect(Collectors.toList()));
+			}
+
+			return jaxVerfuegung;
+		}
+		return null;
+	}
+
+	private JaxVerfuegungZeitabschnitt verfuegungZeitabschnittToJax(VerfuegungZeitabschnitt zeitabschnitt) {
+		if (zeitabschnitt != null) {
+			final JaxVerfuegungZeitabschnitt jaxZeitabschn = new JaxVerfuegungZeitabschnitt();
+			convertAbstractDateRangedFieldsToEntity(jaxZeitabschn, zeitabschnitt);
+			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
+			jaxZeitabschn.setErwerbspensumGS1(zeitabschnitt.getErwerbspensumGS1());
+			jaxZeitabschn.setErwerbspensumGS2(zeitabschnitt.getErwerbspensumGS2());
+			jaxZeitabschn.setBetreuungspensum(zeitabschnitt.getBetreuungspensum());
+			jaxZeitabschn.setFachstellenpensum(zeitabschnitt.getFachstellenpensum());
+			jaxZeitabschn.setAnspruchspensumRest(zeitabschnitt.getAnspruchspensumRest());
+			jaxZeitabschn.setAnspruchberechtigtesPensum(zeitabschnitt.getAnspruchberechtigtesPensum());
+			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
+			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
+			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
+			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
+			jaxZeitabschn.setMassgebendesEinkommen(zeitabschnitt.getMassgebendesEinkommen());
+			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
+			jaxZeitabschn.setStatus(zeitabschnitt.getStatus());
+			return jaxZeitabschn;
+		}
+		return null;
+
 	}
 
 	/**
