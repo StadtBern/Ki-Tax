@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.dto;
 
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import org.apache.commons.lang3.Validate;
 
 import java.math.BigDecimal;
@@ -16,18 +17,14 @@ public class EinkommensverschlechterungResultateDTO extends AbstractFinanzielleS
 		super(familiengroesse, famGroesseAbz);
 
 		if (gesuch != null) {
-			if (gesuch.getGesuchsteller1() != null) {
-				final Einkommensverschlechterung einkommensverschlechterungGS1 = getEinkommensverschlechterungGS1(gesuch, basisJahrPlus);
-				setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1));
-				calculateProGesuchsteller(einkommensverschlechterungGS1, calculateNettoJahresLohn(einkommensverschlechterungGS1));
-			}
-			if (gesuch.getGesuchsteller2() != null) {
+			final Einkommensverschlechterung einkommensverschlechterungGS1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
+			setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1));
 
-				final Einkommensverschlechterung einkommensverschlechterungGS2 = getEinkommensverschlechterungGS2(gesuch, basisJahrPlus);
-				setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2));
-				calculateProGesuchsteller(einkommensverschlechterungGS2, calculateNettoJahresLohn(einkommensverschlechterungGS2));
-			}
-			calculateZusammen();
+			final Einkommensverschlechterung einkommensverschlechterungGS2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
+			setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2));
+
+			calculateZusammen(einkommensverschlechterungGS1, calculateNettoJahresLohn(einkommensverschlechterungGS1),
+				einkommensverschlechterungGS2, calculateNettoJahresLohn(einkommensverschlechterungGS2));
 		}
 		initToZero();
 	}
@@ -52,29 +49,16 @@ public class EinkommensverschlechterungResultateDTO extends AbstractFinanzielleS
 		return total;
 	}
 
-	private Einkommensverschlechterung getEinkommensverschlechterungGS1(Gesuch gesuch, int basisJahrPlus) {
-		if (gesuch.getGesuchsteller1() != null) {
-			Validate.notNull(gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer());
+	private Einkommensverschlechterung getEinkommensverschlechterungGS(Gesuchsteller gesuchsteller, int basisJahrPlus) {
+		if (gesuchsteller != null) {
+			Validate.notNull(gesuchsteller.getEinkommensverschlechterungContainer());
 			if (basisJahrPlus == 2) {
-				return gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2();
+				return gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2();
 			} else {
-				return gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1();
+				return gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1();
 			}
 		}
 		return null;
 	}
-
-	private Einkommensverschlechterung getEinkommensverschlechterungGS2(Gesuch gesuch, int basisJahrPlus) {
-		if (gesuch.getGesuchsteller2() != null) {
-			Validate.notNull(gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer());
-			if (basisJahrPlus == 2) {
-				return gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2();
-			} else {
-				return gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1();
-			}
-		}
-		return null;
-	}
-
 
 }
