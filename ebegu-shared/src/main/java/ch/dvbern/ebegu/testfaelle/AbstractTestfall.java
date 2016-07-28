@@ -25,7 +25,7 @@ public class AbstractTestfall {
 	protected Gesuch createAlleinerziehend(int fallNummer, LocalDate eingangsdatum) {
 		// Fall
 		Fall fall = new Fall();
-		fall.setFallNummer(fallNummer);
+//		fall.setFallNummer(fallNummer); Darf nicht gesetzt werden, wird automatisch vergeben
 		// Gesuch
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(gesuchsperiode);
