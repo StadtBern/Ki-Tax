@@ -22,15 +22,19 @@
             <div class="row">
                 <div class="form-group col-md-6" ng-if="vm.showEkvi()">
                     <hr/>
-                    <div class="dv-radio-container">
+                    <dv-input-container class="form-group dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus1"
                                      ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
-                                     aria-label="{vm.getBasisJahrPlusAsString(0)}">
+                                     aria-label="{vm.getBasisJahrPlusAsString(0)}"
+                                     ng-required="vm.isRequired(1)" class="input-element">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                         </md-checkbox>
-
-                    </div>
+                        <div ng-messages="form.ekvFuerBasisJahrPlus1.$error" role="alert" class="error">
+                            <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                 for="form.ekvFuerBasisJahrPlus1.$error"></div>
+                        </div>
+                    </dv-input-container>
                 </div>
             </div>
 
@@ -68,15 +72,19 @@
             <div class="row">
                 <div class="form-group col-md-6" ng-if="vm.showEkvi()">
                     <hr/>
-                    <div class="dv-radio-container">
+                    <dv-input-container class="form-group dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus2"
                                      ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
-                                     aria-label="{vm.getBasisJahrPlusAsString(1)}">
+                                     aria-label="{vm.getBasisJahrPlusAsString(1)}"
+                                     ng-required="vm.isRequired(2)" class="input-element">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                         </md-checkbox>
-
-                    </div>
+                        <div ng-messages="form.ekvFuerBasisJahrPlus2.$error" role="alert" class="error">
+                            <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
+                                 for="form.ekvFuerBasisJahrPlus2.$error"></div>
+                        </div>
+                    </dv-input-container>
                 </div>
             </div>
 

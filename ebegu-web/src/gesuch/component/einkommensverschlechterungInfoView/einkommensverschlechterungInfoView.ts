@@ -128,6 +128,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             // Speichern ausloesen
             this.errorService.clearAll();
 
+            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+            }
+            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+            }
+
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
 
@@ -139,6 +146,15 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     resetForm() {
         this.initViewModel();
+    }
+
+    isRequired(basisJahrPlus: number): boolean {
+        let ekv: TSEinkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();
+        if (basisJahrPlus === 2) {
+            return ekv.einkommensverschlechterung && !ekv.ekvFuerBasisJahrPlus1;
+        } else {
+            return ekv.einkommensverschlechterung && !ekv.ekvFuerBasisJahrPlus2;
+        }
     }
 
 }

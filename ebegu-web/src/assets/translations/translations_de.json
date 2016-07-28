@@ -21,6 +21,7 @@
     "ADRESSE_GUELTIGAB": "gültig ab",
     "ADRESSE_GUELTIGBIS": "gültig bis",
     "ERROR_REQUIRED": "Feld wird benötigt",
+    "ERROR_REQUIRED_ONE_OF_THEM": "Eines der beiden Felder wird benötigt",
     "ERROR_MIN_LENG": "Eingabe zu kurz ",
     "ERROR_MAX_LENG": "Eingabe zu lang ",
     "ERROR_EMAIL": "Keine gültige Email ",
