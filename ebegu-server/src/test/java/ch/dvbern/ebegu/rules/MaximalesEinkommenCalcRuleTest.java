@@ -23,7 +23,7 @@ public class MaximalesEinkommenCalcRuleTest {
 
 	private BigDecimal MAX_EINKOMMEN = new BigDecimal("159000");
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final MaximalesEinkommenAbschnittRule maximalesEinkommenAbschnittRule = new MaximalesEinkommenAbschnittRule(defaultGueltigkeit);
+	private final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 	private final MaximalesEinkommenCalcRule maximalesEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, MAX_EINKOMMEN);
 	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
 
@@ -35,7 +35,7 @@ public class MaximalesEinkommenCalcRuleTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, MathUtil.DEFAULT.from(50000));
-		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = einkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
@@ -49,7 +49,7 @@ public class MaximalesEinkommenCalcRuleTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 
 		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, MathUtil.DEFAULT.from(180000));
-		List<VerfuegungZeitabschnitt> neueAbschnitte  = maximalesEinkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
+		List<VerfuegungZeitabschnitt> neueAbschnitte  = einkommenAbschnittRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		List<VerfuegungZeitabschnitt> result = maximalesEinkommenCalcRule.calculate(betreuung, neueAbschnitte);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());

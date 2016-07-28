@@ -6,6 +6,8 @@ import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
+import org.junit.Assert;
 import org.junit.Before;
 
 import java.math.BigDecimal;
@@ -23,6 +25,9 @@ public class AbstractBGRechnerTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
+	private MathUtil MATH = MathUtil.DEFAULT;
+
+
 	@Before
 	public void setUpCalcuator() {
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
@@ -31,6 +36,15 @@ public class AbstractBGRechnerTest {
 		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
 		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
 		evaluator = new BetreuungsgutscheinEvaluator(rules);
+	}
+
+	protected void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int beantragtesPensum, int anspruchsberechtigtesPensum, int betreuungspensum, double vollkosten, double verguenstigung, double elternbeitrag) {
+		Assert.assertEquals(beantragtesPensum, abschnitt.getBetreuungspensum());
+		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getErwerbspensumMinusOffset());
+		Assert.assertEquals(betreuungspensum, abschnitt.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(MATH.from(vollkosten), abschnitt.getVollkosten());
+		Assert.assertEquals(MATH.from(verguenstigung), abschnitt.getVerguenstigung());
+		Assert.assertEquals(MATH.from(elternbeitrag), abschnitt.getElternbeitrag());
 	}
 
 	/**

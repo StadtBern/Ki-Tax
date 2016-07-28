@@ -14,6 +14,9 @@ import java.util.Collection;
  */
 public class AbstractTestfall {
 
+	public static final String idInstitutionAaregg = "11111111-1111-1111-1111-111111111101";
+	public static final String idInstitutionBruennen = "11111111-1111-1111-1111-111111111107";
+
 	protected Gesuchsperiode gesuchsperiode;
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;
 
@@ -22,10 +25,9 @@ public class AbstractTestfall {
 		this.institutionStammdatenList = institutionStammdatenList;
 	}
 
-	protected Gesuch createAlleinerziehend(int fallNummer, LocalDate eingangsdatum) {
+	protected Gesuch createAlleinerziehend(LocalDate eingangsdatum) {
 		// Fall
 		Fall fall = new Fall();
-//		fall.setFallNummer(fallNummer); Darf nicht gesetzt werden, wird automatisch vergeben
 		// Gesuch
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(gesuchsperiode);
@@ -96,16 +98,16 @@ public class AbstractTestfall {
 		return kindContainer;
 	}
 
-	protected Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp) {
+	protected Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		Betreuung betreuung = new Betreuung();
-		betreuung.setInstitutionStammdaten(createInstitutionStammdaten(betreuungsangebotTyp));
+		betreuung.setInstitutionStammdaten(createInstitutionStammdaten(betreuungsangebotTyp, institutionsId));
 		betreuung.setBetreuungsstatus(Betreuungsstatus.AUSSTEHEND);
 		return betreuung;
 	}
 
-	protected InstitutionStammdaten createInstitutionStammdaten(BetreuungsangebotTyp betreuungsangebotTyp) {
+	protected InstitutionStammdaten createInstitutionStammdaten(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		for (InstitutionStammdaten institutionStammdaten : institutionStammdatenList) {
-			if (institutionStammdaten.getBetreuungsangebotTyp().equals(betreuungsangebotTyp)) {
+			if (institutionStammdaten.getBetreuungsangebotTyp().equals(betreuungsangebotTyp) && institutionStammdaten.getInstitution().getId().equals(institutionsId)) {
 				return institutionStammdaten;
 			}
 		}
