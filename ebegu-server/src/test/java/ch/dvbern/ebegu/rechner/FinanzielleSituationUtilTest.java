@@ -23,7 +23,7 @@ public class FinanzielleSituationUtilTest {
 	public void testKeineEinkommensverschlechterung() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
-		ch.dvbern.ebegu.tets.TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
