@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
@@ -71,6 +72,9 @@ public class BetreuungsgutscheinEvaluator {
 				}
 				// Und die Resultate in die Verfügung schreiben
                 verfuegung.setZeitabschnitte(zeitabschnitte);
+				List<String> bemerkungenOfAbschnitt = zeitabschnitte.stream().map(VerfuegungZeitabschnitt::getBemerkungen).collect(Collectors.toList());
+				verfuegung.setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitt));
+
 			}
 		}
 	}

@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import com.google.common.base.Joiner;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -15,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * Dieses Objekt repraesentiert einen Zeitabschnitt wahrend eines Betreeungsgutscheinantrags waehrend dem die Faktoren
@@ -83,7 +84,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
-	private String bemerkungen ;
+	private String bemerkungen = "";
 
 	@Transient
 	private String status;
@@ -244,15 +245,19 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			massgebendesEinkommen = massgebendesEinkommen.add(other.getMassgebendesEinkommen());
 		}
 		this.setMassgebendesEinkommen(massgebendesEinkommen);
+
+		this.addBemerkung(other.getBemerkungen());
 	}
 
 	/**
 	 * Fügt eine Bemerkung zur Liste hinzu
 	 */
-	public void addBemerkung(String bemerkung) {
-		StringJoiner sj = new StringJoiner(",");
-	    this.bemerkungen = sj.add(this.bemerkungen).add(bemerkung).toString();
-
+	public void addBemerkung(String bem) {
+		String joinedString = Joiner.on(",").skipNulls().join(
+			StringUtils.defaultIfBlank(this.bemerkungen, null),
+			StringUtils.defaultIfBlank(bem, null)
+		);
+		this.bemerkungen = joinedString;
 	}
 
 	/**

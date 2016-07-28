@@ -42,7 +42,7 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private Integer betreuungNummer = 1;
 
 	@Nullable
-	private JaxVerfuegung  jaxVerfuegung ;
+	private JaxVerfuegung verfuegung;
 
 
 
@@ -97,11 +97,11 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	}
 
 	@Nullable
-	public JaxVerfuegung getJaxVerfuegung() {
-		return jaxVerfuegung;
+	public JaxVerfuegung getVerfuegung() {
+		return verfuegung;
 	}
 
-	public void setJaxVerfuegung(@Nullable JaxVerfuegung jaxVerfuegung) {
-		this.jaxVerfuegung = jaxVerfuegung;
+	public void setVerfuegung(@Nullable JaxVerfuegung verfuegung) {
+		this.verfuegung = verfuegung;
 	}
 }

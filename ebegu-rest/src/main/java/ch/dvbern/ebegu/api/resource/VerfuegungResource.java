@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.VerfuegungService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,7 +18,6 @@ import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -48,7 +48,7 @@ public class VerfuegungResource {
 	private JaxBConverter converter;
 
 	@Resource
- 	private EJBContext context;    //fuer rollback
+	private EJBContext context;    //fuer rollback
 
 //
 //	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
@@ -81,31 +81,15 @@ public class VerfuegungResource {
 //		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 //	}
 
-	@Nullable
-	@POST
-	@Path("/calculate")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response calculateVerfuegung (
-		@Nonnull @NotNull @Valid JaxGesuch gesuchJAXP,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
-		finanzielleSituationService.calculateFinanzDaten(gesuch);
-		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
-		context.setRollbackOnly();
-		return Response.ok(gesuchWithCalcVerfuegung).build();
-	}
-
+	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
 	@Nullable
 	@GET
 	@Path("/calculate/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response calculateVerfuegung (
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchstellerId,
+	public Response calculateVerfuegung(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchstellerId,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
@@ -118,27 +102,10 @@ public class VerfuegungResource {
 		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
+		JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
+
 		context.setRollbackOnly();
-		return Response.ok(gesuchWithCalcVerfuegung).build();
+		return Response.ok(gesuchJax.getKindContainers()).build();
 	}
-
-
-//	@Nullable
-//	@GET
-//	@Path("/{finanzielleSituationId}")
-//	@Consumes(MediaType.WILDCARD)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public JaxFinanzielleSituationContainer findFinanzielleSituation (
-//		@Nonnull @NotNull @PathParam("finanzielleSituationId") JaxId finanzielleSituationId) throws EbeguException {
-//
-//		Validate.notNull(finanzielleSituationId.getId());
-//		String finanzielleSituationID = converter.toEntityId(finanzielleSituationId);
-//		Optional<FinanzielleSituationContainer> optional = verfuegungService.findFinanzielleSituation(finanzielleSituationID);
-//
-//		if (!optional.isPresent()) {
-//			return null;
-//		}
-//		FinanzielleSituationContainer finanzielleSituationToReturn = optional.get();
-//		return converter.finanzielleSituationContainerToJAX(finanzielleSituationToReturn);
-//	}
 }
+

@@ -74,6 +74,11 @@ public class Verfuegung extends AbstractEntity{
 		this.betreuung = betreuung;
 	}
 
+	public boolean addZeitabschnitt(@NotNull final VerfuegungZeitabschnitt zeitabschnitt) {
+		zeitabschnitt.setVerfuegung(this);
+		return !this.zeitabschnitte.add(zeitabschnitt);
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Verfuegung");
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
