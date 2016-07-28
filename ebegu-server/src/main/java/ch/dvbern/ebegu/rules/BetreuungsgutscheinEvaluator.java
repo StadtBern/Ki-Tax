@@ -5,12 +5,14 @@ import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -72,7 +74,9 @@ public class BetreuungsgutscheinEvaluator {
 				}
 				// Und die Resultate in die Verfügung schreiben
                 verfuegung.setZeitabschnitte(zeitabschnitte);
-				List<String> bemerkungenOfAbschnitt = zeitabschnitte.stream().map(VerfuegungZeitabschnitt::getBemerkungen).collect(Collectors.toList());
+				Set<String> bemerkungenOfAbschnitt = zeitabschnitte.stream()
+					.map(VerfuegungZeitabschnitt::getBemerkungen)
+					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
 				verfuegung.setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitt));
 
 			}

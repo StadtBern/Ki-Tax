@@ -6,8 +6,10 @@ import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashSet;
@@ -59,6 +61,23 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 			}
 		}
 	}
+
+	@Test
+	public void doTestEvaluationGeneratedBemerkungen(){
+		Gesuch testgesuch = createGesuch();
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		testgesuch.getFinanzDatenDTO().setMassgebendesEinkommenBasisjahr(new BigDecimal("500000")); //zu hoch -> Comment wird erzeugt
+
+		evaluator.evaluate(testgesuch, getParameter());
+
+		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				Assert.assertFalse(betreuung.getVerfuegung().getGeneratedBemerkungen().isEmpty());
+				Assert.assertTrue(betreuung.getVerfuegung().getGeneratedBemerkungen().startsWith("MAXIMALES"));
+			}
+		}
+	}
+
 
 	private Gesuch createGesuch() {
 		Gesuch gesuch = new Gesuch();
