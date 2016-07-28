@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.converters.LandConverter;
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.enums.Land;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,6 +40,8 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
 	private AdresseTyp adresseTyp;
 
+	@Nullable
+	private String organisation;
 
 	public String getStrasse() {
 		return strasse;
@@ -102,5 +105,14 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
 	public AdresseTyp getAdresseTyp() {
 		return adresseTyp;
+	}
+
+	@Nullable
+	public String getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(@Nullable String organisation) {
+		this.organisation = organisation;
 	}
 }
