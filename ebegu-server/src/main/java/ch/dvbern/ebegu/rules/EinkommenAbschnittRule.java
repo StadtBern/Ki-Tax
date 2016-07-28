@@ -12,10 +12,10 @@ import java.util.List;
 /**
  * Setzt das massgebende Einkommen in die benoetigten Zeitabschnitte
  */
-public class MaximalesEinkommenAbschnittRule extends AbstractAbschnittRule {
+public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 
-	public MaximalesEinkommenAbschnittRule(DateRange validityPeriod) {
+	public EinkommenAbschnittRule(DateRange validityPeriod) {
 		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 
@@ -23,12 +23,10 @@ public class MaximalesEinkommenAbschnittRule extends AbstractAbschnittRule {
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		List<VerfuegungZeitabschnitt> einkommensAbschnitte = new ArrayList<>();
-		//TODO (hefr) Test
-		//TODO (hefr) Rule umbenennen?
 		// Nur ausführen wenn Finanzdaten gesetzt
 		FinanzDatenDTO finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO();
 		if (finanzDatenDTO != null) {
-			VerfuegungZeitabschnitt lastAbschnitt = null;
+			VerfuegungZeitabschnitt lastAbschnitt;
 
 			// Abschnitt Finanzielle Situation
 			VerfuegungZeitabschnitt abschnittFinanzielleSituation = new VerfuegungZeitabschnitt(betreuung.extractGesuchsperiode().getGueltigkeit());

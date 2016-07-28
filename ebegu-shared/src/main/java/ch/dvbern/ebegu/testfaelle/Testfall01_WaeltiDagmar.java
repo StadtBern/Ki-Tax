@@ -11,6 +11,7 @@ import java.util.Collection;
 
 /**
  * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/1
+ * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/1
  */
 public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
@@ -20,7 +21,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	public Gesuch createGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(1, LocalDate.of(2016, Month.JULY, 13));
+		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.JULY, 13));
 		Gesuchsteller gesuchsteller1 = createGesuchsteller("Wälti", "Dagmar");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
@@ -32,14 +33,14 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionAaregg);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 		// Kita Brünnen
-		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA);
+		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionBruennen);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);
 		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(40, LocalDate.of(2017, Month.FEBRUARY, 1), LocalDate.of(2017, Month.JULY, 31));
