@@ -568,7 +568,7 @@ export default class GesuchModelManager {
         return umzugAdr;
     }
 
-    private calculateShowDatumFlags(gesuchsteller: TSGesuchsteller): void {
+    public calculateShowDatumFlags(gesuchsteller: TSGesuchsteller): void {
         if (gesuchsteller.adresse) {
             gesuchsteller.adresse.showDatumVon = false;
         }
