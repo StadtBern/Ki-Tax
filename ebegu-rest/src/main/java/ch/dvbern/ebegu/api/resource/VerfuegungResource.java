@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.VerfuegungService;
 import io.swagger.annotations.Api;
@@ -38,6 +39,9 @@ public class VerfuegungResource {
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -88,6 +92,7 @@ public class VerfuegungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
 		context.setRollbackOnly();
@@ -109,7 +114,9 @@ public class VerfuegungResource {
 		if (!gesuchOptional.isPresent()) {
 			return null;
 		}
-		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuchOptional.get());
+		Gesuch gesuch = gesuchOptional.get();
+		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
+		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
 		context.setRollbackOnly();
 		return Response.ok(gesuchWithCalcVerfuegung).build();
