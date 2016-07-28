@@ -6,6 +6,9 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
 import DateUtil from '../../../utils/DateUtil';
+import VerfuegungRS from '../../../core/service/verfuegungRS.rest';
+import TSGesuch from '../../../models/TSGesuch';
+import TSVerfuegung from '../../../models/TSVerfuegung';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -19,49 +22,30 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'VerfuegungRS'];
 
-    private nombres: string[] = ['hola', 'adios'];
+    private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil) {
+                private ebeguUtil: EbeguUtil, private verfuegungRS: VerfuegungRS) {
         super(state, gesuchModelManager, berechnungsManager);
-        this.initModel();
+        this.initViewModel();
     }
 
-    /**
-     * Die finanzielle Situation und die Einkommensverschlechterungen muessen mithilfe des Berechnungsmanagers berechnet werden, um manche Daten zur Verfügung
-     * zu haben. Das ist notwendig weil die finanzielle Situation nicht gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird,
-     * ist gar nichts berechnet. Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch hier berechnet werden.
-     * Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet
-     * ohne sie neu berechnen zu muessen. Dieses geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden
-     */
-    private initModel(): void {
-        console.log('finSit -> cargado');
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
-        if (this.gesuchModelManager.gesuch.einkommensverschlechterungInfo && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1) {
-            console.log('EV1 -> cargado');
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1); //.then(() => {});
-        }
-        if (this.gesuchModelManager.gesuch.einkommensverschlechterungInfo && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2) {
-            console.log('EV2 -> cargado');
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
-        }
+    public initViewModel(): void {
+        this.verfuegungRS.calculateVerfuegung(this.gesuchModelManager.gesuch.id).then((response: TSGesuch) => {
+            // this.gesuchModelManager.setVerfuegenToWorkWith(response.kindContainers[0].betreuungen[0].);
+            this.verfuegungen.push(response.kindContainers[0].betreuungen[0].verfuegung[0]);
+        });
     }
-
 
     public cancel(): void {
         this.state.go('gesuch.verfuegen');
     }
 
-    public getVerfuegungZeitabschnitte(): Array<string> {
-        //todo beim zeitabschnitte vom Server holen
-        // this.verfuegenRS.getVerfuegen(betreuung).then((response) => {
-        //     this.gesuchModelManager.setVerfuegenToWorkWith(response);
-        // });
-
-        return this.nombres;
+    public getVerfuegungZeitabschnitte(): Array<TSVerfuegung> {
+        return this.verfuegungen;
     }
 
     public getFall() {
