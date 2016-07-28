@@ -433,8 +433,9 @@ export default class GesuchModelManager {
 
         let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
         let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.selbstaendig && !ekv.selbstaendig) {
+        if (fs.selbstaendig) {
 
+            // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
             ekv.selbstaendig = true;
             if (this.basisJahrPlusNumber === 1) {
                 ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
@@ -628,7 +629,7 @@ export default class GesuchModelManager {
                 this.getKindFromServer();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
-        //neu -> create
+            //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
