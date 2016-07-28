@@ -28,8 +28,10 @@ import TSPendenzJA from '../models/TSPendenzJA';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
+import TSVerfuegung from '../models/TSVerfuegung';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 
 describe('EbeguRestUtil', function () {
 
@@ -355,6 +357,56 @@ describe('EbeguRestUtil', function () {
                 expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
                 transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
                 expect(transformedPendenz).toEqual(myPendenz);
+            });
+        });
+        describe('parseVerfuegung()', () => {
+            it('should transform a REST Verfuegung to TS Obj', () => {
+                let restVerfuegung: any = {};
+                restVerfuegung.generatedBemerkungen = 'generated';
+                restVerfuegung.manuelleBemerkungen = 'manuell';
+                restVerfuegung.zeitabschnitte = {};
+
+                let verfuegungTS = ebeguRestUtil.parseVerfuegung(new TSVerfuegung(), restVerfuegung);
+
+                expect(verfuegungTS).toBeDefined();
+                expect(verfuegungTS.generatedBemerkungen).toEqual(restVerfuegung.generatedBemerkungen);
+                expect(verfuegungTS.manuelleBemerkungen).toEqual(restVerfuegung.manuelleBemerkungen);
+                expect(verfuegungTS.zeitabschnitte).toBeDefined();
+            });
+        });
+        describe('parseVerfuegungZeitabschnitt()', () => {
+            it('should transform a REST VerfuegungZeitabschnitt to TS Obj', () => {
+                let restVerfuegungZeitabschnitt: any = {};
+                restVerfuegungZeitabschnitt.abzugFamGroesse = 1;
+                restVerfuegungZeitabschnitt.anspruchberechtigtesPensum = 2;
+                restVerfuegungZeitabschnitt.anspruchspensumRest = 3;
+                restVerfuegungZeitabschnitt.betreuungspensum = 5;
+                restVerfuegungZeitabschnitt.betreuungsstunden = 6;
+                restVerfuegungZeitabschnitt.elternbeitrag = 7;
+                restVerfuegungZeitabschnitt.erwerbspensumGS1 = 8;
+                restVerfuegungZeitabschnitt.erwerbspensumGS2 = 9;
+                restVerfuegungZeitabschnitt.fachstellenpensum = 10;
+                restVerfuegungZeitabschnitt.massgebendesEinkommen = 11;
+                restVerfuegungZeitabschnitt.vollkosten = 12;
+                restVerfuegungZeitabschnitt.bemerkungen = 'bemerkung1';
+                restVerfuegungZeitabschnitt.status = 'status1';
+
+                let verfuegungTS = ebeguRestUtil.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), restVerfuegungZeitabschnitt);
+
+                expect(verfuegungTS).toBeDefined();
+                expect(verfuegungTS.abzugFamGroesse).toEqual(restVerfuegungZeitabschnitt.abzugFamGroesse);
+                expect(verfuegungTS.anspruchberechtigtesPensum).toEqual(restVerfuegungZeitabschnitt.anspruchberechtigtesPensum);
+                expect(verfuegungTS.anspruchspensumRest).toEqual(restVerfuegungZeitabschnitt.anspruchspensumRest);
+                expect(verfuegungTS.betreuungspensum).toEqual(restVerfuegungZeitabschnitt.betreuungspensum);
+                expect(verfuegungTS.betreuungsstunden).toEqual(restVerfuegungZeitabschnitt.betreuungsstunden);
+                expect(verfuegungTS.elternbeitrag).toEqual(restVerfuegungZeitabschnitt.elternbeitrag);
+                expect(verfuegungTS.erwerbspensumGS1).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS1);
+                expect(verfuegungTS.erwerbspensumGS2).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS2);
+                expect(verfuegungTS.fachstellenpensum).toEqual(restVerfuegungZeitabschnitt.fachstellenpensum);
+                expect(verfuegungTS.massgebendesEinkommen).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommen);
+                expect(verfuegungTS.vollkosten).toEqual(restVerfuegungZeitabschnitt.vollkosten);
+                expect(verfuegungTS.bemerkungen).toEqual(restVerfuegungZeitabschnitt.bemerkungen);
+                expect(verfuegungTS.status).toEqual(restVerfuegungZeitabschnitt.status);
             });
         });
     });

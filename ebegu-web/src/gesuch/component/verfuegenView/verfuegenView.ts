@@ -9,6 +9,8 @@ import DateUtil from '../../../utils/DateUtil';
 import VerfuegungRS from '../../../core/service/verfuegungRS.rest';
 import TSGesuch from '../../../models/TSGesuch';
 import TSVerfuegung from '../../../models/TSVerfuegung';
+import TSKindContainer from '../../../models/TSKindContainer';
+import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -34,9 +36,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public initViewModel(): void {
-        this.verfuegungRS.calculateVerfuegung(this.gesuchModelManager.gesuch.id).then((response: TSGesuch) => {
-            // this.gesuchModelManager.setVerfuegenToWorkWith(response.kindContainers[0].betreuungen[0].);
-            this.verfuegungen.push(response.kindContainers[0].betreuungen[0].verfuegung[0]);
+        this.verfuegungRS.calculateVerfuegung(this.gesuchModelManager.gesuch.id).then((response: TSKindContainer[]) => {
+            this.verfuegungen.push(response[0].betreuungen[0].verfuegung);
         });
     }
 
@@ -44,8 +45,18 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         this.state.go('gesuch.verfuegen');
     }
 
-    public getVerfuegungZeitabschnitte(): Array<TSVerfuegung> {
-        return this.verfuegungen;
+    public getVerfuegenToWorkWith(): TSVerfuegung {
+        if (this.verfuegungen.length > 0) {
+            return this.verfuegungen[0];
+        }
+        return undefined;
+    }
+
+    public getVerfuegungZeitabschnitte(): Array<TSVerfuegungZeitabschnitt> {
+        if (this.getVerfuegenToWorkWith()) {
+            return this.getVerfuegenToWorkWith().zeitabschnitte;
+        }
+        return undefined;
     }
 
     public getFall() {

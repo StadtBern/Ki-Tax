@@ -1,6 +1,7 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
+import TSKindContainer from '../../models/TSKindContainer';
 
 export default class VerfuegungRS {
     serviceURL: string;
@@ -21,11 +22,11 @@ export default class VerfuegungRS {
         return 'VerfuegungRS';
     }
 
-    public calculateVerfuegung(gesuchID: string): IPromise<TSGesuch> {
+    public calculateVerfuegung(gesuchID: string): IPromise<TSKindContainer[]> {
         return this.http.get(this.serviceURL + '/calculate/' + encodeURIComponent(gesuchID))
             .then((response: any) => {
                 this.log.debug('PARSING gesuch REST object ', response.data);
-                return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+                return this.ebeguRestUtil.parseKindContainerList(response.data);
             });
     }
 }

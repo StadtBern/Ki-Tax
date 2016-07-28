@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {VerfuegenListViewController} from './verfuegenListView';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
+import BerechnungsManager from '../../service/berechnungsManager';
 
 describe('verfuegenListViewTest', function () {
 
@@ -12,6 +13,7 @@ describe('verfuegenListViewTest', function () {
     let gesuchModelManager: GesuchModelManager;
     let $state: IStateService;
     let tsKindContainer: TSKindContainer;
+    let berechnungsManager: BerechnungsManager;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
@@ -21,7 +23,12 @@ describe('verfuegenListViewTest', function () {
         $state = $injector.get('$state');
         tsKindContainer = new TSKindContainer();
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
-        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, undefined);
+
+        berechnungsManager = $injector.get('BerechnungsManager');
+        spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
+        spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
+
+        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined);
     }));
 
     describe('Public API', function () {

@@ -347,6 +347,8 @@
     "FAMILIENSITUATION_FRAGE_2": "Möchten Sie das Gesuch alleine oder mit einer anderen erziehungsberechtigen Person beantragen?",
     "ALLEINE": "alleine",
     "ZU_ZWEIT": "zu zweit",
+    "MANUELLE_BEMERKUNGEN": "Manuelle Bemerkungen",
+    "GENERATED_BEMERKUNGEN": "Generierte Bemerkungen",
     "BEMERKUNGEN": "Bemerkungen",
     "BEMERKUNGEN_PLACEHOLDER": "Hier kann das Jugendamt zusätzliche Informationen erfassen.",
     "SPEICHERN_UPPER": "SPEICHERN",

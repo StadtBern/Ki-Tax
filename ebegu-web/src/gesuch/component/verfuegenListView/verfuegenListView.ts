@@ -41,10 +41,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
         //Berechnung aller finanziellen Daten
         this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
-        if (this.gesuchModelManager.gesuch.einkommensverschlechterungInfo && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1) {
+        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
+            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1) {
+
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1); //.then(() => {});
         }
-        if (this.gesuchModelManager.gesuch.einkommensverschlechterungInfo && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2) {
+        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
+            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2) {
+
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
         }
     }

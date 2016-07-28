@@ -1166,7 +1166,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private parseVerfuegung(verfuegungTS: TSVerfuegung, verfuegungFromServer: any): TSVerfuegung {
+    public parseVerfuegung(verfuegungTS: TSVerfuegung, verfuegungFromServer: any): TSVerfuegung {
         if (verfuegungFromServer) {
             this.parseAbstractEntity(verfuegungTS, verfuegungFromServer);
             verfuegungTS.generatedBemerkungen = verfuegungFromServer.generatedBemerkungen;
@@ -1189,7 +1189,7 @@ export default class EbeguRestUtil {
         return resultList;
     }
 
-    private parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any) {
+    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any) {
         if (zeitabschnittFromServer) {
             this.parseDateRangeEntity(verfuegungZeitabschnittTS, zeitabschnittFromServer);
             verfuegungZeitabschnittTS.abzugFamGroesse = zeitabschnittFromServer.abzugFamGroesse;
