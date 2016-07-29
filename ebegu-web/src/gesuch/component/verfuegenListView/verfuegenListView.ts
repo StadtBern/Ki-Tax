@@ -6,7 +6,6 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
-import VerfuegungRS from '../../../core/service/verfuegungRS.rest';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -46,18 +45,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
 
         //Berechnung aller finanziellen Daten
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
+        if (!this.berechnungsManager.finanzielleSituationResultate) {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
+        }
         if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1) {
+            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1); //.then(() => {});
         }
         if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2) {
+            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+            && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
         }
-
+        //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.gesuchModelManager.calculateVerfuegungen();
     }
 

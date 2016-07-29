@@ -27,7 +27,7 @@ describe('VerfuegungRS', function () {
     beforeEach(() => {
         let kindGS: TSKind = new TSKind('Pedro', 'Bern');
         TestDataUtil.setAbstractFieldsUndefined(kindGS);
-        let kindJA: TSKind = new TSKind('Johan', 'Basel');
+        let kindJA: TSKind = new TSKind('Pedro', 'Bern');
         TestDataUtil.setAbstractFieldsUndefined(kindJA);
         mockKind = new TSKindContainer(kindGS, kindJA, []);
         TestDataUtil.setAbstractFieldsUndefined(mockKind);
@@ -48,7 +48,7 @@ describe('VerfuegungRS', function () {
     });
 
     describe('API Usage', function () {
-        describe('findKind', () => {
+        describe('calculate', () => {
             it('should return all KindContainer', () => {
                 let gesuchId: string = '1234567789';
                 $httpBackend.expectGET(verfuegungRS.serviceURL + '/calculate/' + gesuchId).respond(mockKindContainerListRest);

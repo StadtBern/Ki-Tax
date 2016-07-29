@@ -1,6 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IPromise, ILogService} from 'angular';
-import TSGesuch from '../../models/TSGesuch';
 import TSKindContainer from '../../models/TSKindContainer';
 
 export default class VerfuegungRS {

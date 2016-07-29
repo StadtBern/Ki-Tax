@@ -39,7 +39,7 @@ public class AbstractBGRechnerTest {
 	}
 
 	public static void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int beantragtesPensum, int anspruchsberechtigtesPensum, int betreuungspensum, double vollkosten, double verguenstigung, double elternbeitrag) {
-		Assert.assertEquals(beantragtesPensum, abschnitt.getBetreuungspensum());
+		Assert.assertEquals("Beantragtes Pensum " + beantragtesPensum+ " entspricht nicht " +abschnitt , beantragtesPensum, abschnitt.getBetreuungspensum());
 		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getErwerbspensumMinusOffset());
 		Assert.assertEquals(betreuungspensum, abschnitt.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(MATH.from(vollkosten), abschnitt.getVollkosten());
