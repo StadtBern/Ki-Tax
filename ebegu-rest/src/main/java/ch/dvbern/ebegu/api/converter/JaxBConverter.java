@@ -1349,6 +1349,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setBetreuungspensum(zeitabschnitt.getBetreuungspensum());
 			jaxZeitabschn.setFachstellenpensum(zeitabschnitt.getFachstellenpensum());
 			jaxZeitabschn.setAnspruchspensumRest(zeitabschnitt.getAnspruchspensumRest());
+			jaxZeitabschn.setBgPensum(zeitabschnitt.getBgPensum());
 			jaxZeitabschn.setAnspruchberechtigtesPensum(zeitabschnitt.getAnspruchberechtigtesPensum());
 			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
 			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());

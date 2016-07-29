@@ -21,7 +21,6 @@ import java.util.Objects;
 /**
  * Dieses Objekt repraesentiert einen Zeitabschnitt wahrend eines Betreeungsgutscheinantrags waehrend dem die Faktoren
  * die fuer die Berechnung des Gutscheins der Betreuung relevant sind konstant geblieben sind.
- *
  */
 @Entity
 @Audited
@@ -146,9 +145,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.anspruchspensumRest = anspruchspensumRest;
 	}
 
-	public int getAnspruchberechtigtesPensum() {
-		return anspruchberechtigtesPensum;
-	}
 
 	public void setAnspruchberechtigtesPensum(int anspruchberechtigtesPensum) {
 		this.anspruchberechtigtesPensum = anspruchberechtigtesPensum;
@@ -270,6 +266,33 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.bemerkungen =  String.join(";", listOfStrings);
 	}
 
+	/**
+	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten Pensum.
+	 * <p>
+	 * Dieses Pensum kann grösser oder kleiner als das Betreuungspensum sein.
+	 * <p>
+	 * Beispiel: Zwei Eltern arbeiten zusammen 140%. In diesem Fall ist das anspruchsberechtigte Pensum 40%.
+	 */
+
+	public int getAnspruchberechtigtesPensum() {
+		//todo aktuell wird das Betreuungspensum hier schon abgezogen, das darf aber nicht sein
+		return anspruchberechtigtesPensum;
+	}
+
+	/**
+	 * Das BG-Pensum wird zum BG-Tarif berechnet und kann höchstens so gross sein, wie das Betreuungspensum.
+	 * Falls das anspruchsberechtigte Pensum unter dem Betreuungspensum liegt, entspricht das BG-Pensum dem
+	 * anspruchsberechtigten Pensum.
+	 * <p>
+	 * Ein Kind mit einem Betreuungspensum von 60% und einem anspruchsberechtigten Pensum von 40% hat ein BG-Pensum von 40%.
+	 * Ein Kind mit einem Betreuungspensum von 40% und einem anspruchsberechtigten Pensum von 60% hat ein BG-Pensum von 40%.
+	 */
+	@Transient
+	public int getBgPensum() {
+		//todo geht das?
+		return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -301,7 +324,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	/**
 	 * Gibt den Betrag des Gutscheins zurück.
-     */
+	 */
 	public BigDecimal getVerguenstigung() {
 		if (vollkosten != null && elternbeitrag != null) {
 			return vollkosten.subtract(elternbeitrag);

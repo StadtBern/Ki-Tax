@@ -50,6 +50,15 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	@NotNull
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
+	private int bgPensum; //min von anspruchberechtigtesPensum und betreuungspensum
+
+	public int getBgPensum() {
+		return bgPensum;
+	}
+
+	public void setBgPensum(int bgPensum) {
+		this.bgPensum = bgPensum;
+	}
 
 	private BigDecimal betreuungsstunden;
 
