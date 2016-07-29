@@ -281,6 +281,7 @@ public class JaxBConverter {
 		adresse.setOrt(jaxAdresse.getOrt());
 		adresse.setGemeinde(jaxAdresse.getGemeinde());
 		adresse.setLand(jaxAdresse.getLand());
+		adresse.setOrganisation(jaxAdresse.getOrganisation());
 		//adresse gilt per default von start of time an
 		adresse.getGueltigkeit().setGueltigAb(jaxAdresse.getGueltigAb() == null ? Constants.START_OF_TIME : jaxAdresse.getGueltigAb());
 
@@ -298,6 +299,7 @@ public class JaxBConverter {
 		jaxAdresse.setOrt(adresse.getOrt());
 		jaxAdresse.setGemeinde(adresse.getGemeinde());
 		jaxAdresse.setLand(adresse.getLand());
+		jaxAdresse.setOrganisation(adresse.getOrganisation());
 		return jaxAdresse;
 	}
 

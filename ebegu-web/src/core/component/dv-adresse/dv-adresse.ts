@@ -9,7 +9,8 @@ export class AdresseComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
         adresse: '<',
-        prefix: '@'
+        prefix: '@',
+        organisation: '<'
     };
     template = require('./dv-adresse.html');
     controller = DvAdresseController;
@@ -27,6 +28,7 @@ export  class DvAdresseController {
     parentForm: IFormController;
     popup: any;   //todo team welchen datepicker wollen wir
     laenderList: TSLand[];
+    organisation: boolean;
 
     /* @ngInject */
     constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS) {

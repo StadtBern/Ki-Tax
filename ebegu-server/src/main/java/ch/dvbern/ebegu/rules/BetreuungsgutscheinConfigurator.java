@@ -58,8 +58,7 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(betreuungspensumCalcRule);
 
 		// 3. Einkommen / Einkommensverschlechterung / Maximales Einkommen
-
-		MaximalesEinkommenAbschnittRule einkommenAbschnittRule = new MaximalesEinkommenAbschnittRule(defaultGueltigkeit);
+		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
 		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);

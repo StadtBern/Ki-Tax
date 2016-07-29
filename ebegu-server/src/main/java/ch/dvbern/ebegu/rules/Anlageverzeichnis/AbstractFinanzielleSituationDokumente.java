@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Gemeinsame Basisklasse zum berechnen der benötigten Dokumente für die Finanzielle Situation und die Einkommensverschlechterung
  */
-abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<AbstractFinanzielleSituation> {
+abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<AbstractFinanzielleSituation, Object> {
 
 
 	void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, String fullname, String basisJahr,

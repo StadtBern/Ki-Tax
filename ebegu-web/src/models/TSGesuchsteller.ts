@@ -11,7 +11,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _mobile: string;
     private _telefon: string;
     private _telefonAusland: string;
-    private _umzug: boolean;
     private _adresse: TSAdresse;
     private _korrespondenzAdresse: TSAdresse;
     private _umzugAdresse: TSAdresse;
@@ -29,7 +28,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
-        this._umzug = umzug;
         this._finanzielleSituationContainer = finanzielleSituation;
         this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
         this._diplomatenstatus = diplomatenstatus;
@@ -58,14 +56,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     public set telefon(value: string) {
         this._telefon = value;
-    }
-
-    public get umzug(): boolean {
-        return this._umzug;
-    }
-
-    public set umzug(value: boolean) {
-        this._umzug = value;
     }
 
     public get adresse(): TSAdresse {

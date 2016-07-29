@@ -193,6 +193,7 @@ export default class EbeguRestUtil {
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
+            restAdresse.organisation = adresse.organisation;
             return restAdresse;
         }
         return undefined;
@@ -210,6 +211,7 @@ export default class EbeguRestUtil {
             adresseTS.land = (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
+            adresseTS.organisation = receivedAdresse.organisation;
             return adresseTS;
         }
         return undefined;
@@ -251,7 +253,6 @@ export default class EbeguRestUtil {
             restGesuchsteller.mobile = gesuchsteller.mobile || undefined;
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
-            restGesuchsteller.umzug = gesuchsteller.umzug;
             restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
             restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
             restGesuchsteller.umzugAdresse = this.adresseToRestObject({}, gesuchsteller.umzugAdresse);
@@ -282,7 +283,6 @@ export default class EbeguRestUtil {
             gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
-            gesuchstellerTS.umzug = gesuchstellerFromServer.umzug;
             gesuchstellerTS.adresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.wohnAdresse);
             gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
             gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);

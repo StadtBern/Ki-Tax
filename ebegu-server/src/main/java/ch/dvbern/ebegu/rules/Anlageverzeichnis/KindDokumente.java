@@ -26,7 +26,7 @@ import java.util.Set;
  * ausgewählt (Eine bestimmte Fachstelle ist für die Bestätigung von Behinderungen zuständig)
  * Es ist entweder dieses Dokument oder die Fachstellenbestätigung Soziale Indikation gefordert, aber nie beide
  **/
-public class KindDokumente extends AbstractDokumente<Kind> {
+public class KindDokumente extends AbstractDokumente<Kind, Object> {
 
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {

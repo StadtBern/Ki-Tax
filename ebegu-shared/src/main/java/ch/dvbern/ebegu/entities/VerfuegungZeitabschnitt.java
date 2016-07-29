@@ -28,6 +28,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
+	//TODO (team) hier hats im Moment ziemlich viele Attribute, mal schauen, was wir alles davon brauchen
 	@Max(100)
 	@Min(0)
 	@NotNull
@@ -79,6 +80,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
+	private int erwerbspensumMinusOffset; // Bei 1 GS: Erwerbspensum GS1, bei 2 GS: Erwerbspensum GS1 + GS2 - 100
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -207,6 +209,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.status = status;
 	}
 
+	public int getErwerbspensumMinusOffset() {
+		return erwerbspensumMinusOffset;
+	}
+
+	public void setErwerbspensumMinusOffset(int erwerbspensumMinusOffset) {
+		this.erwerbspensumMinusOffset = erwerbspensumMinusOffset;
+	}
+
 	public Verfuegung getVerfuegung() {
 		return verfuegung;
 	}
@@ -233,6 +243,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setBetreuungsstunden(newBetreuungsstunden);
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
+		this.setErwerbspensumMinusOffset(this.getErwerbspensumMinusOffset() + other.getErwerbspensumMinusOffset());
 		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 		if (this.getMassgebendesEinkommen() != null) {
 			massgebendesEinkommen = massgebendesEinkommen.add(this.getMassgebendesEinkommen());
@@ -300,6 +311,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
 			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
+			.append(" Maximaler Anspruch: ").append(erwerbspensumMinusOffset).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
@@ -317,6 +329,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			erwerbspensumMinusOffset == that.erwerbspensumMinusOffset &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);
 	}

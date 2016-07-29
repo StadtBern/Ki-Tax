@@ -1,6 +1,21 @@
 <!-- strasse/hausnummer -->
 <div ng-form="adresseForm">
     <fieldset>
+
+        <!-- Adresse Zusatz-->
+        <div class="row" ng-if="vm.organisation">
+            <div class="col-md-6">
+                <dv-input-container class="form-group">
+                    <label data-translate="ADRESSE_ORGANISATION" for="{{vm.prefix}}-organisation">
+                    </label>
+                    <input id="{{vm.prefix}}-organisation" type="text" name="organisation" ng-model="vm.adresse.organisation"
+                           dv-max-length class="form-control">
+                    <dv-error-messages for="adresseForm.organisation.$error"
+                                       class="error"></dv-error-messages>
+                </dv-input-container>
+            </div>
+        </div>
+
         <div class="dv-adresse row">
             <!--Strasse-->
             <div class="col-md-6">

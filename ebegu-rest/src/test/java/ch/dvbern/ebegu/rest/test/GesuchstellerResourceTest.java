@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.api.resource.GesuchstellerResource;
+import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -106,6 +107,25 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		JaxGesuchsteller reloadedGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertEquals(foundGesuchsteller.getNachname(), reloadedGesuchsteller.getNachname());
 		Assert.assertEquals("changednachname", reloadedGesuchsteller.getNachname());
+
+	}
+
+
+
+	@Test
+	public void updateGesuchstellerTest2() throws EbeguException {
+		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.createGesuchsteller(testJaxGesuchsteller, null, null);
+		JaxAdresse korrespondenzAdr = TestJaxDataUtil.createTestJaxAdr("umzugadr");
+		korrespondenzAdr.setOrganisation("Test");
+
+
+		jaxGesuchsteller.setAlternativeAdresse(korrespondenzAdr);
+		jaxGesuchsteller.getAlternativeAdresse().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.updateGesuchsteller(jaxGesuchsteller, null, null);
+
+		Assert.assertNotNull(umgezogeneGesuchsteller.getAlternativeAdresse());
+		Assert.assertEquals(umgezogeneGesuchsteller.getAlternativeAdresse().getOrganisation(), korrespondenzAdr.getOrganisation());
 
 	}
 

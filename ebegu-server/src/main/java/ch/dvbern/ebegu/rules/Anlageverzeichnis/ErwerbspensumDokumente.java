@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -46,19 +47,21 @@ import java.util.Set;
  * Fixe Arbeitszeiten:
  * Wenn Zuschlag zum Erwerbspensum mit Ja beantwortet und als Grund „Fixe Arbeitszeiten“ ausgewählt
  **/
-public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum> {
+public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, LocalDate> {
 
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
+		final LocalDate gueltigAb = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb();
+
 		final Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller1, gueltigAb);
 
 		final Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
-		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller2, gueltigAb);
 	}
 
-	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, Gesuchsteller gesuchsteller) {
+	private void getAllDokumenteGesuchsteller(Set<DokumentGrund> anlageVerzeichnis, Gesuchsteller gesuchsteller, LocalDate gueltigAb) {
 		if (gesuchsteller == null || gesuchsteller.getErwerbspensenContainers().isEmpty()) {
 			return;
 		}
@@ -67,7 +70,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum> {
 
 		for (ErwerbspensumContainer erwerbspensenContainer : erwerbspensenContainers) {
 			final Erwerbspensum erwerbspensumJA = erwerbspensenContainer.getErwerbspensumJA();
-			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+			add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gueltigAb, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 			add(getDokument(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 			add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 			add(getDokument(DokumentTyp.NACHWEIS_RAV, erwerbspensumJA, gesuchsteller.getFullName(), erwerbspensumJA.getName(), DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
@@ -81,13 +84,26 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum> {
 		}
 	}
 
-
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum) {
+	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum, LocalDate periodenstart) {
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
 				case NACHWEIS_ERWERBSPENSUM:
 					// Todo: Wird nur bei Mutation des Erwerbspensums Angestellt verlangt oder bei Neueintritt im Job. Neueintritt = DatumVon >= Periodenstart
 					// Mutation ist noch nicht implementiert...
+					return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart);
+				default:
+					return isDokumentNeeded(dokumentTyp, erwerbspensum);
+			}
+		}
+		return false;
+	}
+
+
+	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum) {
+		if (erwerbspensum != null) {
+			switch (dokumentTyp) {
+				case NACHWEIS_ERWERBSPENSUM:
+					// braucht Periodenstart-Datum als Parameter
 					return false;
 				case NACHWEIS_SELBSTAENDIGKEIT:
 					return erwerbspensum.getTaetigkeit() == Taetigkeit.SELBSTAENDIG;

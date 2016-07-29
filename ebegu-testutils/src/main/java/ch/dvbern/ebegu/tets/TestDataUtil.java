@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
@@ -26,6 +27,9 @@ public final class TestDataUtil {
 	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
 	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
 	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
+
+	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
+	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
 
 	private TestDataUtil() {
 	}
@@ -172,6 +176,36 @@ public final class TestDataUtil {
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.getInstitution().setName("Kita Aaregg");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.getInstitution().setName("Kita Brünnen");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
@@ -375,5 +409,31 @@ public final class TestDataUtil {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		return gesuch;
+	}
+
+	public static void setFinanzielleSituation(Gesuch gesuch, BigDecimal einkommen) {
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV().setNettolohn(einkommen);
+	}
+
+	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {
+		if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() == null) {
+			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
+		}
+		if (gesuch.getEinkommensverschlechterungInfo() == null) {
+			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+		}
+		if (basisJahrPlus1) {
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
+			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+		} else {
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
+			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
+			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+		}
 	}
 }

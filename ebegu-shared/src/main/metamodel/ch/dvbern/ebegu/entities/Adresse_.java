@@ -14,6 +14,7 @@ public abstract class Adresse_ extends ch.dvbern.ebegu.entities.AbstractDateRang
 	public static volatile SingularAttribute<Adresse, String> strasse;
 	public static volatile SingularAttribute<Adresse, String> hausnummer;
 	public static volatile SingularAttribute<Adresse, Land> land;
+	public static volatile SingularAttribute<Adresse, String> organisation;
 	public static volatile SingularAttribute<Adresse, String> zusatzzeile;
 	public static volatile SingularAttribute<Adresse, String> plz;
 
