@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
-import java.math.BigDecimal;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+import java.math.BigDecimal;
 
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(VerfuegungZeitabschnitt.class)
@@ -17,7 +17,9 @@ public abstract class VerfuegungZeitabschnitt_ extends ch.dvbern.ebegu.entities.
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> vollkosten;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> erwerbspensumGS2;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> erwerbspensumGS1;
+	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> bgPensum;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> massgebendesEinkommen;
+	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> erwerbspensumMinusOffset;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> betreuungsstunden;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> betreuungspensum;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Verfuegung> verfuegung;

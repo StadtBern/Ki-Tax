@@ -1,3 +1,18 @@
+# dummy parameter
+INSERT INTO ebegu_parameter
+VALUES (
+  'a679e03e-58e2-446e-a7ee-bbadc87b7c90'
+  , '2016-06-03 10:16:39'
+  , '2016-06-03 10:16:39'
+  , 'flyway'
+  , 'flyway'
+  , 0
+  , '2017-01-01'
+  , '2017-12-31'
+  , 'PARAM_ABGELTUNG_PRO_TAG_KANTON'
+  , '107.19'
+);
+
 ALTER TABLE betreuung
   ADD COLUMN verfuegung_id VARCHAR(36);
 
@@ -44,6 +59,7 @@ CREATE TABLE verfuegung_zeitabschnitt_aud (
   bemerkungen                 VARCHAR(1000),
   betreuungspensum            INTEGER,
   betreuungsstunden           DECIMAL(19, 2),
+  bg_pensum                   INTEGER,
   elternbeitrag               DECIMAL(19, 2),
   erwerbspensumgs1            INTEGER,
   erwerbspensumgs2            INTEGER,
@@ -69,6 +85,7 @@ CREATE TABLE verfuegung_zeitabschnitt (
   bemerkungen                 VARCHAR(1000),
   betreuungspensum            INTEGER     NOT NULL,
   betreuungsstunden           DECIMAL(19, 2),
+  bg_pensum                   INTEGER     NOT NULL,
   elternbeitrag               DECIMAL(19, 2),
   erwerbspensumgs1            INTEGER     NOT NULL,
   erwerbspensumgs2            INTEGER     NOT NULL,

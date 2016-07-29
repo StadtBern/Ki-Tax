@@ -65,6 +65,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
+	@Max(100)
+	@Min(0)
+	@NotNull
+	@Column(nullable = false)
+	private int bgPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
+
 
 	@Column(nullable = true)
 	private BigDecimal betreuungsstunden;
@@ -298,11 +304,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 * Ein Kind mit einem Betreuungspensum von 60% und einem anspruchsberechtigten Pensum von 40% hat ein BG-Pensum von 40%.
 	 * Ein Kind mit einem Betreuungspensum von 40% und einem anspruchsberechtigten Pensum von 60% hat ein BG-Pensum von 40%.
 	 */
-	@Transient
 	public int getBgPensum() {
-		//todo geht das?
-		return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
+		return bgPensum;
 	}
+
+	public void setBgPensum(int bgPensum) {
+		this.bgPensum = bgPensum;
+	}
+
 
 	@Override
 	public String toString() {
