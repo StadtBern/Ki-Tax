@@ -266,7 +266,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 * Fügt eine Bemerkung zur Liste hinzu
 	 */
 	public void addBemerkung(String bem) {
-		String joinedString = Joiner.on(",").skipNulls().join(
+		String joinedString = Joiner.on("\n").skipNulls().join(
 			StringUtils.defaultIfBlank(this.bemerkungen, null),
 			StringUtils.defaultIfBlank(bem, null)
 		);

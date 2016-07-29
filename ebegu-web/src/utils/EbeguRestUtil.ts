@@ -1194,6 +1194,7 @@ export default class EbeguRestUtil {
             this.parseDateRangeEntity(verfuegungZeitabschnittTS, zeitabschnittFromServer);
             verfuegungZeitabschnittTS.abzugFamGroesse = zeitabschnittFromServer.abzugFamGroesse;
             verfuegungZeitabschnittTS.anspruchberechtigtesPensum = zeitabschnittFromServer.anspruchberechtigtesPensum;
+            verfuegungZeitabschnittTS.bgPensum = zeitabschnittFromServer.bgPensum;
             verfuegungZeitabschnittTS.anspruchspensumRest = zeitabschnittFromServer.anspruchspensumRest;
             verfuegungZeitabschnittTS.bemerkungen = zeitabschnittFromServer.bemerkungen;
             verfuegungZeitabschnittTS.betreuungspensum = zeitabschnittFromServer.betreuungspensum;

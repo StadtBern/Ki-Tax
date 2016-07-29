@@ -109,24 +109,24 @@
                            class="table table-striped">
                         <thead>
                         <tr>
-                            <th data-translate="VON" ></th>
-                            <th data-translate="BIS" ></th>
-                            <th data-translate="BETREUUNGSPENSUM"></th>
-                            <th data-translate="ANSPRUCH"></th>
-                            <th data-translate="VOLLKOSTEN"></th>
-                            <th data-translate="ELTERNBEITRAG"></th>
-                            <th data-translate="VERGUENSTIGUNG"></th>
+                            <th class="text-right"  data-translate="VON" ></th>
+                            <th class="text-right"  data-translate="BIS" ></th>
+                            <th class="text-right"  data-translate="BETREUUNGSPENSUM"></th>
+                            <th class="text-right"  data-translate="ANSPRUCH"></th>
+                            <th class="text-right"  data-translate="VOLLKOSTEN"></th>
+                            <th class="text-right"  data-translate="ELTERNBEITRAG"></th>
+                            <th class="text-right"  data-translate="VERGUENSTIGUNG"></th>
                         </tr>
                         </thead>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length > 0">
                         <tr ng-repeat="verfuegungZeitabschnitt in displayedCollection">
-                            <td ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb"></td>
-                            <td ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis"></td>
-                            <td> <span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%</td>
-                            <td> <span ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%</td>
-                            <td ng-bind="verfuegungZeitabschnitt.vollkosten"></td>
-                            <td ng-bind="verfuegungZeitabschnitt.elternbeitrag"></td>
-                            <td ng-bind="verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag"></td>
+                            <td class="text-right" ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%</td>
+                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%</td>
+                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
+                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
+                            <td class="text-right"  ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
                         </tr>
                         </tbody>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
@@ -141,21 +141,17 @@
             <!--bemerkungen-->
             <div class="row">
                 <div class="col-md-12">
-                    <dv-input-container class="form-group">
-                        <label class="inlineHint" for="generated_notes" data-translate="GENERATED_BEMERKUNGEN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="6" id="generated_notes"
-                                  ng-model="vm.getVerfuegenToWorkWith().generatedBemerkungen"></textarea>
-                    </dv-input-container>
+                    <label class="inlineHint" for="generated_notes" data-translate="GENERATED_BEMERKUNGEN"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="generated_notes" ng-disabled="true"
+                              ng-model="vm.getVerfuegenToWorkWith().generatedBemerkungen"></textarea>
                 </div>
             </div>
-            <div class="row">
+            <div class="row marginTop20">
                 <div class="col-md-12">
-                    <dv-input-container class="form-group">
-                        <label class="inlineHint" for="manuelle_notes" data-translate="MANUELLE_BEMERKUNGEN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
-                                  ng-model="vm.getVerfuegenToWorkWith().manuelleBemerkungen"
-                                  placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
-                    </dv-input-container>
+                    <label class="inlineHint" for="manuelle_notes" data-translate="MANUELLE_BEMERKUNGEN"></label>
+                    <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
+                              ng-model="vm.getVerfuegenToWorkWith().manuelleBemerkungen"
+                              placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                 </div>
             </div>
 

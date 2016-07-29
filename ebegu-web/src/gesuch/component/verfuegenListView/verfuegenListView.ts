@@ -6,6 +6,7 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
+import VerfuegungRS from '../../../core/service/verfuegungRS.rest';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -24,7 +25,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
 
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil) {
+    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private ebeguUtil: EbeguUtil) {
         super(state, gesuchModelManager, berechnungsManager);
         this.initViewModel();
     }
@@ -34,7 +36,11 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      * zu haben. Das ist notwendig weil die finanzielle Situation nicht gespeichert wird. D.H. das erste Mal in einer Sitzung wenn ein Gesuch geoeffnet wird,
      * ist gar nichts berechnet. Wenn man dann die Verfügen direkt aufmacht, ist alles leer und wird nichts angezeigt, deswegen muss alles auch hier berechnet werden.
      * Um Probleme mit der Performance zu vermeiden, wird zuerst geprueft, ob die Berechnung schon vorher gemacht wurde, wenn ja dann wird sie einfach verwendet
-     * ohne sie neu berechnen zu muessen. Dieses geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden
+     * ohne sie neu berechnen zu muessen. Dieses geht aber davon aus, dass die Berechnungen immer richtig kalkuliert wurden.
+     *
+     * Die Verfuegungen werden IMMER geladen, wenn diese View geladen wird. Dieses ist etwas ineffizient. Allerdings muss es eigentlich so funktionieren, weil
+     * die Daten sich haben aendern koennen. Es ist ein aehnlicher Fall wie mit der finanziellen Situation. Sollte es Probleme mit der Performance geben, muessen
+     * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
@@ -51,6 +57,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
         }
+
+        this.gesuchModelManager.calculateVerfuegungen();
     }
 
     public getKinderWithBetreuungList(): Array<TSKindContainer> {

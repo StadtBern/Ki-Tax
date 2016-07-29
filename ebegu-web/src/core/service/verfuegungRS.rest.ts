@@ -25,7 +25,7 @@ export default class VerfuegungRS {
     public calculateVerfuegung(gesuchID: string): IPromise<TSKindContainer[]> {
         return this.http.get(this.serviceURL + '/calculate/' + encodeURIComponent(gesuchID))
             .then((response: any) => {
-                this.log.debug('PARSING gesuch REST object ', response.data);
+                this.log.debug('PARSING KindContainers REST object ', response.data);
                 return this.ebeguRestUtil.parseKindContainerList(response.data);
             });
     }

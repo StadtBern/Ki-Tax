@@ -24,21 +24,14 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'VerfuegungRS'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private verfuegungRS: VerfuegungRS) {
+                private ebeguUtil: EbeguUtil) {
         super(state, gesuchModelManager, berechnungsManager);
-        this.initViewModel();
-    }
-
-    public initViewModel(): void {
-        this.verfuegungRS.calculateVerfuegung(this.gesuchModelManager.gesuch.id).then((response: TSKindContainer[]) => {
-            this.verfuegungen.push(response[0].betreuungen[0].verfuegung);
-        });
     }
 
     public cancel(): void {
@@ -46,8 +39,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getVerfuegenToWorkWith(): TSVerfuegung {
-        if (this.verfuegungen.length > 0) {
-            return this.verfuegungen[0];
+        if (this.gesuchModelManager) {
+            return this.gesuchModelManager.getVerfuegenToWorkWith();
         }
         return undefined;
     }
