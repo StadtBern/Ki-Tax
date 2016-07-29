@@ -2,9 +2,12 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
+import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -15,15 +18,15 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
@@ -47,6 +50,9 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 	@Inject
 	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private InstitutionService instService;
 
 
 	@Deployment
@@ -76,49 +82,21 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	@Ignore
-	public void calculateVerfuegung(){
+	public void calculateVerfuegung() {
 
-		Betreuung betreuung = this.persistBetreuung();
-		Gesuch gesuch = betreuung.extractGesuch();
+		Gesuch gesuch = this.persistGesuch();
 		prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit());
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
-
-
-		Gesuch berechnetesGesuch =  this.verfuegungService.calculateVerfuegung(betreuung.extractGesuch());
+		Gesuch berechnetesGesuch = this.verfuegungService.calculateVerfuegung(gesuch);
 		Assert.assertNotNull(berechnetesGesuch);
+		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next()));
+		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next()));
 		Assert.assertNotNull(berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung());
-
+		Verfuegung verfuegung = berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung();
+		Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
+		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
+		AbstractBGRechnerTest.assertZeitabschnitt(august, 80, 80, 80, 1827.05, 1562.25, 264.80);
 	}
-
-	private void prepareParameters(DateRange gueltigkeit) {
-
-		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
-		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19" , new DateRange(year1Start,year1End));
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19" , new DateRange(year1Start.plusYears(1),year1End.plusYears(1)));
-		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7" , gueltigkeit);
-		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244" , gueltigkeit);
-		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5" , gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91" , gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MIN, "0.75" , gueltigkeit);
-		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MAX, "158690" , gueltigkeit);
-		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MIN, "42540" , gueltigkeit);
-		saveParameter(PARAM_ANZAHL_TAGE_KANTON, "240" , gueltigkeit);
-		saveParameter(PARAM_STUNDEN_PRO_TAG_TAGI, "7" , gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit);
-		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12" , gueltigkeit);  //waere eigentlich int
-		saveParameter(PARAM_BABY_FAKTOR, "1.5" , gueltigkeit);
-		Assert.assertEquals(14, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
-
-	}
-
-	private void saveParameter(EbeguParameterKey key, String value, DateRange gueltigkeit) {
-		EbeguParameter ebeguParameter = new EbeguParameter(key, value, gueltigkeit);
-		persistence.persist(ebeguParameter);
-
-	}
-
 
 	@Test
 	public void getAll() {
@@ -129,50 +107,91 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertTrue(allVerfuegungen.stream().allMatch(currentVerfuegung -> currentVerfuegung.equals(verfuegung) || currentVerfuegung.equals(verfuegung2)));
 	}
 
+
 	@Test
 	public void removeVerfuegung() {
 		Verfuegung verfuegung = insertVerfuegung();
 		this.verfuegungService.removeVerfuegung(verfuegung);
 	}
 
-	private Betreuung persistBetreuung() {
-		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
-		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
-			persistence.persist(container);
-		}
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
-		persistence.persist(betreuung.getInstitutionStammdaten());
-		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
-		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+	//Helpers
 
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+	/**
+	 * Hilfsmethode die den Testfa
+	 * @return
+	 */
+	private Gesuch persistGesuch() {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = testfall.createGesuch();
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung1 : kindContainer.getBetreuungen()) {
+				Betreuung betreuung = betreuung1;
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+				if (persistence.find(Institution.class, betreuung.getInstitutionStammdaten().getInstitution().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten().getInstitution());
+				}
+				if (persistence.find(InstitutionStammdaten.class, betreuung.getInstitutionStammdaten().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten());
+				}
+				if (betreuung.getKind().getKindJA().getPensumFachstelle() != null) {
+					persistence.merge(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+				}
+			}
+		}
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch.getGesuchsperiode());
-//		gesuch.addKindContainer(betreuung.getKind()); // umgekehrt auch verknuepfen
 		gesuch = persistence.persist(gesuch);
-		betreuung.getKind().setGesuch(gesuch);
-		persistence.persist(betreuung.getKind());
-
-		persistence.persist(betreuung);
-
-		return betreuung;
+		return gesuch;
 
 	}
 
-	@Nonnull
+
 	private Betreuung insertBetreuung() {
-		return this.persistBetreuung();
+		return persistGesuch().getKindContainers().iterator().next().getBetreuungen().iterator().next();
 	}
 
 	private Verfuegung insertVerfuegung() {
-		Betreuung betreuung = insertBetreuung();
+		Gesuch gesuch = persistGesuch();
+		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		Assert.assertNull(betreuung.getVerfuegung());
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
 		return persistence.persist(verfuegung);
+
+	}
+
+	private void prepareParameters(DateRange gueltigkeit) {
+
+		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
+		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
+		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start, year1End));
+		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)));
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", gueltigkeit);
+		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244", gueltigkeit);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5", gueltigkeit);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91", gueltigkeit);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MIN, "0.75", gueltigkeit);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MAX, "158690", gueltigkeit);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MIN, "42540", gueltigkeit);
+		saveParameter(PARAM_ANZAHL_TAGE_KANTON, "240", gueltigkeit);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_TAGI, "7", gueltigkeit);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit);
+		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12", gueltigkeit);  //waere eigentlich int
+		saveParameter(PARAM_BABY_FAKTOR, "1.5", gueltigkeit);
+		Assert.assertEquals(14, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
+
+	}
+
+	private void saveParameter(EbeguParameterKey key, String value, DateRange gueltigkeit) {
+		EbeguParameter ebeguParameter = new EbeguParameter(key, value, gueltigkeit);
+		persistence.persist(ebeguParameter);
 
 	}
 }

@@ -25,7 +25,7 @@ public class AbstractBGRechnerTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
-	private MathUtil MATH = MathUtil.DEFAULT;
+	private static final MathUtil MATH = MathUtil.DEFAULT;
 
 
 	@Before
@@ -38,7 +38,7 @@ public class AbstractBGRechnerTest {
 		evaluator = new BetreuungsgutscheinEvaluator(rules);
 	}
 
-	protected void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int beantragtesPensum, int anspruchsberechtigtesPensum, int betreuungspensum, double vollkosten, double verguenstigung, double elternbeitrag) {
+	public static void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int beantragtesPensum, int anspruchsberechtigtesPensum, int betreuungspensum, double vollkosten, double verguenstigung, double elternbeitrag) {
 		Assert.assertEquals(beantragtesPensum, abschnitt.getBetreuungspensum());
 		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getErwerbspensumMinusOffset());
 		Assert.assertEquals(betreuungspensum, abschnitt.getAnspruchberechtigtesPensum());
