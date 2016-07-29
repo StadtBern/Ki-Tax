@@ -27,8 +27,10 @@ public class MonatsRule extends AbstractEbeguRule {
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitte) {
 			LocalDate gueltigAb = zeitabschnitt.getGueltigkeit().getGueltigAb();
 			LocalDate gueltigBis = zeitabschnitt.getGueltigkeit().getGueltigBis();
-			while (!gueltigAb.with(TemporalAdjusters.lastDayOfMonth()).isAfter(gueltigBis.with(TemporalAdjusters.lastDayOfMonth()))) {
-				VerfuegungZeitabschnitt monatsSchritt = new VerfuegungZeitabschnitt(new DateRange(gueltigAb, gueltigAb.with(TemporalAdjusters.lastDayOfMonth())));
+			while (!gueltigAb.isAfter(gueltigBis)) {
+				LocalDate endOfMoth = gueltigAb.with(TemporalAdjusters.lastDayOfMonth());
+				LocalDate enddate = endOfMoth.isAfter(gueltigBis) ? gueltigBis : endOfMoth;
+				VerfuegungZeitabschnitt monatsSchritt = new VerfuegungZeitabschnitt(new DateRange(gueltigAb, enddate));
 				monatsSchritt.add(zeitabschnitt);
 				monatsSchritte.add(monatsSchritt);
 				gueltigAb = monatsSchritt.getGueltigkeit().getGueltigBis().plusDays(1);

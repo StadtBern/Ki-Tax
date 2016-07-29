@@ -20,7 +20,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
-                anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, private _bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
+                anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
                 elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string, status?: string, gueltigkeit?: TSDateRange) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
@@ -29,7 +29,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._fachstellenpensum = fachstellenpensum;
         this._anspruchspensumRest = anspruchspensumRest;
         this._anspruchberechtigtesPensum = anspruchberechtigtesPensum;
-        this._bgPensum = _bgPensum;
+        this._bgPensum = bgPensum;
         this._betreuungsstunden = betreuungsstunden;
         this._vollkosten = vollkosten;
         this._elternbeitrag = elternbeitrag;
