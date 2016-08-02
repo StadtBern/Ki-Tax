@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.rules;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
 
 import javax.annotation.Nonnull;
 
@@ -31,12 +32,13 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 		}
 		// Fachstelle: Überschreibt alles
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
-		if (pensumFachstelle > 0) {
+		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
+		if (roundedPensumFachstelle > 0) {
 			// Anspruch ist immer genau das Pensum der Fachstelle
-			betreuungberechnet = pensumFachstelle;
+			betreuungberechnet = roundedPensumFachstelle;
 			// Den neuen "AnspruchRest" bestimmen:
-			if (pensumFachstelle > verfuegungZeitabschnitt.getBetreuungspensum()) {
-				anspruchRest = pensumFachstelle - verfuegungZeitabschnitt.getBetreuungspensum();
+			if (roundedPensumFachstelle > verfuegungZeitabschnitt.getBetreuungspensum()) {
+				anspruchRest = roundedPensumFachstelle - verfuegungZeitabschnitt.getBetreuungspensum();
 			} else {
 				anspruchRest = 0;
 			}
