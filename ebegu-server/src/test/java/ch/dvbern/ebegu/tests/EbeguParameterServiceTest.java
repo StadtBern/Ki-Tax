@@ -156,7 +156,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		parameter.setGueltigkeit(new DateRange(2015));
 		parameterService.saveEbeguParameter(parameter);
 
-		parameterService.getEbeguParameterByJahr(2016);
+		parameterService.getEbeguParametersByJahr(2016);
 
 		allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertFalse(allParameter.isEmpty());

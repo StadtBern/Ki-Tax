@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -55,9 +55,9 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	@Valid
 	@Nullable
-	private JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer;
+	private JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer;
 
-	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
+	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new LinkedHashSet<>();
 
 	private boolean diplomatenstatus;
 
@@ -152,10 +152,10 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	@Nullable
 	public JaxEinkommensverschlechterungContainer getEinkommensverschlechterungContainer() {
-		return jaxEinkommensverschlechterungContainer;
+		return einkommensverschlechterungContainer;
 	}
 
-	public void setEinkommensverschlechterungContainer(@Nullable final JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer) {
-		this.jaxEinkommensverschlechterungContainer = jaxEinkommensverschlechterungContainer;
+	public void setEinkommensverschlechterungContainer(@Nullable JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer) {
+		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
 	}
 }

@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,13 +64,13 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.get(0).getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.get(0).getEingangsdatum());
 
-		Set<BetreuungsangebotTyp> angeboteList = new HashSet<>();
+		Set<BetreuungsangebotTyp> angeboteList = new LinkedHashSet<>();
 		angeboteList.add(BetreuungsangebotTyp.KITA);
 		Assert.assertEquals(angeboteList, pendenzenList.get(0).getAngebote());
 
 		Assert.assertEquals(AntragTyp.GESUCH, pendenzenList.get(0).getAntragTyp());
 
-		Set<String> institutionen = new HashSet<>();
+		Set<String> institutionen = new LinkedHashSet<>();
 		institutionen.add("Institution1");
 		Assert.assertEquals(institutionen, pendenzenList.get(0).getInstitutionen());
 		Assert.assertEquals(converter.gesuchsperiodeToJAX(gesuch1.getGesuchsperiode()), pendenzenList.get(0).getGesuchsperiode());
@@ -90,11 +90,11 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
 		persistence.persist(gesuch.getGesuchsperiode());
 
-		Set<KindContainer> kindContainers = new HashSet<>();
+		Set<KindContainer> kindContainers = new LinkedHashSet<>();
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		KindContainer kind = betreuung.getKind();
 
-		Set<Betreuung> betreuungen = new HashSet<>();
+		Set<Betreuung> betreuungen = new LinkedHashSet<>();
 		betreuungen.add(betreuung);
 		kind.setBetreuungen(betreuungen);
 

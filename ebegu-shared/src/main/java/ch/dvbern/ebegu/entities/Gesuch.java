@@ -1,12 +1,13 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ public class Gesuch extends AbstractAntragEntity {
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
-	private Set<KindContainer> kindContainers = new HashSet<>();
+	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Valid
 	@Nullable
@@ -48,6 +49,9 @@ public class Gesuch extends AbstractAntragEntity {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
+
+	@Transient
+	private FinanzDatenDTO finanzDatenDTO;
 
 
 	@Nullable
@@ -92,10 +96,21 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setEinkommensverschlechterungInfo(@Nullable final EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		this.einkommensverschlechterungInfo = einkommensverschlechterungInfo;
+		if (this.einkommensverschlechterungInfo != null) {
+			this.einkommensverschlechterungInfo.setGesuch(this);
+		}
 	}
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+	}
+
+	public FinanzDatenDTO getFinanzDatenDTO() {
+		return finanzDatenDTO;
+	}
+
+	public void setFinanzDatenDTO(FinanzDatenDTO finanzDatenDTO) {
+		this.finanzDatenDTO = finanzDatenDTO;
 	}
 }

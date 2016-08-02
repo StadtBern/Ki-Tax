@@ -3,6 +3,7 @@ import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 import {TSGeschlecht} from './enums/TSGeschlecht';
 import TSFinanzielleSituationContainer from './TSFinanzielleSituationContainer';
 import TSErwerbspensumContainer from './TSErwerbspensumContainer';
+import TSEinkommensverschlechterungContainer from './TSEinkommensverschlechterungContainer';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -10,26 +11,27 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _mobile: string;
     private _telefon: string;
     private _telefonAusland: string;
-    private _umzug: boolean;
     private _adresse: TSAdresse;
     private _korrespondenzAdresse: TSAdresse;
     private _umzugAdresse: TSAdresse;
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _diplomatenstatus: boolean;
+    private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
-                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean) {
+                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean,
+                einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
         this._telefon = telefon;
         this._telefonAusland = telefonAusland;
-        this._umzug = umzug;
         this._finanzielleSituationContainer = finanzielleSituation;
         this._erwerbspensenContainer = erwerbspensen ? erwerbspensen : [];
         this._diplomatenstatus = diplomatenstatus;
+        this._einkommensverschlechterungContainer = einkommensverschlechterungContainer;
     }
 
     public get mail(): string {
@@ -54,14 +56,6 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     public set telefon(value: string) {
         this._telefon = value;
-    }
-
-    public get umzug(): boolean {
-        return this._umzug;
-    }
-
-    public set umzug(value: boolean) {
-        this._umzug = value;
     }
 
     public get adresse(): TSAdresse {
@@ -119,4 +113,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     set diplomatenstatus(value: boolean) {
         this._diplomatenstatus = value;
     }
+
+    get einkommensverschlechterungContainer(): TSEinkommensverschlechterungContainer {
+        return this._einkommensverschlechterungContainer;
+    }
+
+    set einkommensverschlechterungContainer(value: TSEinkommensverschlechterungContainer) {
+        this._einkommensverschlechterungContainer = value;
+    }
+
 }
+

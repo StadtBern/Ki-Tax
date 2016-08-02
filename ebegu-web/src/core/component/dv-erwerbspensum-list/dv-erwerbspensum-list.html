@@ -16,16 +16,17 @@
                 <tbody>
                 <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                     ng-click="vm.editClicked(row)">
-                    <td ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
+                    <td ng-if="!row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
+                    <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td>
-                        <button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
-                                class="btn btn-sm" title="{{vm.removeButtonTitle}}">
+                        <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
+                                button-class="btn btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>
-                        </button>
+                        </dv-loading-button>
                     </td>
                 </tr>
                 <tr ng-if="vm.erwerbspensen.length === 0">
@@ -40,10 +41,10 @@
     <div class="row">
 
         <div class="col-md-12" style="margin-bottom: 20px">
-            <button type="button" ng-click="vm.addClicked()" class="btn btn-sm btn-success">
+            <dv-loading-button type="button" ng-click="vm.addClicked()" button-class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-plus">
                 </i> {{vm.addButtonText}}
-            </button>
+            </dv-loading-button>
         </div>
     </div>
 </div>

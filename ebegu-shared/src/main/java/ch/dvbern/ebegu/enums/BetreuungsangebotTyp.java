@@ -7,5 +7,9 @@ public enum BetreuungsangebotTyp {
 	KITA,
 	TAGESSCHULE,
 	TAGESELTERN,
-	TAGI
+	TAGI;
+
+	public boolean isSchulamt() {
+		return TAGESSCHULE.equals(this);
+	}
 }

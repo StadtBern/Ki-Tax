@@ -2,18 +2,34 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * comments homa
  */
 public final class TestDataUtil {
+
+	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
+	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
+	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
+	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
+
+	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
+	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
 
 	private TestDataUtil() {
 	}
@@ -164,6 +180,36 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.getInstitution().setName("Kita Aaregg");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
+	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.getInstitution().setName("Kita Brünnen");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static Kind createDefaultKind() {
 		Kind kind = new Kind();
 		kind.setNachname("Kind_Mustermann");
@@ -206,9 +252,20 @@ public final class TestDataUtil {
 		return epCont;
 	}
 
+	public static ErwerbspensumContainer createErwerbspensum(LocalDate von, LocalDate bis, int pensum, int zuschlag) {
+		ErwerbspensumContainer erwerbspensumContainer = new ErwerbspensumContainer();
+		Erwerbspensum erwerbspensum = new Erwerbspensum();
+		erwerbspensum.setPensum(pensum);
+		erwerbspensum.setZuschlagsprozent(zuschlag);
+		erwerbspensum.setGueltigkeit(new DateRange(von, bis));
+		erwerbspensumContainer.setErwerbspensumJA(erwerbspensum);
+		return erwerbspensumContainer;
+	}
+
 	public static Erwerbspensum createErwerbspensumData() {
 		Erwerbspensum ep = new Erwerbspensum();
 		ep.setTaetigkeit(Taetigkeit.ANGESTELLT);
+		ep.setPensum(50);
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
@@ -242,11 +299,31 @@ public final class TestDataUtil {
 	}
 
 	public static Gesuchsperiode createDefaultGesuchsperiode() {
+		return createCurrentGesuchsperiode();
+	}
+
+	public static Gesuchsperiode createCurrentGesuchsperiode() {
 		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
 		gesuchsperiode.setActive(true);
-		gesuchsperiode.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+
+		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear()  : LocalDate.now().getYear() -1 ;
+		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
+		LocalDate end = LocalDate.of(startyear + 1 , Month.JULY, 31);
+		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
 		return gesuchsperiode;
 	}
+
+
+
+	public static Gesuchsperiode createGesuchsperiode1617() {
+		Gesuchsperiode gesuchsperiode = new Gesuchsperiode();
+		gesuchsperiode.setActive(true);
+		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
+		return gesuchsperiode;
+	}
+
+
 
 	public static EbeguParameter createDefaultEbeguParameter() {
 		EbeguParameter instStammdaten = new EbeguParameter();
@@ -289,5 +366,74 @@ public final class TestDataUtil {
 		user.setMandant(createDefaultMandant());
 		user.setRole(UserRole.ADMIN);
 		return user;
+	}
+
+	public static Betreuung createGesuchWithBetreuungspensum(boolean zweiGesuchsteller) {
+		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		gesuch.setFamiliensituation(new Familiensituation());
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		if (zweiGesuchsteller) {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		} else {
+			gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		}
+		gesuch.setGesuchsteller1(new Gesuchsteller());
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		if (zweiGesuchsteller) {
+			gesuch.setGesuchsteller2(new Gesuchsteller());
+			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		}
+		Betreuung betreuung = new Betreuung();
+		betreuung.setKind(new KindContainer());
+		betreuung.getKind().setKindJA(new Kind());
+		betreuung.getKind().setGesuch(gesuch);
+		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
+		return betreuung;
+	}
+
+	public static void calculateFinanzDaten(Gesuch gesuch) {
+		if (gesuch.getGesuchsperiode() == null) {
+			gesuch.setGesuchsperiode(createGesuchsperiode1617());
+		}
+		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
+	}
+
+	public static Gesuch createTestgesuchDagmar(){
+		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
+		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
+		Gesuch gesuch = testfall.createGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		return gesuch;
+	}
+
+	public static void setFinanzielleSituation(Gesuch gesuch, BigDecimal einkommen) {
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV().setNettolohn(einkommen);
+	}
+
+	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {
+		if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() == null) {
+			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
+		}
+		if (gesuch.getEinkommensverschlechterungInfo() == null) {
+			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+		}
+		if (basisJahrPlus1) {
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
+			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
+			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+		} else {
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
+			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
+			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
+			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+		}
 	}
 }

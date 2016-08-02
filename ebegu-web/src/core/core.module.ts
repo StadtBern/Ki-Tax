@@ -14,6 +14,7 @@ import GesuchModelManager from '../gesuch/service/gesuchModelManager';
 import GesuchRS from '../gesuch/service/gesuchRS.rest';
 import FamiliensituationRS from '../gesuch/service/familiensituationRS.rest';
 import FinanzielleSituationRS from '../gesuch/service/finanzielleSituationRS.rest';
+import EinkommensverschlechterungContainerRS from '../gesuch/service/einkommensverschlechterungContainerRS.rest';
 import DVMaxLength from './directive/dv-max-length';
 import {DVDatepicker} from './directive/dv-datepicker/dv-datepicker';
 import {FachstelleRS} from './service/fachstelleRS.rest';
@@ -38,6 +39,13 @@ import {EbeguAuthentication} from '../authentication/authentication.module';
 import {DvPulldownUserMenuComponentConfig} from './component/dv-pulldown-user-menu/dv-pulldown-user-menu';
 import UserRS from './service/userRS.rest';
 import {DVUserselect} from './directive/dv-userselect/dv-userselect';
+import DokumenteRS from '../gesuch/service/dokumenteRS.rest';
+import {DVDokumenteListConfig} from './component/dv-dokumente-list/dv-dokumente-list';
+import {DVLoading} from './directive/dv-loading/dv-loading';
+import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
+import HttpResponseInterceptor from './service/HttpResponseInterceptor';
+import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
+import VerfuegungRS from './service/verfuegungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -68,7 +76,7 @@ const dependencies: string[] = [
     'pascalprecht.translate',
     'angularMoment',
     'cfp.hotkeys',
-     'ui.utils.masks'
+    'ui.utils.masks'
 
 ];
 
@@ -97,6 +105,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchModelManager', GesuchModelManager)
     .service('GesuchRS', GesuchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
+    .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
     .service('MandantRS', MandantRS)
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)
@@ -107,11 +116,17 @@ export const EbeguWebCore: angular.IModule = angular
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .service('UserRS', UserRS)
+    .service('VerfuegungRS', VerfuegungRS)
+    .service('DokumenteRS', DokumenteRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvLoading', DVLoading.factory())
+    .directive('dvLoadingButton', DVLoadingButton.factory())
+    .directive('dvSubmitevent', DVSubmitevent.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
+    .service('HttpResponseInterceptor', HttpResponseInterceptor)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvErwerbspensumList', new DVErwerbspensumListConfig())
@@ -119,4 +134,5 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
-    .component('dvBisher', new DvBisherComponentConfig());
+    .component('dvBisher', new DvBisherComponentConfig())
+    .component('dvDokumenteList', new DVDokumenteListConfig());

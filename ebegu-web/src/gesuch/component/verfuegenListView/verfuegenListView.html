@@ -21,7 +21,7 @@
                     </thead>
                     <tbody ng-repeat="kindContainer in displayedCollection" >
                         <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung" st-select-mode="single"
-                            ng-click="vm.openVerfuegung(betreuung)">
+                            ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                             <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                             <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
                             <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
@@ -39,14 +39,17 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-md-6 text-right">
-                <md-button class="md-raised md-primary" aria-label="{{BEREIT_VERFUEGUNG_UPPER | translate}}">
-                    <span data-translate="BEREIT_VERFUEGUNG_UPPER"></span>
+            <div class="col-md-12 text-center">
+                <md-button class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+                    <span data-translate="GEPRUEFT_UPPER"></span>
                 </md-button>
-            </div>
-            <div class="col-md-6">
+
                 <md-button class="md-raised md-warn md-hue-2" aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
                     <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
+                </md-button>
+
+                <md-button class="md-raised md-warn md-hue-2" aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
+                    <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
                 </md-button>
             </div>
         </div>

@@ -41,6 +41,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Min(1)
 	private Integer betreuungNummer = 1;
 
+	@Nullable
+	private JaxVerfuegung verfuegung;
+
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -91,5 +94,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBetreuungNummer(Integer betreuungNummer) {
 		this.betreuungNummer = betreuungNummer;
+	}
+
+	@Nullable
+	public JaxVerfuegung getVerfuegung() {
+		return verfuegung;
+	}
+
+	public void setVerfuegung(@Nullable JaxVerfuegung verfuegung) {
+		this.verfuegung = verfuegung;
 	}
 }

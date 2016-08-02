@@ -16,6 +16,12 @@ import {FinanzielleSituationResultateViewComponentConfig} from './component/fina
 import {FallCreationViewComponentConfig} from './component/fallCreationView/fallCreationView';
 import {VerfuegenListViewComponentConfig} from './component/verfuegenListView/verfuegenListView';
 import {GesuchToolbarComponentConfig} from './component/gesuchToolbar/gesuchToolbar';
+import {EinkommensverschlechterungInfoViewComponentConfig} from './component/einkommensverschlechterungInfoView/einkommensverschlechterungInfoView';
+import {EinkommensverschlechterungSteuernViewComponentConfig} from './component/einkommensverschlechterungSteuernView/einkommensverschlechterungSteuernView';
+import {EinkommensverschlechterungViewComponentConfig} from './component/einkommensverschlechterungView/einkommensverschlechterungView';
+import {EinkommensverschlechterungResultateViewComponentConfig} from './component/einkommensverschlechterungResultateView/einkommensverschlechterungResultateView';
+import {DokumenteViewComponentConfig} from './component/DokumenteView/dokumenteView';
+import {VerfuegenViewComponentConfig} from './component/verfuegenView/verfuegenView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -33,4 +39,10 @@ export const EbeguWebGesuch =
     .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
     .component('fallCreationView', new FallCreationViewComponentConfig())
     .component('verfuegenListView', new VerfuegenListViewComponentConfig())
-    .component('gesuchToolbar', new GesuchToolbarComponentConfig());
+    .component('verfuegenView', new VerfuegenViewComponentConfig())
+    .component('gesuchToolbar', new GesuchToolbarComponentConfig())
+    .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig())
+    .component('einkommensverschlechterungSteuernView', new EinkommensverschlechterungSteuernViewComponentConfig())
+    .component('einkommensverschlechterungView', new EinkommensverschlechterungViewComponentConfig())
+    .component('einkommensverschlechterungResultateView', new EinkommensverschlechterungResultateViewComponentConfig())
+    .component('dokumenteView', new DokumenteViewComponentConfig());

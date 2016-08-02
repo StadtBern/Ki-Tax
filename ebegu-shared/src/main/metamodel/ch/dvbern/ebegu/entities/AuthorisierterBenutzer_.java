@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
+import java.time.LocalDateTime;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
-import java.time.LocalDateTime;
 
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(AuthorisierterBenutzer.class)

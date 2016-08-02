@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -14,7 +15,6 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -35,6 +35,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 
 	@Inject
 	private FinanzielleSituationRechner finSitRechner;
+
 
 	@Nonnull
 	@Override
@@ -71,13 +72,11 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		if (gesuch.getGesuchsperiode() != null) {
-			double familiengroesse = finSitRechner.calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
-			BigDecimal abzugAufgrundFamiliengroesse = finSitRechner
-				.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-			return new FinanzielleSituationResultateDTO(gesuch, familiengroesse, abzugAufgrundFamiliengroesse);
-		}
-		return new FinanzielleSituationResultateDTO(gesuch, 0, BigDecimal.ZERO);
+		return FinanzielleSituationUtil.calculateResultate(finSitRechner, gesuch);
 	}
 
+	@Override
+	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
+		FinanzielleSituationUtil.calculateFinanzDaten(finSitRechner, gesuch);
+	}
 }

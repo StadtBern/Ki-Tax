@@ -32,5 +32,5 @@ export class DvPulldownUserMenuController {
     public getVersion(): string {
         return VERSION;
     }
-    
+
 }

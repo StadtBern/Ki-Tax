@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -33,5 +34,13 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 		boolean dateRangeIsSame = super.isSame(otherGesuchsperiode);
 		boolean activeSame = Objects.equals(this.getActive(), otherGesuchsperiode.getActive());
 		return dateRangeIsSame && activeSame;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("gueltigkeit", getGueltigkeit().toString())
+			.append("active", active)
+			.toString();
 	}
 }

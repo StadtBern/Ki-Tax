@@ -1,5 +1,6 @@
 var helpers = require('./helpers');
 var commonConfig = require('./webpack.common.js'); //The settings that are common to prod and dev
+var webpackMerge = require('webpack-merge'); //Used to merge webpack configs
 
 /**
  * Webpack Plugins
@@ -10,6 +11,8 @@ var DefinePlugin = require('webpack/lib/DefinePlugin');
 /**
  * Webpack Constants
  */
+const HOST = process.env.HOST || 'localhost';
+const PORT = process.env.PORT || 80;
 const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
 const METADATA = webpackMerge(commonConfig.metadata, {
     host: HOST,

@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
@@ -24,7 +25,10 @@ import java.util.TreeSet;
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer")
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
+		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
+	}
 )
 public class Betreuung extends AbstractEntity {
 
@@ -62,6 +66,11 @@ public class Betreuung extends AbstractEntity {
 	@Min(1)
 	@Column(nullable = false)
 	private Integer betreuungNummer = 1;
+
+	@Valid
+	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
+	private Verfuegung verfuegung;
 
 
 	public KindContainer getKind() {
@@ -122,6 +131,14 @@ public class Betreuung extends AbstractEntity {
 		this.betreuungNummer = betreuungNummer;
 	}
 
+	public Verfuegung getVerfuegung() {
+		return verfuegung;
+	}
+
+	public void setVerfuegung(Verfuegung verfuegung) {
+		this.verfuegung = verfuegung;
+	}
+
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
 			return true;
@@ -136,5 +153,29 @@ public class Betreuung extends AbstractEntity {
 		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
 		return bemSame && pensenSame && statusSame && stammdatenSame;
+	}
+
+	@Transient
+	public Gesuchsperiode extractGesuchsperiode(){
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
+		return this.getKind().getGesuch().getGesuchsperiode();
+	}
+
+	@Transient
+	public Gesuch extractGesuch() {
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		return this.getKind().getGesuch();
+	}
+
+	@Transient
+	public boolean isAngebotKita() {
+		return BetreuungsangebotTyp.KITA.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+	}
+
+	@Transient
+	public boolean isAngebotTageselternKleinkinder() {
+		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
+			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
 	}
 }

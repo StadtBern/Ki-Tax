@@ -7,10 +7,7 @@ import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -78,5 +75,20 @@ public class Familiensituation extends AbstractEntity {
 
 	public void setGemeinsameSteuererklaerung(Boolean gemeinsameSteuererklaerung) {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
+	}
+
+	@Transient
+	public boolean hasSecondGesuchsteller(){
+		switch (this.familienstatus){
+			case ALLEINERZIEHEND:
+			case WENIGER_FUENF_JAHRE:
+				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
+			case VERHEIRATET:
+			case KONKUBINAT:
+			case LAENGER_FUENF_JAHRE:
+				return true;
+		}
+		//wir sollten hier nie hinkommen
+		return false;
 	}
 }

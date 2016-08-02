@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests.validations;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.tests.util.ValidationTestHelper;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
@@ -48,7 +49,10 @@ public class CheckBetreuungspensumDatesOverlappingValidatorTest {
 
 	@Nonnull
 	private Betreuung createBetreuungWithOverlappedDates(boolean overlapping) {
+		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		betreuung.getKind().setGesuch(gesuch); // Aktuell nur in 1 Richtung verknuepft
 		Set<BetreuungspensumContainer> containerSet = new HashSet<>();
 
 		BetreuungspensumContainer betPensContainer = TestDataUtil.createBetPensContainer(betreuung);

@@ -12,6 +12,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
+import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
@@ -37,12 +38,12 @@ export class PendenzenListViewController {
 
 
     static $inject: string[] = ['PendenzRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
+        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
 
     constructor(public pendenzRS: PendenzRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private $state: IStateService,
-                private CONSTANTS: any) {
+                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
+                private $state: IStateService, private CONSTANTS: any) {
         this.initViewModel();
     }
 
@@ -129,6 +130,7 @@ export class PendenzenListViewController {
 
     private openGesuch(gesuch: TSGesuch): void {
         if (gesuch) {
+            this.berechnungsManager.clear();
             this.gesuchModelManager.gesuch = gesuch;
             this.$state.go('gesuch.fallcreation');
         }

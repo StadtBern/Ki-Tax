@@ -4,9 +4,10 @@
             <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
         </h4>
         <hr class="header"/>
-        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
+        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
+              unsaved-warning-form>
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-            <br />
+            <br/>
 
             <!--Geschlecht-->
             <div class="row">
@@ -14,7 +15,8 @@
                     <div class="form-group">
                         <label data-translate="GESCHLECHT"></label>
                         <dv-radio-container name="geschlecht" class="input-element"
-                                            ng-required="true" items="vm.geschlechter" ng-model="vm.getModel().geschlecht">
+                                            ng-required="true" items="vm.geschlechter"
+                                            ng-model="vm.getModel().geschlecht">
                         </dv-radio-container>
                         <dv-error-messages for="form.geschlecht.$error"
                                            class="error"></dv-error-messages>
@@ -28,7 +30,7 @@
                         <label data-translate="VORNAME" for="vorname_ID"></label>
                         <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
                                dv-max-length class="form-control" required>
-                        <dv-error-messages  for="form.vorname.$error"
+                        <dv-error-messages for="form.vorname.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -37,7 +39,7 @@
                         <label data-translate="NAME" for="name_ID"></label>
                         <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
                                dv-max-length class="form-control" required>
-                        <dv-error-messages  for="form.name.$error"
+                        <dv-error-messages for="form.name.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -49,10 +51,10 @@
                     <dv-input-container class="form-group">
                         <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                         </label>
-                        <dv-datepicker input-id="geburtsdatum_ID"  name="geburtsdatum"
+                        <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
                                        ng-model="vm.getModel().geburtsdatum" ng-required="true" class="input-element">
                         </dv-datepicker>
-                        <dv-error-messages  for="form.geburtsdatum.$error"
+                        <dv-error-messages for="form.geburtsdatum.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -65,27 +67,30 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class=" checkbox">
-                        <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr" aria-label="korrespondenzAdr"
+                        <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
+                                     aria-label="korrespondenzAdr"
                                      ng-change="vm.korrespondenzAdrClicked()">
                             <span data-translate="KORRESPONDENZADR"></span>
                             <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
                         </md-checkbox>
-                        <dv-error-messages  for="form.korrespondenzAdr.$error"
+                        <dv-error-messages for="form.korrespondenzAdr.$error"
                                            class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
 
-            <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr" prefix="korrespondenz"></dv-adresse>
+            <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr" prefix="korrespondenz"
+                        organisation="true"></dv-adresse>
 
             <!-- Diplomatenstatus -->
             <div class="row">
                 <div class="col-md-6">
                     <div class=" checkbox">
-                        <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus" aria-label="diplomatenstatus">
+                        <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
+                                     aria-label="diplomatenstatus">
                             <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
                         </md-checkbox>
-                        <dv-error-messages  for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
+                        <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
@@ -94,11 +99,12 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="checkbox">
-                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug" ng-change="vm.umzugadreseClicked()">
+                        <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
+                                     ng-change="vm.umzugadreseClicked()">
                             <span data-translate="UMZUG"></span>
                         </md-checkbox>
-                        <dv-error-messages  for="form.umzug.$error"
-                                            class="error"></dv-error-messages>
+                        <dv-error-messages for="form.umzug.$error"
+                                           class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
@@ -114,7 +120,7 @@
                         </label>
                         <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
                                dv-max-length class="form-control" required placeholder="hans.muster@example.com">
-                        <dv-error-messages  for="form.email.$error"
+                        <dv-error-messages for="form.email.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -130,7 +136,7 @@
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
                                ng-pattern="vm.mobilePattern">
-                        <dv-error-messages  for="form.mobile.$error"
+                        <dv-error-messages for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -141,7 +147,7 @@
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
                                dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
                                ng-pattern="vm.phonePattern">
-                        <dv-error-messages  for="form.telefon.$error"
+                        <dv-error-messages for="form.telefon.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -154,7 +160,7 @@
                         </label>
                         <input id="ausl_tel" type="text" name="telefonAusland" ng-model="vm.getModel().telefonAusland"
                                dv-max-length class="form-control">
-                        <dv-error-messages  for="form.telefonAusland.$error"
+                        <dv-error-messages for="form.telefonAusland.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -163,18 +169,20 @@
             <!--Buttons-->
             <div class="row">
                 <div class="col-md-4 ">
-                    <button ng-click="vm.previousStep()" class="btn btn-link previous">
+                    <dv-loading-button ng-click="vm.previousStep()" button-class="btn btn-link previous">
                         <span class="fa fa-chevron-left"></span>
                         <span data-translate="ZURUECK_UPPER"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-primary" type="submit" data-translate="SAVE"
-                            ng-if="vm.getModel().timestampErstellt === undefined">
-                    </button>
-                    <button class="btn btn-primary" type="submit" data-translate="UPDATE"
-                            ng-if="vm.getModel().timestampErstellt">
-                    </button>
+                    <dv-loading-button button-class="btn btn-primary" type="submit"
+                                       ng-if="vm.getModel().timestampErstellt === undefined">
+                        <span data-translate="SAVE"></span>
+                    </dv-loading-button>
+                    <dv-loading-button button-class="btn btn-primary" type="submit"
+                                       ng-if="vm.getModel().timestampErstellt">
+                        <span data-translate="UPDATE"></span>
+                    </dv-loading-button>
                 </div>
                 <div class="col-md-2">
                     <a href="javascript:;" id="cancelLink" data-translate="CANCEL"
@@ -182,10 +190,10 @@
 
                 </div>
                 <div class="col-md-4 text-right">
-                    <button type="submit" class="btn btn-link next">
+                    <dv-loading-button type="submit" button-class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
-                    </button>
+                    </dv-loading-button>
                 </div>
             </div>
         </form>

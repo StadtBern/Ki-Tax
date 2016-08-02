@@ -2,6 +2,7 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {IFilterService} from 'angular';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSFall from '../models/TSFall';
+import DateUtil from './DateUtil';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -14,6 +15,18 @@ export default class EbeguUtil {
     }
 
     /**
+     * Returns the first day of the given Period in the format DD.MM.YYYY
+     * @param gesuchsperiode
+     * @returns {string}
+     */
+    public getFirstDayGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
+        if (gesuchsperiode && gesuchsperiode.gueltigkeit && gesuchsperiode.gueltigkeit.gueltigAb) {
+            return DateUtil.momentToLocalDateFormat(gesuchsperiode.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+        }
+        return '';
+    }
+
+    /**
      * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
      * @returns {any}
      */
@@ -21,6 +34,17 @@ export default class EbeguUtil {
         if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
             return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
                 + gesuchsperiode.gueltigkeit.gueltigBis.year();
+        }
+        return undefined;
+    }
+
+    /**
+     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
+     * @returns {any}
+     */
+    public getBasisJahrPlusAsString(gesuchsperiode: TSGesuchsperiode, plusJahr: number): string {
+        if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
+            return String(gesuchsperiode.gueltigkeit.gueltigAb.year() + plusJahr);
         }
         return undefined;
     }
