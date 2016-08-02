@@ -508,6 +508,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		finanzielleSituationJA.setGeleisteteAlimente(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setBruttovermoegen(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setSchulden(BigDecimal.valueOf(100000));
+		finanzielleSituationJA.setSelbstaendig(true);
 		finanzielleSituationJA.setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(100000));
 
 
