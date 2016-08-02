@@ -6,10 +6,11 @@ import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX;
 
 /**
  * Configurator, welcher die Regeln und ihre Reihenfolge konfiguriert. Als Parameter erhält er den Mandanten sowie
@@ -21,10 +22,19 @@ public class BetreuungsgutscheinConfigurator {
 
 	private List<Rule> rules = new LinkedList<>();
 
-	public List<Rule> configureRulesForMandant(Mandant mandant, Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
+	public List<Rule> configureRulesForMandant(@Nullable Mandant mandant, @Nonnull Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameter) {
 		// TODO (team) Mandant abfragen, sobald es mehrere hat!
-		useBernerRules(ebeguParameter);
+		useBernerRules(ebeguRuleParameter);
 		return rules;
+	}
+
+	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nullable Mandant mandant){
+		// TODO (team) Mandant abfragen, sobald es mehrere hat!
+		return requiredBernerParameters();
+	}
+
+	public Set<EbeguParameterKey> requiredBernerParameters(){
+		return EnumSet.of(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
 	}
 
 
@@ -51,9 +61,9 @@ public class BetreuungsgutscheinConfigurator {
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
-		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX);
+		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
 		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
-		MaximalesEinkommenCalcRule maxEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getAsBigDecimal());
+		MaximalesEinkommenCalcRule maxEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());
 		rules.add(maxEinkommenCalcRule);
 
 		// REDUKTIONSREGELN

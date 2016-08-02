@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -25,7 +25,7 @@ public class JaxKindContainer extends JaxAbstractDTO {
 	private JaxKind kindJA;
 
 	@NotNull
-	private Set<JaxBetreuung> betreuungen = new HashSet<>();
+	private Set<JaxBetreuung> betreuungen = new LinkedHashSet<>();
 
 	@Min(1)
 	private Integer kindNummer = 1;

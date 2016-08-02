@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -36,7 +36,7 @@ public class Gesuch extends AbstractAntragEntity {
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
-	private Set<KindContainer> kindContainers = new HashSet<>();
+	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Valid
 	@Nullable

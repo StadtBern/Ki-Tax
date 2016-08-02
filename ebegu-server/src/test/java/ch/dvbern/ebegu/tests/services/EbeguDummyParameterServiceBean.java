@@ -93,7 +93,7 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 
 	@Override
 	@Nonnull
-	public Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr) {
+	public Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr) {
 		return dummyObjects.values();
 	}
 
@@ -112,5 +112,13 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 			return Optional.of(mockParameter);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode) {
+		Map<EbeguParameterKey, EbeguParameter> result = new HashMap<>();
+		Collection<EbeguParameter> paramsForGesuchsperiode = getEbeguParameterByGesuchsperiode(gesuchsperiode);
+		paramsForGesuchsperiode.stream().map(ebeguParameter -> result.put(ebeguParameter.getName(), ebeguParameter));
+		return result;
 	}
 }

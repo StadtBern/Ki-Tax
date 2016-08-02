@@ -26,6 +26,7 @@ function getStates(): IState[] {
         new EbeguBetreuungState(),
         new EbeguNewFallState(),
         new EbeguVerfuegenListState(),
+        new EbeguVerfuegenState(),
         new EbeguEinkommensverschlechterungInfoState(),
         new EbeguEinkommensverschlechterungSteuernState(),
         new EbeguEinkommensverschlechterungState(),
@@ -122,6 +123,13 @@ export class EbeguVerfuegenListState implements IState {
     template = '<verfuegen-list-view>';
     url = '/verfuegen';
 }
+
+export class EbeguVerfuegenState implements IState {
+    name = 'gesuch.verfuegenView';
+    template = '<verfuegen-view>';
+    url = '/verfuegenView';
+}
+
 export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
     template = '<einkommensverschlechterung-info-view>';

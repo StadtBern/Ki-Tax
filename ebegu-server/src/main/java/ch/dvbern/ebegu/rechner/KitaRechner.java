@@ -3,6 +3,8 @@ package ch.dvbern.ebegu.rechner;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +16,8 @@ import java.util.Objects;
  * einer Betreuung für das Angebot KITA.
  */
 public class KitaRechner extends AbstractBGRechner {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
@@ -37,7 +41,9 @@ public class KitaRechner extends AbstractBGRechner {
 		BigDecimal anteilMonat = calculateAnteilMonat(von, bis);
 
 		// Abgeltung pro Tag: Abgeltung des Kantons plus Beitrag der Stadt
-		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), parameterDTO.getBeitragStadtProTag());
+		//todo homa hier muss allenfalls auch der parameter fuer das jahr2 beruecksichtigt werden
+		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Abgeltung Kanton");
+		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTagJahr1(), parameterDTO.getBeitragStadtProTag());
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen

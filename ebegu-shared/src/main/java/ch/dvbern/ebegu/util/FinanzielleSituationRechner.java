@@ -120,7 +120,7 @@ public class FinanzielleSituationRechner {
 			}
 		}
 		if (abzugFromServer.isPresent()) {
-			abzugProPerson = abzugFromServer.get().getAsBigDecimal();
+			abzugProPerson = abzugFromServer.get().getValueAsBigDecimal();
 		}
 		// Ein Bigdecimal darf nicht aus einem double erzeugt werden, da das Ergebnis nicht genau die gegebene Nummer waere
 		// deswegen muss man hier familiengroesse als String uebergeben. Sonst bekommen wir PMD rule AvoidDecimalLiteralsInBigDecimalConstructor
