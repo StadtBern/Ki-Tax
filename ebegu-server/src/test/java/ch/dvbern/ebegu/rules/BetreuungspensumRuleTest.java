@@ -3,13 +3,14 @@ package ch.dvbern.ebegu.rules;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialenRestanspruch;
@@ -30,7 +31,7 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaNormalfall() {
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
@@ -45,7 +46,7 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaZuwenigAnspruch() {
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 80);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 80);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
@@ -60,7 +61,7 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaMitRestanspruch() {
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
@@ -75,8 +76,8 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testZweiKitas() {
-		Betreuung betreuung1 = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 60);
-		Betreuung betreuung2 = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 40);
+		Betreuung betreuung1 = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung2 = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 40);
 		betreuung1.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung1, createInitialenRestanspruch(betreuung1.extractGesuchsperiode()));
 		// Nach Kita 1: 20% Rest
@@ -106,7 +107,7 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternSchulkinderOhneErwerbspensum() {
 		// Tageseltern Schulkinder erhalten immer soviel wie sie wollen, unabhängig von Erwerbspensum
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.TAGESELTERN, 80);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN, 80);
 		betreuung.setSchulpflichtig(Boolean.TRUE);
 		List<VerfuegungZeitabschnitt> result = betreuungspensumAbschnittRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumCalcRule.calculate(betreuung, result);
@@ -121,7 +122,7 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternSchulkinderMitTiefemErwerbspensum() {
 		// Tageseltern Schulkinder erhalten immer soviel wie sie wollen, unabhängig von Erwerbspensum
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.TAGESELTERN, 80);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN, 80);
 		betreuung.setSchulpflichtig(Boolean.TRUE);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
@@ -137,9 +138,10 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaMitFachstelleWenigerAlsPensum() {
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
 		betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(40);
+		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = fachstelleDataRule.calculate(betreuung, result);
@@ -155,9 +157,10 @@ public class BetreuungspensumRuleTest {
 
 	@Test
 	public void testKitaMitFachstelleUndRestPensum() {
-		Betreuung betreuung = createBetreuungWithPensum(BetreuungsangebotTyp.KITA, 60);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
 		betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(80);
+		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 40, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = fachstelleDataRule.calculate(betreuung, result);
@@ -171,13 +174,14 @@ public class BetreuungspensumRuleTest {
 		Assert.assertEquals(20, result.get(0).getAnspruchspensumRest());
 	}
 
-	private Betreuung createBetreuungWithPensum(BetreuungsangebotTyp angebot, int pensum) {
+	private Betreuung createBetreuungWithPensum(LocalDate von, LocalDate bis, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
-		betreuung.setBetreuungspensumContainers(new HashSet<>());
+		betreuung.setBetreuungspensumContainers(new LinkedHashSet<>());
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
 		betreuungspensumContainer.setBetreuung(betreuung);
-		betreuungspensumContainer.setBetreuungspensumJA(new Betreuungspensum());
+		DateRange gueltigkeit = new DateRange(von, bis);
+		betreuungspensumContainer.setBetreuungspensumJA(new Betreuungspensum(gueltigkeit));
 		betreuungspensumContainer.getBetreuungspensumJA().setPensum(pensum);
 		betreuung.getBetreuungspensumContainers().add(betreuungspensumContainer);
 		return betreuung;

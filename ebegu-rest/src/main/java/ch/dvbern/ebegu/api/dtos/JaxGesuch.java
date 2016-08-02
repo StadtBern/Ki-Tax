@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -24,7 +24,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private JaxGesuchsteller gesuchsteller2;
 
 	@NotNull
-	private Set<JaxKindContainer> kindContainers = new HashSet<>();
+	private Set<JaxKindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Nullable
 	private JaxFamiliensituation familiensituation;

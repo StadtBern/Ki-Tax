@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
@@ -114,5 +115,43 @@ public class AbstractBGRechnerTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setZeitabschnitte(zeitabschnittList);
 		return verfuegung;
+	}
+
+	/**
+	 * hilfsmethode um den {@link ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar} auf
+	 * korrekte berechnung zu pruefen
+	 */
+	public static void checkTestfallWaeltiDagmar(Gesuch gesuch) {
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				if (betreuung.getInstitutionStammdaten().getInstitution().getId().equals(AbstractTestfall.idInstitutionAaregg)) {
+					Verfuegung verfuegung = betreuung.getVerfuegung();
+					System.out.println(verfuegung);
+					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
+					// Erster Monat
+					VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
+					assertZeitabschnitt(august, 80, 80, 80, 1827.05, 1562.25, 264.80);
+					// Letzter Monat
+					VerfuegungZeitabschnitt januar = verfuegung.getZeitabschnitte().get(5);
+					assertZeitabschnitt(januar, 80, 80, 80, 1827.05, 1562.25, 264.80);
+					// Kein Anspruch mehr ab Februar
+					VerfuegungZeitabschnitt februar = verfuegung.getZeitabschnitte().get(6);
+					assertZeitabschnitt(februar, 0, 80, 0, 0, 0, 0);
+				} else {
+					Verfuegung verfuegung = betreuung.getVerfuegung();
+					System.out.println(verfuegung);
+					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
+					// Noch kein Anspruch bis januar
+					VerfuegungZeitabschnitt januar = verfuegung.getZeitabschnitte().get(5);
+					assertZeitabschnitt(januar, 0, 80, 0, 0, 0, 0);
+					// Erster Monat
+					VerfuegungZeitabschnitt februar = verfuegung.getZeitabschnitte().get(6);
+					assertZeitabschnitt(februar, 40, 80, 40, 913.50, 781.10, 132.40);
+					// Letzter Monat
+					VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(11);
+					assertZeitabschnitt(juli, 40, 80, 40, 913.50, 781.10, 132.40);
+				}
+			}
+		}
 	}
 }

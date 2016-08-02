@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
+import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfallWaeltiDagmar;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService
@@ -93,9 +93,8 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next()));
 		Assert.assertNotNull(berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung());
 		Verfuegung verfuegung = berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung();
-		Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
-		VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
-		AbstractBGRechnerTest.assertZeitabschnitt(august, 80, 80, 80, 1827.05, 1562.25, 264.80);
+		checkTestfallWaeltiDagmar(gesuch);
+
 	}
 
 	@Test

@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 
+	private static final long serialVersionUID = 5116358042804364490L;
+
 	@Max(100)
 	@Min(0)
 	@NotNull

@@ -71,6 +71,9 @@ public class JaxBConverter {
 	@Inject
 	private BetreuungService betreuungService;
 
+	@Inject
+	private VerfuegungService verfuegungService;
+
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -1172,7 +1175,28 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
+
+		if (betreuungJAXP.getVerfuegung() != null) {
+			betreuung.setVerfuegung(this.verfuegungtoStoreableEntity(betreuungJAXP.getVerfuegung()));
+		} else{
+			betreuung.setVerfuegung(null);
+		}
+
 		return betreuung;
+	}
+
+	private Verfuegung verfuegungtoStoreableEntity(JaxVerfuegung verfuegungJAXP) {
+
+		Verfuegung verfToMergeWith = new Verfuegung();
+		if (verfuegungJAXP.getId() != null) {
+
+			final Optional<Verfuegung> existingVerfuegung = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+			//wenn schon vorhanden updaten
+			if (existingVerfuegung.isPresent()) {
+				verfToMergeWith = existingVerfuegung.get();
+			}
+		}
+		return verfuegungToEntity(verfuegungJAXP, verfToMergeWith);
 	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
@@ -1305,7 +1329,7 @@ public class JaxBConverter {
 	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
-	private JaxVerfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
+	private Verfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
 		Validate.notNull(jaxVerfuegung);
 		Validate.notNull(verfuegung);
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
@@ -1314,7 +1338,7 @@ public class JaxBConverter {
 
 		//List of Verfuegungszeitabschnitte converten
 		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());
-		return jaxVerfuegung;
+		return verfuegung;
 
 	}
 
@@ -1369,7 +1393,6 @@ public class JaxBConverter {
 																	final VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Validate.notNull(jaxVerfuegungZeitabschnitt);
 		Validate.notNull(verfuegungZeitabschnitt);
-		final JaxVerfuegungZeitabschnitt jaxZeitabschn = new JaxVerfuegungZeitabschnitt();
 		//Mal auskommentiert da wahrscheinlich von client gar nie etwas gesetzt werden soll
 //		convertAbstractDateRangedFieldsToEntity(jaxZeitabschn, verfuegungZeitabschnitt);
 //		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());

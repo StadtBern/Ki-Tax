@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -16,6 +17,13 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 
 	private static final long serialVersionUID = -9032857320571372370L;
 
+	public Betreuungspensum() {
+
+	}
+
+	public Betreuungspensum(DateRange gueltigkeit) {
+		this.setGueltigkeit(gueltigkeit);
+	}
 
 	@Override
 	public int compareTo(Betreuungspensum o) {

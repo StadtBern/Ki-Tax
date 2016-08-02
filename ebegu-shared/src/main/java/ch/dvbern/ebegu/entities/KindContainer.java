@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -55,7 +55,7 @@ public class KindContainer extends AbstractEntity {
 	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
-	private Set<Betreuung> betreuungen = new HashSet<>();
+	private Set<Betreuung> betreuungen = new LinkedHashSet<>();
 
 
 	public Gesuch getGesuch() {
