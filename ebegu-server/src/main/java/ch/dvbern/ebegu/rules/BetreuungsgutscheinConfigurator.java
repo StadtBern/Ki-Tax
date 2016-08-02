@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX;
@@ -21,20 +22,19 @@ public class BetreuungsgutscheinConfigurator {
 
 	private List<Rule> rules = new LinkedList<>();
 
-	public List<Rule> configureRulesForMandant(@Nonnull Mandant mandant, @Nonnull Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameter) {
+	public List<Rule> configureRulesForMandant(@Nullable Mandant mandant, @Nonnull Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameter) {
 		// TODO (team) Mandant abfragen, sobald es mehrere hat!
 		useBernerRules(ebeguRuleParameter);
 		return rules;
 	}
 
-	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nonnull Mandant mandant){
+	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nullable Mandant mandant){
 		// TODO (team) Mandant abfragen, sobald es mehrere hat!
 		return requiredBernerParameters();
 	}
 
 	public Set<EbeguParameterKey> requiredBernerParameters(){
-		Set<EbeguParameterKey> requiredParams = EnumSet.of(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
-		return requiredParams;
+		return EnumSet.of(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
 	}
 
 

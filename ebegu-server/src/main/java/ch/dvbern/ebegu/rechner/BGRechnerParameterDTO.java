@@ -18,7 +18,7 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
  * Kapselung aller Parameter, welche für die BG-Berechnung aller Angebote benötigt werden.
  * Diese müssen aus den EbeguParametern gelesen werden.
  */
-public class BGRechnerParameterDTO {
+public final class BGRechnerParameterDTO {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 

@@ -44,6 +44,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
+	@Inject
+	private MandantService mandantService;
+
 
 	@Nonnull
 	@Override
@@ -80,7 +83,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Nonnull
 	@Override
 	public Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch) {
-		Mandant mandant = null;   //gesuch get mandant?
+		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
 		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
 		bgEvaluator.evaluate(gesuch, calculatorParameters);
@@ -107,7 +110,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	 */
 	private Map<EbeguParameterKey, EbeguParameter> loadRuleParameters(Mandant mandant, Gesuchsperiode gesuchsperiode, Set<EbeguParameterKey> keysToLoad) {
 		//Hinweis, Mandant wird noch ignoriert
-		Validate.isTrue(mandant == null, "Mandant wird noch nicht beruecksichtigt. Codeaenderung noetig");
+		if (mandant != null) {
+			LOG.warn("Mandant wird noch nicht beruecksichtigt. Codeaenderung noetig");
+		}
 		LocalDate stichtag = gesuchsperiode.getGueltigkeit().getGueltigAb();
 		Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameters = new HashMap<EbeguParameterKey, EbeguParameter>();
 		for (EbeguParameterKey currentParamKey : keysToLoad) {

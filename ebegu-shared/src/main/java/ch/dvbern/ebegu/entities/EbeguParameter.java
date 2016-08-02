@@ -37,7 +37,7 @@ public class EbeguParameter extends AbstractDateRangedEntity {
 	}
 
 	public EbeguParameter(EbeguParameterKey name, String value) {
-		this(name, value, null);
+		this(name, value, Constants.DEFAULT_GUELTIGKEIT);
 	}
 
 
