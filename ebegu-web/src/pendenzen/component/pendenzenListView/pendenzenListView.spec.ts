@@ -12,6 +12,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
+import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 
 describe('pendenzenListView', function () {
 
@@ -25,6 +26,7 @@ describe('pendenzenListView', function () {
     let $filter: IFilterService;
     let $httpBackend: IHttpBackendService;
     let gesuchModelManager: GesuchModelManager;
+    let berechnungsManager: BerechnungsManager;
     let $state: IStateService;
     let CONSTANTS: any;
 
@@ -41,6 +43,7 @@ describe('pendenzenListView', function () {
         $filter = $injector.get('$filter');
         $httpBackend = $injector.get('$httpBackend');
         gesuchModelManager = $injector.get('GesuchModelManager');
+        berechnungsManager = $injector.get('BerechnungsManager');
         $state = $injector.get('$state');
         CONSTANTS = $injector.get('CONSTANTS');
     }));
@@ -51,7 +54,7 @@ describe('pendenzenListView', function () {
                 let mockPendenz: TSPendenzJA = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, CONSTANTS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
                 $scope.$apply();
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
@@ -80,7 +83,7 @@ describe('pendenzenListView', function () {
                 mockRestCalls();
                 spyOn($state, 'go');
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, $state, CONSTANTS);
+                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));

@@ -157,6 +157,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSGesuch to REST object and back', () => {
                 let myGesuch = new TSGesuch();
                 TestDataUtil.setAbstractFieldsUndefined(myGesuch);
+                myGesuch.einkommensverschlechterungInfo = undefined;
                 let fall: TSFall = new TSFall();
                 TestDataUtil.setAbstractFieldsUndefined(fall);
                 fall.nextNumberKind = 2;
@@ -431,7 +432,6 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.geschlecht = TSGeschlecht.MAENNLICH;
         myGesuchsteller.telefon = '+41 76 300 12 34';
         myGesuchsteller.mobile = '+41 76 300 12 34';
-        myGesuchsteller.umzug = false;
         myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
         myGesuchsteller.korrespondenzAdresse = undefined;
         myGesuchsteller.umzugAdresse = undefined;
