@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -7,7 +7,6 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
-import IFormController = angular.IFormController;
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -21,6 +20,7 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController {
 
+    public selbstaendig: boolean;
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
@@ -39,6 +39,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
             this.gesuchModelManager.getGesuchstellerNumber());
         this.gesuchModelManager.copyEkvGeschaeftsgewinnFromFS();
+        this.selbstaendig = this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().isSelbstaendig();
     }
 
     showSteuerveranlagung(): boolean {
@@ -47,10 +48,6 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     showSteuererklaerung(): boolean {
         return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().steuerveranlagungErhalten === false;
-    }
-
-    showSelbstaendig(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().selbstaendig === true;
     }
 
     showHintSteuererklaerung(): boolean {

@@ -652,7 +652,6 @@ export default class EbeguRestUtil {
         restAbstractFinanzielleSituation.erhalteneAlimente = abstractFinanzielleSituation.erhalteneAlimente;
         restAbstractFinanzielleSituation.bruttovermoegen = abstractFinanzielleSituation.bruttovermoegen;
         restAbstractFinanzielleSituation.schulden = abstractFinanzielleSituation.schulden;
-        restAbstractFinanzielleSituation.selbstaendig = abstractFinanzielleSituation.selbstaendig;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahr = abstractFinanzielleSituation.geschaeftsgewinnBasisjahr;
@@ -670,7 +669,6 @@ export default class EbeguRestUtil {
             abstractFinanzielleSituationTS.erhalteneAlimente = abstractFinanzielleSituationFromServer.erhalteneAlimente;
             abstractFinanzielleSituationTS.bruttovermoegen = abstractFinanzielleSituationFromServer.bruttovermoegen;
             abstractFinanzielleSituationTS.schulden = abstractFinanzielleSituationFromServer.schulden;
-            abstractFinanzielleSituationTS.selbstaendig = abstractFinanzielleSituationFromServer.selbstaendig;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahr = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahr;

@@ -42,10 +42,6 @@ public class AbstractFinanzielleSituation extends AbstractEntity {
 	@Column(nullable = true)
 	private BigDecimal schulden;
 
-	@NotNull
-	@Column(nullable = false)
-	private Boolean selbstaendig = Boolean.FALSE;
-
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus2;
 
@@ -113,14 +109,6 @@ public class AbstractFinanzielleSituation extends AbstractEntity {
 
 	public void setSchulden(final BigDecimal schulden) {
 		this.schulden = schulden;
-	}
-
-	public Boolean getSelbstaendig() {
-		return selbstaendig;
-	}
-
-	public void setSelbstaendig(final Boolean selbstaendig) {
-		this.selbstaendig = selbstaendig;
 	}
 
 	public BigDecimal getGeschaeftsgewinnBasisjahrMinus2() {

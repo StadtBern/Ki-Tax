@@ -441,10 +441,8 @@ export default class GesuchModelManager {
 
         let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
         let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.selbstaendig) {
-
+        if (fs.isSelbstaendig()) {
             // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
-            ekv.selbstaendig = true;
             if (this.basisJahrPlusNumber === 1) {
                 ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
                 ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;

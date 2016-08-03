@@ -980,7 +980,6 @@ public class JaxBConverter {
 		abstractFinanzielleSituation.setErhalteneAlimente(abstractFinanzielleSituationJAXP.getErhalteneAlimente());
 		abstractFinanzielleSituation.setBruttovermoegen(abstractFinanzielleSituationJAXP.getBruttovermoegen());
 		abstractFinanzielleSituation.setSchulden(abstractFinanzielleSituationJAXP.getSchulden());
-		abstractFinanzielleSituation.setSelbstaendig(abstractFinanzielleSituationJAXP.getSelbstaendig());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahr());
@@ -999,7 +998,6 @@ public class JaxBConverter {
 			jaxAbstractFinanzielleSituation.setErhalteneAlimente(persistedAbstractFinanzielleSituation.getErhalteneAlimente());
 			jaxAbstractFinanzielleSituation.setBruttovermoegen(persistedAbstractFinanzielleSituation.getBruttovermoegen());
 			jaxAbstractFinanzielleSituation.setSchulden(persistedAbstractFinanzielleSituation.getSchulden());
-			jaxAbstractFinanzielleSituation.setSelbstaendig(persistedAbstractFinanzielleSituation.getSelbstaendig());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());

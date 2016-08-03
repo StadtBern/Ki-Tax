@@ -76,7 +76,15 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 						abstractFinanzielleSituation.getSchulden().compareTo(BigDecimal.ZERO) > 0;
 				case ERFOLGSRECHNUNGEN:
 					return !abstractFinanzielleSituation.getSteuerveranlagungErhalten() &&
-						abstractFinanzielleSituation.getSelbstaendig();
+						((abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null &&
+							abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr().compareTo(BigDecimal.ZERO) > 0
+						) || (
+							abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null &&
+								abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1().compareTo(BigDecimal.ZERO) > 0
+						) || (
+							abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null &&
+								abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2().compareTo(BigDecimal.ZERO) > 0
+						));
 				default:
 					return false;
 			}

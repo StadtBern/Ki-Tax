@@ -18,7 +18,6 @@ public abstract class AbstractFinanzielleSituation_ extends ch.dvbern.ebegu.enti
 	public static volatile SingularAttribute<AbstractFinanzielleSituation, BigDecimal> geschaeftsgewinnBasisjahr;
 	public static volatile SingularAttribute<AbstractFinanzielleSituation, BigDecimal> ersatzeinkommen;
 	public static volatile SingularAttribute<AbstractFinanzielleSituation, BigDecimal> erhalteneAlimente;
-	public static volatile SingularAttribute<AbstractFinanzielleSituation, Boolean> selbstaendig;
 	public static volatile SingularAttribute<AbstractFinanzielleSituation, BigDecimal> geschaeftsgewinnBasisjahrMinus1;
 	public static volatile SingularAttribute<AbstractFinanzielleSituation, Boolean> steuererklaerungAusgefuellt;
 

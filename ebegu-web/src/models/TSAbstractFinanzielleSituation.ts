@@ -9,7 +9,6 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
     private _erhalteneAlimente: number;
     private _bruttovermoegen: number;
     private _schulden: number;
-    private _selbstaendig: boolean;
     private _geschaeftsgewinnBasisjahrMinus2: number;
     private _geschaeftsgewinnBasisjahrMinus1: number;
     private _geschaeftsgewinnBasisjahr: number;
@@ -18,7 +17,7 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
 
     constructor(steuerveranlagungErhalten?: boolean, steuererklaerungAusgefuellt?: boolean,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
-                schulden?: number, selbstaendig?: boolean, geschaeftsgewinnBasisjahrMinus2?: number,
+                schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number,
                 geschaeftsgewinnBasisjahrMinus1?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
         super();
         this._steuerveranlagungErhalten = steuerveranlagungErhalten;
@@ -28,7 +27,6 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
         this._erhalteneAlimente = erhalteneAlimente;
         this._bruttovermoegen = bruttovermoegen;
         this._schulden = schulden;
-        this._selbstaendig = selbstaendig;
         this._geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
         this._geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
         this._geschaeftsgewinnBasisjahr = geschaeftsgewinnBasisjahr;
@@ -91,14 +89,6 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
         this._schulden = value;
     }
 
-    get selbstaendig(): boolean {
-        return this._selbstaendig;
-    }
-
-    set selbstaendig(value: boolean) {
-        this._selbstaendig = value;
-    }
-
     get geschaeftsgewinnBasisjahrMinus2(): number {
         return this._geschaeftsgewinnBasisjahrMinus2;
     }
@@ -129,5 +119,11 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
 
     set geleisteteAlimente(value: number) {
         this._geleisteteAlimente = value;
+    }
+
+    public isSelbstaendig(): boolean {
+        return (this._geschaeftsgewinnBasisjahr !== null && this._geschaeftsgewinnBasisjahr !== undefined)
+            || (this._geschaeftsgewinnBasisjahrMinus1 !== null && this._geschaeftsgewinnBasisjahrMinus1 !== undefined)
+            || (this._geschaeftsgewinnBasisjahrMinus2 !== null && this._geschaeftsgewinnBasisjahrMinus2 !== undefined);
     }
 }
