@@ -441,7 +441,8 @@ export default class GesuchModelManager {
 
         let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
         let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.isSelbstaendig()) {
+        // if (fs.isSelbstaendig()) {
+            // die daten muessen IMMER kopiert werden
             // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
             if (this.basisJahrPlusNumber === 1) {
                 ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
@@ -452,7 +453,7 @@ export default class GesuchModelManager {
                 ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
                 ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
             }
-        }
+        // }
     }
 
 

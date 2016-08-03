@@ -20,7 +20,7 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController {
 
-    public selbstaendig: boolean;
+    public showSelbstaendig: boolean;
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
@@ -39,7 +39,22 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
             this.gesuchModelManager.getGesuchstellerNumber());
         this.gesuchModelManager.copyEkvGeschaeftsgewinnFromFS();
-        this.selbstaendig = this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().isSelbstaendig();
+        this.showSelbstaendig = this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().isSelbstaendig();
+    }
+
+    public showSelbstaendigClicked() {
+        if (!this.showSelbstaendig) {
+            this.resetSelbstaendigFields();
+        }
+    }
+
+    private resetSelbstaendigFields() {
+        if (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith()) {
+            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr = undefined;
+            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1 = undefined;
+            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2 = undefined;
+            this.calculate();
+        }
     }
 
     showSteuerveranlagung(): boolean {

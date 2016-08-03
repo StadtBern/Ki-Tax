@@ -20,7 +20,7 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
-    public selbstaendig: boolean;
+    public showSelbstaendig: boolean;
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
@@ -34,7 +34,22 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
-        this.selbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
+        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
+    }
+
+    public showSelbstaendigClicked() {
+        if (!this.showSelbstaendig) {
+            this.resetSelbstaendigFields();
+        }
+    }
+
+    private resetSelbstaendigFields() {
+        if (this.gesuchModelManager.getStammdatenToWorkWith() && this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer) {
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahr = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2 = undefined;
+            this.calculate();
+        }
     }
 
     showSteuerveranlagung(): boolean {
