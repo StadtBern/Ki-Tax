@@ -980,8 +980,6 @@ public class JaxBConverter {
 		abstractFinanzielleSituation.setErhalteneAlimente(abstractFinanzielleSituationJAXP.getErhalteneAlimente());
 		abstractFinanzielleSituation.setBruttovermoegen(abstractFinanzielleSituationJAXP.getBruttovermoegen());
 		abstractFinanzielleSituation.setSchulden(abstractFinanzielleSituationJAXP.getSchulden());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahr());
 		abstractFinanzielleSituation.setGeleisteteAlimente(abstractFinanzielleSituationJAXP.getGeleisteteAlimente());
 
@@ -998,8 +996,6 @@ public class JaxBConverter {
 			jaxAbstractFinanzielleSituation.setErhalteneAlimente(persistedAbstractFinanzielleSituation.getErhalteneAlimente());
 			jaxAbstractFinanzielleSituation.setBruttovermoegen(persistedAbstractFinanzielleSituation.getBruttovermoegen());
 			jaxAbstractFinanzielleSituation.setSchulden(persistedAbstractFinanzielleSituation.getSchulden());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
 			jaxAbstractFinanzielleSituation.setGeleisteteAlimente(persistedAbstractFinanzielleSituation.getGeleisteteAlimente());
 		}
@@ -1011,6 +1007,8 @@ public class JaxBConverter {
 		abstractFinanzielleSituationToEntity(finanzielleSituationJAXP, finanzielleSituation);
 
 		finanzielleSituation.setNettolohn(finanzielleSituationJAXP.getNettolohn());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		return finanzielleSituation;
 	}
 
@@ -1018,10 +1016,11 @@ public class JaxBConverter {
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
-
 			JaxFinanzielleSituation jaxFinanzielleSituation = new JaxFinanzielleSituation();
 
 			abstractFinanzielleSituationToJAX(persistedFinanzielleSituation, jaxFinanzielleSituation);
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxFinanzielleSituation.setNettolohn(persistedFinanzielleSituation.getNettolohn());
 
 			return jaxFinanzielleSituation;

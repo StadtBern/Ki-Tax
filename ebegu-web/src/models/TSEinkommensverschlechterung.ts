@@ -23,12 +23,10 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
                 nettolohnOkt?: number, nettolohnNov?: number, nettolohnDez?: number,
                 nettolohnZus?: number,
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
-                schulden?: number, geschaeftsgewinnBasisjahrMinus2?: number,
-                geschaeftsgewinnBasisjahrMinus1?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
+                schulden?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
         super(steuerveranlagungErhalten, steuererklaerungAusgefuellt,
             familienzulage, ersatzeinkommen, erhalteneAlimente, bruttovermoegen,
-            schulden, geschaeftsgewinnBasisjahrMinus2,
-            geschaeftsgewinnBasisjahrMinus1, geschaeftsgewinnBasisjahr, geleisteteAlimente);
+            schulden, geschaeftsgewinnBasisjahr, geleisteteAlimente);
 
         this._nettolohnJan = nettolohnJan;
         this._nettolohnFeb = nettolohnFeb;
@@ -43,8 +41,6 @@ export default class TSEinkommensverschlechterung extends TSAbstractFinanzielleS
         this._nettolohnNov = nettolohnNov;
         this._nettolohnDez = nettolohnDez;
         this._nettolohnZus = nettolohnZus;
-
-
     }
 
 

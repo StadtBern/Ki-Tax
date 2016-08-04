@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions, IFormController, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -7,6 +7,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
+import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -21,10 +22,14 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController {
 
     public showSelbstaendig: boolean;
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    private geschaeftsgewinnBasisjahrMinus1: number;
+    private geschaeftsgewinnBasisjahrMinus2: number;
+
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log'];
+
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService) {
         super($state, gesuchModelManager, berechnungsManager);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
@@ -38,8 +43,8 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     private initViewModel() {
         this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
             this.gesuchModelManager.getGesuchstellerNumber());
-        this.gesuchModelManager.copyEkvGeschaeftsgewinnFromFS();
-        this.showSelbstaendig = this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().isSelbstaendig();
+        this.getGeschaeftsgewinnFromFS();
+        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
     }
 
     public showSelbstaendigClicked() {
@@ -51,8 +56,6 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     private resetSelbstaendigFields() {
         if (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith()) {
             this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr = undefined;
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1 = undefined;
-            this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2 = undefined;
             this.calculate();
         }
     }
@@ -181,6 +184,25 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     public getResultate(): TSFinanzielleSituationResultateDTO {
         return this.berechnungsManager.getEinkommensverschlechterungResultate(this.gesuchModelManager.getBasisJahrPlusNumber());
+    }
+
+    public getGeschaeftsgewinnFromFS(): void {
+        if (!this.gesuchModelManager.getStammdatenToWorkWith() || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer
+            || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
+            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
+            this.$log.debug('Fehler: FinSit muss existieren');
+            return;
+        }
+
+        let fs: TSFinanzielleSituation = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
+        if (this.gesuchModelManager.basisJahrPlusNumber === 1) {
+            this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
+        } else {
+            //basisjahr Plus 2
+            this.geschaeftsgewinnBasisjahrMinus1 = this.gesuchModelManager.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1.geschaeftsgewinnBasisjahr;
+            this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
+        }
     }
 
 }

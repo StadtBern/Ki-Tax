@@ -431,32 +431,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public copyEkvGeschaeftsgewinnFromFS(): void {
-        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
-            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
-            console.log('Fehler: FinSit muss existieren');
-            return;
-        }
-
-        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
-        let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        // if (fs.isSelbstaendig()) {
-            // die daten muessen IMMER kopiert werden
-            // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
-            if (this.basisJahrPlusNumber === 1) {
-                ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-            } else {
-                //basisjahr Plus 2
-                let ekvP1: TSEinkommensverschlechterung = this.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
-                ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            }
-        // }
-    }
-
-
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
      * Wenn force werden Gesuch und Fall immer erstellt.
