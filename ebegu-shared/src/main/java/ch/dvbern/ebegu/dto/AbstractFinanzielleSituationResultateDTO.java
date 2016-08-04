@@ -1,14 +1,12 @@
 package ch.dvbern.ebegu.dto;
 
-import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
  * DTO für die Resultate der Berechnungen der Finanziellen Situation
  */
-public class AbstractFinanzielleSituationResultateDTO {
+public abstract class AbstractFinanzielleSituationResultateDTO {
 
 	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller1 = BigDecimal.ZERO;
 	private BigDecimal geschaeftsgewinnDurchschnittGesuchsteller2 = BigDecimal.ZERO;
@@ -27,107 +25,6 @@ public class AbstractFinanzielleSituationResultateDTO {
 		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
 	}
 
-	protected BigDecimal calcGeschaeftsgewinnDurchschnitt(AbstractFinanzielleSituation abstractFinanzielleSituation) {
-		if (abstractFinanzielleSituation != null) {
-			BigDecimal total = BigDecimal.ZERO;
-			BigDecimal anzahlJahre = BigDecimal.ZERO;
-			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null) {
-				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
-				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-			}
-			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null) {
-				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
-				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-			}
-			if (abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null) {
-				total = total.add(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
-				anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
-			}
-			if (anzahlJahre.intValue() > 0) {
-				return total.divide(anzahlJahre, RoundingMode.HALF_UP);
-			}
-		}
-		return null;
-	}
-
-
-	private BigDecimal calcVermoegen5Prozent(AbstractFinanzielleSituation abstractFinanzielleSituation1, AbstractFinanzielleSituation abstractFinanzielleSituation2) {
-
-		final BigDecimal totalBruttovermoegen = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
-			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getBruttovermoegen() : BigDecimal.ZERO);
-
-		final BigDecimal totalSchulden = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getSchulden() : BigDecimal.ZERO,
-			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getSchulden() : BigDecimal.ZERO);
-
-		BigDecimal total = subtract(totalBruttovermoegen, totalSchulden);
-		if (total.compareTo(BigDecimal.ZERO) < 0) {
-			total = BigDecimal.ZERO;
-		}
-		total = percent(total, 5);
-		return total;
-	}
-
-	protected BigDecimal add(BigDecimal value1, BigDecimal value2) {
-		value1 = value1 != null ? value1 : BigDecimal.ZERO;
-		value2 = value2 != null ? value2 : BigDecimal.ZERO;
-		return value1.add(value2);
-	}
-
-	private BigDecimal subtract(BigDecimal value1, BigDecimal value2) {
-		value1 = value1 != null ? value1 : BigDecimal.ZERO;
-		value2 = value2 != null ? value2 : BigDecimal.ZERO;
-		return value1.subtract(value2);
-	}
-
-	private BigDecimal percent(BigDecimal value, int percent) {
-		BigDecimal total = value != null ? value : BigDecimal.ZERO;
-		total = total.multiply(new BigDecimal("" + percent));
-		total = total.divide(new BigDecimal("100"), RoundingMode.HALF_UP);
-		return total;
-	}
-
-	/**
-	 * rundet auf die naechste Ganzzahl groesser gleich 0
-	 */
-	private BigDecimal positiveNonNullAndRound(BigDecimal value) {
-		if (value == null) {
-			return BigDecimal.ZERO;
-		}
-		// Returns the maximum of this BigDecimal and val.
-		value = value.setScale(0, RoundingMode.HALF_UP);
-		return value.max(BigDecimal.ZERO);
-	}
-
-	private BigDecimal calcEinkommen(AbstractFinanzielleSituation abstractFinanzielleSituation1, BigDecimal nettoJahresLohn1,
-									 AbstractFinanzielleSituation abstractFinanzielleSituation2, BigDecimal nettoJahresLohn2) {
-		BigDecimal total = BigDecimal.ZERO;
-		total = calcEinkommenProGS(abstractFinanzielleSituation1, nettoJahresLohn1, total);
-		total = calcEinkommenProGS(abstractFinanzielleSituation2, nettoJahresLohn2, total);
-		return total;
-	}
-
-	private BigDecimal calcEinkommenProGS(AbstractFinanzielleSituation abstractFinanzielleSituation, BigDecimal nettoJahresLohn, BigDecimal total) {
-		if (abstractFinanzielleSituation != null) {
-			total = add(total, nettoJahresLohn);
-			total = add(total, abstractFinanzielleSituation.getFamilienzulage());
-			total = add(total, abstractFinanzielleSituation.getErsatzeinkommen());
-			total = add(total, abstractFinanzielleSituation.getErhalteneAlimente());
-			total = add(total, calcGeschaeftsgewinnDurchschnitt(abstractFinanzielleSituation));
-		}
-		return total;
-	}
-
-	private BigDecimal calcAbzuege(AbstractFinanzielleSituation finanzielleSituationGS1, AbstractFinanzielleSituation finanzielleSituationGS2) {
-		BigDecimal totalAbzuege = BigDecimal.ZERO;
-		if (finanzielleSituationGS1 != null) {
-			totalAbzuege = add(totalAbzuege, finanzielleSituationGS1.getGeleisteteAlimente());
-		}
-		if (finanzielleSituationGS2 != null) {
-			totalAbzuege = add(totalAbzuege, finanzielleSituationGS2.getGeleisteteAlimente());
-		}
-		return totalAbzuege;
-	}
-
 	void initToZero() {
 		// Alle Werte auf 0 initialisieren, falls Null
 		// Wenn negativ -> 0
@@ -142,19 +39,17 @@ public class AbstractFinanzielleSituationResultateDTO {
 		massgebendesEinkommen = positiveNonNullAndRound(massgebendesEinkommen);
 	}
 
-
-	void calculateZusammen(AbstractFinanzielleSituation finanzielleSituationGS1, BigDecimal nettoJahresLohn1,
-						   AbstractFinanzielleSituation finanzielleSituationGS2, BigDecimal nettoJahresLohn2) {
-
-		this.einkommenBeiderGesuchsteller = calcEinkommen(finanzielleSituationGS1, nettoJahresLohn1, finanzielleSituationGS2, nettoJahresLohn2);
-		this.nettovermoegenFuenfProzent = calcVermoegen5Prozent(finanzielleSituationGS1, finanzielleSituationGS2);
-		this.abzuegeBeiderGesuchsteller = calcAbzuege(finanzielleSituationGS1, finanzielleSituationGS2);
-
-		this.anrechenbaresEinkommen = add(einkommenBeiderGesuchsteller, nettovermoegenFuenfProzent);
-		this.totalAbzuege = add(abzuegeBeiderGesuchsteller, abzugAufgrundFamiliengroesse);
-		this.massgebendesEinkommen = subtract(anrechenbaresEinkommen, totalAbzuege);
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	private BigDecimal positiveNonNullAndRound(BigDecimal value) {
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		// Returns the maximum of this BigDecimal and val.
+		value = value.setScale(0, RoundingMode.HALF_UP);
+		return value.max(BigDecimal.ZERO);
 	}
-
 
 	public BigDecimal getGeschaeftsgewinnDurchschnittGesuchsteller1() {
 		return geschaeftsgewinnDurchschnittGesuchsteller1;

@@ -72,7 +72,7 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		return FinanzielleSituationUtil.calculateResultate(finSitRechner, gesuch);
+		return FinanzielleSituationUtil.calculateResultateFinanzielleSituation(finSitRechner, gesuch);
 	}
 
 	@Override
