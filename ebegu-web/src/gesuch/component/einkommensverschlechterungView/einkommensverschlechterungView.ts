@@ -41,10 +41,16 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     }
 
     private initViewModel() {
-        this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
-            this.gesuchModelManager.getGesuchstellerNumber());
-        this.getGeschaeftsgewinnFromFS();
-        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
+        if (this.gesuchModelManager) {
+            this.gesuchModelManager.initEinkommensverschlechterungContainer(this.gesuchModelManager.getBasisJahrPlusNumber(),
+                this.gesuchModelManager.getGesuchstellerNumber());
+
+            this.getGeschaeftsgewinnFromFS();
+
+            this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig()
+                || (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== null
+                    && this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
+        }
     }
 
     public showSelbstaendigClicked() {

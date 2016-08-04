@@ -75,13 +75,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 						abstractFinanzielleSituation.getSchulden() != null &&
 						abstractFinanzielleSituation.getSchulden().compareTo(BigDecimal.ZERO) > 0;
 				case ERFOLGSRECHNUNGEN:
-					return !abstractFinanzielleSituation.getSteuerveranlagungErhalten() &&
-						abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null;
-//				case ERFOLGSRECHNUNGEN:
-//					return !abstractFinanzielleSituation.getSteuerveranlagungErhalten() &&
-//						(abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null
-//							|| abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null
-//							|| abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
+					return isErfolgsrechnungNeeded(abstractFinanzielleSituation);
 				default:
 					return false;
 			}
@@ -90,6 +84,14 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 	}
 
 	protected boolean isJahresLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+		return false;
+	}
+
+	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+		if (abstractFinanzielleSituation != null) {
+			return !abstractFinanzielleSituation.getSteuerveranlagungErhalten() &&
+				abstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr() != null;
+		}
 		return false;
 	}
 

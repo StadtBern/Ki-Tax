@@ -311,7 +311,8 @@
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig" aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT | translate}}"
-                                     ng-change="vm.showSelbstaendigClicked()">
+                                     ng-change="vm.showSelbstaendigClicked()"
+                                     ng-disabled="vm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig()">
                             <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                         </md-checkbox>
                     </div>
@@ -341,7 +342,7 @@
                     <div class="col-md-6">
                         <dv-input-container class="form-group">
                             <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1" for="geschaeftsgewinnBasisjahrMinus1"
-                                   translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-1}}}"></label>
+                                   translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith() - 1}}}"></label>
                             <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
                                    ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
                                    dv-max-length max="999999999999" class="form-control" disabled>

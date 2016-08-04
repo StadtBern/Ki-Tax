@@ -19,30 +19,13 @@ public class FinanzielleSituationUtil {
 
 	@Nonnull
 	public static FinanzielleSituationResultateDTO calculateResultateFinanzielleSituation(@Nonnull FinanzielleSituationRechner rechner, @Nonnull Gesuch gesuch) {
-		double familiengroesse = 0;
-		BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
 
-		if (gesuch.getGesuchsperiode() != null) {
-			familiengroesse = rechner.calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
-			abzugAufgrundFamiliengroesse = rechner
-				.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-		}
+		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : rechner.calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
+		BigDecimal abzugAufgrundFamiliengroesse = gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO : rechner
+			.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
 
 		final FinanzielleSituationResultateDTO finSitResultDTO = new FinanzielleSituationResultateDTO(familiengroesse, abzugAufgrundFamiliengroesse);
-
-		if (gesuch != null) {
-			final FinanzielleSituation finanzielleSituationGS1 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller1());
-			finSitResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1));
-
-			final FinanzielleSituation finanzielleSituationGS2 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller2());
-			finSitResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2));
-
-			FinanzielleSituationUtil.calculateZusammen(finSitResultDTO, finanzielleSituationGS1,
-				FinanzielleSituationUtil.calculateNettoJahresLohn(finanzielleSituationGS1),
-				finSitResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
-				finanzielleSituationGS2, FinanzielleSituationUtil.calculateNettoJahresLohn(finanzielleSituationGS2),
-				finSitResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
-		}
+		setFinanzielleSituationParameters(gesuch, finSitResultDTO);
 
 		return finSitResultDTO;
 	}
@@ -51,45 +34,63 @@ public class FinanzielleSituationUtil {
 	public static AbstractFinanzielleSituationResultateDTO calculateResultateEinkommensverschlechterung(@Nonnull FinanzielleSituationRechner rechner,
 																										@Nonnull Gesuch gesuch, int basisJahrPlus) {
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
-		double familiengroesse = 0;
-		BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
-
-		if (gesuch.getGesuchsperiode() != null) {
-			//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhaeltnisse beruecksichtigt
-			// (nicht Stand 31.12. des Vorjahres)!
-
-			familiengroesse = rechner.calculateFamiliengroesse(gesuch, null);
-			abzugAufgrundFamiliengroesse = rechner
-				.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-		}
+		//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhaeltnisse beruecksichtigt
+		// (nicht Stand 31.12. des Vorjahres)!
+		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : rechner.calculateFamiliengroesse(gesuch, null);
+		BigDecimal abzugAufgrundFamiliengroesse = gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO : rechner
+			.calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
 
 		final EinkommensverschlechterungResultateDTO einkVerResultDTO =  new EinkommensverschlechterungResultateDTO(familiengroesse, abzugAufgrundFamiliengroesse);
-
-		if (gesuch != null) {
-			Einkommensverschlechterung einkommensverschlechterungGS1 = null;
-			if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() != null) {
-				einkommensverschlechterungGS1 = FinanzielleSituationUtil.getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
-				final FinanzielleSituation finanzielleSituationGS1 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller1());
-				einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(
-					FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1, finanzielleSituationGS1));
-			}
-
-			Einkommensverschlechterung einkommensverschlechterungGS2 = null;
-			if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer() != null) {
-				einkommensverschlechterungGS2 = FinanzielleSituationUtil.getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
-				final FinanzielleSituation finanzielleSituationGS2 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller2());
-				einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
-					FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2, finanzielleSituationGS2));
-			}
-
-			FinanzielleSituationUtil.calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1,
-				FinanzielleSituationUtil.calculateNettoJahresLohn(einkommensverschlechterungGS1),
-				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
-				einkommensverschlechterungGS2, FinanzielleSituationUtil.calculateNettoJahresLohn(einkommensverschlechterungGS2),
-				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
-		}
+		setEinkommensverschlechterungParameters(gesuch, basisJahrPlus, einkVerResultDTO);
 
 		return einkVerResultDTO;
+	}
+
+	/**
+	 * Nimmt das uebergebene FinanzielleSituationResultateDTO und mit den Daten vom Gesuch, berechnet alle im
+	 * FinanzielleSituationResultateDTO benoetigten Daten.
+	 * @param gesuch
+	 * @param finSitResultDTO
+	 */
+	private static void setFinanzielleSituationParameters(@Nonnull Gesuch gesuch, final FinanzielleSituationResultateDTO finSitResultDTO) {
+		final FinanzielleSituation finanzielleSituationGS1 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller1());
+		finSitResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1));
+
+		final FinanzielleSituation finanzielleSituationGS2 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller2());
+		finSitResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2));
+
+		FinanzielleSituationUtil.calculateZusammen(finSitResultDTO, finanzielleSituationGS1,
+			FinanzielleSituationUtil.calculateNettoJahresLohn(finanzielleSituationGS1),
+			finSitResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
+			finanzielleSituationGS2, FinanzielleSituationUtil.calculateNettoJahresLohn(finanzielleSituationGS2),
+			finSitResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
+	}
+
+	/**
+	 * Nimmt das uebergebene EinkommensverschlechterungResultateDTO und mit den Daten vom Gesuch, berechnet alle im
+	 * EinkommensverschlechterungResultateDTO benoetigten Daten.
+	 * @param gesuch
+	 * @param basisJahrPlus
+	 * @param einkVerResultDTO
+	 */
+	private static void setEinkommensverschlechterungParameters(@Nonnull Gesuch gesuch, int basisJahrPlus,
+																final EinkommensverschlechterungResultateDTO einkVerResultDTO) {
+		Einkommensverschlechterung einkommensverschlechterungGS1 = FinanzielleSituationUtil.getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
+		final FinanzielleSituation finanzielleSituationGS1 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller1());
+		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(
+			FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1, finanzielleSituationGS1));
+
+		Einkommensverschlechterung einkommensverschlechterungGS2 = FinanzielleSituationUtil.getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
+		final FinanzielleSituation finanzielleSituationGS2 = FinanzielleSituationUtil.getFinanzielleSituationGS(gesuch.getGesuchsteller2());
+		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
+			FinanzielleSituationUtil.calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2, finanzielleSituationGS2));
+
+		FinanzielleSituationUtil.calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1,
+			FinanzielleSituationUtil.calculateNettoJahresLohn(einkommensverschlechterungGS1),
+			einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
+			einkommensverschlechterungGS2, FinanzielleSituationUtil.calculateNettoJahresLohn(einkommensverschlechterungGS2),
+			einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
+
 	}
 
 
@@ -129,12 +130,9 @@ public class FinanzielleSituationUtil {
 
 	private static boolean acceptEKV(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenJahr) {
 		BigDecimal minimumEKV = MathUtil.EINE_NACHKOMMASTELLE.from(0.8);
-		if (massgebendesEinkommenVorjahr.compareTo(BigDecimal.ZERO) > 0 && MathUtil.EXACT.divide(massgebendesEinkommenJahr, massgebendesEinkommenVorjahr).compareTo(minimumEKV) <= 0) {
-			// EKV gewährt
-			return true;
-		} else {
-			return false;
-		}
+		// EKV gewährt
+		return massgebendesEinkommenVorjahr.compareTo(BigDecimal.ZERO) > 0
+			&& MathUtil.EXACT.divide(massgebendesEinkommenJahr, massgebendesEinkommenVorjahr).compareTo(minimumEKV) <= 0;
 	}
 
 	private static void calculateZusammen(final AbstractFinanzielleSituationResultateDTO finSitResultDTO, AbstractFinanzielleSituation finanzielleSituationGS1,
@@ -214,18 +212,17 @@ public class FinanzielleSituationUtil {
 
 
 	private static BigDecimal calcVermoegen5Prozent(AbstractFinanzielleSituation abstractFinanzielleSituation1, AbstractFinanzielleSituation abstractFinanzielleSituation2) {
-
-		final BigDecimal totalBruttovermoegen = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
+		final BigDecimal totalBruttovermoegen = FinanzielleSituationUtil.add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
 			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getBruttovermoegen() : BigDecimal.ZERO);
 
-		final BigDecimal totalSchulden = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getSchulden() : BigDecimal.ZERO,
+		final BigDecimal totalSchulden = FinanzielleSituationUtil.add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getSchulden() : BigDecimal.ZERO,
 			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getSchulden() : BigDecimal.ZERO);
 
-		BigDecimal total = subtract(totalBruttovermoegen, totalSchulden);
+		BigDecimal total = FinanzielleSituationUtil.subtract(totalBruttovermoegen, totalSchulden);
 		if (total.compareTo(BigDecimal.ZERO) < 0) {
 			total = BigDecimal.ZERO;
 		}
-		total = percent(total, 5);
+		total = FinanzielleSituationUtil.percent(total, 5);
 		return total;
 	}
 
@@ -279,9 +276,11 @@ public class FinanzielleSituationUtil {
 		return totalAbzuege;
 	}
 
-
-	// Einkommensverschlechterung
-
+	/**
+	 * Berechnet die NettoJahresLohn fuer ein Einkommensverschlechterung
+	 * @param einkommensverschlechterung
+	 * @return
+	 */
 	private static BigDecimal calculateNettoJahresLohn(Einkommensverschlechterung einkommensverschlechterung) {
 		BigDecimal total = BigDecimal.ZERO;
 		if (einkommensverschlechterung != null) {
@@ -302,6 +301,18 @@ public class FinanzielleSituationUtil {
 		return total;
 	}
 
+	/**
+	 * Berechnet die NettoJahresLohn fuer eine Finanzielle Situation
+	 * @param finanzielleSituation
+	 * @return
+	 */
+	private static BigDecimal calculateNettoJahresLohn(FinanzielleSituation finanzielleSituation) {
+		if (finanzielleSituation != null) {
+			return finanzielleSituation.getNettolohn();
+		}
+		return BigDecimal.ZERO;
+	}
+
 	private static Einkommensverschlechterung getEinkommensverschlechterungGS(Gesuchsteller gesuchsteller, int basisJahrPlus) {
 		if (gesuchsteller != null) {
 			Validate.notNull(gesuchsteller.getEinkommensverschlechterungContainer());
@@ -312,13 +323,6 @@ public class FinanzielleSituationUtil {
 			}
 		}
 		return null;
-	}
-
-	private static BigDecimal calculateNettoJahresLohn(FinanzielleSituation finanzielleSituation) {
-		if (finanzielleSituation != null) {
-			return finanzielleSituation.getNettolohn();
-		}
-		return BigDecimal.ZERO;
 	}
 
 	private static FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
