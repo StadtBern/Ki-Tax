@@ -113,4 +113,14 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     public getResultate(): TSFinanzielleSituationResultateDTO {
         return this.berechnungsManager.finanzielleSituationResultate;
     }
+
+    /**
+     * Mindestens einer aller Felder von Geschaftsgewinn muss ausgefuellt sein. Mit dieser Methode kann man es pruefen.
+     * @returns {boolean}
+     */
+    public isGeschaeftsgewinnRequired(): boolean {
+        return !(this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahr ||
+                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 ||
+                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2);
+    }
 }
