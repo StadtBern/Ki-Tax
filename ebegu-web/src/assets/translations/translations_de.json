@@ -75,10 +75,13 @@
     "KORRESPONDENZADR": "Zustell- / Postadresse",
     "VORNAME": "Vorname",
     "NAME": "Name",
+    "NAME_UPPER": "NAME",
+    "VORNAME_UPPER": "VORNAME",
     "EMAIL": "E-Mail",
     "MOBILE": "Mobile",
     "TELEFON": "Telefon",
     "GEBURTSDATUM": "Geburtsdatum",
+    "GEBURTSDATUM_UPPER": "GEBURTSTAG",
     "UMZUG": "geplanter Umzug?",
     "TELEFON_AUSLAND": "Telefon Ausland",
     "KEIN_EINTRAG": "Es ist aktuell kein Eintrag vorhanden",
@@ -410,6 +413,7 @@
     "MENU_FREIGABEQUITTUNG": "Freigabequittung",
     "MENU_FALL_EROEFFNEN": "FALL ERÖFFNEN",
     "MENU_PENDENZEN": "PENDENZEN",
+    "MENU_PENDENZEN_INSTITUTION": "PENDENZEN (Kita)",
     "MENU_ERSTGESUCH_VOM": "Erstgesuch vom {{date}}",
     "MENU_ERSTGESUCH": "Erstgesuch",
     "MENU_ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",
@@ -615,6 +619,8 @@
     "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
     "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
-    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
+
+    "TYP_UPPER": "TYP"
 }
 

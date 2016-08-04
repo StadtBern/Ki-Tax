@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -19,7 +21,6 @@ public interface BetreuungService {
 	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
 
 	/**
-
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -34,4 +35,16 @@ public interface BetreuungService {
 	 * @param betreuungId Id der Betreuung zu entfernen
 	 */
 	void removeBetreuung(@Nonnull String betreuungId);
+
+	/**
+	 * Gibt alle Betreuungen zurueck
+     */
+	@Nonnull
+	Collection<Betreuung> getAllBetreuungen();
+
+	/**
+	 * Gibt alle Betreuungen zurueck, welche in einem der uebergebenen Status sind.
+     */
+	@Nonnull
+	Collection<Betreuung> getBetreuungenInStatus(@Nonnull Betreuungsstatus... betreuungsstatusList);
 }

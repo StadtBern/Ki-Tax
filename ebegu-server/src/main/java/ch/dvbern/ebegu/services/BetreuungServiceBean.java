@@ -2,8 +2,10 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -12,8 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
 import javax.validation.Valid;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Betreuung
@@ -24,8 +25,9 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Inject
 	private Persistence<Betreuung> persistence;
-//	@Inject
-//	private KindService kindService;
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Override
@@ -64,5 +66,22 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Optional<Betreuung> betreuungToRemove = findBetreuung(betreuungId);
 		betreuungToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
 		persistence.remove(betreuungToRemove.get());
+	}
+
+	@Nonnull
+	@Override
+	public Collection<Betreuung> getAllBetreuungen() {
+		return new ArrayList<>(criteriaQueryHelper.getAll(Betreuung.class));
+	}
+
+	@Nonnull
+	@Override
+	public Collection<Betreuung> getBetreuungenInStatus(@Nonnull Betreuungsstatus... betreuungsstatusList) {
+		Objects.requireNonNull(betreuungsstatusList, "betreuungsstatusList muss gesetzt sein");
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+		Root<Betreuung> root = query.from(Betreuung.class);
+		query.where(root.get(Betreuung_.betreuungsstatus).in(betreuungsstatusList));
+		return persistence.getCriteriaResults(query);
 	}
 }

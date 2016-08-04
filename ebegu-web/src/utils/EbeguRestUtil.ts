@@ -43,6 +43,7 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSPendenzInstitution from '../models/TSPendenzInstitution';
 
 
 export default class EbeguRestUtil {
@@ -1070,6 +1071,44 @@ export default class EbeguRestUtil {
             }
         } else {
             pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
+        }
+        return pendenzen;
+    }
+
+    public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+        restPendenz.betreuungsId = pendenz.betreuungsId;
+        restPendenz.name = pendenz.name;
+        restPendenz.vorname = pendenz.vorname;
+        restPendenz.geburtsdatum = DateUtil.momentToLocalDate(pendenz.geburtsdatum);
+        restPendenz.typ = pendenz.typ;
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.betreuungsangebotTyp = pendenz.betreuungsangebotTyp;
+        restPendenz.institution = pendenz.institution;
+        return restPendenz;
+    }
+
+    public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+        pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
+        pendenzTS.name = pendenzFromServer.name;
+        pendenzTS.vorname = pendenzFromServer.vorname;
+        pendenzTS.geburtsdatum = pendenzFromServer.geburtsdatum;
+        pendenzTS.typ = pendenzFromServer.typ;
+        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.betreuungsangebotTyp = pendenzFromServer.betreuungsangebotTyp;
+        pendenzTS.institution = pendenzFromServer.institution;
+        return pendenzTS;
+    }
+
+    public parsePendenzenInstitution(data: any): TSPendenzInstitution[] {
+        var pendenzen: TSPendenzInstitution[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                pendenzen[i] = this.parsePendenzInstitution(new TSPendenzInstitution(), data[i]);
+            }
+        } else {
+            pendenzen[0] = this.parsePendenzInstitution(new TSPendenzInstitution(), data);
         }
         return pendenzen;
     }
