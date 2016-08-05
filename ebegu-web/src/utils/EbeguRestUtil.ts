@@ -901,6 +901,7 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
         restBetreuung.schulpflichtig = betreuung.schulpflichtig;
+        restBetreuung.vertrag = betreuung.vertrag;
         if (betreuung.institutionStammdaten) {
             restBetreuung.institutionStammdaten = this.institutionStammdatenToRestObject({}, betreuung.institutionStammdaten);
         }
@@ -947,6 +948,7 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
             betreuungTS.schulpflichtig = betreuungFromServer.schulpflichtig;
+            betreuungTS.vertrag = betreuungFromServer.vertrag;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);

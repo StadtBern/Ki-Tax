@@ -49,7 +49,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
-        if (!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) {
+        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) && this.isInstitutionRole()) {
+            // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
         if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
@@ -192,6 +193,18 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         if (this.getBetreuungModel()) {
             return (this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND
                 || this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.SCHULAMT);
+        }
+        return false;
+    }
+
+    /**
+     * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
+     * and only for the role Institution
+     * @returns {boolean}
+     */
+    public areBetreuungspensenEditable(): boolean {
+        if (this.getBetreuungModel()) {
+            return this.isEnabled() && this.isInstitutionRole();
         }
         return false;
     }

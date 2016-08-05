@@ -72,6 +72,11 @@ public class Betreuung extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 
+	@NotNull
+	@Column(nullable = false)
+	private Boolean vertrag = false;
+
+
 
 	public KindContainer getKind() {
 		return kind;
@@ -177,5 +182,13 @@ public class Betreuung extends AbstractEntity {
 	public boolean isAngebotTageselternKleinkinder() {
 		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
 			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
+	}
+
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
 	}
 }

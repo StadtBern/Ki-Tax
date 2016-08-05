@@ -44,6 +44,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Nullable
 	private JaxVerfuegung verfuegung;
 
+	@NotNull
+	private Boolean vertrag;
+
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -103,5 +106,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setVerfuegung(@Nullable JaxVerfuegung verfuegung) {
 		this.verfuegung = verfuegung;
+	}
+
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
 	}
 }
