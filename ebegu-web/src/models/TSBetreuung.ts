@@ -26,7 +26,7 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._schulpflichtig = schulpflichtig;
         this._betreuungNummer = betreuungNummer;
         this._verfuegung = verfuegung;
-        this._vertrag = vertrag;
+        this._vertrag = vertrag ? true : false;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
