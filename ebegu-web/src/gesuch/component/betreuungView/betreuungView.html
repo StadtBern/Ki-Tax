@@ -178,6 +178,20 @@
                     </div>
                 </div>
 
+                <!--erweiterte Beduerfnisse-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="checkbox">
+                            <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse" name="erweiterteBeduerfnisse"
+                                         aria-label="erweiterteBeduerfnisse" ng-disabled="!vm.areBetreuungspensenEditable()">
+                                <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
+                            </md-checkbox>
+                            <dv-error-messages for="form.erweiterteBeduerfnisse.$error"
+                                               class="error"></dv-error-messages>
+                        </div>
+                    </div>
+                </div>
+
                 <!--Platz anfordern-->
                 <div class="row" ng-if="!vm.isBetreuungsstatusWarten()">
                     <div class="col-md-12">

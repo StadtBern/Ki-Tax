@@ -12,8 +12,8 @@ export default class TSKind extends TSAbstractPersonEntity {
     private _bemerkungen: string;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
-                kinderabzug?: TSKinderabzug, familienErgaenzendeBetreuung?: boolean,
-                mutterspracheDeutsch?: boolean, pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
+                kinderabzug?: TSKinderabzug, familienErgaenzendeBetreuung?: boolean, mutterspracheDeutsch?: boolean,
+                pensumFachstelle?: TSPensumFachstelle, bemerkungen?: string) {
 
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._kinderabzug = kinderabzug;

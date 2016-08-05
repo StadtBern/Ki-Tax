@@ -76,6 +76,10 @@ public class Betreuung extends AbstractEntity {
 	@Column(nullable = false)
 	private Boolean vertrag = false;
 
+	@NotNull
+	@Column(nullable = false)
+	private Boolean erweiterteBeduerfnisse = false;
+
 
 
 	public KindContainer getKind() {
@@ -190,5 +194,13 @@ public class Betreuung extends AbstractEntity {
 
 	public void setVertrag(Boolean vertrag) {
 		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
 }

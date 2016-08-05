@@ -1,5 +1,0 @@
-ALTER TABLE betreuung
-  ADD COLUMN vertrag BIT NOT NULL DEFAULT FALSE;
-
-ALTER TABLE betreuung_aud
-  ADD COLUMN vertrag BIT;

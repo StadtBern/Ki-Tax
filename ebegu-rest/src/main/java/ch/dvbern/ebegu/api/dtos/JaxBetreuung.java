@@ -47,6 +47,9 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private Boolean vertrag;
 
+	@NotNull
+	private Boolean erweiterteBeduerfnisse;
+
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -114,5 +117,13 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setVertrag(Boolean vertrag) {
 		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
 }
