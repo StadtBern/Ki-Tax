@@ -384,6 +384,7 @@
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
     "PLATZBESTAETIGUNG_ANFORDERN": "PLATZBESTÄTIGUNG ANFORDERN",
+    "DATEN_STIMMEN_NICHT": "Daten stimmen nicht",
     "SCHULPFLICHTIG": "schulpflichtig per {{anfangsperiode}}",
     "VERTRAG": "Ich habe einen Vertrag",
     "INSTITUTION": "Institution",

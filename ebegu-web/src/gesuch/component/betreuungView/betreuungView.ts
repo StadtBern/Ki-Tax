@@ -186,6 +186,29 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     /**
+     * When the status is ABGEWIESEN or BESTAETIGT, we can say the process has ended.
+     * @returns {boolean}
+     */
+    public isProcessFinished(): boolean {
+        if (this.gesuchModelManager && this.gesuchModelManager.getBetreuungToWorkWith()) {
+            return this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.ABGEWIESEN
+                || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.BESTAETIGT;
+        }
+        return false;
+    }
+
+    /**
+     * When the status is WARTEN, we can say the process is waiting to be completed.
+     * @returns {boolean}
+     */
+    public isProcessWaiting(): boolean {
+        if (this.gesuchModelManager && this.gesuchModelManager.getBetreuungToWorkWith()) {
+            return this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.WARTEN;
+        }
+        return false;
+    }
+
+    /**
      * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
      * @returns {boolean}
      */
