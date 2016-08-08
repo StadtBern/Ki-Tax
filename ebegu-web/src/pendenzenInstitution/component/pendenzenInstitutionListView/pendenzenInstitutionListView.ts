@@ -25,8 +25,8 @@ export class PendenzenInstitutionListViewComponentConfig implements IComponentOp
 export class PendenzenInstitutionListViewController {
 
     private pendenzenList: Array<TSPendenzInstitution>;
-    selectedBetreuungsangebotTyp: TSBetreuungsangebotTyp;
-    selectedInstitution: TSInstitution;
+    selectedBetreuungsangebotTyp: string;
+    selectedInstitution: string;
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
     betreuungsangebotTypList: Array<TSBetreuungsangebotTyp>;

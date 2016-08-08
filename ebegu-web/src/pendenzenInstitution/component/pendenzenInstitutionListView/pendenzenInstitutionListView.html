@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"  st-delay="20"
+                <table st-table="displayedCollection" st-set-filter="pendenzInstitutionFilter"  st-safe-src="vm.getPendenzenList()"  st-delay="20"
                        class="table table-striped fixedtable">
                     <thead>
                     <tr>
@@ -22,7 +22,7 @@
                         <th st-sort="typ" class="sortable" data-translate="TYP_UPPER"></th>
                         <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
                         <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
-                        <th st-sort="angebot" class="sortable" data-translate="ANGEBOT_UPPER"></th>
+                        <th st-sort="betreuungsangebotTyp" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
                     </tr>
                     <tr>
@@ -40,14 +40,14 @@
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="angebote" id="angebote" st-search="angebote" class="form-control"
+                            <select st-input-event="change" name="betreuungsangebotTyp" id="betreuungsangebotTyp" st-search="betreuungsangebotTyp" class="form-control"
                                     ng-options="typ | translate for typ in vm.betreuungsangebotTypList track by typ"
                                     ng-model="vm.selectedBetreuungsangebotTyp">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
                         </th>
                         <th>
-                            <select st-input-event="change" name="institutionen" id="institutionen" st-search="institutionen" class="form-control"
+                            <select st-input-event="change" name="institution" id="institution" st-search="institution" class="form-control"
                                     ng-options="institution.name for institution in vm.institutionenList track by institution.name"
                                     ng-model="vm.selectedInstitution">
                                 <option value="">{{"ALLE" | translate}}</option>
