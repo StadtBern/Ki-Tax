@@ -148,6 +148,22 @@ public class Betreuung extends AbstractEntity {
 		this.verfuegung = verfuegung;
 	}
 
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
+	}
+
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
 			return true;
@@ -186,21 +202,5 @@ public class Betreuung extends AbstractEntity {
 	public boolean isAngebotTageselternKleinkinder() {
 		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
 			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
-	}
-
-	public Boolean getVertrag() {
-		return vertrag;
-	}
-
-	public void setVertrag(Boolean vertrag) {
-		this.vertrag = vertrag;
-	}
-
-	public Boolean getErweiterteBeduerfnisse() {
-		return erweiterteBeduerfnisse;
-	}
-
-	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
-		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
 }

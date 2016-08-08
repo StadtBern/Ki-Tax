@@ -196,7 +196,7 @@
                 <div class="row" ng-if="!vm.isBetreuungsstatusWarten()">
                     <div class="col-md-12">
                         <dv-loading-button type="button" ng-click="vm.platzAnfordern(form)"
-                                           button-class="btn btn-sm btn-success" button-disabled="!form.$valid">
+                                           button-class="btn btn-sm btn-success" button-disabled="!form.$valid || !vm.getBetreuungModel().vertrag">
                             <span ng-if="!vm.isProcessFinished()"
                                   data-translate="PLATZBESTAETIGUNG_ANFORDERN">
                             </span>
