@@ -646,7 +646,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(institutionJAXP, institution);
 		institution.setName(institutionJAXP.getName());
 
-		if (institutionJAXP.getMandant().getId() != null) {
+		if (institutionJAXP.getMandant() != null && institutionJAXP.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(institutionJAXP.getMandant().getId());
 			if (mandantFromDB.isPresent()) {
 				institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
@@ -1470,20 +1470,32 @@ public class JaxBConverter {
 		benutzer.setNachname(loginElement.getNachname());
 		benutzer.setVorname(loginElement.getVorname());
 		benutzer.setRole(loginElement.getRole());
-		benutzer.setMandant(this.mandantToEntity(loginElement.getMandant(), new Mandant()));
+		benutzer.setMandant(mandantToEntity(loginElement.getMandant(), new Mandant()));
+		if (loginElement.getInstitution() != null) {
+			benutzer.setInstitution(institutionToEntity(loginElement.getInstitution(), new Institution()));
+		}
+		if (loginElement.getTraegerschaft() != null) {
+			benutzer.setTraegerschaft(traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()));
+		}
 		return benutzer;
 	}
 
-	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer verantwortlicher) {
+	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer benutzer) {
 		JaxAuthLoginElement loginElement = new JaxAuthLoginElement();
-		loginElement.setVorname(verantwortlicher.getVorname());
-		loginElement.setNachname(verantwortlicher.getNachname());
-		loginElement.setEmail(verantwortlicher.getEmail());
-		if (verantwortlicher.getMandant() != null) {
-			loginElement.setMandant(mandantToJAX(verantwortlicher.getMandant()));
+		loginElement.setVorname(benutzer.getVorname());
+		loginElement.setNachname(benutzer.getNachname());
+		loginElement.setEmail(benutzer.getEmail());
+		if (benutzer.getMandant() != null) {
+			loginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
-		loginElement.setUsername(verantwortlicher.getUsername());
-		loginElement.setRole(verantwortlicher.getRole());
+		if (benutzer.getInstitution() != null) {
+			loginElement.setInstitution(institutionToJAX(benutzer.getInstitution()));
+		}
+		if (benutzer.getTraegerschaft() != null) {
+			loginElement.setTraegerschaft(traegerschaftToJAX(benutzer.getTraegerschaft()));
+		}
+		loginElement.setUsername(benutzer.getUsername());
+		loginElement.setRole(benutzer.getRole());
 		return loginElement;
 	}
 

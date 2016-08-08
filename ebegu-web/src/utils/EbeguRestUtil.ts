@@ -1081,6 +1081,8 @@ export default class EbeguRestUtil {
             user.email = userTS.email;
             user.role = userTS.role;
             user.mandant = this.mandantToRestObject({}, userTS.mandant);
+            user.traegerschaft = this.traegerschaftToRestObject({}, userTS.traegerschaft);
+            user.institution = this.institutionToRestObject({}, userTS.institution);
             return user;
         }
         return undefined;
@@ -1095,6 +1097,8 @@ export default class EbeguRestUtil {
             userTS.email = userFromServer.email;
             userTS.role = userFromServer.role;
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
+            userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
+            userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
             return userTS;
         }
         return undefined;
