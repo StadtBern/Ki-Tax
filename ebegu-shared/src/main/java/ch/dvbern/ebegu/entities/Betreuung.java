@@ -206,10 +206,10 @@ public class Betreuung extends AbstractEntity {
 	}
 
 	/**
-	 * Erstellt die BetreuungsId als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
+	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
      */
 	@Transient
-	public String getBetreuungNummerTotal() {
+	public String getBGNummer() {
 		String year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
 		String fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
 		String kind = "" + getKind().getKindNummer();
