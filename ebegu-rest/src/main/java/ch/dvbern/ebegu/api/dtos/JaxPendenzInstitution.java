@@ -23,6 +23,9 @@ public class JaxPendenzInstitution {
 	private String betreuungsId;
 
 	@NotNull
+	private String gesuchId;
+
+	@NotNull
 	private String name;
 
 	@NotNull
@@ -55,6 +58,14 @@ public class JaxPendenzInstitution {
 
 	public void setBetreuungsId(String betreuungsId) {
 		this.betreuungsId = betreuungsId;
+	}
+
+	public String getGesuchId() {
+		return gesuchId;
+	}
+
+	public void setGesuchId(String gesuchId) {
+		this.gesuchId = gesuchId;
 	}
 
 	public String getName() {

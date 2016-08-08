@@ -5,6 +5,7 @@ import TSInstitution from './TSInstitution';
 export default class TSPendenzInstitution {
 
     private _betreuungsId: string;
+    private _gesuchId: string;
     private _name: string;
     private _vorname: string;
     private _geburtsdatum: moment.Moment;
@@ -14,10 +15,11 @@ export default class TSPendenzInstitution {
     private _betreuungsangebotTyp: TSBetreuungsangebotTyp;
     private _institution: TSInstitution;
 
-    constructor(betreuungsId?: string, name?: string, vorname?: string, geburtsdatum?: moment.Moment, typ?: string,
+    constructor(betreuungsId?: string, gesuchId?: string, name?: string, vorname?: string, geburtsdatum?: moment.Moment, typ?: string,
                 gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
                 betreuungsangebotTyp?: TSBetreuungsangebotTyp, institution?: TSInstitution) {
         this._betreuungsId = betreuungsId;
+        this._gesuchId = gesuchId;
         this._name = name;
         this._vorname = vorname;
         this._geburtsdatum = geburtsdatum;
@@ -34,6 +36,14 @@ export default class TSPendenzInstitution {
 
     set betreuungsId(value: string) {
         this._betreuungsId = value;
+    }
+
+    get gesuchId(): string {
+        return this._gesuchId;
+    }
+
+    set gesuchId(value: string) {
+        this._gesuchId = value;
     }
 
     get name(): string {

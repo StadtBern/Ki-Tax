@@ -84,6 +84,7 @@ public class PendenzResource {
 		for (Betreuung betreuung : betreuungenInStatus) {
 			JaxPendenzInstitution pendenz = new JaxPendenzInstitution();
 			pendenz.setBetreuungsId(betreuung.getBetreuungNummerTotal());
+			pendenz.setGesuchId(betreuung.extractGesuch().getId());
 			pendenz.setName(betreuung.getKind().getKindJA().getNachname());
 			pendenz.setVorname(betreuung.getKind().getKindJA().getVorname());
 			pendenz.setGeburtsdatum(betreuung.getKind().getKindJA().getGeburtsdatum());
