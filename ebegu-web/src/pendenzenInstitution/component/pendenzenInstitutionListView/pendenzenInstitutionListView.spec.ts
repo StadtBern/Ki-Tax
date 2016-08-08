@@ -66,7 +66,7 @@ describe('pendenzenInstitutionListView', function () {
     });
 
     function mockGetPendenzenList(): TSPendenzInstitution {
-        let mockPendenz: TSPendenzInstitution = new TSPendenzInstitution('123.12.12.12', 'Kind', 'Kilian', undefined,
+        let mockPendenz: TSPendenzInstitution = new TSPendenzInstitution('123.12.12.12', '123', 'Kind', 'Kilian', undefined,
             'Platzbestaetigung', undefined, undefined, TSBetreuungsangebotTyp.KITA, undefined);
         let result: Array<TSPendenzInstitution> = [mockPendenz];
         spyOn(pendenzInstitutionRS, 'getPendenzenList').and.returnValue($q.when(result));

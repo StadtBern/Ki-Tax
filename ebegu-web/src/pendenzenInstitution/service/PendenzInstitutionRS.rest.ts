@@ -28,5 +28,4 @@ export default class PendenzInstitutionRS {
                 return this.ebeguRestUtil.parsePendenzenInstitution(response.data);
             });
     }
-
 }
