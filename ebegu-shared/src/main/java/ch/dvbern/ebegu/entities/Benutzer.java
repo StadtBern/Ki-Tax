@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 	@Index(columnList = "username,mandant_id", name = "IX_benutzer_username_mandant")
 })
 @Audited
+@CheckBenutzerRoles
 public class Benutzer extends AbstractEntity {
 
 	private static final long serialVersionUID = 6372688971894279665L;

@@ -1471,12 +1471,9 @@ public class JaxBConverter {
 		benutzer.setVorname(loginElement.getVorname());
 		benutzer.setRole(loginElement.getRole());
 		benutzer.setMandant(mandantToEntity(loginElement.getMandant(), new Mandant()));
-		if (loginElement.getInstitution() != null) {
-			benutzer.setInstitution(institutionToEntity(loginElement.getInstitution(), new Institution()));
-		}
-		if (loginElement.getTraegerschaft() != null) {
-			benutzer.setTraegerschaft(traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()));
-		}
+		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
+		benutzer.setInstitution(loginElement.getInstitution() != null ? institutionToEntity(loginElement.getInstitution(), new Institution()) : null);
+		benutzer.setTraegerschaft(loginElement.getTraegerschaft() != null ? traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()) : null);
 		return benutzer;
 	}
 
