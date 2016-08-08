@@ -1166,6 +1166,9 @@ public class JaxBConverter {
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
 		betreuung.setSchulpflichtig(betreuungJAXP.getSchulpflichtig());
+		betreuung.setVertrag(betreuungJAXP.getVertrag());
+		betreuung.setErweiterteBeduerfnisse(betreuungJAXP.getErweiterteBeduerfnisse());
+
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
@@ -1288,6 +1291,8 @@ public class JaxBConverter {
 		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
 		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
 		jaxBetreuung.setSchulpflichtig(betreuungFromServer.getSchulpflichtig());
+		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());
+		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
 
