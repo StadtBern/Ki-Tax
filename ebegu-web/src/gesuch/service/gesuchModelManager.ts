@@ -753,6 +753,22 @@ export default class GesuchModelManager {
         return -1;
     }
 
+    /**
+     * Sucht das Kind mit der eingegebenen KindID in allen KindContainers des Gesuchs. kindNumber wird gesetzt und zurueckgegeben
+     * @param kindID
+     * @returns {number}
+     */
+    public findKindById(kindID: string): number {
+        if (this.gesuch.kindContainers) {
+            for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
+                if (this.gesuch.kindContainers[i].id === kindID) {
+                    return this.kindNumber = i + 1;
+                }
+            }
+        }
+        return -1;
+    }
+
     public removeKind(): IPromise<TSKindContainer> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
@@ -763,6 +779,22 @@ export default class GesuchModelManager {
     public findBetreuung(betreuung: TSBetreuung): number {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
             return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
+        }
+        return -1;
+    }
+
+    /**
+     * Sucht die Betreuung mit der eingegebenen betreuungID in allen Betreuungen des aktuellen Kind. betreuungNumber wird gesetzt und zurueckgegeben
+     * @param betreuungID
+     * @returns {number}
+     */
+    public findBetreuungById(betreuungID: string): number {
+        if (this.getKindToWorkWith()) {
+            for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
+                if (this.getKindToWorkWith().betreuungen[i].id === betreuungID) {
+                    return this.betreuungNumber = i + 1;
+                }
+            }
         }
         return -1;
     }

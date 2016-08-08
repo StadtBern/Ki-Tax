@@ -21,10 +21,16 @@ public class JaxPendenzInstitution {
 	private static final long serialVersionUID = -1277026654764135397L;
 
 	@NotNull
+	private String betreuungsNummer;
+
+	@NotNull
 	private String betreuungsId;
 
 	@NotNull
 	private String gesuchId;
+
+	@NotNull
+	private String kindId;
 
 	@NotNull
 	private String name;
@@ -53,6 +59,14 @@ public class JaxPendenzInstitution {
 	private JaxInstitution institution;
 
 
+	public String getBetreuungsNummer() {
+		return betreuungsNummer;
+	}
+
+	public void setBetreuungsNummer(String betreuungsNummer) {
+		this.betreuungsNummer = betreuungsNummer;
+	}
+
 	public String getBetreuungsId() {
 		return betreuungsId;
 	}
@@ -67,6 +81,14 @@ public class JaxPendenzInstitution {
 
 	public void setGesuchId(String gesuchId) {
 		this.gesuchId = gesuchId;
+	}
+
+	public String getKindId() {
+		return kindId;
+	}
+
+	public void setKindId(String kindId) {
+		this.kindId = kindId;
 	}
 
 	public String getName() {
