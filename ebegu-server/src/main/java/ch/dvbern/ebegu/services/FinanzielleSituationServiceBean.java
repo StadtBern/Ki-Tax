@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -72,11 +71,11 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Override
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch) {
-		return FinanzielleSituationUtil.calculateResultateFinanzielleSituation(finSitRechner, gesuch);
+		return finSitRechner.calculateResultateFinanzielleSituation(gesuch);
 	}
 
 	@Override
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
-		FinanzielleSituationUtil.calculateFinanzDaten(finSitRechner, gesuch);
+		finSitRechner.calculateFinanzDaten(gesuch);
 	}
 }

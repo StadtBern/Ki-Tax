@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
@@ -398,7 +397,8 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
 	public static Gesuch createTestgesuchDagmar(){

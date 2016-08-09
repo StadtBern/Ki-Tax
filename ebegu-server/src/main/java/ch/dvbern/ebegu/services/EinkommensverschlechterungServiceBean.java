@@ -1,13 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.AbstractFinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -70,8 +69,8 @@ public class EinkommensverschlechterungServiceBean extends AbstractBaseService i
 
 	@Override
 	@Nonnull
-	public AbstractFinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus) {
-		return FinanzielleSituationUtil.calculateResultateEinkommensverschlechterung(finSitRechner, gesuch, basisJahrPlus);
+	public FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus) {
+		return finSitRechner.calculateResultateEinkommensverschlechterung(gesuch, basisJahrPlus);
 	}
 
 }
