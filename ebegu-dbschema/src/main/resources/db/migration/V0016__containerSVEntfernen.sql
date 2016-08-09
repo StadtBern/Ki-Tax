@@ -1,0 +1,8 @@
+ALTER TABLE finanzielle_situation_container DROP FOREIGN KEY FK_finanziellesituationcontainer_finanziellesituationsv_id;
+DROP INDEX FK_finanziellesituationcontainer_finanziellesituationsv_id ON finanzielle_situation_container;
+
+DELETE FROM finanzielle_situation WHERE id IN (SELECT finanzielle_situationsv_id FROM finanzielle_situation_container);
+ALTER TABLE finanzielle_situation_container DROP finanzielle_situationsv_id;
+
+DELETE FROM finanzielle_situation_aud WHERE id IN (SELECT finanzielle_situationsv_id FROM finanzielle_situation_container_aud);
+ALTER TABLE finanzielle_situation_container_aud DROP finanzielle_situationsv_id;

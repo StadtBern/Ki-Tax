@@ -41,20 +41,20 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     showSteuererklaerung(): boolean {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.steuerveranlagungErhalten === false;
+        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten === false;
     }
 
     showSelbstaendig(): boolean {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.selbstaendig === true;
+        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.selbstaendig === true;
     }
 
     private steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
-        if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === true) {
-            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = true;
-        } else if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === false) {
+        if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === true) {
+            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = true;
+        } else if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === false) {
             // Steuerveranlagung neu NEIN -> Fragen loeschen
-            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = undefined;
+            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
         }
     }
 

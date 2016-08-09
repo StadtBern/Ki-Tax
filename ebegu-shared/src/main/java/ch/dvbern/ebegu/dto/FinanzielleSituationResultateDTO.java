@@ -37,7 +37,7 @@ public class FinanzielleSituationResultateDTO extends AbstractFinanzielleSituati
 
 	private FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
 		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
-			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationSV();
+			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA();
 		}
 		return null;
 	}

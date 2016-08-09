@@ -369,12 +369,16 @@ export default class GesuchModelManager {
         if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
+
+            //TODO (Team) Zum Testen der Bisher-Werte
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS = new TSFinanzielleSituation();
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS.nettolohn = 100000;
         }
         if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
         }
     }
 
@@ -433,13 +437,13 @@ export default class GesuchModelManager {
 
     public copyEkvGeschaeftsgewinnFromFS(): void {
         if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
+            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
             console.log('Fehler: FinSit muss existieren');
             return;
         }
 
-        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
+        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA;
         let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
         if (fs.selbstaendig) {
 

@@ -68,8 +68,7 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 		final FinanzielleSituationContainer finanzielleSituationContainer = gesuchsteller.getFinanzielleSituationContainer();
 
-		//TODO: momentan wird zum Ausfüllen die FinanzielleSituationSV benutzt. Später muss jedoch die FinanzielleSituationJA benutzt werden!
-		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationSV();
+		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationJA();
 
 		super.getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
 
