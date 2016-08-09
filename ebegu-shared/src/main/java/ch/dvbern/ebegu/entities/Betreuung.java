@@ -189,7 +189,7 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public Gesuch extractGesuch() {
-		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuch because Kind is null");
 		return this.getKind().getGesuch();
 	}
 
