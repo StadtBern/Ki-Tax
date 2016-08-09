@@ -46,6 +46,14 @@ describe('betreuungView', function () {
     });
 
     describe('API Usage', function () {
+        describe('Object creation', () => {
+            it('create an empty list of Betreuungspensen for a role different than Institution', () => {
+                let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
+                    $rootScope.$new(), null, null);
+                expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
+                expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
+            });
+        });
         describe('cancel existing object', () => {
             it('should not remove the kind and then go to betreuungen', () => {
                 spyOn($state, 'go');
@@ -89,13 +97,13 @@ describe('betreuungView', function () {
             });
         });
         describe('createBetreuungspensum', () => {
-            it('creates the first betreuungspensum in empty list and then a second one', () => {
+            it('creates the first betreuungspensum in empty list and then a second one (for role=Institution)', () => {
                 // Just creating an object must add a new BetreuungspensumContainer
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(0);
                 betreuungView.createBetreuungspensum();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(2);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumGS).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA).toBeDefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.pensum).toBeUndefined();
