@@ -94,6 +94,7 @@ export class KindViewController extends AbstractGesuchViewController {
     public familienErgaenzendeBetreuungClicked() {
         if (!this.getModel().familienErgaenzendeBetreuung) {
             this.showFachstelle = false;
+            this.getModel().wohnhaftImGleichenHaushalt = undefined;
             this.resetFachstelleFields();
         }
     }

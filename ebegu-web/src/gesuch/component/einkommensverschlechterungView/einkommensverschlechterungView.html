@@ -326,7 +326,7 @@
                                translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></label>
                         <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr" ui-number-mask="0"
                                ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr" ng-blur="vm.calculate()"
-                               dv-max-length max="999999999999" class="form-control">
+                               dv-max-length max="999999999999" class="form-control" ui-negative-number>
                         <dv-error-messages  for="form.geschaeftsgewinnBasisjahr.$error" class="error"></dv-error-messages>
                         <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahr"
                                    ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"
@@ -343,7 +343,7 @@
                                translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-1}}}"></label>
                         <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
                                ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1"
-                               dv-max-length max="999999999999" class="form-control" disabled>
+                               dv-max-length max="999999999999" class="form-control" disabled ui-negative-number>
                         <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus1.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
@@ -357,7 +357,7 @@
                                translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-2}}}"></label>
                         <input id="geschaeftsgewinnBasisjahrMinus2" type="text" name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
                                ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2"
-                               dv-max-length max="999999999999" class="form-control" disabled>
+                               dv-max-length max="999999999999" class="form-control" disabled ui-negative-number>
                         <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus2.$error" class="error"></dv-error-messages>
                     </dv-input-container>
                 </div>
