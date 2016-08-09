@@ -130,4 +130,20 @@ public class MathUtilTest {
 		assertEquals(new BigDecimal("1.10"), MathUtil.roundToFrankenRappen(new BigDecimal("1.0749")));
 		assertEquals(new BigDecimal("1.05"), MathUtil.roundToFrankenRappen(new BigDecimal("1.0744")));
 	}
+
+	@Test
+	public void testRoundIntToTens() {
+		assertEquals(0, MathUtil.roundIntToTens(-1));
+		assertEquals(0, MathUtil.roundIntToTens(0));
+		assertEquals(0, MathUtil.roundIntToTens(1));
+		assertEquals(10, MathUtil.roundIntToTens(5)); // special case giving errors in Java6
+		assertEquals(10, MathUtil.roundIntToTens(10));
+		assertEquals(10, MathUtil.roundIntToTens(11));
+		assertEquals(10, MathUtil.roundIntToTens(14));
+		assertEquals(20, MathUtil.roundIntToTens(15));
+		assertEquals(20, MathUtil.roundIntToTens(16));
+		assertEquals(20, MathUtil.roundIntToTens(19));
+		assertEquals(152360, MathUtil.roundIntToTens(152362));
+		assertEquals(152370, MathUtil.roundIntToTens(152365));
+	}
 }
