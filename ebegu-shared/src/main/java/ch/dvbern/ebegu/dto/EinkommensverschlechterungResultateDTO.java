@@ -17,11 +17,17 @@ public class EinkommensverschlechterungResultateDTO extends AbstractFinanzielleS
 		super(familiengroesse, famGroesseAbz);
 
 		if (gesuch != null) {
-			final Einkommensverschlechterung einkommensverschlechterungGS1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
-			setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1));
+			Einkommensverschlechterung einkommensverschlechterungGS1 = null;
+			if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() != null) {
+				einkommensverschlechterungGS1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
+				setGeschaeftsgewinnDurchschnittGesuchsteller1(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1));
+			}
 
-			final Einkommensverschlechterung einkommensverschlechterungGS2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
-			setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2));
+			Einkommensverschlechterung einkommensverschlechterungGS2 = null;
+			if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getEinkommensverschlechterungContainer() != null) {
+				einkommensverschlechterungGS2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
+				setGeschaeftsgewinnDurchschnittGesuchsteller2(calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2));
+			}
 
 			calculateZusammen(einkommensverschlechterungGS1, calculateNettoJahresLohn(einkommensverschlechterungGS1),
 				einkommensverschlechterungGS2, calculateNettoJahresLohn(einkommensverschlechterungGS2));

@@ -71,6 +71,9 @@ public class JaxBConverter {
 	@Inject
 	private BetreuungService betreuungService;
 
+	@Inject
+	private VerfuegungService verfuegungService;
+
 
 	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
 
@@ -1163,6 +1166,9 @@ public class JaxBConverter {
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
 		betreuung.setSchulpflichtig(betreuungJAXP.getSchulpflichtig());
+		betreuung.setVertrag(betreuungJAXP.getVertrag());
+		betreuung.setErweiterteBeduerfnisse(betreuungJAXP.getErweiterteBeduerfnisse());
+
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
@@ -1172,7 +1178,28 @@ public class JaxBConverter {
 			betreuung.setInstitutionStammdaten(institutionStammdatenToEntity(betreuungJAXP.getInstitutionStammdaten(), instStammdatenToMerge));
 		}
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
+
+		if (betreuungJAXP.getVerfuegung() != null) {
+			betreuung.setVerfuegung(this.verfuegungtoStoreableEntity(betreuungJAXP.getVerfuegung()));
+		} else{
+			betreuung.setVerfuegung(null);
+		}
+
 		return betreuung;
+	}
+
+	private Verfuegung verfuegungtoStoreableEntity(JaxVerfuegung verfuegungJAXP) {
+
+		Verfuegung verfToMergeWith = new Verfuegung();
+		if (verfuegungJAXP.getId() != null) {
+
+			final Optional<Verfuegung> existingVerfuegung = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+			//wenn schon vorhanden updaten
+			if (existingVerfuegung.isPresent()) {
+				verfToMergeWith = existingVerfuegung.get();
+			}
+		}
+		return verfuegungToEntity(verfuegungJAXP, verfToMergeWith);
 	}
 
 	public Betreuung betreuungToStoreableEntity(@Nonnull final JaxBetreuung betreuungJAXP) {
@@ -1194,7 +1221,7 @@ public class JaxBConverter {
 	/**
 	 * Goes through the whole list of jaxBetPenContainers. For each (jax)Container that already exists as Entity it merges both and adds the resulting
 	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
-	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
+	 * but not in the list of jax, won't be added to the list and are then removed (cascade and orphanremoval)
 	 *
 	 * @param jaxBetPenContainers      Betreuungspensen DTOs from Client
 	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
@@ -1257,16 +1284,138 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
-	public JaxBetreuung betreuungToJAX(final Betreuung persistedBetreuung) {
+	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
-		convertAbstractFieldsToJAX(persistedBetreuung, jaxBetreuung);
-		jaxBetreuung.setBemerkungen(persistedBetreuung.getBemerkungen());
-		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(persistedBetreuung.getBetreuungspensumContainers()));
-		jaxBetreuung.setBetreuungsstatus(persistedBetreuung.getBetreuungsstatus());
-		jaxBetreuung.setSchulpflichtig(persistedBetreuung.getSchulpflichtig());
-		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(persistedBetreuung.getInstitutionStammdaten()));
-		jaxBetreuung.setBetreuungNummer(persistedBetreuung.getBetreuungNummer());
+		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
+		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
+		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
+		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
+		jaxBetreuung.setSchulpflichtig(betreuungFromServer.getSchulpflichtig());
+		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());
+		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
+		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
+		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
+
+		if (betreuungFromServer.getVerfuegung() != null) {
+			jaxBetreuung.setVerfuegung(verfuegungToJax(betreuungFromServer.getVerfuegung()));
+		}
 		return jaxBetreuung;
+	}
+
+	/**
+	 * converts the given verfuegung into a JaxVerfuegung
+	 *
+	 * @param verfuegung
+	 * @return dto with the values of the verfuegung
+	 */
+	private JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
+		if (verfuegung != null) {
+			final JaxVerfuegung jaxVerfuegung = new JaxVerfuegung();
+			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
+			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
+			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
+
+			if (verfuegung.getZeitabschnitte() != null) {
+				jaxVerfuegung.getZeitabschnitte().addAll(
+					verfuegung.getZeitabschnitte()
+						.stream()
+						.map(this::verfuegungZeitabschnittToJax)
+						.collect(Collectors.toList()));
+			}
+
+			return jaxVerfuegung;
+		}
+		return null;
+	}
+
+	/**
+	 * converts the given verfuegung into a JaxVerfuegung
+	 *
+	 * @param verfuegung
+	 * @return dto with the values of the verfuegung
+	 */
+	private Verfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
+		Validate.notNull(jaxVerfuegung);
+		Validate.notNull(verfuegung);
+		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
+		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
+		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
+
+		//List of Verfuegungszeitabschnitte converten
+		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());
+		return verfuegung;
+
+	}
+
+	private void verfuegungZeitabschnitteToEntity(List<VerfuegungZeitabschnitt> existingZeitabschnitte,
+												  List<JaxVerfuegungZeitabschnitt> zeitabschnitteFromClient) {
+		final Set<VerfuegungZeitabschnitt> convertedZeitabschnitte = new TreeSet<>();
+		for (final JaxVerfuegungZeitabschnitt jaxZeitabschnitt : zeitabschnitteFromClient) {
+			final VerfuegungZeitabschnitt containerToMergeWith = existingZeitabschnitte
+				.stream()
+				.filter(existingBetPensumEntity -> existingBetPensumEntity.getId().equals(jaxZeitabschnitt.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new VerfuegungZeitabschnitt());
+			final VerfuegungZeitabschnitt abschnittToAdd = verfuegungZeitabschnittToEntity(jaxZeitabschnitt, containerToMergeWith);
+			final boolean added = convertedZeitabschnitte.add(abschnittToAdd);
+			if (!added) {
+				LOG.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		existingZeitabschnitte.clear();
+		existingZeitabschnitte.addAll(convertedZeitabschnitte);
+
+	}
+
+
+	private JaxVerfuegungZeitabschnitt verfuegungZeitabschnittToJax(VerfuegungZeitabschnitt zeitabschnitt) {
+		if (zeitabschnitt != null) {
+			final JaxVerfuegungZeitabschnitt jaxZeitabschn = new JaxVerfuegungZeitabschnitt();
+			convertAbstractDateRangedFieldsToJAX(zeitabschnitt, jaxZeitabschn);
+			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
+			jaxZeitabschn.setErwerbspensumGS1(zeitabschnitt.getErwerbspensumGS1());
+			jaxZeitabschn.setErwerbspensumGS2(zeitabschnitt.getErwerbspensumGS2());
+			jaxZeitabschn.setBetreuungspensum(zeitabschnitt.getBetreuungspensum());
+			jaxZeitabschn.setFachstellenpensum(zeitabschnitt.getFachstellenpensum());
+			jaxZeitabschn.setAnspruchspensumRest(zeitabschnitt.getAnspruchspensumRest());
+			jaxZeitabschn.setBgPensum(zeitabschnitt.getBgPensum());
+			jaxZeitabschn.setAnspruchberechtigtesPensum(zeitabschnitt.getAnspruchberechtigtesPensum());
+			jaxZeitabschn.setBetreuungsstunden(zeitabschnitt.getBetreuungsstunden());
+			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
+			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
+			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
+			jaxZeitabschn.setMassgebendesEinkommen(zeitabschnitt.getMassgebendesEinkommen());
+			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
+			jaxZeitabschn.setStatus(zeitabschnitt.getStatus());
+			return jaxZeitabschn;
+		}
+		return null;
+	}
+
+	private VerfuegungZeitabschnitt verfuegungZeitabschnittToEntity(final JaxVerfuegungZeitabschnitt jaxVerfuegungZeitabschnitt,
+																	final VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		Validate.notNull(jaxVerfuegungZeitabschnitt);
+		Validate.notNull(verfuegungZeitabschnitt);
+		//Mal auskommentiert da wahrscheinlich von client gar nie etwas gesetzt werden soll
+//		convertAbstractDateRangedFieldsToEntity(jaxZeitabschn, verfuegungZeitabschnitt);
+//		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
+//		verfuegungZeitabschnitt.setErwerbspensumGS1(jaxVerfuegungZeitabschnitt.getErwerbspensumGS1());
+//		verfuegungZeitabschnitt.setErwerbspensumGS2(jaxVerfuegungZeitabschnitt.getErwerbspensumGS2());
+//		verfuegungZeitabschnitt.setBetreuungspensum(jaxVerfuegungZeitabschnitt.getBetreuungspensum());
+//		verfuegungZeitabschnitt.setFachstellenpensum(jaxVerfuegungZeitabschnitt.getFachstellenpensum());
+//		verfuegungZeitabschnitt.setAnspruchspensumRest(jaxVerfuegungZeitabschnitt.getAnspruchspensumRest());
+//		verfuegungZeitabschnitt.setBgPensum(jaxVerfuegungZeitabschnitt.getBgPensum());
+//		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(jaxVerfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
+//		verfuegungZeitabschnitt.setBetreuungsstunden(jaxVerfuegungZeitabschnitt.getBetreuungsstunden());
+//		verfuegungZeitabschnitt.setVollkosten(jaxVerfuegungZeitabschnitt.getVollkosten());
+//		verfuegungZeitabschnitt.setElternbeitrag(jaxVerfuegungZeitabschnitt.getElternbeitrag());
+//		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
+//		verfuegungZeitabschnitt.setMassgebendesEinkommen(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommen());
+//		verfuegungZeitabschnitt.setStatus(jaxVerfuegungZeitabschnitt.getStatus());
+		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
+		return verfuegungZeitabschnitt;
 	}
 
 	/**

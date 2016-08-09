@@ -63,4 +63,13 @@ export default class BerechnungsManager {
             });
     }
 
+    /**
+     * setzt alle Resultate zureuck so dass sicher nichts mehr gesetzt ist, wird zB gebraucht wenn man den Fall wechselt
+     */
+    public clear() {
+        this.einkommensverschlechterungResultateBjP1 = undefined;
+        this.einkommensverschlechterungResultateBjP2 = undefined;
+        this.finanzielleSituationResultate = undefined;
+        this.dokumente = undefined;
+    }
 }

@@ -36,6 +36,8 @@ import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlechterungInfo';
 import TSUser from '../../models/TSUser';
+import VerfuegungRS from '../../core/service/verfuegungRS.rest';
+import TSVerfuegung from '../../models/TSVerfuegung';
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
@@ -47,15 +49,21 @@ export default class GesuchModelManager {
     private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
+    //diese Variable enthaelt alle Kinder die die Methode verfuegungRS.calculateVerfuegung zurueckgibt. Normalerweise sollten die Kinder im
+    // gesuch aktualisiert werden. Das Problem ist, dass die Verfuegungen nicht gespeichert werden duerfen, bis der Benutzer auf den Knopf
+    // Verfuegen klickt
+    private kinderWithBetreuungList: Array<TSKindContainer> = []; // todo dies koennte verbessert werden. Das Problem hier ist, dass die
+
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
-        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS', 'EinkommensverschlechterungContainerRS'];
+        'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
-                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS) {
+                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -854,6 +862,28 @@ export default class GesuchModelManager {
     public getFallVerantwortlicher(): TSUser {
         if (this.gesuch && this.gesuch.fall) {
             return this.gesuch.fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    public calculateVerfuegungen(): void {
+        this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
+            .then((response: TSKindContainer[]) => {
+                this.kinderWithBetreuungList = response;
+            });
+    }
+
+    public getVerfuegenToWorkWith(): TSVerfuegung {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            for (let i = 0; i < this.kinderWithBetreuungList.length; i++) {
+                if (this.kinderWithBetreuungList[i].id === this.getKindToWorkWith().id) {
+                    for (let j = 0; j < this.kinderWithBetreuungList[i].betreuungen.length; j++) {
+                        if (this.kinderWithBetreuungList[i].betreuungen[j].id === this.getBetreuungToWorkWith().id) {
+                            return this.kinderWithBetreuungList[i].betreuungen[j].verfuegung;
+                        }
+                    }
+                }
+            }
         }
         return undefined;
     }

@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -190,7 +190,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 	@Nonnull
 	private Gesuch createGesuchWithKind(Kinderabzug abzug) {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
-		Set<KindContainer> kindContainers = new HashSet<>();
+		Set<KindContainer> kindContainers = new LinkedHashSet<>();
 		KindContainer kindContainer = new KindContainer();
 		Kind kindJA = new Kind();
 		kindJA.setKinderabzug(abzug);

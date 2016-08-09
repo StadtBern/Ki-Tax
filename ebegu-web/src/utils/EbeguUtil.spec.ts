@@ -87,4 +87,23 @@ describe('EbeguUtil', function () {
             expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, fall, 1, 1)).toBe('16.000254.1.1');
         });
     });
+    describe('getFirstDayGesuchsperiodeAsString', () => {
+        it ('it returns empty string for undefined Gesuchsperiode', () => {
+            expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
+        });
+        it ('it returns empty string for undefined daterange in the Gesuchsperiode', () => {
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, undefined);
+            expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(undefined)).toBe('');
+        });
+        it ('it returns empty string for undefined gueltigAb', () => {
+            let daterange: TSDateRange = new TSDateRange(undefined, moment('31.07.2017', 'DD.MM.YYYY'));
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, daterange);
+            expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('');
+        });
+        it ('it returns 01.08.2016', () => {
+            let daterange: TSDateRange = new TSDateRange(moment('01.08.2016', 'DD.MM.YYYY'), moment('31.07.2017', 'DD.MM.YYYY'));
+            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, daterange);
+            expect(ebeguUtil.getFirstDayGesuchsperiodeAsString(gesuchsperiode)).toBe('01.08.2016');
+        });
+    });
 });

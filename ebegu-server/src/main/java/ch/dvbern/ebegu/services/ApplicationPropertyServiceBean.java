@@ -44,7 +44,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Nonnull
 	@Override
-	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value)  {
+	public ApplicationProperty  saveOrUpdateApplicationProperty(@Nonnull final String key, @Nonnull final String value) {
 		Validate.notNull(key);
 		Validate.notNull(value);
 		Optional<ApplicationProperty> property = readApplicationProperty(key);

@@ -41,6 +41,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Min(1)
 	private Integer betreuungNummer = 1;
 
+	@Nullable
+	private JaxVerfuegung verfuegung;
+
+	@NotNull
+	private Boolean vertrag;
+
+	@NotNull
+	private Boolean erweiterteBeduerfnisse;
+
 
 
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
@@ -91,5 +100,30 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBetreuungNummer(Integer betreuungNummer) {
 		this.betreuungNummer = betreuungNummer;
+	}
+
+	@Nullable
+	public JaxVerfuegung getVerfuegung() {
+		return verfuegung;
+	}
+
+	public void setVerfuegung(@Nullable JaxVerfuegung verfuegung) {
+		this.verfuegung = verfuegung;
+	}
+
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
 }

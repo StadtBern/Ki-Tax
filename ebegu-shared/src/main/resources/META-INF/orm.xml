@@ -34,5 +34,7 @@
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.Dokument"/>
 	<entity class="ch.dvbern.ebegu.entities.DokumentGrund"/>
+	<entity class="ch.dvbern.ebegu.entities.Verfuegung"/>
+	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
 
 </entity-mappings>

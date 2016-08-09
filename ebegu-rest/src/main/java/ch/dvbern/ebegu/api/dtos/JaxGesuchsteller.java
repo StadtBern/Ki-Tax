@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -57,7 +57,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	@Nullable
 	private JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer;
 
-	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new HashSet<>();
+	private Collection<JaxErwerbspensumContainer> erwerbspensenContainers = new LinkedHashSet<>();
 
 	private boolean diplomatenstatus;
 

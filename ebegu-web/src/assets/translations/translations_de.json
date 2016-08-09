@@ -347,6 +347,8 @@
     "FAMILIENSITUATION_FRAGE_2": "Möchten Sie das Gesuch alleine oder mit einer anderen erziehungsberechtigen Person beantragen?",
     "ALLEINE": "alleine",
     "ZU_ZWEIT": "zu zweit",
+    "MANUELLE_BEMERKUNGEN": "Manuelle Bemerkungen",
+    "GENERATED_BEMERKUNGEN": "Generierte Bemerkungen",
     "BEMERKUNGEN": "Bemerkungen",
     "BEMERKUNGEN_PLACEHOLDER": "Hier kann das Jugendamt zusätzliche Informationen erfassen.",
     "SPEICHERN_UPPER": "SPEICHERN",
@@ -382,10 +384,14 @@
     "BETREUUNG_LOESCHEN": "Wollen Sie das Betreuungsangebot \"{{betreuungsangebottyp}}\" vom Kind {{kindname}} wirklich löschen?",
     "BETREUUNG_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
     "PLATZBESTAETIGUNG_ANFORDERN": "PLATZBESTÄTIGUNG ANFORDERN",
+    "DATEN_STIMMEN_NICHT": "Daten stimmen nicht",
     "SCHULPFLICHTIG": "schulpflichtig per {{anfangsperiode}}",
+    "VERTRAG": "Ich habe einen Vertrag mit der Institution",
+    "ERWEITERTE_BEDUERFNISSE": "Erweiterte Bedürfnisse",
     "INSTITUTION": "Institution",
-    "BEREIT_VERFUEGUNG_UPPER": "BEREIT ZUR VERFÜGUNG",
+    "GEPRUEFT_UPPER": "GEPRÜFT",
     "ERSTE_MAHNUNG_UPPER": "1. MAHNUNG",
+    "ZURUECK_GESUCHSTELLER_UPPER": "ZURÜCK AN GESUCHSTELLER",
     "INSTITUTION_UPPER": "INSTITUTION",
     "ANGEBOT_UPPER": "ANGEBOT",
     "VERANTWORTLICH_UPPER": "VERANTWORTLICH",
@@ -430,7 +436,6 @@
     "BETREUUNG": "Betreuung",
     "BETREUUNG_UPPER": "BETREUUNG",
     "STATUS": "Status",
-    "STATUS_UPPER": "STATUS",
     "AUSSTEHEND": "ausstehend",
     "WARTEN": "warten",
     "SCHULAMT": "nicht nötig",
@@ -604,9 +609,14 @@
     "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
-    "DIV": "Sonstige Nachweise"
-
-
-
+    "DIV": "Sonstige Nachweise",
+    "ANSPRUCH": "Anspruch",
+    "VOLLKOSTEN": "Vollkosten",
+    "ELTERNBEITRAG": "Elternbeitrag",
+    "VERGUENSTIGUNG": "Vergünstigung",
+    "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
+    "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
+    "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
 }
 

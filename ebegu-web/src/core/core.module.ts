@@ -48,6 +48,7 @@ import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
 
+import VerfuegungRS from './service/verfuegungRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -118,6 +119,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('BetreuungRS', BetreuungRS)
     .service('GesuchsperiodeRS', GesuchsperiodeRS)
     .service('UserRS', UserRS)
+    .service('VerfuegungRS', VerfuegungRS)
     .service('DokumenteRS', DokumenteRS)
     .service('UploadRS', UploadRS)
     .directive('dvMaxLength', DVMaxLength.factory())

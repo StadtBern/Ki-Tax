@@ -21,6 +21,7 @@ import {EinkommensverschlechterungSteuernViewComponentConfig} from './component/
 import {EinkommensverschlechterungViewComponentConfig} from './component/einkommensverschlechterungView/einkommensverschlechterungView';
 import {EinkommensverschlechterungResultateViewComponentConfig} from './component/einkommensverschlechterungResultateView/einkommensverschlechterungResultateView';
 import {DokumenteViewComponentConfig} from './component/DokumenteView/dokumenteView';
+import {VerfuegenViewComponentConfig} from './component/verfuegenView/verfuegenView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
@@ -38,6 +39,7 @@ export const EbeguWebGesuch =
     .component('erwerbspensumView', new ErwerbspensumViewComponentConfig())
     .component('fallCreationView', new FallCreationViewComponentConfig())
     .component('verfuegenListView', new VerfuegenListViewComponentConfig())
+    .component('verfuegenView', new VerfuegenViewComponentConfig())
     .component('gesuchToolbar', new GesuchToolbarComponentConfig())
     .component('einkommensverschlechterungInfoView', new EinkommensverschlechterungInfoViewComponentConfig())
     .component('einkommensverschlechterungSteuernView', new EinkommensverschlechterungSteuernViewComponentConfig())

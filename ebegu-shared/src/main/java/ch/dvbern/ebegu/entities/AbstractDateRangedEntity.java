@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Gueltigkeit;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -43,4 +44,10 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 		return Objects.equals(this.getGueltigkeit(), otherAbstDateRangedEntity.getGueltigkeit());
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("gueltigkeit", gueltigkeit)
+			.toString();
+	}
 }

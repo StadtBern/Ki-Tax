@@ -228,4 +228,16 @@ public enum MathUtil {
 	public static boolean isSame(@Nonnull Optional<BigDecimal> a, @Nonnull Optional<BigDecimal> b) {
 		return a.isPresent() && b.isPresent() && a.get().compareTo(b.get()) == 0 || !a.isPresent() && !b.isPresent();
 	}
+
+	/**
+	 * Rundet die eingegebene Nummer in 10er Schritten.
+	 * Beispiel
+	 * 20 bis 24 = 20
+	 * 25 bis 29 = 30
+	 * @param pensumFachstelle
+	 * @return
+     */
+	public static int roundIntToTens(int pensumFachstelle) {
+		return (int) (Math.round((double) pensumFachstelle / 10) * 10);
+	}
 }

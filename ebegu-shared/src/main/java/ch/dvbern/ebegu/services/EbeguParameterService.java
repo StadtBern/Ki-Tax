@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -58,7 +59,7 @@ public interface EbeguParameterService {
 	 * Vorjahr kopiert.
 	 */
 	@Nonnull
-	Collection<EbeguParameter> getEbeguParameterByJahr(@Nonnull Integer jahr);
+	Collection<EbeguParameter> getEbeguParametersByJahr(@Nonnull Integer jahr);
 
 	/**
 	 * Sucht den am Stichtag gueltigen Ebegu-Parameter mit dem übergebenen Key.
@@ -72,4 +73,12 @@ public interface EbeguParameterService {
 	 */
 	@Nonnull
 	Optional<EbeguParameter> getEbeguParameterByKeyAndDate(@Nonnull EbeguParameterKey key, @Nonnull LocalDate date, final EntityManager em);
+
+	/**
+	 * Gleiches resultat wie getEbeguParameterByGesuchsperiode aber als Map
+	 *
+	 * @param gesuchsperiode
+	 * @return
+	 */
+	Map<EbeguParameterKey, EbeguParameter> getEbeguParameterByGesuchsperiodeAsMap(@Nonnull Gesuchsperiode gesuchsperiode);
 }

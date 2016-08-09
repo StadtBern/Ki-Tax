@@ -41,6 +41,8 @@ import TSEinkommensverschlechterung from '../models/TSEinkommensverschlechterung
 import TSDokumenteDTO from '../models/dto/TSDokumenteDTO';
 import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
+import TSVerfuegung from '../models/TSVerfuegung';
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 
 
 export default class EbeguRestUtil {
@@ -899,6 +901,8 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
         restBetreuung.schulpflichtig = betreuung.schulpflichtig;
+        restBetreuung.vertrag = betreuung.vertrag;
+        restBetreuung.erweiterteBeduerfnisse = betreuung.erweiterteBeduerfnisse;
         if (betreuung.institutionStammdaten) {
             restBetreuung.institutionStammdaten = this.institutionStammdatenToRestObject({}, betreuung.institutionStammdaten);
         }
@@ -945,10 +949,13 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
             betreuungTS.schulpflichtig = betreuungFromServer.schulpflichtig;
+            betreuungTS.vertrag = betreuungFromServer.vertrag;
+            betreuungTS.erweiterteBeduerfnisse = betreuungFromServer.erweiterteBeduerfnisse;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
             betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
+            betreuungTS.verfuegung = this.parseVerfuegung(new TSVerfuegung(), betreuungFromServer.verfuegung);
             return betreuungTS;
         }
         return undefined;
@@ -1195,6 +1202,51 @@ export default class EbeguRestUtil {
             dokument.dokumentPfad = dokumentTS.dokumentPfad;
             dokument.dokumentTyp = dokumentTS.dokumentTyp;
             return dokument;
+        }
+        return undefined;
+    }
+
+    public parseVerfuegung(verfuegungTS: TSVerfuegung, verfuegungFromServer: any): TSVerfuegung {
+        if (verfuegungFromServer) {
+            this.parseAbstractEntity(verfuegungTS, verfuegungFromServer);
+            verfuegungTS.generatedBemerkungen = verfuegungFromServer.generatedBemerkungen;
+            verfuegungTS.manuelleBemerkungen = verfuegungFromServer.manuelleBemerkungen;
+            verfuegungTS.zeitabschnitte = this.parseVerfuegungZeitabschnitte(verfuegungFromServer.zeitabschnitte);
+            return verfuegungTS;
+        }
+        return undefined;
+    }
+
+    private parseVerfuegungZeitabschnitte(zeitabschnitte: Array<any>): TSVerfuegungZeitabschnitt[] {
+        let resultList: TSVerfuegungZeitabschnitt[] = [];
+        if (zeitabschnitte && Array.isArray(zeitabschnitte)) {
+            for (var i = 0; i < zeitabschnitte.length; i++) {
+                resultList[i] = this.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), zeitabschnitte[i]);
+            }
+        } else {
+            resultList[0] = this.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), zeitabschnitte);
+        }
+        return resultList;
+    }
+
+    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any) {
+        if (zeitabschnittFromServer) {
+            this.parseDateRangeEntity(verfuegungZeitabschnittTS, zeitabschnittFromServer);
+            verfuegungZeitabschnittTS.abzugFamGroesse = zeitabschnittFromServer.abzugFamGroesse;
+            verfuegungZeitabschnittTS.anspruchberechtigtesPensum = zeitabschnittFromServer.anspruchberechtigtesPensum;
+            verfuegungZeitabschnittTS.bgPensum = zeitabschnittFromServer.bgPensum;
+            verfuegungZeitabschnittTS.anspruchspensumRest = zeitabschnittFromServer.anspruchspensumRest;
+            verfuegungZeitabschnittTS.bemerkungen = zeitabschnittFromServer.bemerkungen;
+            verfuegungZeitabschnittTS.betreuungspensum = zeitabschnittFromServer.betreuungspensum;
+            verfuegungZeitabschnittTS.betreuungsstunden = zeitabschnittFromServer.betreuungsstunden;
+            verfuegungZeitabschnittTS.elternbeitrag = zeitabschnittFromServer.elternbeitrag;
+            verfuegungZeitabschnittTS.erwerbspensumGS1 = zeitabschnittFromServer.erwerbspensumGS1;
+            verfuegungZeitabschnittTS.erwerbspensumGS2 = zeitabschnittFromServer.erwerbspensumGS2;
+            verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
+            verfuegungZeitabschnittTS.massgebendesEinkommen = zeitabschnittFromServer.massgebendesEinkommen;
+            verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
+            verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
+            return verfuegungZeitabschnittTS;
         }
         return undefined;
     }

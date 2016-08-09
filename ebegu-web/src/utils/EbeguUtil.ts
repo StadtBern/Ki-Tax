@@ -2,6 +2,7 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {IFilterService} from 'angular';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSFall from '../models/TSFall';
+import DateUtil from './DateUtil';
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
@@ -11,6 +12,18 @@ export default class EbeguUtil {
     static $inject = ['$filter', 'CONSTANTS'];
     /* @ngInject */
     constructor(private $filter: IFilterService, private CONSTANTS: any) {
+    }
+
+    /**
+     * Returns the first day of the given Period in the format DD.MM.YYYY
+     * @param gesuchsperiode
+     * @returns {string}
+     */
+    public getFirstDayGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
+        if (gesuchsperiode && gesuchsperiode.gueltigkeit && gesuchsperiode.gueltigkeit.gueltigAb) {
+            return DateUtil.momentToLocalDateFormat(gesuchsperiode.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+        }
+        return '';
     }
 
     /**

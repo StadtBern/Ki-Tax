@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -68,11 +69,13 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 			anspruch = 0;
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Anspruch wurde aufgrund Erwerbspensum auf 0% gesetzt");
 		}
-		verfuegungZeitabschnitt.setErwerbspensumMinusOffset(anspruch);
-		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
+		// Der Anspruch wird immer auf 10-er Schritten gerundet.
+		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
+		verfuegungZeitabschnitt.setErwerbspensumMinusOffset(roundedAnspruch);
+		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
 		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) { //wurde schon mal ein Rest berechnet?
 			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
-			verfuegungZeitabschnitt.setAnspruchspensumRest(anspruch);
+			verfuegungZeitabschnitt.setAnspruchspensumRest(roundedAnspruch);
 		}
 	}
 
