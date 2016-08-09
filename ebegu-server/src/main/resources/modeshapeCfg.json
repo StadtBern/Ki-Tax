@@ -1,0 +1,9 @@
+{
+  "name": "Ebegu repository",
+  "storage": {
+    "persistence" : {
+      "type" : "file",
+      "path": "target/ebegu_repository"
+    }
+  }
+}

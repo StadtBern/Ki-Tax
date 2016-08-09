@@ -410,4 +410,19 @@ public final class TestDataUtil {
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
 		}
 	}
+
+	public static DokumentGrund createDefaultDokumentGrund() {
+
+		DokumentGrund dokumentGrund = new DokumentGrund();
+		dokumentGrund.setDokumentGrundTyp(DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		dokumentGrund.setTag("tag");
+		dokumentGrund.setFullName("Hugo");
+		dokumentGrund.setDokumente(new HashSet<Dokument>());
+		final Dokument dokument = new Dokument();
+		dokument.setDokumentGrund(dokumentGrund);
+		dokument.setDokumentName("testdokument");
+		dokument.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
+		dokumentGrund.getDokumente().add(dokument);
+		return dokumentGrund;
+	}
 }

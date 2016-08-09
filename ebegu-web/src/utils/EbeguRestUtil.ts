@@ -1133,8 +1133,9 @@ export default class EbeguRestUtil {
 
     parseDokumentGrund(dokumentGrund: TSDokumentGrund, dokumentGrundFromServer: any): TSDokumentGrund {
         if (dokumentGrundFromServer) {
+            this.parseAbstractEntity(dokumentGrund, dokumentGrundFromServer);
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
-            dokumentGrund.fullname = dokumentGrundFromServer.fullname;
+            dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
             return dokumentGrund;
@@ -1156,8 +1157,43 @@ export default class EbeguRestUtil {
 
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
+            this.parseAbstractEntity(dokument, dokumentFromServer);
             dokument.dokumentName = dokumentFromServer.dokumentName;
+            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
             dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
+            return dokument;
+        }
+        return undefined;
+    }
+
+    public dokumentGrundToRestObject(dokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
+        if (dokumentGrundTS) {
+            this.abstractEntityToRestObject(dokumentGrund, dokumentGrundTS);
+            dokumentGrund.tag = dokumentGrundTS.tag;
+            dokumentGrund.fullName = dokumentGrundTS.fullName;
+            dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+            return dokumentGrund;
+        }
+        return undefined;
+    }
+
+    private dokumenteToRestObject(dokumente: Array<TSDokument>): Array<any> {
+        let list: any[] = [];
+        if (dokumente) {
+            for (var i = 0; i < dokumente.length; i++) {
+                list[i] = this.dokumentToRestObject({}, dokumente[i]);
+            }
+        }
+        return list;
+    }
+
+    private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
+        if (dokumentTS) {
+            this.abstractEntityToRestObject(dokument, dokumentTS);
+            dokument.dokumentName = dokumentTS.dokumentName;
+            dokument.dokumentPfad = dokumentTS.dokumentPfad;
+            dokument.dokumentTyp = dokumentTS.dokumentTyp;
             return dokument;
         }
         return undefined;

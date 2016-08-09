@@ -4,9 +4,14 @@ import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSDokumentGrund extends TSAbstractEntity {
 
+    constructor(dokumentGrundTyp?: TSDokumentGrundTyp) {
+        super();
+        this._dokumentGrundTyp = dokumentGrundTyp;
+    }
+
     private _dokumentGrundTyp: TSDokumentGrundTyp;
 
-    private _fullname: string;
+    private _fullName: string;
 
     private _tag: string;
 
@@ -20,12 +25,12 @@ export default class TSDokumentGrund extends TSAbstractEntity {
         this._dokumentGrundTyp = value;
     }
 
-    get fullname(): string {
-        return this._fullname;
+    get fullName(): string {
+        return this._fullName;
     }
 
-    set fullname(value: string) {
-        this._fullname = value;
+    set fullName(value: string) {
+        this._fullName = value;
     }
 
     get tag(): string {

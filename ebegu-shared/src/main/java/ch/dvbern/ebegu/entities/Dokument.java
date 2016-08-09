@@ -25,12 +25,11 @@ public class Dokument extends AbstractEntity {
 	@NotNull
 	private String dokumentName;
 
-
 	//Dokument soll nicht in DB gespeichert werden, sondern in File-System. Wie genau ist noch nicht klar und muss noch evaluiert werden!
-//	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-//	@Column(nullable = true)
-//	@Nullable
-//	private String dokumentPfad;
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false)
+	@NotNull
+	private String dokumentPfad;
 
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
@@ -73,6 +72,14 @@ public class Dokument extends AbstractEntity {
 
 	public void setDokumentGrund(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;
+	}
+
+	public String getDokumentPfad() {
+		return dokumentPfad;
+	}
+
+	public void setDokumentPfad(String dokumentPfad) {
+		this.dokumentPfad = dokumentPfad;
 	}
 
 	@Override

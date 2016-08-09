@@ -13,15 +13,17 @@ import java.util.Set;
 
 @XmlRootElement(name = "dokumentGrund")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxDokumentGrund {
+public class JaxDokumentGrund extends JaxAbstractDTO {
 
+
+	private static final long serialVersionUID = -1451729857998697429L;
 
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	private DokumentGrundTyp dokumentGrundTyp;
 
 	@Nullable
-	private String fullname;
+	private String fullName;
 
 	@Nullable
 	private String tag;
@@ -38,12 +40,12 @@ public class JaxDokumentGrund {
 	}
 
 	@Nullable
-	public String getFullname() {
-		return fullname;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFullname(@Nullable String fullname) {
-		this.fullname = fullname;
+	public void setFullName(@Nullable String fullName) {
+		this.fullName = fullName;
 	}
 
 	@Nullable

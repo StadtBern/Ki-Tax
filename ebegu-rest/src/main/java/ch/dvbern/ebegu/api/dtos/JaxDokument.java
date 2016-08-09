@@ -9,10 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "dokument")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxDokument {
+public class JaxDokument extends JaxAbstractDTO {
 
-	@NotNull
+	private static final long serialVersionUID = 1118235796540488553L;
+
 	private String dokumentName;
+
+	private String dokumentPfad;
 
 	@NotNull
 	private DokumentTyp dokumentTyp;
@@ -31,5 +34,36 @@ public class JaxDokument {
 
 	public void setDokumentTyp(DokumentTyp dokumentTyp) {
 		this.dokumentTyp = dokumentTyp;
+	}
+
+	public String getDokumentPfad() {
+		return dokumentPfad;
+	}
+
+	public void setDokumentPfad(String dokumentPfad) {
+		this.dokumentPfad = dokumentPfad;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		JaxDokument that = (JaxDokument) o;
+
+		if (dokumentName != null ? !dokumentName.equals(that.dokumentName) : that.dokumentName != null) return false;
+		if (dokumentPfad != null ? !dokumentPfad.equals(that.dokumentPfad) : that.dokumentPfad != null) return false;
+		return dokumentTyp == that.dokumentTyp;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + (dokumentName != null ? dokumentName.hashCode() : 0);
+		result = 31 * result + (dokumentPfad != null ? dokumentPfad.hashCode() : 0);
+		result = 31 * result + (dokumentTyp != null ? dokumentTyp.hashCode() : 0);
+		return result;
 	}
 }

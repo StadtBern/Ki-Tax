@@ -1360,10 +1360,10 @@ public class JaxBConverter {
 
 	}
 
-	private JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
-		JaxDokumentGrund jaxDokumentGrund = new JaxDokumentGrund();
+	public JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
+		JaxDokumentGrund jaxDokumentGrund = convertAbstractFieldsToJAX(dokumentGrund,new JaxDokumentGrund());
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
-		jaxDokumentGrund.setFullname(dokumentGrund.getFullName());
+		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
 		for (Dokument dokument : dokumentGrund.getDokumente()) {
 			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
@@ -1372,9 +1372,69 @@ public class JaxBConverter {
 	}
 
 	private JaxDokument dokumentToJax(Dokument dokument) {
-		JaxDokument jaxDokument = new JaxDokument();
+		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument,new JaxDokument());
 		jaxDokument.setDokumentName(dokument.getDokumentName());
 		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
+		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
 		return jaxDokument;
 	}
+
+	public DokumentGrund dokumentGrundToEntity(@Nonnull final JaxDokumentGrund dokumentGrundJAXP, @Nonnull final DokumentGrund dokumentGrund) {
+		Validate.notNull(dokumentGrund);
+		Validate.notNull(dokumentGrundJAXP);
+		convertAbstractFieldsToEntity(dokumentGrundJAXP, dokumentGrund);
+
+		dokumentGrund.setDokumentGrundTyp(dokumentGrundJAXP.getDokumentGrundTyp());
+		dokumentGrund.setFullName(dokumentGrundJAXP.getFullName());
+		dokumentGrund.setTag(dokumentGrundJAXP.getTag());
+
+		dokumenteToEntity(dokumentGrundJAXP.getDokumente(), dokumentGrund.getDokumente(), dokumentGrund);
+		return dokumentGrund;
+	}
+
+	/**
+	 * Goes through the whole list of jaxDokuments. For each (jax)dokument that already exists as Entity it merges both and adds the resulting
+	 * (jax) dokument to the list. If the dokument doesn't exist it creates a new one and adds it to the list. Thus all dokumente that existed as entity
+	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
+	 *
+	 * @param jaxDokuments      Dokumente DTOs from Client
+	 * @param existingDokumente List of currently stored Dokumente
+	 */
+	private void dokumenteToEntity(final Set<JaxDokument> jaxDokuments,
+								   final Collection<Dokument> existingDokumente, final DokumentGrund dokumentGrund) {
+		final Set<Dokument> transformedDokumente = new HashSet<>();
+		for (final JaxDokument jaxDokument : jaxDokuments) {
+			final Dokument dokumenteToMergeWith = existingDokumente
+				.stream()
+				.filter(existingDokumentEntity -> existingDokumentEntity.getId().equals(jaxDokument.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new Dokument());
+			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
+			final boolean added = transformedDokumente.add(dokToAdd);
+			if (!added) {
+				LOG.warn("dropped duplicate container " + dokToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Dokumente of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		existingDokumente.clear();
+		existingDokumente.addAll(transformedDokumente);
+	}
+
+	private Dokument dokumentToEntity(JaxDokument jaxDokument, Dokument dokument, DokumentGrund dokumentGrund) {
+		Validate.notNull(dokument);
+		Validate.notNull(jaxDokument);
+		Validate.notNull(dokumentGrund);
+		convertAbstractFieldsToEntity(jaxDokument, dokument);
+
+		dokument.setDokumentGrund(dokumentGrund);
+		dokument.setDokumentTyp(jaxDokument.getDokumentTyp());
+		dokument.setDokumentName(jaxDokument.getDokumentName());
+		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
+		return dokument;
+	}
+
+
 }

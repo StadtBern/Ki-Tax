@@ -40,7 +40,7 @@ CREATE TABLE dokument_grund_aud
      user_erstellt      VARCHAR(36), 
      user_mutiert       VARCHAR(36), 
      dokument_grund_typ VARCHAR(255), 
-     fullname           VARCHAR(255),
+     fullName           VARCHAR(255),
      tag                VARCHAR(255),
      gesuch_id          VARCHAR(36), 
      PRIMARY KEY (id, rev) 
@@ -55,7 +55,7 @@ CREATE TABLE dokument_grund
      user_mutiert       VARCHAR(36) NOT NULL, 
      version            BIGINT NOT NULL, 
      dokument_grund_typ VARCHAR(255), 
-     fullname           VARCHAR(255),
+     fullName           VARCHAR(255),
      tag                VARCHAR(255),
      gesuch_id          VARCHAR(36) NOT NULL, 
      PRIMARY KEY (id) 

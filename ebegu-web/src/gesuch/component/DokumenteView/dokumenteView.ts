@@ -9,6 +9,7 @@ import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import IFormController = angular.IFormController;
+import EbeguUtil from '../../../utils/EbeguUtil';
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -29,15 +30,20 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteFamSit: TSDokumentGrund[] = [];
     dokumenteErwp: TSDokumentGrund[] = [];
     dokumenteKinder: TSDokumentGrund[] = [];
+    dokumenteSonst: TSDokumentGrund[] = [];
+
+    test: any;
 
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'Upload', 'EbeguUtil'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private upload: any, ebeguUtil: EbeguUtil) {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.calculate();
+        this.dokumenteSonst.push(new TSDokumentGrund(TSDokumentGrundTyp.SONSTIGE_NACHWEISE));
+        console.log('alskdjf', upload);
     }
 
     calculate() {
@@ -91,6 +97,24 @@ export class DokumenteViewController extends AbstractGesuchViewController {
 
             this.errorService.clearAll();
             this.nextStep();
+        }
+    }
+
+    addUploadedDokuments(dokumentGrund: any, dokumente: any): void {
+        var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+        console.log(index);
+
+        if (index > -1) {
+            dokumente[index] = dokumentGrund;
+        }
+    }
+
+    addUploadedDokumentsFinSit(dokumentGrund: any): void {
+        var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, this.dokumenteFinSit);
+        console.log(index);
+
+        if (index > -1) {
+            this.dokumenteFinSit[index] = dokumentGrund;
         }
     }
 

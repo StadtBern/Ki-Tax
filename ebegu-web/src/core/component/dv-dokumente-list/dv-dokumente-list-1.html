@@ -1,0 +1,79 @@
+<div class="dv-dokumente-list">
+
+    <div class="col-md-12 table-responsive" ng-if="vm.dokumente.length">
+
+        <h4 class="mainTitle">
+            <span data-translate="{{vm.tableTitle}}"></span>
+            {{vm.titleValue}}
+        </h4>
+        <hr class="header"/>
+
+        <table st-table="table" st-safe-src="vm.dokumente"
+               class="table table-striped" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
+            <thead>
+            <tr>
+                <!--without tag-->
+                <th width="60%" st-sort="dokumentTyp" class="sortable" ng-if="!vm.tag"><span
+                    data-translate="DOK_DOKUMENT"> </span>
+                </th>
+
+                <!--with tag-->
+                <th width="45%" st-sort="dokumentTyp" class="sortable" ng-if="vm.tag"><span
+                    data-translate="DOK_DOKUMENT"> </span>
+                </th>
+                <th width="15%" st-sort="tag" class="sortable" ng-if="vm.tag">
+                    <span data-translate="{{vm.tag}}"></span>
+                </th>
+
+                <th width="30%" st-sort="fullName" class="sortable" st-sort-default="true">
+                    <span data-translate="DOK_FUER"> </span>
+                </th>
+
+                <th width="5%"></th>
+                <th width="5%"></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in table">
+                <td colspan="3">
+
+                    <table class="col-md-12">
+                        <tr>
+                            <!--with and without tag-->
+                            <td ng-bind="row.dokumente[0].dokumentTyp | translate" width="60%" ng-if="!vm.tag"></td>
+
+                            <!--with tag-->
+                            <td ng-bind="row.dokumente[0].dokumentTyp | translate" width="45%" ng-if="vm.tag"></td>
+
+                            <td ng-bind="row.tag" ng-if="vm.tag" width="15%"></td>
+
+                            <td ng-bind="row.fullName" width="30%"></td>
+
+                            <td width="5%">
+                                <i ng-if="!vm.hasDokuments(row)" class="fa fa-circle" aria-hidden="true"
+                                   style="color: orange"></i>
+                                <i ng-if="vm.hasDokuments(row)" class="fa fa-circle" aria-hidden="true"
+                                   style="color: green"></i>
+                            </td>
+                            <td ng-click="$event.stopPropagation()" width="5%">
+                                <a ngf-select="vm.uploadAnhaenge($files, row)" data-ngf-multiple="true" ng-bind="TEST"
+                                   class="fa fa-file-text-o" aria-hidden="true"></a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table  st-table="table2" st-safe-src="row.dokumente">
+                        <tr ng-repeat="row2 in table2">
+                            <td ng-bind="row2.dokumentName"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
