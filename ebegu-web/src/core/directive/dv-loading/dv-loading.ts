@@ -1,7 +1,5 @@
-import {IDirective, IDirectiveFactory} from 'angular';
+import {IDirective, IDirectiveFactory, IHttpService} from 'angular';
 import Moment = moment.Moment;
-import INgModelController = angular.INgModelController;
-import IHttpService = angular.IHttpService;
 
 
 interface IDVLoadingController {
