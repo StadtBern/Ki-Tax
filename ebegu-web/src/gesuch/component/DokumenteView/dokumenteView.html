@@ -13,35 +13,41 @@
 
             <dv-dokumente-list dokumente="vm.dokumenteFamSit" table-id="dokumenteFamSit"
                                table-title="DOK_FAMILIENSITUATION" title-value=""
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFamSit)">
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteKinder" table-id="dokumenteKinder"
                                table-title="DOK_KINDER"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteKinder)">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteKinder)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteKinder)">
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteFinSit" table-id="dokumenteFinSit"
                                table-title="DOK_FINANZIELLE_SITUATION"
                                title-value="vm.gesuchModelManager.getBasisjahr()"
-                               on-upload-done="vm.addUploadedDokumentsFinSit(dokument)" ng-bind="vm.dokumenteFinSit">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFinSit)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFinSit)">
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteErwp" table-id="dokumenteErwp"
                                table-title="DOK_ERWERBSPENSUM"
                                tag="DOK_TAETIGKEIT"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteErwp)">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteErwp)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteErwp)">
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteEkv" table-id="dokumenteEkv"
                                table-title="EKVI_EINKOMMENSVERSCHLECHTERUNG"
                                tag="DOK_JAHR"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteEkv)">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteEkv)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
                                table-title="Sonstiges gschmöis"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)">
+                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
+                               on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)">
             </dv-dokumente-list>
 
             <!-- -------------------------------------------Navigation--------------------------------------------  -->

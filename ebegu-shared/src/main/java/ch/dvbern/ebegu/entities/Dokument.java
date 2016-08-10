@@ -31,6 +31,11 @@ public class Dokument extends AbstractEntity {
 	@NotNull
 	private String dokumentPfad;
 
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false)
+	@NotNull
+	private String dokumentSize;
+
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	private DokumentTyp dokumentTyp;
@@ -80,6 +85,14 @@ public class Dokument extends AbstractEntity {
 
 	public void setDokumentPfad(String dokumentPfad) {
 		this.dokumentPfad = dokumentPfad;
+	}
+
+	public String getDokumentSize() {
+		return dokumentSize;
+	}
+
+	public void setDokumentSize(String dokumentSize) {
+		this.dokumentSize = dokumentSize;
 	}
 
 	@Override

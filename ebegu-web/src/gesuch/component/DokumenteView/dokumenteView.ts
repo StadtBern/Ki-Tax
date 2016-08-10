@@ -8,8 +8,10 @@ import {IStammdatenStateParams} from '../../gesuch.route';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
-import IFormController = angular.IFormController;
 import EbeguUtil from '../../../utils/EbeguUtil';
+import TSDokument from '../../../models/TSDokument';
+import DokumenteRS from '../../service/dokumenteRS.rest';
+import IFormController = angular.IFormController;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -35,15 +37,15 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     test: any;
 
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'Upload', 'EbeguUtil'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'DokumenteRS'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private upload: any, ebeguUtil: EbeguUtil) {
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                private dokumenteRS: DokumenteRS) {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.calculate();
         this.dokumenteSonst.push(new TSDokumentGrund(TSDokumentGrundTyp.SONSTIGE_NACHWEISE));
-        console.log('alskdjf', upload);
     }
 
     calculate() {
@@ -94,28 +96,50 @@ export class DokumenteViewController extends AbstractGesuchViewController {
 
     submit(form: IFormController) {
         if (form.$valid) {
-
             this.errorService.clearAll();
             this.nextStep();
         }
     }
 
-    addUploadedDokuments(dokumentGrund: any, dokumente: any): void {
+    addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
+        console.log('addUploadedDokuments called');
         var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
-        console.log(index);
 
         if (index > -1) {
+            console.log('add dokument to dokumentList');
             dokumente[index] = dokumentGrund;
         }
+        this.handleUpdateBug(dokumente);
     }
 
-    addUploadedDokumentsFinSit(dokumentGrund: any): void {
-        var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, this.dokumenteFinSit);
-        console.log(index);
+
+    removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
+
+        var index = EbeguUtil.getIndexOfElementwithID(dokument, dokumentGrund.dokumente);
 
         if (index > -1) {
-            this.dokumenteFinSit[index] = dokumentGrund;
+            console.log('add dokument to dokumentList');
+            dokumentGrund.dokumente.splice(index, 1);
         }
+
+        this.dokumenteRS.updateDokumentGrund(dokumentGrund).then((response) => {
+
+            let returnedDG: TSDokumentGrund = angular.copy(response);
+            var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
+            if (index > -1) {
+                console.log('update dokumentGrund in dokumentList');
+                dokumente[index] = dokumentGrund;
+            }
+        });
+
+        this.handleUpdateBug(dokumente);
+    }
+
+    private handleUpdateBug(dokumente: TSDokumentGrund[]) {
+        // Ugly Fix:
+        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
+        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
+        dokumente[0] = angular.copy(dokumente[0]);
     }
 
 }

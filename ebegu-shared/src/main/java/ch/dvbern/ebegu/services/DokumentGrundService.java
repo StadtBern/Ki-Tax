@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.DokumentGrund;
-import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.*;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -24,5 +25,16 @@ public interface DokumentGrundService {
 	 */
 	@Nonnull
 	Optional<DokumentGrund> findDokumentGrund(@Nonnull String key);
+
+	@Nonnull
+	Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Aktualisiert die DokumentGrund in der DB
+	 * @param dokumentGrund Die DokumentGrund als DTO
+	 */
+	@Nonnull
+	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
+
 
 }

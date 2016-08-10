@@ -17,6 +17,8 @@ public class JaxDokument extends JaxAbstractDTO {
 
 	private String dokumentPfad;
 
+	private String dokumentSize;
+
 	@NotNull
 	private DokumentTyp dokumentTyp;
 
@@ -44,26 +46,12 @@ public class JaxDokument extends JaxAbstractDTO {
 		this.dokumentPfad = dokumentPfad;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-
-		JaxDokument that = (JaxDokument) o;
-
-		if (dokumentName != null ? !dokumentName.equals(that.dokumentName) : that.dokumentName != null) return false;
-		if (dokumentPfad != null ? !dokumentPfad.equals(that.dokumentPfad) : that.dokumentPfad != null) return false;
-		return dokumentTyp == that.dokumentTyp;
-
+	public String getDokumentSize() {
+		return dokumentSize;
 	}
 
-	@Override
-	public int hashCode() {
-		int result = super.hashCode();
-		result = 31 * result + (dokumentName != null ? dokumentName.hashCode() : 0);
-		result = 31 * result + (dokumentPfad != null ? dokumentPfad.hashCode() : 0);
-		result = 31 * result + (dokumentTyp != null ? dokumentTyp.hashCode() : 0);
-		return result;
+	public void setDokumentSize(String dokumentSize) {
+		this.dokumentSize = dokumentSize;
 	}
+
 }

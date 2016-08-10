@@ -4,6 +4,7 @@ import TSGesuch from '../../models/TSGesuch';
 import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import TSDokumentGrund from '../../models/TSDokumentGrund';
 
 
 export default class DokumenteRS {
@@ -27,6 +28,19 @@ export default class DokumenteRS {
                 this.log.debug('PARSING dokumentDTA REST object ', response.data);
                 return this.ebeguRestUtil.parseDokumenteDTO(new TSDokumenteDTO(), response.data);
             });
+    }
+
+    public updateDokumentGrund(dokumentGrund: TSDokumentGrund): IPromise<TSDokumentGrund> {
+        let restDokumentGrund = {};
+        restDokumentGrund = this.ebeguRestUtil.dokumentGrundToRestObject(restDokumentGrund, dokumentGrund);
+        return this.http.put(this.serviceURL, restDokumentGrund, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING dokumentGrund REST object ', response.data);
+            return this.ebeguRestUtil.parseDokumentGrund(new TSDokumentGrund(), response.data);
+        });
     }
 
 }

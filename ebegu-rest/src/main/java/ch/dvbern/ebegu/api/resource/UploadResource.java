@@ -4,14 +4,15 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.api.util.UploadFileInfo;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,35 +86,44 @@ public class UploadResource {
 		}
 
 		if (filenames == null || filenames.length == 0) {
-			return Response.serverError().entity("filename must be given").build();
+			final String problemString = "filename must be given";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
 		}
-
 
 		String gesuchId = request.getHeader(GESUCHID_HEADER);
 		if (StringUtils.isEmpty(gesuchId)) {
-			return Response.serverError().entity("a valid gesuchID must be given").build();
+			final String problemString = "a valid gesuchID must be given";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
 		}
 
 		List<InputPart> inputPartsDG = input.getFormDataMap().get(PART_DOKUMENT_GRUND);
 		if (inputPartsDG == null || !inputPartsDG.stream().findAny().isPresent()) {
-			return Response.serverError().entity("form-parameter 'inputPartsDG' not found").build();
+			final String problemString = "form-parameter 'inputPartsDG' not found";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
 		}
 
 		JaxDokumentGrund jaxDokumentGrund = null;
 		try (InputStream dokGrund = input.getFormDataPart(PART_DOKUMENT_GRUND, InputStream.class, null)) {
-			jaxDokumentGrund = new ObjectMapper().readValue(IOUtils.toString(dokGrund, "UTF-8"), JaxDokumentGrund.class);
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new JavaTimeModule());
+			jaxDokumentGrund = mapper.readValue(IOUtils.toString(dokGrund, "UTF-8"), JaxDokumentGrund.class);
 		} catch (Exception e) {
-			LOG.error("Can't parse DokumentGrund from Jax to object", e);
-			return Response.serverError().entity("Can't parse DokumentGrund from Jax to object").build();
+			final String problemString = "Can't parse DokumentGrund from Jax to object";
+			LOG.error(problemString, e);
+			return Response.serverError().entity(problemString).build();
 		}
 
 		if (jaxDokumentGrund == null) {
-			LOG.error("Can't parse DokumentGrund from Jax to object");
-			return Response.serverError().entity("Can't parse DokumentGrund from Jax to object").build();
+			final String problemString = "\"Can't parse DokumentGrund from Jax to object";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
+
 		}
 
 		int filecounter = 0;
-		List<UploadFileInfo> fileInfos = new ArrayList<UploadFileInfo>();
 		String partrileName = PART_FILE + "[" + filecounter + "]";
 
 		List<InputPart> inputParts = input.getFormDataMap().get(partrileName);
@@ -126,30 +135,24 @@ public class UploadResource {
 				fileInfo.setFilename(filenames[filecounter]);
 			}
 
-			byte[] bytes;
 			try (InputStream file = input.getFormDataPart(partrileName, InputStream.class, null)) {
 				fileInfo.setBytes(IOUtils.toByteArray(file));
 			}
 
-			fileInfos.add(fileInfo);
+			fileSaverService.save(fileInfo, gesuchId);
 
-
-			String path = fileSaverService.save(fileInfo.getBytes(), fileInfo.getFilename(), gesuchId);
-
-
-			addFileToDokumentGrund(jaxDokumentGrund, fileInfo.getFilename(), path);
-
+			addFileToDokumentGrund(jaxDokumentGrund, fileInfo);
 
 			filecounter++;
 			partrileName = PART_FILE + "[" + filecounter + "]";
 			inputParts = input.getFormDataMap().get(partrileName);
 		}
 
-
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId);
 		if (!gesuch.isPresent()) {
-			LOG.error("Can't find Gesuch on DB");
-			return Response.serverError().entity("Can't find Gesuch on DB").build();
+			final String problemString = "Can't find Gesuch on DB";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
 		}
 
 		DokumentGrund dokumentGrundToMerge = new DokumentGrund();
@@ -173,23 +176,30 @@ public class UploadResource {
 		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
 	}
 
-	private void addFileToDokumentGrund(JaxDokumentGrund jaxDokumentGrund, String filename, String path) {
+	private void addFileToDokumentGrund(JaxDokumentGrund jaxDokumentGrund, UploadFileInfo uploadFileInfo) {
 		Validate.notNull(jaxDokumentGrund.getDokumente());
 		DokumentTyp dokumentTyp = null;
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
 			dokumentTyp = jaxDokument.getDokumentTyp();
-			if (null == jaxDokument.getDokumentName() || jaxDokument.getDokumentName().isEmpty()) {
+			if (null == jaxDokument.getDokumentName() ||
+				jaxDokument.getDokumentName().isEmpty() ||
+				jaxDokument.getDokumentName().equals(uploadFileInfo.getFilename())) {
+
 				//set to existing
-				jaxDokument.setDokumentName(filename);
-				jaxDokument.setDokumentPfad(path);
+				jaxDokument.setDokumentName(uploadFileInfo.getFilename());
+				jaxDokument.setDokumentPfad(uploadFileInfo.getPath());
+				jaxDokument.setDokumentSize(uploadFileInfo.getSizeString());
+
 				return;
 			}
 		}
+
 		//add new
 		JaxDokument dokument = new JaxDokument();
 		dokument.setDokumentTyp(dokumentTyp);
-		dokument.setDokumentName(filename);
-		dokument.setDokumentPfad(path);
+		dokument.setDokumentName(uploadFileInfo.getFilename());
+		dokument.setDokumentPfad(uploadFileInfo.getPath());
+		dokument.setDokumentSize(uploadFileInfo.getSizeString());
 		jaxDokumentGrund.getDokumente().add(dokument);
 	}
 }

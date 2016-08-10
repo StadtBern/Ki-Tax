@@ -3,6 +3,7 @@ import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import {UploadRS} from '../../service/uploadRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import TSDokument from '../../../models/TSDokument';
 let template = require('./dv-dokumente-list.html');
 require('./dv-dokumente-list.less');
 
@@ -15,7 +16,8 @@ export class DVDokumenteListConfig implements IComponentOptions {
         tableTitle: '@',
         tag: '@',
         titleValue: '<',
-        onUploadDone: '&'
+        onUploadDone: '&',
+        onRemove: '&'
 
     };
     template = template;
@@ -31,6 +33,7 @@ export class DVDokumenteListController {
     tag: string;
     titleValue: string;
     onUploadDone: (dokumentGrund: any) => void;
+    onRemove: (attrs: any) => void;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil'];
     /* @ngInject */
@@ -44,23 +47,17 @@ export class DVDokumenteListController {
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
 
-
-//        console.log('Uploading file:', file.name);
-        console.log('**********');
-        console.log(this.dokumente);
-
         if (this.gesuchModelManager.gesuch) {
             let gesuchID = this.gesuchModelManager.gesuch.id;
-            //          console.log('Uploading file: ' + file.name + ' on gesuch ' + gesuchID);
+            console.log('Uploading files on gesuch ' + gesuchID);
             this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
 
                 let returnedDG: TSDokumentGrund = angular.copy(response);
-
                 this.handleUpload(returnedDG);
 
             });
         } else {
-            //console.log('No gesuch found to store file: ', file.name);
+            console.log('No gesuch found to store file ');
         }
 
     }
@@ -80,6 +77,10 @@ export class DVDokumenteListController {
         this.onUploadDone({dokument: returnedDG});
     }
 
+    remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
+        console.log('component -> remove dokument ' + dokument.dokumentName);
+        this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
+    }
 
 
 }

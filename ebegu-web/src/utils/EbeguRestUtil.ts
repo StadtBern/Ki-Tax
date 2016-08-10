@@ -1168,6 +1168,7 @@ export default class EbeguRestUtil {
             dokument.dokumentName = dokumentFromServer.dokumentName;
             dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
             dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
+            dokument.dokumentSize = dokumentFromServer.dokumentSize;
             return dokument;
         }
         return undefined;
@@ -1201,6 +1202,7 @@ export default class EbeguRestUtil {
             dokument.dokumentName = dokumentTS.dokumentName;
             dokument.dokumentPfad = dokumentTS.dokumentPfad;
             dokument.dokumentTyp = dokumentTS.dokumentTyp;
+            dokument.dokumentSize = dokumentTS.dokumentSize;
             return dokument;
         }
         return undefined;

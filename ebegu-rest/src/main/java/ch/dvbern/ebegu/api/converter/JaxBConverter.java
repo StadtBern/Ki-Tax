@@ -1181,7 +1181,7 @@ public class JaxBConverter {
 
 		if (betreuungJAXP.getVerfuegung() != null) {
 			betreuung.setVerfuegung(this.verfuegungtoStoreableEntity(betreuungJAXP.getVerfuegung()));
-		} else{
+		} else {
 			betreuung.setVerfuegung(null);
 		}
 
@@ -1510,21 +1510,28 @@ public class JaxBConverter {
 	}
 
 	public JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
-		JaxDokumentGrund jaxDokumentGrund = convertAbstractFieldsToJAX(dokumentGrund,new JaxDokumentGrund());
+		JaxDokumentGrund jaxDokumentGrund = convertAbstractFieldsToJAX(dokumentGrund, new JaxDokumentGrund());
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
 		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
-		for (Dokument dokument : dokumentGrund.getDokumente()) {
-			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+		if (dokumentGrund.getDokumente() != null) {
+			if (jaxDokumentGrund.getDokumente() == null) {
+				jaxDokumentGrund.setDokumente(new HashSet<JaxDokument>());
+			}
+			for (Dokument dokument : dokumentGrund.getDokumente()) {
+
+				jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+			}
 		}
 		return jaxDokumentGrund;
 	}
 
 	private JaxDokument dokumentToJax(Dokument dokument) {
-		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument,new JaxDokument());
+		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		jaxDokument.setDokumentName(dokument.getDokumentName());
 		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
 		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
+		jaxDokument.setDokumentSize(dokument.getDokumentSize());
 		return jaxDokument;
 	}
 
@@ -1582,6 +1589,7 @@ public class JaxBConverter {
 		dokument.setDokumentTyp(jaxDokument.getDokumentTyp());
 		dokument.setDokumentName(jaxDokument.getDokumentName());
 		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
+		dokument.setDokumentSize(jaxDokument.getDokumentSize());
 		return dokument;
 	}
 

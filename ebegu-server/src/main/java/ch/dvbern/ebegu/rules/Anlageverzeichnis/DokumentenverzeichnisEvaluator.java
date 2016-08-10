@@ -19,16 +19,15 @@ public class DokumentenverzeichnisEvaluator {
 
 		Set<DokumentGrund> anlageVerzeichnis = new HashSet<>();
 
-		if(gesuch != null) {
+		if (gesuch != null) {
 			kindAnlagen.getAllDokumente(gesuch, anlageVerzeichnis);
 			erwerbspensumDokumente.getAllDokumente(gesuch, anlageVerzeichnis);
 			finanzielleSituationDokumente.getAllDokumente(gesuch, anlageVerzeichnis);
 			einkommensverschlechterungDokumente.getAllDokumente(gesuch, anlageVerzeichnis);
 		}
 
+
 		return anlageVerzeichnis;
 	}
-
-
 
 }

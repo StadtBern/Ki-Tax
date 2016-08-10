@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.util;
 
+import ch.dvbern.ebegu.util.UploadFileInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;

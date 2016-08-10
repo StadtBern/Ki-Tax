@@ -1,18 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Institution;
-
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.util.Collection;
-import java.util.Optional;
+import ch.dvbern.ebegu.util.UploadFileInfo;
 
 /**
- * Service zum Verwalten von Institutionen
+ * Service zum Speichern von Files auf dem File-System
+ * Kann ev. durch modshape ersetzt werden
  */
 public interface FileSaverService {
 
-	String save(byte[] file, String fileName, String GesuchId);
+	boolean save(UploadFileInfo uploadFileInfo, String GesuchId);
 
-
+	boolean remove(String dokumentPaths);
 }
