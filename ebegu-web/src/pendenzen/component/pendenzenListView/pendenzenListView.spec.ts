@@ -67,7 +67,7 @@ describe('pendenzenListView', function () {
         });
         describe('translateBetreuungsangebotTypList', () => {
             it('returns a comma separated string with all BetreuungsangebotTypen', () => {
-                let list: Array<TSBetreuungsangebotTyp> = [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN];
+                let list: Array<TSBetreuungsangebotTyp> = [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND];
                 expect(pendenzListViewController.translateBetreuungsangebotTypList(list))
                     .toEqual('Tagesstätte für Kleinkinder, Tageseltern');
             });

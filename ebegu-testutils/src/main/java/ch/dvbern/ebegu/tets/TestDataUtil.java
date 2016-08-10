@@ -277,7 +277,6 @@ public final class TestDataUtil {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-		betreuung.setSchulpflichtig(false);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");

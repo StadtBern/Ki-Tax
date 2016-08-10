@@ -107,8 +107,7 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternSchulkinderOhneErwerbspensum() {
 		// Tageseltern Schulkinder erhalten immer soviel wie sie wollen, unabhängig von Erwerbspensum
-		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN, 80);
-		betreuung.setSchulpflichtig(Boolean.TRUE);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 80);
 		List<VerfuegungZeitabschnitt> result = betreuungspensumAbschnittRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumCalcRule.calculate(betreuung, result);
 		Assert.assertNotNull(result);
@@ -122,8 +121,7 @@ public class BetreuungspensumRuleTest {
 	@Test
 	public void testTageselternSchulkinderMitTiefemErwerbspensum() {
 		// Tageseltern Schulkinder erhalten immer soviel wie sie wollen, unabhängig von Erwerbspensum
-		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN, 80);
-		betreuung.setSchulpflichtig(Boolean.TRUE);
+		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND, 80);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		List<VerfuegungZeitabschnitt> result = erwerbspensumRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);

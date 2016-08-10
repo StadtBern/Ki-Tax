@@ -31,11 +31,11 @@ describe('pendenzFilter', function () {
         pendenzArray.push(pendenz1);
 
         pendenz2 = new TSPendenzJA('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.TAGESELTERN], ['Instit2'], 'Antonio Jimenez');
+            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez');
         pendenzArray.push(pendenz2);
 
         pendenz3 = new TSPendenzJA('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
+            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
         pendenzArray.push(pendenz3);
 
     }));
@@ -71,7 +71,7 @@ describe('pendenzFilter', function () {
         });
         it('should return an array with only the elements of the given angebotstyp', function () {
             expect(pendenzFilter(pendenzArray, {angebote: TSBetreuungsangebotTyp.KITA})).toEqual([pendenz1, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {angebote: TSBetreuungsangebotTyp.TAGESELTERN})).toEqual([pendenz2, pendenz3]);
+            expect(pendenzFilter(pendenzArray, {angebote: TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND})).toEqual([pendenz2, pendenz3]);
             expect(pendenzFilter(pendenzArray, {angebote: TSBetreuungsangebotTyp.TAGESSCHULE})).toEqual([]);
             expect(pendenzFilter(pendenzArray, {angebote: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
         });
