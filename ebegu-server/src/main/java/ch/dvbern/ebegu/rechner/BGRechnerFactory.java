@@ -15,7 +15,7 @@ public class BGRechnerFactory {
 			return new KitaRechner();
 		} else if (BetreuungsangebotTyp.TAGI.equals(betreuungsangebotTyp)){
 			return new TagiRechner();
-		} else if (BetreuungsangebotTyp.TAGESELTERN.equals(betreuungsangebotTyp)) {
+		} else if (betreuungsangebotTyp.isTageseltern()) {
 			return new TageselternRechner();
 		}
 		// Alle anderen Angebotstypen werden nicht berechnet

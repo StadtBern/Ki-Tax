@@ -618,9 +618,6 @@ export default class EbeguRestUtil {
         if (finanzielleSituationContainer.finanzielleSituationJA) {
             restFinanzielleSituationContainer.finanzielleSituationJA = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationJA);
         }
-        if (finanzielleSituationContainer.finanzielleSituationSV) {
-            restFinanzielleSituationContainer.finanzielleSituationSV = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationSV);
-        }
         return restFinanzielleSituationContainer;
     }
 
@@ -631,7 +628,6 @@ export default class EbeguRestUtil {
             //todo hefr nur initialisieren wenn noetig?
             containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
             containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
-            containerTS.finanzielleSituationSV = this.parseFinanzielleSituation(containerTS.finanzielleSituationSV || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationSV);
             return containerTS;
         }
         return undefined;
@@ -640,6 +636,8 @@ export default class EbeguRestUtil {
     public finanzielleSituationToRestObject(restFinanzielleSituation: any, finanzielleSituation: TSFinanzielleSituation): TSFinanzielleSituation {
         this.abstractfinanzielleSituationToRestObject(restFinanzielleSituation, finanzielleSituation);
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         return restFinanzielleSituation;
     }
 
@@ -652,9 +650,6 @@ export default class EbeguRestUtil {
         restAbstractFinanzielleSituation.erhalteneAlimente = abstractFinanzielleSituation.erhalteneAlimente;
         restAbstractFinanzielleSituation.bruttovermoegen = abstractFinanzielleSituation.bruttovermoegen;
         restAbstractFinanzielleSituation.schulden = abstractFinanzielleSituation.schulden;
-        restAbstractFinanzielleSituation.selbstaendig = abstractFinanzielleSituation.selbstaendig;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahr = abstractFinanzielleSituation.geschaeftsgewinnBasisjahr;
         restAbstractFinanzielleSituation.geleisteteAlimente = abstractFinanzielleSituation.geleisteteAlimente;
         return restAbstractFinanzielleSituation;
@@ -670,9 +665,6 @@ export default class EbeguRestUtil {
             abstractFinanzielleSituationTS.erhalteneAlimente = abstractFinanzielleSituationFromServer.erhalteneAlimente;
             abstractFinanzielleSituationTS.bruttovermoegen = abstractFinanzielleSituationFromServer.bruttovermoegen;
             abstractFinanzielleSituationTS.schulden = abstractFinanzielleSituationFromServer.schulden;
-            abstractFinanzielleSituationTS.selbstaendig = abstractFinanzielleSituationFromServer.selbstaendig;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahr = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahr;
             abstractFinanzielleSituationTS.geleisteteAlimente = abstractFinanzielleSituationFromServer.geleisteteAlimente;
             return abstractFinanzielleSituationTS;
@@ -684,6 +676,8 @@ export default class EbeguRestUtil {
         if (finanzielleSituationFromServer) {
             this.parseAbstractFinanzielleSituation(finanzielleSituationTS, finanzielleSituationFromServer);
             finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             return finanzielleSituationTS;
         }
         return undefined;
@@ -815,6 +809,7 @@ export default class EbeguRestUtil {
 
     private kindToRestObject(restKind: any, kind: TSKind): any {
         this.abstractPersonEntitytoRestObject(restKind, kind);
+        restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
         restKind.kinderabzug = kind.kinderabzug;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
@@ -853,6 +848,7 @@ export default class EbeguRestUtil {
     private parseKind(kindTS: TSKind, kindFromServer: any): TSKind {
         if (kindFromServer) {
             this.parseAbstractPersonEntity(kindTS, kindFromServer);
+            kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
             kindTS.kinderabzug = kindFromServer.kinderabzug;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
@@ -900,7 +896,6 @@ export default class EbeguRestUtil {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
-        restBetreuung.schulpflichtig = betreuung.schulpflichtig;
         restBetreuung.vertrag = betreuung.vertrag;
         restBetreuung.erweiterteBeduerfnisse = betreuung.erweiterteBeduerfnisse;
         if (betreuung.institutionStammdaten) {
@@ -948,7 +943,6 @@ export default class EbeguRestUtil {
         if (betreuungFromServer) {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
-            betreuungTS.schulpflichtig = betreuungFromServer.schulpflichtig;
             betreuungTS.vertrag = betreuungFromServer.vertrag;
             betreuungTS.erweiterteBeduerfnisse = betreuungFromServer.erweiterteBeduerfnisse;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;

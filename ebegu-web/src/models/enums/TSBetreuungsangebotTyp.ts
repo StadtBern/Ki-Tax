@@ -1,6 +1,7 @@
 export enum TSBetreuungsangebotTyp {
     KITA = <any> 'KITA',
-    TAGESELTERN = <any> 'TAGESELTERN',
+    TAGESELTERN_KLEINKIND = <any> 'TAGESELTERN_KLEINKIND',
+    TAGESELTERN_SCHULKIND = <any> 'TAGESELTERN_SCHULKIND',
     TAGI = <any> 'TAGI',
     TAGESSCHULE = <any> 'TAGESSCHULE'
 }
@@ -8,7 +9,8 @@ export enum TSBetreuungsangebotTyp {
 export function getTSBetreuungsangebotTypValues(): Array<TSBetreuungsangebotTyp> {
     return [
         TSBetreuungsangebotTyp.KITA,
-        TSBetreuungsangebotTyp.TAGESELTERN,
+        TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND,
+        TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND,
         TSBetreuungsangebotTyp.TAGI,
         TSBetreuungsangebotTyp.TAGESSCHULE
     ];

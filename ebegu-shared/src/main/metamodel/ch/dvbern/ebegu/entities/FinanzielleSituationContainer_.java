@@ -11,7 +11,6 @@ public abstract class FinanzielleSituationContainer_ extends ch.dvbern.ebegu.ent
 	public static volatile SingularAttribute<FinanzielleSituationContainer, Gesuchsteller> gesuchsteller;
 	public static volatile SingularAttribute<FinanzielleSituationContainer, Integer> jahr;
 	public static volatile SingularAttribute<FinanzielleSituationContainer, FinanzielleSituation> finanzielleSituationJA;
-	public static volatile SingularAttribute<FinanzielleSituationContainer, FinanzielleSituation> finanzielleSituationSV;
 	public static volatile SingularAttribute<FinanzielleSituationContainer, FinanzielleSituation> finanzielleSituationGS;
 
 }

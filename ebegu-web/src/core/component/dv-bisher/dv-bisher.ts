@@ -7,7 +7,6 @@ export class DvBisherComponentConfig implements IComponentOptions {
     bindings: any = {
         gs: '<',
         ja: '<',
-        sv: '<'
     };
     template = template;
     controller = DvBisher;

@@ -88,7 +88,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final FinanzielleSituation finanzielleSituation = TestDataUtil.createDefaultFinanzielleSituation();
 
 		finanzielleSituation.setSteuerveranlagungErhalten(steuerveranlagungErhalten);
-		finanzielleSituationContainer.setFinanzielleSituationSV(finanzielleSituation);
+		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
 
 		final Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 		gesuchsteller.setNachname("Chavez");
@@ -480,7 +480,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		createFinanzielleSituationGS(1, testgesuch, "Sämi", false);
 
-		final FinanzielleSituation finanzielleSituationJA = testgesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV();
+		final FinanzielleSituation finanzielleSituationJA = testgesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA();
 
 		finanzielleSituationJA.setFamilienzulage(BigDecimal.valueOf(100000));
 		finanzielleSituationJA.setErsatzeinkommen(BigDecimal.valueOf(100000));

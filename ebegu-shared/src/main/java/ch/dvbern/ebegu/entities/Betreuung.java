@@ -53,10 +53,6 @@ public class Betreuung extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
-	@Nullable
-	@Column(nullable = true)
-	private Boolean schulpflichtig = false;
-
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -112,15 +108,6 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
-	}
-
-	@Nullable
-	public Boolean getSchulpflichtig() {
-		return schulpflichtig;
-	}
-
-	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
-		this.schulpflichtig = schulpflichtig;
 	}
 
 	@Nullable
@@ -189,7 +176,7 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public Gesuch extractGesuch() {
-		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuch because Kind is null");
 		return this.getKind().getGesuch();
 	}
 
@@ -200,7 +187,6 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
-			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
 	}
 }

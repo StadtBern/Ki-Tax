@@ -49,8 +49,8 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		betreuungKitaBruennen.getBetreuungspensumContainers().add(betreuungspensumKitaBruennen);
 		// Finanzielle Situation
 		FinanzielleSituationContainer finanzielleSituationContainer = createFinanzielleSituationContainer();
-		finanzielleSituationContainer.getFinanzielleSituationSV().setNettolohn(MathUtil.DEFAULT.from(53265));
-		finanzielleSituationContainer.getFinanzielleSituationSV().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
+		finanzielleSituationContainer.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(53265));
+		finanzielleSituationContainer.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		return gesuch;
