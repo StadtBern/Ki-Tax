@@ -11,15 +11,17 @@ import IScope = angular.IScope;
  *                                                          zu verwenden, muss der Kontroller eine Subklasse von AbstractGesuchViewController sein.
  *                                                          Diese Attribute ist pflicht, darf aber auch auch ein leeres Array sein
  *     dv-show-expression - optionale Attribute, mit der man einen extra boolean Wert uebergeben kann
+ *
+ * ACHTUNG! Diese Direktive darf nicht mit ng-if zusammen benutzt werden
  */
 export class DVShowElement implements IDirective {
     restrict = 'A';
     controller = DVRoleElementController;
     // kind bindToController und kein controllerAs weil sonst wird der scope ueberschrieben, da wir mit attribute Direktiven arbeiten
 
-    transclude: any = 'element';
-    priority: number; // = 600;
-    terminal: boolean; // = true;
+    transclude: any;
+    priority: number;
+    terminal: boolean;
     replace = true;
     ngIf: any;
 
@@ -33,16 +35,15 @@ export class DVShowElement implements IDirective {
         this.terminal = this.ngIf.terminal;
     }
 
-
     link = (scope: IScope, element: IAugmentedJQuery, attributes: any, controller: DVRoleElementController, $transclude: any) => {
         // Copy arguments to new array to avoid: The 'arguments' object cannot be referenced in an arrow function in ES3 and ES5.
         // Consider using a standard function expression.
         let arguments2: Array<any> = [scope, element, attributes, controller, $transclude];
+        this.callNgIfThrough(attributes, controller, arguments2);
 
         attributes.$observe('dvShowAllowedRoles', (value: any) => {
             let roles = scope.$eval(value);
             controller.dvAllowedRoles = roles;
-            this.callNgIfThrough(attributes, controller, arguments2); // nur hier aufrufen, sonst dupliziert sich das Element
         });
         attributes.$observe('dvShowExpression', (value: any) => {
             let expression = scope.$eval(value);
@@ -51,7 +52,8 @@ export class DVShowElement implements IDirective {
     };
 
     /**
-     * Diese Methode darf nur einmal aufgerufen werden. Sollte diese Methode X-Mal aufgerufen werden, wird das Element dann X-Mall angezeigt
+     * Diese Methode darf nur einmal aufgerufen werden.
+     * VORSICHT. Sollte diese Methode X-Mal aufgerufen werden, wird das Element dann X-Mall angezeigt
      * @param attributes
      * @param controller
      * @param arguments2

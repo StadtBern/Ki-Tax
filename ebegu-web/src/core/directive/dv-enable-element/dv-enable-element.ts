@@ -11,6 +11,8 @@ import IScope = angular.IScope;
  *                                                          zu verwenden, muss der Kontroller eine Subklasse von AbstractGesuchViewController sein.
  *                                                          Diese Attribute ist pflicht, darf aber auch auch ein leeres Array sein
  *     dv-enable-expression - optionale Attribute, mit der man einen extra boolean Wert uebergeben kann
+ *
+ * ACHTUNG! Diese Direktive darf nicht mit disable zusammen benutzt werden
  */
 export class DVEnableElement implements IDirective {
     restrict = 'A';
