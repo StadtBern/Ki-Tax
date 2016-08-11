@@ -439,7 +439,7 @@ public class FinanzielleSituationRechner {
 
 	private FinanzielleSituation getFinanzielleSituationGS(Gesuchsteller gesuchsteller) {
 		if (gesuchsteller != null && gesuchsteller.getFinanzielleSituationContainer() != null) {
-			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationSV();
+			return gesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA();
 		}
 		return null;
 	}
