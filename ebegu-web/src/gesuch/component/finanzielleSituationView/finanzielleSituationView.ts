@@ -60,10 +60,6 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten === false;
     }
 
-    showSelbstaendig(): boolean {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig() === true;
-    }
-
     private steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
         if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === true) {
@@ -124,7 +120,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
      */
     public isGeschaeftsgewinnRequired(): boolean {
         return !(this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr ||
-                this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 ||
-                this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2);
+        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 ||
+        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2);
     }
 }
