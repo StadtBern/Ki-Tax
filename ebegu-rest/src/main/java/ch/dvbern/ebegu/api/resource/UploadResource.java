@@ -189,7 +189,7 @@ public class UploadResource {
 				jaxDokument.setDokumentName(uploadFileInfo.getFilename());
 				jaxDokument.setDokumentPfad(uploadFileInfo.getPath());
 				jaxDokument.setDokumentSize(uploadFileInfo.getSizeString());
-
+				LOG.info("Replace placeholder on "+jaxDokumentGrund.getDokumentTyp()+" by file "+ uploadFileInfo.getFilename());
 				return;
 			}
 		}
@@ -200,5 +200,6 @@ public class UploadResource {
 		dokument.setDokumentPfad(uploadFileInfo.getPath());
 		dokument.setDokumentSize(uploadFileInfo.getSizeString());
 		jaxDokumentGrund.getDokumente().add(dokument);
+		LOG.info("Add on "+jaxDokumentGrund.getDokumentTyp()+" file "+ uploadFileInfo.getFilename());
 	}
 }

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class FileSaverServiceBean implements FileSaverService {
 
 	@Override
 	public boolean save(UploadFileInfo uploadFileInfo, String gesuchId) {
+		Validate.notNull(uploadFileInfo);
+		Validate.notNull(uploadFileInfo.getFilename());
 
 		final String absulutFilePath = path + gesuchId + "/" + uploadFileInfo.getFilename();
 		uploadFileInfo.setPath(absulutFilePath);
@@ -33,11 +36,12 @@ public class FileSaverServiceBean implements FileSaverService {
 		try {
 			if (!Files.exists(file.getParent())) {
 				Files.createDirectories(file.getParent());
+				LOG.info("Save file in FileSystem: " + absulutFilePath);
 			}
 			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));
 
 		} catch (IOException e) {
-			LOG.error("Can't save file in FileSystem: " + uploadFileInfo.getFilename(), e);
+			LOG.info("Can't save file in FileSystem: " + uploadFileInfo.getFilename(), e);
 			return false;
 		}
 		return true;
@@ -50,9 +54,10 @@ public class FileSaverServiceBean implements FileSaverService {
 		try {
 			if (Files.exists(path)) {
 				Files.delete(path);
+				LOG.info("Delete file in FileSystem: " + dokumentPaths);
 			}
 		} catch (IOException e) {
-			LOG.error("Can't remove file in FileSystem: " + dokumentPaths, e);
+			LOG.info("Can't remove file in FileSystem: " + dokumentPaths, e);
 			return false;
 		}
 		return true;

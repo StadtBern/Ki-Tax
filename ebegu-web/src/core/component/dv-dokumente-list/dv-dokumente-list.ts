@@ -50,6 +50,9 @@ export class DVDokumenteListController {
         if (this.gesuchModelManager.gesuch) {
             let gesuchID = this.gesuchModelManager.gesuch.id;
             console.log('Uploading files on gesuch ' + gesuchID);
+            for (var file of files) {
+                console.log('File: ' + file.name );
+            }
             this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
 
                 let returnedDG: TSDokumentGrund = angular.copy(response);
