@@ -43,15 +43,20 @@ export class DVShowElement implements IDirective {
         attributes.$observe('dvAllowedRoles', (value: any) => {
             let roles = scope.$eval(value);
             controller.dvAllowedRoles = roles;
-            this.callNgIfThrough(attributes, controller, arguments2);
+            this.callNgIfThrough(attributes, controller, arguments2); // nur hier aufrufen, sonst dupliziert sich das Element
         });
         attributes.$observe('dvExpression', (value: any) => {
             let expression = scope.$eval(value);
             controller.dvExpression = expression;
-            this.callNgIfThrough(attributes, controller, arguments2);
         });
     };
 
+    /**
+     * Diese Methode darf nur einmal aufgerufen werden. Sollte diese Methode X-Mal aufgerufen werden, wird das Element dann X-Mall angezeigt
+     * @param attributes
+     * @param controller
+     * @param arguments2
+     */
     private callNgIfThrough(attributes: any, controller: DVShowElementController, arguments2: Array<any>) {
         attributes.ngIf = () => {
             return (controller.checkValidity());
