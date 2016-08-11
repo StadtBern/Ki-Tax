@@ -37,7 +37,7 @@
             <tr ng-repeat-start="row in table" class="dokument-grund-row">
 
                 <!--with and without tag-->
-                <td ng-bind="row.dokumente[0].dokumentTyp | translate" ngf-drop="vm.uploadAnhaenge($files, row)"
+                <td ng-bind="row.dokumentTyp | translate" ngf-drop="vm.uploadAnhaenge($files, row)"
                     ngf-drag-over-class="'dragover'" ngf-multiple="true"
                     ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)]"></td>
 

@@ -1514,6 +1514,7 @@ public class JaxBConverter {
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
 		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
+		jaxDokumentGrund.setDokumentTyp(dokumentGrund.getDokumentTyp());
 		if (dokumentGrund.getDokumente() != null) {
 			if (jaxDokumentGrund.getDokumente() == null) {
 				jaxDokumentGrund.setDokumente(new HashSet<JaxDokument>());
@@ -1529,7 +1530,6 @@ public class JaxBConverter {
 	private JaxDokument dokumentToJax(Dokument dokument) {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		jaxDokument.setDokumentName(dokument.getDokumentName());
-		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
 		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
 		jaxDokument.setDokumentSize(dokument.getDokumentSize());
 		return jaxDokument;
@@ -1543,6 +1543,7 @@ public class JaxBConverter {
 		dokumentGrund.setDokumentGrundTyp(dokumentGrundJAXP.getDokumentGrundTyp());
 		dokumentGrund.setFullName(dokumentGrundJAXP.getFullName());
 		dokumentGrund.setTag(dokumentGrundJAXP.getTag());
+		dokumentGrund.setDokumentTyp(dokumentGrundJAXP.getDokumentTyp());
 
 		dokumenteToEntity(dokumentGrundJAXP.getDokumente(), dokumentGrund.getDokumente(), dokumentGrund);
 		return dokumentGrund;
@@ -1586,7 +1587,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxDokument, dokument);
 
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentTyp(jaxDokument.getDokumentTyp());
 		dokument.setDokumentName(jaxDokument.getDokumentName());
 		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
 		dokument.setDokumentSize(jaxDokument.getDokumentSize());

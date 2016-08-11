@@ -180,7 +180,7 @@ public class UploadResource {
 		Validate.notNull(jaxDokumentGrund.getDokumente());
 		DokumentTyp dokumentTyp = null;
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
-			dokumentTyp = jaxDokument.getDokumentTyp();
+
 			if (null == jaxDokument.getDokumentName() ||
 				jaxDokument.getDokumentName().isEmpty() ||
 				jaxDokument.getDokumentName().equals(uploadFileInfo.getFilename())) {
@@ -196,7 +196,6 @@ public class UploadResource {
 
 		//add new
 		JaxDokument dokument = new JaxDokument();
-		dokument.setDokumentTyp(dokumentTyp);
 		dokument.setDokumentName(uploadFileInfo.getFilename());
 		dokument.setDokumentPfad(uploadFileInfo.getPath());
 		dokument.setDokumentSize(uploadFileInfo.getSizeString());

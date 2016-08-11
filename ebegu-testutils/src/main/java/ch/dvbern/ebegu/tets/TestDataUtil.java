@@ -443,11 +443,11 @@ public final class TestDataUtil {
 		dokumentGrund.setDokumentGrundTyp(DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 		dokumentGrund.setTag("tag");
 		dokumentGrund.setFullName("Hugo");
+		dokumentGrund.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
 		dokumentGrund.setDokumente(new HashSet<Dokument>());
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
 		dokument.setDokumentName("testdokument");
-		dokument.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}

@@ -19,23 +19,12 @@ public class JaxDokument extends JaxAbstractDTO {
 
 	private String dokumentSize;
 
-	@NotNull
-	private DokumentTyp dokumentTyp;
-
 	public String getDokumentName() {
 		return dokumentName;
 	}
 
 	public void setDokumentName(String dokumentName) {
 		this.dokumentName = dokumentName;
-	}
-
-	public DokumentTyp getDokumentTyp() {
-		return dokumentTyp;
-	}
-
-	public void setDokumentTyp(DokumentTyp dokumentTyp) {
-		this.dokumentTyp = dokumentTyp;
 	}
 
 	public String getDokumentPfad() {

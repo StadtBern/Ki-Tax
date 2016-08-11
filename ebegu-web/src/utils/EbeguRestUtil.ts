@@ -1144,6 +1144,7 @@ export default class EbeguRestUtil {
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
             dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
             return dokumentGrund;
         }
@@ -1167,7 +1168,6 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(dokument, dokumentFromServer);
             dokument.dokumentName = dokumentFromServer.dokumentName;
             dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
-            dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
             dokument.dokumentSize = dokumentFromServer.dokumentSize;
             return dokument;
         }
@@ -1180,7 +1180,9 @@ export default class EbeguRestUtil {
             dokumentGrund.tag = dokumentGrundTS.tag;
             dokumentGrund.fullName = dokumentGrundTS.fullName;
             dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
             dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+
             return dokumentGrund;
         }
         return undefined;
@@ -1201,7 +1203,6 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(dokument, dokumentTS);
             dokument.dokumentName = dokumentTS.dokumentName;
             dokument.dokumentPfad = dokumentTS.dokumentPfad;
-            dokument.dokumentTyp = dokumentTS.dokumentTyp;
             dokument.dokumentSize = dokumentTS.dokumentSize;
             return dokument;
         }

@@ -44,19 +44,22 @@ public class DokumentGrund extends AbstractEntity {
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName, tag);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	@NotNull
@@ -77,6 +80,10 @@ public class DokumentGrund extends AbstractEntity {
 	@Column(nullable = true)
 	@Nullable
 	private String tag;
+
+	@Enumerated(value = EnumType.STRING)
+	@NotNull
+	private DokumentTyp dokumentTyp;
 
 	@Nullable
 	@Valid
@@ -125,6 +132,14 @@ public class DokumentGrund extends AbstractEntity {
 
 	public void setTag(@Nullable String tag) {
 		this.tag = tag;
+	}
+
+	public DokumentTyp getDokumentTyp() {
+		return dokumentTyp;
+	}
+
+	public void setDokumentTyp(DokumentTyp dokumentTyp) {
+		this.dokumentTyp = dokumentTyp;
 	}
 
 	@Override

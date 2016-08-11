@@ -7,8 +7,6 @@ export default class TSDokument extends TSAbstractEntity {
 
     private _dokumentPfad: string;
 
-    private _dokumentTyp: TSDokumentTyp;
-
     private _dokumentSize: string;
 
     get dokumentName(): string {
@@ -17,14 +15,6 @@ export default class TSDokument extends TSAbstractEntity {
 
     set dokumentName(value: string) {
         this._dokumentName = value;
-    }
-
-    get dokumentTyp(): TSDokumentTyp {
-        return this._dokumentTyp;
-    }
-
-    set dokumentTyp(value: TSDokumentTyp) {
-        this._dokumentTyp = value;
     }
 
     get dokumentPfad(): string {

@@ -145,9 +145,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertFalse(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, sämi));
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(sämi);
-
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.SORGERECHTSVEREINBARUNG, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.SORGERECHTSVEREINBARUNG, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -162,9 +160,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		Assert.assertTrue(kindDokumente.isDokumentNeeded(DokumentTyp.FACHSTELLENBEST_SOZ, kind));
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
-
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_SOZ, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_SOZ, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -180,8 +176,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = getDokumentGrund(kind);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_BEH, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.FACHSTELLENBEST_BEH, dokumentGrund.getDokumentTyp());
 	}
 
 	private DokumentGrund getDokumentGrund(Kind kind) {
@@ -215,8 +210,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_ERWERBSPENSUM, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_ERWERBSPENSUM, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -240,8 +234,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -255,9 +248,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_AUSBILDUNG, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_AUSBILDUNG, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -271,9 +262,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_RAV, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_RAV, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -287,8 +276,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.BESTAETIGUNG_ARZT, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.BESTAETIGUNG_ARZT, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -304,8 +292,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_UNREG_ARBEITSZ, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -321,8 +308,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_LANG_ARBEITSWEG, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -338,8 +324,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_SONSTIGEN_ZUSCHLAG, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -355,8 +340,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -372,8 +356,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = checkDokumentGrund(erwerbspensum);
 
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.NACHWEIS_FIXE_ARBEITSZEITEN, dokumentGrund.getDokumentTyp());
 	}
 
 
@@ -409,13 +392,12 @@ public class DokumentenverzeichnisEvaluatorTest {
 				}
 			}
 
-			final Set<Dokument> dokumente = dokumentGrund.getDokumente();
-			for (Dokument dokument : dokumente) {
-				if (dokument.getDokumentTyp().equals(dokumentTyp)) {
-					grunds.add(dokumentGrund);
-					break;
-				}
+
+			if (dokumentGrund.getDokumentTyp().equals(dokumentTyp)) {
+				grunds.add(dokumentGrund);
+				break;
 			}
+
 		}
 		return grunds;
 	}
@@ -433,8 +415,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final DokumentGrund dokumentGrund = dokumentGrunds.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.FINANZIELLESITUATION, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertEquals(null, dokumentGrund.getFullName());
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, dokument.getDokumentTyp());
+		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, dokumentGrund.getDokumentTyp());
 	}
 
 	@Test
@@ -489,8 +470,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 			1, dokumentGrundsForType.size());
 		final DokumentGrund dokumentGrund = dokumentGrundsForType.iterator().next();
 		Assert.assertEquals(fullname, dokumentGrund.getFullName());
-		final Dokument dokument = dokumentGrund.getDokumente().iterator().next();
-		Assert.assertEquals(dokumentTyp, dokument.getDokumentTyp());
+		Assert.assertEquals(dokumentTyp, dokumentGrund.getDokumentTyp());
 
 	}
 

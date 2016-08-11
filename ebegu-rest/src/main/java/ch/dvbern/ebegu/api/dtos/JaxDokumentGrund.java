@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -21,6 +22,9 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	private DokumentGrundTyp dokumentGrundTyp;
+
+	@NotNull
+	private DokumentTyp dokumentTyp;
 
 	@Nullable
 	private String fullName;
@@ -64,5 +68,13 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 
 	public void setDokumente(@Nullable Set<JaxDokument> dokumente) {
 		this.dokumente = dokumente;
+	}
+
+	public DokumentTyp getDokumentTyp() {
+		return dokumentTyp;
+	}
+
+	public void setDokumentTyp(DokumentTyp dokumentTyp) {
+		this.dokumentTyp = dokumentTyp;
 	}
 }

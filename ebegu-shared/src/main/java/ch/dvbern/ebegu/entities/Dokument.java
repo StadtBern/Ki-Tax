@@ -36,11 +36,6 @@ public class Dokument extends AbstractEntity {
 	@NotNull
 	private String dokumentSize;
 
-	@Enumerated(value = EnumType.STRING)
-	@NotNull
-	private DokumentTyp dokumentTyp;
-
-
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokument_dokumentgrund_id"), nullable = false)
@@ -49,9 +44,8 @@ public class Dokument extends AbstractEntity {
 	public Dokument() {
 	}
 
-	public Dokument(DokumentGrund dokumentGrund, DokumentTyp dokumentTyp) {
+	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;
-		this.dokumentTyp = dokumentTyp;
 	}
 
 	@Nullable
@@ -61,14 +55,6 @@ public class Dokument extends AbstractEntity {
 
 	public void setDokumentName(@Nullable String dokumentName) {
 		this.dokumentName = dokumentName;
-	}
-
-	public DokumentTyp getDokumentTyp() {
-		return dokumentTyp;
-	}
-
-	public void setDokumentTyp(DokumentTyp dokumentTyp) {
-		this.dokumentTyp = dokumentTyp;
 	}
 
 	public DokumentGrund getDokumentGrund() {
@@ -99,7 +85,8 @@ public class Dokument extends AbstractEntity {
 	public String toString() {
 		return "Dokument{" +
 			"dokumentName='" + dokumentName + '\'' +
-			", dokumentTyp=" + dokumentTyp +
+			", dokumentPfad='" + dokumentPfad + '\'' +
+			", dokumentSize='" + dokumentSize + '\'' +
 			'}';
 	}
 }

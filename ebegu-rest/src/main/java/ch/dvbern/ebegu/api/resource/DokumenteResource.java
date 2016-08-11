@@ -161,8 +161,8 @@ public class DokumenteResource {
 				if (persistedDokumentGrund.getDokumente() != null && !persistedDokumentGrund.getDokumente().isEmpty() &&
 					dokumentGrundNeeded.getDokumente() != null && !dokumentGrundNeeded.getDokumente().isEmpty()) {
 
-					final DokumentTyp dokumentTypPersisted = persistedDokumentGrund.getDokumente().iterator().next().getDokumentTyp();
-					final DokumentTyp dokumentTypNeeded = dokumentGrundNeeded.getDokumente().iterator().next().getDokumentTyp();
+					final DokumentTyp dokumentTypPersisted = persistedDokumentGrund.getDokumentTyp();
+					final DokumentTyp dokumentTypNeeded = dokumentGrundNeeded.getDokumentTyp();
 					if (dokumentTypNeeded.equals(dokumentTypPersisted)) {
 						persisted.add(persistedDokumentGrund);
 					}
