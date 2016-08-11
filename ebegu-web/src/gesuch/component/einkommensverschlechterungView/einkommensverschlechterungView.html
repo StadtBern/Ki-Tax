@@ -310,74 +310,77 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="checkbox">
-                        <md-checkbox ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().selbstaendig" name="selbstaendig" aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT|translate}}">
+                        <md-checkbox ng-model="vm.showSelbstaendig" name="showSelbstaendig" aria-label="{{FINANZIELLE_SITUATION_SELBSTAENDIGKEIT | translate}}"
+                                     ng-change="vm.showSelbstaendigClicked()"
+                                     ng-disabled="vm.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig()">
                             <span data-translate="FINANZIELLE_SITUATION_SELBSTAENDIGKEIT"></span>
                         </md-checkbox>
-                        <dv-error-messages  for="form.selbstaendig.$error" class="error"></dv-error-messages>
                     </div>
                 </div>
             </div>
 
             <!-- Geschaeftsgewinn Basisjahr -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showSelbstaendig()">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR" for="geschaeftsgewinnBasisjahr"
-                               translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></label>
-                        <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr" ng-blur="vm.calculate()"
-                               dv-max-length max="999999999999" class="form-control" ui-negative-number>
-                        <dv-error-messages  for="form.geschaeftsgewinnBasisjahr.$error" class="error"></dv-error-messages>
-                        <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahr"
-                                   ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"
-                                   sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"></dv-bisher>
-                    </dv-input-container>
+            <div ng-if="vm.showSelbstaendig">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR" for="geschaeftsgewinnBasisjahr"
+                                   translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"></label>
+                            <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr" ui-number-mask="0"
+                                   ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr" ng-blur="vm.calculate()"
+                                   dv-max-length max="999999999999" class="form-control">
+                            <dv-error-messages  for="form.geschaeftsgewinnBasisjahr.$error" class="error"></dv-error-messages>
+                            <dv-bisher gs="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith_GS().geschaeftsgewinnBasisjahr"
+                                       ja="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"
+                                       sv="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr"></dv-bisher>
+                        </dv-input-container>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Geschäftsgewinn Basisjahr-1 -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showSelbstaendig()">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1" for="geschaeftsgewinnBasisjahrMinus1"
-                               translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-1}}}"></label>
-                        <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus1"
-                               dv-max-length max="999999999999" class="form-control" disabled ui-negative-number>
-                        <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus1.$error" class="error"></dv-error-messages>
-                    </dv-input-container>
+                <!-- Geschäftsgewinn Basisjahr-1 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1" for="geschaeftsgewinnBasisjahrMinus1"
+                                   translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith() - 1}}}"></label>
+                            <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
+                                   ng-model="vm.geschaeftsgewinnBasisjahrMinus1"
+                                   dv-max-length max="999999999999" class="form-control" disabled>
+                            <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus1.$error" class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Geschäftsgewinn Basisjahr-2 -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showSelbstaendig()">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2" for="geschaeftsgewinnBasisjahrMinus2"
-                               translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-2}}}"></label>
-                        <input id="geschaeftsgewinnBasisjahrMinus2" type="text" name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
-                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahrMinus2"
-                               dv-max-length max="999999999999" class="form-control" disabled ui-negative-number>
-                        <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus2.$error" class="error"></dv-error-messages>
-                    </dv-input-container>
+                <!-- Geschäftsgewinn Basisjahr-2 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2" for="geschaeftsgewinnBasisjahrMinus2"
+                                   translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()-2}}}"></label>
+                            <input id="geschaeftsgewinnBasisjahrMinus2" type="text" name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
+                                   ng-model="vm.geschaeftsgewinnBasisjahrMinus2"
+                                   dv-max-length max="999999999999" class="form-control" disabled>
+                            <dv-error-messages  for="form.geschaeftsgewinnBasisjahrMinus2.$error" class="error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Durchschnitt Geschäftsgewinn -->
-            <div class="row">
-                <div class="col-md-6" ng-if="vm.showSelbstaendig()">
-                    <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 1">
-                        <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS1"></label>
-                        <input id="geschaeftsgewinnDurchschnittGS1" type="text" name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
-                               ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                    <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
-                        <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS2"></label>
-                        <input id="geschaeftsgewinnDurchschnittGS2" type="text" name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
-                               ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
+                <!-- Durchschnitt Geschäftsgewinn -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 1">
+                            <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS1"></label>
+                            <input id="geschaeftsgewinnDurchschnittGS1" type="text" name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
+                                   ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller1"
+                                   dv-max-length max="999999999999" class="form-control" disabled>
+                        </dv-input-container>
+                        <dv-input-container class="form-group" ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
+                            <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT" for="geschaeftsgewinnDurchschnittGS2"></label>
+                            <input id="geschaeftsgewinnDurchschnittGS2" type="text" name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
+                                   ng-model="vm.getResultate().geschaeftsgewinnDurchschnittGesuchsteller2"
+                                   dv-max-length max="999999999999" class="form-control" disabled>
+                        </dv-input-container>
+                    </div>
                 </div>
             </div>
 

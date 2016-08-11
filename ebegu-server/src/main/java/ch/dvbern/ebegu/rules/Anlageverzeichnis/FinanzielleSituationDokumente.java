@@ -77,6 +77,7 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 	}
 
+	@Override
 	protected boolean isJahresLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
 			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
@@ -84,6 +85,19 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 			return !finanzielleSituation.getSteuerveranlagungErhalten() &&
 				finanzielleSituation.getNettolohn() != null &&
 				finanzielleSituation.getNettolohn().compareTo(BigDecimal.ZERO) > 0;
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean isErfolgsrechnungNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
+		if (abstractFinanzielleSituation instanceof FinanzielleSituation) {
+			FinanzielleSituation finanzielleSituation = (FinanzielleSituation) abstractFinanzielleSituation;
+
+			return !finanzielleSituation.getSteuerveranlagungErhalten() &&
+				(finanzielleSituation.getGeschaeftsgewinnBasisjahr() != null
+					|| finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1() != null
+					|| finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2() != null);
 		}
 		return false;
 	}

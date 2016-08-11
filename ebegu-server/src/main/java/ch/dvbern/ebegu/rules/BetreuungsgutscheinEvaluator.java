@@ -37,7 +37,7 @@ public class BetreuungsgutscheinEvaluator {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {
-			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationUtil.calculateFinanzDaten()");
+			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationRechner.calculateFinanzDaten()");
 		}
 
 		List<Rule> rulesToRun = findRulesToRunForPeriode(gesuch.getGesuchsperiode());

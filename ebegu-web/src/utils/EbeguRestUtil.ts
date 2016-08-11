@@ -640,6 +640,8 @@ export default class EbeguRestUtil {
     public finanzielleSituationToRestObject(restFinanzielleSituation: any, finanzielleSituation: TSFinanzielleSituation): TSFinanzielleSituation {
         this.abstractfinanzielleSituationToRestObject(restFinanzielleSituation, finanzielleSituation);
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         return restFinanzielleSituation;
     }
 
@@ -652,9 +654,6 @@ export default class EbeguRestUtil {
         restAbstractFinanzielleSituation.erhalteneAlimente = abstractFinanzielleSituation.erhalteneAlimente;
         restAbstractFinanzielleSituation.bruttovermoegen = abstractFinanzielleSituation.bruttovermoegen;
         restAbstractFinanzielleSituation.schulden = abstractFinanzielleSituation.schulden;
-        restAbstractFinanzielleSituation.selbstaendig = abstractFinanzielleSituation.selbstaendig;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahr = abstractFinanzielleSituation.geschaeftsgewinnBasisjahr;
         restAbstractFinanzielleSituation.geleisteteAlimente = abstractFinanzielleSituation.geleisteteAlimente;
         return restAbstractFinanzielleSituation;
@@ -670,9 +669,6 @@ export default class EbeguRestUtil {
             abstractFinanzielleSituationTS.erhalteneAlimente = abstractFinanzielleSituationFromServer.erhalteneAlimente;
             abstractFinanzielleSituationTS.bruttovermoegen = abstractFinanzielleSituationFromServer.bruttovermoegen;
             abstractFinanzielleSituationTS.schulden = abstractFinanzielleSituationFromServer.schulden;
-            abstractFinanzielleSituationTS.selbstaendig = abstractFinanzielleSituationFromServer.selbstaendig;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahr = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahr;
             abstractFinanzielleSituationTS.geleisteteAlimente = abstractFinanzielleSituationFromServer.geleisteteAlimente;
             return abstractFinanzielleSituationTS;
@@ -684,6 +680,8 @@ export default class EbeguRestUtil {
         if (finanzielleSituationFromServer) {
             this.parseAbstractFinanzielleSituation(finanzielleSituationTS, finanzielleSituationFromServer);
             finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             return finanzielleSituationTS;
         }
         return undefined;

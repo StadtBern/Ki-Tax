@@ -9,9 +9,9 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 /**
- * Tests für FinanzielleSituationUtil
+ * Tests für FinanzielleSituationRechner
  */
-public class FinanzielleSituationUtilTest {
+public class FinanzielleSituationRechnerTest {
 
 	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
 	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
