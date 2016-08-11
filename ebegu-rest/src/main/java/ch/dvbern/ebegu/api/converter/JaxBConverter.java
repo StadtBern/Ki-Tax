@@ -914,10 +914,6 @@ public class JaxBConverter {
 			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationJA()).orElse(new FinanzielleSituation());
 			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null) {
-			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationSV()).orElse(new FinanzielleSituation());
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), finSitToMergeWith));
-		}
 		return container;
 	}
 
@@ -927,7 +923,6 @@ public class JaxBConverter {
 		jaxPerson.setJahr(persistedFinanzielleSituation.getJahr());
 		jaxPerson.setFinanzielleSituationGS(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationGS()));
 		jaxPerson.setFinanzielleSituationJA(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationJA()));
-		jaxPerson.setFinanzielleSituationSV(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationSV()));
 		return jaxPerson;
 	}
 

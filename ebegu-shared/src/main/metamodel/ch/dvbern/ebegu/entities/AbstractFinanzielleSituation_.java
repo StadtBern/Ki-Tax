@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
-import java.math.BigDecimal;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+import java.math.BigDecimal;
 
 @Generated(value = "org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor")
 @StaticMetamodel(AbstractFinanzielleSituation.class)

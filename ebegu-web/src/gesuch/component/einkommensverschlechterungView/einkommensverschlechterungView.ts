@@ -47,7 +47,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
             this.getGeschaeftsgewinnFromFS();
 
-            this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig()
+            this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig()
                 || (this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== null
                     && this.gesuchModelManager.getEinkommensverschlechterungToWorkWith().geschaeftsgewinnBasisjahr !== undefined);
         }
@@ -194,13 +194,13 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     public getGeschaeftsgewinnFromFS(): void {
         if (!this.gesuchModelManager.getStammdatenToWorkWith() || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
+            || !this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA) {
             // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
             this.$log.debug('Fehler: FinSit muss existieren');
             return;
         }
 
-        let fs: TSFinanzielleSituation = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
+        let fs: TSFinanzielleSituation = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA;
         if (this.gesuchModelManager.basisJahrPlusNumber === 1) {
             this.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
             this.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;

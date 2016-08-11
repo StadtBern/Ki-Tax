@@ -34,7 +34,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
-        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
+        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig();
     }
 
     public showSelbstaendigClicked() {
@@ -45,9 +45,9 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private resetSelbstaendigFields() {
         if (this.gesuchModelManager.getStammdatenToWorkWith() && this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer) {
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahr = undefined;
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 = undefined;
-            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2 = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahr = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2 = undefined;
             this.calculate();
         }
     }
@@ -57,16 +57,16 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     showSteuererklaerung(): boolean {
-        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.steuerveranlagungErhalten === false;
+        return this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.steuerveranlagungErhalten === false;
     }
 
     private steuerveranlagungClicked(): void {
         // Wenn Steuerveranlagung JA -> auch StekErhalten -> JA
-        if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === true) {
-            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = true;
-        } else if (this.getModel().finanzielleSituationSV.steuerveranlagungErhalten === false) {
+        if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === true) {
+            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = true;
+        } else if (this.getModel().finanzielleSituationJA.steuerveranlagungErhalten === false) {
             // Steuerveranlagung neu NEIN -> Fragen loeschen
-            this.getModel().finanzielleSituationSV.steuererklaerungAusgefuellt = undefined;
+            this.getModel().finanzielleSituationJA.steuererklaerungAusgefuellt = undefined;
         }
     }
 
@@ -119,8 +119,8 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
      * @returns {boolean}
      */
     public isGeschaeftsgewinnRequired(): boolean {
-        return !(this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahr ||
-                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 ||
-                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2);
+        return !(this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr ||
+        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1 ||
+        this.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2);
     }
 }
