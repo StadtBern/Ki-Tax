@@ -977,9 +977,6 @@ public class JaxBConverter {
 		abstractFinanzielleSituation.setErhalteneAlimente(abstractFinanzielleSituationJAXP.getErhalteneAlimente());
 		abstractFinanzielleSituation.setBruttovermoegen(abstractFinanzielleSituationJAXP.getBruttovermoegen());
 		abstractFinanzielleSituation.setSchulden(abstractFinanzielleSituationJAXP.getSchulden());
-		abstractFinanzielleSituation.setSelbstaendig(abstractFinanzielleSituationJAXP.getSelbstaendig());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahr());
 		abstractFinanzielleSituation.setGeleisteteAlimente(abstractFinanzielleSituationJAXP.getGeleisteteAlimente());
 
@@ -988,7 +985,7 @@ public class JaxBConverter {
 
 	private void abstractFinanzielleSituationToJAX(@Nullable final AbstractFinanzielleSituation persistedAbstractFinanzielleSituation, JaxAbstractFinanzielleSituation jaxAbstractFinanzielleSituation) {
 		if (persistedAbstractFinanzielleSituation != null) {
-			convertAbstractFieldsToEntity(jaxAbstractFinanzielleSituation, persistedAbstractFinanzielleSituation);
+			convertAbstractFieldsToJAX(persistedAbstractFinanzielleSituation, jaxAbstractFinanzielleSituation);
 			jaxAbstractFinanzielleSituation.setSteuerveranlagungErhalten(persistedAbstractFinanzielleSituation.getSteuerveranlagungErhalten());
 			jaxAbstractFinanzielleSituation.setSteuererklaerungAusgefuellt(persistedAbstractFinanzielleSituation.getSteuererklaerungAusgefuellt());
 			jaxAbstractFinanzielleSituation.setFamilienzulage(persistedAbstractFinanzielleSituation.getFamilienzulage());
@@ -996,9 +993,6 @@ public class JaxBConverter {
 			jaxAbstractFinanzielleSituation.setErhalteneAlimente(persistedAbstractFinanzielleSituation.getErhalteneAlimente());
 			jaxAbstractFinanzielleSituation.setBruttovermoegen(persistedAbstractFinanzielleSituation.getBruttovermoegen());
 			jaxAbstractFinanzielleSituation.setSchulden(persistedAbstractFinanzielleSituation.getSchulden());
-			jaxAbstractFinanzielleSituation.setSelbstaendig(persistedAbstractFinanzielleSituation.getSelbstaendig());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
 			jaxAbstractFinanzielleSituation.setGeleisteteAlimente(persistedAbstractFinanzielleSituation.getGeleisteteAlimente());
 		}
@@ -1010,6 +1004,8 @@ public class JaxBConverter {
 		abstractFinanzielleSituationToEntity(finanzielleSituationJAXP, finanzielleSituation);
 
 		finanzielleSituation.setNettolohn(finanzielleSituationJAXP.getNettolohn());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		return finanzielleSituation;
 	}
 
@@ -1017,10 +1013,11 @@ public class JaxBConverter {
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
-
 			JaxFinanzielleSituation jaxFinanzielleSituation = new JaxFinanzielleSituation();
 
 			abstractFinanzielleSituationToJAX(persistedFinanzielleSituation, jaxFinanzielleSituation);
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxFinanzielleSituation.setNettolohn(persistedFinanzielleSituation.getNettolohn());
 
 			return jaxFinanzielleSituation;
@@ -1032,7 +1029,6 @@ public class JaxBConverter {
 	private Einkommensverschlechterung einkommensverschlechterungToEntity(@Nonnull final JaxEinkommensverschlechterung einkommensverschlechterungJAXP, @Nonnull final Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		Validate.notNull(einkommensverschlechterungJAXP);
-		convertAbstractFieldsToEntity(einkommensverschlechterungJAXP, einkommensverschlechterung);
 		abstractFinanzielleSituationToEntity(einkommensverschlechterungJAXP, einkommensverschlechterung);
 
 		einkommensverschlechterung.setNettolohnJan(einkommensverschlechterungJAXP.getNettolohnJan());
@@ -1056,8 +1052,6 @@ public class JaxBConverter {
 
 		if (persistedEinkommensverschlechterung != null) {
 			JaxEinkommensverschlechterung jaxEinkommensverschlechterung = new JaxEinkommensverschlechterung();
-
-			convertAbstractFieldsToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
 
 			abstractFinanzielleSituationToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
 

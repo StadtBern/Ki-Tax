@@ -90,6 +90,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 
 	}
 
+	@Override
 	protected boolean isMonatsLohnausweisNeeded(AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		if (abstractFinanzielleSituation instanceof Einkommensverschlechterung) {
 
