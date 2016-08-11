@@ -79,7 +79,7 @@ describe('betreuungView', function () {
             beforeEach(function () {
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
-                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
             });
             it('should return an empty list if betreuungsangebot is not yet defined', () => {

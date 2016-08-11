@@ -112,7 +112,8 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESSCHULE) {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN;
 		}
-		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN) {
+		else if (betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN_KLEINKIND ||
+				betreuungsangebotTyp == BetreuungsangebotTyp.TAGESELTERN_SCHULKIND) {
 			key = EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN;
 		}
 		if (key != null) {

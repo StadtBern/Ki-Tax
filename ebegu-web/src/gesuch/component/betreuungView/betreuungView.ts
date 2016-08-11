@@ -92,11 +92,6 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                 if (this.isTagesschule()) {
                     this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
                 }
-                if (!this.isTageseltern()) {
-                    this.getBetreuungModel().schulpflichtig = undefined;
-                } else if (!this.getBetreuungModel().schulpflichtig) {
-                    this.getBetreuungModel().schulpflichtig = false; // sollte es undefined sein setzen wir es direkt auf false
-                }
             }
             this.errorService.clearAll();
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
@@ -242,7 +237,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public isTageseltern(): boolean {
-        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN);
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
+            this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {

@@ -57,7 +57,7 @@ public class BetreuungsangebotTypRuleTest {
 	public void testAngebotTageseltern() {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESELTERN, betreuung);
+		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND, betreuung);
 
 		List<VerfuegungZeitabschnitt> result = betreuungsangebotTypRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		Assert.assertNotNull(result);
