@@ -7,11 +7,11 @@ import IScope = angular.IScope;
 /**
  * Attribute Directive um Elementen aus- und einblenden.
  * Die Direktive muss folgendermasse benutzt werden:
- *     dv-show-element - diese Attribute muss in jedem Element gesetzt werden, der die Direktive braucht
- *     dv-allowed-roles="[vm.TSRole.X, vm.TSRole.Y, ...]" - Array mit allen Rollen, für die das Element eingeblendet werden muss. Um diese Syntax
+ *     dv-show-element - diese Attribute muss in jedem Element gesetzt werden, das die Direktive braucht
+ *     dv-show-allowed-roles="[vm.TSRole.X, vm.TSRole.Y, ...]" - Array mit allen Rollen, für die das Element eingeblendet werden muss. Um diese Syntax
  *                                                          zu verwenden, muss der Kontroller eine Subklasse von AbstractGesuchViewController sein.
- *                                                          Diese Attribute ist pflicht, darf auch auch ein leeres Array sein
- *     dv-expression - optionale Attribute, mit der man einen extra boolean Wert uebergeben kann
+ *                                                          Diese Attribute ist pflicht, darf aber auch auch ein leeres Array sein
+ *     dv-show-expression - optionale Attribute, mit der man einen extra boolean Wert uebergeben kann
  */
 export class DVShowElement implements IDirective {
     restrict = 'A';
@@ -40,14 +40,14 @@ export class DVShowElement implements IDirective {
         // Consider using a standard function expression.
         let arguments2: Array<any> = [scope, element, attributes, controller, $transclude];
 
-        attributes.$observe('dvAllowedRoles', (value: any) => {
+        attributes.$observe('dvShowAllowedRoles', (value: any) => {
             let roles = scope.$eval(value);
-            controller.dvAllowedRoles = roles;
+            controller.dvShowAllowedRoles = roles;
             this.callNgIfThrough(attributes, controller, arguments2); // nur hier aufrufen, sonst dupliziert sich das Element
         });
-        attributes.$observe('dvExpression', (value: any) => {
+        attributes.$observe('dvShowExpression', (value: any) => {
             let expression = scope.$eval(value);
-            controller.dvExpression = expression;
+            controller.dvShowExpression = expression;
         });
     };
 
@@ -74,8 +74,8 @@ export class DVShowElement implements IDirective {
 
 export class DVShowElementController {
 
-    dvAllowedRoles: Array<TSRole>;
-    dvExpression: boolean;
+    dvShowAllowedRoles: Array<TSRole>;
+    dvShowExpression: boolean;
 
     static $inject: string[] = ['AuthServiceRS'];
 
@@ -95,8 +95,8 @@ export class DVShowElementController {
      * @returns {boolean}
      */
     private checkRoles(): boolean {
-        if (this.dvAllowedRoles) {
-            for (let role of this.dvAllowedRoles) {
+        if (this.dvShowAllowedRoles) {
+            for (let role of this.dvShowAllowedRoles) {
                 if (this.authServiceRS.getPrincipalRole() === role) {
                     return true;
                 }
@@ -110,9 +110,9 @@ export class DVShowElementController {
      * @returns {boolean} wenn die expression is null oder undefined gibt es true zurueck. Sonst gibt es den Wert von expression zurueck
      */
     private checkExpression(): boolean {
-        if (this.dvExpression === undefined || this.dvExpression === null) {
+        if (this.dvShowExpression === undefined || this.dvShowExpression === null) {
             return true;
         }
-        return (this.dvExpression === true);
+        return (this.dvShowExpression === true);
     }
 }

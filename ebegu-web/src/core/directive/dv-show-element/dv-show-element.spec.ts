@@ -24,33 +24,33 @@ describe('DVShowElementController', function () {
 
     describe('checkRoles', function() {
         it('should return true for the same role as the user and no expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
-            cvShowElementController.dvExpression = undefined;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvShowExpression = undefined;
             expect(cvShowElementController.checkValidity()).toBe(true);
         });
         it('should return true for the same role as the user and true expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
-            cvShowElementController.dvExpression = true;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvShowExpression = true;
             expect(cvShowElementController.checkValidity()).toBe(true);
         });
         it('should return false for the same role as the user and false expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
-            cvShowElementController.dvExpression = false;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvShowExpression = false;
             expect(cvShowElementController.checkValidity()).toBe(false);
         });
         it('should return false for a different role as the user and no expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
-            cvShowElementController.dvExpression = undefined;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvShowExpression = undefined;
             expect(cvShowElementController.checkValidity()).toBe(false);
         });
         it('should return false for a different role as the user and true expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
-            cvShowElementController.dvExpression = undefined;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvShowExpression = undefined;
             expect(cvShowElementController.checkValidity()).toBe(false);
         });
         it('should return false for a different role as the user and false expression', function () {
-            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
-            cvShowElementController.dvExpression = undefined;
+            cvShowElementController.dvShowAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvShowExpression = undefined;
             expect(cvShowElementController.checkValidity()).toBe(false);
         });
     });
