@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IFormController} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -7,7 +7,6 @@ import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituat
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IFormController = angular.IFormController;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -21,6 +20,7 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
+    public showSelbstaendig: boolean;
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
@@ -34,6 +34,22 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
+        this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.isSelbstaendig();
+    }
+
+    public showSelbstaendigClicked() {
+        if (!this.showSelbstaendig) {
+            this.resetSelbstaendigFields();
+        }
+    }
+
+    private resetSelbstaendigFields() {
+        if (this.gesuchModelManager.getStammdatenToWorkWith() && this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer) {
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahr = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 = undefined;
+            this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2 = undefined;
+            this.calculate();
+        }
     }
 
     showSteuerveranlagung(): boolean {
@@ -100,5 +116,15 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     public getResultate(): TSFinanzielleSituationResultateDTO {
         return this.berechnungsManager.finanzielleSituationResultate;
+    }
+
+    /**
+     * Mindestens einer aller Felder von Geschaftsgewinn muss ausgefuellt sein. Mit dieser Methode kann man es pruefen.
+     * @returns {boolean}
+     */
+    public isGeschaeftsgewinnRequired(): boolean {
+        return !(this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahr ||
+                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1 ||
+                this.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2);
     }
 }
