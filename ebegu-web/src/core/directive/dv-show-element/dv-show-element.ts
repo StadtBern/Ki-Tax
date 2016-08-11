@@ -1,6 +1,8 @@
-import {IDirective, IDirectiveFactory, IAugmentedJQuery, IAttributes} from 'angular';
+import {IDirective, IDirectiveFactory, IAugmentedJQuery} from 'angular';
 import {TSRole} from '../../../models/enums/TSRole';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import IScope = angular.IScope;
+
 
 /**
  * Attribute Directive um Elementen aus- und einblenden.
@@ -16,23 +18,50 @@ export class DVShowElement implements IDirective {
     controller = DVShowElementController;
     // kind bindToController und kein controllerAs weil sonst wird der scope ueberschrieben, da wir mit attribute Direktiven arbeiten
 
+    transclude: any = 'element';
+    priority: number; // = 600;
+    terminal: boolean; // = true;
+    replace = true;
+    ngIf: any;
 
-    link = (scope: any, element: IAugmentedJQuery, attributes: any, controller: DVShowElementController) => {
+    static $inject: string[] = ['ngIfDirective'];
+
+    /* @ngInject */
+    constructor(private ngIfDirective: any) {
+        this.ngIf = ngIfDirective[0];
+        this.transclude = this.ngIf.transclude;
+        this.priority = this.ngIf.priority;
+        this.terminal = this.ngIf.terminal;
+    }
+
+
+    link = (scope: IScope, element: IAugmentedJQuery, attributes: any, controller: DVShowElementController, $transclude: any) => {
+        // Copy arguments to new array to avoid: The 'arguments' object cannot be referenced in an arrow function in ES3 and ES5.
+        // Consider using a standard function expression.
+        let arguments2: Array<any> = [scope, element, attributes, controller, $transclude];
+
         attributes.$observe('dvAllowedRoles', (value: any) => {
             let roles = scope.$eval(value);
             controller.dvAllowedRoles = roles;
-            controller.updateState(element);
+            this.callNgIfThrough(attributes, controller, arguments2);
         });
         attributes.$observe('dvExpression', (value: any) => {
             let expression = scope.$eval(value);
             controller.dvExpression = expression;
-            controller.updateState(element);
+            this.callNgIfThrough(attributes, controller, arguments2);
         });
     };
 
+    private callNgIfThrough(attributes: any, controller: DVShowElementController, arguments2: Array<any>) {
+        attributes.ngIf = () => {
+            return (controller.checkValidity());
+        };
+        this.ngIf.link.apply(this.ngIf, arguments2);
+    }
+
     static factory(): IDirectiveFactory {
-        const directive = (ngIfDirective: any) => new DVShowElement();
-        directive.$inject = [];
+        const directive = (ngIfDirective: any) => new DVShowElement(ngIfDirective);
+        directive.$inject = ['ngIfDirective'];
         return directive;
     }
 }
@@ -42,7 +71,6 @@ export class DVShowElementController {
 
     dvAllowedRoles: Array<TSRole>;
     dvExpression: boolean;
-    ngIf: any;
 
     static $inject: string[] = ['AuthServiceRS'];
 
@@ -50,22 +78,21 @@ export class DVShowElementController {
     constructor(private authServiceRS: AuthServiceRS) {
     }
 
-    public updateState(element: IAugmentedJQuery) {
-        if (this.checkRoles() && this.evaluateExpression()) {
-            element.show();
-        } else {
-            element.hide();
-        }
+    /**
+     * Gibt true zurueck wenn die Rolle der Benutzer eraubt ist den Element zu sehen und die zusaetzliche Expression true ist.
+     */
+    public checkValidity(): boolean {
+        return this.checkRoles() && this.checkExpression();
     }
 
     /**
      * Die Rollen muessen gesetzt sein, wenn diese Direktive verwendet wird. Sollten die Rollen nicht gesetzt sein, wird das Element ausgeblendet
      * @returns {boolean}
      */
-    public checkRoles(): boolean {
+    private checkRoles(): boolean {
         if (this.dvAllowedRoles) {
             for (let role of this.dvAllowedRoles) {
-                if (this.authServiceRS.getPrincipal().role === role) {
+                if (this.authServiceRS.getPrincipalRole() === role) {
                     return true;
                 }
             }
@@ -77,7 +104,7 @@ export class DVShowElementController {
      * Diese Methode gibt einfach den Wert von expression zurueck. Hier koennte man aber auch etwas berechnen wenn noetig
      * @returns {boolean} wenn die expression is null oder undefined gibt es true zurueck. Sonst gibt es den Wert von expression zurueck
      */
-    public evaluateExpression(): boolean {
+    private checkExpression(): boolean {
         if (this.dvExpression === undefined || this.dvExpression === null) {
             return true;
         }

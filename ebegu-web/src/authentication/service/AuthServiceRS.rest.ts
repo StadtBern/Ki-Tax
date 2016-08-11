@@ -16,8 +16,15 @@ export default class AuthServiceRS {
                 private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
     }
 
-    public getPrincipal() {
+    public getPrincipal(): TSUser {
         return this.principal;
+    }
+
+    public getPrincipalRole(): TSRole {
+        if (this.principal) {
+            return this.principal.role;
+        }
+        return undefined;
     }
 
     public loginRequest(userCredentials: TSUser): IPromise<TSUser> {

@@ -1,43 +1,57 @@
 import '../../../bootstrap.ts';
 import 'angular-mocks';
 import {EbeguWebCore} from '../../core.module';
-import {DVShowElement} from './dv-show-element';
-import {ICompileService, IScope, IAugmentedJQuery} from 'angular';
+import {DVShowElementController} from './dv-show-element';
 import {EbeguAuthentication} from '../../../authentication/authentication.module';
+import {TSRole} from '../../../models/enums/TSRole';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import IInjectorService = angular.auto.IInjectorService;
 
-describe('DVShowElement', function () {
+describe('DVShowElementController', function () {
 
-    // let controller: DVShowElementController;
-    // let dvShowElement: DVShowElement;
-    let $rootScope: IScope;
-    let $compile: ICompileService;
-    let element: IAugmentedJQuery;
+    let authServiceRS: AuthServiceRS;
+    let cvShowElementController: DVShowElementController;
 
     beforeEach(angular.mock.module(EbeguAuthentication.name));
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: IInjectorService) {
-        $rootScope = $injector.get('$rootScope');
-        // scope = $rootScope.$new();
-
-        $compile = $injector.get('$compile');
+        authServiceRS = <AuthServiceRS>$injector.get('AuthServiceRS');
+        spyOn(authServiceRS, 'getPrincipalRole').and.returnValue(TSRole.GESUCHSTELLER);
+        cvShowElementController = new DVShowElementController(authServiceRS);
 
     }));
 
     describe('checkRoles', function() {
-        it('should return true for the same role as the user', function () {
-            // element = $compile('<div>Show me</div>')($rootScope);
-            element = $compile('<div dv-show-element dv-allowed-roles="E" dv-expression="true">Show me</div>')($rootScope);
-
-
-            // let authServiceRS: any = $injector.get('AuthServiceRS');
-            // controller = new DVShowElementController(authServiceRS);
-            $rootScope.$digest();
-
-            expect(element).toBeDefined();
-
-            // expect(element.hasClass('ng-hide')).toBe(true);
+        it('should return true for the same role as the user and no expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvExpression = undefined;
+            expect(cvShowElementController.checkValidity()).toBe(true);
+        });
+        it('should return true for the same role as the user and true expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvExpression = true;
+            expect(cvShowElementController.checkValidity()).toBe(true);
+        });
+        it('should return false for the same role as the user and false expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.GESUCHSTELLER];
+            cvShowElementController.dvExpression = false;
+            expect(cvShowElementController.checkValidity()).toBe(false);
+        });
+        it('should return false for a different role as the user and no expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvExpression = undefined;
+            expect(cvShowElementController.checkValidity()).toBe(false);
+        });
+        it('should return false for a different role as the user and true expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvExpression = undefined;
+            expect(cvShowElementController.checkValidity()).toBe(false);
+        });
+        it('should return false for a different role as the user and false expression', function () {
+            cvShowElementController.dvAllowedRoles = [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.ADMIN];
+            cvShowElementController.dvExpression = undefined;
+            expect(cvShowElementController.checkValidity()).toBe(false);
         });
     });
 });
