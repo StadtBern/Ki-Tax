@@ -12,6 +12,7 @@ package ch.dvbern.ebegu.api.dtos;
 import ch.dvbern.ebegu.enums.UserRole;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -36,6 +37,10 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nonnull
 	private UserRole role;
 	private JaxMandant mandant;
+	@Nullable
+	private JaxTraegerschaft traegerschaft;
+	@Nullable
+	private JaxInstitution institution;
 
 
 
@@ -100,5 +105,23 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	public void setMandant(JaxMandant mandant) {
 		this.mandant = mandant;
+	}
+
+	@Nullable
+	public JaxTraegerschaft getTraegerschaft() {
+		return traegerschaft;
+	}
+
+	public void setTraegerschaft(@Nullable JaxTraegerschaft traegerschaft) {
+		this.traegerschaft = traegerschaft;
+	}
+
+	@Nullable
+	public JaxInstitution getInstitution() {
+		return institution;
+	}
+
+	public void setInstitution(@Nullable JaxInstitution institution) {
+		this.institution = institution;
 	}
 }
