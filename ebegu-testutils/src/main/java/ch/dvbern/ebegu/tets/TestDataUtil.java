@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 
@@ -277,7 +276,6 @@ public final class TestDataUtil {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-		betreuung.setSchulpflichtig(false);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
@@ -380,11 +378,11 @@ public final class TestDataUtil {
 		}
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		if (zweiGesuchsteller) {
 			gesuch.setGesuchsteller2(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		}
 		Betreuung betreuung = new Betreuung();
 		betreuung.setKind(new KindContainer());
@@ -398,7 +396,8 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
 	public static Gesuch createTestgesuchDagmar(){
@@ -413,8 +412,8 @@ public final class TestDataUtil {
 
 	public static void setFinanzielleSituation(Gesuch gesuch, BigDecimal einkommen) {
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV().setNettolohn(einkommen);
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(einkommen);
 	}
 
 	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {

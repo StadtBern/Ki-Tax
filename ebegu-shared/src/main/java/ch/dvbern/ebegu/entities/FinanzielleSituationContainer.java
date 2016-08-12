@@ -38,11 +38,6 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationJA_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
-	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationSV_id"), nullable = true)
-	private FinanzielleSituation finanzielleSituationSV;
-
 
 	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;
@@ -74,13 +69,5 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 
 	public void setFinanzielleSituationJA(FinanzielleSituation finanzielleSituationJA) {
 		this.finanzielleSituationJA = finanzielleSituationJA;
-	}
-
-	public FinanzielleSituation getFinanzielleSituationSV() {
-		return finanzielleSituationSV;
-	}
-
-	public void setFinanzielleSituationSV(FinanzielleSituation finanzielleSituationSV) {
-		this.finanzielleSituationSV = finanzielleSituationSV;
 	}
 }

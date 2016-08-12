@@ -369,12 +369,16 @@ export default class GesuchModelManager {
         if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
+
+            //TODO (Team) Zum Testen der Bisher-Werte
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS = new TSFinanzielleSituation();
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS.nettolohn = 100000;
         }
         if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
         }
     }
 
@@ -430,33 +434,6 @@ export default class GesuchModelManager {
             }
         }
     }
-
-    public copyEkvGeschaeftsgewinnFromFS(): void {
-        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
-            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
-            console.log('Fehler: FinSit muss existieren');
-            return;
-        }
-
-        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
-        let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.selbstaendig) {
-
-            // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
-            ekv.selbstaendig = true;
-            if (this.basisJahrPlusNumber === 1) {
-                ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-            } else {
-                //basisjahr Plus 2
-                let ekvP1: TSEinkommensverschlechterung = this.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
-                ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            }
-        }
-    }
-
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist

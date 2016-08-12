@@ -6,16 +6,13 @@ export default class TSFinanzielleSituationContainer extends TSAbstractEntity {
     private _jahr: number;
     private _finanzielleSituationGS: TSFinanzielleSituation;
     private _finanzielleSituationJA: TSFinanzielleSituation;
-    private _finanzielleSituationSV: TSFinanzielleSituation;
 
     constructor(jahr?: number, finanzielleSituationGS?: TSFinanzielleSituation,
-                finanzielleSituationJA?: TSFinanzielleSituation,
-                finanzielleSituationSV?: TSFinanzielleSituation) {
+                finanzielleSituationJA?: TSFinanzielleSituation) {
         super();
         this._jahr = jahr;
         this._finanzielleSituationGS = finanzielleSituationGS;
         this._finanzielleSituationJA = finanzielleSituationJA;
-        this._finanzielleSituationSV = finanzielleSituationSV;
     }
 
     get jahr(): number {
@@ -40,13 +37,5 @@ export default class TSFinanzielleSituationContainer extends TSAbstractEntity {
 
     set finanzielleSituationJA(value: TSFinanzielleSituation) {
         this._finanzielleSituationJA = value;
-    }
-
-    get finanzielleSituationSV(): TSFinanzielleSituation {
-        return this._finanzielleSituationSV;
-    }
-
-    set finanzielleSituationSV(value: TSFinanzielleSituation) {
-        this._finanzielleSituationSV = value;
     }
 }

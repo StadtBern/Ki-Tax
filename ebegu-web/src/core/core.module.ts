@@ -46,6 +46,9 @@ import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import VerfuegungRS from './service/verfuegungRS.rest';
+import {DVShowElement} from './directive/dv-show-element/dv-show-element';
+import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
+import {DVRoleElementController} from './controller/DVRoleElementController';
 
 let dynamicDependencies = function (): string[] {
 
@@ -124,9 +127,12 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())
+    .directive('dvShowElement', DVShowElement.factory())
+    .directive('dvEnableElement', DVEnableElement.factory())
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
+    .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
     .component('dvErwerbspensumList', new DVErwerbspensumListConfig())

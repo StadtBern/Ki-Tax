@@ -9,7 +9,6 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _institutionStammdaten: TSInstitutionStammdaten;
     private _betreuungsstatus: TSBetreuungsstatus;
     private _betreuungspensumContainers: Array<TSBetreuungspensumContainer>;
-    private _schulpflichtig: boolean;
     private _bemerkungen: string;
     private _betreuungNummer: number;
     private _verfuegung: TSVerfuegung;
@@ -18,14 +17,13 @@ export default class TSBetreuung extends TSAbstractEntity {
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
-                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string, schulpflichtig?: boolean,
+                betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
         this._betreuungspensumContainers = betreuungspensumContainers ? betreuungspensumContainers : [];
         this._bemerkungen = bemerkungen;
-        this._schulpflichtig = schulpflichtig;
         this._betreuungNummer = betreuungNummer;
         this._verfuegung = verfuegung;
         this._vertrag = vertrag ? true : false;
@@ -54,14 +52,6 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set betreuungspensumContainers(value: Array<TSBetreuungspensumContainer>) {
         this._betreuungspensumContainers = value;
-    }
-
-    get schulpflichtig(): boolean {
-        return this._schulpflichtig;
-    }
-
-    set schulpflichtig(value: boolean) {
-        this._schulpflichtig = value;
     }
 
     get bemerkungen(): string {

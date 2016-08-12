@@ -14,6 +14,8 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import Moment = moment.Moment;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -29,10 +31,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
+                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService, private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
@@ -49,7 +51,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
-        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) && this.isInstitutionRole()) {
+        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
@@ -92,11 +94,6 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                 if (this.isTagesschule()) {
                     this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
                 }
-                if (!this.isTageseltern()) {
-                    this.getBetreuungModel().schulpflichtig = undefined;
-                } else if (!this.getBetreuungModel().schulpflichtig) {
-                    this.getBetreuungModel().schulpflichtig = false; // sollte es undefined sein setzen wir es direkt auf false
-                }
             }
             this.errorService.clearAll();
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
@@ -112,7 +109,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
-    cancel() {
+    public cancel() {
         this.removeBetreuungFromKind();
         this.state.go('gesuch.betreuungen');
     }
@@ -204,7 +201,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     public areBetreuungspensenEditable(): boolean {
         if (this.getBetreuungModel()) {
-            return this.isEnabled() && this.isInstitutionRole();
+            return this.isEnabled() && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION);
         }
         return false;
     }
@@ -242,7 +239,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public isTageseltern(): boolean {
-        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN);
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
+            this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {

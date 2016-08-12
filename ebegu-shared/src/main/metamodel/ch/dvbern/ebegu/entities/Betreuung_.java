@@ -19,7 +19,6 @@ public abstract class Betreuung_ extends ch.dvbern.ebegu.entities.AbstractEntity
 	public static volatile SingularAttribute<Betreuung, Verfuegung> verfuegung;
 	public static volatile SingularAttribute<Betreuung, Integer> betreuungNummer;
 	public static volatile SingularAttribute<Betreuung, Betreuungsstatus> betreuungsstatus;
-	public static volatile SingularAttribute<Betreuung, Boolean> schulpflichtig;
 
 }
 

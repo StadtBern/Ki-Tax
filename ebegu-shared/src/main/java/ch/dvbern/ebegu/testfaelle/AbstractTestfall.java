@@ -138,7 +138,7 @@ public class AbstractTestfall {
 		finanzielleSituation.setSteuerveranlagungErhalten(true);
 		finanzielleSituation.setSteuererklaerungAusgefuellt(true);
 		finanzielleSituationContainer.setJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear()-1);
-		finanzielleSituationContainer.setFinanzielleSituationSV(finanzielleSituation);
+		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
 		return finanzielleSituationContainer;
 	}
 }
