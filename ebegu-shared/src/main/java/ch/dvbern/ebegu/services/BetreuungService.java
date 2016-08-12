@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -37,14 +36,11 @@ public interface BetreuungService {
 	void removeBetreuung(@Nonnull String betreuungId);
 
 	/**
-	 * Gibt alle Betreuungen zurueck
+	 * Gibt die Pendenzen fuer einen Benutzer mit Rolle Institution oder Traegerschaft zurueck.
+	 * Dies sind Betreuungen, welche zu einer Institution gehoeren, fuer welche der Benutzer berechtigt ist,
+	 * und deren Status "WARTEN" ist.
      */
 	@Nonnull
-	Collection<Betreuung> getAllBetreuungen();
+	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
 
-	/**
-	 * Gibt alle Betreuungen zurueck, welche in einem der uebergebenen Status sind.
-     */
-	@Nonnull
-	Collection<Betreuung> getBetreuungenInStatus(@Nonnull Betreuungsstatus... betreuungsstatusList);
 }

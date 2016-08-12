@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -30,6 +33,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private InstitutionService institutionService;
 
 
 	@Nonnull
@@ -70,6 +76,29 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Nonnull
 	public Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId) {
 		List<InstitutionStammdaten> resultList = getQueryAllInstitutionStammdatenByInstitution(institutionId).getResultList();
+		return resultList;
+	}
+
+	@Override
+	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
+		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<BetreuungsangebotTyp> query = cb.createQuery(BetreuungsangebotTyp.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		query.select(root.get(InstitutionStammdaten_.betreuungsangebotTyp));
+		query.distinct(true);
+
+		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
+		Predicate intervalPredicate = cb.between(dateParam,
+			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(InstitutionStammdaten_.gueltigkeit).get(DateRange_.gueltigBis));
+
+		Predicate institutionPredicate = root.get(InstitutionStammdaten_.institution).in(institutionenForCurrentBenutzer);
+
+		query.where(intervalPredicate, institutionPredicate);
+		TypedQuery<BetreuungsangebotTyp> q = persistence.getEntityManager().createQuery(query).setParameter(dateParam, LocalDate.now());
+		List<BetreuungsangebotTyp> resultList = q.getResultList();
 		return resultList;
 	}
 

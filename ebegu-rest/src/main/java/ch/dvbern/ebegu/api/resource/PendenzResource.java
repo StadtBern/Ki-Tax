@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
@@ -78,8 +77,7 @@ public class PendenzResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/institution")
 	public List<JaxPendenzInstitution> getAllPendenzenInstitution() {
-		//TODO (Team) Hier muss dann noch nach Institution bzw. Trägerschaft eingeschränkt werden!
-		Collection<Betreuung> betreuungenInStatus = betreuungService.getBetreuungenInStatus(Betreuungsstatus.WARTEN);
+		Collection<Betreuung> betreuungenInStatus = betreuungService.getPendenzenForInstitutionsOrTraegerschaftUser();
 		List<JaxPendenzInstitution> pendenzenList = new ArrayList<>();
 		for (Betreuung betreuung : betreuungenInStatus) {
 			JaxPendenzInstitution pendenz = new JaxPendenzInstitution();

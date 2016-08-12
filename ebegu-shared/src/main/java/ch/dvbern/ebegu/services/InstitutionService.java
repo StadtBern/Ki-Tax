@@ -64,4 +64,10 @@ public interface InstitutionService {
 	 * @return Gibt alle aktive Institutionen zurück
 	 */
 	Collection<Institution> getAllActiveInstitutionen();
+
+	/**
+	 * Gibt alle Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
+     */
+	Collection<Institution> getInstitutionenForCurrentBenutzer();
+
 }

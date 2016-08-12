@@ -416,7 +416,7 @@
     "MENU_FREIGABEQUITTUNG": "Freigabequittung",
     "MENU_FALL_EROEFFNEN": "FALL ERÖFFNEN",
     "MENU_PENDENZEN": "PENDENZEN",
-    "MENU_PENDENZEN_INSTITUTION": "PENDENZEN (Kita)",
+    "MENU_PENDENZEN_INSTITUTION": "PENDENZEN",
     "MENU_ERSTGESUCH_VOM": "Erstgesuch vom {{date}}",
     "MENU_ERSTGESUCH": "Erstgesuch",
     "MENU_ERSTGESUCH_PERIODE": "Erstgesuch der Periode {{periode}}",

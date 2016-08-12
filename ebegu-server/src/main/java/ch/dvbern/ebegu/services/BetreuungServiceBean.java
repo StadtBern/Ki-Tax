@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -28,6 +28,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private BenutzerService benutzerService;
+
+	@Inject
+	private InstitutionService institutionService;
 
 
 	@Override
@@ -68,20 +74,35 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		persistence.remove(betreuungToRemove.get());
 	}
 
-	@Nonnull
 	@Override
-	public Collection<Betreuung> getAllBetreuungen() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Betreuung.class));
+	@Nonnull
+	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
+		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
+		if (benutzerOptional.isPresent()) {
+			Benutzer benutzer = benutzerOptional.get();
+			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
+				Collection<Institution> allInstitutionenFromTraegerschaft = institutionService.getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				return getPendenzenForInstitution((Institution[]) allInstitutionenFromTraegerschaft.toArray(new Institution[allInstitutionenFromTraegerschaft.size()]));
+			}
+			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
+				return getPendenzenForInstitution(benutzer.getInstitution());
+			}
+		}
+		return Collections.emptyList();
 	}
 
 	@Nonnull
-	@Override
-	public Collection<Betreuung> getBetreuungenInStatus(@Nonnull Betreuungsstatus... betreuungsstatusList) {
-		Objects.requireNonNull(betreuungsstatusList, "betreuungsstatusList muss gesetzt sein");
+	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
+		Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
 		Root<Betreuung> root = query.from(Betreuung.class);
-		query.where(root.get(Betreuung_.betreuungsstatus).in(betreuungsstatusList));
+		// Status muss WARTEN sein
+		Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
+		// Institution
+		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+
+		query.where(predicateStatus, predicateInstitution);
 		return persistence.getCriteriaResults(query);
 	}
 }

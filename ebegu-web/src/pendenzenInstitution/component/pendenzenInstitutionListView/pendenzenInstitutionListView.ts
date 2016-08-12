@@ -12,6 +12,7 @@ import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import ITimeoutService = angular.ITimeoutService;
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
+import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 let template = require('./pendenzenInstitutionListView.html');
 require('./pendenzenInstitutionListView.less');
 
@@ -35,11 +36,11 @@ export class PendenzenInstitutionListViewController {
     numberOfPages: number = 1;
 
 
-    static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'GesuchsperiodeRS',
+    static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
         'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
 
     constructor(public pendenzRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private gesuchsperiodeRS: GesuchsperiodeRS,
+                private institutionRS: InstitutionRS, private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
                 private $state: IStateService, private CONSTANTS: any) {
         this.initViewModel();
@@ -69,15 +70,15 @@ export class PendenzenInstitutionListViewController {
     }
 
     public updateInstitutionenList(): void {
-        //TODO (Team) Nur die Institution(en) des eingeloggten Benutzers!
-        this.institutionRS.getAllInstitutionen().then((response: any) => {
+        this.institutionRS.getInstitutionenForCurrentBenutzer().then((response: any) => {
             this.institutionenList = angular.copy(response);
         });
     }
 
     public updateBetreuungsangebotTypList(): void {
-        //TODO (Team) Nur die Betreuungsangebote der Institution(en) des eingeloggten Benutzers!
-        this.betreuungsangebotTypList = getTSBetreuungsangebotTypValues();
+        this.institutionStammdatenRS.getBetreuungsangeboteForInstitutionenOfCurrentBenutzer().then((response: any) => {
+            this.betreuungsangebotTypList = angular.copy(response);
+        });
     }
 
     public getPendenzenList(): Array<TSPendenzInstitution> {
