@@ -20,4 +20,8 @@ export class TSRoleUtil {
         }
         return result;
     }
+
+    public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
+        return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
+    }
 }
