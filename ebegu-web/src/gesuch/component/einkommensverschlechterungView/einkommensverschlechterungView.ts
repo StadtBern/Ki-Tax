@@ -93,85 +93,84 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
-    previousStep() {
-        if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 1
-                if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern');
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungInfo');
-                }
-            } else { //gesuchsteller ===2
-
-                // 2 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-                }
-
-            }
-
-        } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
-
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-            } else { //gesuchsteller ===2
-                // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
-            }
-        }
-    }
-
-    nextStep() {
-
-        if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
-                } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            } else { //gesuchsteller ===2
-
-                // 2 , 1
-                if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '2'});
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            }
-
-        } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
-
-            if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
-                // 1 , 2
-                if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
-                } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                }
-
-            } else { //gesuchsteller ===2
-                // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            }
-        }
-    }
-
-    submit(form: IFormController) {
+    previousStep(form: IFormController): void {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.saveEinkommensverschlechterungContainer().then((einkommensverschlechterungResponse: any) => {
-                this.nextStep();
+                if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
+                    if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
+                        // 1 , 1
+                        if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterungSteuern');
+                        } else {
+                            this.state.go('gesuch.einkommensverschlechterungInfo');
+                        }
+                    } else { //gesuchsteller ===2
+
+                        // 2 , 1
+                        if (this.gesuchModelManager.isBasisJahr2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
+                        } else {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+                        }
+
+                    }
+
+                } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
+
+                    if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
+                        // 1 , 2
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+                    } else { //gesuchsteller ===2
+                        // 2 , 2
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
+                    }
+                }
+            });
+        }
+    }
+
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.gesuchModelManager.saveEinkommensverschlechterungContainer().then((einkommensverschlechterungResponse: any) => {
+                if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
+                    if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
+                        // 1 , 1
+                        if (this.gesuchModelManager.isBasisJahr2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
+                        } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
+                        } else {
+                            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                        }
+
+                    } else { //gesuchsteller ===2
+
+                        // 2 , 1
+                        if (this.gesuchModelManager.isBasisJahr2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '2'});
+                        } else {
+                            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                        }
+
+                    }
+
+                } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
+
+                    if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
+                        // 1 , 2
+                        if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
+                        } else {
+                            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                        }
+
+                    } else { //gesuchsteller ===2
+                        // 2 , 2
+                        this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                    }
+                }
             });
         }
     }

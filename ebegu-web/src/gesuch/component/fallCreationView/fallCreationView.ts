@@ -45,7 +45,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         return this.gesuchModelManager.gesuch;
     }
 
-    submit(form: IFormController) {
+    nextStep(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {

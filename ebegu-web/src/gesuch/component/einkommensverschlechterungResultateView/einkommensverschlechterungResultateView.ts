@@ -72,48 +72,48 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
-    previousStep() {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-        } else {
-            // baisjahrPlus1
-
-            let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
-            let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
-
-            if (gesuchsteller2Required && basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '2'});
-            } else if (gesuchsteller2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
-            } else if (basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-            }
-
-        }
-    }
-
-    nextStep() {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.state.go('gesuch.dokumente');
-        } else {
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else {
-                this.state.go('gesuch.dokumente');
-            }
-        }
-    }
-
-    submit(form: IFormController) {
+    previousStep(form: IFormController): void {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
+                if (this.parsedBasisJahrPlusNum === 2) {
+                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                } else {
+                    // baisjahrPlus1
+
+                    let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
+                    let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
+
+                    if (gesuchsteller2Required && basisJahr2Required) {
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '2'});
+                    } else if (gesuchsteller2Required) {
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
+                    } else if (basisJahr2Required) {
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
+                    } else {
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+                    }
+
+                }
+            });
+        }
+    }
+
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
+                if (this.parsedBasisJahrPlusNum === 2) {
+                    this.state.go('gesuch.dokumente');
+                } else {
+                    let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                        && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+                    if (ekvFuerBasisJahrPlus2) {
+                        this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+                    } else {
+                        this.state.go('gesuch.dokumente');
+                    }
+                }
             });
         }
     }
@@ -128,10 +128,6 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         } else {
             console.log('No gesuch and Basisjahr to calculate');
         }
-    }
-
-    resetForm() {
-        this.initViewModel();
     }
 
     public getEinkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {

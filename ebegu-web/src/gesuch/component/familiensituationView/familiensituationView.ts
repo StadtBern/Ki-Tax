@@ -41,11 +41,20 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.gesuchModelManager.initFamiliensituation();
     }
 
-    submit($form: IFormController) {
-        if ($form.$valid) {
+    previousStep(form: IFormController): void {
+        if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
+                this.state.go('gesuch.fallcreation');
+            });
+        }
+    }
+
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
+                this.state.go('gesuch.stammdaten');
             });
         }
     }

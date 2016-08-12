@@ -101,51 +101,49 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     /**
-     * Navigation back
-     */
-    previousStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
-    }
-
-    /**
-     * Navigation forward
-     */
-    nextStep() {
-        //todo gapa muesste hier nicht vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung verwendet werden
-        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.einkommensverschlechterungSteuern');
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
-            }
-        } else {
-            this.state.go('gesuch.dokumente');
-        }
-    }
-
-    submit(form: IFormController) {
+      * Navigation back
+      */
+    previousStep(form: IFormController): void {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
-
-            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
-                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
-            }
-            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
-                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
-            }
-
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
-            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
+            this.beforeSave();
+            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
+                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
             });
         }
     }
 
-    resetForm() {
-        this.initViewModel();
+    /**
+      * Navigation forward
+      */
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.beforeSave();
+            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
+                if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+                    if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                        this.state.go('gesuch.einkommensverschlechterungSteuern');
+                    } else {
+                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+                    }
+                } else {
+                    this.state.go('gesuch.dokumente');
+                }
+            });
+        }
+    }
+
+    beforeSave(): void {
+        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+        }
+        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+        }
+
+        this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
+        this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
     }
 
     isRequired(basisJahrPlus: number): boolean {

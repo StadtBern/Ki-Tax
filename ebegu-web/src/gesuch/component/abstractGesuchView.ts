@@ -21,7 +21,4 @@ export default class AbstractGesuchViewController {
     submit(form: IFormController): void {
     }
 
-    previousStep(): void {
-    }
-
 }

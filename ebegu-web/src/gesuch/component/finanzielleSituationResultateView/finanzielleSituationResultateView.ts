@@ -53,24 +53,24 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
             this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
     }
 
-    previousStep() {
-        if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 2});
-        } else {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+    previousStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
+                if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+                    this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 2});
+                } else {
+                    this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                }
+            });
         }
     }
 
-    nextStep() {
-        this.state.go('gesuch.einkommensverschlechterungInfo');
-    }
-
-    submit(form: IFormController) {
+    nextStep(form: IFormController): void {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
+                this.state.go('gesuch.einkommensverschlechterungInfo');
             });
         }
     }

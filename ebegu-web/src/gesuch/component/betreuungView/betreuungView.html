@@ -222,17 +222,17 @@
             <!--Buttons-->
             <div class="row">
                 <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link previous">
+                    <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link cancel">
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
-                <div ng-if="vm.isEnabled()" class="col-md-6 text-right">
-                    <dv-loading-button  type="submit" button-class="btn btn-link next" type="submit">
+                <div class="col-md-6 text-right">
+                    <dv-loading-button ng-click="vm.save(form)" button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
-                        <span class="fa fa-chevron-right"></span>
                     </dv-loading-button>
                 </div>
             </div>
+
         </form>
     </div>
 </div>

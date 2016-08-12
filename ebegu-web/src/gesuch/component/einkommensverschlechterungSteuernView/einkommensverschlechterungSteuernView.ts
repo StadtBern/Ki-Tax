@@ -82,27 +82,24 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    previousStep() {
-        this.state.go('gesuch.einkommensverschlechterungInfo');
-    }
-
-    nextStep() {
-        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-    }
-
-    submit(form: IFormController) {
+    previousStep(form: IFormController): void {
         if (form.$valid) {
             this.removeNotNeededEKV();
-            // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
+                this.state.go('gesuch.einkommensverschlechterungInfo');
             });
         }
     }
 
-    resetForm() {
-        this.initViewModel();
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.removeNotNeededEKV();
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
+                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+            });
+        }
     }
 
     public getEkv_GS1_Bjp1(): TSEinkommensverschlechterung {

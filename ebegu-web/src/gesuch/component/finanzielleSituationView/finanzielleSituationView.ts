@@ -70,30 +70,30 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    previousStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-        } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.kinder');
-        }
-    }
-
-    nextStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
-        } else {
-            this.state.go('gesuch.finanzielleSituationResultate');
-        }
-    }
-
-    submit(form: IFormController) {
+    previousStep(form: IFormController): void {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
             this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
-                this.nextStep();
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
+                    this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.state.go('gesuch.finanzielleSituationStart');
+                } else {
+                    this.state.go('gesuch.kinder');
+                }
+            });
+        }
+    }
+
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
+                } else {
+                    this.state.go('gesuch.finanzielleSituationResultate');
+                }
             });
         }
     }
