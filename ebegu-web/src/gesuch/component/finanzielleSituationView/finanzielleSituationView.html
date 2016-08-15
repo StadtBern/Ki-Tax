@@ -127,8 +127,8 @@
                             <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR" for="geschaeftsgewinnBasisjahr"
                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></label>
                             <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr" ui-number-mask="0"
-                                   ng-model="vm.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahr" ng-blur="vm.calculate()"
-                                   dv-max-length max="999999999999" class="form-control"
+                                   ng-model="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahr" ng-blur="vm.calculate()"
+                                   dv-max-length max="999999999999" class="form-control" ui-negative-number
                                    ng-required="vm.isGeschaeftsgewinnRequired()">
                             <div ng-messages="form.geschaeftsgewinnBasisjahr.$error" role="alert" class="error">
                                 <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
@@ -147,8 +147,8 @@
                             <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1" for="geschaeftsgewinnBasisjahrMinus1"
                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()-1}}}"></label>
                             <input id="geschaeftsgewinnBasisjahrMinus1" type="text" name="geschaeftsgewinnBasisjahrMinus1" ui-number-mask="0"
-                                   ng-model="vm.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus1" ng-blur="vm.calculate()"
-                                   dv-max-length max="999999999999" class="form-control"
+                                   ng-model="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus1" ng-blur="vm.calculate()"
+                                   dv-max-length max="999999999999" class="form-control" ui-negative-number
                                    ng-required="vm.isGeschaeftsgewinnRequired()">
                             <div ng-messages="form.geschaeftsgewinnBasisjahrMinus1.$error" role="alert" class="error">
                                 <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
@@ -167,8 +167,8 @@
                             <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2" for="geschaeftsgewinnBasisjahrMinus2"
                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()-2}}}"></label>
                             <input id="geschaeftsgewinnBasisjahrMinus2" type="text" name="geschaeftsgewinnBasisjahrMinus2" ui-number-mask="0"
-                                   ng-model="vm.getModel().finanzielleSituationSV.geschaeftsgewinnBasisjahrMinus2" ng-blur="vm.calculate()"
-                                   dv-max-length max="999999999999" class="form-control"
+                                   ng-model="vm.getModel().finanzielleSituationJA.geschaeftsgewinnBasisjahrMinus2" ng-blur="vm.calculate()"
+                                   dv-max-length max="999999999999" class="form-control" ui-negative-number
                                    ng-required="vm.isGeschaeftsgewinnRequired()">
                             <div ng-messages="form.geschaeftsgewinnBasisjahrMinus2.$error" role="alert" class="error">
                                 <div ng-message="required" data-translate="ERROR_REQUIRED_ONE_OF_THEM"
