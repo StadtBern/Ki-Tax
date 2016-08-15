@@ -20,6 +20,8 @@ export default class TSDokumentGrund extends TSAbstractEntity {
 
     private _dokumentTyp: TSDokumentTyp;
 
+    private _needed: boolean;
+
     get dokumentGrundTyp(): TSDokumentGrundTyp {
         return this._dokumentGrundTyp;
     }
@@ -58,6 +60,14 @@ export default class TSDokumentGrund extends TSAbstractEntity {
 
     set dokumentTyp(value: TSDokumentTyp) {
         this._dokumentTyp = value;
+    }
+    
+    get needed(): boolean {
+        return this._needed;
+    }
+
+    set needed(value: boolean) {
+        this._needed = value;
     }
 }
 

@@ -45,7 +45,6 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.calculate();
-        this.dokumenteSonst.push(new TSDokumentGrund(TSDokumentGrundTyp.SONSTIGE_NACHWEISE));
     }
 
     calculate() {
@@ -58,6 +57,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     this.searchDokumente(promiseValue, this.dokumenteFamSit, TSDokumentGrundTyp.FAMILIENSITUATION);
                     this.searchDokumente(promiseValue, this.dokumenteErwp, TSDokumentGrundTyp.ERWERBSPENSUM);
                     this.searchDokumente(promiseValue, this.dokumenteKinder, TSDokumentGrundTyp.KINDER);
+                    this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
                 });
         } else {
             console.log('No gesuch für dokumente');
@@ -125,10 +125,21 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         this.dokumenteRS.updateDokumentGrund(dokumentGrund).then((response) => {
 
             let returnedDG: TSDokumentGrund = angular.copy(response);
-            var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
-            if (index > -1) {
-                console.log('update dokumentGrund in dokumentList');
-                dokumente[index] = dokumentGrund;
+
+            if (returnedDG) {
+                // replace existing object in table with returned if returned not null
+                var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
+                if (index > -1) {
+                    console.log('update dokumentGrund in dokumentList');
+                    dokumente[index] = dokumentGrund;
+                }
+            } else {
+                // delete object in table with sended if returned is null
+                var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+                if (index > -1) {
+                    console.log('remove dokumentGrund in dokumentList');
+                    dokumente.splice(index, 1);
+                }
             }
         });
 

@@ -4,7 +4,8 @@ import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,6 +35,8 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 
 	@Nullable
 	private Set<JaxDokument> dokumente = new HashSet<>();
+
+	private boolean needed = true;
 
 	public DokumentGrundTyp getDokumentGrundTyp() {
 		return dokumentGrundTyp;
@@ -76,5 +79,13 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 
 	public void setDokumentTyp(DokumentTyp dokumentTyp) {
 		this.dokumentTyp = dokumentTyp;
+	}
+
+	public boolean isNeeded() {
+		return needed;
+	}
+
+	public void setNeeded(boolean needed) {
+		this.needed = needed;
 	}
 }

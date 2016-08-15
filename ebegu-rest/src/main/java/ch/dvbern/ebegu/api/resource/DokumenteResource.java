@@ -73,6 +73,7 @@ public class DokumenteResource {
 		if (gesuch.isPresent()) {
 
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
+			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded, gesuch.get());
 
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuch(gesuch.get());
 
@@ -105,15 +106,18 @@ public class DokumenteResource {
 		}
 
 		DokumentGrund dokumentGrundToMerge = converter.dokumentGrundToEntity(dokumentGrundJAXP, dokumentGrundFromDB);
-
 		DokumentGrund modifiedDokumentGrund = this.dokumentGrundService.updateDokumentGrund(dokumentGrundToMerge);
+
+		if (modifiedDokumentGrund == null) {
+			return null;
+		}
 
 		return converter.dokumentGrundToJax(modifiedDokumentGrund);
 	}
 
 	/**
 	 * Gibt Liste von Dokumenten zurück, welche auf der DB vorhanden sind auf dem jaxB Objekt jedoch nicht mehr.
-     */
+	 */
 	private Set<Dokument> findDokumentToRemove(JaxDokumentGrund dokumentGrundJAXP, DokumentGrund dokumentGrundFromDB) {
 		Set<Dokument> dokumentsToRemove = new HashSet<Dokument>();
 		Validate.notNull(dokumentGrundFromDB.getDokumente());
@@ -140,16 +144,27 @@ public class DokumenteResource {
 	public Set<DokumentGrund> mergeNeededAndPersisted(Set<DokumentGrund> dokumentGrundsNeeded, Collection<DokumentGrund> persistedDokumentGrunds) {
 
 		Set<DokumentGrund> dokumentGrundsMerged = new HashSet<>();
+		Set<DokumentGrund> persistedDokumentAdded = new HashSet<>();
 
+		// Ersetzen des Placeholder mit dem vorhandenen Dokument, falls schon ein Dokument gespeichert wurde...
 		for (DokumentGrund dokumentGrundNeeded : dokumentGrundsNeeded) {
 			Set<DokumentGrund> persistedForNeeded = getPersistedForNeeded(persistedDokumentGrunds, dokumentGrundNeeded);
 
 			if (persistedForNeeded != null && !persistedForNeeded.isEmpty()) {
+				persistedDokumentAdded.addAll(persistedForNeeded);
 				dokumentGrundsMerged.addAll(persistedForNeeded);
 			} else {
 				dokumentGrundsMerged.add(dokumentGrundNeeded);
 			}
 		}
+
+		//Hinzufügen der vorhandenen Dokumente welche jedoch eigentlich nicht mehr benötigt werden.
+		persistedDokumentGrunds.removeAll(persistedDokumentAdded);
+		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
+			persistedDokumentGrund.setNeeded(false);
+			dokumentGrundsMerged.add(persistedDokumentGrund);
+		}
+
 		return dokumentGrundsMerged;
 
 	}
@@ -158,15 +173,10 @@ public class DokumenteResource {
 		Set<DokumentGrund> persisted = new HashSet<>();
 		for (DokumentGrund persistedDokumentGrund : persistedDokumentGrunds) {
 			if (persistedDokumentGrund.getDokumentGrundTyp().equals(dokumentGrundNeeded.getDokumentGrundTyp())) {
-				if (persistedDokumentGrund.getDokumente() != null && !persistedDokumentGrund.getDokumente().isEmpty() &&
-					dokumentGrundNeeded.getDokumente() != null && !dokumentGrundNeeded.getDokumente().isEmpty()) {
-
-					final DokumentTyp dokumentTypPersisted = persistedDokumentGrund.getDokumentTyp();
-					final DokumentTyp dokumentTypNeeded = dokumentGrundNeeded.getDokumentTyp();
-					if (dokumentTypNeeded.equals(dokumentTypPersisted)) {
-						persisted.add(persistedDokumentGrund);
-					}
-
+				final DokumentTyp dokumentTypPersisted = persistedDokumentGrund.getDokumentTyp();
+				final DokumentTyp dokumentTypNeeded = dokumentGrundNeeded.getDokumentTyp();
+				if (dokumentTypNeeded.equals(dokumentTypPersisted)) {
+					persisted.add(persistedDokumentGrund);
 				}
 			}
 		}

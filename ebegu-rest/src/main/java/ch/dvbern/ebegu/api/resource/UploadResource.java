@@ -130,7 +130,7 @@ public class UploadResource {
 		while (inputParts != null && inputParts.stream().findAny().isPresent()) {
 			UploadFileInfo fileInfo = RestUtil.parseUploadFile(inputParts.stream().findAny().get());
 
-			// evil workaround, da sonst das file-encoding (wahrscheinlich beim Parsen vom MultipartFormDataInput kaputt geht :(
+			// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
 			if (filenames[filecounter] != null) {
 				fileInfo.setFilename(filenames[filecounter]);
 			}
@@ -182,8 +182,7 @@ public class UploadResource {
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
 
 			if (null == jaxDokument.getDokumentName() ||
-				jaxDokument.getDokumentName().isEmpty() ||
-				jaxDokument.getDokumentName().equals(uploadFileInfo.getFilename())) {
+				jaxDokument.getDokumentName().isEmpty() ) {
 
 				//set to existing
 				jaxDokument.setDokumentName(uploadFileInfo.getFilename());

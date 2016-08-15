@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.rules.Anlageverzeichnis;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import javax.ejb.Stateless;
 import java.util.HashSet;
@@ -28,6 +30,11 @@ public class DokumentenverzeichnisEvaluator {
 
 
 		return anlageVerzeichnis;
+	}
+
+	public void addSonstige(Set<DokumentGrund> dokumentGrunds, Gesuch gesuch) {
+		DokumentGrund dokumentGrund = new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE , DokumentTyp.DIV);
+		dokumentGrunds.add(dokumentGrund);
 	}
 
 }

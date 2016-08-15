@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -7,10 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Stateless
 @Local(FileSaverService.class)
@@ -20,8 +23,8 @@ public class FileSaverServiceBean implements FileSaverService {
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaverServiceBean.class);
 
 
-	// Todo: Path muss in JBoss oder DB gespeichert werden!!!!!
-	private static final String path = "/tmp/ebegu/";
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
 
 
 	@Override
@@ -29,7 +32,9 @@ public class FileSaverServiceBean implements FileSaverService {
 		Validate.notNull(uploadFileInfo);
 		Validate.notNull(uploadFileInfo.getFilename());
 
-		final String absulutFilePath = path + gesuchId + "/" + uploadFileInfo.getFilename();
+		UUID uuid = UUID.randomUUID();
+
+		final String absulutFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "_" + uploadFileInfo.getFilename();
 		uploadFileInfo.setPath(absulutFilePath);
 
 		Path file = Paths.get(absulutFilePath);

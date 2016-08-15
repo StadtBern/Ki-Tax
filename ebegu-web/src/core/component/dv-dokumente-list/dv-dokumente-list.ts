@@ -17,7 +17,8 @@ export class DVDokumenteListConfig implements IComponentOptions {
         tag: '@',
         titleValue: '<',
         onUploadDone: '&',
-        onRemove: '&'
+        onRemove: '&',
+        sonstige: '<'
 
     };
     template = template;
@@ -34,6 +35,7 @@ export class DVDokumenteListController {
     titleValue: string;
     onUploadDone: (dokumentGrund: any) => void;
     onRemove: (attrs: any) => void;
+    sonstige: boolean;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil'];
     /* @ngInject */
@@ -51,18 +53,16 @@ export class DVDokumenteListController {
             let gesuchID = this.gesuchModelManager.gesuch.id;
             console.log('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
-                console.log('File: ' + file.name );
+                console.log('File: ' + file.name);
             }
-            this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
 
+            this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
                 let returnedDG: TSDokumentGrund = angular.copy(response);
                 this.handleUpload(returnedDG);
-
             });
         } else {
             console.log('No gesuch found to store file ');
         }
-
     }
 
     hasDokuments(selectDokument: TSDokumentGrund): boolean {
@@ -83,6 +83,18 @@ export class DVDokumenteListController {
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
         console.log('component -> remove dokument ' + dokument.dokumentName);
         this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
+    }
+
+    getWidth(): String {
+        if (this.sonstige) {
+            return '95%';
+        } else {
+            if (this.tag) {
+                return '45%';
+            } else {
+                return '60%';
+            }
+        }
     }
 
 

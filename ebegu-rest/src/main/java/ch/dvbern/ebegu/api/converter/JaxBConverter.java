@@ -1504,6 +1504,7 @@ public class JaxBConverter {
 		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
 		jaxDokumentGrund.setDokumentTyp(dokumentGrund.getDokumentTyp());
+		jaxDokumentGrund.setNeeded(dokumentGrund.isNeeded());
 		if (dokumentGrund.getDokumente() != null) {
 			if (jaxDokumentGrund.getDokumente() == null) {
 				jaxDokumentGrund.setDokumente(new HashSet<JaxDokument>());
@@ -1533,6 +1534,7 @@ public class JaxBConverter {
 		dokumentGrund.setFullName(dokumentGrundJAXP.getFullName());
 		dokumentGrund.setTag(dokumentGrundJAXP.getTag());
 		dokumentGrund.setDokumentTyp(dokumentGrundJAXP.getDokumentTyp());
+		dokumentGrund.setNeeded(dokumentGrundJAXP.isNeeded());
 
 		dokumenteToEntity(dokumentGrundJAXP.getDokumente(), dokumentGrund.getDokumente(), dokumentGrund);
 		return dokumentGrund;

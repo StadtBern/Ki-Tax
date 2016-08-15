@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public interface DokumentGrundService {
 	 * Aktualisiert die DokumentGrund in der DB
 	 * @param dokumentGrund Die DokumentGrund als DTO
 	 */
-	@Nonnull
+	@Nullable
 	DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund);
 
 

@@ -587,6 +587,9 @@
     "DOK_FUER": "für ",
     "DOK_JAHR": "Jahr ",
     "DOK_TAETIGKEIT": "Tätigkeit",
+    "DOK_SONSTIGES": "Sonstige Nachweise",
+
+    "ERROR_FILE_TOO_LARGE": "File ist zu gross (Maximal 10MB)",
 
     "NACHWEIS_TRENNUNG": "Trennungsvereinbarung / Scheidungsurteil / Sonstiger Nachweis über Trennung / Eheschutzverfahren",
     "SORGERECHTSVEREINBARUNG": "Sorgerechtsvereinbarung",
@@ -613,7 +616,7 @@
     "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
-    "DIV": "Sonstige Nachweise",
+    "DIV": "Hier können Sie zusätzliche Dokumente hochladen",
     "ANSPRUCH": "Anspruch",
     "VOLLKOSTEN": "Vollkosten",
     "ELTERNBEITRAG": "Elternbeitrag",

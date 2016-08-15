@@ -9,18 +9,14 @@
         <hr class="header"/>
 
         <table st-table="table" st-safe-src="vm.dokumente" st-
-               class="table table-striped dokumentgrundtable" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
+               class="table table-striped dokumentgrundtable" id="{{vm.tableId}}">
             <thead>
-            <tr>
+            <tr ng-if="!vm.sonstige">
                 <!--without tag-->
-                <th width="60%" st-sort="dokumentTyp" class="sortable" ng-if="!vm.tag">
+                <th width="vm.getWidth()" st-sort="dokumentTyp" class="sortable">
                     <span data-translate="DOK_DOKUMENT"> </span>
                 </th>
 
-                <!--with tag-->
-                <th width="45%" st-sort="dokumentTyp" class="sortable" ng-if="vm.tag">
-                    <span data-translate="DOK_DOKUMENT"> </span>
-                </th>
                 <th width="15%" st-sort="tag" class="sortable" ng-if="vm.tag">
                     <span data-translate="{{vm.tag}}"></span>
                 </th>
@@ -32,6 +28,10 @@
                 <th width="5%"></th>
                 <th width="5%"></th>
             </tr>
+            <tr ng-if="vm.sonstige" class="sonstige">
+                <th width="vm.getWidth()"></th>
+                <th width="5%"></th>
+            </tr>
             </thead>
             <tbody>
             <tr ng-repeat-start="row in table" class="dokument-grund-row">
@@ -39,20 +39,26 @@
                 <!--with and without tag-->
                 <td ng-bind="row.dokumentTyp | translate" ngf-drop="vm.uploadAnhaenge($files, row)"
                     ngf-drag-over-class="'dragover'" ngf-multiple="true"
+                    ngf-max-size="'10MB'" ngf-max-total-size="'100MB'"
                     ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)]"></td>
 
                 <!--with tag-->
-                <td ng-bind="row.tag" ng-if="vm.tag"
+                <td ng-bind="row.tag" ng-if="!vm.sonstige && vm.tag"
                     ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)]"></td>
 
-                <td ng-bind="row.fullName" ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)]"></td>
+                <td ng-bind="row.fullName" ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)] "
+                    ng-if="!vm.sonstige"></td>
 
-                <td>
+                <td ng-if="!vm.sonstige">
                     <i ng-if="!vm.hasDokuments(row)" class="fa fa-circle" aria-hidden="true" style="color: orange"></i>
-                    <i ng-if="vm.hasDokuments(row)" class="fa fa-check" aria-hidden="true" style="color: green"></i>
+                    <i ng-if="row.needed && vm.hasDokuments(row)" class="fa fa-check" aria-hidden="true"
+                       style="color: green"></i>
+                    <i ng-if="!row.needed && vm.hasDokuments(row)" class="fa fa-check" aria-hidden="true"
+                       style="color: orange"></i>
                 </td>
                 <td ng-click="$event.stopPropagation()">
-                    <a ngf-select="vm.uploadAnhaenge($files, row)" data-ngf-multiple="true"
+                    <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
+                       ngf-max-size="'10MB'" ngf-max-total-size="100MB"
                        class="fa fa-file-text-o" aria-hidden="true" style="color: black"></a>
                 </td>
             </tr>
@@ -86,7 +92,8 @@
                                 <i class="fa fa-eye" aria-hidden="true" style="color: black"></i>
                             </td>
                             <td>
-                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true" style="color: black"></span>
+                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
+                                      style="color: black"></span>
                             </td>
                         </tr>
                         </tbody>

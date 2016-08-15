@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,9 +52,15 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	}
 
 	@Override
-	@Nonnull
+	@Nullable
 	public DokumentGrund updateDokumentGrund(@Nonnull DokumentGrund dokumentGrund) {
 		Objects.requireNonNull(dokumentGrund);
+
+		//Wenn DokumentGrund keine Dokumente mehr hat und nicht gebraucht wird, wird er entfernt
+		if (!dokumentGrund.isNeeded() && (dokumentGrund.getDokumente() == null || dokumentGrund.getDokumente().isEmpty())) {
+			persistence.remove(dokumentGrund);
+			return null;
+		}
 		return persistence.merge(dokumentGrund);
 	}
 

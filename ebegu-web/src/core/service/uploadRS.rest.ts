@@ -22,7 +22,7 @@ export class UploadRS {
     }
 
     public uploadFile(files: any, dokumentGrund: TSDokumentGrund, gesuchID: string): IPromise<TSDokumentGrund> {
-        
+
         let restDokumentGrund = {};
         restDokumentGrund = this.ebeguRestUtil.dokumentGrundToRestObject(restDokumentGrund, dokumentGrund);
         let restDokumentString = this.upload.json(restDokumentGrund);

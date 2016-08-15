@@ -10,8 +10,10 @@
 
 package ch.dvbern.ebegu.config;
 
+import ch.dvbern.ebegu.services.FileSaverService;
 import org.apache.commons.configuration.SystemConfiguration;
 
+import javax.ejb.Local;
 import javax.enterprise.context.Dependent;
 import java.io.Serializable;
 
@@ -23,7 +25,8 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 
 
 	private static final long serialVersionUID = 463057263479503486L;
-	public static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
+	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
+	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
 
 	public EbeguConfigurationImpl() {
 
@@ -33,6 +36,11 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public boolean getIsDevmode() {
 		return getBoolean(EBEGU_DEVELOPMENT_MODE, true);
+	}
+
+	@Override
+	public String getDocumentFilePath() {
+		return getString(EBEGU_DOCUMENT_FILE_PATH, getString("jboss.server.data.dir"));
 	}
 
 

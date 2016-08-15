@@ -1139,6 +1139,7 @@ export default class EbeguRestUtil {
             dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
             dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundFromServer.needed;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
             return dokumentGrund;
         }
@@ -1175,6 +1176,7 @@ export default class EbeguRestUtil {
             dokumentGrund.fullName = dokumentGrundTS.fullName;
             dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
             dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundTS.needed;
             dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
 
             return dokumentGrund;

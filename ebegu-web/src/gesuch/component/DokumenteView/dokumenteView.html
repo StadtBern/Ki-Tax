@@ -2,7 +2,6 @@
     <div class="col-md-12">
 
 
-
         <br/>
         <span data-translate="DOK_HINT_DOKUMENTE"> </span>
         <br/>
@@ -45,9 +44,10 @@
             </dv-dokumente-list>
 
             <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
-                               table-title="Sonstiges gschmöis"
+                               table-title="DOK_SONSTIGES"
                                on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)">
+                               on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)"
+                               sonstige="true">
             </dv-dokumente-list>
 
             <!-- -------------------------------------------Navigation--------------------------------------------  -->

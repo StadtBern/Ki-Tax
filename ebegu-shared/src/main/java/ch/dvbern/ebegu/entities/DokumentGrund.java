@@ -90,6 +90,9 @@ public class DokumentGrund extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dokumentGrund")
 	private Set<Dokument> dokumente = new HashSet<>();
 
+	// Marker, ob Dokument benötigt wird oder nicht. Nicht in DB
+	@Transient
+	private boolean needed = true;
 
 	@Nullable
 	public Set<Dokument> getDokumente() {
@@ -140,6 +143,14 @@ public class DokumentGrund extends AbstractEntity {
 
 	public void setDokumentTyp(DokumentTyp dokumentTyp) {
 		this.dokumentTyp = dokumentTyp;
+	}
+
+	public boolean isNeeded() {
+		return needed;
+	}
+
+	public void setNeeded(boolean needed) {
+		this.needed = needed;
 	}
 
 	@Override
