@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+@SuppressFBWarnings({"NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"})
 @Stateless
 @Local(FileSaverService.class)
 public class FileSaverServiceBean implements FileSaverService {
@@ -39,6 +41,7 @@ public class FileSaverServiceBean implements FileSaverService {
 
 		Path file = Paths.get(absulutFilePath);
 		try {
+
 			if (!Files.exists(file.getParent())) {
 				Files.createDirectories(file.getParent());
 				LOG.info("Save file in FileSystem: " + absulutFilePath);

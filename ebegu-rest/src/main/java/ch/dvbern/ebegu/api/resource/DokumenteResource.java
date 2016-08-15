@@ -150,7 +150,7 @@ public class DokumenteResource {
 		for (DokumentGrund dokumentGrundNeeded : dokumentGrundsNeeded) {
 			Set<DokumentGrund> persistedForNeeded = getPersistedForNeeded(persistedDokumentGrunds, dokumentGrundNeeded);
 
-			if (persistedForNeeded != null && !persistedForNeeded.isEmpty()) {
+			if (!persistedForNeeded.isEmpty()) {
 				persistedDokumentAdded.addAll(persistedForNeeded);
 				dokumentGrundsMerged.addAll(persistedForNeeded);
 			} else {

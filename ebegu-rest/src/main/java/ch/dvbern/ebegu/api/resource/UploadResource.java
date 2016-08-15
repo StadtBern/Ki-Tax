@@ -78,19 +78,21 @@ public class UploadResource {
 
 		request.setAttribute(InputPart.DEFAULT_CONTENT_TYPE_PROPERTY, "*/*; charset=UTF-8");
 
-
+		// get filenames from Header
 		String filenamesJson = request.getHeader(FILENAME_HEADER);
 		String[] filenames = null;
 		if (!StringUtils.isEmpty(filenamesJson)) {
 			filenames = filenamesJson.split(";");
 		}
 
+		// check if filenames available
 		if (filenames == null || filenames.length == 0) {
 			final String problemString = "filename must be given";
 			LOG.error(problemString);
 			return Response.serverError().entity(problemString).build();
 		}
 
+		// Get GesuchId from header
 		String gesuchId = request.getHeader(GESUCHID_HEADER);
 		if (StringUtils.isEmpty(gesuchId)) {
 			final String problemString = "a valid gesuchID must be given";
@@ -98,6 +100,7 @@ public class UploadResource {
 			return Response.serverError().entity(problemString).build();
 		}
 
+		// Get DokumentGrund Object from form-paramter
 		List<InputPart> inputPartsDG = input.getFormDataMap().get(PART_DOKUMENT_GRUND);
 		if (inputPartsDG == null || !inputPartsDG.stream().findAny().isPresent()) {
 			final String problemString = "form-parameter 'inputPartsDG' not found";
@@ -105,12 +108,13 @@ public class UploadResource {
 			return Response.serverError().entity(problemString).build();
 		}
 
+		// Convert DokumentGrund from inputStream
 		JaxDokumentGrund jaxDokumentGrund = null;
 		try (InputStream dokGrund = input.getFormDataPart(PART_DOKUMENT_GRUND, InputStream.class, null)) {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.registerModule(new JavaTimeModule());
 			jaxDokumentGrund = mapper.readValue(IOUtils.toString(dokGrund, "UTF-8"), JaxDokumentGrund.class);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			final String problemString = "Can't parse DokumentGrund from Jax to object";
 			LOG.error(problemString, e);
 			return Response.serverError().entity(problemString).build();
@@ -123,30 +127,7 @@ public class UploadResource {
 
 		}
 
-		int filecounter = 0;
-		String partrileName = PART_FILE + "[" + filecounter + "]";
-
-		List<InputPart> inputParts = input.getFormDataMap().get(partrileName);
-		while (inputParts != null && inputParts.stream().findAny().isPresent()) {
-			UploadFileInfo fileInfo = RestUtil.parseUploadFile(inputParts.stream().findAny().get());
-
-			// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
-			if (filenames[filecounter] != null) {
-				fileInfo.setFilename(filenames[filecounter]);
-			}
-
-			try (InputStream file = input.getFormDataPart(partrileName, InputStream.class, null)) {
-				fileInfo.setBytes(IOUtils.toByteArray(file));
-			}
-
-			fileSaverService.save(fileInfo, gesuchId);
-
-			addFileToDokumentGrund(jaxDokumentGrund, fileInfo);
-
-			filecounter++;
-			partrileName = PART_FILE + "[" + filecounter + "]";
-			inputParts = input.getFormDataMap().get(partrileName);
-		}
+		extractFilesFromInput(input, filenames, gesuchId, jaxDokumentGrund);
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId);
 		if (!gesuch.isPresent()) {
@@ -163,8 +144,8 @@ public class UploadResource {
 		DokumentGrund convertedDokumentGrund = converter.dokumentGrundToEntity(jaxDokumentGrund, dokumentGrundToMerge);
 		convertedDokumentGrund.setGesuch(gesuch.get());
 
+		// save modified Dokument to DB
 		DokumentGrund persistedDokumentGrund = dokumentGrundService.saveDokumentGrund(convertedDokumentGrund);
-
 
 		final JaxDokumentGrund jaxDokumentGrundToReturn = converter.dokumentGrundToJax(persistedDokumentGrund);
 
@@ -176,9 +157,39 @@ public class UploadResource {
 		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
 	}
 
+	private void extractFilesFromInput(MultipartFormDataInput input, String[] filenames, String gesuchId, JaxDokumentGrund jaxDokumentGrund) throws MimeTypeParseException, IOException {
+		int filecounter = 0;
+		String partrileName = PART_FILE + "[" + filecounter + "]";
+
+		// do for every file:
+		List<InputPart> inputParts = input.getFormDataMap().get(partrileName);
+		while (inputParts != null && inputParts.stream().findAny().isPresent()) {
+			UploadFileInfo fileInfo = RestUtil.parseUploadFile(inputParts.stream().findAny().get());
+
+			// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
+			if (filenames[filecounter] != null) {
+				fileInfo.setFilename(filenames[filecounter]);
+			}
+
+			try (InputStream file = input.getFormDataPart(partrileName, InputStream.class, null)) {
+				fileInfo.setBytes(IOUtils.toByteArray(file));
+			}
+
+			// safe File to Filesystem
+			fileSaverService.save(fileInfo, gesuchId);
+
+			// add the new file to DokumentGrund object
+			addFileToDokumentGrund(jaxDokumentGrund, fileInfo);
+
+			filecounter++;
+			partrileName = PART_FILE + "[" + filecounter + "]";
+			inputParts = input.getFormDataMap().get(partrileName);
+		}
+	}
+
 	private void addFileToDokumentGrund(JaxDokumentGrund jaxDokumentGrund, UploadFileInfo uploadFileInfo) {
 		Validate.notNull(jaxDokumentGrund.getDokumente());
-		DokumentTyp dokumentTyp = null;
+
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
 
 			if (null == jaxDokument.getDokumentName() ||

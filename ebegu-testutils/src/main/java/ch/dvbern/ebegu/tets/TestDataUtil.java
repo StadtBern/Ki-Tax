@@ -447,6 +447,8 @@ public final class TestDataUtil {
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
 		dokument.setDokumentName("testdokument");
+		dokument.setDokumentPfad("testpfad/");
+		dokument.setDokumentSize("123456");
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}

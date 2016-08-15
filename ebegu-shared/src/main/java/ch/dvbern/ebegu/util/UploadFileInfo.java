@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.util;
 
-import io.undertow.util.FileUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.activation.MimeType;
+import java.util.Arrays;
 
+@SuppressFBWarnings("EI_EXPOSE_REP")
 public class UploadFileInfo {
 
 	private String filename;
@@ -40,7 +42,7 @@ public class UploadFileInfo {
 	}
 
 	public void setBytes(byte[] bytes) {
-		this.bytes = bytes;
+		this.bytes = Arrays.copyOf(bytes, bytes.length);
 	}
 
 	public String getPath() {
@@ -62,9 +64,11 @@ public class UploadFileInfo {
 	public String getSizeString() {
 
 		int unit = 1000;
-		if (size < unit) return size + " B";
+		if (size < unit) {
+			return size + " B";
+		}
 		int exp = (int) (Math.log(size) / Math.log(unit));
-		String pre = ("kMGTPE").charAt(exp-1) + "";
+		String pre = ("kMGTPE").charAt(exp - 1) + "";
 		return String.format("%.1f %sB", size / Math.pow(unit, exp), pre);
 	}
 }

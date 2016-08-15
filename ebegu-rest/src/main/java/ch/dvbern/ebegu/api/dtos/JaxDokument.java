@@ -1,8 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.enums.DokumentTyp;
-
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -45,14 +42,24 @@ public class JaxDokument extends JaxAbstractDTO {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
 
 		JaxDokument that = (JaxDokument) o;
 
-		if (dokumentName != null ? !dokumentName.equals(that.dokumentName) : that.dokumentName != null) return false;
-		if (dokumentPfad != null ? !dokumentPfad.equals(that.dokumentPfad) : that.dokumentPfad != null) return false;
+		if (dokumentName != null ? !dokumentName.equals(that.dokumentName) : that.dokumentName != null) {
+			return false;
+		}
+		if (dokumentPfad != null ? !dokumentPfad.equals(that.dokumentPfad) : that.dokumentPfad != null) {
+			return false;
+		}
 		return dokumentSize != null ? dokumentSize.equals(that.dokumentSize) : that.dokumentSize == null;
 
 	}
