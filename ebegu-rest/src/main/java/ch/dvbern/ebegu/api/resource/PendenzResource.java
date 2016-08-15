@@ -32,6 +32,7 @@ public class PendenzResource {
 
 	@Inject
 	private JaxBConverter converter;
+
 	@Inject
 	private GesuchService gesuchService;
 

@@ -28,6 +28,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 
 	@Inject
 	private Persistence<Benutzer> persistence;
+
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
