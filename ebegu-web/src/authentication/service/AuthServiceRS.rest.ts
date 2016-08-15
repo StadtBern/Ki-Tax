@@ -3,6 +3,7 @@ import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import HttpBuffer from './HttpBuffer';
 import ICookiesService = angular.cookies.ICookiesService;
+import {TSRole} from '../../models/enums/TSRole';
 
 export default class AuthServiceRS {
 
@@ -15,8 +16,15 @@ export default class AuthServiceRS {
                 private $cookies: ICookiesService, private base64: any, private ebeguRestUtil: EbeguRestUtil, private httpBuffer: HttpBuffer) {
     }
 
-    public getPrincipal() {
+    public getPrincipal(): TSUser {
         return this.principal;
+    }
+
+    public getPrincipalRole(): TSRole {
+        if (this.principal) {
+            return this.principal.role;
+        }
+        return undefined;
     }
 
     public loginRequest(userCredentials: TSUser): IPromise<TSUser> {
@@ -62,4 +70,15 @@ export default class AuthServiceRS {
         });
     };
 
+    /**
+     * Gibt true zurueck, wenn der eingelogte Benutzer die gegebene Role hat. Fuer undefined Werte wird immer false zurueckgegeben.
+     * @param role
+     * @returns {boolean}
+     */
+    public isRole(role: TSRole) {
+        if (role && this.principal) {
+            return this.principal.role === role;
+        }
+        return false;
+    }
 }

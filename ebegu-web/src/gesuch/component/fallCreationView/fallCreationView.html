@@ -10,7 +10,6 @@
         </div>
     </div>
     <hr class="header"/>
-
     <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
 
         <!--Eingangsdatum-->
@@ -19,8 +18,8 @@
                 <dv-input-container class="form-group">
                     <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
                     </label>
-                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum""
-                                   ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
+                    <dv-datepicker input-id="eingangsdatum_ID"  name="eingangsdatum"
+                    ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true" class="input-element">
                     </dv-datepicker>
                     <dv-error-messages  for="form.eingangsdatum.$error"
                                         class="error"></dv-error-messages>
@@ -46,9 +45,9 @@
                 </div>
             </div>
 
-    </div>
+        </div>
 
-    <!--Buttons-->
+        <!--Buttons-->
         <div class="row">
             <div class="col-md-6 col-md-offset-6">
                 <dv-loading-button type="submit" button-class="btn btn-link next">
