@@ -24,4 +24,11 @@ export class TSRoleUtil {
     public static getTraegerschaftInstitutionRoles(): Array<TSRole> {
         return [TSRole.SACHBEARBEITER_INSTITUTION, TSRole.SACHBEARBEITER_TRAEGERSCHAFT];
     }
+
+    public static getAllRolesButTraegerschaftInstitution(): Array<string> {
+        return TSRoleUtil.getAllRoles().filter(element =>
+            element !== TSRole[TSRole.SACHBEARBEITER_INSTITUTION] && element !== TSRole[TSRole.SACHBEARBEITER_TRAEGERSCHAFT]
+        );
+    }
+
 }

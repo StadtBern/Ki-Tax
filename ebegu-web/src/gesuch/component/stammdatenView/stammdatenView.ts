@@ -10,6 +10,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -29,6 +30,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     ebeguRestUtil: EbeguRestUtil;
     phonePattern: string;
     mobilePattern: string;
+    allowedRoles: Array<TSRole>;
 
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
@@ -52,6 +54,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
         this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     submit(form: IFormController) {

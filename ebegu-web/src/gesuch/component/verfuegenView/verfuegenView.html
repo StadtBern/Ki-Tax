@@ -4,71 +4,73 @@
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate unsaved-warning-form>
 
             <!-- Abzuege -->
-            <div class="row marginTop20">
-                <div class="col-md-12">
-                    <span data-translate="AUFGRUND_FIN_SITUATION" data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseFS()}}"
-                           for="finSitAbzug_ID"></label>
-                    <input id="finSitAbzug_ID" type="text" name="finSitAbzug"
-                           ng-model="vm.berechnungsManager.finanzielleSituationResultate.abzugAufgrundFamiliengroesse"
-                           class="form-control" ng-disabled="true">
-                </div>
-                <div class="col-md-6">
-                    <label data-translate="MASSGEBENDES_EINKOMMEN" for="finSitEinkommen_ID"></label>
-                    <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
-                           ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkommen"
-                           class="form-control" ng-disabled="true">
-                </div>
-            </div>
-
-            <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1">
+            <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                 <div class="row marginTop20">
                     <div class="col-md-12">
+                        <span data-translate="AUFGRUND_FIN_SITUATION" data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseFS()}}"
+                               for="finSitAbzug_ID"></label>
+                        <input id="finSitAbzug_ID" type="text" name="finSitAbzug"
+                               ng-model="vm.berechnungsManager.finanzielleSituationResultate.abzugAufgrundFamiliengroesse"
+                               class="form-control" ng-disabled="true">
+                    </div>
+                    <div class="col-md-6">
+                        <label data-translate="MASSGEBENDES_EINKOMMEN" for="finSitEinkommen_ID"></label>
+                        <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
+                               ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkommen"
+                               class="form-control" ng-disabled="true">
+                    </div>
+                </div>
+
+                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1">
+                    <div class="row marginTop20">
+                        <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
                               data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung1()}}"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV1()}}"
+                                   for="einVersAbzug1_ID"></label>
+                            <input id="einVersAbzug1_ID" type="text" name="einVersAbzug1"
+                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.abzugAufgrundFamiliengroesse"
+                                   class="form-control" ng-disabled="true">
+                        </div>
+                        <div class="col-md-6">
+                            <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen1_ID"></label>
+                            <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
+                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkommen"
+                                   class="form-control" ng-disabled="true">
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV1()}}"
-                               for="einVersAbzug1_ID"></label>
-                        <input id="einVersAbzug1_ID" type="text" name="einVersAbzug1"
-                               ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.abzugAufgrundFamiliengroesse"
-                               class="form-control" ng-disabled="true">
-                    </div>
-                    <div class="col-md-6">
-                        <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen1_ID"></label>
-                        <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
-                               ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkommen"
-                               class="form-control" ng-disabled="true">
-                    </div>
-                </div>
-            </div>
 
-            <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2">
-                <div class="row marginTop20">
-                    <div class="col-md-12">
+                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2">
+                    <div class="row marginTop20">
+                        <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
                               data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung2()}}"></span>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV2()}}"
-                               for="einVersAbzug2_ID"></label>
-                        <input id="einVersAbzug2_ID" type="text" name="einVersAbzug2"
-                               ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.abzugAufgrundFamiliengroesse"
-                               class="form-control" ng-disabled="true">
-                    </div>
-                    <div class="col-md-6">
-                        <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen2_ID"></label>
-                        <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
-                               ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkommen"
-                               class="form-control" ng-disabled="true">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label data-translate="ABZUG_AUFGRUND_FAM_GROESSE" data-translate-value-famgroesse="{{vm.getFamiliengroesseEV2()}}"
+                                   for="einVersAbzug2_ID"></label>
+                            <input id="einVersAbzug2_ID" type="text" name="einVersAbzug2"
+                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.abzugAufgrundFamiliengroesse"
+                                   class="form-control" ng-disabled="true">
+                        </div>
+                        <div class="col-md-6">
+                            <label data-translate="MASSGEBENDES_EINKOMMEN" for="einVersEinkommen2_ID"></label>
+                            <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
+                                   ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkommen"
+                                   class="form-control" ng-disabled="true">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,7 +133,7 @@
                         </tbody>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
                         <tr>
-                        <td colspan="7" class="empty-table" >Zeitabschnitte noch nicht berechnet</td>
+                            <td colspan="7" class="empty-table" >Zeitabschnitte noch nicht berechnet</td>
                         </tr>
                         </tbody>
                     </table>
@@ -139,14 +141,14 @@
             </div>
 
             <!--bemerkungen-->
-            <div class="row">
+            <div class="row" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
                 <div class="col-md-12">
                     <label class="inlineHint" for="generated_notes" data-translate="GENERATED_BEMERKUNGEN"></label>
                     <textarea md-no-autogrow class="form-control" rows="6" id="generated_notes" ng-disabled="true"
                               ng-model="vm.getVerfuegenToWorkWith().generatedBemerkungen"></textarea>
                 </div>
             </div>
-            <div class="row marginTop20">
+            <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
                 <div class="col-md-12">
                     <label class="inlineHint" for="manuelle_notes" data-translate="MANUELLE_BEMERKUNGEN"></label>
                     <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
@@ -162,7 +164,7 @@
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
-                <div class="col-md-6 text-right">
+                <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                     <dv-loading-button type="submit" button-class="btn btn-link next">
                         <span data-translate="SPEICHERN_UPPER"></span>
                         <span class="fa fa-chevron-right"></span>
