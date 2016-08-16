@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -188,5 +189,23 @@ public class Betreuung extends AbstractEntity {
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
 		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+	}
+
+	/**
+	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
+     */
+	@Transient
+	public String getBGNummer() {
+		String year = "";
+		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
+			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		}
+		String fall = "";
+		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
+			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		}
+		String kind = "" + getKind().getKindNummer();
+		String betreuung = "" + getBetreuungNummer();
+		return year + "." + fall + "." + kind + "." + betreuung;
 	}
 }

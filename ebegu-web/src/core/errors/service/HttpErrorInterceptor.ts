@@ -42,6 +42,9 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
 
         } else if (this.isDataEbeguExceptionReport(data)) {
             errors = this.convertEbeguExceptionReport(data);
+        } else if (this.isFileUploadException(data)) {
+            errors = [];
+            errors.push(new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, 'ERROR_FILE_TOO_LARGE', data));
         } else {
             //the error objects is neither a ViolationReport nor a ExceptionReport. Create a generic error msg
             errors = [];
@@ -134,5 +137,13 @@ export default class HttpErrorInterceptor implements IHttpInterceptor {
         }
 
         return [data];
+    }
+
+    private isFileUploadException(response: String) {
+        if (!response) {
+            return false;
+        }
+
+        return response.indexOf('java.io.IOException: UT000020: Connection terminated as request was larger than ') > -1;
     }
 }

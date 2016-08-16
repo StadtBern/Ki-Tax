@@ -43,6 +43,7 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSPendenzInstitution from '../models/TSPendenzInstitution';
 
 
 export default class EbeguRestUtil {
@@ -1072,6 +1073,46 @@ export default class EbeguRestUtil {
         return pendenzen;
     }
 
+    public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+        restPendenz.betreuungsId = pendenz.betreuungsId;
+        restPendenz.gesuchId = pendenz.gesuchId;
+        restPendenz.name = pendenz.name;
+        restPendenz.vorname = pendenz.vorname;
+        restPendenz.geburtsdatum = DateUtil.momentToLocalDate(pendenz.geburtsdatum);
+        restPendenz.typ = pendenz.typ;
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.betreuungsangebotTyp = pendenz.betreuungsangebotTyp;
+        restPendenz.institution = pendenz.institution;
+        return restPendenz;
+    }
+
+    public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+        pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
+        pendenzTS.gesuchId = pendenzFromServer.gesuchId;
+        pendenzTS.name = pendenzFromServer.name;
+        pendenzTS.vorname = pendenzFromServer.vorname;
+        pendenzTS.geburtsdatum = pendenzFromServer.geburtsdatum;
+        pendenzTS.typ = pendenzFromServer.typ;
+        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.betreuungsangebotTyp = pendenzFromServer.betreuungsangebotTyp;
+        pendenzTS.institution = pendenzFromServer.institution;
+        return pendenzTS;
+    }
+
+    public parsePendenzenInstitution(data: any): TSPendenzInstitution[] {
+        var pendenzen: TSPendenzInstitution[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                pendenzen[i] = this.parsePendenzInstitution(new TSPendenzInstitution(), data[i]);
+            }
+        } else {
+            pendenzen[0] = this.parsePendenzInstitution(new TSPendenzInstitution(), data);
+        }
+        return pendenzen;
+    }
+
     public userToRestObject(user: any, userTS: TSUser): any {
         if (userTS) {
             user.username = userTS.username;
@@ -1138,9 +1179,12 @@ export default class EbeguRestUtil {
 
     parseDokumentGrund(dokumentGrund: TSDokumentGrund, dokumentGrundFromServer: any): TSDokumentGrund {
         if (dokumentGrundFromServer) {
+            this.parseAbstractEntity(dokumentGrund, dokumentGrundFromServer);
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
-            dokumentGrund.fullname = dokumentGrundFromServer.fullname;
+            dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundFromServer.needed;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
             return dokumentGrund;
         }
@@ -1161,8 +1205,46 @@ export default class EbeguRestUtil {
 
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
+            this.parseAbstractEntity(dokument, dokumentFromServer);
             dokument.dokumentName = dokumentFromServer.dokumentName;
-            dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
+            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
+            dokument.dokumentSize = dokumentFromServer.dokumentSize;
+            return dokument;
+        }
+        return undefined;
+    }
+
+    public dokumentGrundToRestObject(dokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
+        if (dokumentGrundTS) {
+            this.abstractEntityToRestObject(dokumentGrund, dokumentGrundTS);
+            dokumentGrund.tag = dokumentGrundTS.tag;
+            dokumentGrund.fullName = dokumentGrundTS.fullName;
+            dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundTS.needed;
+            dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+
+            return dokumentGrund;
+        }
+        return undefined;
+    }
+
+    private dokumenteToRestObject(dokumente: Array<TSDokument>): Array<any> {
+        let list: any[] = [];
+        if (dokumente) {
+            for (var i = 0; i < dokumente.length; i++) {
+                list[i] = this.dokumentToRestObject({}, dokumente[i]);
+            }
+        }
+        return list;
+    }
+
+    private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
+        if (dokumentTS) {
+            this.abstractEntityToRestObject(dokument, dokumentTS);
+            dokument.dokumentName = dokumentTS.dokumentName;
+            dokument.dokumentPfad = dokumentTS.dokumentPfad;
+            dokument.dokumentSize = dokumentTS.dokumentSize;
             return dokument;
         }
         return undefined;

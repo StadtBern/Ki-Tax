@@ -1,11 +1,14 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
+import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
 
@@ -29,12 +32,15 @@ public class PendenzResource {
 
 	@Inject
 	private JaxBConverter converter;
+
 	@Inject
 	private GesuchService gesuchService;
 
+	@Inject
+	private BetreuungService betreuungService;
+
 	/**
-	 * Gibt eine Liste mit allen Pendenzen zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
-	 * @return
+	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
      */
 	@Nonnull
 	@GET
@@ -66,11 +72,34 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
+	@Nonnull
+	@GET
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/institution")
+	public List<JaxPendenzInstitution> getAllPendenzenInstitution() {
+		Collection<Betreuung> betreuungenInStatus = betreuungService.getPendenzenForInstitutionsOrTraegerschaftUser();
+		List<JaxPendenzInstitution> pendenzenList = new ArrayList<>();
+		for (Betreuung betreuung : betreuungenInStatus) {
+			JaxPendenzInstitution pendenz = new JaxPendenzInstitution();
+			pendenz.setBetreuungsId(betreuung.getBGNummer());
+			pendenz.setGesuchId(betreuung.extractGesuch().getId());
+			pendenz.setName(betreuung.getKind().getKindJA().getNachname());
+			pendenz.setVorname(betreuung.getKind().getKindJA().getVorname());
+			pendenz.setGeburtsdatum(betreuung.getKind().getKindJA().getGeburtsdatum());
+			pendenz.setEingangsdatum(betreuung.extractGesuch().getEingangsdatum());
+			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
+			pendenz.setBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
+			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
+			pendenzenList.add(pendenz);
+		}
+		return pendenzenList;
+	}
+
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-	 * @param kindContainers
-	 * @return
      */
 	private Set<String> createInstitutionenList(Set<KindContainer> kindContainers) {
 		Set<String> resultSet = new HashSet<>();
@@ -87,8 +116,6 @@ public class PendenzResource {
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-	 * @param kindContainers
-	 * @return
      */
 	private Set<BetreuungsangebotTyp> createAngeboteList(Set<KindContainer> kindContainers) {
 		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();

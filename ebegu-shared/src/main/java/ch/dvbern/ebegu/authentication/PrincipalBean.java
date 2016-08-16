@@ -9,6 +9,9 @@ import java.security.Principal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * ACHTUNG:  Das  injecten funktioniert anscheinend leider nicht
+ */
 @RequestScoped
 public class PrincipalBean {
 

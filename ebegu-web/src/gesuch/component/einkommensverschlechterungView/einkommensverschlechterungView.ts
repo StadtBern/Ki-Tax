@@ -22,8 +22,8 @@ export class EinkommensverschlechterungViewComponentConfig implements IComponent
 export class EinkommensverschlechterungViewController extends AbstractGesuchViewController {
 
     public showSelbstaendig: boolean;
-    private geschaeftsgewinnBasisjahrMinus1: number;
-    private geschaeftsgewinnBasisjahrMinus2: number;
+    public geschaeftsgewinnBasisjahrMinus1: number;
+    public geschaeftsgewinnBasisjahrMinus2: number;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log'];
 

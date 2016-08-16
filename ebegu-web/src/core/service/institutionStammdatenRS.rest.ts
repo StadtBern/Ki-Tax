@@ -2,6 +2,7 @@ import {IHttpService, ILogService, IPromise, IHttpPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import DateUtil from '../../utils/DateUtil';
+import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 
 export class InstitutionStammdatenRS {
     serviceURL: string;
@@ -76,6 +77,13 @@ export class InstitutionStammdatenRS {
             });
     }
 
+    public getBetreuungsangeboteForInstitutionenOfCurrentBenutzer(): IPromise<TSBetreuungsangebotTyp[]> {
+        return this.http.get(this.serviceURL + '/currentuser')
+            .then((response: any) => {
+                this.log.debug('PARSING institutionStammdaten REST array object', response.data);
+                return response.data;
+            });
+    }
 
     public getServiceName(): string {
         return 'InstitutionStammdatenRS';
