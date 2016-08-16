@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,21 +15,28 @@ import java.util.Set;
 
 @XmlRootElement(name = "dokumentGrund")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxDokumentGrund {
+public class JaxDokumentGrund extends JaxAbstractDTO {
 
+
+	private static final long serialVersionUID = -1451729857998697429L;
 
 	@Enumerated(value = EnumType.STRING)
 	@NotNull
 	private DokumentGrundTyp dokumentGrundTyp;
 
+	@NotNull
+	private DokumentTyp dokumentTyp;
+
 	@Nullable
-	private String fullname;
+	private String fullName;
 
 	@Nullable
 	private String tag;
 
 	@Nullable
 	private Set<JaxDokument> dokumente = new HashSet<>();
+
+	private boolean needed = true;
 
 	public DokumentGrundTyp getDokumentGrundTyp() {
 		return dokumentGrundTyp;
@@ -38,12 +47,12 @@ public class JaxDokumentGrund {
 	}
 
 	@Nullable
-	public String getFullname() {
-		return fullname;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFullname(@Nullable String fullname) {
-		this.fullname = fullname;
+	public void setFullName(@Nullable String fullName) {
+		this.fullName = fullName;
 	}
 
 	@Nullable
@@ -62,5 +71,21 @@ public class JaxDokumentGrund {
 
 	public void setDokumente(@Nullable Set<JaxDokument> dokumente) {
 		this.dokumente = dokumente;
+	}
+
+	public DokumentTyp getDokumentTyp() {
+		return dokumentTyp;
+	}
+
+	public void setDokumentTyp(DokumentTyp dokumentTyp) {
+		this.dokumentTyp = dokumentTyp;
+	}
+
+	public boolean isNeeded() {
+		return needed;
+	}
+
+	public void setNeeded(boolean needed) {
+		this.needed = needed;
 	}
 }

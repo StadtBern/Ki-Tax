@@ -45,6 +45,9 @@ import {DVLoading} from './directive/dv-loading/dv-loading';
 import {DVLoadingButton} from './directive/dv-loading-button/dv-loading-button';
 import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
+import 'ng-file-upload';
+import {UploadRS} from './service/uploadRS.rest';
+
 import VerfuegungRS from './service/verfuegungRS.rest';
 import {DVShowElement} from './directive/dv-show-element/dv-show-element';
 import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
@@ -79,8 +82,8 @@ const dependencies: string[] = [
     'pascalprecht.translate',
     'angularMoment',
     'cfp.hotkeys',
-    'ui.utils.masks'
-
+    'ui.utils.masks',
+    'ngFileUpload'
 ];
 
 
@@ -121,6 +124,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('UserRS', UserRS)
     .service('VerfuegungRS', VerfuegungRS)
     .service('DokumenteRS', DokumenteRS)
+    .service('UploadRS', UploadRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())

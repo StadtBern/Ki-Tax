@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.DokumentTyp;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -25,17 +24,16 @@ public class Dokument extends AbstractEntity {
 	@NotNull
 	private String dokumentName;
 
-
 	//Dokument soll nicht in DB gespeichert werden, sondern in File-System. Wie genau ist noch nicht klar und muss noch evaluiert werden!
-//	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-//	@Column(nullable = true)
-//	@Nullable
-//	private String dokumentPfad;
-
-	@Enumerated(value = EnumType.STRING)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false)
 	@NotNull
-	private DokumentTyp dokumentTyp;
+	private String dokumentPfad;
 
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false)
+	@NotNull
+	private String dokumentSize;
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -45,9 +43,8 @@ public class Dokument extends AbstractEntity {
 	public Dokument() {
 	}
 
-	public Dokument(DokumentGrund dokumentGrund, DokumentTyp dokumentTyp) {
+	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;
-		this.dokumentTyp = dokumentTyp;
 	}
 
 	@Nullable
@@ -59,14 +56,6 @@ public class Dokument extends AbstractEntity {
 		this.dokumentName = dokumentName;
 	}
 
-	public DokumentTyp getDokumentTyp() {
-		return dokumentTyp;
-	}
-
-	public void setDokumentTyp(DokumentTyp dokumentTyp) {
-		this.dokumentTyp = dokumentTyp;
-	}
-
 	public DokumentGrund getDokumentGrund() {
 		return dokumentGrund;
 	}
@@ -75,11 +64,28 @@ public class Dokument extends AbstractEntity {
 		this.dokumentGrund = dokumentGrund;
 	}
 
+	public String getDokumentPfad() {
+		return dokumentPfad;
+	}
+
+	public void setDokumentPfad(String dokumentPfad) {
+		this.dokumentPfad = dokumentPfad;
+	}
+
+	public String getDokumentSize() {
+		return dokumentSize;
+	}
+
+	public void setDokumentSize(String dokumentSize) {
+		this.dokumentSize = dokumentSize;
+	}
+
 	@Override
 	public String toString() {
 		return "Dokument{" +
 			"dokumentName='" + dokumentName + '\'' +
-			", dokumentTyp=" + dokumentTyp +
+			", dokumentPfad='" + dokumentPfad + '\'' +
+			", dokumentSize='" + dokumentSize + '\'' +
 			'}';
 	}
 }

@@ -44,19 +44,22 @@ public class DokumentGrund extends AbstractEntity {
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName, tag);
 		this.dokumente = new HashSet<>();
-		this.dokumente.add(new Dokument(this, dokumentTyp));
+		this.dokumentTyp = dokumentTyp;
+		this.dokumente.add(new Dokument(this));
 	}
 
 	@NotNull
@@ -78,11 +81,18 @@ public class DokumentGrund extends AbstractEntity {
 	@Nullable
 	private String tag;
 
+	@Enumerated(value = EnumType.STRING)
+	@NotNull
+	private DokumentTyp dokumentTyp;
+
 	@Nullable
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "dokumentGrund")
 	private Set<Dokument> dokumente = new HashSet<>();
 
+	// Marker, ob Dokument benötigt wird oder nicht. Nicht in DB
+	@Transient
+	private boolean needed = true;
 
 	@Nullable
 	public Set<Dokument> getDokumente() {
@@ -125,6 +135,22 @@ public class DokumentGrund extends AbstractEntity {
 
 	public void setTag(@Nullable String tag) {
 		this.tag = tag;
+	}
+
+	public DokumentTyp getDokumentTyp() {
+		return dokumentTyp;
+	}
+
+	public void setDokumentTyp(DokumentTyp dokumentTyp) {
+		this.dokumentTyp = dokumentTyp;
+	}
+
+	public boolean isNeeded() {
+		return needed;
+	}
+
+	public void setNeeded(boolean needed) {
+		this.needed = needed;
 	}
 
 	@Override

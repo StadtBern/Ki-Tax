@@ -86,6 +86,9 @@
     "TELEFON_AUSLAND": "Telefon Ausland",
     "KEIN_EINTRAG": "Es ist aktuell kein Eintrag vorhanden",
     "GESUCHSTELLER_DIPLOMATENSTATUS": "Diplomatenstatus",
+    "DATEINAME": "Dateiname",
+    "DATUM": "Datum",
+    "SIZE": "Grösse",
     "Land_AD": "Andorra",
     "Land_AE": "Vereinigte Arabische Emirate",
     "Land_AF": "Afghanistan",
@@ -590,6 +593,9 @@
     "DOK_FUER": "für ",
     "DOK_JAHR": "Jahr ",
     "DOK_TAETIGKEIT": "Tätigkeit",
+    "DOK_SONSTIGES": "Sonstige Nachweise",
+
+    "ERROR_FILE_TOO_LARGE": "File ist zu gross (Maximal 10MB)",
 
     "NACHWEIS_TRENNUNG": "Trennungsvereinbarung / Scheidungsurteil / Sonstiger Nachweis über Trennung / Eheschutzverfahren",
     "SORGERECHTSVEREINBARUNG": "Sorgerechtsvereinbarung",
@@ -603,7 +609,7 @@
     "NACHWEIS_UNREG_ARBEITSZ": "Nachweis über die unregelmässige Arbeitszeit (z.B. ArbG-Bestätigung)",
     "NACHWEIS_LANG_ARBEITSWEG": "Nachweis über langen Arbeitsweg",
     "NACHWEIS_SONSTIGEN_ZUSCHLAG": "Grund für sonstigen Zuschlag",
-    "NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT": "Gleiche Arbeitstage bei Teilzeit",
+    "NACHWEIS_GLEICHE_ARBEITSTAGE_BEI_TEILZEIT": "Überlappende Arbeitstage bei Teilzeit",
     "NACHWEIS_FIXE_ARBEITSZEITEN": "Fixe Arbeitszeiten",
     "STEUERVERANLAGUNG": "Steuerveranlagung",
     "STEUERERKLAERUNG": "Steuererklärung",
@@ -616,7 +622,7 @@
     "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
-    "DIV": "Sonstige Nachweise",
+    "DIV": "Hier können Sie zusätzliche Dokumente hochladen",
     "ANSPRUCH": "Anspruch",
     "VOLLKOSTEN": "Vollkosten",
     "ELTERNBEITRAG": "Elternbeitrag",
@@ -624,8 +630,6 @@
     "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
     "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
-    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
-
-    "TYP_UPPER": "TYP"
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
 }
 
