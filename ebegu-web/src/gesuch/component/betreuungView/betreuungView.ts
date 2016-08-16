@@ -88,7 +88,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
+    //todo team remove this method
     submit(form: IFormController): void {
+        this.submitMe(form, TSBetreuungsstatus.AUSSTEHEND);
+    }
+
+    submitMe(form: IFormController, newStatus: TSBetreuungsstatus): void {
+        let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (form.$valid) {
             if (this.getBetreuungModel()) {
                 if (this.isTagesschule()) {
@@ -96,10 +102,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
                 }
             }
             this.errorService.clearAll();
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
                 this.state.go('gesuch.betreuungen');
             }).catch((exception) => {
                 //todo team Fehler anzeigen
+                this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
                 return undefined;
             });
         }
@@ -178,8 +186,15 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.WARTEN;
-        this.submit(form);
+        this.submitMe(form, TSBetreuungsstatus.WARTEN);
+    }
+
+    public platzBestaetigen(form: IFormController): void {
+        this.submitMe(form, TSBetreuungsstatus.BESTAETIGT);
+    }
+
+    public platzAbweisen(form: IFormController): void {
+        this.submitMe(form, TSBetreuungsstatus.ABGEWIESEN);
     }
 
     /**
@@ -213,6 +228,14 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public isBetreuungsstatusBestaetigt(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.BESTAETIGT);
+    }
+
+    public isBetreuungsstatusAusstehend(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND);
+    }
+
+    public isBetreuungsstatusSchulamt(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
     }
 
     private isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
