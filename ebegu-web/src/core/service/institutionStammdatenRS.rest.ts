@@ -78,7 +78,7 @@ export class InstitutionStammdatenRS {
     }
 
     public getBetreuungsangeboteForInstitutionenOfCurrentBenutzer(): IPromise<TSBetreuungsangebotTyp[]> {
-        return this.http.get(this.serviceURL + '/currentuser' + '/')
+        return this.http.get(this.serviceURL + '/currentuser')
             .then((response: any) => {
                 this.log.debug('PARSING institutionStammdaten REST array object', response.data);
                 return response.data;
