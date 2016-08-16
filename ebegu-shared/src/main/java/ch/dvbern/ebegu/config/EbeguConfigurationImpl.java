@@ -10,10 +10,8 @@
 
 package ch.dvbern.ebegu.config;
 
-import ch.dvbern.ebegu.services.FileSaverService;
 import org.apache.commons.configuration.SystemConfiguration;
 
-import javax.ejb.Local;
 import javax.enterprise.context.Dependent;
 import java.io.Serializable;
 

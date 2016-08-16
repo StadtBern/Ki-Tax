@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -34,11 +34,12 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteKinder: TSDokumentGrund[] = [];
     dokumenteSonst: TSDokumentGrund[] = [];
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'DokumenteRS'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+                                'DokumenteRS', '$log'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                private dokumenteRS: DokumenteRS) {
+                private dokumenteRS: DokumenteRS, private $log: ILogService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.calculate();
@@ -57,7 +58,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
                 });
         } else {
-            console.log('No gesuch für dokumente');
+            this.$log.debug('No gesuch für dokumente');
         }
     }
 
@@ -99,11 +100,11 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     }
 
     addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
-        console.log('addUploadedDokuments called');
+        this.$log.debug('addUploadedDokuments called');
         var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
 
         if (index > -1) {
-            console.log('add dokument to dokumentList');
+            this.$log.debug('add dokument to dokumentList');
             dokumente[index] = dokumentGrund;
         }
         this.handleUpdateBug(dokumente);
@@ -115,7 +116,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         var index = EbeguUtil.getIndexOfElementwithID(dokument, dokumentGrund.dokumente);
 
         if (index > -1) {
-            console.log('add dokument to dokumentList');
+            this.$log.debug('add dokument to dokumentList');
             dokumentGrund.dokumente.splice(index, 1);
         }
 
@@ -127,14 +128,14 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 // replace existing object in table with returned if returned not null
                 var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
                 if (index > -1) {
-                    console.log('update dokumentGrund in dokumentList');
+                    this.$log.debug('update dokumentGrund in dokumentList');
                     dokumente[index] = dokumentGrund;
                 }
             } else {
                 // delete object in table with sended if returned is null
                 var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
                 if (index > -1) {
-                    console.log('remove dokumentGrund in dokumentList');
+                    this.$log.debug('remove dokumentGrund in dokumentList');
                     dokumente.splice(index, 1);
                 }
             }

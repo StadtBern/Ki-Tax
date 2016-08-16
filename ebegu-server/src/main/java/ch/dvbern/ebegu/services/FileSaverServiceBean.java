@@ -36,15 +36,15 @@ public class FileSaverServiceBean implements FileSaverService {
 
 		UUID uuid = UUID.randomUUID();
 
-		final String absulutFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "_" + uploadFileInfo.getFilename();
-		uploadFileInfo.setPath(absulutFilePath);
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "_" + uploadFileInfo.getFilename();
+		uploadFileInfo.setPath(absoluteFilePath);
 
-		Path file = Paths.get(absulutFilePath);
+		Path file = Paths.get(absoluteFilePath);
 		try {
 
 			if (!Files.exists(file.getParent())) {
 				Files.createDirectories(file.getParent());
-				LOG.info("Save file in FileSystem: " + absulutFilePath);
+				LOG.info("Save file in FileSystem: " + absoluteFilePath);
 			}
 			uploadFileInfo.setSize(Files.size(Files.write(file, uploadFileInfo.getBytes())));
 

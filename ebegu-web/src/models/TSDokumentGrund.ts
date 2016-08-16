@@ -5,11 +5,6 @@ import {TSDokumentTyp} from './enums/TSDokumentTyp';
 
 export default class TSDokumentGrund extends TSAbstractEntity {
 
-    constructor(dokumentGrundTyp?: TSDokumentGrundTyp) {
-        super();
-        this._dokumentGrundTyp = dokumentGrundTyp;
-    }
-
     private _dokumentGrundTyp: TSDokumentGrundTyp;
 
     private _fullName: string;
@@ -21,6 +16,12 @@ export default class TSDokumentGrund extends TSAbstractEntity {
     private _dokumentTyp: TSDokumentTyp;
 
     private _needed: boolean;
+
+
+    constructor(dokumentGrundTyp?: TSDokumentGrundTyp) {
+        super();
+        this._dokumentGrundTyp = dokumentGrundTyp;
+    }
 
     get dokumentGrundTyp(): TSDokumentGrundTyp {
         return this._dokumentGrundTyp;
@@ -61,7 +62,7 @@ export default class TSDokumentGrund extends TSAbstractEntity {
     set dokumentTyp(value: TSDokumentTyp) {
         this._dokumentTyp = value;
     }
-    
+
     get needed(): boolean {
         return this._needed;
     }

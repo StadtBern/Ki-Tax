@@ -6,7 +6,6 @@ import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;

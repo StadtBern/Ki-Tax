@@ -630,8 +630,6 @@
     "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
     "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
-    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
-
-    "TYP_UPPER": "TYP"
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
 }
 
