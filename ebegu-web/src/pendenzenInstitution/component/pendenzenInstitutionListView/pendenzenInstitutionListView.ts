@@ -91,7 +91,7 @@ export class PendenzenInstitutionListViewController {
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution): void {
         if (pendenz) {
-            this.gesuchRS.findGesuch(pendenz.gesuchId).then((response) => {
+            this.gesuchRS.findGesuchForInstitution(pendenz.gesuchId).then((response) => {
                 if (response) {
                     this.gesuchModelManager.gesuch = response;
                     this.openBetreuung(pendenz);

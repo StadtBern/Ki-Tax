@@ -1,12 +1,14 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.EbeguParameter;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.VerfuegungService;
-import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -23,9 +25,7 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
@@ -84,7 +84,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void calculateVerfuegung() {
 
-		Gesuch gesuch = this.persistGesuch();
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
 		prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit());
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch berechnetesGesuch = this.verfuegungService.calculateVerfuegung(gesuch);
@@ -115,48 +115,14 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 	//Helpers
 
-	/**
-	 * Hilfsmethode die den Testfa
-	 * @return
-	 */
-	private Gesuch persistGesuch() {
-		instService.getAllInstitutionen();
-		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
-		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-
-		Gesuch gesuch = testfall.createGesuch();
-		for (KindContainer kindContainer : gesuch.getKindContainers()) {
-			for (Betreuung betreuung1 : kindContainer.getBetreuungen()) {
-				Betreuung betreuung = betreuung1;
-				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
-				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
-				if (persistence.find(Institution.class, betreuung.getInstitutionStammdaten().getInstitution().getId()) == null) {
-					persistence.merge(betreuung.getInstitutionStammdaten().getInstitution());
-				}
-				if (persistence.find(InstitutionStammdaten.class, betreuung.getInstitutionStammdaten().getId()) == null) {
-					persistence.merge(betreuung.getInstitutionStammdaten());
-				}
-				if (betreuung.getKind().getKindJA().getPensumFachstelle() != null) {
-					persistence.merge(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
-				}
-			}
-		}
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
-		return gesuch;
-
-	}
-
 
 	private Betreuung insertBetreuung() {
-		return persistGesuch().getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		return TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence)
+			.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 	}
 
 	private Verfuegung insertVerfuegung() {
-		Gesuch gesuch = persistGesuch();
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
 		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		Assert.assertNull(betreuung.getVerfuegung());
 		Verfuegung verfuegung = new Verfuegung();

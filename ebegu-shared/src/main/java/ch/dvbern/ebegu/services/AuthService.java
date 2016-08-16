@@ -37,7 +37,7 @@ public interface AuthService {
 
 	/**
 	 * @param credentials Token spezifische Credentials
-	 * @return {@link AuthorisierterBenutzer#getId()} wenn der Login noch gut ist
+	 * @return {@link ch.dvbern.ebegu.entities.AuthorisierterBenutzer#getId()} wenn der Login noch gut ist
 	 */
 	Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials);
 
