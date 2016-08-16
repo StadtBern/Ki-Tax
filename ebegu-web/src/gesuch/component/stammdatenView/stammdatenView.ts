@@ -68,7 +68,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             }
             this.errorService.clearAll();
             this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
-                this.nextStep();
+                this.nextStep('gesuch.kinder');
             });
         }
     }
@@ -94,11 +94,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         }
     }
 
-    nextStep() {
+    nextStep(nextURL: string) {
         if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
         } else {
-            this.state.go('gesuch.kinder');
+            this.state.go(nextURL);
         }
     }
 

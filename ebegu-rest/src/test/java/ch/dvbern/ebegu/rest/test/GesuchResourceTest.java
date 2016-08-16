@@ -116,7 +116,17 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 		final JaxGesuch gesuchForInstitution = gesuchResource.findGesuchForInstitution(converter.toJaxId(gesuch));
 
-		Assert.assertNull(gesuchForInstitution);
+		Assert.assertNull(gesuchForInstitution.getEinkommensverschlechterungInfo());
+
+		Assert.assertNotNull(gesuchForInstitution.getGesuchsteller1());
+		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getEinkommensverschlechterungContainer());
+		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getErwerbspensenContainers());
+		Assert.assertNull(gesuchForInstitution.getGesuchsteller1().getFinanzielleSituationContainer());
+
+		Assert.assertNull(gesuchForInstitution.getGesuchsteller2()); //GS2 ist von Anfang an nicht gesetzt
+
+		Assert.assertNotNull(gesuchForInstitution.getKindContainers());
+		Assert.assertEquals(0, gesuchForInstitution.getKindContainers().size());
 	}
 
 

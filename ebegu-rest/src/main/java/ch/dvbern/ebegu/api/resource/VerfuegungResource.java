@@ -3,10 +3,14 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.VerfuegungService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +28,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST Resource fuer FinanzielleSituation
@@ -39,6 +45,9 @@ public class VerfuegungResource {
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private InstitutionService institutionService;
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
@@ -104,8 +113,16 @@ public class VerfuegungResource {
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
 		JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
+		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+
 		context.setRollbackOnly();
-		return Response.ok(gesuchJax.getKindContainers()).build();
+
+		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
+		if (instForCurrBenutzer.size() > 0) {
+			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+		}
+
+		return Response.ok(kindContainers).build();
 	}
 }
 
