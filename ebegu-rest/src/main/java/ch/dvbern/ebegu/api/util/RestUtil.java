@@ -76,7 +76,7 @@ public final class RestUtil {
 
 	private static boolean isInstitutionInList(Collection<Institution> userInstitutionen, JaxInstitution institutionToLookFor) {
 		for (final Institution institutionInList : userInstitutionen) {
-			if (institutionInList.getId() == institutionToLookFor.getId()) {
+			if (institutionInList.getId().equals(institutionToLookFor.getId())) {
 				return true;
 			}
 		}
