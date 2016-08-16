@@ -2,9 +2,15 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -12,8 +18,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
 import javax.validation.Valid;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Betreuung
@@ -24,8 +29,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Inject
 	private Persistence<Betreuung> persistence;
-//	@Inject
-//	private KindService kindService;
+
+
+	@Inject
+	private InstitutionService institutionService;
+
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 
 	@Override
@@ -64,5 +73,39 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Optional<Betreuung> betreuungToRemove = findBetreuung(betreuungId);
 		betreuungToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
 		persistence.remove(betreuungToRemove.get());
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
+		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		if (!instForCurrBenutzer.isEmpty()) {
+			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
+	 * @param institutionen
+	 * @return
+	 */
+	@Nonnull
+	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
+		if (institutionen != null) {
+			Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+			Root<Betreuung> root = query.from(Betreuung.class);
+			// Status muss WARTEN sein
+			Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
+			// Institution
+			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+
+			query.where(predicateStatus, predicateInstitution);
+			return persistence.getCriteriaResults(query);
+		}
+		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
+		return Collections.emptyList();
 	}
 }

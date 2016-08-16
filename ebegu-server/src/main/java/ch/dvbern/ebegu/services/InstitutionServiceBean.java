@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Institution_;
-import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.entities.Traegerschaft_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -13,10 +15,11 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.*;
 
 /**
  * Service fuer Institution
@@ -30,6 +33,9 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private BenutzerService benutzerService;
 
 	@Nonnull
 	@Override
@@ -74,8 +80,27 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 	@Override
 	@Nonnull
 	public Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId) {
-		Traegerschaft traegerschaft = persistence.find(Traegerschaft.class, traegerschaftId);
-		return criteriaQueryHelper.getEntitiesByAttribute(Institution.class, traegerschaft, Institution_.traegerschaft);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Institution> query = cb.createQuery(Institution.class);
+		Root<Institution> root = query.from(Institution.class);
+		//Traegerschaft
+		Predicate predTraegerschaft = cb.equal(root.get(Institution_.traegerschaft).get(Traegerschaft_.id), traegerschaftId);
+
+		query.where(predTraegerschaft);
+		return persistence.getCriteriaResults(query);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Institution> getAllActiveInstitutionenFromTraegerschaft(String traegerschaftId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Institution> query = cb.createQuery(Institution.class);
+		Root<Institution> root = query.from(Institution.class);
+		//Traegerschaft
+		Predicate predTraegerschaft = cb.equal(root.get(Institution_.traegerschaft).get(Traegerschaft_.id), traegerschaftId);
+		Predicate predActive = cb.equal(root.get(Institution_.active), Boolean.TRUE);
+		query.where(predTraegerschaft, predActive);
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
@@ -90,4 +115,23 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 		return new ArrayList<>(criteriaQueryHelper.getAll(Institution.class));
 	}
 
+	@Override
+	@Nonnull
+	public Collection<Institution> getInstitutionenForCurrentBenutzer() {
+		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
+		if (benutzerOptional.isPresent()) {
+			Benutzer benutzer = benutzerOptional.get();
+			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
+				return getAllActiveInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
+			}
+			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
+				List<Institution> institutionList = new ArrayList<>();
+				if (benutzer.getInstitution() != null && benutzer.getInstitution().getActive()) {
+					institutionList.add(benutzer.getInstitution());
+				}
+				return institutionList;
+			}
+		}
+		return Collections.emptyList();
+	}
 }
