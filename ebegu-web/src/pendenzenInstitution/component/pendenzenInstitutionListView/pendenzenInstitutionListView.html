@@ -63,7 +63,7 @@
                         <td ng-bind="row.name"></td>
                         <td ng-bind="row.vorname"></td>
                         <td ng-bind="row.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td ng-bind="row.typ"></td>
+                        <td ng-bind="row.typ | translate"></td>
                         <td ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
                         <td ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-bind="row.betreuungsangebotTyp | translate"></td>

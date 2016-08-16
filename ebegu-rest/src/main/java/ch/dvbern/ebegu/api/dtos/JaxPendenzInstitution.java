@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 /**
- * DTO fuer Pendenzen der Institutionen
+ * DTO fuer Pendenzenliste der Institutionen. Es kann pro Antrag mehrere solcher Pendenzen geben. Naemlich fuer jede
+ * Betreuung
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)

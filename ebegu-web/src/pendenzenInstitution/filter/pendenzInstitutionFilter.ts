@@ -1,11 +1,9 @@
-import EbeguUtil from '../../utils/EbeguUtil';
-
 // Es wird empfohlen, Filters als normale Funktionen zu implementieren, denn es bringt nichts, dafuer eine Klasse zu implementieren.
-PendenzInstitutionFilter.$inject = ['$filter', 'EbeguUtil', 'CONSTANTS'];
+PendenzInstitutionFilter.$inject = ['$filter'];
 
 // Zuerst pruefen wir welcher Wert kommt, d.h. aus welcher Column. Je nach Column wird danach dem entsprechenden Comparator aufgerufen.
 // Fuer mehrere Columns reicht es mit dem standard Comparator, der auch hier einfach implementiert wird.
-export function PendenzInstitutionFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any) {
+export function PendenzInstitutionFilter($filter: any) {
     let filterFilter = $filter('filter');
 
     let standardComparator = function standardComparator(obj: any, text: any) {

@@ -1,11 +1,16 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuung_;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -25,11 +30,11 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Inject
 	private Persistence<Betreuung> persistence;
 
-	@Inject
-	private BenutzerService benutzerService;
 
 	@Inject
 	private InstitutionService institutionService;
+
+	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 
 	@Override
@@ -73,32 +78,34 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Override
 	@Nonnull
 	public Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser() {
-		Optional<Benutzer> benutzerOptional = benutzerService.getCurrentBenutzer();
-		if (benutzerOptional.isPresent()) {
-			Benutzer benutzer = benutzerOptional.get();
-			if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(benutzer.getRole()) && benutzer.getTraegerschaft() != null) {
-				Collection<Institution> allInstitutionenFromTraegerschaft = institutionService.getAllInstitutionenFromTraegerschaft(benutzer.getTraegerschaft().getId());
-				return getPendenzenForInstitution((Institution[]) allInstitutionenFromTraegerschaft.toArray(new Institution[allInstitutionenFromTraegerschaft.size()]));
-			}
-			if (UserRole.SACHBEARBEITER_INSTITUTION.equals(benutzer.getRole()) && benutzer.getInstitution() != null) {
-				return getPendenzenForInstitution(benutzer.getInstitution());
-			}
+		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		if (!instForCurrBenutzer.isEmpty()) {
+			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
 		}
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
+	 * @param institutionen
+	 * @return
+	 */
 	@Nonnull
 	private Collection<Betreuung> getPendenzenForInstitution(@Nonnull Institution... institutionen) {
-		Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
-		Root<Betreuung> root = query.from(Betreuung.class);
-		// Status muss WARTEN sein
-		Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
-		// Institution
-		Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
+		if (institutionen != null) {
+			Objects.requireNonNull(institutionen, "institutionen muss gesetzt sein");
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+			Root<Betreuung> root = query.from(Betreuung.class);
+			// Status muss WARTEN sein
+			Predicate predicateStatus = cb.equal(root.get(Betreuung_.betreuungsstatus), Betreuungsstatus.WARTEN);
+			// Institution
+			Predicate predicateInstitution = root.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.institution).in(Arrays.asList(institutionen));
 
-		query.where(predicateStatus, predicateInstitution);
-		return persistence.getCriteriaResults(query);
+			query.where(predicateStatus, predicateInstitution);
+			return persistence.getCriteriaResults(query);
+		}
+		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
+		return Collections.emptyList();
 	}
 }

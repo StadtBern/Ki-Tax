@@ -2,7 +2,7 @@ import {IComponentOptions, IFilterService} from 'angular';
 import TSPendenzInstitution from '../../../models/TSPendenzInstitution';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
@@ -10,9 +10,9 @@ import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
-import ITimeoutService = angular.ITimeoutService;
 import PendenzInstitutionRS from '../../service/PendenzInstitutionRS.rest';
 import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./pendenzenInstitutionListView.html');
 require('./pendenzenInstitutionListView.less');
 
@@ -37,7 +37,7 @@ export class PendenzenInstitutionListViewController {
 
 
     static $inject: string[] = ['PendenzInstitutionRS', 'EbeguUtil', '$filter', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS', 'UserRS', 'AuthServiceRS'];
+        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', 'CONSTANTS'];
 
     constructor(public pendenzRS: PendenzInstitutionRS, private ebeguUtil: EbeguUtil, private $filter: IFilterService,
                 private institutionRS: InstitutionRS, private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,

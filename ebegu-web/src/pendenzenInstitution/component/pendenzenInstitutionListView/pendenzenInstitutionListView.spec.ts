@@ -11,12 +11,14 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
+import {InstitutionStammdatenRS} from '../../../core/service/institutionStammdatenRS.rest';
 
 describe('pendenzenInstitutionListView', function () {
 
     let institutionRS: InstitutionRS;
     let gesuchsperiodeRS: GesuchsperiodeRS;
     let gesuchRS: GesuchRS;
+    let institutionStammdatenRS: InstitutionStammdatenRS;
     let pendenzInstitutionRS: PendenzInstitutionRS;
     let pendenzInstitutionListViewController: PendenzenInstitutionListViewController;
     let $q: IQService;
@@ -34,6 +36,7 @@ describe('pendenzenInstitutionListView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         pendenzInstitutionRS = $injector.get('PendenzInstitutionRS');
         institutionRS = $injector.get('InstitutionRS');
+        institutionStammdatenRS = $injector.get('InstitutionStammdatenRS');
         gesuchsperiodeRS = $injector.get('GesuchsperiodeRS');
         gesuchRS = $injector.get('GesuchRS');
         $q = $injector.get('$q');
@@ -52,7 +55,7 @@ describe('pendenzenInstitutionListView', function () {
                 let mockPendenz: TSPendenzInstitution = mockGetPendenzenList();
                 mockRestCalls();
                 pendenzInstitutionListViewController = new PendenzenInstitutionListViewController(pendenzInstitutionRS, undefined, $filter,
-                    institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
+                    institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
                 $scope.$apply();
                 expect(pendenzInstitutionRS.getPendenzenList).toHaveBeenCalled();

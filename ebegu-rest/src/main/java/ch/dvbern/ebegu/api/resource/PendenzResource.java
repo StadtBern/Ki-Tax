@@ -91,7 +91,7 @@ public class PendenzResource {
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
 			pendenz.setBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
-			pendenz.setTyp("Platzbestätigung"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
+			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
 			pendenzenList.add(pendenz);
 		}
 		return pendenzenList;

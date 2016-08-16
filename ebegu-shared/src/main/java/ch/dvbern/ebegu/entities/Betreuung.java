@@ -196,8 +196,14 @@ public class Betreuung extends AbstractEntity {
      */
 	@Transient
 	public String getBGNummer() {
-		String year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
-		String fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		String year = "";
+		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
+			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		}
+		String fall = "";
+		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
+			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		}
 		String kind = "" + getKind().getKindNummer();
 		String betreuung = "" + getBetreuungNummer();
 		return year + "." + fall + "." + kind + "." + betreuung;
