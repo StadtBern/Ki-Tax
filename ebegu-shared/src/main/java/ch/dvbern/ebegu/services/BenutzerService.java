@@ -40,4 +40,9 @@ public interface BenutzerService {
 	 */
 	void removeBenutzer(@Nonnull String username);
 
+	/**
+	 * Gibt den aktuell eingeloggten Benutzer zurueck
+     */
+	@Nonnull
+	Optional<Benutzer> getCurrentBenutzer();
 }

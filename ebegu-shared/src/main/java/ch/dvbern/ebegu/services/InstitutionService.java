@@ -45,12 +45,17 @@ public interface InstitutionService {
 	void deleteInstitution(@Nonnull String InstitutionId);
 
 	/**
-	 *
 	 * @param traegerschaftId Der ID der Traegerschaft, fuer welche die Institutionen gesucht werden muessen
 	 * @return Liste mit allen Institutionen der gegebenen Traegerschaft
      */
 	@Nonnull
 	Collection<Institution> getAllInstitutionenFromTraegerschaft(String traegerschaftId);
+
+	/**
+	 * @return  gibt alle aktiven Institution einer Traegerschaft zurueck
+	 */
+	@Nonnull
+	Collection<Institution> getAllActiveInstitutionenFromTraegerschaft(String traegerschaftId);
 
 	/**
 	 *
@@ -64,4 +69,10 @@ public interface InstitutionService {
 	 * @return Gibt alle aktive Institutionen zurück
 	 */
 	Collection<Institution> getAllActiveInstitutionen();
+
+	/**
+	 * Gibt alle aktiven Institutionen zurueck, fuer welche der aktuell eingeloggte Benutzer berechtigt ist.
+     */
+	Collection<Institution> getInstitutionenForCurrentBenutzer();
+
 }

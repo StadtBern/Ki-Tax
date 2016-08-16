@@ -77,8 +77,11 @@ export class AuthenticationListViewController {
 
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
-            this.$state.go('pendenzen');
+            if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_JA' || user.getRoleKey() === 'TSRole_ADMIN') {
+                this.$state.go('pendenzen');
+            } else  if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
+                this.$state.go('pendenzenInstitution');
+            }
         });
     }
-
 }
