@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.util;
 
+import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -9,7 +10,13 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -23,6 +30,7 @@ public final class RestUtil {
 
 	/**
 	 * Parst den Content-Disposition Header
+	 *
 	 * @param part aus einem {@link MultipartFormDataInput}. Bei keinem Filename oder einem leeren Filename wird dieser auf null reduziert.
 	 */
 	@Nonnull
@@ -44,6 +52,22 @@ public final class RestUtil {
 
 	public static boolean isFileDownloadRequest(@Nonnull ContainerRequestContext requestContext) {
 		return requestContext.getUriInfo().getPath().startsWith("/blobs/temp");
+	}
+
+	public static Response buildDownloadResponse(Dokument dokument, boolean attachment) throws IOException {
+
+		Path filePath = Paths.get(dokument.getDokumentPfad());
+
+			final String contentType = Files.probeContentType(filePath);
+			//final long size = Files.size(filePath);
+			final byte[] bytes = Files.readAllBytes(filePath);
+
+			String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + dokument.getDokumentName() + '"';
+
+			return Response.ok(bytes).header("Content-Disposition", disposition)
+				.type(MediaType.valueOf(contentType)).build();
+
+
 	}
 
 }

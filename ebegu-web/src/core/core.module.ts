@@ -47,6 +47,7 @@ import HttpResponseInterceptor from './service/HttpResponseInterceptor';
 import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
+import {DownloadRS} from './service/downloadRS.rest';
 
 import VerfuegungRS from './service/verfuegungRS.rest';
 import {DVShowElement} from './directive/dv-show-element/dv-show-element';
@@ -125,6 +126,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('VerfuegungRS', VerfuegungRS)
     .service('DokumenteRS', DokumenteRS)
     .service('UploadRS', UploadRS)
+    .service('DownloadRS', DownloadRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())

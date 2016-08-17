@@ -68,7 +68,7 @@
                         <thead>
                         <tr style="background-color: lightgray">
                             <!--without tag-->
-                            <th width="50%" st-sort="dokumentName" class="sortable" st-sort-default="true">
+                            <th width="45%" st-sort="dokumentName" class="sortable" st-sort-default="true">
                                 <span data-translate="DATEINAME"></span>
                             </th>
 
@@ -81,6 +81,7 @@
 
                             <th width="5%"></th>
                             <th width="5%"></th>
+                            <th width="5%"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -89,7 +90,12 @@
                             <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"></td>
                             <td ng-bind="dokument.dokumentSize"></td>
                             <td>
-                                <i class="fa fa-eye" aria-hidden="true" style="color: black"></i>
+                                <span ng-click="vm.download(dokument,true)" class="fa fa-download" aria-hidden="true"
+                                      style="color: black"></span>
+                            </td>
+                            <td>
+                                <span ng-click="vm.download(dokument,false)" class="fa fa-eye" aria-hidden="true"
+                                      style="color: black"></span>
                             </td>
                             <td>
                                 <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
