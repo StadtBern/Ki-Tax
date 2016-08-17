@@ -52,7 +52,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     }
 
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.saveGesuchAndFall().then(navigationFunction);
