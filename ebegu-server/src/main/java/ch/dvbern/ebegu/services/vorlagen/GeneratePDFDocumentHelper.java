@@ -15,6 +15,7 @@ import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 
@@ -39,9 +40,9 @@ import fr.opensagres.xdocreport.itext.extension.IPdfWriterConfiguration;
  */
 public class GeneratePDFDocumentHelper {
 
-	private static String PDFENCODING = "ISO-8859-1";
-	private static String NUMOFPAGE = "#PAGE";
-	private static String NUMOFPAGES = "#MAX";
+	private static final String PDFENCODING = "ISO-8859-1";
+	private static final String NUMOFPAGE = "#PAGE";
+	private static final String NUMOFPAGES = "#MAX";
 
 	/**
 	 * Konvertiert ein docx zu einem PDF
@@ -51,7 +52,7 @@ public class GeneratePDFDocumentHelper {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	public byte[] generatePDFDocument(byte[] generateFrom) throws Exception {
+	public byte[] generatePDFDocument(byte[] generateFrom) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {
 
 		if (generateFrom == null) {
 			throw new IllegalArgumentException("Das Argument 'generateFrom' darf nicht leer sein");
@@ -91,7 +92,7 @@ public class GeneratePDFDocumentHelper {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	private byte[] manipulatePdf(byte[] doc) throws Exception {
+	private byte[] manipulatePdf(byte[] doc) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {
 
 		PDFFontUtil.embedStandardFonts();
 
@@ -126,7 +127,7 @@ public class GeneratePDFDocumentHelper {
 		return manipulated.toByteArray();
 	}
 
-	private void setWriterPDFA(PdfStamper stamper) throws Exception {
+	private void setWriterPDFA(PdfStamper stamper) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		PdfWriter writer = stamper.getWriter();
 
@@ -141,7 +142,7 @@ public class GeneratePDFDocumentHelper {
 	 *
 	 * @param pdfWriter
 	 */
-	private void setColorProfile(PdfWriter pdfWriter) throws Exception {
+	private void setColorProfile(PdfWriter pdfWriter) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		pdfWriter.setDefaultColorspace(PdfName.DEFAULTRGB, null);
 

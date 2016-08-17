@@ -11,12 +11,12 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-
-import java.util.List;
 
 public class VerfuegungPrintMergeSource implements MergeSource {
 
@@ -42,19 +42,19 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
 		if ("Mutation".equalsIgnoreCase(key)) {
-			return new Boolean(verfuegungsmuster.isMutation());
+			return Boolean.valueOf(verfuegungsmuster.isMutation());
 		}
 		if ("gesuchsteller2Exist".equalsIgnoreCase(key)) {
-			return new Boolean(verfuegungsmuster.existGesuchsteller2());
+			return Boolean.valueOf(verfuegungsmuster.existGesuchsteller2());
 		}
 		if ("PensumIstGroesser0".equalsIgnoreCase(key)) {
-			return new Boolean(verfuegungsmuster.isPensumGrosser0());
+			return Boolean.valueOf(verfuegungsmuster.isPensumGrosser0());
 		}
 		if ("pensumIst0".equalsIgnoreCase(key)) {
-			return new Boolean(!verfuegungsmuster.isPensumGrosser0());
+			return Boolean.valueOf(!verfuegungsmuster.isPensumGrosser0());
 		}
 
-		return Boolean.FALSE;
+		return Boolean.valueOf(true);
 	}
 
 	@Override
