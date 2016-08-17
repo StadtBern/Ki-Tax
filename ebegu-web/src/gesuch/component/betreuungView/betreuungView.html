@@ -188,6 +188,18 @@
                     </div>
                 </div>
 
+                <!--grund Ablehnung-->
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                    <div class="col-md-12">
+                        <dv-input-container class="form-group">
+                            <label class="inlineHint" for="grundAblehnung" data-translate="GRUND_ABLEHNUNG"></label>
+                            <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
+                                      ng-model="vm.getBetreuungModel().grundAblehnung">
+                            </textarea>
+                        </dv-input-container>
+                    </div>
+                </div>
+
                 <!--erweiterte Beduerfnisse-->
                 <div class="row">
                     <div class="col-md-6">
@@ -214,7 +226,9 @@
                 <div class="row">
                     <div class="col-md-12 well well-status-abgewiesen" ng-if="vm.isBetreuungsstatusAbgewiesen()">
                         <i class="fa fa-times" aria-hidden="true"></i>
-                        <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"></span>
+                        <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"
+                              data-translate-value-grund="{{vm.getBetreuungModel().grundAblehnung}}">
+                        </span>
                     </div>
                 </div>
                 <div class="row">

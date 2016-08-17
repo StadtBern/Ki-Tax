@@ -897,6 +897,7 @@ export default class EbeguRestUtil {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
+        restBetreuung.grundAblehnung = betreuung.grundAblehnung;
         restBetreuung.vertrag = betreuung.vertrag;
         restBetreuung.erweiterteBeduerfnisse = betreuung.erweiterteBeduerfnisse;
         if (betreuung.institutionStammdaten) {
@@ -944,6 +945,7 @@ export default class EbeguRestUtil {
         if (betreuungFromServer) {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
+            betreuungTS.grundAblehnung = betreuungFromServer.grundAblehnung;
             betreuungTS.vertrag = betreuungFromServer.vertrag;
             betreuungTS.erweiterteBeduerfnisse = betreuungFromServer.erweiterteBeduerfnisse;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;

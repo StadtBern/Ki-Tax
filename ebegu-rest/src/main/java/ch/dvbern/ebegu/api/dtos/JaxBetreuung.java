@@ -35,6 +35,10 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	private String grundAblehnung;
+
 	@Min(1)
 	private Integer betreuungNummer = 1;
 
@@ -80,6 +84,15 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getGrundAblehnung() {
+		return grundAblehnung;
+	}
+
+	public void setGrundAblehnung(@Nullable String grundAblehnung) {
+		this.grundAblehnung = grundAblehnung;
 	}
 
 	public Integer getBetreuungNummer() {

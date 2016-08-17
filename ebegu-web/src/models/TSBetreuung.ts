@@ -10,6 +10,7 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _betreuungsstatus: TSBetreuungsstatus;
     private _betreuungspensumContainers: Array<TSBetreuungspensumContainer>;
     private _bemerkungen: string;
+    private _grundAblehnung: string;
     private _betreuungNummer: number;
     private _verfuegung: TSVerfuegung;
     private _vertrag: boolean;
@@ -18,12 +19,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string,
-                betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean) {
+                betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
+                grundAblehnung?: string) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
         this._betreuungspensumContainers = betreuungspensumContainers ? betreuungspensumContainers : [];
         this._bemerkungen = bemerkungen;
+        this._grundAblehnung = grundAblehnung;
         this._betreuungNummer = betreuungNummer;
         this._verfuegung = verfuegung;
         this._vertrag = vertrag ? true : false;
@@ -60,6 +63,14 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set bemerkungen(value: string) {
         this._bemerkungen = value;
+    }
+
+    get grundAblehnung(): string {
+        return this._grundAblehnung;
+    }
+
+    set grundAblehnung(value: string) {
+        this._grundAblehnung = value;
     }
 
     get betreuungNummer(): number {

@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
+import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
@@ -23,6 +24,7 @@ import java.util.TreeSet;
  */
 @Audited
 @Entity
+@CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
@@ -58,6 +60,11 @@ public class Betreuung extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String grundAblehnung;
 
 	@NotNull
 	@Min(1)
@@ -118,6 +125,15 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getGrundAblehnung() {
+		return grundAblehnung;
+	}
+
+	public void setGrundAblehnung(@Nullable String grundAblehnung) {
+		this.grundAblehnung = grundAblehnung;
 	}
 
 	public Integer getBetreuungNummer() {

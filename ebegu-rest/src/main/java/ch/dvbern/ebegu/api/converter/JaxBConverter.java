@@ -1152,6 +1152,7 @@ public class JaxBConverter {
 		Validate.notNull(betreuungJAXP);
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
+		betreuung.setGrundAblehnung(betreuungJAXP.getGrundAblehnung());
 
 		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
@@ -1278,6 +1279,7 @@ public class JaxBConverter {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
 		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
 		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
+		jaxBetreuung.setGrundAblehnung(betreuungFromServer.getGrundAblehnung());
 		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
 		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
 		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());
