@@ -15,6 +15,8 @@ import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -42,10 +44,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     erwerbspensum: TSErwerbspensumContainer;
     patternPercentage: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager',
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
+                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
@@ -71,20 +75,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.isGesuchstellerRole()) {
+        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();
-        }
-    }
-
-    submit(form: IFormController) {
-        if (form.$valid) {
-            this.maybeResetZuschlagsgrund(this.erwerbspensum);
-            this.errorService.clearAll();
-            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
-                this.state.go('gesuch.erwerbsPensen');
-            });
         }
     }
 
@@ -96,6 +90,16 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         if (erwerbspensum && !erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum) {
             erwerbspensum.erwerbspensumJA.zuschlagsprozent = undefined;
             erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
+        }
+    }
+
+    save(form: IFormController) {
+        if (form.$valid) {
+            this.maybeResetZuschlagsgrund(this.erwerbspensum);
+            this.errorService.clearAll();
+            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
+                this.state.go('gesuch.erwerbsPensen');
+            });
         }
     }
 

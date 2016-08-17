@@ -37,10 +37,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         super(state, gesuchModelManager, berechnungsManager);
     }
 
-    submit(): void {
-        this.nextStep();
-    }
-
     previousStep(): void {
         this.state.go('gesuch.kinder');
     }

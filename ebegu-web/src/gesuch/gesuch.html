@@ -1,34 +1,67 @@
 <div class="row">
 
-    <gesuch-toolbar ng-if="vm.isJugendamt()"></gesuch-toolbar>
+    <gesuch-toolbar dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+    </gesuch-toolbar>
 
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
-            <li ui-sref-active="active" ui-sref="gesuch.fallcreation">
+            <li ui-sref-active="active" ui-sref="gesuch.fallcreation"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
                 <a ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM"
                    data-translate-value-date="{{vm.getDateErstgesuch()}}"></a>
                 <a ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></a>
             </li>
-            <li ui-sref-active="active" ui-sref="gesuch.familiensituation"><a data-translate="MENU_FAMSITUATION"></a>
+
+            <li ui-sref-active="active" ui-sref="gesuch.familiensituation">
+                <a data-translate="MENU_FAMSITUATION"></a>
             </li>
+
             <li ui-sref-active="active" ui-sref="gesuch.stammdaten"><a data-translate="MENU_GESUCHSTELLER"></a></li>
-            <li ui-sref-active="active" ui-sref="gesuch.kinder"><a data-translate="MENU_KINDER"></a></li>
-            <li ui-sref-active="active" ui-sref="gesuch.betreuungen"><a data-translate="MENU_BETREUUNG"></a></li>
-            <li ui-sref-active="active" ui-sref="gesuch.erwerbsPensen"><a data-translate="MENU_ERWERBSPENSUM"></a></li>
+
+            <li ui-sref-active="active" ui-sref="gesuch.kinder"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                <a data-translate="MENU_KINDER"></a>
+            </li>
+
+            <li ui-sref-active="active" ui-sref="gesuch.betreuungen">
+                <a data-translate="MENU_BETREUUNG"></a>
+            </li>
+
+            <li ui-sref-active="active" ui-sref="gesuch.erwerbsPensen"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                <a data-translate="MENU_ERWERBSPENSUM"></a>
+            </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituationStart"
-                ng-if="vm.showFinanzsituationStart()"><a data-translate="MENU_FINANZIELLE_SITUATION"></a></li>
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
+                dv-show-expression="vm.showFinanzsituationStart()">
+                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+            </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituation" ng-if="!vm.showFinanzsituationStart()"><a
-                data-translate="MENU_FINANZIELLE_SITUATION"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituation"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
+                dv-show-expression="!vm.showFinanzsituationStart()">
+                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+            </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.einkommensverschlechterungInfo"><a
-                data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.einkommensverschlechterungInfo"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                <a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a>
+            </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.dokumente"><a data-translate="MENU_DOKUMENTE"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.dokumente"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                <a data-translate="MENU_DOKUMENTE"></a>
+            </li>
 
-            <li><a data-translate="MENU_FREIGABEQUITTUNG"></a></li>
-            <li ui-sref-active="active" ui-sref="gesuch.verfuegen"><a data-translate="MENU_VERFUEGEN"></a></li>
+            <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                <a data-translate="MENU_FREIGABEQUITTUNG"></a>
+            </li>
+
+            <li ui-sref-active="active" ui-sref="gesuch.verfuegen">
+                <a data-translate="MENU_VERFUEGEN"></a>
+            </li>
+
         </ul>
     </div>
     <div ui-view class="col-md-5"></div>

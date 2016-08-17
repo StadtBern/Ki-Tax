@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 
-import ch.dvbern.ebegu.dto.AbstractFinanzielleSituationResultateDTO;
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 
@@ -49,5 +49,5 @@ public interface EinkommensverschlechterungService {
 	 * Berechnet die Einkomensverschlechterung beider Gesuchsteller für das entsprechende BasisJahr 1 oder 2
 	 */
 	@Nonnull
-	AbstractFinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus);
+	FinanzielleSituationResultateDTO calculateResultate(@Nonnull Gesuch gesuch, int basisJahrPlus);
 }

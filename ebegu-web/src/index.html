@@ -33,8 +33,15 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active"><a href="#">Home</a></li>
-                <li ui-sref-active="active"><a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a></li>
-                <li ui-sref-active="active"><a ui-sref="gesuch.fallcreation({createNew: true})" data-translate="MENU_FALL_EROEFFNEN"></a></li>
+                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN']">
+                    <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
+                    <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
+                </li>
+                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN']">
+                    <a ui-sref="gesuch.fallcreation({createNew: true})" data-translate="MENU_FALL_EROEFFNEN"></a>
+                </li>
                 <li ui-sref-active="active"><a href="#contact">Kontakt</a></li>
             </ul>
         </div><!--/.nav-collapse -->

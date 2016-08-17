@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -52,10 +53,6 @@ public class Betreuung extends AbstractEntity {
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
-
-	@Nullable
-	@Column(nullable = true)
-	private Boolean schulpflichtig = false;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -112,15 +109,6 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
-	}
-
-	@Nullable
-	public Boolean getSchulpflichtig() {
-		return schulpflichtig;
-	}
-
-	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
-		this.schulpflichtig = schulpflichtig;
 	}
 
 	@Nullable
@@ -189,7 +177,7 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public Gesuch extractGesuch() {
-		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuch because Kind is null");
 		return this.getKind().getGesuch();
 	}
 
@@ -200,7 +188,24 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
-			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+	}
+
+	/**
+	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
+     */
+	@Transient
+	public String getBGNummer() {
+		String year = "";
+		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
+			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		}
+		String fall = "";
+		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
+			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		}
+		String kind = "" + getKind().getKindNummer();
+		String betreuung = "" + getBetreuungNummer();
+		return year + "." + fall + "." + kind + "." + betreuung;
 	}
 }

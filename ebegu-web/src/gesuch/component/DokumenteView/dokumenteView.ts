@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -8,6 +8,9 @@ import {IStammdatenStateParams} from '../../gesuch.route';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import TSDokument from '../../../models/TSDokument';
+import DokumenteRS from '../../service/dokumenteRS.rest';
 import IFormController = angular.IFormController;
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
@@ -29,12 +32,14 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteFamSit: TSDokumentGrund[] = [];
     dokumenteErwp: TSDokumentGrund[] = [];
     dokumenteKinder: TSDokumentGrund[] = [];
+    dokumenteSonst: TSDokumentGrund[] = [];
 
-
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+                                'DokumenteRS', '$log'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                private dokumenteRS: DokumenteRS, private $log: ILogService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.calculate();
@@ -50,9 +55,10 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     this.searchDokumente(promiseValue, this.dokumenteFamSit, TSDokumentGrundTyp.FAMILIENSITUATION);
                     this.searchDokumente(promiseValue, this.dokumenteErwp, TSDokumentGrundTyp.ERWERBSPENSUM);
                     this.searchDokumente(promiseValue, this.dokumenteKinder, TSDokumentGrundTyp.KINDER);
+                    this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
                 });
         } else {
-            console.log('No gesuch für dokumente');
+            this.$log.debug('No gesuch für dokumente');
         }
     }
 
@@ -67,31 +73,80 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         }
     }
 
-
-    previousStep() {
-        let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-        let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-        if (ekvFuerBasisJahrPlus2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-        } else if (ekvFuerBasisJahrPlus1) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-        } else {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
-        }
-    }
-
-    nextStep() {
-        this.state.go('gesuch.verfuegen');
-    }
-
-    submit(form: IFormController) {
+    previousStep(form: IFormController): void {
         if (form.$valid) {
-
             this.errorService.clearAll();
-            this.nextStep();
+            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            if (ekvFuerBasisJahrPlus2) {
+                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+            } else if (ekvFuerBasisJahrPlus1) {
+                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+            } else {
+                this.state.go('gesuch.einkommensverschlechterungInfo');
+            }
         }
+    }
+
+    nextStep(form: IFormController): void {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            this.state.go('gesuch.verfuegen');
+        }
+    }
+
+    addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
+        this.$log.debug('addUploadedDokuments called');
+        var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+
+        if (index > -1) {
+            this.$log.debug('add dokument to dokumentList');
+            dokumente[index] = dokumentGrund;
+        }
+        this.handleUpdateBug(dokumente);
+    }
+
+
+    removeDokument(dokumentGrund: TSDokumentGrund, dokument: TSDokument, dokumente: TSDokumentGrund[]) {
+
+        var index = EbeguUtil.getIndexOfElementwithID(dokument, dokumentGrund.dokumente);
+
+        if (index > -1) {
+            this.$log.debug('add dokument to dokumentList');
+            dokumentGrund.dokumente.splice(index, 1);
+        }
+
+        this.dokumenteRS.updateDokumentGrund(dokumentGrund).then((response) => {
+
+            let returnedDG: TSDokumentGrund = angular.copy(response);
+
+            if (returnedDG) {
+                // replace existing object in table with returned if returned not null
+                var index = EbeguUtil.getIndexOfElementwithID(returnedDG, dokumente);
+                if (index > -1) {
+                    this.$log.debug('update dokumentGrund in dokumentList');
+                    dokumente[index] = dokumentGrund;
+                }
+            } else {
+                // delete object in table with sended if returned is null
+                var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);
+                if (index > -1) {
+                    this.$log.debug('remove dokumentGrund in dokumentList');
+                    dokumente.splice(index, 1);
+                }
+            }
+        });
+
+        this.handleUpdateBug(dokumente);
+    }
+
+    private handleUpdateBug(dokumente: TSDokumentGrund[]) {
+        // Ugly Fix:
+        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
+        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
+        dokumente[0] = angular.copy(dokumente[0]);
     }
 
 }

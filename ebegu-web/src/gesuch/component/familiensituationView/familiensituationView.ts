@@ -11,6 +11,7 @@ import {
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 
@@ -27,6 +28,7 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 export class FamiliensituationViewController extends AbstractGesuchViewController {
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
+    allowedRoles: Array<TSRole>;
 
     static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
@@ -39,14 +41,25 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
-    submit($form: IFormController) {
-        if ($form.$valid) {
+    previousStep(form: IFormController): void {
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.fallcreation');
+        });
+    }
+
+    nextStep(form: IFormController): void {
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.stammdaten');
+        });
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+        if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
-            });
+            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
         }
     }
 

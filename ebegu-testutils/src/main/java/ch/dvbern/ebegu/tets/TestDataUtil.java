@@ -2,14 +2,15 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.FinanzielleSituationUtil;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -277,7 +278,6 @@ public final class TestDataUtil {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
-		betreuung.setSchulpflichtig(false);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
 		betreuung.setBemerkungen("Betreuung_Bemerkungen");
@@ -380,11 +380,11 @@ public final class TestDataUtil {
 		}
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		if (zweiGesuchsteller) {
 			gesuch.setGesuchsteller2(new Gesuchsteller());
 			gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
+			gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		}
 		Betreuung betreuung = new Betreuung();
 		betreuung.setKind(new KindContainer());
@@ -398,7 +398,8 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationUtil.calculateFinanzDaten(new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6), gesuch);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
 	public static Gesuch createTestgesuchDagmar(){
@@ -413,8 +414,8 @@ public final class TestDataUtil {
 
 	public static void setFinanzielleSituation(Gesuch gesuch, BigDecimal einkommen) {
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationSV(new FinanzielleSituation());
-		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationSV().setNettolohn(einkommen);
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(einkommen);
 	}
 
 	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {
@@ -435,5 +436,54 @@ public final class TestDataUtil {
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
 		}
+	}
+
+	public static DokumentGrund createDefaultDokumentGrund() {
+
+		DokumentGrund dokumentGrund = new DokumentGrund();
+		dokumentGrund.setDokumentGrundTyp(DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
+		dokumentGrund.setTag("tag");
+		dokumentGrund.setFullName("Hugo");
+		dokumentGrund.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
+		dokumentGrund.setDokumente(new HashSet<Dokument>());
+		final Dokument dokument = new Dokument();
+		dokument.setDokumentGrund(dokumentGrund);
+		dokument.setDokumentName("testdokument");
+		dokument.setDokumentPfad("testpfad/");
+		dokument.setDokumentSize("123456");
+		dokumentGrund.getDokumente().add(dokument);
+		return dokumentGrund;
+	}
+
+	/**
+	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
+	 */
+	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = testfall.createGesuch();
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+				if (persistence.find(Institution.class, betreuung.getInstitutionStammdaten().getInstitution().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten().getInstitution());
+				}
+				if (persistence.find(InstitutionStammdaten.class, betreuung.getInstitutionStammdaten().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten());
+				}
+				if (betreuung.getKind().getKindJA().getPensumFachstelle() != null) {
+					persistence.merge(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+				}
+			}
+		}
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
+		gesuch = persistence.persist(gesuch);
+		return gesuch;
 	}
 }

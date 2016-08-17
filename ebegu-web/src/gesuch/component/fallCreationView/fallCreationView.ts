@@ -25,7 +25,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-        private errorService: ErrorService, $stateParams: INewFallStateParams) {
+                private errorService: ErrorService, $stateParams: INewFallStateParams) {
         super(state, gesuchModelManager, berechnungsManager);
         this.createNewParam = $stateParams.createNew;
         this.initViewModel();
@@ -45,14 +45,20 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         return this.gesuchModelManager.gesuch;
     }
 
-    submit(form: IFormController) {
+    nextStep(form: IFormController): void {
+        this.save(form, () => {
+            this.state.go('gesuch.familiensituation');
+        });
+
+    }
+
+    save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.saveGesuchAndFall().then((response: any) => {
-                this.state.go('gesuch.familiensituation');
-            });
+            this.gesuchModelManager.saveGesuchAndFall().then(navigationFunction);
         }
     }
+
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
         return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);

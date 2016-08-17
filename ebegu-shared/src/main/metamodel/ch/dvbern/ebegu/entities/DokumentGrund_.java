@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
+import ch.dvbern.ebegu.enums.DokumentTyp;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -15,6 +16,7 @@ public abstract class DokumentGrund_ extends ch.dvbern.ebegu.entities.AbstractEn
 	public static volatile SingularAttribute<DokumentGrund, String> tag;
 	public static volatile SingularAttribute<DokumentGrund, Gesuch> gesuch;
 	public static volatile SetAttribute<DokumentGrund, Dokument> dokumente;
+	public static volatile SingularAttribute<DokumentGrund, DokumentTyp> dokumentTyp;
 
 }
 

@@ -61,6 +61,10 @@ public class BetreuungsgutscheinConfigurator {
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
+		// 4. Kind wohnt im gleichen Haushalt
+		WohnhaftImGleichenHaushaltRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltRule(defaultGueltigkeit);
+		rules.add(wohnhaftImGleichenHaushaltRule);
+
 		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
 		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
 		MaximalesEinkommenCalcRule maxEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());

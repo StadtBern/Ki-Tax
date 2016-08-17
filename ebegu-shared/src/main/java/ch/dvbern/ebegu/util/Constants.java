@@ -47,4 +47,6 @@ public interface Constants {
 	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
 
 	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+
+	int FALLNUMMER_LENGTH = 6;
 }

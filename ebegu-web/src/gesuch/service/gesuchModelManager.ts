@@ -369,12 +369,16 @@ export default class GesuchModelManager {
         if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
+
+            //TODO (Team) Zum Testen der Bisher-Werte
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS = new TSFinanzielleSituation();
+            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS.nettolohn = 100000;
         }
         if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
         }
     }
 
@@ -430,33 +434,6 @@ export default class GesuchModelManager {
             }
         }
     }
-
-    public copyEkvGeschaeftsgewinnFromFS(): void {
-        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
-            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
-            console.log('Fehler: FinSit muss existieren');
-            return;
-        }
-
-        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
-        let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.selbstaendig) {
-
-            // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
-            ekv.selbstaendig = true;
-            if (this.basisJahrPlusNumber === 1) {
-                ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-            } else {
-                //basisjahr Plus 2
-                let ekvP1: TSEinkommensverschlechterung = this.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
-                ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            }
-        }
-    }
-
 
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
@@ -776,6 +753,22 @@ export default class GesuchModelManager {
         return -1;
     }
 
+    /**
+     * Sucht das Kind mit der eingegebenen KindID in allen KindContainers des Gesuchs. kindNumber wird gesetzt und zurueckgegeben
+     * @param kindID
+     * @returns {number}
+     */
+    public findKindById(kindID: string): number {
+        if (this.gesuch.kindContainers) {
+            for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
+                if (this.gesuch.kindContainers[i].id === kindID) {
+                    return this.kindNumber = i + 1;
+                }
+            }
+        }
+        return -1;
+    }
+
     public removeKind(): IPromise<TSKindContainer> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
@@ -786,6 +779,22 @@ export default class GesuchModelManager {
     public findBetreuung(betreuung: TSBetreuung): number {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
             return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
+        }
+        return -1;
+    }
+
+    /**
+     * Sucht die Betreuung mit der eingegebenen betreuungID in allen Betreuungen des aktuellen Kind. betreuungNumber wird gesetzt und zurueckgegeben
+     * @param betreuungID
+     * @returns {number}
+     */
+    public findBetreuungById(betreuungID: string): number {
+        if (this.getKindToWorkWith()) {
+            for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
+                if (this.getKindToWorkWith().betreuungen[i].id === betreuungID) {
+                    return this.betreuungNumber = i + 1;
+                }
+            }
         }
         return -1;
     }

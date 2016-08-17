@@ -53,7 +53,7 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController) {
+    save(form: IFormController) {
         if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.updateKind().then((kindResponse: any) => {
@@ -94,6 +94,7 @@ export class KindViewController extends AbstractGesuchViewController {
     public familienErgaenzendeBetreuungClicked() {
         if (!this.getModel().familienErgaenzendeBetreuung) {
             this.showFachstelle = false;
+            this.getModel().wohnhaftImGleichenHaushalt = undefined;
             this.resetFachstelleFields();
         }
     }

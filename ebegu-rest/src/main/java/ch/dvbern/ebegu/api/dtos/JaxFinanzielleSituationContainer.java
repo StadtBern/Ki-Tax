@@ -25,9 +25,6 @@ public class JaxFinanzielleSituationContainer extends JaxAbstractDTO {
 	@Valid
 	private JaxFinanzielleSituation finanzielleSituationJA;
 
-	@Valid
-	private JaxFinanzielleSituation finanzielleSituationSV;
-
 
 	public Integer getJahr() {
 		return jahr;
@@ -51,13 +48,5 @@ public class JaxFinanzielleSituationContainer extends JaxAbstractDTO {
 
 	public void setFinanzielleSituationJA(JaxFinanzielleSituation finanzielleSituationJA) {
 		this.finanzielleSituationJA = finanzielleSituationJA;
-	}
-
-	public JaxFinanzielleSituation getFinanzielleSituationSV() {
-		return finanzielleSituationSV;
-	}
-
-	public void setFinanzielleSituationSV(JaxFinanzielleSituation finanzielleSituationSV) {
-		this.finanzielleSituationSV = finanzielleSituationSV;
 	}
 }

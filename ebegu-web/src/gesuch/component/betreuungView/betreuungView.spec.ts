@@ -10,6 +10,7 @@ import {IHttpBackendService, IQService, IScope} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 
 describe('betreuungView', function () {
 
@@ -21,6 +22,7 @@ describe('betreuungView', function () {
     let betreuung: TSBetreuung;
     let $rootScope: IScope;
     let $httpBackend: IHttpBackendService;
+    let authServiceRS: AuthServiceRS;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -35,8 +37,10 @@ describe('betreuungView', function () {
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
         $rootScope = $injector.get('$rootScope');
+        authServiceRS = $injector.get('AuthServiceRS');
+        spyOn(authServiceRS, 'isRole').and.returnValue(true);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope.$new(), $injector.get('BerechnungsManager'), $injector.get('ErrorService'));
+            $rootScope.$new(), $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS);
     }));
 
     describe('Public API', function () {
@@ -49,9 +53,9 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope.$new(), null, null);
+                    $rootScope.$new(), null, null, authServiceRS);
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
-                expect(myBetreuungView.getBetreuungspensen().length).toEqual(0);
+                expect(myBetreuungView.getBetreuungspensen().length).toEqual(1);
             });
         });
         describe('cancel existing object', () => {
@@ -79,7 +83,7 @@ describe('betreuungView', function () {
             beforeEach(function () {
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
-                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
             });
             it('should return an empty list if betreuungsangebot is not yet defined', () => {
@@ -100,10 +104,10 @@ describe('betreuungView', function () {
             it('creates the first betreuungspensum in empty list and then a second one (for role=Institution)', () => {
                 // Just creating an object must add a new BetreuungspensumContainer
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(0);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
                 betreuungView.createBetreuungspensum();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
-                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(2);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumGS).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA).toBeDefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers[0].betreuungspensumJA.pensum).toBeUndefined();
@@ -173,7 +177,7 @@ describe('betreuungView', function () {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form: any = {};
         form.$valid = true;
-        betreuungView.submit(form);
+        betreuungView.save(form);
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {

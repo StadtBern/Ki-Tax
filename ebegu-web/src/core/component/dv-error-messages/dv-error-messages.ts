@@ -14,6 +14,3 @@ export class DvErrorMessagesComponentConfig implements IComponentOptions {
 
 export class DvErrorMessages {
 }
-
-
-

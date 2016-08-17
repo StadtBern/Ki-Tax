@@ -104,7 +104,7 @@ module.exports = webpackMerge(commonConfig, {
             'ENV': JSON.stringify(METADATA.ENV),
             'HMR': METADATA.HMR,
             'VERSION': METADATA.version,
-            'BUILDTSTAMP': METADATA.buildtstamp, 
+            'BUILDTSTAMP': METADATA.buildtstamp,
             'process.env': {
                 'ENV': JSON.stringify(METADATA.ENV),
                 'NODE_ENV': JSON.stringify(METADATA.ENV),
@@ -135,7 +135,7 @@ module.exports = webpackMerge(commonConfig, {
             beautify: false, //prod
 
             mangle: {
-                screw_ie8 : true,
+                screw_ie8: true,
                 keep_fnames: true
             }, //prod
             /*
