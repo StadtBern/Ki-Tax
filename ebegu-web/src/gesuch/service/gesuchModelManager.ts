@@ -41,6 +41,7 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
+    previousGesuch: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindNumber: number;
@@ -446,6 +447,18 @@ export default class GesuchModelManager {
             this.gesuch.fall = new TSFall();
             this.setCurrentUserAsFallVerantwortlicher();
         }
+        this.backupCurrentGesuch();
+    }
+
+    /**
+     * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
+     */
+    private backupCurrentGesuch() {
+        this.previousGesuch =  angular.copy(this.gesuch);
+    }
+
+    public restoreBackupOfPreviousGesuch(){
+        this.gesuch = this.previousGesuch;
     }
 
     public initFamiliensituation() {

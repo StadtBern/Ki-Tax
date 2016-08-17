@@ -42,6 +42,7 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel(): void {
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
         this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
@@ -64,6 +65,7 @@ export class KindViewController extends AbstractGesuchViewController {
 
     cancel() {
         this.removeKindFromList();
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
         this.state.go('gesuch.kinder');
     }
 

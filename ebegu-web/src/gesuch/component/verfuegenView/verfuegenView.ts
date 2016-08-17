@@ -33,6 +33,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     cancel(): void {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
         this.state.go('gesuch.verfuegen');
     }
 

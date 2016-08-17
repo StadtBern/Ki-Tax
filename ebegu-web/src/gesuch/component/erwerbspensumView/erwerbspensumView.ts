@@ -14,9 +14,9 @@ import {
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IFormController = angular.IFormController;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -52,6 +52,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
                 private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -104,6 +105,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     cancel() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();   
         this.state.go('gesuch.erwerbsPensen');
     }
 

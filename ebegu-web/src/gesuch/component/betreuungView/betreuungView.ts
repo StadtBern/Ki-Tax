@@ -13,9 +13,9 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import Moment = moment.Moment;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import Moment = moment.Moment;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -47,6 +47,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel() {
+        this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
@@ -111,6 +112,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public cancel() {
         this.removeBetreuungFromKind();
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
         this.state.go('gesuch.betreuungen');
     }
 
