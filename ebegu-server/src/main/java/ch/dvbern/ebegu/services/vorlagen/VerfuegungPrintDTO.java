@@ -11,14 +11,13 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.util.Constants;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,40 +34,29 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Override
 	public String getGesuchstellerName() {
-
-		return betreuung.extractGesuch().getGesuchsteller1().getFullName();
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
+		if (gesuchsteller.isPresent()) {
+			return gesuchsteller.get().getFullName();
+		}
+		return "";
 	}
 
 	@Override
 	public String getGesuchstellerStrasse() {
-
-		if (getGesuchstellerAdresse() != null) {
-			return getGesuchstellerAdresse().getStrasse();
+		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
+		if (gesuchstellerAdresse.isPresent()) {
+			return gesuchstellerAdresse.get().getStrasse();
 		}
 		return "";
 	}
 
 	@Override
 	public String getGesuchstellerPLZStadt() {
-
-		if (getGesuchstellerAdresse() != null) {
-			return getGesuchstellerAdresse().getPlz() + " " + getGesuchstellerAdresse().getOrt();
+		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
+		if (gesuchstellerAdresse.isPresent()) {
+			return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
 		}
 		return "";
-	}
-
-	@Nullable
-	private GesuchstellerAdresse getGesuchstellerAdresse() {
-
-		List<GesuchstellerAdresse> adressen = betreuung.extractGesuch().getGesuchsteller1().getAdressen();
-		GesuchstellerAdresse wohnadresse = null;
-		for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
-			if (gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)) {
-				return gesuchstellerAdresse;
-			}
-			wohnadresse = gesuchstellerAdresse;
-		}
-		return wohnadresse;
 	}
 
 	@Override
@@ -78,39 +66,48 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Override
 	public String getVerfuegungsdatum() {
-
-		// TODO ZEAB ist das Setzen der Verfuegungsdatum Korrekt
-		return Constants.DATE_FORMATTER.format(betreuung.getVerfuegung().getTimestampErstellt());
-
+		Optional<Verfuegung> verfuegung = extractVerfuegung();
+		if (verfuegung.isPresent()) {
+			Verfuegung verfuegung1 = verfuegung.get();
+			if (verfuegung1.getTimestampErstellt() != null) {
+				// TODO ZEAB ist das Setzen der Verfuegungsdatum Korrekt
+				return Constants.DATE_FORMATTER.format(verfuegung1.getTimestampErstellt());
+			}
+		}
+		return "";
 	}
 
 	@Override
 	public String getGesuchsteller1() {
-
-		return betreuung.extractGesuch().getGesuchsteller1().getFullName();
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
+		if (gesuchsteller.isPresent()) {
+			return gesuchsteller.get().getFullName();
+		}
+		return "";
 	}
 
 	@Override
 	public String getGesuchsteller2() {
-
-		return betreuung.extractGesuch().getGesuchsteller2().getFullName();
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller2();
+		if (gesuchsteller.isPresent()) {
+			return gesuchsteller.get().getFullName();
+		}
+		return "";
 	}
 
 	@Override
 	public String getKindNameVorname() {
-
-		return betreuung.getKind().getKindJA().getFullName();
+		return extractKind().getFullName();
 	}
 
 	@Override
 	public String getKindGeburtsdatum() {
 
-		return Constants.DATE_FORMATTER.format(betreuung.getKind().getKindJA().getGeburtsdatum());
+		return Constants.DATE_FORMATTER.format(extractKind().getGeburtsdatum());
 	}
 
 	@Override
 	public String getKitaBezeichnung() {
-
 		return betreuung.getInstitutionStammdaten().getInstitution().getName();
 	}
 
@@ -126,27 +123,30 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Override
 	public List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt() {
-
 		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
-		result.addAll(betreuung.getVerfuegung().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
+		Optional<Verfuegung> verfuegung = extractVerfuegung();
+		if (verfuegung.isPresent()) {
+			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
+		}
 		return result;
 	}
 
 	@Override
 	public String getBemerkung() {
-
-		return betreuung.getVerfuegung().getGeneratedBemerkungen() + " " + betreuung.getVerfuegung().getManuelleBemerkungen();
+		Optional<Verfuegung> verfuegung = extractVerfuegung();
+		if (verfuegung.isPresent()) {
+			return verfuegung.get().getGeneratedBemerkungen() + " " + verfuegung.get().getManuelleBemerkungen();
+		}
+		return "";
 	}
 
 	@Override
 	public boolean existGesuchsteller2() {
-
 		return betreuung.extractGesuch().getGesuchsteller2() != null;
 	}
 
 	@Override
 	public boolean isPensumGrosser0() {
-
 		List<VerfuegungZeitabschnittPrint> vzList = getVerfuegungZeitabschnitt();
 		int value = 0;
 		for (VerfuegungZeitabschnittPrint verfuegungZeitabschnitt : vzList) {
@@ -158,8 +158,58 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Override
 	public boolean isMutation() {
+		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
+		return false;
+	}
 
-		// TODO ZEAB ist so Korrekt
-		return betreuung.getVerfuegung().getTimestampMutiert() != null;
+	@Nonnull
+	private Optional<Gesuchsteller> extractGesuchsteller1() {
+		Gesuchsteller gs1 = betreuung.extractGesuch().getGesuchsteller1();
+		if (gs1 != null) {
+			return Optional.of(gs1);
+		}
+		return Optional.empty();
+	}
+
+	@Nonnull
+	private Optional<Gesuchsteller> extractGesuchsteller2() {
+		Gesuchsteller gs2 = betreuung.extractGesuch().getGesuchsteller2();
+		if (gs2 != null) {
+			return Optional.of(gs2);
+		}
+		return Optional.empty();
+	}
+
+	@Nonnull
+	private Kind extractKind()  {
+		return betreuung.getKind().getKindJA();
+	}
+
+	@Nonnull
+	private Optional<GesuchstellerAdresse> getGesuchstellerAdresse() {
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
+		if (gesuchsteller.isPresent()) {
+			List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
+			GesuchstellerAdresse wohnadresse = null;
+			for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
+				if (gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)) {
+					return Optional.of(gesuchstellerAdresse);
+				}
+				wohnadresse = gesuchstellerAdresse;
+			}
+			if (wohnadresse != null) {
+				return Optional.of(wohnadresse);
+			}
+		}
+		return Optional.empty();
+	}
+
+	@Nonnull
+	private Optional<Verfuegung> extractVerfuegung() {
+		Verfuegung verfuegung = betreuung.getVerfuegung();
+		if (verfuegung != null) {
+			return Optional.of(verfuegung);
+		}
+		return Optional.empty();
 	}
 }

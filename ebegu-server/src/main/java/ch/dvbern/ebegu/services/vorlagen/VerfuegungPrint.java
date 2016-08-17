@@ -15,69 +15,35 @@ import java.util.List;
 */
 public interface VerfuegungPrint {
 
-	/**
-	 * @return
-	 */
+	// ****************************************************************************************************************
+	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
+	// mit den Platzhaltern im Word-Template!
+	// ****************************************************************************************************************
+
 	String getGesuchstellerName();
 
-	/**
-	 * @return
-	 */
 	String getGesuchstellerStrasse();
 
-	/**
-	 * @return
-	 */
 	String getGesuchstellerPLZStadt();
 
-	/**
-	 * @return
-	 */
 	String getReferenzNummer();
 
-	/**
-	 * @return Verfuegungsdatum
-	 */
 	String getVerfuegungsdatum();
 
-	/**
-	 * @return
-	 */
 	String getGesuchsteller1();
 
-	/**
-	 * @return
-	 */
 	String getGesuchsteller2();
 
-	/**
-	 * @return
-	 */
 	String getKindNameVorname();
 
-	/**
-	 * @return
-	 */
 	String getKindGeburtsdatum();
 
-	/**
-	 * @return
-	 */
 	String getKitaBezeichnung();
 
-	/**
-	 * @return
-	 */
 	String getAnspruchAb();
 
-	/**
-	 * @return
-	 */
 	String getAnspruchBis();
 
-	/**
-	 * @return
-	 */
 	List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt();
 
 	/**

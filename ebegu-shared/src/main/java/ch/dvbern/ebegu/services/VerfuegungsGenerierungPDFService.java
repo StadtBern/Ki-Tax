@@ -1,9 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import java.util.List;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -23,7 +24,8 @@ public interface VerfuegungsGenerierungPDFService {
 	 *
 	 * @param gesuch das Gesuch
 	 * @return Liste der generierten Verfuegungen Pro Kind
-	 * @throws {@link MergeDocException} Falls bei der Verfuegungsgenerierung einen Fehler auftritt
+	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
 	 */
-	List<byte[]> generiereVerfuegungen(Gesuch gesuch) throws MergeDocException;
+	@Nonnull
+	List<byte[]> generiereVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException;
 }

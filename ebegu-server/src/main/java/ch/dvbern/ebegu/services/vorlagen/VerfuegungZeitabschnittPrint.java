@@ -15,6 +15,11 @@ import java.math.BigDecimal;
 */
 public interface VerfuegungZeitabschnittPrint {
 
+	// ****************************************************************************************************************
+	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
+	// mit den Platzhaltern im Word-Template!
+	// ****************************************************************************************************************
+
 	String getVon();
 
 	String getBis();

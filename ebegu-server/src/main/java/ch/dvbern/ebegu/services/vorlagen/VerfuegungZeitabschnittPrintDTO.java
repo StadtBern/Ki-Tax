@@ -11,63 +11,56 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.math.BigDecimal;
-
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
+
+import java.math.BigDecimal;
 
 public class VerfuegungZeitabschnittPrintDTO implements VerfuegungZeitabschnittPrint {
 
-	private ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
-	public VerfuegungZeitabschnittPrintDTO(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	public VerfuegungZeitabschnittPrintDTO(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
 	}
 
 	@Override
 	public String getVon() {
-
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
 	}
 
 	@Override
 	public String getBis() {
-
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis());
 	}
 
 	@Override
 	public int getBetreuung() {
-
 		return verfuegungZeitabschnitt.getBetreuungspensum();
 	}
 
 	@Override
 	public int getAnspruch() {
-
 		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 	}
 
 	@Override
 	public int getBGPensum() {
-
-		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();//// TODO (hefr) spaeter das
+		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum(); // TODO (hefr) spaeter das BG-Pensum nehmen!
 	}
 
 	@Override
 	public BigDecimal getVollkosten() {
-
 		return verfuegungZeitabschnitt.getVollkosten();
 	}
 
 	@Override
 	public BigDecimal getElternbeitrag() {
-
 		return verfuegungZeitabschnitt.getElternbeitrag();
 	}
 
 	@Override
 	public BigDecimal getVerguenstigung() {
-
 		return verfuegungZeitabschnitt.getVerguenstigung();
 	}
 }

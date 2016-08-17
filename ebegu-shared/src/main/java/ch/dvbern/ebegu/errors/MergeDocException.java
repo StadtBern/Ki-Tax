@@ -11,13 +11,17 @@ package ch.dvbern.ebegu.errors;
 * Ersteller: zeab am: 16.08.2016
 */
 
-import java.io.Serializable;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.ejb.ApplicationException;
+import java.io.Serializable;
 
-//TODO ZEAB Muss annotiert werden.
+@ApplicationException(rollback = true)
 public class MergeDocException extends EbeguException {
+
+	private static final long serialVersionUID = 1289688844437918486L;
 
 	/**
 	 * Fall bei der Mergen der Vorlgage eine Fehler auftritt wird diese Exception geworfen
@@ -28,6 +32,6 @@ public class MergeDocException extends EbeguException {
 	 * @param args die Argumente
 	 */
 	public MergeDocException(@Nullable String methodeName, @Nullable String message, @Nullable Throwable cause, @Nonnull Serializable... args) {
-		super(methodeName, message, cause, args);
+		super(methodeName, message, ErrorCodeEnum.ERROR_PRINT_PDF, cause, args);
 	}
 }

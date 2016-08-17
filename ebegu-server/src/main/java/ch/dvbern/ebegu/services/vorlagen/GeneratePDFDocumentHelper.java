@@ -11,6 +11,15 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 10.08.2016
 */
 
+import ch.dvbern.ebegu.errors.MergeDocException;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import javax.annotation.Nonnull;
 import java.awt.color.ICC_Profile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,22 +27,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PRStream;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfDocument;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfWriter;
-
-import fr.opensagres.xdocreport.itext.extension.IPdfWriterConfiguration;
+import java.util.Objects;
 
 /**
  * Helper Klasse um einen DocX zu einem PDF zu konvertieren
@@ -47,52 +41,43 @@ public class GeneratePDFDocumentHelper {
 	/**
 	 * Konvertiert ein docx zu einem PDF
 	 *
-	 * @param generateFrom
 	 * @return das PDF Dokument als Byte
-	 * @throws IOException
-	 * @throws DocumentException
+	 * @throws MergeDocException
 	 */
-	public byte[] generatePDFDocument(byte[] generateFrom) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {
+	@Nonnull
+	public byte[] generatePDFDocument(@Nonnull byte[] generateFrom) throws MergeDocException {
+		try {
+			Objects.requireNonNull(generateFrom, "generateFrom muss gesetzt sein");
+			final XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(generateFrom));
 
-		if (generateFrom == null) {
-			throw new IllegalArgumentException("Das Argument 'generateFrom' darf nicht leer sein");
+			final PdfOptions options = PdfOptions.create();
+			options.setConfiguration(this::setXDocReportPDFWriterOptions);
+
+			java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+			PdfConverter.getInstance().convert(document, out, options);
+
+			return manipulatePdf(out.toByteArray());
+		} catch (IOException | InvocationTargetException | DocumentException | IllegalAccessException | NoSuchMethodException e) {
+			throw new MergeDocException("generatePDFDocument()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
 		}
-		final XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(generateFrom));
-
-		final PdfOptions options = PdfOptions.create();
-		options.setConfiguration(new IPdfWriterConfiguration() {
-
-			@Override
-			public void configure(PdfWriter pdfWriter) {
-
-				setXDocReportPDFWriterOptions(pdfWriter);
-			}
-		});
-
-		java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
-		PdfConverter.getInstance().convert(document, out, options);
-
-		return manipulatePdf(out.toByteArray());
 	}
 
-	private void setXDocReportPDFWriterOptions(PdfWriter pdfWriter) {
-
+	private void setXDocReportPDFWriterOptions(@Nonnull PdfWriter pdfWriter) {
 		pdfWriter.setPdfVersion(PdfWriter.PDF_VERSION_1_4);
-
 		pdfWriter.setTagged();
-
 		PDFFontUtil.embedStandardFonts();
 	}
 
 	/**
 	 * PDF has to be manipulated in order to set the right page number.
-	 *
-	 * @param doc
-	 * @return
 	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchMethodException
 	 * @throws DocumentException
 	 */
-	private byte[] manipulatePdf(byte[] doc) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {
+	@Nonnull
+	private byte[] manipulatePdf(@Nonnull byte[] doc) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, DocumentException {
 
 		PDFFontUtil.embedStandardFonts();
 
@@ -118,16 +103,16 @@ public class GeneratePDFDocumentHelper {
 			setWriterPDFA(stamper);
 
 		} finally {
-			if (stamper != null) {
-				stamper.close();
-			}
-			reader.close();
-			manipulated.close();
+				if (stamper != null) {
+					stamper.close();
+				}
+				reader.close();
+				manipulated.close();
 		}
 		return manipulated.toByteArray();
 	}
 
-	private void setWriterPDFA(PdfStamper stamper) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+	private void setWriterPDFA(@Nonnull PdfStamper stamper) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		PdfWriter writer = stamper.getWriter();
 
@@ -139,10 +124,10 @@ public class GeneratePDFDocumentHelper {
 
 	/**
 	 * Zusätlich zu die Fonts, soll auch das Color Profil im PDF.Dictionnary addiert werden.
-	 *
-	 * @param pdfWriter
 	 */
-	private void setColorProfile(PdfWriter pdfWriter) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+	@SuppressWarnings("PMD.AvoidCatchingNPE")
+	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
+	private void setColorProfile(@Nonnull PdfWriter pdfWriter) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 
 		pdfWriter.setDefaultColorspace(PdfName.DEFAULTRGB, null);
 

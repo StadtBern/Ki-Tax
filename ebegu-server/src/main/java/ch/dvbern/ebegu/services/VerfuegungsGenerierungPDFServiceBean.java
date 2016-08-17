@@ -18,10 +18,14 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintDTO;
 import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintMergeSource;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +38,10 @@ import java.util.Objects;
 @Local(VerfuegungsGenerierungPDFService.class)
 public class VerfuegungsGenerierungPDFServiceBean extends AbstractBaseService implements VerfuegungsGenerierungPDFService {
 
+	@Nonnull
 	@Override
-	public List<byte[]> generiereVerfuegungen(Gesuch gesuch) throws MergeDocException {
+	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
+	public List<byte[]> generiereVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
@@ -54,9 +60,8 @@ public class VerfuegungsGenerierungPDFServiceBean extends AbstractBaseService im
 					is.close();
 				}
 			}
-
-		} catch (Exception e) {
-			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetretten", e, new Objects[] {});
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetreten", e, new Objects[] {});
 		}
 		return result;
 	}
