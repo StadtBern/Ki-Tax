@@ -11,7 +11,7 @@
         </div>
         <hr class="header"/>
 
-        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
+        <form role="form" name="form" class="" novalidate
               unsaved-warning-form>
             <!--Schuljahr -->
             <div class="row">
@@ -218,13 +218,15 @@
 
                 <!-- Status texts -->
                 <div class="row">
-                    <div class="col-md-12 well well-status-warten" ng-if="vm.isBetreuungsstatusWarten()">
+                    <div class="col-md-12 well well-status-warten"
+                         ng-if="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                         <i class="fa fa-hourglass-half" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 well well-status-abgewiesen" ng-if="vm.isBetreuungsstatusAbgewiesen()">
+                    <div class="col-md-12 well well-status-abgewiesen"
+                         ng-if="vm.isBetreuungsstatusAbgewiesen() && !vm.isSavingData">
                         <i class="fa fa-times" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"
                               data-translate-value-grund="{{vm.getBetreuungModel().grundAblehnung}}">
@@ -232,7 +234,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 well well-status-bestaetigt" ng-if="vm.isBetreuungsstatusBestaetigt()">
+                    <div class="col-md-12 well well-status-bestaetigt"
+                         ng-if="vm.isBetreuungsstatusBestaetigt() && !vm.isSavingData">
                         <i class="fa fa-check" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
                     </div>
@@ -240,18 +243,21 @@
 
                 <!--Platz anfordern-->
                 <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                     dv-show-expression="!vm.isBetreuungsstatusWarten() && !vm.isBetreuungsstatusSchulamt()">
+                     dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                     <div class="col-md-12">
                         <dv-loading-button type="button" ng-click="form.$valid && vm.platzAnfordern(form)"
                                            button-class="btn btn-md btn-success"
                                            button-disabled="!form.$valid || !vm.getBetreuungModel().vertrag">
-                            <span ng-if="!vm.isProcessFinished()"
-                                  data-translate="PLATZBESTAETIGUNG_ANFORDERN">
-                            </span>
-                            <span ng-if="vm.isProcessFinished()"
-                                  data-translate="DATEN_STIMMEN_NICHT">
-                            </span>
+                            <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>
+
                         </dv-loading-button>
+                    </div>
+                </div>
+                <!--falsche Angaben-->
+                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                     dv-show-expression="vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()">
+                    <div class="col-md-12">
+                        <a href="#" ng-click="form.$valid && vm.platzAnfordern(form)" data-translate="FALSCHE_ANGABEN"></a>
                     </div>
                 </div>
 
@@ -279,14 +285,14 @@
             </div>
 
             <!--Buttons-->
-            <div class="row">
+            <div class="row marginTop20">
                 <div class="col-md-6">
                     <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link cancel">
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
                 <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                     dv-show-expression="vm.isBetreuungsstatusSchulamt()">
+                     dv-show-expression="vm.isBetreuungsstatusSchulamt() && form.$valid && (vm.getBetreuungModel().vertrag === true)">
                     <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>

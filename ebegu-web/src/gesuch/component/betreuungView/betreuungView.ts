@@ -30,6 +30,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
+    isSavingData: boolean; // Semaphore
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
@@ -47,6 +48,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel() {
+        this.isSavingData = false;
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
@@ -88,12 +90,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    //todo team remove this method
-    submit(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.AUSSTEHEND, 'gesuch.betreuungen');
-    }
-
-    submitMe(form: IFormController, newStatus: TSBetreuungsstatus, nextStep: string): void {
+    save(form: IFormController, newStatus: TSBetreuungsstatus, nextStep: string): void {
+        this.isSavingData = true;
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (form.$valid) {
             if (this.getBetreuungModel()) {
@@ -104,9 +102,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.errorService.clearAll();
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
+                this.isSavingData = false;
                 this.state.go(nextStep);
             }).catch((exception) => {
                 //todo team Fehler anzeigen
+                this.isSavingData = false;
                 this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
                 return undefined;
             });
@@ -186,19 +186,19 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+        this.save(form, TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
     }
 
     public platzBestaetigen(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
+        this.save(form, TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
     }
 
     public platzAbweisen(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
+        this.save(form, TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 
     public saveSchulamt(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
+        this.save(form, TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
     }
 
     /**

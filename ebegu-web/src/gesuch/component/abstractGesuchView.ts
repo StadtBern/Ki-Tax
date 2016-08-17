@@ -1,5 +1,4 @@
 import {IStateService} from 'angular-ui-router';
-import {IFormController} from 'angular';
 import GesuchModelManager from '../service/gesuchModelManager';
 import BerechnungsManager from '../service/berechnungsManager';
 import {TSRole} from '../../models/enums/TSRole';
@@ -19,9 +18,6 @@ export default class AbstractGesuchViewController {
         this.berechnungsManager = $berechnungsManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
-    }
-
-    submit(form: IFormController): void {
     }
 
 }
