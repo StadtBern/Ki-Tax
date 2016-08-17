@@ -8,6 +8,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import DateUtil from '../../../utils/DateUtil';
 import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
+import IFormController = angular.IFormController;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -31,8 +32,18 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         super(state, gesuchModelManager, berechnungsManager);
     }
 
-    public cancel(): void {
+    cancel(): void {
         this.state.go('gesuch.verfuegen');
+    }
+
+    save(form: IFormController) {
+        if (form.$valid) {
+            //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
+            //this.errorService.clearAll();
+            // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
+                this.state.go('gesuch.verfuegen');
+            // });
+        }
     }
 
     public getVerfuegenToWorkWith(): TSVerfuegung {
