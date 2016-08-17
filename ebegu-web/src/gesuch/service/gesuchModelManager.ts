@@ -695,7 +695,7 @@ export default class GesuchModelManager {
      * @param betreuung
      * @returns {TSBetreuung}
      */
-    private setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
+    public setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
         return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1] = betreuung;
     }
 

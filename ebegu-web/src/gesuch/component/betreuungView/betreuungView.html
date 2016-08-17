@@ -259,7 +259,8 @@
                 <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
                      dv-show-expression="vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()">
                     <div class="col-md-12">
-                        <a href="#" ng-click="form.$valid && vm.platzAnfordern(form)" data-translate="FALSCHE_ANGABEN"></a>
+                        <a href="" ng-click="vm.platzAnfordern(form)"
+                           data-translate="FALSCHE_ANGABEN"></a>
                     </div>
                 </div>
 
@@ -273,7 +274,7 @@
                         </dv-loading-button>
                     </div>
                     <div class="col-md-6">
-                        <dv-loading-button button-click="vm.platzAbweisen(form)"  type="submit" button-class="btn btn-md btn-danger"
+                        <dv-loading-button button-click="vm.platzAbweisen(form)" button-class="btn btn-md btn-danger"
                                    aria-label="{{ABWEISEN_UPPER | translate}}">
                             <span data-translate="ABWEISEN_UPPER"></span>
                         </dv-loading-button>

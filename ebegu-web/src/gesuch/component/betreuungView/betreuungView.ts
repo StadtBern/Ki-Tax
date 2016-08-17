@@ -32,12 +32,14 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
     isSavingData: boolean; // Semaphore
+    initialBetreuung: TSBetreuung;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService, private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
+        this.initialBetreuung = angular.copy(this.getBetreuungModel());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
@@ -54,7 +56,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
-        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)) {
+        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
+            && (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT))) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
         }
@@ -91,27 +94,25 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: IFormController, newStatus: TSBetreuungsstatus, nextStep: string): void {
+    save(newStatus: TSBetreuungsstatus, nextStep: string): void {
         this.isSavingData = true;
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
-        if (form.$valid) {
-            if (this.getBetreuungModel()) {
-                if (this.isTagesschule()) {
-                    this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
-                }
+        if (this.getBetreuungModel()) {
+            if (this.isTagesschule()) {
+                this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
             }
-            this.errorService.clearAll();
-            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
-            this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
-                this.isSavingData = false;
-                this.state.go(nextStep);
-            }).catch((exception) => {
-                //todo team Fehler anzeigen
-                this.isSavingData = false;
-                this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
-                return undefined;
-            });
         }
+        this.errorService.clearAll();
+        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
+        this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
+            this.isSavingData = false;
+            this.state.go(nextStep);
+        }).catch((exception) => {
+            //todo team Fehler anzeigen
+            this.isSavingData = false;
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
+            return undefined;
+        });
     }
 
     private setBetreuungsangebotTypValues(): void {
@@ -187,21 +188,38 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        this.save(form, TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+        if (form.$valid) {
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+        }
     }
 
     public platzBestaetigen(form: IFormController): void {
-        this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-        this.save(form, TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
+        if (form.$valid) {
+            this.getBetreuungModel().datumBestaetigung = DateUtil.today();
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
+        }
     }
 
+    /**
+     * Wenn ein Betreuungsangebot abgewiesen wird, muss man die neu eingegebenen Betreuungspensen zuruecksetzen, da sie nicht relevant sind.
+     * Allerdings muessen der Grund und das Datum der Ablehnung doch gespeichert werden.
+     * In diesem Fall machen wir keine Validierung weil die Daten die eingegeben werden muessen, direkt auf dem Server gecheckt werden
+     * @param form
+     */
     public platzAbweisen(form: IFormController): void {
+        //copy values modified by the Institution in initialBetreuung
+        this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
+        this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
+        //restore initialBetreuung
+        this.gesuchModelManager.setBetreuungToWorkWith(this.initialBetreuung);
         this.getBetreuungModel().datumAblehnung = DateUtil.today();
-        this.save(form, TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 
     public saveSchulamt(form: IFormController): void {
-        this.save(form, TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
+        if (form.$valid) {
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
+        }
     }
 
     /**
