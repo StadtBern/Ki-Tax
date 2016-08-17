@@ -44,12 +44,22 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
-    submit($form: IFormController) {
-        if ($form.$valid) {
+    previousStep(form: IFormController): void {
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.fallcreation');
+        });
+    }
+
+    nextStep(form: IFormController): void {
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.stammdaten');
+        });
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+        if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
-            });
+            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
         }
     }
 

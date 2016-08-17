@@ -88,7 +88,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController): void {
+    save(form: IFormController): void {
         if (form.$valid) {
             if (this.getBetreuungModel()) {
                 if (this.isTagesschule()) {
@@ -179,7 +179,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public platzAnfordern(form: IFormController): void {
         this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.WARTEN;
-        this.submit(form);
+        this.save(form);
     }
 
     /**

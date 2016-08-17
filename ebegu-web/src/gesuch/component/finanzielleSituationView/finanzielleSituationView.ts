@@ -70,31 +70,33 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    previousStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-        } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.kinder');
-        }
+    previousStep(form: IFormController): void {
+        this.save(form, (finanzielleSituationResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
+                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+            } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.finanzielleSituationStart');
+            } else {
+                this.state.go('gesuch.kinder');
+            }
+        });
+
     }
 
-    nextStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
-        } else {
-            this.state.go('gesuch.finanzielleSituationResultate');
-        }
+    nextStep(form: IFormController): void {
+        this.save(form, (finanzielleSituationResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
+            } else {
+                this.state.go('gesuch.finanzielleSituationResultate');
+            }
+        });
     }
 
-    submit(form: IFormController) {
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
-            this.gesuchModelManager.saveFinanzielleSituation().then((finanzielleSituationResponse: any) => {
-                this.nextStep();
-            });
+            this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
         }
     }
 

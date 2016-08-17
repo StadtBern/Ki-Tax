@@ -71,11 +71,6 @@ export class KinderListViewController extends AbstractGesuchViewController {
             });
     }
 
-    submit(): void {
-        this.errorService.clearAll();
-        this.nextStep();
-    }
-
     previousStep(): void {
         if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
             this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
