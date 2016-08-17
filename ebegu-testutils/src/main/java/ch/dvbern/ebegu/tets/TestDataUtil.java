@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tets;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
@@ -9,6 +10,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -451,5 +453,37 @@ public final class TestDataUtil {
 		dokument.setDokumentSize("123456");
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
+	}
+
+	/**
+	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
+	 */
+	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = testfall.createGesuch();
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+				if (persistence.find(Institution.class, betreuung.getInstitutionStammdaten().getInstitution().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten().getInstitution());
+				}
+				if (persistence.find(InstitutionStammdaten.class, betreuung.getInstitutionStammdaten().getId()) == null) {
+					persistence.merge(betreuung.getInstitutionStammdaten());
+				}
+				if (betreuung.getKind().getKindJA().getPensumFachstelle() != null) {
+					persistence.merge(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
+				}
+			}
+		}
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
+		gesuch = persistence.persist(gesuch);
+		return gesuch;
 	}
 }

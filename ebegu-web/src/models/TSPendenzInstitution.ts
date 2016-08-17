@@ -4,8 +4,10 @@ import TSInstitution from './TSInstitution';
 
 export default class TSPendenzInstitution {
 
+    private _betreuungsNummer: string;
     private _betreuungsId: string;
     private _gesuchId: string;
+    private _kindId: string;
     private _name: string;
     private _vorname: string;
     private _geburtsdatum: moment.Moment;
@@ -15,11 +17,14 @@ export default class TSPendenzInstitution {
     private _betreuungsangebotTyp: TSBetreuungsangebotTyp;
     private _institution: TSInstitution;
 
-    constructor(betreuungsId?: string, gesuchId?: string, name?: string, vorname?: string, geburtsdatum?: moment.Moment, typ?: string,
-                gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
+
+    constructor(betreuungsNummer?: string, betreuungsId?: string, gesuchId?: string, kindId?: string, name?: string, vorname?: string,
+                geburtsdatum?: moment.Moment, typ?: string, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment,
                 betreuungsangebotTyp?: TSBetreuungsangebotTyp, institution?: TSInstitution) {
+        this._betreuungsNummer = betreuungsNummer;
         this._betreuungsId = betreuungsId;
         this._gesuchId = gesuchId;
+        this._kindId = kindId;
         this._name = name;
         this._vorname = vorname;
         this._geburtsdatum = geburtsdatum;
@@ -28,6 +33,14 @@ export default class TSPendenzInstitution {
         this._eingangsdatum = eingangsdatum;
         this._betreuungsangebotTyp = betreuungsangebotTyp;
         this._institution = institution;
+    }
+
+    get betreuungsNummer(): string {
+        return this._betreuungsNummer;
+    }
+
+    set betreuungsNummer(value: string) {
+        this._betreuungsNummer = value;
     }
 
     get betreuungsId(): string {
@@ -44,6 +57,14 @@ export default class TSPendenzInstitution {
 
     set gesuchId(value: string) {
         this._gesuchId = value;
+    }
+
+    get kindId(): string {
+        return this._kindId;
+    }
+
+    set kindId(value: string) {
+        this._kindId = value;
     }
 
     get name(): string {

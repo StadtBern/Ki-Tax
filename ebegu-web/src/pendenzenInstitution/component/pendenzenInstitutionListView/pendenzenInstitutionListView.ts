@@ -90,6 +90,24 @@ export class PendenzenInstitutionListViewController {
     }
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution): void {
-        console.log('open Pendenz');
+        if (pendenz) {
+            this.gesuchRS.findGesuchForInstitution(pendenz.gesuchId).then((response) => {
+                if (response) {
+                    this.gesuchModelManager.gesuch = response;
+                    this.openBetreuung(pendenz);
+                }
+            });
+        }
+    }
+
+    private openBetreuung(pendenz: TSPendenzInstitution): void {
+        if (this.gesuchModelManager.gesuch && pendenz) {
+            this.gesuchModelManager.findKindById(pendenz.kindId);
+            let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
+            if (betreuungNumber > 0) {
+                this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
+                this.$state.go('gesuch.betreuung');
+            }
+        }
     }
 }

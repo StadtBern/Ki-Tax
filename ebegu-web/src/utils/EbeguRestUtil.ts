@@ -1074,8 +1074,10 @@ export default class EbeguRestUtil {
     }
 
     public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+        restPendenz.betreuungsNummer = pendenz.betreuungsNummer;
         restPendenz.betreuungsId = pendenz.betreuungsId;
         restPendenz.gesuchId = pendenz.gesuchId;
+        restPendenz.kindId = pendenz.kindId;
         restPendenz.name = pendenz.name;
         restPendenz.vorname = pendenz.vorname;
         restPendenz.geburtsdatum = DateUtil.momentToLocalDate(pendenz.geburtsdatum);
@@ -1088,8 +1090,10 @@ export default class EbeguRestUtil {
     }
 
     public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+        pendenzTS.betreuungsNummer = pendenzFromServer.betreuungsNummer;
         pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
         pendenzTS.gesuchId = pendenzFromServer.gesuchId;
+        pendenzTS.kindId = pendenzFromServer.kindId;
         pendenzTS.name = pendenzFromServer.name;
         pendenzTS.vorname = pendenzFromServer.vorname;
         pendenzTS.geburtsdatum = pendenzFromServer.geburtsdatum;

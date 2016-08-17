@@ -11,6 +11,7 @@ import {
 } from '../../../models/enums/TSGesuchstellerKardinalitaet';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 
@@ -27,6 +28,7 @@ export class FamiliensituationViewComponentConfig implements IComponentOptions {
 export class FamiliensituationViewController extends AbstractGesuchViewController {
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
+    allowedRoles: Array<TSRole>;
 
     static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
     /* @ngInject */
@@ -39,6 +41,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     previousStep(form: IFormController): void {
