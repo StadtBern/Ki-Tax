@@ -3,12 +3,15 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
@@ -25,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -41,6 +45,8 @@ public class KindResource {
 	private GesuchService gesuchService;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private InstitutionService institutionService;
 
 	@Nullable
 	@PUT
@@ -84,7 +90,16 @@ public class KindResource {
 		if (!optional.isPresent()) {
 			return null;
 		}
-		return converter.kindContainerToJAX(optional.get());
+		JaxKindContainer jaxKindContainer = converter.kindContainerToJAX(optional.get());
+
+		// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
+		// damit nur die relevanten Kinder geschickt werden
+		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		if (instForCurrBenutzer.size() > 0) {
+			RestUtil.purgeSingleKindAndBetreuungenOfInstitutionen(jaxKindContainer, instForCurrBenutzer);
+		}
+
+		return jaxKindContainer;
 
 	}
 

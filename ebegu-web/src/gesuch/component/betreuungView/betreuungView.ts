@@ -90,10 +90,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     //todo team remove this method
     submit(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.AUSSTEHEND);
+        this.submitMe(form, TSBetreuungsstatus.AUSSTEHEND, 'gesuch.betreuungen');
     }
 
-    submitMe(form: IFormController, newStatus: TSBetreuungsstatus): void {
+    submitMe(form: IFormController, newStatus: TSBetreuungsstatus, nextStep: string): void {
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (form.$valid) {
             if (this.getBetreuungModel()) {
@@ -104,7 +104,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.errorService.clearAll();
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
             this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
-                this.state.go('gesuch.betreuungen');
+                this.state.go(nextStep);
             }).catch((exception) => {
                 //todo team Fehler anzeigen
                 this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
@@ -186,19 +186,19 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.WARTEN);
+        this.submitMe(form, TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
     }
 
     public platzBestaetigen(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.BESTAETIGT);
+        this.submitMe(form, TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
     }
 
     public platzAbweisen(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.ABGEWIESEN);
+        this.submitMe(form, TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 
     public saveSchulamt(form: IFormController): void {
-        this.submitMe(form, TSBetreuungsstatus.SCHULAMT);
+        this.submitMe(form, TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
     }
 
     /**

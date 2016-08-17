@@ -75,7 +75,7 @@
             </div>
 
             <!--vertrag-->
-            <div class="row">
+            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
