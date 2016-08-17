@@ -82,16 +82,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController) {
-        if (form.$valid) {
-            this.maybeResetZuschlagsgrund(this.erwerbspensum);
-            this.errorService.clearAll();
-            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
-                this.state.go('gesuch.erwerbsPensen');
-            });
-        }
-    }
-
     /**
      * Beim speichern wird geschaut ob Zuschlagsgrund noetig ist, wenn nicht zuruecksetzten
      * @param erwerbspensum
@@ -100,6 +90,16 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         if (erwerbspensum && !erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum) {
             erwerbspensum.erwerbspensumJA.zuschlagsprozent = undefined;
             erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
+        }
+    }
+
+    save(form: IFormController) {
+        if (form.$valid) {
+            this.maybeResetZuschlagsgrund(this.erwerbspensum);
+            this.errorService.clearAll();
+            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
+                this.state.go('gesuch.erwerbsPensen');
+            });
         }
     }
 

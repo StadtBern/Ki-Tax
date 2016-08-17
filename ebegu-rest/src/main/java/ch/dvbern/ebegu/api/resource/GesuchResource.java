@@ -145,9 +145,6 @@ public class GesuchResource {
 	/**
 	 * Nimmt das uebergebene Gesuch und entfernt alle Daten die fuer die Rollen SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT nicht
 	 * relevant sind. Dieses Gesuch wird zurueckgeliefert
-	 * @param completeGesuch
-	 * @param userInstitutionen
-	 * @return
 	 */
 	private JaxGesuch cleanGesuchForInstitutionTraegerschaft(final JaxGesuch completeGesuch, final Collection<Institution> userInstitutionen) {
 		//clean EKV

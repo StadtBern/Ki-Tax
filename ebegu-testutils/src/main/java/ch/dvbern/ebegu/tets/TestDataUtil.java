@@ -456,8 +456,7 @@ public final class TestDataUtil {
 	}
 
 	/**
-	 * Hilfsmethode die den Testfa
-	 * @return
+	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
 	 */
 	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
 		instService.getAllInstitutionen();
@@ -468,8 +467,7 @@ public final class TestDataUtil {
 
 		Gesuch gesuch = testfall.createGesuch();
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
-			for (Betreuung betreuung1 : kindContainer.getBetreuungen()) {
-				Betreuung betreuung = betreuung1;
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
 				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
 				if (persistence.find(Institution.class, betreuung.getInstitutionStammdaten().getInstitution().getId()) == null) {
@@ -487,6 +485,5 @@ public final class TestDataUtil {
 		persistence.persist(gesuch.getGesuchsperiode());
 		gesuch = persistence.persist(gesuch);
 		return gesuch;
-
 	}
 }

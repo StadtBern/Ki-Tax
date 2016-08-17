@@ -72,9 +72,9 @@ public final class RestUtil {
 	public static void purgeSingleKindAndBetreuungenOfInstitutionen(JaxKindContainer kind, Collection<Institution> userInstitutionen) {
 		final Iterator<JaxBetreuung> betreuungIterator = kind.getBetreuungen().iterator();
 		while (betreuungIterator.hasNext()) {
-            final JaxBetreuung betruung = betreuungIterator.next();
-            if (!RestUtil.isInstitutionInList(userInstitutionen, betruung.getInstitutionStammdaten().getInstitution())
-                || !Betreuungsstatus.WARTEN.equals(betruung.getBetreuungsstatus())) {
+            final JaxBetreuung betreuung = betreuungIterator.next();
+            if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
+                || !Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
                 betreuungIterator.remove();
             }
         }

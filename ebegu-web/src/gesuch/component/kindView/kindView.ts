@@ -53,7 +53,7 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController) {
+    save(form: IFormController) {
         if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.updateKind().then((kindResponse: any) => {

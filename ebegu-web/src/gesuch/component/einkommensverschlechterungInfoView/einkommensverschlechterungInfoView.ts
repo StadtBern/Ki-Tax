@@ -103,31 +103,21 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     /**
      * Navigation back
      */
-    previousStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+    previousStep(form: IFormController): void {
+        this.save(form, this.navigatePrevious);
+
     }
 
     /**
      * Navigation forward
      */
-    nextStep() {
-        //todo gapa muesste hier nicht vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.einkommensverschlechterung verwendet werden
-        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.einkommensverschlechterungSteuern');
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
-            }
-        } else {
-            this.state.go('gesuch.dokumente');
-        }
+    nextStep(form: IFormController): void {
+        this.save(form, this.navigateNext);
     }
 
-    submit(form: IFormController) {
+    private save(form: angular.IFormController, navigationFunction: (response: any) => any) {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
-
             if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
                 this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
             }
@@ -137,16 +127,28 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
+            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
 
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
-            });
         }
     }
 
-    resetForm() {
-        this.initViewModel();
-    }
+    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
+    private navigateNext = (response: any) => {
+        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.einkommensverschlechterungSteuern');
+            } else {
+                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+            }
+        } else {
+            this.state.go('gesuch.dokumente');
+        }
+    };
+
+    private navigatePrevious = (response: any) => {
+        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+    };
+
 
     isRequired(basisJahrPlus: number): boolean {
         let ekv: TSEinkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();

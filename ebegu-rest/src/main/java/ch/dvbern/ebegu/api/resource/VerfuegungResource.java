@@ -115,6 +115,7 @@ public class VerfuegungResource {
 
 		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 
+		// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
 		context.setRollbackOnly();
 
 		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();

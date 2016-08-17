@@ -41,26 +41,23 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false;
     }
 
-    previousStep() {
-        this.state.go('gesuch.kinder');
+    previousStep(form: IFormController): void {
+        this.save(form, (gesuch: any) => {
+            this.state.go('gesuch.erwerbsPensen');
+        });
     }
 
-    nextStep() {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+    nextStep(form: IFormController): void {
+        this.save(form, (gesuch: any) => {
+            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+        });
     }
 
-    submit(form: IFormController) {
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
-            // Speichern ausloesen
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.nextStep();
-            });
+            this.gesuchModelManager.updateGesuch().then(navigationFunction);
         }
-    }
-
-    resetForm() {
-        this.initViewModel();
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
