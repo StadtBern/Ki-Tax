@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.AuthService;
@@ -55,6 +56,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 	@Test
 	public void testFindGesuchForInstitution() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_INSTITUTION,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution(),
 			null, gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
@@ -82,6 +84,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 	@Test
 	public void testFindGesuchForTraegerschaft() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, null,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
@@ -140,5 +143,14 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 		benutzer.setTraegerschaft(traegerschaft);
 		benutzer.setMandant(mandant);
 		benutzerService.saveBenutzer(benutzer);
+	}
+
+	private void changeStatusToWarten(KindContainer kindContainer) {
+		final Iterator<Betreuung> iterator = kindContainer.getBetreuungen().iterator();
+		while (iterator.hasNext()) {
+			Betreuung betreuung = iterator.next();
+			betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
+			persistence.merge(betreuung);
+		}
 	}
 }

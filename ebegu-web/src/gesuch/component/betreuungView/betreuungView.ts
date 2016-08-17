@@ -94,7 +94,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(newStatus: TSBetreuungsstatus, nextStep: string): void {
+    private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
         this.isSavingData = true;
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (this.getBetreuungModel()) {
@@ -234,15 +234,6 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         return false;
     }
 
-    /**
-     * When the status is ABGEWIESEN or BESTAETIGT, we can say the process has ended.
-     * @returns {boolean}
-     */
-    public isProcessFinished(): boolean {
-        return this.isBetreuungsstatusAbgewiesen()
-            || this.isBetreuungsstatusBestaetigt();
-    }
-
     public isBetreuungsstatusWarten(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.WARTEN);
     }
@@ -284,6 +275,17 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             return this.betreuungsangebot.key === TSBetreuungsangebotTyp[betAngTyp];
         }
         return false;
+    }
+
+    /**
+     * Erweiterte Beduerfnisse wird nur beim Institutionen oder Traegerschaften eingeblendet oder wenn das Feld schon als true gesetzt ist
+     * ACHTUNG: Hier benutzen wir die Direktive dv-show-element nicht, da es unterschiedliche Bedingungen für jede Rolle gibt.
+     * @returns {boolean}
+     */
+    public showErweiterteBeduerfnisse(): boolean {
+        return TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
+            || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()
+            || this.getBetreuungModel().erweiterteBeduerfnisse === true;
     }
 
 }
