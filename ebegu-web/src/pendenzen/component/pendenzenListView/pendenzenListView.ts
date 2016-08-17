@@ -121,7 +121,6 @@ export class PendenzenListViewController {
         if (pendenz && pendenz.antragTyp === TSAntragTyp.GESUCH) {
             this.gesuchRS.findGesuch(pendenz.antragId).then((response) => {
                 if (response) {
-                    // pendenz.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
                     this.openGesuch(response);
                 }
             });

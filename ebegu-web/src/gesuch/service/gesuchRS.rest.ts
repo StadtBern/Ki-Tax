@@ -44,4 +44,12 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
+    public findGesuchForInstitution(gesuchID: string): IPromise<TSGesuch> {
+        return this.http.get(this.serviceURL + '/institution/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                this.$log.debug('PARSING gesuch (fuer Institutionen) REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+            });
+    }
+
 }

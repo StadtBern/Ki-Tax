@@ -1,4 +1,3 @@
-import {TSDokumentTyp} from './enums/TSDokumentTyp';
 import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSDokument extends TSAbstractEntity {

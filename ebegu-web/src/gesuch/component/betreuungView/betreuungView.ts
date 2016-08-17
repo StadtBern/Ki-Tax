@@ -88,7 +88,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController): void {
+    save(form: IFormController): void {
         if (form.$valid) {
             if (this.getBetreuungModel()) {
                 if (this.isTagesschule()) {
@@ -179,7 +179,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public platzAnfordern(form: IFormController): void {
         this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.WARTEN;
-        this.submit(form);
+        this.save(form);
     }
 
     /**
@@ -188,20 +188,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-            return (this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND
-                || this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.SCHULAMT);
-        }
-        return false;
-    }
-
-    /**
-     * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
-     * and only for the role Institution
-     * @returns {boolean}
-     */
-    public areBetreuungspensenEditable(): boolean {
-        if (this.getBetreuungModel()) {
-            return this.isEnabled() && this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION);
+            return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
+                || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
         }
         return false;
     }

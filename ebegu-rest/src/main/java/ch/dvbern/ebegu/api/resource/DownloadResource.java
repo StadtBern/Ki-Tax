@@ -37,8 +37,6 @@ import java.net.URI;
 public class DownloadResource {
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(DownloadResource.class);
-
 	@Inject
 	private TempDokumentService tempDokumentService;
 

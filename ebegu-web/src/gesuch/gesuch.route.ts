@@ -88,6 +88,7 @@ export class EbeguBetreuungState implements IState {
     template = '<betreuung-view>';
     url = '/betreuungen/betreuung';
 }
+
 export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
     template = '<erwerbspensum-list-view>';

@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.enums.DokumentTyp;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;

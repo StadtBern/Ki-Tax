@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -19,7 +20,6 @@ public interface BetreuungService {
 	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
 
 	/**
-
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -34,4 +34,13 @@ public interface BetreuungService {
 	 * @param betreuungId Id der Betreuung zu entfernen
 	 */
 	void removeBetreuung(@Nonnull String betreuungId);
+
+	/**
+	 * Gibt die Pendenzen fuer einen Benutzer mit Rolle Institution oder Traegerschaft zurueck.
+	 * Dies sind Betreuungen, welche zu einer Institution gehoeren, fuer welche der Benutzer berechtigt ist,
+	 * und deren Status "WARTEN" ist.
+     */
+	@Nonnull
+	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
+
 }

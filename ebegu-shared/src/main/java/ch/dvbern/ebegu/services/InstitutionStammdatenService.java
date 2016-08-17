@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
@@ -50,4 +51,10 @@ public interface InstitutionStammdatenService {
 	 * @return Alle InstitutionStammdaten, bei denen die Institution dem übergebenen id-Wert entspricht
 	 */
 	Collection<InstitutionStammdaten> getAllInstitutionStammdatenByInstitution(String institutionId);
+
+	/**
+	 * Gibt alle Betreuungsangebotstypen zurueck, welche die Institutionen anbieten, fuer welche der
+	 * aktuell eingeloggte Benutzer berechtigt ist
+     */
+	Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer();
 }

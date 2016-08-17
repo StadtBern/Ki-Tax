@@ -177,7 +177,7 @@ describe('betreuungView', function () {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form: any = {};
         form.$valid = true;
-        betreuungView.submit(form);
+        betreuungView.save(form);
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {

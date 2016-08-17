@@ -316,7 +316,9 @@ public class FinanzielleSituationRechner {
 			anzahlJahre = anzahlJahre.add(BigDecimal.ONE);
 		}
 		if (anzahlJahre.intValue() > 0) {
-			return total.divide(anzahlJahre, RoundingMode.HALF_UP);
+			final BigDecimal divided = total.divide(anzahlJahre, RoundingMode.HALF_UP);
+			// Durschnitt darf NIE kleiner als 0 sein
+			return divided.intValue() >= 0 ? divided : BigDecimal.ZERO;
 		}
 
 		return null;
