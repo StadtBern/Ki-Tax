@@ -14,10 +14,10 @@ package ch.dvbern.ebegu.tests.docmerge;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.services.vorlagen.Verfuegungsmuster;
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnittPrint;
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrint;
 
-public class VerfuegungsmusterDummyImp implements Verfuegungsmuster {
+public class VerfuegungsmusterDummyImp implements VerfuegungPrint {
 
 	@Override
 	public String getGesuchstellerName() {
@@ -92,17 +92,17 @@ public class VerfuegungsmusterDummyImp implements Verfuegungsmuster {
 	}
 
 	@Override
-	public List<VerfuegungZeitabschnitt> getVerfuegungZeitabschnitt() {
+	public List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt() {
 
-		List<VerfuegungZeitabschnitt> list = new ArrayList<>();
+		List<VerfuegungZeitabschnittPrint> list = new ArrayList<>();
 
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
-		list.add(new VerfuegungZeitabschnittImplDummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
+		list.add(new VerfuegungZeitabschnittPrintDTODummy());
 
 		return list;
 	}

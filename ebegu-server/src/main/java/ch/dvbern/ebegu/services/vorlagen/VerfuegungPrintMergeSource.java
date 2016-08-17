@@ -11,21 +11,21 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.List;
-
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
-public class VerfuegungsmusterMergeSource implements MergeSource {
+import java.util.List;
 
-	private Verfuegungsmuster verfuegungsmuster;
+public class VerfuegungPrintMergeSource implements MergeSource {
+
+	private VerfuegungPrint verfuegungsmuster;
 
 	/**
 	 * @param verfuegungsmuster
 	 */
-	public VerfuegungsmusterMergeSource(Verfuegungsmuster verfuegungsmuster) {
+	public VerfuegungPrintMergeSource(VerfuegungPrint verfuegungsmuster) {
 		this.verfuegungsmuster = verfuegungsmuster;
 	}
 

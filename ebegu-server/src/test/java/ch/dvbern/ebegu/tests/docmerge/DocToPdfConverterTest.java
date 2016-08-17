@@ -17,7 +17,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import ch.dvbern.ebegu.services.vorlagen.GeneratePDFDocumentHelper;
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungsmusterMergeSource;
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 
 @RunWith(Arquillian.class)
@@ -49,7 +49,7 @@ public class DocToPdfConverterTest {
 
 		InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
 
-		byte[] pdf = new GeneratePDFDocumentHelper().generatePDFDocument((docxME.getDocument(is, new VerfuegungsmusterMergeSource(new VerfuegungsmusterDummyImp()))));
+		byte[] pdf = new GeneratePDFDocumentHelper().generatePDFDocument((docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungsmusterDummyImp()))));
 
 		is.close();
 
@@ -67,7 +67,7 @@ public class DocToPdfConverterTest {
 
 		InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
 
-		byte[] pdf = new GeneratePDFDocumentHelper().generatePDFDocument((docxME.getDocument(is, new VerfuegungsmusterMergeSource(new VerfuegungsmusterPensum0IstDummyImp()))));
+		byte[] pdf = new GeneratePDFDocumentHelper().generatePDFDocument((docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungsmusterPensum0IstDummyImp()))));
 
 		is.close();
 

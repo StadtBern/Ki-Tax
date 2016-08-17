@@ -15,11 +15,11 @@ import java.math.BigDecimal;
 
 import ch.dvbern.ebegu.util.Constants;
 
-public class VerfuegungZeitabschnittImpl implements VerfuegungZeitabschnitt {
+public class VerfuegungZeitabschnittPrintDTO implements VerfuegungZeitabschnittPrint {
 
 	private ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
-	public VerfuegungZeitabschnittImpl(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	public VerfuegungZeitabschnittPrintDTO(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
 	}
 

@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 /**
  * Implementiert den Verfuegungsmuster
  */
-public class VerfuegungsmusterImpl implements Verfuegungsmuster {
+public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
-	public VerfuegungsmusterImpl(Betreuung betreuung) {
+	public VerfuegungPrintDTO(Betreuung betreuung) {
 
 		this.betreuung = betreuung;
 	}
@@ -125,10 +125,10 @@ public class VerfuegungsmusterImpl implements Verfuegungsmuster {
 	}
 
 	@Override
-	public List<ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt> getVerfuegungZeitabschnitt() {
+	public List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt() {
 
-		List<ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt> result = new ArrayList<>();
-		result.addAll(betreuung.getVerfuegung().getZeitabschnitte().stream().map(VerfuegungZeitabschnittImpl::new).collect(Collectors.toList()));
+		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
+		result.addAll(betreuung.getVerfuegung().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
 		return result;
 	}
 
@@ -147,9 +147,9 @@ public class VerfuegungsmusterImpl implements Verfuegungsmuster {
 	@Override
 	public boolean isPensumGrosser0() {
 
-		List<ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt> vzList = getVerfuegungZeitabschnitt();
+		List<VerfuegungZeitabschnittPrint> vzList = getVerfuegungZeitabschnitt();
 		int value = 0;
-		for (ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt verfuegungZeitabschnitt : vzList) {
+		for (VerfuegungZeitabschnittPrint verfuegungZeitabschnitt : vzList) {
 			value = value + verfuegungZeitabschnitt.getBGPensum();
 			// BG-Pensum
 		}

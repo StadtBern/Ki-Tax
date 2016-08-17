@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 *
 * Ersteller: zeab am: 12.08.2016
 */
-public interface VerfuegungZeitabschnitt {
+public interface VerfuegungZeitabschnittPrint {
 
 	String getVon();
 

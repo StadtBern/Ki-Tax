@@ -11,22 +11,21 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 09.08.2016
 */
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.vorlagen.GeneratePDFDocumentHelper;
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungsmusterImpl;
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungsmusterMergeSource;
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintDTO;
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementiert VerfuegungsGenerierungPDFService
@@ -51,7 +50,7 @@ public class VerfuegungsGenerierungPDFServiceBean extends AbstractBaseService im
 					// Pro Betreuung ein Dokument
 					InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
 					Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
-					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungsmusterMergeSource(new VerfuegungsmusterImpl(betreuung)))));
+					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintDTO(betreuung)))));
 					is.close();
 				}
 			}

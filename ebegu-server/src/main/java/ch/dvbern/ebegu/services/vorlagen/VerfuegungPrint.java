@@ -13,7 +13,7 @@ import java.util.List;
 *
 * Ersteller: zeab am: 12.08.2016
 */
-public interface Verfuegungsmuster {
+public interface VerfuegungPrint {
 
 	/**
 	 * @return
@@ -78,7 +78,7 @@ public interface Verfuegungsmuster {
 	/**
 	 * @return
 	 */
-	List<VerfuegungZeitabschnitt> getVerfuegungZeitabschnitt();
+	List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt();
 
 	/**
 	 * @return die Bemerkung

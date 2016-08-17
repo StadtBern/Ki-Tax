@@ -11,11 +11,11 @@ package ch.dvbern.ebegu.tests.docmerge;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnittPrint;
+
 import java.math.BigDecimal;
 
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungZeitabschnitt;
-
-public class VerfuegungZeitabschnittImplDummy implements VerfuegungZeitabschnitt {
+public class VerfuegungZeitabschnittPrintDTODummy implements VerfuegungZeitabschnittPrint {
 
 	@Override
 	public String getVon() {
