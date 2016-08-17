@@ -11,16 +11,15 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.util.Constants;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementiert den Verfuegungsmuster
@@ -74,9 +73,7 @@ public class VerfuegungsmusterImpl implements Verfuegungsmuster {
 
 	@Override
 	public String getReferenzNummer() {
-
-		// TODO BGNummer
-		return betreuung.getKind().getKindNummer().toString();
+		return betreuung.getBGNummer();
 	}
 
 	@Override
@@ -119,16 +116,12 @@ public class VerfuegungsmusterImpl implements Verfuegungsmuster {
 
 	@Override
 	public String getAnspruchAb() {
-
-		// TODO aus verfuguegung berechnen
-		return null;// TODO ZEAB Implementieren
+		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb());
 	}
 
 	@Override
 	public String getAnspruchBis() {
-
-		// TODO aus verfuguegung berechnen
-		return null;// TODO ZEAB Implementieren
+		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 	}
 
 	@Override
