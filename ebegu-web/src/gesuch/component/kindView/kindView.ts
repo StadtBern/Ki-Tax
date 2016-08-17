@@ -37,11 +37,12 @@ export class KindViewController extends AbstractGesuchViewController {
 
         //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
         $scope.$on('$stateChangeStart', () => {
-            this.removeKindFromList();
+            this.reset();
         });
     }
 
     private initViewModel(): void {
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
         this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
@@ -63,8 +64,13 @@ export class KindViewController extends AbstractGesuchViewController {
     }
 
     cancel() {
-        this.removeKindFromList();
+        this.reset();
         this.state.go('gesuch.kinder');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
+        this.removeKindFromList();
     }
 
     private removeKindFromList() {

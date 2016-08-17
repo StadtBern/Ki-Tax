@@ -14,9 +14,9 @@ import {
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IFormController = angular.IFormController;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -52,6 +52,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
                 private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -67,7 +68,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         } else {
             console.log('kein gesuchsteller gefunden');
         }
-
+        //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+        $scope.$on('$stateChangeStart', () => {
+            this.reset();
+        });
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {
@@ -104,7 +108,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     cancel() {
+        this.reset();
         this.state.go('gesuch.erwerbsPensen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
     private initEmptyEwpContainer(): TSErwerbspensumContainer {
