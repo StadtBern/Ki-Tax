@@ -63,8 +63,8 @@ public final class RestUtil {
 			final JaxKindContainer kind = kindsIterator.next();
 			final Iterator<JaxBetreuung> betreuungIterator = kind.getBetreuungen().iterator();
 			while (betreuungIterator.hasNext()) {
-				final JaxBetreuung betruung = betreuungIterator.next();
-				if (!RestUtil.isInstitutionInList(userInstitutionen, betruung.getInstitutionStammdaten().getInstitution())) {
+				final JaxBetreuung betreuung = betreuungIterator.next();
+				if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())) {
 					betreuungIterator.remove();
 				}
 			}

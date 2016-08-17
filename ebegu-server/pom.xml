@@ -78,7 +78,6 @@
         <dependency>
             <groupId>ch.dvbern.lib</groupId>
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
-            <version>1.7</version>
         </dependency>
 
         <!--tests der validators-->

@@ -141,6 +141,4 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 		benutzer.setMandant(mandant);
 		benutzerService.saveBenutzer(benutzer);
 	}
-
-
 }
