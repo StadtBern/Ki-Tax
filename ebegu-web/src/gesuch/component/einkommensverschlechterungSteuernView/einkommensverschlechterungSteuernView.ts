@@ -83,22 +83,24 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
     }
 
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.removeNotNeededEKV();
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            });
-        }
+        this.save(form, () => {
+            this.state.go('gesuch.einkommensverschlechterungInfo');
+        });
     }
 
     nextStep(form: IFormController): void {
+        this.save(form, () => {
+            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+        });
+
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.removeNotNeededEKV();
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-            });
+            this.gesuchModelManager.updateGesuch().then(navigationFunction);
+
         }
     }
 

@@ -73,50 +73,68 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                if (this.parsedBasisJahrPlusNum === 2) {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-                } else {
-                    // baisjahrPlus1
-
-                    let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
-                    let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
-
-                    if (gesuchsteller2Required && basisJahr2Required) {
-                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '2'});
-                    } else if (gesuchsteller2Required) {
-                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '2', basisjahrPlus: '1'});
-                    } else if (basisJahr2Required) {
-                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '2'});
-                    } else {
-                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-                    }
-
-                }
-            });
-        }
+        this.save(form, this.navigatePrevious);
     }
 
     nextStep(form: IFormController): void {
+        this.save(form, this.navigateNext);
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                if (this.parsedBasisJahrPlusNum === 2) {
-                    this.state.go('gesuch.dokumente');
-                } else {
-                    let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                        && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-                    if (ekvFuerBasisJahrPlus2) {
-                        this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-                    } else {
-                        this.state.go('gesuch.dokumente');
-                    }
-                }
-            });
+            this.gesuchModelManager.updateGesuch().then(navigationFunction);
         }
     }
+
+    private navigatePrevious = (gesuch: any) => {
+        if (this.parsedBasisJahrPlusNum === 2) {
+            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+        } else {
+            // baisjahrPlus1
+
+            let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
+            let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
+
+            if (gesuchsteller2Required && basisJahr2Required) {
+                this.state.go('gesuch.einkommensverschlechterung', {
+                    gesuchstellerNumber: '2',
+                    basisjahrPlus: '2'
+                });
+            } else if (gesuchsteller2Required) {
+                this.state.go('gesuch.einkommensverschlechterung', {
+                    gesuchstellerNumber: '2',
+                    basisjahrPlus: '1'
+                });
+            } else if (basisJahr2Required) {
+                this.state.go('gesuch.einkommensverschlechterung', {
+                    gesuchstellerNumber: '1',
+                    basisjahrPlus: '2'
+                });
+            } else {
+                this.state.go('gesuch.einkommensverschlechterung', {
+                    gesuchstellerNumber: '1',
+                    basisjahrPlus: '1'
+                });
+            }
+
+        }
+    };
+
+    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
+    private navigateNext = (gesuch: any) => {
+        if (this.parsedBasisJahrPlusNum === 2) {
+            this.state.go('gesuch.dokumente');
+        } else {
+            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+            if (ekvFuerBasisJahrPlus2) {
+                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+            } else {
+                this.state.go('gesuch.dokumente');
+            }
+        }
+    };
 
     calculate() {
         if (this.gesuchModelManager.gesuch && this.parsedBasisJahrPlusNum) {

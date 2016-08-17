@@ -42,20 +42,21 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.fallcreation');
-            });
-        }
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.fallcreation');
+        });
     }
 
     nextStep(form: IFormController): void {
+        this.save(form, (response: any) => {
+            this.state.go('gesuch.stammdaten');
+        });
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.stammdaten');
-            });
+            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
         }
     }
 

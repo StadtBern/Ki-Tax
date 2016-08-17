@@ -101,50 +101,54 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     /**
-      * Navigation back
-      */
+     * Navigation back
+     */
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.beforeSave();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
-            });
-        }
+        this.save(form, this.navigatePrevious);
+
     }
 
     /**
-      * Navigation forward
-      */
+     * Navigation forward
+     */
     nextStep(form: IFormController): void {
+        this.save(form, this.navigateNext);
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (response: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.beforeSave();
-            this.gesuchModelManager.updateFamiliensituation().then((response: any) => {
-                if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
-                    if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                        this.state.go('gesuch.einkommensverschlechterungSteuern');
-                    } else {
-                        this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
-                    }
-                } else {
-                    this.state.go('gesuch.dokumente');
-                }
-            });
+            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+            }
+            if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+            }
+
+            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
+            this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
+            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
+
         }
     }
 
-    beforeSave(): void {
-        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
-            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
+    private navigateNext = (response: any) => {
+        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.einkommensverschlechterungSteuern');
+            } else {
+                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+            }
+        } else {
+            this.state.go('gesuch.dokumente');
         }
-        if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
-            this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
-        }
+    };
 
-        this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
-        this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-    }
+    private navigatePrevious = (response: any) => {
+        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+    };
+
 
     isRequired(basisJahrPlus: number): boolean {
         let ekv: TSEinkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();

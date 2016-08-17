@@ -11,7 +11,7 @@
         </div>
         <hr class="header"/>
 
-        <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
+        <form role="form" name="form" class="" novalidate
               unsaved-warning-form>
             <!--Schuljahr -->
             <div class="row">
@@ -227,7 +227,7 @@
                     </dv-loading-button>
                 </div>
                 <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.save(form)" button-class="btn btn-link save">
+                    <dv-loading-button ng-click="vm.save(form)" button-class="btn btn-link save" type="submit">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>
                 </div>

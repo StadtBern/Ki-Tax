@@ -63,39 +63,35 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     }
 
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.beforeSave();
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
-                if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                    this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
-                } else {
-                    this.state.go('gesuch.familiensituation');
-                }
-            });
-        }
+        this.save(form, (gesuchstellerResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
+                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
+            } else {
+                this.state.go('gesuch.familiensituation');
+            }
+        });
     }
 
     nextStep(form: IFormController): void {
-        if (form.$valid) {
-            this.beforeSave();
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
-                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
-                } else {
-                    this.state.go('gesuch.kinder');
-                }
-            });
-        }
+        this.save(form, (gesuchstellerResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
+            } else {
+                this.state.go('gesuch.kinder');
+            }
+        });
     }
 
-    beforeSave(): void {
-        if (!this.showUmzug) {
-            this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
-        }
-        if (!this.showKorrespondadr) {
-            this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+        if (form.$valid) {
+            if (!this.showUmzug) {
+                this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
+            }
+            if (!this.showKorrespondadr) {
+                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+            }
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateGesuchsteller().then(navigationFunction);
         }
     }
 

@@ -42,20 +42,21 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.state.go('gesuch.kinder');
-            });
-        }
+        this.save(form, (gesuch: any) => {
+            this.state.go('gesuch.erwerbsPensen');
+        });
     }
 
     nextStep(form: IFormController): void {
+        this.save(form, (gesuch: any) => {
+            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+        });
+    }
+
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then((gesuch: any) => {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
-            });
+            this.gesuchModelManager.updateGesuch().then(navigationFunction);
         }
     }
 
