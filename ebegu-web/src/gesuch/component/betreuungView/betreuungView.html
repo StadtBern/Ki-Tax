@@ -229,7 +229,8 @@
                          ng-if="vm.isBetreuungsstatusAbgewiesen() && !vm.isSavingData">
                         <i class="fa fa-times" aria-hidden="true"></i>
                         <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"
-                              data-translate-value-grund="{{vm.getBetreuungModel().grundAblehnung}}">
+                              data-translate-value-grund="{{vm.getBetreuungModel().grundAblehnung}}"
+                              data-translate-value-date="{{vm.getBetreuungModel().datumAblehnung  | amDateFormat : 'DD.MM.YYYY'}}">
                         </span>
                     </div>
                 </div>
@@ -237,7 +238,8 @@
                     <div class="col-md-12 well well-status-bestaetigt"
                          ng-if="vm.isBetreuungsstatusBestaetigt() && !vm.isSavingData">
                         <i class="fa fa-check" aria-hidden="true"></i>
-                        <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
+                        <span data-translate="BETREUUNG_BESTAETIGT_TEXT"
+                              data-translate-value-date="{{vm.getBetreuungModel().datumBestaetigung  | amDateFormat : 'DD.MM.YYYY'}}"></span>
                     </div>
                 </div>
 

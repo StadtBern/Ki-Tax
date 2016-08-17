@@ -1153,6 +1153,8 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
 		betreuung.setGrundAblehnung(betreuungJAXP.getGrundAblehnung());
+		betreuung.setDatumAblehnung(betreuungJAXP.getDatumAblehnung());
+		betreuung.setDatumBestaetigung(betreuungJAXP.getDatumBestaetigung());
 
 		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
@@ -1280,6 +1282,8 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
 		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
 		jaxBetreuung.setGrundAblehnung(betreuungFromServer.getGrundAblehnung());
+		jaxBetreuung.setDatumAblehnung(betreuungFromServer.getDatumAblehnung());
+		jaxBetreuung.setDatumBestaetigung(betreuungFromServer.getDatumBestaetigung());
 		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
 		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
 		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());

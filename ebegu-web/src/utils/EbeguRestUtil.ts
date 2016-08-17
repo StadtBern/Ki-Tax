@@ -898,6 +898,8 @@ export default class EbeguRestUtil {
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
         restBetreuung.grundAblehnung = betreuung.grundAblehnung;
+        restBetreuung.datumAblehnung = DateUtil.momentToLocalDate(betreuung.datumAblehnung);
+        restBetreuung.datumBestaetigung = DateUtil.momentToLocalDate(betreuung.datumBestaetigung);
         restBetreuung.vertrag = betreuung.vertrag;
         restBetreuung.erweiterteBeduerfnisse = betreuung.erweiterteBeduerfnisse;
         if (betreuung.institutionStammdaten) {
@@ -946,6 +948,8 @@ export default class EbeguRestUtil {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
             betreuungTS.grundAblehnung = betreuungFromServer.grundAblehnung;
+            betreuungTS.datumAblehnung = DateUtil.localDateToMoment(betreuungFromServer.datumAblehnung);
+            betreuungTS.datumBestaetigung = DateUtil.localDateToMoment(betreuungFromServer.datumBestaetigung);
             betreuungTS.vertrag = betreuungFromServer.vertrag;
             betreuungTS.erweiterteBeduerfnisse = betreuungFromServer.erweiterteBeduerfnisse;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;

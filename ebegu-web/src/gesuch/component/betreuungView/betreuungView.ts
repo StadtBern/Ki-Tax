@@ -16,6 +16,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import Moment = moment.Moment;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
+import DateUtil from '../../../utils/DateUtil';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -190,10 +191,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzBestaetigen(form: IFormController): void {
+        this.getBetreuungModel().datumBestaetigung = DateUtil.today();
         this.save(form, TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
     }
 
     public platzAbweisen(form: IFormController): void {
+        this.getBetreuungModel().datumAblehnung = DateUtil.today();
         this.save(form, TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
     }
 

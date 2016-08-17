@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
@@ -10,6 +11,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +53,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@NotNull
 	private Boolean erweiterteBeduerfnisse;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumAblehnung = null;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumBestaetigung = null;
 
 
 
@@ -126,5 +137,23 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
 		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
+	}
+
+	@Nullable
+	public LocalDate getDatumAblehnung() {
+		return datumAblehnung;
+	}
+
+	public void setDatumAblehnung(@Nullable LocalDate datumAblehnung) {
+		this.datumAblehnung = datumAblehnung;
+	}
+
+	@Nullable
+	public LocalDate getDatumBestaetigung() {
+		return datumBestaetigung;
+	}
+
+	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
+		this.datumBestaetigung = datumBestaetigung;
 	}
 }

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,6 +84,14 @@ public class Betreuung extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Boolean erweiterteBeduerfnisse = false;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumAblehnung;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumBestaetigung;
 
 
 
@@ -167,6 +176,26 @@ public class Betreuung extends AbstractEntity {
 	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
 		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
+
+	@Nullable
+	public LocalDate getDatumAblehnung() {
+		return datumAblehnung;
+	}
+
+	public void setDatumAblehnung(@Nullable LocalDate datumAblehnung) {
+		this.datumAblehnung = datumAblehnung;
+	}
+
+	@Nullable
+	public LocalDate getDatumBestaetigung() {
+		return datumBestaetigung;
+	}
+
+	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
+		this.datumBestaetigung = datumBestaetigung;
+	}
+
+
 
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {

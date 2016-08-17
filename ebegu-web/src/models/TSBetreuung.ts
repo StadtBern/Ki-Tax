@@ -15,12 +15,14 @@ export default class TSBetreuung extends TSAbstractEntity {
     private _verfuegung: TSVerfuegung;
     private _vertrag: boolean;
     private _erweiterteBeduerfnisse: boolean;
+    private _datumAblehnung: moment.Moment;
+    private _datumBestaetigung: moment.Moment;
 
 
     constructor(institutionStammdaten?: TSInstitutionStammdaten, betreuungsstatus?: TSBetreuungsstatus,
                 betreuungspensumContainers?: Array<TSBetreuungspensumContainer>, bemerkungen?: string,
                 betreuungNummer?: number, verfuegung?: TSVerfuegung, vertrag?: boolean, erweiterteBeduerfnisse?: boolean,
-                grundAblehnung?: string) {
+                grundAblehnung?: string, datumAblehnung?: moment.Moment, datumBestaetigung?: moment.Moment) {
         super();
         this._institutionStammdaten = institutionStammdaten;
         this._betreuungsstatus = betreuungsstatus ? betreuungsstatus : TSBetreuungsstatus.AUSSTEHEND;
@@ -31,6 +33,8 @@ export default class TSBetreuung extends TSAbstractEntity {
         this._verfuegung = verfuegung;
         this._vertrag = vertrag ? true : false;
         this._erweiterteBeduerfnisse = erweiterteBeduerfnisse ? true : false;
+        this._datumAblehnung = datumAblehnung;
+        this._datumBestaetigung = datumBestaetigung;
     }
 
     get institutionStammdaten(): TSInstitutionStammdaten {
@@ -103,5 +107,21 @@ export default class TSBetreuung extends TSAbstractEntity {
 
     set erweiterteBeduerfnisse(value: boolean) {
         this._erweiterteBeduerfnisse = value;
+    }
+
+    get datumAblehnung(): moment.Moment {
+        return this._datumAblehnung;
+    }
+
+    set datumAblehnung(value: moment.Moment) {
+        this._datumAblehnung = value;
+    }
+
+    get datumBestaetigung(): moment.Moment {
+        return this._datumBestaetigung;
+    }
+
+    set datumBestaetigung(value: moment.Moment) {
+        this._datumBestaetigung = value;
     }
 }
