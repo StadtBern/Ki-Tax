@@ -270,6 +270,13 @@
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
+                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                      dv-show-expression="vm.isBetreuungsstatusSchulamt()" class="col-md-6 text-right">
+                    <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link next">
+                        <span data-translate="SPEICHERN_UPPER"></span>
+                        <span class="fa fa-chevron-right"></span>
+                    </dv-loading-button>
+                </div>
             </div>
         </form>
     </div>

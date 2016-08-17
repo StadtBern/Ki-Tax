@@ -197,6 +197,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.submitMe(form, TSBetreuungsstatus.ABGEWIESEN);
     }
 
+    public saveSchulamt(form: IFormController): void {
+        this.submitMe(form, TSBetreuungsstatus.SCHULAMT);
+    }
+
     /**
      * Returns true when the user is allowed to edit the content. This happens when the status is AUSSTEHEHND or SCHULAMT
      * @returns {boolean}
