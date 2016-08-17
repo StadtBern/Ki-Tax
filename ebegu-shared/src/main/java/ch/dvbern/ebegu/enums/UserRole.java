@@ -8,5 +8,6 @@ public enum UserRole {
 	GESUCHSTELLER,
 	JURIST,
 	REVISOR,
-	STEUERAMT
+	STEUERAMT,
+	SCHULAMT
 }
