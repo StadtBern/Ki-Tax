@@ -68,7 +68,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         } else {
             console.log('kein gesuchsteller gefunden');
         }
-
+        //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+        $scope.$on('$stateChangeStart', () => {
+            this.reset();
+        });
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {
@@ -105,8 +108,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     cancel() {
-        this.gesuchModelManager.restoreBackupOfPreviousGesuch();   
+        this.reset();
         this.state.go('gesuch.erwerbsPensen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
     private initEmptyEwpContainer(): TSErwerbspensumContainer {
