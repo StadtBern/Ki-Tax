@@ -1594,4 +1594,9 @@ public class JaxBConverter {
 	}
 
 
+	public JaxTempDokument tempDokumentToJAX(TempDokument tempDokument) {
+		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(tempDokument, new JaxTempDokument());
+		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
+		return jaxTempDokument;
+	}
 }
