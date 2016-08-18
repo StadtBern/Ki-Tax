@@ -75,15 +75,17 @@
             </div>
 
             <!--vertrag-->
-            <div class="row">
+            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
-                                     aria-label="vertrag" ng-disabled="!vm.isEnabled()">
+                                     aria-label="vertrag" ng-disabled="!vm.isEnabled()"
+                                     ng-class="{true:'checkbox-error', false:''}[vm.flagErrorVertrag]">
                             <span data-translate="VERTRAG"></span>
                         </md-checkbox>
-                        <dv-error-messages for="form.vertrag.$error"
-                                           class="error"></dv-error-messages>
+                        <div class="dv-error-messages error" ng-if="vm.flagErrorVertrag === true">
+                            <span data-translate="ERROR_VERTRAG_REQUIRED"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,6 +93,8 @@
             <!--Diese Felder werden fuer Betreuungsangebottyp TAGESSCHULE ausgeblendet. Fuer alle anderen eingeblendet-->
             <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
             <div ng-if="!vm.isTagesschule()">
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                 <!--Betreuungspensen-->
                 <div ng-repeat="betpen in vm.getBetreuungspensen()">
                     <!--Betreuungspensum-->
@@ -104,8 +108,7 @@
                                 <input id="betreuungspensum-{{$index}}" type="text" name="betreuungspensum-{{$index}}"
                                        ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
                                        dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                       ng-required="true" dv-enable-element
-                                       dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                       ng-required="true">
                                 <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                                 <dv-error-messages for="form['betreuungspensum-' + $index].$error"
                                                    class="error hint"></dv-error-messages>
@@ -123,8 +126,7 @@
                                 <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}"
                                                class="input-element"
                                                ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
-                                               ng-required="true" placeholder="" dv-enable-element
-                                               dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                               ng-required="true" placeholder="">
                                 </dv-datepicker>
                                 <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                 <dv-error-messages for="form['datumAb-' + $index].$error"
@@ -139,8 +141,7 @@
                                 <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}"
                                                class="input-element"
                                                ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
-                                               ng-required="false" placeholder="" dv-enable-element
-                                               dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                               ng-required="false" placeholder="">
                                 </dv-datepicker>
                                 <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                 <dv-error-messages for="form['datumBis-' + $index].$error"
@@ -161,6 +162,7 @@
                         </div>
                     </div>
                 </div>
+                </fieldset>
 
                 <br>
                 <!--Neues Betreuungspensum hinzufuegen-->
@@ -188,8 +190,20 @@
                     </div>
                 </div>
 
+                <!--grund Ablehnung-->
+                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                    <div class="col-md-12">
+                        <dv-input-container class="form-group">
+                            <label class="inlineHint" for="grundAblehnung" data-translate="GRUND_ABLEHNUNG"></label>
+                            <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
+                                      ng-model="vm.getBetreuungModel().grundAblehnung">
+                            </textarea>
+                        </dv-input-container>
+                    </div>
+                </div>
+
                 <!--erweiterte Beduerfnisse-->
-                <div class="row">
+                <div class="row" ng-if="vm.showErweiterteBeduerfnisse()">
                     <div class="col-md-6">
                         <div class="checkbox">
                             <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse"
@@ -204,18 +218,67 @@
                     </div>
                 </div>
 
+                <!-- Status texts -->
+                <div class="row">
+                    <div class="col-md-12 well well-status-warten"
+                         ng-if="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
+                        <i class="fa fa-hourglass-half" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 well well-status-abgewiesen"
+                         ng-if="vm.isBetreuungsstatusAbgewiesen() && !vm.isSavingData">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"
+                              data-translate-value-grund="{{vm.getBetreuungModel().grundAblehnung}}"
+                              data-translate-value-date="{{vm.getBetreuungModel().datumAblehnung  | amDateFormat : 'DD.MM.YYYY'}}">
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 well well-status-bestaetigt"
+                         ng-if="vm.isBetreuungsstatusBestaetigt() && !vm.isSavingData">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_BESTAETIGT_TEXT"
+                              data-translate-value-date="{{vm.getBetreuungModel().datumBestaetigung  | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                    </div>
+                </div>
+
                 <!--Platz anfordern-->
-                <div class="row" ng-if="!vm.isBetreuungsstatusWarten()">
+                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                     dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                     <div class="col-md-12">
-                        <dv-loading-button type="button" ng-click="vm.platzAnfordern(form)"
-                                           button-class="btn btn-sm btn-success"
-                                           button-disabled="!form.$valid || !vm.getBetreuungModel().vertrag">
-                            <span ng-if="!vm.isProcessFinished()"
-                                  data-translate="PLATZBESTAETIGUNG_ANFORDERN">
-                            </span>
-                            <span ng-if="vm.isProcessFinished()"
-                                  data-translate="DATEN_STIMMEN_NICHT">
-                            </span>
+                        <dv-loading-button type="submit"
+                                           ng-click="vm.platzAnfordern(form)"
+                                           button-class="btn btn-md btn-success">
+                            <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>
+
+                        </dv-loading-button>
+                    </div>
+                </div>
+                <!--falsche Angaben-->
+                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
+                     dv-show-expression="vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()">
+                    <div class="col-md-12">
+                        <a href="" ng-click="vm.platzAnfordern(form)"
+                           data-translate="FALSCHE_ANGABEN"></a>
+                    </div>
+                </div>
+
+                <!--Institution Buttons-->
+                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                     dv-show-expression="vm.isBetreuungsstatusWarten()">
+                    <div class="col-md-6">
+                        <dv-loading-button button-click="vm.platzBestaetigen(form)" type="submit" button-class="btn btn-md btn-success"
+                                   aria-label="{{BESTAETIGEN_UPPER | translate}}">
+                            <span data-translate="BESTAETIGEN_UPPER"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-6">
+                        <dv-loading-button button-click="vm.platzAbweisen(form)" button-class="btn btn-md btn-danger"
+                                   aria-label="{{ABWEISEN_UPPER | translate}}">
+                            <span data-translate="ABWEISEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                 </div>
@@ -224,39 +287,18 @@
                 <p class="inlineHint marginTop20" data-translate="BETREUUNGSPENSUM_HINT1"
                    dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER]"></p>
 
-
-                <div class="row">
-                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusWarten()">
-                        <i class="fa fa-hourglass-half" aria-hidden="true"></i>
-                        <span data-translate="BETREUUNG_WARTEN_TEXT"></span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusAbgewiesen()">
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                        <span data-translate="BETREUUNG_ABGEWIESEN_TEXT"></span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12" ng-if="vm.isBetreuungsstatusBestaetigt()">
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        <span data-translate="BETREUUNG_BESTAETIGT_TEXT"></span>
-                    </div>
-                </div>
-
             </div>
 
             <!--Buttons-->
-            <div class="row">
+            <div class="row marginTop20">
                 <div class="col-md-6">
                     <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link cancel">
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
-                <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.save(form)" button-class="btn btn-link save" type="submit">
+                <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                     dv-show-expression="vm.isBetreuungsstatusSchulamt() && form.$valid && (vm.getBetreuungModel().vertrag === true)">
+                    <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>
                 </div>

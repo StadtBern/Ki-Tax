@@ -105,7 +105,5 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     public getModel(): TSGesuchsteller {
         return this.gesuchModelManager.getStammdatenToWorkWith();
     }
-    
-    
 
 }

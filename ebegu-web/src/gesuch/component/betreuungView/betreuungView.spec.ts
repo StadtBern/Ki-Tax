@@ -3,7 +3,6 @@ import {IStateService} from 'angular-ui-router';
 import {BetreuungViewController} from './betreuungView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
-import DateUtil from '../../../utils/DateUtil';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {IHttpBackendService, IQService, IScope} from 'angular';
@@ -11,6 +10,7 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import DateUtil from '../../../utils/DateUtil';
 
 describe('betreuungView', function () {
 
@@ -116,13 +116,6 @@ describe('betreuungView', function () {
             });
         });
         describe('submit', () => {
-            it('Does not submit because form is invalid', () => {
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
-                let form: any = {};
-                form.$valid = false;
-                betreuungView.submit(form);
-                expect(gesuchModelManager.updateBetreuung).not.toHaveBeenCalled();
-            });
             it('submits all data of current Betreuung', () => {
                 testSubmit($q.when({}), true);
             });
@@ -130,11 +123,31 @@ describe('betreuungView', function () {
                 testSubmit($q.reject(), false);
             });
         });
+        describe('platzAbweisen()', () => {
+            it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
+                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
+                let form: any = {};
+                betreuung.erweiterteBeduerfnisse = true;
+                betreuung.grundAblehnung = 'mein Grund';
+                let oldBetreuung = angular.copy(betreuung);
+                oldBetreuung.betreuungspensumContainers = [];
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
+                betreuungView.platzAbweisen(form);
+                expect(gesuchModelManager.setBetreuungToWorkWith).toHaveBeenCalledWith(oldBetreuung);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.ABGEWIESEN);
+                expect(gesuchModelManager.getBetreuungToWorkWith().datumAblehnung).toEqual(DateUtil.today());
+                expect(gesuchModelManager.getBetreuungToWorkWith().grundAblehnung).toEqual('mein Grund');
+                expect(gesuchModelManager.getBetreuungToWorkWith().erweiterteBeduerfnisse).toBe(true);
+                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+            });
+        });
         describe('platzAnfordern()', () => {
             it('must change the status of the Betreuung to WARTEN', () => {
                 spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
                 let form: any = {};
                 form.$valid = true;
+                betreuung.vertrag = true;
                 // betreuung.timestampErstellt = undefined;
                 betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
@@ -172,12 +185,13 @@ describe('betreuungView', function () {
      * @param promiseResponse
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
+        betreuung.vertrag = true;
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form: any = {};
         form.$valid = true;
-        betreuungView.save(form);
+        betreuungView.platzAnfordern(form);
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {

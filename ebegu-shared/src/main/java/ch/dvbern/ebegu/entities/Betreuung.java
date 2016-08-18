@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
+import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,6 +25,7 @@ import java.util.TreeSet;
  */
 @Audited
 @Entity
+@CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
@@ -59,6 +62,11 @@ public class Betreuung extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String grundAblehnung;
+
 	@NotNull
 	@Min(1)
 	@Column(nullable = false)
@@ -76,6 +84,14 @@ public class Betreuung extends AbstractEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Boolean erweiterteBeduerfnisse = false;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumAblehnung;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumBestaetigung;
 
 
 
@@ -120,6 +136,15 @@ public class Betreuung extends AbstractEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
+	@Nullable
+	public String getGrundAblehnung() {
+		return grundAblehnung;
+	}
+
+	public void setGrundAblehnung(@Nullable String grundAblehnung) {
+		this.grundAblehnung = grundAblehnung;
+	}
+
 	public Integer getBetreuungNummer() {
 		return betreuungNummer;
 	}
@@ -151,6 +176,26 @@ public class Betreuung extends AbstractEntity {
 	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
 		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
 	}
+
+	@Nullable
+	public LocalDate getDatumAblehnung() {
+		return datumAblehnung;
+	}
+
+	public void setDatumAblehnung(@Nullable LocalDate datumAblehnung) {
+		this.datumAblehnung = datumAblehnung;
+	}
+
+	@Nullable
+	public LocalDate getDatumBestaetigung() {
+		return datumBestaetigung;
+	}
+
+	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
+		this.datumBestaetigung = datumBestaetigung;
+	}
+
+
 
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
