@@ -11,9 +11,9 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.math.BigDecimal;
-
 import ch.dvbern.ebegu.util.Constants;
+
+import java.math.BigDecimal;
 
 public class VerfuegungZeitabschnittPrintDTO implements VerfuegungZeitabschnittPrint {
 

@@ -1,23 +1,6 @@
 package ch.dvbern.ebegu.rechner;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.EbeguParameter;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
@@ -25,6 +8,15 @@ import ch.dvbern.ebegu.rules.Rule;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.junit.Assert;
+import org.junit.Before;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Superklasse für BG-Rechner-Tests
@@ -37,19 +29,10 @@ public class AbstractBGRechnerTest {
 
 	@Before
 	public void setUpCalcuator() {
-
-		// Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
-		// EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX,
-		// "159000");
-		// ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
-		// BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
-		// List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
-		// evaluator = new BetreuungsgutscheinEvaluator(rules);
 		evaluator = createEvaluator();
 	}
 
 	public static BetreuungsgutscheinEvaluator createEvaluator() {
-
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
 		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
 		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
@@ -73,7 +56,6 @@ public class AbstractBGRechnerTest {
 	 * Stellt alle für die Berechnung benötigten Parameter zusammen
 	 */
 	public static BGRechnerParameterDTO getParameter() {
-
 		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO();
 		parameterDTO.setBeitragKantonProTagJahr1(new BigDecimal("107.19"));
 		parameterDTO.setBeitragKantonProTagJahr2(new BigDecimal("107.19"));

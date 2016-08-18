@@ -11,12 +11,13 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.List;
-
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
 
 public class VerfuegungPrintMergeSource implements MergeSource {
 
@@ -52,7 +53,7 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 		} else if ("verfuegung.pensumIst0".equalsIgnoreCase(key)) {
 			return !verfuegung.isPensumGrosser0();
 		} else if ("verfuegung.printbemerkung".equalsIgnoreCase(key)) {
-			return verfuegung.getBemerkungen() != null && !"".equals(verfuegung.getBemerkungen().trim());
+			return StringUtils.isNotEmpty(verfuegung.getBemerkungen().trim());
 		}
 		return Boolean.FALSE;// new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key);
 	}
