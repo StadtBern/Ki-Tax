@@ -4,6 +4,8 @@ import {UploadRS} from '../../service/uploadRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
+import {DownloadRS} from '../../service/downloadRS.rest';
+import TSTempDokument from '../../../models/TSTempDokument';
 let template = require('./dv-dokumente-list.html');
 require('./dv-dokumente-list.less');
 
@@ -37,9 +39,10 @@ export class DVDokumenteListController {
     onRemove: (attrs: any) => void;
     sonstige: boolean;
 
-    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil'];
+    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS'];
     /* @ngInject */
-    constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil) {
+    constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
+                private downloadRS: DownloadRS) {
 
     }
 
@@ -84,6 +87,19 @@ export class DVDokumenteListController {
         console.log('component -> remove dokument ' + dokument.dokumentName);
         this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
     }
+
+    download(dokument: TSDokument, attachment: boolean) {
+        console.log('download dokument ' + dokument.dokumentName);
+
+        this.downloadRS.getAccessToken(dokument.id).then((response) => {
+            let tempDokument: TSTempDokument = angular.copy(response);
+            console.log('accessToken: ' + tempDokument.accessToken);
+
+            this.downloadRS.startDownload(tempDokument.accessToken, dokument.dokumentName, attachment);
+        });
+
+    }
+
 
     getWidth(): String {
         if (this.sonstige) {

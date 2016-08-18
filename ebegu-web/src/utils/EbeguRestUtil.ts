@@ -43,6 +43,7 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSTempDokument from '../models/TSTempDokument';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
 
 
@@ -1295,6 +1296,15 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             return verfuegungZeitabschnittTS;
+        }
+        return undefined;
+    }
+
+    parseTempDokument(tsTempDokument: TSTempDokument, tempDokumentFromServer: any) {
+        if (tempDokumentFromServer) {
+            this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
+            tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
+            return tsTempDokument;
         }
         return undefined;
     }

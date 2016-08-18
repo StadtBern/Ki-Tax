@@ -372,12 +372,8 @@ export default class GesuchModelManager {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
-
-            //TODO (Team) Zum Testen der Bisher-Werte
-            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS = new TSFinanzielleSituation();
-            // this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationGS.nettolohn = 100000;
         }
-        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
+        if (this.gesuch && this.isGesuchsteller2Required() && this.gesuch.gesuchsteller2 && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
