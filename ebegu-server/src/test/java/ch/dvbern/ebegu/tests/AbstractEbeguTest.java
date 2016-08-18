@@ -44,6 +44,8 @@ public abstract class AbstractEbeguTest {
 			.addAsLibraries(testDeps)
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+			.addAsResource("vorlagen/Verfuegungsmuster.docx","vorlagen/Verfuegungsmuster.docx")
+			.addAsResource("font/sRGB.profile","font/sRGB.profile")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 				// Deploy our test datasource
