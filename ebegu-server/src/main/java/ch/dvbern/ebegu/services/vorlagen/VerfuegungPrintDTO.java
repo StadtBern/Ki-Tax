@@ -29,7 +29,7 @@ import ch.dvbern.ebegu.util.Constants;
 /**
  * Transferobjekt
  */
-public class VerfuegungPrintDTO {
+public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
@@ -44,6 +44,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return GesuchstellerName
 	 */
+	@Override
 	public String getGesuchstellerName() {
 
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
@@ -56,6 +57,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Gesuchsteller-Strasse
 	 */
+	@Override
 	public String getGesuchstellerStrasse() {
 
 		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
@@ -68,6 +70,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Gesuchsteller-PLZ Stadt
 	 */
+	@Override
 	public String getGesuchstellerPLZStadt() {
 
 		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
@@ -80,6 +83,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
+	@Override
 	public String getReferenzNummer() {
 
 		return betreuung.getBGNummer();
@@ -88,6 +92,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Gesuchsteller-Verfuegungsdatum
 	 */
+	@Override
 	public String getVerfuegungsdatum() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
@@ -104,6 +109,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Name des Gesuchsteller1
 	 */
+	@Override
 	public String getGesuchsteller1() {
 
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
@@ -116,6 +122,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Name des Gesuchsteller2
 	 */
+	@Override
 	public String getGesuchsteller2() {
 
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller2();
@@ -128,6 +135,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Name Vorname des Kindes
 	 */
+	@Override
 	public String getKindNameVorname() {
 
 		return extractKind().getFullName();
@@ -136,6 +144,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Geburtsdatum des Kindes
 	 */
+	@Override
 	public String getKindGeburtsdatum() {
 
 		return Constants.DATE_FORMATTER.format(betreuung.getKind().getKindJA().getGeburtsdatum());
@@ -152,6 +161,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return AnspruchAb
 	 */
+	@Override
 	public String getAnspruchAb() {
 
 		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb());
@@ -160,6 +170,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return AnspruchBis
 	 */
+	@Override
 	public String getAnspruchBis() {
 
 		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
@@ -168,9 +179,10 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return VerfuegungZeitabschnitten
 	 */
-	public List<VerfuegungZeitabschnittPrintDTO> getVerfuegungZeitabschnitt() {
+	@Override
+	public List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt() {
 
-		List<VerfuegungZeitabschnittPrintDTO> result = new ArrayList<>();
+		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
@@ -181,6 +193,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return Bemerkungen
 	 */
+	@Override
 	public String getBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
@@ -200,6 +213,7 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return true falls Gesuchsteller 2 existiert
 	 */
+	@Override
 	public boolean existGesuchsteller2() {
 
 		return betreuung.extractGesuch().getGesuchsteller2() != null;
@@ -208,11 +222,12 @@ public class VerfuegungPrintDTO {
 	/**
 	 * @return true falls Pensum groesser 0 ist
 	 */
+	@Override
 	public boolean isPensumGrosser0() {
 
-		List<VerfuegungZeitabschnittPrintDTO> vzList = getVerfuegungZeitabschnitt();
+		List<VerfuegungZeitabschnittPrint> vzList = getVerfuegungZeitabschnitt();
 		int value = 0;
-		for (VerfuegungZeitabschnittPrintDTO verfuegungZeitabschnitt : vzList) {
+		for (VerfuegungZeitabschnittPrint verfuegungZeitabschnitt : vzList) {
 			value = value + verfuegungZeitabschnitt.getBGPensum();
 			// BG-Pensum
 		}

@@ -12,8 +12,8 @@ package ch.dvbern.ebegu.services.vorlagen;
 */
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
@@ -32,31 +32,8 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		// Diese Konstanten werden in der Wordvolage verwendet. Bei Aenderungen muss Wordvorlage angepasst werden
-		if ("gesuchstellerStrasse".equalsIgnoreCase(key)) {
-			return verfuegung.getGesuchstellerStrasse();
-		} else if ("gesuchstellerPlzStadt".equalsIgnoreCase(key)) {
-			return verfuegung.getGesuchstellerPLZStadt();
-		} else if ("referenznummer".equalsIgnoreCase(key)) {
-			return verfuegung.getReferenzNummer();
-		} else if ("verfuegungsdatum".equalsIgnoreCase(key)) {
-			return verfuegung.getVerfuegungsdatum();
-		} else if ("gesuchsteller1".equalsIgnoreCase(key)) {
-			return verfuegung.getGesuchsteller1();
-		} else if ("gesuchsteller2".equalsIgnoreCase(key)) {
-			return verfuegung.getGesuchsteller2();
-		} else if ("kindNameVorname".equalsIgnoreCase(key)) {
-			return verfuegung.getKindNameVorname();
-		} else if ("kindGeburtsdatum".equalsIgnoreCase(key)) {
-			return verfuegung.getKindGeburtsdatum();
-		} else if ("kitabezeichnung".equalsIgnoreCase(key)) {
-			return verfuegung.getKitaBezeichnung();
-		} else if ("anspruchAb".equalsIgnoreCase(key)) {
-			return verfuegung.getAnspruchAb();
-		} else if ("anspruchBis".equalsIgnoreCase(key)) {
-			return verfuegung.getAnspruchBis();
-		} else if ("bemerkungen".equalsIgnoreCase(key)) {
-			return verfuegung.getBemerkungen();
+		if (key.startsWith("verfuegung")) {
+			return new BeanMergeSource(verfuegung, "verfuegung.").getData(mergeContext, key);
 		}
 		return null;
 	}
@@ -64,26 +41,27 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		if ("Mutation".equalsIgnoreCase(key)) {
+		// TODO ZEAB new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key); wieder einschalten
+		// und anpassen
+		if ("verfuegung.Mutation".equalsIgnoreCase(key)) {
 			return verfuegung.isMutation();
-		} else if ("gesuchsteller2Exist".equalsIgnoreCase(key)) {
+		} else if ("verfuegung.gesuchsteller2Exist".equalsIgnoreCase(key)) {
 			return verfuegung.existGesuchsteller2();
-		} else if ("PensumIstGroesser0".equalsIgnoreCase(key)) {
+		} else if ("verfuegung.PensumIstGroesser0".equalsIgnoreCase(key)) {
 			return verfuegung.isPensumGrosser0();
-		} else if ("pensumIst0".equalsIgnoreCase(key)) {
+		} else if ("verfuegung.pensumIst0".equalsIgnoreCase(key)) {
 			return !verfuegung.isPensumGrosser0();
-		} else if ("printbemerkung".equalsIgnoreCase(key)) {
+		} else if ("verfuegung.printbemerkung".equalsIgnoreCase(key)) {
 			return verfuegung.getBemerkungen() != null && !"".equals(verfuegung.getBemerkungen().trim());
 		}
-		return Boolean.FALSE;
+		return Boolean.FALSE;// new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key);
 	}
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
 		if (key.startsWith("Betreuungen")) {
-			return verfuegung.getVerfuegungZeitabschnitt().stream().map(verfuegungZeitabschnitt -> new ZeitabschnittPrintMergeSource(verfuegungZeitabschnitt))
-					.collect(Collectors.toList());
+			return new BeanMergeSource(verfuegung, "Betreuungen.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}
