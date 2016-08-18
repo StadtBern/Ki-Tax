@@ -66,18 +66,16 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 
 		if ("Mutation".equalsIgnoreCase(key)) {
 			return verfuegung.isMutation();
-		}
-		if ("gesuchsteller2Exist".equalsIgnoreCase(key)) {
+		} else if ("gesuchsteller2Exist".equalsIgnoreCase(key)) {
 			return verfuegung.existGesuchsteller2();
-		}
-		if ("PensumIstGroesser0".equalsIgnoreCase(key)) {
+		} else if ("PensumIstGroesser0".equalsIgnoreCase(key)) {
 			return verfuegung.isPensumGrosser0();
-		}
-		if ("pensumIst0".equalsIgnoreCase(key)) {
+		} else if ("pensumIst0".equalsIgnoreCase(key)) {
 			return !verfuegung.isPensumGrosser0();
+		} else if ("printbemerkung".equalsIgnoreCase(key)) {
+			return verfuegung.getBemerkungen() != null && !"".equals(verfuegung.getBemerkungen().trim());
 		}
-
-		return Boolean.valueOf(true);
+		return Boolean.FALSE;
 	}
 
 	@Override
