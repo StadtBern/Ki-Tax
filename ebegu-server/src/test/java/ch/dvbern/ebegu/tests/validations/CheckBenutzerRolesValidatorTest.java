@@ -67,6 +67,12 @@ public class CheckBenutzerRolesValidatorTest {
 	}
 
 	@Test
+	public void testCheckBenutzerRoleSchulamtNoInstitutionTraegerschaft() {
+		Benutzer benutzer = createBenutzer(UserRole.SCHULAMT, null, null);
+		Assert.assertTrue(validator.isValid(benutzer, null));
+	}
+
+	@Test
 	public void testCheckBenutzerRoleRevisorNoInstitutionTraegerschaft() {
 		Benutzer benutzer = createBenutzer(UserRole.REVISOR, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));

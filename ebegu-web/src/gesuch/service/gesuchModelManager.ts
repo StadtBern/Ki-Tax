@@ -41,6 +41,7 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
+    gesuchSnapshot: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindNumber: number;
@@ -52,7 +53,8 @@ export default class GesuchModelManager {
     //diese Variable enthaelt alle Kinder die die Methode verfuegungRS.calculateVerfuegung zurueckgibt. Normalerweise sollten die Kinder im
     // gesuch aktualisiert werden. Das Problem ist, dass die Verfuegungen nicht gespeichert werden duerfen, bis der Benutzer auf den Knopf
     // Verfuegen klickt
-    private kinderWithBetreuungList: Array<TSKindContainer> = []; // todo dies koennte verbessert werden. Das Problem hier ist, dass die
+    // todo dies koennte verbessert werden. Das Problem hier ist, dass wir beim Berechnen der Verfuegung nciht das ganze Gesuch hin und her schicken wollen
+    private kinderWithBetreuungList: Array<TSKindContainer> = [];
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -446,6 +448,18 @@ export default class GesuchModelManager {
             this.gesuch.fall = new TSFall();
             this.setCurrentUserAsFallVerantwortlicher();
         }
+        this.backupCurrentGesuch();
+    }
+
+    /**
+     * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
+     */
+    private backupCurrentGesuch() {
+        this.gesuchSnapshot =  angular.copy(this.gesuch);
+    }
+
+    public restoreBackupOfPreviousGesuch() {
+        this.gesuch = this.gesuchSnapshot;
     }
 
     public initFamiliensituation() {
@@ -612,12 +626,14 @@ export default class GesuchModelManager {
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
+                this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
             //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
+                this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
         }
@@ -628,12 +644,14 @@ export default class GesuchModelManager {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
+                this.backupCurrentGesuch();
                 return this.getKindToWorkWith();
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
+                this.backupCurrentGesuch();
                 return this.getKindToWorkWith();
             });
         }
@@ -841,12 +859,14 @@ export default class GesuchModelManager {
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
+                    this.backupCurrentGesuch();
                     return response;
                 });
         } else {
             return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
                 .then((storedErwerbspensum: TSErwerbspensumContainer) => {
                     gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
+                    this.backupCurrentGesuch();
                     return storedErwerbspensum;
                 });
         }
