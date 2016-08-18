@@ -12,6 +12,7 @@ package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.types.DateRange;
 
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
