@@ -29,7 +29,7 @@ public class ZeitabschnittPrintMergeSource implements MergeSource {
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		// Diese Konstanten werden in der Wordvolage verwendet. Bei Aenderungen muss den Wordvorlage angepasst werden
+		// Diese Konstanten werden in der Wordvolage verwendet. Bei Aenderungen muss Wordvorlage angepasst werden
 		if ("von".equalsIgnoreCase(key)) {
 			return verfuegungZeitabschnitt.getVon();
 		} else if ("bis".equalsIgnoreCase(key)) {

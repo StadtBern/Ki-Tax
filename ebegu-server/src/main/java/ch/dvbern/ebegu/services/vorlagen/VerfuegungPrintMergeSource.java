@@ -32,7 +32,7 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		// Diese Konstanten werden in der Wordvolage verwendet. Bei Aenderungen muss den Wordvorlage angepasst werden
+		// Diese Konstanten werden in der Wordvolage verwendet. Bei Aenderungen muss Wordvorlage angepasst werden
 		if ("gesuchstellerStrasse".equalsIgnoreCase(key)) {
 			return verfuegung.getGesuchstellerStrasse();
 		} else if ("gesuchstellerPlzStadt".equalsIgnoreCase(key)) {
