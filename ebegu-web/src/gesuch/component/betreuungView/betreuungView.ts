@@ -33,6 +33,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
     isSavingData: boolean; // Semaphore
     initialBetreuung: TSBetreuung;
+    flagErrorVertrag: boolean;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
@@ -53,6 +54,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     private initViewModel() {
         this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.isSavingData = false;
+        this.flagErrorVertrag = false;
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
@@ -194,8 +196,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        if (form.$valid) {
+        if (form.$valid && this.getBetreuungModel().vertrag === true) {
             this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+        } else if (this.getBetreuungModel().vertrag !== true) {
+            this.flagErrorVertrag = true;
         }
     }
 

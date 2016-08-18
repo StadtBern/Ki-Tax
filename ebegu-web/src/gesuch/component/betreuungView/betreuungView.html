@@ -79,11 +79,13 @@
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
-                                     aria-label="vertrag" ng-disabled="!vm.isEnabled()">
+                                     aria-label="vertrag" ng-disabled="!vm.isEnabled()"
+                                     ng-class="{true:'checkbox-error', false:''}[vm.flagErrorVertrag]">
                             <span data-translate="VERTRAG"></span>
                         </md-checkbox>
-                        <dv-error-messages for="form.vertrag.$error"
-                                           class="error"></dv-error-messages>
+                        <div class="dv-error-messages error" ng-if="vm.flagErrorVertrag === true">
+                            <span data-translate="ERROR_VERTRAG_REQUIRED"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -247,9 +249,9 @@
                 <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
                      dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                     <div class="col-md-12">
-                        <dv-loading-button type="button" ng-click="form.$valid && vm.platzAnfordern(form)"
-                                           button-class="btn btn-md btn-success"
-                                           button-disabled="!form.$valid || !vm.getBetreuungModel().vertrag">
+                        <dv-loading-button type="submit"
+                                           ng-click="vm.platzAnfordern(form)"
+                                           button-class="btn btn-md btn-success">
                             <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>
 
                         </dv-loading-button>

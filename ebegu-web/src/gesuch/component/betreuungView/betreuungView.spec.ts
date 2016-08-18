@@ -147,6 +147,7 @@ describe('betreuungView', function () {
                 spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
                 let form: any = {};
                 form.$valid = true;
+                betreuung.vertrag = true;
                 // betreuung.timestampErstellt = undefined;
                 betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
@@ -184,6 +185,7 @@ describe('betreuungView', function () {
      * @param promiseResponse
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
+        betreuung.vertrag = true;
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);

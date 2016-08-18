@@ -22,6 +22,7 @@
     "ADRESSE_GUELTIGBIS": "gültig bis",
     "ERROR_REQUIRED": "Feld wird benötigt",
     "ERROR_REQUIRED_ONE_OF_THEM": "Eines der Felder wird benötigt",
+    "ERROR_VERTRAG_REQUIRED": "Um eine Platzbestätigung anzufordern müssen Sie einen Vertrag mit der Institution haben",
     "ERROR_MIN_LENG": "Eingabe zu kurz ",
     "ERROR_MAX_LENG": "Eingabe zu lang ",
     "ERROR_EMAIL": "Keine gültige Email ",
