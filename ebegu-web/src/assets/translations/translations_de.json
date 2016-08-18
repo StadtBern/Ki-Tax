@@ -32,6 +32,7 @@
     "ERROR_MAX": "Maximaler Wert überschritten",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
     "ERWERBSPENSUM_LOESCHEN": "Wollen Sie das Erwerbspensum wirklich löschen",
+    "FILE_LOESCHEN":"Wollen Sie das Dokument wirklich löschen",
     "FINANZIELLE_SITUATION": "Finanzielle Situation {{basisjahr}}",
     "FINANZIELLE_SITUATION_RESULTATE": "Resultate Finanzielle Situation {{basisjahr}}",
     "FINANZIELLE_SITUATION_STEK_GEMEINSAM": "Haben Sie eine gemeinsame Steuererklärung {{basisjahr}} mit Gesuchsteller 2 erhalten?",
