@@ -41,7 +41,6 @@ public class TempDokumentServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createAndFindTempDokument() {
 
-
 		DokumentGrund dokumentGrund = TestDataUtil.createDefaultDokumentGrund();
 		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		persistence.persist(gesuch.getGesuchsperiode());
