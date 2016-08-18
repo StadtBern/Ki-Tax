@@ -11,29 +11,41 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.util.Constants;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.util.Constants;
+
 /**
- * Implementiert den Verfuegungsmuster
+ * Transferobjekt
  */
-public class VerfuegungPrintDTO implements VerfuegungPrint {
+public class VerfuegungPrintDTO {
 
 	private Betreuung betreuung;
 
+	/**
+	 * @param betreuung
+	 */
 	public VerfuegungPrintDTO(Betreuung betreuung) {
 
 		this.betreuung = betreuung;
 	}
 
-	@Override
+	/**
+	 * @return GesuchstellerName
+	 */
 	public String getGesuchstellerName() {
+
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
 		if (gesuchsteller.isPresent()) {
 			return gesuchsteller.get().getFullName();
@@ -41,8 +53,11 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Gesuchsteller-Strasse
+	 */
 	public String getGesuchstellerStrasse() {
+
 		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
 		if (gesuchstellerAdresse.isPresent()) {
 			return gesuchstellerAdresse.get().getStrasse();
@@ -50,8 +65,11 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Gesuchsteller-PLZ Stadt
+	 */
 	public String getGesuchstellerPLZStadt() {
+
 		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
 		if (gesuchstellerAdresse.isPresent()) {
 			return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
@@ -59,13 +77,19 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Gesuchsteller-ReferenzNummer
+	 */
 	public String getReferenzNummer() {
+
 		return betreuung.getBGNummer();
 	}
 
-	@Override
+	/**
+	 * @return Gesuchsteller-Verfuegungsdatum
+	 */
 	public String getVerfuegungsdatum() {
+
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			Verfuegung verfuegung1 = verfuegung.get();
@@ -77,8 +101,11 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Name des Gesuchsteller1
+	 */
 	public String getGesuchsteller1() {
+
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
 		if (gesuchsteller.isPresent()) {
 			return gesuchsteller.get().getFullName();
@@ -86,8 +113,11 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Name des Gesuchsteller2
+	 */
 	public String getGesuchsteller2() {
+
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller2();
 		if (gesuchsteller.isPresent()) {
 			return gesuchsteller.get().getFullName();
@@ -95,35 +125,52 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return Name Vorname des Kindes
+	 */
 	public String getKindNameVorname() {
+
 		return extractKind().getFullName();
 	}
 
-	@Override
+	/**
+	 * @return Geburtsdatum des Kindes
+	 */
 	public String getKindGeburtsdatum() {
 
-		return Constants.DATE_FORMATTER.format(extractKind().getGeburtsdatum());
+		return Constants.DATE_FORMATTER.format(betreuung.getKind().getKindJA().getGeburtsdatum());
 	}
 
-	@Override
+	/**
+	 * @return Kita Name
+	 */
 	public String getKitaBezeichnung() {
+
 		return betreuung.getInstitutionStammdaten().getInstitution().getName();
 	}
 
-	@Override
+	/**
+	 * @return AnspruchAb
+	 */
 	public String getAnspruchAb() {
+
 		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigAb());
 	}
 
-	@Override
+	/**
+	 * @return AnspruchBis
+	 */
 	public String getAnspruchBis() {
+
 		return Constants.DATE_FORMATTER.format(betreuung.extractGesuchsperiode().getGueltigkeit().getGueltigBis());
 	}
 
-	@Override
-	public List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt() {
-		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
+	/**
+	 * @return VerfuegungZeitabschnitten
+	 */
+	public List<VerfuegungZeitabschnittPrintDTO> getVerfuegungZeitabschnitt() {
+
+		List<VerfuegungZeitabschnittPrintDTO> result = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
@@ -131,39 +178,59 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return result;
 	}
 
-	@Override
-	public String getBemerkung() {
+	/**
+	 * @return Bemerkungen
+	 */
+	public String getBemerkungen() {
+
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			return verfuegung.get().getGeneratedBemerkungen() + " " + verfuegung.get().getManuelleBemerkungen();
+			StringBuilder bemerkungen = new StringBuilder();
+			if (betreuung.getVerfuegung().getGeneratedBemerkungen() != null) {
+				bemerkungen.append(betreuung.getVerfuegung().getGeneratedBemerkungen());
+			}
+			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
+				bemerkungen.append(betreuung.getVerfuegung().getManuelleBemerkungen());
+			}
+			return bemerkungen.toString();
 		}
 		return "";
 	}
 
-	@Override
+	/**
+	 * @return true falls Gesuchsteller 2 existiert
+	 */
 	public boolean existGesuchsteller2() {
+
 		return betreuung.extractGesuch().getGesuchsteller2() != null;
 	}
 
-	@Override
+	/**
+	 * @return true falls Pensum groesser 0 ist
+	 */
 	public boolean isPensumGrosser0() {
-		List<VerfuegungZeitabschnittPrint> vzList = getVerfuegungZeitabschnitt();
+
+		List<VerfuegungZeitabschnittPrintDTO> vzList = getVerfuegungZeitabschnitt();
 		int value = 0;
-		for (VerfuegungZeitabschnittPrint verfuegungZeitabschnitt : vzList) {
+		for (VerfuegungZeitabschnittPrintDTO verfuegungZeitabschnitt : vzList) {
 			value = value + verfuegungZeitabschnitt.getBGPensum();
 			// BG-Pensum
 		}
 		return value > 0;
 	}
 
-	@Override
+	/**
+	 * @return true falls es sich um eine Mutation handelt
+	 */
 	public boolean isMutation() {
+
 		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
 		return false;
 	}
 
 	@Nonnull
 	private Optional<Gesuchsteller> extractGesuchsteller1() {
+
 		Gesuchsteller gs1 = betreuung.extractGesuch().getGesuchsteller1();
 		if (gs1 != null) {
 			return Optional.of(gs1);
@@ -173,6 +240,7 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Nonnull
 	private Optional<Gesuchsteller> extractGesuchsteller2() {
+
 		Gesuchsteller gs2 = betreuung.extractGesuch().getGesuchsteller2();
 		if (gs2 != null) {
 			return Optional.of(gs2);
@@ -181,12 +249,14 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 	}
 
 	@Nonnull
-	private Kind extractKind()  {
+	private Kind extractKind() {
+
 		return betreuung.getKind().getKindJA();
 	}
 
 	@Nonnull
 	private Optional<GesuchstellerAdresse> getGesuchstellerAdresse() {
+
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
 		if (gesuchsteller.isPresent()) {
 			List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
@@ -206,6 +276,7 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 	@Nonnull
 	private Optional<Verfuegung> extractVerfuegung() {
+
 		Verfuegung verfuegung = betreuung.getVerfuegung();
 		if (verfuegung != null) {
 			return Optional.of(verfuegung);

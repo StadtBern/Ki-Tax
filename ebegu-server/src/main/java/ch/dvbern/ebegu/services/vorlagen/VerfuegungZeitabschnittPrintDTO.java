@@ -11,56 +11,79 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
-import ch.dvbern.ebegu.util.Constants;
-
 import java.math.BigDecimal;
 
-public class VerfuegungZeitabschnittPrintDTO implements VerfuegungZeitabschnittPrint {
+import ch.dvbern.ebegu.util.Constants;
 
-	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+public class VerfuegungZeitabschnittPrintDTO {
 
-	public VerfuegungZeitabschnittPrintDTO(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	private ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+
+	public VerfuegungZeitabschnittPrintDTO(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
 	}
 
-	@Override
+	/**
+	 * @return Von
+	 */
 	public String getVon() {
+
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
 	}
 
-	@Override
+	/**
+	 * @return Bis
+	 */
 	public String getBis() {
+
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis());
 	}
 
-	@Override
+	/**
+	 * @return Betreuung
+	 */
 	public int getBetreuung() {
+
 		return verfuegungZeitabschnitt.getBetreuungspensum();
 	}
 
-	@Override
+	/**
+	 * @return Anspruch
+	 */
 	public int getAnspruch() {
+
 		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 	}
 
-	@Override
+	/**
+	 * @return BGPensum
+	 */
 	public int getBGPensum() {
-		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum(); // TODO (hefr) spaeter das BG-Pensum nehmen!
+
+		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();//// TODO (hefr) spaeter das
 	}
 
-	@Override
+	/**
+	 * @return Vollkosten
+	 */
 	public BigDecimal getVollkosten() {
+
 		return verfuegungZeitabschnitt.getVollkosten();
 	}
 
-	@Override
+	/**
+	 * @return Elternbeitrag
+	 */
 	public BigDecimal getElternbeitrag() {
+
 		return verfuegungZeitabschnitt.getElternbeitrag();
 	}
 
-	@Override
+	/**
+	 * @return Verguenstigung
+	 */
 	public BigDecimal getVerguenstigung() {
+
 		return verfuegungZeitabschnitt.getVerguenstigung();
 	}
 }
