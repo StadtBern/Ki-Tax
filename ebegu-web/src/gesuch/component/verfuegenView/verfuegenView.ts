@@ -22,24 +22,34 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil) {
+                private ebeguUtil: EbeguUtil, private $scope: any) {
         super(state, gesuchModelManager, berechnungsManager);
+        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
+        $scope.$on('$stateChangeStart', () => {
+            this.reset();
+        });
     }
 
     cancel(): void {
+        this.reset();
         this.state.go('gesuch.verfuegen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
     save(form: IFormController) {
         if (form.$valid) {
             //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
             //this.errorService.clearAll();
+            //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
             // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
                 this.state.go('gesuch.verfuegen');
             // });

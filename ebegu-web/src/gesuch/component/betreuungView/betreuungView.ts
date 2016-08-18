@@ -46,11 +46,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
         //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
         $scope.$on('$stateChangeStart', () => {
-            this.removeBetreuungFromKind();
+            this.reset();
         });
     }
 
     private initViewModel() {
+        this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.isSavingData = false;
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
@@ -120,8 +121,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public cancel() {
-        this.removeBetreuungFromKind();
+        this.reset();
         this.state.go('gesuch.betreuungen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
+        this.removeBetreuungFromKind();
     }
 
     private removeBetreuungFromKind(): void {
