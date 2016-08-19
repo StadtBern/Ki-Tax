@@ -36,5 +36,6 @@
 	<entity class="ch.dvbern.ebegu.entities.DokumentGrund"/>
 	<entity class="ch.dvbern.ebegu.entities.Verfuegung"/>
 	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
+	<entity class="ch.dvbern.ebegu.entities.TempDokument"/>
 
 </entity-mappings>

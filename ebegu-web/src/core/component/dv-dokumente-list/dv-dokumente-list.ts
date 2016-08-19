@@ -4,7 +4,12 @@ import {UploadRS} from '../../service/uploadRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
+import {DownloadRS} from '../../service/downloadRS.rest';
+import TSTempDokument from '../../../models/TSTempDokument';
+import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 let template = require('./dv-dokumente-list.html');
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
 
 export class DVDokumenteListConfig implements IComponentOptions {
@@ -37,9 +42,10 @@ export class DVDokumenteListController {
     onRemove: (attrs: any) => void;
     sonstige: boolean;
 
-    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil'];
+    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog'];
     /* @ngInject */
-    constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil) {
+    constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
+                private downloadRS: DownloadRS, private dvDialog: DvDialog) {
 
     }
 
@@ -82,8 +88,28 @@ export class DVDokumenteListController {
 
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
         console.log('component -> remove dokument ' + dokument.dokumentName);
-        this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
+        this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            deleteText: '',
+            title: 'FILE_LOESCHEN'
+        })
+            .then(() => {   //User confirmed removal
+                this.onRemove({dokumentGrund: dokumentGrund, dokument: dokument});
+
+            });
     }
+
+    download(dokument: TSDokument, attachment: boolean) {
+        console.log('download dokument ' + dokument.dokumentName);
+
+        this.downloadRS.getAccessToken(dokument.id).then((response) => {
+            let tempDokument: TSTempDokument = angular.copy(response);
+            console.log('accessToken: ' + tempDokument.accessToken);
+
+            this.downloadRS.startDownload(tempDokument.accessToken, dokument.dokumentName, attachment);
+        });
+
+    }
+
 
     getWidth(): String {
         if (this.sonstige) {

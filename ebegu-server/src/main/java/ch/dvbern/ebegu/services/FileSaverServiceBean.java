@@ -36,7 +36,10 @@ public class FileSaverServiceBean implements FileSaverService {
 
 		UUID uuid = UUID.randomUUID();
 
-		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "_" + uploadFileInfo.getFilename();
+		String ending = getFileNameEnding(uploadFileInfo.getFilename());
+
+		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "." + ending;
 		uploadFileInfo.setPath(absoluteFilePath);
 
 		Path file = Paths.get(absoluteFilePath);
@@ -53,6 +56,16 @@ public class FileSaverServiceBean implements FileSaverService {
 			return false;
 		}
 		return true;
+	}
+
+	private String getFileNameEnding(String filename) {
+
+		String extension = "";
+		int i = filename.lastIndexOf('.');
+		if (i > 0) {
+			extension = filename.substring(i + 1);
+		}
+		return extension;
 	}
 
 	@Override
