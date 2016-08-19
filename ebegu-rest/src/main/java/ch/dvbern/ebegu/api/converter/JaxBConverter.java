@@ -1603,4 +1603,23 @@ public class JaxBConverter {
 		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
 		return jaxTempDokument;
 	}
+
+	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {
+		final JaxWizardStep jaxWizardStep = convertAbstractFieldsToJAX(wizardStep, new JaxWizardStep());
+		jaxWizardStep.setGesuchId(wizardStep.getGesuch().getId());
+		jaxWizardStep.setWizardStepName(wizardStep.getWizardStepName());
+		jaxWizardStep.setWizardStepStatus(wizardStep.getWizardStepStatus());
+		jaxWizardStep.setBemerkungen(wizardStep.getBemerkungen());
+		return jaxWizardStep;
+	}
+
+	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep, final Gesuch gesuch) {
+		convertAbstractFieldsToEntity(jaxWizardStep, wizardStep);
+		// wir muessen das Gesuch uebergeben weil das JaxObjekt nur das GesuchID hat, waehrend WizardStep das ganze Gesuch braucht
+		wizardStep.setGesuch(gesuch);
+		wizardStep.setWizardStepName(jaxWizardStep.getWizardStepName());
+		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
+		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());
+		return wizardStep;
+	}
 }
