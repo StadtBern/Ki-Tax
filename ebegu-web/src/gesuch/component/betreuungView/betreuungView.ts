@@ -45,11 +45,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-        //Wir verlassen uns hier darauf, dass zuerst das popup vom unsavedChanges plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            // wenn der user die changes verwerfen will koennen wir die view resetten, ansosnten machen wir nichts da wir hier bleiben
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
             if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
-                this.reset();  //Maske wird verlasse, changes resettten auf letzten speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
+                this.reset();  //Maske wird verlasse, changes resettten auf letzten Speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
             }
         });
     }

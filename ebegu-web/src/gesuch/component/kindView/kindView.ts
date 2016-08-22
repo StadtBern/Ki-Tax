@@ -35,9 +35,9 @@ export class KindViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 
-        //Wir verlassen uns hier darauf, dass zuerst das popup vom unsavedChanges plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den User fragt ob er die ungesp. changes verwerfen will
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
-            // wenn der user die changes verwerfen will koennen wir die view resetten, ansosnten machen wir nichts da wir hier bleiben
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
             if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
                 //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
                 this.reset();

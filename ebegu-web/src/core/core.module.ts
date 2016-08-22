@@ -48,6 +48,7 @@ import DVSubmitevent from './directive/dv-submitevent/dv-submitevent';
 import 'ng-file-upload';
 import {UploadRS} from './service/uploadRS.rest';
 import {DownloadRS} from './service/downloadRS.rest';
+
 import VerfuegungRS from './service/verfuegungRS.rest';
 import {DVShowElement} from './directive/dv-show-element/dv-show-element';
 import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
@@ -57,9 +58,9 @@ let dynamicDependencies = function (): string[] {
 
     let dynDep: string [] = ['unsavedChanges'];
     //deaktiviere unsavedChanges plugin fuer development
-    // if (ENV === 'development') {
-    //     return [];
-    // }
+    if (ENV === 'development') {
+        return [];
+    }
     return dynDep;
 };
 

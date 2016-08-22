@@ -30,7 +30,7 @@ export function configure($translateProvider: ITranslateProvider, $injector: IIn
     if ($injector.has('unsavedWarningsConfigProvider')) {
         let unsavedWarningsConfigProvider: any = $injector.get('unsavedWarningsConfigProvider');
         unsavedWarningsConfigProvider.useTranslateService = true;
-        unsavedWarningsConfigProvider.logEnabled = true;
+        unsavedWarningsConfigProvider.logEnabled = false;
         unsavedWarningsConfigProvider.navigateMessage = 'UNSAVED_WARNING';
         unsavedWarningsConfigProvider.reloadMessage = 'UNSAVED_WARNING_RELOAD';
     }
