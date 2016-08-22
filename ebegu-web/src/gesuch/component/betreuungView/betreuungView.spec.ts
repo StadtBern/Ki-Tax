@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {IHttpBackendService, IQService, IScope} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -21,7 +21,7 @@ describe('betreuungView', function () {
     let ebeguUtil: EbeguUtil;
     let $q: IQService;
     let betreuung: TSBetreuung;
-    let $rootScope: any;
+    let $rootScope:  any;
     let $httpBackend: IHttpBackendService;
     let authServiceRS: AuthServiceRS;
 
@@ -205,7 +205,7 @@ describe('betreuungView', function () {
         let form: any = {};
         form.$valid = true;
         form.$setPristine = () => {};
-        form.$setUntouched() = () => {};
+        form.$setUntouched = () => {};
         return form;
     }
 

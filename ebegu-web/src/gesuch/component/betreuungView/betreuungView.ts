@@ -63,6 +63,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
         this.startEmptyListOfBetreuungspensen();
+        //institutionen lazy laden
         if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateInstitutionenList();
         }
