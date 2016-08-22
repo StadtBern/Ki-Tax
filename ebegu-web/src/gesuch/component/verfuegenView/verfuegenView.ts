@@ -30,14 +30,19 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any) {
         super(state, gesuchModelManager, berechnungsManager);
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.reset();
+
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            console.log('resetting state due to navigation change, ');
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+                this.reset();
+            }
         });
     }
 
-    cancel(): void {
+    cancel(form: IFormController): void {
         this.reset();
+        form.$setPristine();
         this.state.go('gesuch.verfuegen');
     }
 

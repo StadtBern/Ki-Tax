@@ -63,8 +63,8 @@ describe('betreuungView', function () {
             it('should not remove the kind and then go to betreuungen', () => {
                 spyOn($state, 'go');
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
-
-                betreuungView.cancel();
+                let form : any = createDummyForm();
+                betreuungView.cancel(form);
                 expect(gesuchModelManager.removeBetreuungFromKind).not.toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
             });
@@ -74,8 +74,8 @@ describe('betreuungView', function () {
                 spyOn($state, 'go');
                 betreuung.timestampErstellt = undefined;
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
-
-                betreuungView.cancel();
+                let form : any = createDummyForm();
+                betreuungView.cancel(form);
                 expect(gesuchModelManager.removeBetreuungFromKind).toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
             });
@@ -128,7 +128,7 @@ describe('betreuungView', function () {
             it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
                 spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
                 spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
-                let form: any = {};
+                let form = createDummyForm();
                 betreuung.erweiterteBeduerfnisse = true;
                 betreuung.grundAblehnung = 'mein Grund';
                 let oldBetreuung = angular.copy(betreuung);
@@ -146,8 +146,7 @@ describe('betreuungView', function () {
         describe('platzAnfordern()', () => {
             it('must change the status of the Betreuung to WARTEN', () => {
                 spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
-                let form: any = {};
-                form.$valid = true;
+                let form = createDummyForm();
                 betreuung.vertrag = true;
                 // betreuung.timestampErstellt = undefined;
                 betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
@@ -190,11 +189,7 @@ describe('betreuungView', function () {
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-        let form: any = {
-            $valid: true,
-            $setUntouched: function() {},
-            $setPristine: function() {}
-        };
+        let form = createDummyForm();
         betreuungView.platzAnfordern(form);
         $rootScope.form = form;
         $rootScope.$apply();
@@ -204,6 +199,14 @@ describe('betreuungView', function () {
         } else {
             expect($state.go).not.toHaveBeenCalled();
         }
+    }
+
+    function createDummyForm(): any {
+        let form: any = {};
+        form.$valid = true;
+        form.$setPristine = () => {};
+        form.$setUntouched() = () => {};
+        return form;
     }
 
 });
