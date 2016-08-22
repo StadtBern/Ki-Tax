@@ -318,7 +318,6 @@ describe('EbeguRestUtil', function () {
                 expect(restErwerbspensum.zuschlagZuErwerbspensum).toEqual(erwerbspensumJA.zuschlagZuErwerbspensum);
                 expect(restErwerbspensum.zuschlagsprozent).toEqual(erwerbspensumJA.zuschlagsprozent);
                 expect(restErwerbspensum.zuschlagsgrund).toEqual(erwerbspensumJA.zuschlagsgrund);
-                expect(restErwerbspensum.gesundheitlicheEinschraenkungen).toEqual(erwerbspensumJA.gesundheitlicheEinschraenkungen);
 
                 let transformedErwerbspensum = ebeguRestUtil.parseErwerbspensum(new TSErwerbspensum(), restErwerbspensum);
 

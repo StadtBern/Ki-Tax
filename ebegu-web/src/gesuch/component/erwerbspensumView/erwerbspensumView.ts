@@ -48,7 +48,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
@@ -122,5 +122,19 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         ewpContainer.erwerbspensumJA = ewp;
         return ewpContainer;
 
+    }
+
+    viewZuschalg(): boolean {
+        return this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.ANGESTELLT ||
+            this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.AUSBILDUNG ||
+            this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.SELBSTAENDIG;
+    }
+
+    taetigkeitChanged() {
+        if (!this.viewZuschalg()) {
+            this.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum = false;
+            this.erwerbspensum.erwerbspensumJA.zuschlagsprozent = undefined;
+            this.erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
+        }
     }
 }

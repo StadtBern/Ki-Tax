@@ -1122,7 +1122,6 @@ public class JaxBConverter {
 		erwerbspensum.setZuschlagZuErwerbspensum(jaxErwerbspensum.getZuschlagZuErwerbspensum());
 		erwerbspensum.setZuschlagsgrund(jaxErwerbspensum.getZuschlagsgrund());
 		erwerbspensum.setZuschlagsprozent(jaxErwerbspensum.getZuschlagsprozent());
-		erwerbspensum.setGesundheitlicheEinschraenkungen(jaxErwerbspensum.getGesundheitlicheEinschraenkungen());
 		erwerbspensum.setTaetigkeit(jaxErwerbspensum.getTaetigkeit());
 		erwerbspensum.setPensum(jaxErwerbspensum.getPensum());
 		erwerbspensum.setBezeichnung(jaxErwerbspensum.getBezeichnung());
@@ -1138,7 +1137,6 @@ public class JaxBConverter {
 			jaxErwerbspensum.setZuschlagZuErwerbspensum(pensum.getZuschlagZuErwerbspensum());
 			jaxErwerbspensum.setZuschlagsgrund(pensum.getZuschlagsgrund());
 			jaxErwerbspensum.setZuschlagsprozent(pensum.getZuschlagsprozent());
-			jaxErwerbspensum.setGesundheitlicheEinschraenkungen(pensum.getGesundheitlicheEinschraenkungen());
 			jaxErwerbspensum.setTaetigkeit(pensum.getTaetigkeit());
 			jaxErwerbspensum.setBezeichnung(pensum.getBezeichnung());
 			jaxErwerbspensum.setPensum(pensum.getPensum());

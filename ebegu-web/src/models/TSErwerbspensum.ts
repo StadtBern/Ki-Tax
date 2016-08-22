@@ -16,19 +16,16 @@ export default class TSErwerbspensum extends TSAbstractPensumEntity {
 
     private _zuschlagsprozent: number;
 
-    private _gesundheitlicheEinschraenkungen: boolean;
-
     private _bezeichnung: String;
 
 
     constructor(pensum?: number, gueltigkeit?: TSDateRange, taetigkeit?: TSTaetigkeit, zuschlagZuErwerbspensum?: boolean,
-                zuschlagsgrund?: TSZuschlagsgrund, zuschlagsprozent?: number, gesundheitlicheEinschraenkungen?: boolean) {
+                zuschlagsgrund?: TSZuschlagsgrund, zuschlagsprozent?: number) {
         super(pensum, gueltigkeit);
         this._taetigkeit = taetigkeit;
         this._zuschlagZuErwerbspensum = zuschlagZuErwerbspensum;
         this._zuschlagsgrund = zuschlagsgrund;
         this._zuschlagsprozent = zuschlagsprozent;
-        this._gesundheitlicheEinschraenkungen = gesundheitlicheEinschraenkungen;
     }
 
 
@@ -62,14 +59,6 @@ export default class TSErwerbspensum extends TSAbstractPensumEntity {
 
     set zuschlagsprozent(value: number) {
         this._zuschlagsprozent = value;
-    }
-
-    get gesundheitlicheEinschraenkungen(): boolean {
-        return this._gesundheitlicheEinschraenkungen;
-    }
-
-    set gesundheitlicheEinschraenkungen(value: boolean) {
-        this._gesundheitlicheEinschraenkungen = value;
     }
 
     get bezeichnung(): String {

@@ -33,7 +33,6 @@ export default class TestDataUtil {
 
     static createErwerbspensum(): TSErwerbspensum {
         let dummyErwerbspensum = new TSErwerbspensum();
-        dummyErwerbspensum.gesundheitlicheEinschraenkungen = false;
         dummyErwerbspensum.taetigkeit = TSTaetigkeit.ANGESTELLT;
         dummyErwerbspensum.pensum = 80;
         dummyErwerbspensum.gueltigkeit = new TSDateRange(DateUtil.today(), DateUtil.today().add(7, 'months'));

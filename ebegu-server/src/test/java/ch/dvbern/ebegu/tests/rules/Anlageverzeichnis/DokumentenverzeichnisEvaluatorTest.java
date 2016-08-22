@@ -67,8 +67,11 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final ErwerbspensumContainer erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
 
 		final Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
-		erwerbspensumJA.setTaetigkeit(taetigkeit);
-		erwerbspensumJA.setGesundheitlicheEinschraenkungen(gesundheitlicheEinschraenkungen);
+		if(gesundheitlicheEinschraenkungen){
+			erwerbspensumJA.setTaetigkeit(Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN);
+		}else{
+			erwerbspensumJA.setTaetigkeit(taetigkeit);
+		}
 		erwerbspensumJA.setZuschlagZuErwerbspensum(zuschlagZuErwerbspensum);
 		erwerbspensumJA.setZuschlagsgrund(zuschlagsgrund);
 		erwerbspensumJA.getGueltigkeit().setGueltigAb(LocalDate.of(1980, 1, 1));

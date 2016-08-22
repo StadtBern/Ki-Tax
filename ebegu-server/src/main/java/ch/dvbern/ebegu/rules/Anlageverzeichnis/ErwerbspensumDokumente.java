@@ -90,7 +90,8 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 				case NACHWEIS_ERWERBSPENSUM:
 					// Todo: Wird nur bei Mutation des Erwerbspensums Angestellt verlangt oder bei Neueintritt im Job. Neueintritt = DatumVon >= Periodenstart
 					// Mutation ist noch nicht implementiert...
-					return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart);
+					return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
+						erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT;
 				default:
 					return isDokumentNeeded(dokumentTyp, erwerbspensum);
 			}
@@ -112,7 +113,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 				case NACHWEIS_RAV:
 					return erwerbspensum.getTaetigkeit() == Taetigkeit.RAV;
 				case BESTAETIGUNG_ARZT:
-					return erwerbspensum.getGesundheitlicheEinschraenkungen();
+					return erwerbspensum.getTaetigkeit() == Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN;
 				case NACHWEIS_UNREG_ARBEITSZ:
 					return erwerbspensum.getZuschlagZuErwerbspensum()
 						&& erwerbspensum.getZuschlagsgrund() == Zuschlagsgrund.UNREGELMAESSIGE_ARBEITSZEITEN;
