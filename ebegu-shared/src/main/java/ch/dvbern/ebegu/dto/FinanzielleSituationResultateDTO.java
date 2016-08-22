@@ -43,7 +43,7 @@ public class FinanzielleSituationResultateDTO {
 	/**
 	 * rundet auf die naechste Ganzzahl groesser gleich 0
 	 */
-	private BigDecimal positiveNonNullAndRound(BigDecimal value) {
+	public BigDecimal positiveNonNullAndRound(BigDecimal value) {
 		if (value == null) {
 			return BigDecimal.ZERO;
 		}

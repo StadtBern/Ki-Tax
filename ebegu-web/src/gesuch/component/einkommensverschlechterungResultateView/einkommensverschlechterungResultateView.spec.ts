@@ -90,6 +90,18 @@ describe('einkommensverschlechterungResultateView', function () {
             expect(ekvrvc.calculateVeraenderung()).toEqual('- 81.2 %');
         });
 
+        it('should return - 100 %', () => {
+
+            setValues(59720, 0);
+            expect(ekvrvc.calculateVeraenderung()).toEqual('- 100 %');
+        });
+
+        it('should return + 100 %', () => {
+
+            setValues(0, 59720);
+            expect(ekvrvc.calculateVeraenderung()).toEqual('+ 100 %');
+        });
+
         function setValues( massgebendesEinkommen_vj: number, massgebendesEinkommen_bj: number) {
             let finsint: TSFinanzielleSituationResultateDTO = new TSFinanzielleSituationResultateDTO();
             finsint.massgebendesEinkommen = massgebendesEinkommen_bj;
