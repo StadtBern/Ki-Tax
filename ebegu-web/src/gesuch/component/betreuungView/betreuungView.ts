@@ -13,10 +13,10 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import Moment = moment.Moment;
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
+import Moment = moment.Moment;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -45,9 +45,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.reset();
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                this.reset();  //Maske wird verlasse, changes resettten auf letzten Speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
+            }
         });
     }
 
@@ -97,7 +100,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    private save(newStatus: TSBetreuungsstatus, nextStep: string): void {
+    private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
         this.isSavingData = true;
         let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
         if (this.getBetreuungModel()) {
@@ -109,9 +112,11 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
         this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
             this.isSavingData = false;
+            form.$setPristine();
             this.state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
+            console.log('there was an error saving the betreuung ', this.gesuchModelManager.getBetreuungToWorkWith());
             this.isSavingData = false;
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
             return undefined;
@@ -122,8 +127,9 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
-    public cancel() {
+    public cancel(formCtrl: IFormController) {
         this.reset();
+        formCtrl.$setPristine();
         this.state.go('gesuch.betreuungen');
     }
 
@@ -134,7 +140,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     private removeBetreuungFromKind(): void {
         if (this.gesuchModelManager.getBetreuungToWorkWith() && !this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
-            //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
+            //wenn die Betreeung noch nicht erstellt wurde, loeschen wir die Betreuung vom Array
             this.gesuchModelManager.removeBetreuungFromKind();
         }
     }
@@ -197,7 +203,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public platzAnfordern(form: IFormController): void {
         if (form.$valid && this.getBetreuungModel().vertrag === true) {
-            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen');
+            this.flagErrorVertrag = false;
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', form);
         } else if (this.getBetreuungModel().vertrag !== true) {
             this.flagErrorVertrag = true;
         }
@@ -206,7 +213,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     public platzBestaetigen(form: IFormController): void {
         if (form.$valid) {
             this.getBetreuungModel().datumBestaetigung = DateUtil.today();
-            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution');
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', form);
         }
     }
 
@@ -223,12 +230,12 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         //restore initialBetreuung
         this.gesuchModelManager.setBetreuungToWorkWith(this.initialBetreuung);
         this.getBetreuungModel().datumAblehnung = DateUtil.today();
-        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution');
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
     }
 
     public saveSchulamt(form: IFormController): void {
         if (form.$valid) {
-            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen');
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', form);
         }
     }
 
