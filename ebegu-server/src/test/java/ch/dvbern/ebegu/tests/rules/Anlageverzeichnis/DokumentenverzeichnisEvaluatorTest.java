@@ -67,9 +67,9 @@ public class DokumentenverzeichnisEvaluatorTest {
 		final ErwerbspensumContainer erwerbspensumContainer = TestDataUtil.createErwerbspensumContainer();
 
 		final Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
-		if(gesundheitlicheEinschraenkungen){
+		if (gesundheitlicheEinschraenkungen){
 			erwerbspensumJA.setTaetigkeit(Taetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN);
-		}else{
+		} else {
 			erwerbspensumJA.setTaetigkeit(taetigkeit);
 		}
 		erwerbspensumJA.setZuschlagZuErwerbspensum(zuschlagZuErwerbspensum);

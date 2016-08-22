@@ -129,14 +129,14 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     }
 
-    viewZuschalg(): boolean {
+    viewZuschlag(): boolean {
         return this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.ANGESTELLT ||
             this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.AUSBILDUNG ||
             this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.SELBSTAENDIG;
     }
 
     taetigkeitChanged() {
-        if (!this.viewZuschalg()) {
+        if (!this.viewZuschlag()) {
             this.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum = false;
             this.erwerbspensum.erwerbspensumJA.zuschlagsprozent = undefined;
             this.erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
