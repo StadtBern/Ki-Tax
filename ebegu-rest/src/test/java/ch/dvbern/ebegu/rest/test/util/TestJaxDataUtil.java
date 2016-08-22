@@ -80,7 +80,6 @@ public class TestJaxDataUtil {
 	public static JaxErwerbspensum createTestJaxErwerbspensum() {
 		JaxErwerbspensum jaxErwerbspensum = new JaxErwerbspensum();
 		jaxErwerbspensum.setTaetigkeit(Taetigkeit.ANGESTELLT);
-		jaxErwerbspensum.setGesundheitlicheEinschraenkungen(true);
 		jaxErwerbspensum.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		jaxErwerbspensum.setZuschlagZuErwerbspensum(true);
 		jaxErwerbspensum.setZuschlagsprozent(15);

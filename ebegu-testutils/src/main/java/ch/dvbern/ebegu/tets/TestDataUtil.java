@@ -270,7 +270,6 @@ public final class TestDataUtil {
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
-		ep.setGesundheitlicheEinschraenkungen(false);
 		return ep;
 	}
 
@@ -307,13 +306,12 @@ public final class TestDataUtil {
 		gesuchsperiode.setActive(true);
 
 		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
-		int startyear = isSecondHalbjahr ? LocalDate.now().getYear()  : LocalDate.now().getYear() -1 ;
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
 		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
-		LocalDate end = LocalDate.of(startyear + 1 , Month.JULY, 31);
+		LocalDate end = LocalDate.of(startyear + 1, Month.JULY, 31);
 		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
 		return gesuchsperiode;
 	}
-
 
 
 	public static Gesuchsperiode createGesuchsperiode1617() {
@@ -322,7 +320,6 @@ public final class TestDataUtil {
 		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
 		return gesuchsperiode;
 	}
-
 
 
 	public static EbeguParameter createDefaultEbeguParameter() {
@@ -402,7 +399,7 @@ public final class TestDataUtil {
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
-	public static Gesuch createTestgesuchDagmar(){
+	public static Gesuch createTestgesuchDagmar() {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);

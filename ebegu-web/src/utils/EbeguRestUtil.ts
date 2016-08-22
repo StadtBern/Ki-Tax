@@ -324,7 +324,6 @@ export default class EbeguRestUtil {
     public parseErwerbspensum(erwerbspensum: TSErwerbspensum, erwerbspensumFromServer: any): TSErwerbspensum {
         if (erwerbspensumFromServer) {
             this.parseAbstractPensumEntity(erwerbspensum, erwerbspensumFromServer);
-            erwerbspensum.gesundheitlicheEinschraenkungen = erwerbspensumFromServer.gesundheitlicheEinschraenkungen;
             erwerbspensum.taetigkeit = erwerbspensumFromServer.taetigkeit;
             erwerbspensum.zuschlagsgrund = erwerbspensumFromServer.zuschlagsgrund;
             erwerbspensum.zuschlagsprozent = erwerbspensumFromServer.zuschlagsprozent;
@@ -339,7 +338,6 @@ export default class EbeguRestUtil {
     public erwerbspensumToRestObject(restErwerbspensum: any, erwerbspensum: TSErwerbspensum): any {
         if (erwerbspensum) {
             this.abstractPensumEntityToRestObject(restErwerbspensum, erwerbspensum);
-            restErwerbspensum.gesundheitlicheEinschraenkungen = erwerbspensum.gesundheitlicheEinschraenkungen;
             restErwerbspensum.taetigkeit = erwerbspensum.taetigkeit;
             restErwerbspensum.zuschlagsgrund = erwerbspensum.zuschlagsgrund;
             restErwerbspensum.zuschlagsprozent = erwerbspensum.zuschlagsprozent;
