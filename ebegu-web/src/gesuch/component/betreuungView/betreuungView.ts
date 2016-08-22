@@ -62,13 +62,22 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
+        this.startEmptyListOfBetreuungspensen();
+        //institutionen lazy laden
+        if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
+            this.gesuchModelManager.updateInstitutionenList();
+        }
+    }
+
+    /**
+     * Fuer Institutionen und Traegerschaften wird es geprueft ob es schon ein Betreuungspensum existiert,
+     * wenn nicht wir die Liste dann mit einem leeren initiallisiert
+     */
+    private startEmptyListOfBetreuungspensen() {
         if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
             && (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT))) {
             // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
             this.createBetreuungspensum();
-        }
-        if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
-            this.gesuchModelManager.updateInstitutionenList();
         }
     }
 
@@ -116,9 +125,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             this.state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
+            // starting over
             console.log('there was an error saving the betreuung ', this.gesuchModelManager.getBetreuungToWorkWith());
             this.isSavingData = false;
             this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
+            this.startEmptyListOfBetreuungspensen();
+            this.$scope.form.$setUntouched();
+            this.$scope.form.$setPristine();
             return undefined;
         });
     }
@@ -228,7 +241,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
         this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
         //restore initialBetreuung
-        this.gesuchModelManager.setBetreuungToWorkWith(this.initialBetreuung);
+        this.gesuchModelManager.setBetreuungToWorkWith(angular.copy(this.initialBetreuung));
         this.getBetreuungModel().datumAblehnung = DateUtil.today();
         this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
     }

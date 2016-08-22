@@ -5,12 +5,13 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {IHttpBackendService, IQService, IScope} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import DateUtil from '../../../utils/DateUtil';
+import IFormController = angular.IFormController;
 
 describe('betreuungView', function () {
 
@@ -20,7 +21,7 @@ describe('betreuungView', function () {
     let ebeguUtil: EbeguUtil;
     let $q: IQService;
     let betreuung: TSBetreuung;
-    let $rootScope: IScope;
+    let $rootScope:  any;
     let $httpBackend: IHttpBackendService;
     let authServiceRS: AuthServiceRS;
 
@@ -40,7 +41,7 @@ describe('betreuungView', function () {
         authServiceRS = $injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'isRole').and.returnValue(true);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope.$new(), $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS);
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS);
     }));
 
     describe('Public API', function () {
@@ -53,7 +54,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope.$new(), null, null, authServiceRS);
+                    $rootScope, null, null, authServiceRS);
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(1);
             });
@@ -190,6 +191,7 @@ describe('betreuungView', function () {
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         let form = createDummyForm();
         betreuungView.platzAnfordern(form);
+        $rootScope.form = form;
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {
@@ -203,6 +205,7 @@ describe('betreuungView', function () {
         let form: any = {};
         form.$valid = true;
         form.$setPristine = () => {};
+        form.$setUntouched = () => {};
         return form;
     }
 

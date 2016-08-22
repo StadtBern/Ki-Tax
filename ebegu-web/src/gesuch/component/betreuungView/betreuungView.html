@@ -75,7 +75,8 @@
             </div>
 
             <!--vertrag-->
-            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                dv-show-expression="!vm.isTagesschule()">
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
@@ -296,7 +297,7 @@
                     </dv-loading-button>
                 </div>
                 <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                     dv-show-expression="vm.isBetreuungsstatusSchulamt() && form.$valid && (vm.getBetreuungModel().vertrag === true)">
+                     dv-show-expression="vm.isBetreuungsstatusSchulamt()">
                     <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>
