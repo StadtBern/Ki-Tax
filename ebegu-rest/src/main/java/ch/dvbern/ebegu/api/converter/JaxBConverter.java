@@ -1613,10 +1613,8 @@ public class JaxBConverter {
 		return jaxWizardStep;
 	}
 
-	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep, final Gesuch gesuch) {
+	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep) {
 		convertAbstractFieldsToEntity(jaxWizardStep, wizardStep);
-		// wir muessen das Gesuch uebergeben weil das JaxObjekt nur das GesuchID hat, waehrend WizardStep das ganze Gesuch braucht
-		wizardStep.setGesuch(gesuch);
 		wizardStep.setWizardStepName(jaxWizardStep.getWizardStepName());
 		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
 		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());

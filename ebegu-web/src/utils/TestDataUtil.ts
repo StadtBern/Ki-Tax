@@ -8,6 +8,9 @@ import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
 import Moment = moment.Moment;
+import TSWizardStep from '../models/TSWizardStep';
+import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 
 export default class TestDataUtil {
 
@@ -58,5 +61,15 @@ export default class TestDataUtil {
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/0621fb5d-a187-5a91-abaf-8a813c4d263a').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+    }
+
+    public static createWizardStep(gesuchId: string): TSWizardStep {
+        let wizardStep: TSWizardStep = new TSWizardStep();
+        TestDataUtil.setAbstractFieldsUndefined(wizardStep);
+        wizardStep.gesuchId = gesuchId;
+        wizardStep.bemerkungen = 'bemerkung';
+        wizardStep.wizardStepStatus = TSWizardStepStatus.IN_BEARBEITUNG;
+        wizardStep.wizardStepName = TSWizardStepName.BETREUUNG;
+        return wizardStep;
     }
 }

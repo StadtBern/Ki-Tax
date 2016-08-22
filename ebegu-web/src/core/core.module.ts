@@ -53,6 +53,8 @@ import VerfuegungRS from './service/verfuegungRS.rest';
 import {DVShowElement} from './directive/dv-show-element/dv-show-element';
 import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
 import {DVRoleElementController} from './controller/DVRoleElementController';
+import WizardStepManager from '../gesuch/service/wizardStepManager';
+import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -127,6 +129,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('DokumenteRS', DokumenteRS)
     .service('UploadRS', UploadRS)
     .service('DownloadRS', DownloadRS)
+    .service('WizardStepRS', WizardStepRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
@@ -138,6 +141,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('FachstelleRS', FachstelleRS)
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
+    .service('WizardStepManager', WizardStepManager)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())

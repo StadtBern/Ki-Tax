@@ -1331,4 +1331,16 @@ export default class EbeguRestUtil {
         restWizardStep.bemerkungen = wizardStep.bemerkungen;
         return restWizardStep;
     }
+
+    public parseWizardStepList(data: any): TSWizardStep[] {
+        var wizardSteps: TSWizardStep[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                wizardSteps[i] = this.parseWizardStep(new TSWizardStep(), data[i]);
+            }
+        } else {
+            wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
+        }
+        return wizardSteps;
+    }
 }
