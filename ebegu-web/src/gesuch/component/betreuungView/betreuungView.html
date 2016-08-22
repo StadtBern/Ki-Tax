@@ -75,7 +75,8 @@
             </div>
 
             <!--vertrag-->
-            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                dv-show-expression="!vm.isTagesschule()">
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
@@ -249,8 +250,7 @@
                 <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
                      dv-show-expression="vm.isBetreuungsstatusAusstehend()">
                     <div class="col-md-12">
-                        <dv-loading-button type="submit"
-                                           ng-click="vm.platzAnfordern(form)"
+                        <dv-loading-button button-click="vm.platzAnfordern(form)"
                                            button-class="btn btn-md btn-success">
                             <span data-translate="PLATZBESTAETIGUNG_ANFORDERN"></span>
 
@@ -292,12 +292,12 @@
             <!--Buttons-->
             <div class="row marginTop20">
                 <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.cancel()" button-class="btn btn-link cancel">
+                    <dv-loading-button button-click="vm.cancel(form)" button-class="btn btn-link cancel" type="reset">
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
                 <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                     dv-show-expression="vm.isBetreuungsstatusSchulamt() && form.$valid && (vm.getBetreuungModel().vertrag === true)">
+                     dv-show-expression="vm.isBetreuungsstatusSchulamt()">
                     <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>
