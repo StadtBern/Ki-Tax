@@ -29,13 +29,6 @@ public class JaxAbstractFinanzielleSituation extends JaxAbstractDTO {
 
 	private BigDecimal schulden;
 
-	@NotNull
-	private Boolean selbstaendig = Boolean.FALSE;
-
-	private BigDecimal geschaeftsgewinnBasisjahrMinus2;
-
-	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
-
 	private BigDecimal geschaeftsgewinnBasisjahr;
 
 	private BigDecimal geleisteteAlimente;
@@ -95,30 +88,6 @@ public class JaxAbstractFinanzielleSituation extends JaxAbstractDTO {
 
 	public void setSchulden(final BigDecimal schulden) {
 		this.schulden = schulden;
-	}
-
-	public Boolean getSelbstaendig() {
-		return selbstaendig;
-	}
-
-	public void setSelbstaendig(final Boolean selbstaendig) {
-		this.selbstaendig = selbstaendig;
-	}
-
-	public BigDecimal getGeschaeftsgewinnBasisjahrMinus2() {
-		return geschaeftsgewinnBasisjahrMinus2;
-	}
-
-	public void setGeschaeftsgewinnBasisjahrMinus2(final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
-		this.geschaeftsgewinnBasisjahrMinus2 = geschaeftsgewinnBasisjahrMinus2;
-	}
-
-	public BigDecimal getGeschaeftsgewinnBasisjahrMinus1() {
-		return geschaeftsgewinnBasisjahrMinus1;
-	}
-
-	public void setGeschaeftsgewinnBasisjahrMinus1(final BigDecimal geschaeftsgewinnBasisjahrMinus1) {
-		this.geschaeftsgewinnBasisjahrMinus1 = geschaeftsgewinnBasisjahrMinus1;
 	}
 
 	public BigDecimal getGeschaeftsgewinnBasisjahr() {

@@ -7,6 +7,8 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -18,6 +20,12 @@ import javax.validation.constraints.Size;
 public class Kind extends AbstractPersonEntity {
 
 	private static final long serialVersionUID = -9032257320578372570L;
+
+	@Max(100)
+	@Min(0)
+	@Nullable
+	@Column(nullable = true)
+	private Integer wohnhaftImGleichenHaushalt;
 
 	@NotNull
 	@Column(nullable = false)
@@ -42,6 +50,14 @@ public class Kind extends AbstractPersonEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+
+	public Integer getWohnhaftImGleichenHaushalt() {
+		return wohnhaftImGleichenHaushalt;
+	}
+
+	public void setWohnhaftImGleichenHaushalt(Integer wohnhaftImGleichenHaushalt) {
+		this.wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
+	}
 
 	public Kinderabzug getKinderabzug() {
 		return kinderabzug;

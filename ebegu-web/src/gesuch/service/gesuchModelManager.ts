@@ -41,6 +41,7 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 
 export default class GesuchModelManager {
     gesuch: TSGesuch;
+    gesuchSnapshot: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
     private kindNumber: number;
@@ -52,7 +53,8 @@ export default class GesuchModelManager {
     //diese Variable enthaelt alle Kinder die die Methode verfuegungRS.calculateVerfuegung zurueckgibt. Normalerweise sollten die Kinder im
     // gesuch aktualisiert werden. Das Problem ist, dass die Verfuegungen nicht gespeichert werden duerfen, bis der Benutzer auf den Knopf
     // Verfuegen klickt
-    private kinderWithBetreuungList: Array<TSKindContainer> = []; // todo dies koennte verbessert werden. Das Problem hier ist, dass die
+    // todo dies koennte verbessert werden. Das Problem hier ist, dass wir beim Berechnen der Verfuegung nciht das ganze Gesuch hin und her schicken wollen
+    private kinderWithBetreuungList: Array<TSKindContainer> = [];
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -369,12 +371,12 @@ export default class GesuchModelManager {
         if (this.gesuch && !this.gesuch.gesuchsteller1.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller1.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller1.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
         }
-        if (this.gesuch && this.isGesuchsteller2Required() && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
+        if (this.gesuch && this.isGesuchsteller2Required() && this.gesuch.gesuchsteller2 && !this.gesuch.gesuchsteller2.finanzielleSituationContainer) {
             this.gesuch.gesuchsteller2.finanzielleSituationContainer = new TSFinanzielleSituationContainer();
             this.gesuch.gesuchsteller2.finanzielleSituationContainer.jahr = this.getBasisjahr();
-            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationSV = new TSFinanzielleSituation();
+            this.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA = new TSFinanzielleSituation();
         }
     }
 
@@ -431,33 +433,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public copyEkvGeschaeftsgewinnFromFS(): void {
-        if (!this.getStammdatenToWorkWith() || !this.getStammdatenToWorkWith().finanzielleSituationContainer
-            || !this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV) {
-            // TODO: Wenn die finanzielleSituation noch nicht existiert haben wir ein Problem
-            console.log('Fehler: FinSit muss existieren');
-            return;
-        }
-
-        let fs: TSFinanzielleSituation = this.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationSV;
-        let ekv: TSEinkommensverschlechterung = this.getEinkommensverschlechterungToWorkWith();
-        if (fs.selbstaendig) {
-
-            // Wenn in Finanzieller Situation selbständig, in EKV muss auch selbständig sein!
-            ekv.selbstaendig = true;
-            if (this.basisJahrPlusNumber === 1) {
-                ekv.geschaeftsgewinnBasisjahrMinus1 = fs.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahrMinus1;
-            } else {
-                //basisjahr Plus 2
-                let ekvP1: TSEinkommensverschlechterung = this.getStammdatenToWorkWith().einkommensverschlechterungContainer.ekvJABasisJahrPlus1;
-                ekv.geschaeftsgewinnBasisjahrMinus1 = ekvP1.geschaeftsgewinnBasisjahr;
-                ekv.geschaeftsgewinnBasisjahrMinus2 = fs.geschaeftsgewinnBasisjahr;
-            }
-        }
-    }
-
-
     /**
      * Erstellt ein neues Gesuch und einen neuen Fall. Wenn !forced sie werden nur erstellt wenn das Gesuch noch nicht erstellt wurde i.e. es null/undefined ist
      * Wenn force werden Gesuch und Fall immer erstellt.
@@ -469,6 +444,18 @@ export default class GesuchModelManager {
             this.gesuch.fall = new TSFall();
             this.setCurrentUserAsFallVerantwortlicher();
         }
+        this.backupCurrentGesuch();
+    }
+
+    /**
+     * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
+     */
+    private backupCurrentGesuch() {
+        this.gesuchSnapshot =  angular.copy(this.gesuch);
+    }
+
+    public restoreBackupOfPreviousGesuch() {
+        this.gesuch = this.gesuchSnapshot;
     }
 
     public initFamiliensituation() {
@@ -635,12 +622,14 @@ export default class GesuchModelManager {
         if (this.getBetreuungToWorkWith().timestampErstellt) {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
+                this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
             //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
+                this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
         }
@@ -651,12 +640,14 @@ export default class GesuchModelManager {
             return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
+                this.backupCurrentGesuch();
                 return this.getKindToWorkWith();
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
+                this.backupCurrentGesuch();
                 return this.getKindToWorkWith();
             });
         }
@@ -718,7 +709,7 @@ export default class GesuchModelManager {
      * @param betreuung
      * @returns {TSBetreuung}
      */
-    private setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
+    public setBetreuungToWorkWith(betreuung: TSBetreuung): TSBetreuung {
         return this.getKindToWorkWith().betreuungen[this.betreuungNumber - 1] = betreuung;
     }
 
@@ -776,6 +767,22 @@ export default class GesuchModelManager {
         return -1;
     }
 
+    /**
+     * Sucht das Kind mit der eingegebenen KindID in allen KindContainers des Gesuchs. kindNumber wird gesetzt und zurueckgegeben
+     * @param kindID
+     * @returns {number}
+     */
+    public findKindById(kindID: string): number {
+        if (this.gesuch.kindContainers) {
+            for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
+                if (this.gesuch.kindContainers[i].id === kindID) {
+                    return this.kindNumber = i + 1;
+                }
+            }
+        }
+        return -1;
+    }
+
     public removeKind(): IPromise<TSKindContainer> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
@@ -786,6 +793,22 @@ export default class GesuchModelManager {
     public findBetreuung(betreuung: TSBetreuung): number {
         if (this.getKindToWorkWith() && this.getKindToWorkWith().betreuungen) {
             return this.betreuungNumber = this.getKindToWorkWith().betreuungen.indexOf(betreuung) + 1;
+        }
+        return -1;
+    }
+
+    /**
+     * Sucht die Betreuung mit der eingegebenen betreuungID in allen Betreuungen des aktuellen Kind. betreuungNumber wird gesetzt und zurueckgegeben
+     * @param betreuungID
+     * @returns {number}
+     */
+    public findBetreuungById(betreuungID: string): number {
+        if (this.getKindToWorkWith()) {
+            for (let i = 0; i < this.getKindToWorkWith().betreuungen.length; i++) {
+                if (this.getKindToWorkWith().betreuungen[i].id === betreuungID) {
+                    return this.betreuungNumber = i + 1;
+                }
+            }
         }
         return -1;
     }
@@ -832,12 +855,14 @@ export default class GesuchModelManager {
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
+                    this.backupCurrentGesuch();
                     return response;
                 });
         } else {
             return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
                 .then((storedErwerbspensum: TSErwerbspensumContainer) => {
                     gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
+                    this.backupCurrentGesuch();
                     return storedErwerbspensum;
                 });
         }

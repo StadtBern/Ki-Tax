@@ -41,6 +41,10 @@
       {
         "name": "ebeguWeb.pendenzen",
         "file": "src/pendenzen/pendenzen.module.ts"
+      },
+      {
+        "name": "ebeguWeb.pendenzenInstitution",
+        "file": "src/pendenzenInstitution/pendenzenInstitution.module.ts"
       }
     ]
   }

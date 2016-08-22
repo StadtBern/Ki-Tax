@@ -13,6 +13,9 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import BerechnungsManager from '../../service/berechnungsManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
+import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
@@ -28,32 +31,53 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     betreuungsangebot: any;
     betreuungsangebotValues: Array<any>;
     instStammId: string; //der ausgewaehlte instStammId wird hier gespeichert und dann in die entsprechende InstitutionStammdaten umgewandert
+    isSavingData: boolean; // Semaphore
+    initialBetreuung: TSBetreuung;
+    flagErrorVertrag: boolean;
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
+                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService, private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
+        this.initialBetreuung = angular.copy(this.getBetreuungModel());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
         this.initViewModel();
 
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.removeBetreuungFromKind();
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                this.reset();  //Maske wird verlasse, changes resettten auf letzten Speicherpunkt (wenn gespeichert wurde wird auf gespeicherten punkt resetted)
+            }
         });
     }
 
     private initViewModel() {
+        this.gesuchModelManager.initGesuch(false); //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
+        this.isSavingData = false;
+        this.flagErrorVertrag = false;
         if (this.getInstitutionSD()) {
             this.instStammId = this.getInstitutionSD().id;
             this.betreuungsangebot = this.getBetreuungsangebotFromInstitutionList();
         }
-        if (!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0) {
-            this.createBetreuungspensum();
-        }
+        this.startEmptyListOfBetreuungspensen();
+        //institutionen lazy laden
         if (this.gesuchModelManager.getInstitutionenList() || this.gesuchModelManager.getInstitutionenList().length <= 0) {
             this.gesuchModelManager.updateInstitutionenList();
+        }
+    }
+
+    /**
+     * Fuer Institutionen und Traegerschaften wird es geprueft ob es schon ein Betreuungspensum existiert,
+     * wenn nicht wir die Liste dann mit einem leeren initiallisiert
+     */
+    private startEmptyListOfBetreuungspensen() {
+        if ((!this.getBetreuungspensen() || this.getBetreuungspensen().length === 0)
+            && (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT))) {
+            // nur fuer Institutionen wird ein Betreuungspensum by default erstellt
+            this.createBetreuungspensum();
         }
     }
 
@@ -85,40 +109,51 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController): void {
-        if (form.$valid) {
-            if (this.getBetreuungModel()) {
-                if (this.isTagesschule()) {
-                    this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
-                }
-                if (!this.isTageseltern()) {
-                    this.getBetreuungModel().schulpflichtig = undefined;
-                } else if (!this.getBetreuungModel().schulpflichtig) {
-                    this.getBetreuungModel().schulpflichtig = false; // sollte es undefined sein setzen wir es direkt auf false
-                }
+    private save(newStatus: TSBetreuungsstatus, nextStep: string, form: IFormController): void {
+        this.isSavingData = true;
+        let oldStatus: TSBetreuungsstatus = this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
+        if (this.getBetreuungModel()) {
+            if (this.isTagesschule()) {
+                this.getBetreuungModel().betreuungspensumContainers = []; // fuer Tagesschule werden keine Betreuungspensum benoetigt, deswegen löschen wir sie vor dem Speichern
             }
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
-                this.state.go('gesuch.betreuungen');
-            }).catch((exception) => {
-                //todo team Fehler anzeigen
-                return undefined;
-            });
         }
+        this.errorService.clearAll();
+        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = newStatus;
+        this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
+            this.isSavingData = false;
+            form.$setPristine();
+            this.state.go(nextStep);
+        }).catch((exception) => {
+            //todo team Fehler anzeigen
+            // starting over
+            console.log('there was an error saving the betreuung ', this.gesuchModelManager.getBetreuungToWorkWith());
+            this.isSavingData = false;
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = oldStatus;
+            this.startEmptyListOfBetreuungspensen();
+            this.$scope.form.$setUntouched();
+            this.$scope.form.$setPristine();
+            return undefined;
+        });
     }
 
     private setBetreuungsangebotTypValues(): void {
         this.betreuungsangebotValues = this.ebeguUtil.translateStringList(getTSBetreuungsangebotTypValues());
     }
 
-    cancel() {
-        this.removeBetreuungFromKind();
+    public cancel(formCtrl: IFormController) {
+        this.reset();
+        formCtrl.$setPristine();
         this.state.go('gesuch.betreuungen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
+        this.removeBetreuungFromKind();
     }
 
     private removeBetreuungFromKind(): void {
         if (this.gesuchModelManager.getBetreuungToWorkWith() && !this.gesuchModelManager.getBetreuungToWorkWith().timestampErstellt) {
-            //wenn das Kind noch nicht erstellt wurde, löschen wir das Kind vom Array
+            //wenn die Betreeung noch nicht erstellt wurde, loeschen wir die Betreuung vom Array
             this.gesuchModelManager.removeBetreuungFromKind();
         }
     }
@@ -180,8 +215,41 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public platzAnfordern(form: IFormController): void {
-        this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.WARTEN;
-        this.submit(form);
+        if (form.$valid && this.getBetreuungModel().vertrag === true) {
+            this.flagErrorVertrag = false;
+            this.save(TSBetreuungsstatus.WARTEN, 'gesuch.betreuungen', form);
+        } else if (this.getBetreuungModel().vertrag !== true) {
+            this.flagErrorVertrag = true;
+        }
+    }
+
+    public platzBestaetigen(form: IFormController): void {
+        if (form.$valid) {
+            this.getBetreuungModel().datumBestaetigung = DateUtil.today();
+            this.save(TSBetreuungsstatus.BESTAETIGT, 'pendenzenInstitution', form);
+        }
+    }
+
+    /**
+     * Wenn ein Betreuungsangebot abgewiesen wird, muss man die neu eingegebenen Betreuungspensen zuruecksetzen, da sie nicht relevant sind.
+     * Allerdings muessen der Grund und das Datum der Ablehnung doch gespeichert werden.
+     * In diesem Fall machen wir keine Validierung weil die Daten die eingegeben werden muessen, direkt auf dem Server gecheckt werden
+     * @param form
+     */
+    public platzAbweisen(form: IFormController): void {
+        //copy values modified by the Institution in initialBetreuung
+        this.initialBetreuung.erweiterteBeduerfnisse = this.getBetreuungModel().erweiterteBeduerfnisse;
+        this.initialBetreuung.grundAblehnung = this.getBetreuungModel().grundAblehnung;
+        //restore initialBetreuung
+        this.gesuchModelManager.setBetreuungToWorkWith(angular.copy(this.initialBetreuung));
+        this.getBetreuungModel().datumAblehnung = DateUtil.today();
+        this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
+    }
+
+    public saveSchulamt(form: IFormController): void {
+        if (form.$valid) {
+            this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', form);
+        }
     }
 
     /**
@@ -190,8 +258,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
      */
     public isEnabled(): boolean {
         if (this.getBetreuungModel()) {
-            return (this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.AUSSTEHEND
-                || this.getBetreuungModel().betreuungsstatus === TSBetreuungsstatus.SCHULAMT);
+            return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND)
+                || this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
         }
         return false;
     }
@@ -208,6 +276,14 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         return this.isBetreuungsstatus(TSBetreuungsstatus.BESTAETIGT);
     }
 
+    public isBetreuungsstatusAusstehend(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.AUSSTEHEND);
+    }
+
+    public isBetreuungsstatusSchulamt(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.SCHULAMT);
+    }
+
     private isBetreuungsstatus(status: TSBetreuungsstatus): boolean {
         if (this.getBetreuungModel()) {
             return this.getBetreuungModel().betreuungsstatus === status;
@@ -220,7 +296,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     }
 
     public isTageseltern(): boolean {
-        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN);
+        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND) ||
+            this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
     }
 
     private isBetreuungsangebottyp(betAngTyp: TSBetreuungsangebotTyp): boolean {
@@ -228,6 +305,17 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             return this.betreuungsangebot.key === TSBetreuungsangebotTyp[betAngTyp];
         }
         return false;
+    }
+
+    /**
+     * Erweiterte Beduerfnisse wird nur beim Institutionen oder Traegerschaften eingeblendet oder wenn das Feld schon als true gesetzt ist
+     * ACHTUNG: Hier benutzen wir die Direktive dv-show-element nicht, da es unterschiedliche Bedingungen für jede Rolle gibt.
+     * @returns {boolean}
+     */
+    public showErweiterteBeduerfnisse(): boolean {
+        return TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
+            || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()
+            || this.getBetreuungModel().erweiterteBeduerfnisse === true;
     }
 
 }

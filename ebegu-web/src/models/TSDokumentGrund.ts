@@ -1,16 +1,27 @@
 import TSDokument from './TSDokument';
 import {TSDokumentGrundTyp} from './enums/TSDokumentGrundTyp';
 import TSAbstractEntity from './TSAbstractEntity';
+import {TSDokumentTyp} from './enums/TSDokumentTyp';
 
 export default class TSDokumentGrund extends TSAbstractEntity {
 
     private _dokumentGrundTyp: TSDokumentGrundTyp;
 
-    private _fullname: string;
+    private _fullName: string;
 
     private _tag: string;
 
     private _dokumente: Array<TSDokument>;
+
+    private _dokumentTyp: TSDokumentTyp;
+
+    private _needed: boolean;
+
+
+    constructor(dokumentGrundTyp?: TSDokumentGrundTyp) {
+        super();
+        this._dokumentGrundTyp = dokumentGrundTyp;
+    }
 
     get dokumentGrundTyp(): TSDokumentGrundTyp {
         return this._dokumentGrundTyp;
@@ -20,12 +31,12 @@ export default class TSDokumentGrund extends TSAbstractEntity {
         this._dokumentGrundTyp = value;
     }
 
-    get fullname(): string {
-        return this._fullname;
+    get fullName(): string {
+        return this._fullName;
     }
 
-    set fullname(value: string) {
-        this._fullname = value;
+    set fullName(value: string) {
+        this._fullName = value;
     }
 
     get tag(): string {
@@ -42,6 +53,22 @@ export default class TSDokumentGrund extends TSAbstractEntity {
 
     set dokumente(value: Array<TSDokument>) {
         this._dokumente = value;
+    }
+
+    get dokumentTyp(): TSDokumentTyp {
+        return this._dokumentTyp;
+    }
+
+    set dokumentTyp(value: TSDokumentTyp) {
+        this._dokumentTyp = value;
+    }
+
+    get needed(): boolean {
+        return this._needed;
+    }
+
+    set needed(value: boolean) {
+        this._needed = value;
     }
 }
 

@@ -32,7 +32,10 @@
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo"/>
 	<entity class="ch.dvbern.ebegu.entities.Einkommensverschlechterung"/>
 	<entity class="ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.Dokument"/>
+	<entity class="ch.dvbern.ebegu.entities.DokumentGrund"/>
 	<entity class="ch.dvbern.ebegu.entities.Verfuegung"/>
 	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
+	<entity class="ch.dvbern.ebegu.entities.TempDokument"/>
 
 </entity-mappings>

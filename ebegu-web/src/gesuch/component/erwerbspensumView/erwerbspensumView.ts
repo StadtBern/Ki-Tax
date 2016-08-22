@@ -14,6 +14,8 @@ import {
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../../models/enums/TSRole';
 import IFormController = angular.IFormController;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
@@ -42,12 +44,15 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     erwerbspensum: TSErwerbspensumContainer;
     patternPercentage: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager',
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
+                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;
         this.gesuchModelManager.setGesuchstellerNumber(parseInt($stateParams.gesuchstellerNumber));
         this.gesuchsteller = this.gesuchModelManager.getStammdatenToWorkWith();
@@ -63,7 +68,13 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         } else {
             console.log('kein gesuchsteller gefunden');
         }
-
+        //Wir verlassen uns hier darauf, dass zuerst das popup vom unsavedChanges plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                this.reset();
+            }
+        });
     }
 
     getTaetigkeitenList(): Array<TSTaetigkeit> {
@@ -71,20 +82,10 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     }
 
     getZuschlagsgrundList(): Array<TSZuschlagsgrund> {
-        if (this.isGesuchstellerRole()) {
+        if (this.authServiceRS.isRole(TSRole.GESUCHSTELLER)) {
             return getTSZuschlagsgruendeForGS();
         } else {
             return getTSZuschlagsgrunde();
-        }
-    }
-
-    submit(form: IFormController) {
-        if (form.$valid) {
-            this.maybeResetZuschlagsgrund(this.erwerbspensum);
-            this.errorService.clearAll();
-            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
-                this.state.go('gesuch.erwerbsPensen');
-            });
         }
     }
 
@@ -99,8 +100,25 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         }
     }
 
-    cancel() {
+    save(form: IFormController) {
+        if (form.$valid) {
+            this.maybeResetZuschlagsgrund(this.erwerbspensum);
+            this.errorService.clearAll();
+            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
+                form.$setPristine();
+                this.state.go('gesuch.erwerbsPensen');
+            });
+        }
+    }
+
+    cancel(form: IFormController) {
+        this.reset();
+        form.$setPristine();
         this.state.go('gesuch.erwerbsPensen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
     private initEmptyEwpContainer(): TSErwerbspensumContainer {

@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
+import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -13,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,6 +25,7 @@ import java.util.TreeSet;
  */
 @Audited
 @Entity
+@CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
@@ -53,14 +57,15 @@ public class Betreuung extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
-	@Nullable
-	@Column(nullable = true)
-	private Boolean schulpflichtig = false;
-
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String grundAblehnung;
 
 	@NotNull
 	@Min(1)
@@ -71,6 +76,23 @@ public class Betreuung extends AbstractEntity {
 	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
+
+	@NotNull
+	@Column(nullable = false)
+	private Boolean vertrag = false;
+
+	@NotNull
+	@Column(nullable = false)
+	private Boolean erweiterteBeduerfnisse = false;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumAblehnung;
+
+	@Nullable
+	@Column(nullable = true)
+	private LocalDate datumBestaetigung;
+
 
 
 	public KindContainer getKind() {
@@ -106,21 +128,21 @@ public class Betreuung extends AbstractEntity {
 	}
 
 	@Nullable
-	public Boolean getSchulpflichtig() {
-		return schulpflichtig;
-	}
-
-	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
-		this.schulpflichtig = schulpflichtig;
-	}
-
-	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
 	}
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getGrundAblehnung() {
+		return grundAblehnung;
+	}
+
+	public void setGrundAblehnung(@Nullable String grundAblehnung) {
+		this.grundAblehnung = grundAblehnung;
 	}
 
 	public Integer getBetreuungNummer() {
@@ -138,6 +160,42 @@ public class Betreuung extends AbstractEntity {
 	public void setVerfuegung(Verfuegung verfuegung) {
 		this.verfuegung = verfuegung;
 	}
+
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
+	}
+
+	@Nullable
+	public LocalDate getDatumAblehnung() {
+		return datumAblehnung;
+	}
+
+	public void setDatumAblehnung(@Nullable LocalDate datumAblehnung) {
+		this.datumAblehnung = datumAblehnung;
+	}
+
+	@Nullable
+	public LocalDate getDatumBestaetigung() {
+		return datumBestaetigung;
+	}
+
+	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
+		this.datumBestaetigung = datumBestaetigung;
+	}
+
+
 
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
@@ -164,7 +222,7 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public Gesuch extractGesuch() {
-		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
+		Objects.requireNonNull(this.getKind(), "Can not extract Gesuch because Kind is null");
 		return this.getKind().getGesuch();
 	}
 
@@ -175,7 +233,24 @@ public class Betreuung extends AbstractEntity {
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN.equals(getInstitutionStammdaten().getBetreuungsangebotTyp()) &&
-			getSchulpflichtig() != null && getSchulpflichtig().equals(Boolean.FALSE);
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+	}
+
+	/**
+	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
+     */
+	@Transient
+	public String getBGNummer() {
+		String year = "";
+		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
+			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		}
+		String fall = "";
+		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
+			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+		}
+		String kind = "" + getKind().getKindNummer();
+		String betreuung = "" + getBetreuungNummer();
+		return year + "." + fall + "." + kind + "." + betreuung;
 	}
 }

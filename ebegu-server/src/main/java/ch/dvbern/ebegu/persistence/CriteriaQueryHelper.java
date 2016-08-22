@@ -11,21 +11,25 @@ import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Hilfsklasse welche CriteriaQueries erstellt.
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 @Dependent
 public class CriteriaQueryHelper {
 
@@ -42,7 +46,7 @@ public class CriteriaQueryHelper {
 	}
 
 	@Nonnull
-	public <T extends P, P extends AbstractEntity> Collection<T> getAllOrdered(@Nonnull final Class<T> clazz, @Nonnull SingularAttribute<P, String> orderBy){
+	public <T extends P, P extends AbstractEntity> Collection<T> getAllOrdered(@Nonnull final Class<T> clazz, @Nonnull SingularAttribute<P, String> orderBy) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<T> query = cb.createQuery(clazz);
 		Root root = query.from(clazz);
@@ -55,7 +59,7 @@ public class CriteriaQueryHelper {
 	@Nonnull
 	public <A, E extends AbstractEntity> Optional<E> getEntityByUniqueAttribute(@Nonnull final Class<E> entityClazz,
 																				@Nullable final A attributeValue,
-																				@Nonnull final SingularAttribute<E, A> attribute){
+																				@Nonnull final SingularAttribute<E, A> attribute) {
 		final Collection<E> results = getEntitiesByAttribute(entityClazz, attributeValue, attribute);
 		E result = ensureSingleResult(results, attributeValue);
 		/*String attrValue = Objects.toString(attributeValue, "");
@@ -117,11 +121,12 @@ public class CriteriaQueryHelper {
 	/**
 	 * Gibt alle Datensaetze vom Typ clazz zurück, bei welchen das gegebene Datum zwischen den Werten
 	 * von datumVon und DatumBis liegt.
+	 *
 	 * @param clazz Entity class
-	 * @param date Datum fuer die Suche
-	 * @param <T> Entity Class
-     * @return Liste mit Datensaetzen
-     */
+	 * @param date  Datum fuer die Suche
+	 * @param <T>   Entity Class
+	 * @return Liste mit Datensaetzen
+	 */
 	public <T extends AbstractDateRangedEntity> Collection<T> getAllInInterval(Class<T> clazz, LocalDate date) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<T> query = cb.createQuery(clazz);
@@ -138,6 +143,22 @@ public class CriteriaQueryHelper {
 		TypedQuery<T> q = persistence.getEntityManager().createQuery(query).setParameter(dateParam, date);
 		List<T> resultList = q.getResultList();
 		return resultList;
+	}
+
+	public <T extends AbstractEntity> int deleteAllBefore(@Nonnull Class<T> entityClazz, @Nonnull LocalDateTime before) {
+		checkNotNull(entityClazz);
+		checkNotNull(before);
+
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		CriteriaDelete<T> delete = cb.createCriteriaDelete(entityClazz);
+		Root<T> root = delete.from(entityClazz);
+
+		ParameterExpression<LocalDateTime> beforeParam = cb.parameter(LocalDateTime.class, "before");
+		delete.where(cb.lessThan(root.get(AbstractDateRangedEntity_.timestampMutiert), beforeParam));
+
+		Query query = persistence.getEntityManager().createQuery(delete);
+		query.setParameter(beforeParam, before);
+		return query.executeUpdate();
 	}
 }
 

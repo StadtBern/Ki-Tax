@@ -646,7 +646,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(institutionJAXP, institution);
 		institution.setName(institutionJAXP.getName());
 
-		if (institutionJAXP.getMandant().getId() != null) {
+		if (institutionJAXP.getMandant() != null && institutionJAXP.getMandant().getId() != null) {
 			final Optional<Mandant> mandantFromDB = mandantService.findMandant(institutionJAXP.getMandant().getId());
 			if (mandantFromDB.isPresent()) {
 				institution.setMandant(mandantToEntity(institutionJAXP.getMandant(), mandantFromDB.get()));
@@ -749,6 +749,7 @@ public class JaxBConverter {
 	public JaxKind kindToJAX(@Nonnull final Kind persistedKind) {
 		final JaxKind jaxKind = new JaxKind();
 		convertAbstractPersonFieldsToJAX(persistedKind, jaxKind);
+		jaxKind.setWohnhaftImGleichenHaushalt(persistedKind.getWohnhaftImGleichenHaushalt());
 		jaxKind.setKinderabzug(persistedKind.getKinderabzug());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
@@ -816,6 +817,7 @@ public class JaxBConverter {
 		Validate.notNull(kindJAXP);
 		Validate.notNull(kind);
 		convertAbstractPersonFieldsToEntity(kindJAXP, kind);
+		kind.setWohnhaftImGleichenHaushalt(kindJAXP.getWohnhaftImGleichenHaushalt());
 		kind.setKinderabzug(kindJAXP.getKinderabzug());
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
@@ -912,10 +914,6 @@ public class JaxBConverter {
 			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationJA()).orElse(new FinanzielleSituation());
 			container.setFinanzielleSituationJA(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationJA(), finSitToMergeWith));
 		}
-		if (containerJAX.getFinanzielleSituationSV() != null) {
-			finSitToMergeWith = Optional.ofNullable(container.getFinanzielleSituationSV()).orElse(new FinanzielleSituation());
-			container.setFinanzielleSituationSV(finanzielleSituationToEntity(containerJAX.getFinanzielleSituationSV(), finSitToMergeWith));
-		}
 		return container;
 	}
 
@@ -925,7 +923,6 @@ public class JaxBConverter {
 		jaxPerson.setJahr(persistedFinanzielleSituation.getJahr());
 		jaxPerson.setFinanzielleSituationGS(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationGS()));
 		jaxPerson.setFinanzielleSituationJA(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationJA()));
-		jaxPerson.setFinanzielleSituationSV(finanzielleSituationToJAX(persistedFinanzielleSituation.getFinanzielleSituationSV()));
 		return jaxPerson;
 	}
 
@@ -980,9 +977,6 @@ public class JaxBConverter {
 		abstractFinanzielleSituation.setErhalteneAlimente(abstractFinanzielleSituationJAXP.getErhalteneAlimente());
 		abstractFinanzielleSituation.setBruttovermoegen(abstractFinanzielleSituationJAXP.getBruttovermoegen());
 		abstractFinanzielleSituation.setSchulden(abstractFinanzielleSituationJAXP.getSchulden());
-		abstractFinanzielleSituation.setSelbstaendig(abstractFinanzielleSituationJAXP.getSelbstaendig());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
-		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		abstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(abstractFinanzielleSituationJAXP.getGeschaeftsgewinnBasisjahr());
 		abstractFinanzielleSituation.setGeleisteteAlimente(abstractFinanzielleSituationJAXP.getGeleisteteAlimente());
 
@@ -991,7 +985,7 @@ public class JaxBConverter {
 
 	private void abstractFinanzielleSituationToJAX(@Nullable final AbstractFinanzielleSituation persistedAbstractFinanzielleSituation, JaxAbstractFinanzielleSituation jaxAbstractFinanzielleSituation) {
 		if (persistedAbstractFinanzielleSituation != null) {
-			convertAbstractFieldsToEntity(jaxAbstractFinanzielleSituation, persistedAbstractFinanzielleSituation);
+			convertAbstractFieldsToJAX(persistedAbstractFinanzielleSituation, jaxAbstractFinanzielleSituation);
 			jaxAbstractFinanzielleSituation.setSteuerveranlagungErhalten(persistedAbstractFinanzielleSituation.getSteuerveranlagungErhalten());
 			jaxAbstractFinanzielleSituation.setSteuererklaerungAusgefuellt(persistedAbstractFinanzielleSituation.getSteuererklaerungAusgefuellt());
 			jaxAbstractFinanzielleSituation.setFamilienzulage(persistedAbstractFinanzielleSituation.getFamilienzulage());
@@ -999,9 +993,6 @@ public class JaxBConverter {
 			jaxAbstractFinanzielleSituation.setErhalteneAlimente(persistedAbstractFinanzielleSituation.getErhalteneAlimente());
 			jaxAbstractFinanzielleSituation.setBruttovermoegen(persistedAbstractFinanzielleSituation.getBruttovermoegen());
 			jaxAbstractFinanzielleSituation.setSchulden(persistedAbstractFinanzielleSituation.getSchulden());
-			jaxAbstractFinanzielleSituation.setSelbstaendig(persistedAbstractFinanzielleSituation.getSelbstaendig());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
-			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxAbstractFinanzielleSituation.setGeschaeftsgewinnBasisjahr(persistedAbstractFinanzielleSituation.getGeschaeftsgewinnBasisjahr());
 			jaxAbstractFinanzielleSituation.setGeleisteteAlimente(persistedAbstractFinanzielleSituation.getGeleisteteAlimente());
 		}
@@ -1013,6 +1004,8 @@ public class JaxBConverter {
 		abstractFinanzielleSituationToEntity(finanzielleSituationJAXP, finanzielleSituation);
 
 		finanzielleSituation.setNettolohn(finanzielleSituationJAXP.getNettolohn());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus2());
+		finanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(finanzielleSituationJAXP.getGeschaeftsgewinnBasisjahrMinus1());
 		return finanzielleSituation;
 	}
 
@@ -1020,10 +1013,11 @@ public class JaxBConverter {
 	private JaxFinanzielleSituation finanzielleSituationToJAX(@Nullable final FinanzielleSituation persistedFinanzielleSituation) {
 
 		if (persistedFinanzielleSituation != null) {
-
 			JaxFinanzielleSituation jaxFinanzielleSituation = new JaxFinanzielleSituation();
 
 			abstractFinanzielleSituationToJAX(persistedFinanzielleSituation, jaxFinanzielleSituation);
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus2(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus2());
+			jaxFinanzielleSituation.setGeschaeftsgewinnBasisjahrMinus1(persistedFinanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			jaxFinanzielleSituation.setNettolohn(persistedFinanzielleSituation.getNettolohn());
 
 			return jaxFinanzielleSituation;
@@ -1035,7 +1029,6 @@ public class JaxBConverter {
 	private Einkommensverschlechterung einkommensverschlechterungToEntity(@Nonnull final JaxEinkommensverschlechterung einkommensverschlechterungJAXP, @Nonnull final Einkommensverschlechterung einkommensverschlechterung) {
 		Validate.notNull(einkommensverschlechterung);
 		Validate.notNull(einkommensverschlechterungJAXP);
-		convertAbstractFieldsToEntity(einkommensverschlechterungJAXP, einkommensverschlechterung);
 		abstractFinanzielleSituationToEntity(einkommensverschlechterungJAXP, einkommensverschlechterung);
 
 		einkommensverschlechterung.setNettolohnJan(einkommensverschlechterungJAXP.getNettolohnJan());
@@ -1059,8 +1052,6 @@ public class JaxBConverter {
 
 		if (persistedEinkommensverschlechterung != null) {
 			JaxEinkommensverschlechterung jaxEinkommensverschlechterung = new JaxEinkommensverschlechterung();
-
-			convertAbstractFieldsToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
 
 			abstractFinanzielleSituationToJAX(persistedEinkommensverschlechterung, jaxEinkommensverschlechterung);
 
@@ -1161,11 +1152,16 @@ public class JaxBConverter {
 		Validate.notNull(betreuungJAXP);
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
 		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
+		betreuung.setGrundAblehnung(betreuungJAXP.getGrundAblehnung());
+		betreuung.setDatumAblehnung(betreuungJAXP.getDatumAblehnung());
+		betreuung.setDatumBestaetigung(betreuungJAXP.getDatumBestaetigung());
 
 		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
-		betreuung.setSchulpflichtig(betreuungJAXP.getSchulpflichtig());
+		betreuung.setVertrag(betreuungJAXP.getVertrag());
+		betreuung.setErweiterteBeduerfnisse(betreuungJAXP.getErweiterteBeduerfnisse());
+
 		// InstitutionStammdaten muessen bereits existieren
 		if (betreuungJAXP.getInstitutionStammdaten() != null) {
 			final String instStammdatenID = betreuungJAXP.getInstitutionStammdaten().getId();
@@ -1178,7 +1174,7 @@ public class JaxBConverter {
 
 		if (betreuungJAXP.getVerfuegung() != null) {
 			betreuung.setVerfuegung(this.verfuegungtoStoreableEntity(betreuungJAXP.getVerfuegung()));
-		} else{
+		} else {
 			betreuung.setVerfuegung(null);
 		}
 
@@ -1285,9 +1281,13 @@ public class JaxBConverter {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
 		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
 		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
+		jaxBetreuung.setGrundAblehnung(betreuungFromServer.getGrundAblehnung());
+		jaxBetreuung.setDatumAblehnung(betreuungFromServer.getDatumAblehnung());
+		jaxBetreuung.setDatumBestaetigung(betreuungFromServer.getDatumBestaetigung());
 		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
 		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
-		jaxBetreuung.setSchulpflichtig(betreuungFromServer.getSchulpflichtig());
+		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());
+		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
 		jaxBetreuung.setInstitutionStammdaten(institutionStammdatenToJAX(betreuungFromServer.getInstitutionStammdaten()));
 		jaxBetreuung.setBetreuungNummer(betreuungFromServer.getBetreuungNummer());
 
@@ -1476,20 +1476,29 @@ public class JaxBConverter {
 		benutzer.setNachname(loginElement.getNachname());
 		benutzer.setVorname(loginElement.getVorname());
 		benutzer.setRole(loginElement.getRole());
-		benutzer.setMandant(this.mandantToEntity(loginElement.getMandant(), new Mandant()));
+		benutzer.setMandant(mandantToEntity(loginElement.getMandant(), new Mandant()));
+		// wir muessen Traegerschaft und Institution auch updaten wenn sie null sind. Es koennte auch so aus dem IAM kommen
+		benutzer.setInstitution(loginElement.getInstitution() != null ? institutionToEntity(loginElement.getInstitution(), new Institution()) : null);
+		benutzer.setTraegerschaft(loginElement.getTraegerschaft() != null ? traegerschaftToEntity(loginElement.getTraegerschaft(), new Traegerschaft()) : null);
 		return benutzer;
 	}
 
-	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer verantwortlicher) {
+	public JaxAuthLoginElement benutzerToAuthLoginElement(Benutzer benutzer) {
 		JaxAuthLoginElement loginElement = new JaxAuthLoginElement();
-		loginElement.setVorname(verantwortlicher.getVorname());
-		loginElement.setNachname(verantwortlicher.getNachname());
-		loginElement.setEmail(verantwortlicher.getEmail());
-		if (verantwortlicher.getMandant() != null) {
-			loginElement.setMandant(mandantToJAX(verantwortlicher.getMandant()));
+		loginElement.setVorname(benutzer.getVorname());
+		loginElement.setNachname(benutzer.getNachname());
+		loginElement.setEmail(benutzer.getEmail());
+		if (benutzer.getMandant() != null) {
+			loginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
-		loginElement.setUsername(verantwortlicher.getUsername());
-		loginElement.setRole(verantwortlicher.getRole());
+		if (benutzer.getInstitution() != null) {
+			loginElement.setInstitution(institutionToJAX(benutzer.getInstitution()));
+		}
+		if (benutzer.getTraegerschaft() != null) {
+			loginElement.setTraegerschaft(traegerschaftToJAX(benutzer.getTraegerschaft()));
+		}
+		loginElement.setUsername(benutzer.getUsername());
+		loginElement.setRole(benutzer.getRole());
 		return loginElement;
 	}
 
@@ -1504,21 +1513,96 @@ public class JaxBConverter {
 
 	}
 
-	private JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
-		JaxDokumentGrund jaxDokumentGrund = new JaxDokumentGrund();
+	public JaxDokumentGrund dokumentGrundToJax(DokumentGrund dokumentGrund) {
+		JaxDokumentGrund jaxDokumentGrund = convertAbstractFieldsToJAX(dokumentGrund, new JaxDokumentGrund());
 		jaxDokumentGrund.setDokumentGrundTyp(dokumentGrund.getDokumentGrundTyp());
-		jaxDokumentGrund.setFullname(dokumentGrund.getFullName());
+		jaxDokumentGrund.setFullName(dokumentGrund.getFullName());
 		jaxDokumentGrund.setTag(dokumentGrund.getTag());
-		for (Dokument dokument : dokumentGrund.getDokumente()) {
-			jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+		jaxDokumentGrund.setDokumentTyp(dokumentGrund.getDokumentTyp());
+		jaxDokumentGrund.setNeeded(dokumentGrund.isNeeded());
+		if (dokumentGrund.getDokumente() != null) {
+			if (jaxDokumentGrund.getDokumente() == null) {
+				jaxDokumentGrund.setDokumente(new HashSet<JaxDokument>());
+			}
+			for (Dokument dokument : dokumentGrund.getDokumente()) {
+
+				jaxDokumentGrund.getDokumente().add(dokumentToJax(dokument));
+			}
 		}
 		return jaxDokumentGrund;
 	}
 
 	private JaxDokument dokumentToJax(Dokument dokument) {
-		JaxDokument jaxDokument = new JaxDokument();
+		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
 		jaxDokument.setDokumentName(dokument.getDokumentName());
-		jaxDokument.setDokumentTyp(dokument.getDokumentTyp());
+		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
+		jaxDokument.setDokumentSize(dokument.getDokumentSize());
 		return jaxDokument;
+	}
+
+	public DokumentGrund dokumentGrundToEntity(@Nonnull final JaxDokumentGrund dokumentGrundJAXP, @Nonnull final DokumentGrund dokumentGrund) {
+		Validate.notNull(dokumentGrund);
+		Validate.notNull(dokumentGrundJAXP);
+		convertAbstractFieldsToEntity(dokumentGrundJAXP, dokumentGrund);
+
+		dokumentGrund.setDokumentGrundTyp(dokumentGrundJAXP.getDokumentGrundTyp());
+		dokumentGrund.setFullName(dokumentGrundJAXP.getFullName());
+		dokumentGrund.setTag(dokumentGrundJAXP.getTag());
+		dokumentGrund.setDokumentTyp(dokumentGrundJAXP.getDokumentTyp());
+		dokumentGrund.setNeeded(dokumentGrundJAXP.isNeeded());
+
+		dokumenteToEntity(dokumentGrundJAXP.getDokumente(), dokumentGrund.getDokumente(), dokumentGrund);
+		return dokumentGrund;
+	}
+
+	/**
+	 * Goes through the whole list of jaxDokuments. For each (jax)dokument that already exists as Entity it merges both and adds the resulting
+	 * (jax) dokument to the list. If the dokument doesn't exist it creates a new one and adds it to the list. Thus all dokumente that existed as entity
+	 * but not in the list of jax, won't be added to the list and then removed (cascade and orphanremoval)
+	 *
+	 * @param jaxDokuments      Dokumente DTOs from Client
+	 * @param existingDokumente List of currently stored Dokumente
+	 */
+	private void dokumenteToEntity(final Set<JaxDokument> jaxDokuments,
+								   final Collection<Dokument> existingDokumente, final DokumentGrund dokumentGrund) {
+		final Set<Dokument> transformedDokumente = new HashSet<>();
+		for (final JaxDokument jaxDokument : jaxDokuments) {
+			final Dokument dokumenteToMergeWith = existingDokumente
+				.stream()
+				.filter(existingDokumentEntity -> existingDokumentEntity.getId().equals(jaxDokument.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new Dokument());
+			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
+			final boolean added = transformedDokumente.add(dokToAdd);
+			if (!added) {
+				LOG.warn("dropped duplicate container " + dokToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Dokumente of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		existingDokumente.clear();
+		existingDokumente.addAll(transformedDokumente);
+	}
+
+	private Dokument dokumentToEntity(JaxDokument jaxDokument, Dokument dokument, DokumentGrund dokumentGrund) {
+		Validate.notNull(dokument);
+		Validate.notNull(jaxDokument);
+		Validate.notNull(dokumentGrund);
+		convertAbstractFieldsToEntity(jaxDokument, dokument);
+
+		dokument.setDokumentGrund(dokumentGrund);
+		dokument.setDokumentName(jaxDokument.getDokumentName());
+		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
+		dokument.setDokumentSize(jaxDokument.getDokumentSize());
+		return dokument;
+	}
+
+
+	public JaxTempDokument tempDokumentToJAX(TempDokument tempDokument) {
+		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(tempDokument, new JaxTempDokument());
+		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
+		return jaxTempDokument;
 	}
 }

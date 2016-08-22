@@ -35,13 +35,19 @@ export class KindViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.removeKindFromList();
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den User fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
+                this.reset();
+            }
         });
+
     }
 
     private initViewModel(): void {
+        this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.kinderabzugValues = getTSKinderabzugValues();
         this.showFachstelle = (this.gesuchModelManager.getKindToWorkWith().kindJA.pensumFachstelle) ? true : false;
@@ -53,7 +59,7 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    submit(form: IFormController) {
+    save(form: IFormController) {
         if (form.$valid) {
             this.errorService.clearAll();
             this.gesuchModelManager.updateKind().then((kindResponse: any) => {
@@ -62,9 +68,15 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    cancel() {
-        this.removeKindFromList();
+    cancel(form: IFormController) {
+        this.reset();
+        form.$setPristine();
         this.state.go('gesuch.kinder');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
+        this.removeKindFromList();
     }
 
     private removeKindFromList() {
@@ -94,6 +106,7 @@ export class KindViewController extends AbstractGesuchViewController {
     public familienErgaenzendeBetreuungClicked() {
         if (!this.getModel().familienErgaenzendeBetreuung) {
             this.showFachstelle = false;
+            this.getModel().wohnhaftImGleichenHaushalt = undefined;
             this.resetFachstelleFields();
         }
     }

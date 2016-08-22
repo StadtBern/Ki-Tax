@@ -9,10 +9,12 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Benutzer.class)
 public abstract class Benutzer_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
+	public static volatile SingularAttribute<Benutzer, Institution> institution;
 	public static volatile SingularAttribute<Benutzer, UserRole> role;
 	public static volatile SingularAttribute<Benutzer, String> vorname;
 	public static volatile SingularAttribute<Benutzer, Mandant> mandant;
 	public static volatile SingularAttribute<Benutzer, String> nachname;
+	public static volatile SingularAttribute<Benutzer, Traegerschaft> traegerschaft;
 	public static volatile SingularAttribute<Benutzer, String> email;
 	public static volatile SingularAttribute<Benutzer, String> username;
 

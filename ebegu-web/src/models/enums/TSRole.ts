@@ -2,10 +2,12 @@ export enum TSRole {
     ADMIN = <any> 'ADMIN',
     SACHBEARBEITER_JA= <any> 'SACHBEARBEITER_JA',
     SACHBEARBEITER_INSTITUTION= <any> 'SACHBEARBEITER_INSTITUTION',
+    SACHBEARBEITER_TRAEGERSCHAFT= <any> 'SACHBEARBEITER_TRAEGERSCHAFT',
     GESUCHSTELLER= <any> 'GESUCHSTELLER',
     JURIST= <any> 'JURIST',
     REVISOR= <any> 'REVISOR',
-    STEUERAMT= <any> 'STEUERAMT'
+    STEUERAMT= <any> 'STEUERAMT',
+    SCHULAMT= <any> 'SCHULAMT'
 }
 
 export function getTSRoleValues(): Array<TSRole> {
@@ -13,10 +15,12 @@ export function getTSRoleValues(): Array<TSRole> {
         TSRole.ADMIN,
         TSRole.SACHBEARBEITER_JA,
         TSRole.SACHBEARBEITER_INSTITUTION,
+        TSRole.SACHBEARBEITER_TRAEGERSCHAFT,
         TSRole.GESUCHSTELLER,
         TSRole.JURIST,
         TSRole.REVISOR,
         TSRole.STEUERAMT,
+        TSRole.SCHULAMT,
     ];
 }
 

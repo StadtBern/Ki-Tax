@@ -110,8 +110,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     previousStep() {
-        //todo team navigation hier auf betreuung
-        this.state.go('gesuch.kinder');
+        this.state.go('gesuch.betreuungen');
     }
 
     nextStep() {

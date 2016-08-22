@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -152,6 +152,16 @@
                 <version>0.6</version>
             </dependency>
 
+            <dependency>
+                <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
+                <artifactId>docx-engine</artifactId>
+                <version>1.8.11</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.opensagres.xdocreport</groupId>
+                <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+                <version>1.0.6</version>
+            </dependency>
             <!--<dependency>-->
             <!--<groupId>commons-codec</groupId>-->
             <!--<artifactId>commons-codec</artifactId>-->
@@ -281,6 +291,11 @@
                 <artifactId>easymock</artifactId>
                 <version>3.4</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.dvbern.lib</groupId>
+                <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
+                <version>1.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

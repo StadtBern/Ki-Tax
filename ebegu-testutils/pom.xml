@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +13,10 @@
         <dependency>
             <groupId>ch.dvbern.ebegu</groupId>
             <artifactId>ebegu-shared</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.dvbern.lib</groupId>
+            <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
         </dependency>
     </dependencies>
 

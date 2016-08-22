@@ -10,6 +10,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -29,6 +30,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     ebeguRestUtil: EbeguRestUtil;
     phonePattern: string;
     mobilePattern: string;
+    allowedRoles: Array<TSRole>;
 
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
@@ -52,22 +54,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
         this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
-    }
-
-    submit(form: IFormController) {
-        if (form.$valid) {
-            //this.state.go("next.step"); //go to the next step
-            if (!this.showUmzug) {
-                this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
-            }
-            if (!this.showKorrespondadr) {
-                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
-            }
-            this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then((gesuchstellerResponse: any) => {
-                this.nextStep();
-            });
-        }
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     umzugadreseClicked() {
@@ -78,24 +65,40 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    resetForm() {
-        this.gesuchModelManager.initStammdaten();
-        this.initViewmodel();
+    previousStep(form: IFormController): void {
+        this.save(form, (gesuchstellerResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
+                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
+            } else {
+                this.state.go('gesuch.familiensituation');
+            }
+        });
     }
 
-    previousStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
-        } else {
-            this.state.go('gesuch.familiensituation');
-        }
+    nextStep(form: IFormController, isJugendamt: boolean): void {
+        this.save(form, (gesuchstellerResponse: any) => {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
+            } else {
+                if (isJugendamt) {
+                    this.state.go('gesuch.kinder');
+                } else {
+                    this.state.go('gesuch.betreuungen');
+                }
+            }
+        });
     }
 
-    nextStep() {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
-        } else {
-            this.state.go('gesuch.kinder');
+    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+        if (form.$valid) {
+            if (!this.showUmzug) {
+                this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
+            }
+            if (!this.showKorrespondadr) {
+                this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+            }
+            this.errorService.clearAll();
+            this.gesuchModelManager.updateGesuchsteller().then(navigationFunction);
         }
     }
 

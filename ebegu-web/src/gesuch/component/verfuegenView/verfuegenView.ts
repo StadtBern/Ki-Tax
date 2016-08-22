@@ -8,6 +8,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import DateUtil from '../../../utils/DateUtil';
 import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
+import IFormController = angular.IFormController;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -21,18 +22,43 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil) {
+                private ebeguUtil: EbeguUtil, private $scope: any) {
         super(state, gesuchModelManager, berechnungsManager);
+
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            console.log('resetting state due to navigation change, ');
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+                this.reset();
+            }
+        });
     }
 
-    public cancel(): void {
+    cancel(form: IFormController): void {
+        this.reset();
+        form.$setPristine();
         this.state.go('gesuch.verfuegen');
+    }
+
+    reset() {
+        this.gesuchModelManager.restoreBackupOfPreviousGesuch();
+    }
+
+    save(form: IFormController) {
+        if (form.$valid) {
+            //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
+            //this.errorService.clearAll();
+            //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
+            // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
+                this.state.go('gesuch.verfuegen');
+            // });
+        }
     }
 
     public getVerfuegenToWorkWith(): TSVerfuegung {

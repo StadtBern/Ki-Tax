@@ -28,11 +28,11 @@ describe('fallCreationView', function () {
             $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('$stateParams'));
     }));
 
-    describe('Submit', () => {
+    describe('nextStep', () => {
         it('submitted but rejected -> it does not go to the next step', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.reject({}));
-            fallCreationview.submit(form);
+            fallCreationview.nextStep(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
             expect($state.go).not.toHaveBeenCalled();
@@ -40,7 +40,7 @@ describe('fallCreationView', function () {
         it('should submit the form and go to the next page', () => {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall').and.returnValue($q.when({}));
-            fallCreationview.submit(form);
+            fallCreationview.nextStep(form);
             $rootScope.$apply();
             expect(gesuchModelManager.saveGesuchAndFall).toHaveBeenCalled();
             expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation');
@@ -49,7 +49,7 @@ describe('fallCreationView', function () {
             spyOn($state, 'go');
             spyOn(gesuchModelManager, 'saveGesuchAndFall');
             form.$valid = false;
-            fallCreationview.submit(form);
+            fallCreationview.nextStep(form);
             expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
             expect($state.go).not.toHaveBeenCalled();
         });

@@ -1,10 +1,12 @@
 package ch.dvbern.ebegu.tests.util;
 
+import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tests.AbstractEbeguTest;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -19,6 +21,7 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -31,6 +34,11 @@ import java.util.Set;
 @Transactional(TransactionMode.DISABLED)
 public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 
+	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
+	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
+	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
+	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("50000");
+	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("64001");
 	private static final double DELTA = 1e-15;
 	public static final LocalDate DATE_2005 = LocalDate.of(2005, 12, 31);
 
@@ -45,6 +53,149 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 	public static Archive<?> createDeploymentEnvironment() {
 		return AbstractEbeguTest.createTestArchive();
 	}
+
+
+
+	@Test
+	public void testPositiverDurschnittlicherGewinn() throws Exception {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		//positiv value
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(100));
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(300));
+		FinanzielleSituationResultateDTO finSitResultateDTO1 = finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+
+		Assert.assertEquals(BigDecimal.valueOf(100), finSitResultateDTO1.getGeschaeftsgewinnDurchschnittGesuchsteller1());
+	}
+
+	@Test
+	public void testNegativerDurschnittlicherGewinn() throws Exception {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		//negativ value
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahr(BigDecimal.valueOf(-100));
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus1(BigDecimal.valueOf(-100));
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setGeschaeftsgewinnBasisjahrMinus2(BigDecimal.valueOf(-300));
+		FinanzielleSituationResultateDTO finSitResultateDTO2 = finSitRechner.calculateResultateFinanzielleSituation(gesuch);
+
+		Assert.assertEquals(BigDecimal.ZERO, finSitResultateDTO2.getGeschaeftsgewinnDurchschnittGesuchsteller1());
+	}
+
+
+	@Test
+	public void testKeineEinkommensverschlechterung() throws Exception {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
+	@Test
+	public void testEinkommensverschlechterung2016Abgelehnt() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
+	@Test
+	public void testEinkommensverschlechterung2016Angenommen() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ANGENOMMEN, true);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_1, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
+	@Test
+	public void testEinkommensverschlechterung2016Abgelehnt2017Angenommen() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ANGENOMMEN, false);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(EINKOMMEN_EKV2_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_2, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
+	@Test
+	public void testEinkommensverschlechterung2016Angenommen2017Angenommen() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ANGENOMMEN, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ANGENOMMEN, false);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(EINKOMMEN_EKV_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_1, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(EINKOMMEN_EKV2_ANGENOMMEN, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertEquals(TestDataUtil.STICHTAG_EKV_2, gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
+	@Test
+	public void testEinkommensverschlechterung2016Abgelehnt2017Abgelehnt() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ABGELEHNT, false);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
+		Assert.assertEquals(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), gesuch.getFinanzDatenDTO().getDatumVonBasisjahr());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus1());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus1());
+
+		Assert.assertEquals(BigDecimal.ZERO, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahrPlus2());
+		Assert.assertNull(gesuch.getFinanzDatenDTO().getDatumVonBasisjahrPlus2());
+	}
+
 
 	@Test
 	public void testCalculateFamiliengroesseNullGesuch() {

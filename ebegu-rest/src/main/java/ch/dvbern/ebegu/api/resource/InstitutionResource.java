@@ -168,4 +168,16 @@ public class InstitutionResource {
 			.map(inst -> converter.institutionToJAX(inst))
 			.collect(Collectors.toList());
 	}
+
+	@ApiOperation(value = "Find and return a list of all Institutionen of the currently logged in Benutzer.")
+	@Nonnull
+	@GET
+	@Path("/currentuser")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxInstitution> getInstitutionenForCurrentBenutzer() {
+		return institutionService.getInstitutionenForCurrentBenutzer().stream()
+			.map(inst -> converter.institutionToJAX(inst))
+			.collect(Collectors.toList());
+	}
 }

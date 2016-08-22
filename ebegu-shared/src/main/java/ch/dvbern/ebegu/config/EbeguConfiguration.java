@@ -21,5 +21,7 @@ public interface EbeguConfiguration {
 	 */
 	boolean getIsDevmode();
 
+	String getDocumentFilePath();
+
 
 }

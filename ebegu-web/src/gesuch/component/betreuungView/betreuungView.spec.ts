@@ -3,13 +3,15 @@ import {IStateService} from 'angular-ui-router';
 import {BetreuungViewController} from './betreuungView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSBetreuung from '../../../models/TSBetreuung';
-import DateUtil from '../../../utils/DateUtil';
 import TSInstitutionStammdaten from '../../../models/TSInstitutionStammdaten';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
-import {IHttpBackendService, IQService, IScope} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import DateUtil from '../../../utils/DateUtil';
+import IFormController = angular.IFormController;
 
 describe('betreuungView', function () {
 
@@ -19,8 +21,9 @@ describe('betreuungView', function () {
     let ebeguUtil: EbeguUtil;
     let $q: IQService;
     let betreuung: TSBetreuung;
-    let $rootScope: IScope;
+    let $rootScope:  any;
     let $httpBackend: IHttpBackendService;
+    let authServiceRS: AuthServiceRS;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -35,8 +38,10 @@ describe('betreuungView', function () {
         betreuung.timestampErstellt = DateUtil.today();
         spyOn(gesuchModelManager, 'getBetreuungToWorkWith').and.returnValue(betreuung);
         $rootScope = $injector.get('$rootScope');
+        authServiceRS = $injector.get('AuthServiceRS');
+        spyOn(authServiceRS, 'isRole').and.returnValue(true);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope.$new(), $injector.get('BerechnungsManager'), $injector.get('ErrorService'));
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS);
     }));
 
     describe('Public API', function () {
@@ -46,12 +51,20 @@ describe('betreuungView', function () {
     });
 
     describe('API Usage', function () {
+        describe('Object creation', () => {
+            it('create an empty list of Betreuungspensen for a role different than Institution', () => {
+                let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
+                    $rootScope, null, null, authServiceRS);
+                expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
+                expect(myBetreuungView.getBetreuungspensen().length).toEqual(1);
+            });
+        });
         describe('cancel existing object', () => {
             it('should not remove the kind and then go to betreuungen', () => {
                 spyOn($state, 'go');
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
-
-                betreuungView.cancel();
+                let form : any = createDummyForm();
+                betreuungView.cancel(form);
                 expect(gesuchModelManager.removeBetreuungFromKind).not.toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
             });
@@ -61,8 +74,8 @@ describe('betreuungView', function () {
                 spyOn($state, 'go');
                 betreuung.timestampErstellt = undefined;
                 spyOn(gesuchModelManager, 'removeBetreuungFromKind');
-
-                betreuungView.cancel();
+                let form : any = createDummyForm();
+                betreuungView.cancel(form);
                 expect(gesuchModelManager.removeBetreuungFromKind).toHaveBeenCalled();
                 expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen');
             });
@@ -71,7 +84,7 @@ describe('betreuungView', function () {
             beforeEach(function () {
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('1', TSBetreuungsangebotTyp.KITA));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('2', TSBetreuungsangebotTyp.KITA));
-                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN));
+                gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('3', TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
                 gesuchModelManager.getInstitutionenList().push(createInstitutionStammdaten('4', TSBetreuungsangebotTyp.TAGESSCHULE));
             });
             it('should return an empty list if betreuungsangebot is not yet defined', () => {
@@ -89,7 +102,7 @@ describe('betreuungView', function () {
             });
         });
         describe('createBetreuungspensum', () => {
-            it('creates the first betreuungspensum in empty list and then a second one', () => {
+            it('creates the first betreuungspensum in empty list and then a second one (for role=Institution)', () => {
                 // Just creating an object must add a new BetreuungspensumContainer
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toBeDefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers.length).toBe(1);
@@ -104,13 +117,6 @@ describe('betreuungView', function () {
             });
         });
         describe('submit', () => {
-            it('Does not submit because form is invalid', () => {
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
-                let form: any = {};
-                form.$valid = false;
-                betreuungView.submit(form);
-                expect(gesuchModelManager.updateBetreuung).not.toHaveBeenCalled();
-            });
             it('submits all data of current Betreuung', () => {
                 testSubmit($q.when({}), true);
             });
@@ -118,11 +124,30 @@ describe('betreuungView', function () {
                 testSubmit($q.reject(), false);
             });
         });
+        describe('platzAbweisen()', () => {
+            it('must change the status of the Betreuung to ABGEWIESEN and restore initial values of Betreuung', () => {
+                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
+                spyOn(gesuchModelManager, 'setBetreuungToWorkWith').and.stub();
+                let form = createDummyForm();
+                betreuung.erweiterteBeduerfnisse = true;
+                betreuung.grundAblehnung = 'mein Grund';
+                let oldBetreuung = angular.copy(betreuung);
+                oldBetreuung.betreuungspensumContainers = [];
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
+                betreuungView.platzAbweisen(form);
+                expect(gesuchModelManager.setBetreuungToWorkWith).toHaveBeenCalledWith(oldBetreuung);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.ABGEWIESEN);
+                expect(gesuchModelManager.getBetreuungToWorkWith().datumAblehnung).toEqual(DateUtil.today());
+                expect(gesuchModelManager.getBetreuungToWorkWith().grundAblehnung).toEqual('mein Grund');
+                expect(gesuchModelManager.getBetreuungToWorkWith().erweiterteBeduerfnisse).toBe(true);
+                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
+            });
+        });
         describe('platzAnfordern()', () => {
             it('must change the status of the Betreuung to WARTEN', () => {
                 spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when({}));
-                let form: any = {};
-                form.$valid = true;
+                let form = createDummyForm();
+                betreuung.vertrag = true;
                 // betreuung.timestampErstellt = undefined;
                 betreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
@@ -160,12 +185,13 @@ describe('betreuungView', function () {
      * @param promiseResponse
      */
     function testSubmit(promiseResponse: any, moveToNextStep: boolean) {
+        betreuung.vertrag = true;
         spyOn($state, 'go');
         spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue(promiseResponse);
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-        let form: any = {};
-        form.$valid = true;
-        betreuungView.submit(form);
+        let form = createDummyForm();
+        betreuungView.platzAnfordern(form);
+        $rootScope.form = form;
         $rootScope.$apply();
         expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
         if (moveToNextStep) {
@@ -173,6 +199,14 @@ describe('betreuungView', function () {
         } else {
             expect($state.go).not.toHaveBeenCalled();
         }
+    }
+
+    function createDummyForm(): any {
+        let form: any = {};
+        form.$valid = true;
+        form.$setPristine = () => {};
+        form.$setUntouched = () => {};
+        return form;
     }
 
 });

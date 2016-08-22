@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
@@ -10,6 +11,8 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,18 +34,33 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	@NotNull
 	private List<JaxBetreuungspensumContainer> betreuungspensumContainers = new ArrayList<>();
 
-	@Nullable
-	private Boolean schulpflichtig;
-
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	private String bemerkungen;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	private String grundAblehnung;
 
 	@Min(1)
 	private Integer betreuungNummer = 1;
 
 	@Nullable
 	private JaxVerfuegung verfuegung;
+
+	@NotNull
+	private Boolean vertrag;
+
+	@NotNull
+	private Boolean erweiterteBeduerfnisse;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumAblehnung = null;
+
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate datumBestaetigung = null;
 
 
 
@@ -71,21 +89,21 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	}
 
 	@Nullable
-	public Boolean getSchulpflichtig() {
-		return schulpflichtig;
-	}
-
-	public void setSchulpflichtig(@Nullable Boolean schulpflichtig) {
-		this.schulpflichtig = schulpflichtig;
-	}
-
-	@Nullable
 	public String getBemerkungen() {
 		return bemerkungen;
 	}
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public String getGrundAblehnung() {
+		return grundAblehnung;
+	}
+
+	public void setGrundAblehnung(@Nullable String grundAblehnung) {
+		this.grundAblehnung = grundAblehnung;
 	}
 
 	public Integer getBetreuungNummer() {
@@ -103,5 +121,39 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setVerfuegung(@Nullable JaxVerfuegung verfuegung) {
 		this.verfuegung = verfuegung;
+	}
+
+	public Boolean getVertrag() {
+		return vertrag;
+	}
+
+	public void setVertrag(Boolean vertrag) {
+		this.vertrag = vertrag;
+	}
+
+	public Boolean getErweiterteBeduerfnisse() {
+		return erweiterteBeduerfnisse;
+	}
+
+	public void setErweiterteBeduerfnisse(Boolean erweiterteBeduerfnisse) {
+		this.erweiterteBeduerfnisse = erweiterteBeduerfnisse;
+	}
+
+	@Nullable
+	public LocalDate getDatumAblehnung() {
+		return datumAblehnung;
+	}
+
+	public void setDatumAblehnung(@Nullable LocalDate datumAblehnung) {
+		this.datumAblehnung = datumAblehnung;
+	}
+
+	@Nullable
+	public LocalDate getDatumBestaetigung() {
+		return datumBestaetigung;
+	}
+
+	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
+		this.datumBestaetigung = datumBestaetigung;
 	}
 }

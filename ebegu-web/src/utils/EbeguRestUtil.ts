@@ -43,6 +43,8 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
+import TSTempDokument from '../models/TSTempDokument';
+import TSPendenzInstitution from '../models/TSPendenzInstitution';
 
 
 export default class EbeguRestUtil {
@@ -618,9 +620,6 @@ export default class EbeguRestUtil {
         if (finanzielleSituationContainer.finanzielleSituationJA) {
             restFinanzielleSituationContainer.finanzielleSituationJA = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationJA);
         }
-        if (finanzielleSituationContainer.finanzielleSituationSV) {
-            restFinanzielleSituationContainer.finanzielleSituationSV = this.finanzielleSituationToRestObject({}, finanzielleSituationContainer.finanzielleSituationSV);
-        }
         return restFinanzielleSituationContainer;
     }
 
@@ -631,7 +630,6 @@ export default class EbeguRestUtil {
             //todo hefr nur initialisieren wenn noetig?
             containerTS.finanzielleSituationGS = this.parseFinanzielleSituation(containerTS.finanzielleSituationGS || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationGS);
             containerTS.finanzielleSituationJA = this.parseFinanzielleSituation(containerTS.finanzielleSituationJA || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationJA);
-            containerTS.finanzielleSituationSV = this.parseFinanzielleSituation(containerTS.finanzielleSituationSV || new TSFinanzielleSituation(), containerFromServer.finanzielleSituationSV);
             return containerTS;
         }
         return undefined;
@@ -640,6 +638,8 @@ export default class EbeguRestUtil {
     public finanzielleSituationToRestObject(restFinanzielleSituation: any, finanzielleSituation: TSFinanzielleSituation): TSFinanzielleSituation {
         this.abstractfinanzielleSituationToRestObject(restFinanzielleSituation, finanzielleSituation);
         restFinanzielleSituation.nettolohn = finanzielleSituation.nettolohn;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
+        restFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         return restFinanzielleSituation;
     }
 
@@ -652,9 +652,6 @@ export default class EbeguRestUtil {
         restAbstractFinanzielleSituation.erhalteneAlimente = abstractFinanzielleSituation.erhalteneAlimente;
         restAbstractFinanzielleSituation.bruttovermoegen = abstractFinanzielleSituation.bruttovermoegen;
         restAbstractFinanzielleSituation.schulden = abstractFinanzielleSituation.schulden;
-        restAbstractFinanzielleSituation.selbstaendig = abstractFinanzielleSituation.selbstaendig;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus2;
-        restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituation.geschaeftsgewinnBasisjahrMinus1;
         restAbstractFinanzielleSituation.geschaeftsgewinnBasisjahr = abstractFinanzielleSituation.geschaeftsgewinnBasisjahr;
         restAbstractFinanzielleSituation.geleisteteAlimente = abstractFinanzielleSituation.geleisteteAlimente;
         return restAbstractFinanzielleSituation;
@@ -670,9 +667,6 @@ export default class EbeguRestUtil {
             abstractFinanzielleSituationTS.erhalteneAlimente = abstractFinanzielleSituationFromServer.erhalteneAlimente;
             abstractFinanzielleSituationTS.bruttovermoegen = abstractFinanzielleSituationFromServer.bruttovermoegen;
             abstractFinanzielleSituationTS.schulden = abstractFinanzielleSituationFromServer.schulden;
-            abstractFinanzielleSituationTS.selbstaendig = abstractFinanzielleSituationFromServer.selbstaendig;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
-            abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             abstractFinanzielleSituationTS.geschaeftsgewinnBasisjahr = abstractFinanzielleSituationFromServer.geschaeftsgewinnBasisjahr;
             abstractFinanzielleSituationTS.geleisteteAlimente = abstractFinanzielleSituationFromServer.geleisteteAlimente;
             return abstractFinanzielleSituationTS;
@@ -684,6 +678,8 @@ export default class EbeguRestUtil {
         if (finanzielleSituationFromServer) {
             this.parseAbstractFinanzielleSituation(finanzielleSituationTS, finanzielleSituationFromServer);
             finanzielleSituationTS.nettolohn = finanzielleSituationFromServer.nettolohn;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus2 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus2;
+            finanzielleSituationTS.geschaeftsgewinnBasisjahrMinus1 = finanzielleSituationFromServer.geschaeftsgewinnBasisjahrMinus1;
             return finanzielleSituationTS;
         }
         return undefined;
@@ -815,6 +811,7 @@ export default class EbeguRestUtil {
 
     private kindToRestObject(restKind: any, kind: TSKind): any {
         this.abstractPersonEntitytoRestObject(restKind, kind);
+        restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
         restKind.kinderabzug = kind.kinderabzug;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
@@ -853,6 +850,7 @@ export default class EbeguRestUtil {
     private parseKind(kindTS: TSKind, kindFromServer: any): TSKind {
         if (kindFromServer) {
             this.parseAbstractPersonEntity(kindTS, kindFromServer);
+            kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
             kindTS.kinderabzug = kindFromServer.kinderabzug;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
@@ -900,7 +898,11 @@ export default class EbeguRestUtil {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
         restBetreuung.bemerkungen = betreuung.bemerkungen;
-        restBetreuung.schulpflichtig = betreuung.schulpflichtig;
+        restBetreuung.grundAblehnung = betreuung.grundAblehnung;
+        restBetreuung.datumAblehnung = DateUtil.momentToLocalDate(betreuung.datumAblehnung);
+        restBetreuung.datumBestaetigung = DateUtil.momentToLocalDate(betreuung.datumBestaetigung);
+        restBetreuung.vertrag = betreuung.vertrag;
+        restBetreuung.erweiterteBeduerfnisse = betreuung.erweiterteBeduerfnisse;
         if (betreuung.institutionStammdaten) {
             restBetreuung.institutionStammdaten = this.institutionStammdatenToRestObject({}, betreuung.institutionStammdaten);
         }
@@ -946,7 +948,11 @@ export default class EbeguRestUtil {
         if (betreuungFromServer) {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
             betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
-            betreuungTS.schulpflichtig = betreuungFromServer.schulpflichtig;
+            betreuungTS.grundAblehnung = betreuungFromServer.grundAblehnung;
+            betreuungTS.datumAblehnung = DateUtil.localDateToMoment(betreuungFromServer.datumAblehnung);
+            betreuungTS.datumBestaetigung = DateUtil.localDateToMoment(betreuungFromServer.datumBestaetigung);
+            betreuungTS.vertrag = betreuungFromServer.vertrag;
+            betreuungTS.erweiterteBeduerfnisse = betreuungFromServer.erweiterteBeduerfnisse;
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
@@ -1074,6 +1080,50 @@ export default class EbeguRestUtil {
         return pendenzen;
     }
 
+    public pendenzInstitutionToRestObject(restPendenz: any, pendenz: TSPendenzInstitution): any {
+        restPendenz.betreuungsNummer = pendenz.betreuungsNummer;
+        restPendenz.betreuungsId = pendenz.betreuungsId;
+        restPendenz.gesuchId = pendenz.gesuchId;
+        restPendenz.kindId = pendenz.kindId;
+        restPendenz.name = pendenz.name;
+        restPendenz.vorname = pendenz.vorname;
+        restPendenz.geburtsdatum = DateUtil.momentToLocalDate(pendenz.geburtsdatum);
+        restPendenz.typ = pendenz.typ;
+        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.betreuungsangebotTyp = pendenz.betreuungsangebotTyp;
+        restPendenz.institution = pendenz.institution;
+        return restPendenz;
+    }
+
+    public parsePendenzInstitution(pendenzTS: TSPendenzInstitution, pendenzFromServer: any): TSPendenzInstitution {
+        pendenzTS.betreuungsNummer = pendenzFromServer.betreuungsNummer;
+        pendenzTS.betreuungsId = pendenzFromServer.betreuungsId;
+        pendenzTS.gesuchId = pendenzFromServer.gesuchId;
+        pendenzTS.kindId = pendenzFromServer.kindId;
+        pendenzTS.name = pendenzFromServer.name;
+        pendenzTS.vorname = pendenzFromServer.vorname;
+        pendenzTS.geburtsdatum = pendenzFromServer.geburtsdatum;
+        pendenzTS.typ = pendenzFromServer.typ;
+        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.betreuungsangebotTyp = pendenzFromServer.betreuungsangebotTyp;
+        pendenzTS.institution = pendenzFromServer.institution;
+        return pendenzTS;
+    }
+
+    public parsePendenzenInstitution(data: any): TSPendenzInstitution[] {
+        var pendenzen: TSPendenzInstitution[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                pendenzen[i] = this.parsePendenzInstitution(new TSPendenzInstitution(), data[i]);
+            }
+        } else {
+            pendenzen[0] = this.parsePendenzInstitution(new TSPendenzInstitution(), data);
+        }
+        return pendenzen;
+    }
+
     public userToRestObject(user: any, userTS: TSUser): any {
         if (userTS) {
             user.username = userTS.username;
@@ -1083,6 +1133,8 @@ export default class EbeguRestUtil {
             user.email = userTS.email;
             user.role = userTS.role;
             user.mandant = this.mandantToRestObject({}, userTS.mandant);
+            user.traegerschaft = this.traegerschaftToRestObject({}, userTS.traegerschaft);
+            user.institution = this.institutionToRestObject({}, userTS.institution);
             return user;
         }
         return undefined;
@@ -1097,6 +1149,8 @@ export default class EbeguRestUtil {
             userTS.email = userFromServer.email;
             userTS.role = userFromServer.role;
             userTS.mandant = this.parseMandant(new TSMandant(), userFromServer.mandant);
+            userTS.traegerschaft = this.parseTraegerschaft(new TSTraegerschaft(), userFromServer.traegerschaft);
+            userTS.institution = this.parseInstitution(new TSInstitution(), userFromServer.institution);
             return userTS;
         }
         return undefined;
@@ -1136,9 +1190,12 @@ export default class EbeguRestUtil {
 
     parseDokumentGrund(dokumentGrund: TSDokumentGrund, dokumentGrundFromServer: any): TSDokumentGrund {
         if (dokumentGrundFromServer) {
+            this.parseAbstractEntity(dokumentGrund, dokumentGrundFromServer);
             dokumentGrund.dokumentGrundTyp = dokumentGrundFromServer.dokumentGrundTyp;
-            dokumentGrund.fullname = dokumentGrundFromServer.fullname;
+            dokumentGrund.fullName = dokumentGrundFromServer.fullName;
             dokumentGrund.tag = dokumentGrundFromServer.tag;
+            dokumentGrund.dokumentTyp = dokumentGrundFromServer.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundFromServer.needed;
             dokumentGrund.dokumente = this.parseDokumente(dokumentGrundFromServer.dokumente);
             return dokumentGrund;
         }
@@ -1159,8 +1216,46 @@ export default class EbeguRestUtil {
 
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
+            this.parseAbstractEntity(dokument, dokumentFromServer);
             dokument.dokumentName = dokumentFromServer.dokumentName;
-            dokument.dokumentTyp = dokumentFromServer.dokumentTyp;
+            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
+            dokument.dokumentSize = dokumentFromServer.dokumentSize;
+            return dokument;
+        }
+        return undefined;
+    }
+
+    public dokumentGrundToRestObject(dokumentGrund: any, dokumentGrundTS: TSDokumentGrund): any {
+        if (dokumentGrundTS) {
+            this.abstractEntityToRestObject(dokumentGrund, dokumentGrundTS);
+            dokumentGrund.tag = dokumentGrundTS.tag;
+            dokumentGrund.fullName = dokumentGrundTS.fullName;
+            dokumentGrund.dokumentGrundTyp = dokumentGrundTS.dokumentGrundTyp;
+            dokumentGrund.dokumentTyp = dokumentGrundTS.dokumentTyp;
+            dokumentGrund.needed = dokumentGrundTS.needed;
+            dokumentGrund.dokumente = this.dokumenteToRestObject(dokumentGrundTS.dokumente);
+
+            return dokumentGrund;
+        }
+        return undefined;
+    }
+
+    private dokumenteToRestObject(dokumente: Array<TSDokument>): Array<any> {
+        let list: any[] = [];
+        if (dokumente) {
+            for (var i = 0; i < dokumente.length; i++) {
+                list[i] = this.dokumentToRestObject({}, dokumente[i]);
+            }
+        }
+        return list;
+    }
+
+    private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
+        if (dokumentTS) {
+            this.abstractEntityToRestObject(dokument, dokumentTS);
+            dokument.dokumentName = dokumentTS.dokumentName;
+            dokument.dokumentPfad = dokumentTS.dokumentPfad;
+            dokument.dokumentSize = dokumentTS.dokumentSize;
             return dokument;
         }
         return undefined;
@@ -1207,6 +1302,15 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             return verfuegungZeitabschnittTS;
+        }
+        return undefined;
+    }
+
+    parseTempDokument(tsTempDokument: TSTempDokument, tempDokumentFromServer: any) {
+        if (tempDokumentFromServer) {
+            this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
+            tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
+            return tsTempDokument;
         }
         return undefined;
     }
