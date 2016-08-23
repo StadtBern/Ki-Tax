@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.dto;
 
+import ch.dvbern.ebegu.util.MathUtil;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * DTO für die Resultate der Berechnungen der Finanziellen Situation
@@ -29,28 +30,17 @@ public class FinanzielleSituationResultateDTO {
 	private void initToZero() {
 		// Alle Werte auf 0 initialisieren, falls Null
 		// Wenn negativ -> 0
-		geschaeftsgewinnDurchschnittGesuchsteller1 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller1);
-		geschaeftsgewinnDurchschnittGesuchsteller2 = positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller2);
-		einkommenBeiderGesuchsteller = positiveNonNullAndRound(einkommenBeiderGesuchsteller);
-		nettovermoegenFuenfProzent = positiveNonNullAndRound(nettovermoegenFuenfProzent);
-		anrechenbaresEinkommen = positiveNonNullAndRound(anrechenbaresEinkommen);
-		abzuegeBeiderGesuchsteller = positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
-		abzugAufgrundFamiliengroesse = positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
-		totalAbzuege = positiveNonNullAndRound(totalAbzuege);
-		massgebendesEinkommen = positiveNonNullAndRound(massgebendesEinkommen);
+		geschaeftsgewinnDurchschnittGesuchsteller1 = MathUtil.positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller1);
+		geschaeftsgewinnDurchschnittGesuchsteller2 = MathUtil.positiveNonNullAndRound(geschaeftsgewinnDurchschnittGesuchsteller2);
+		einkommenBeiderGesuchsteller = MathUtil.positiveNonNullAndRound(einkommenBeiderGesuchsteller);
+		nettovermoegenFuenfProzent = MathUtil.positiveNonNullAndRound(nettovermoegenFuenfProzent);
+		anrechenbaresEinkommen = MathUtil.positiveNonNullAndRound(anrechenbaresEinkommen);
+		abzuegeBeiderGesuchsteller = MathUtil.positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
+		abzugAufgrundFamiliengroesse = MathUtil.positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
+		totalAbzuege = MathUtil.positiveNonNullAndRound(totalAbzuege);
+		massgebendesEinkommen = MathUtil.positiveNonNullAndRound(massgebendesEinkommen);
 	}
 
-	/**
-	 * rundet auf die naechste Ganzzahl groesser gleich 0
-	 */
-	public BigDecimal positiveNonNullAndRound(BigDecimal value) {
-		if (value == null) {
-			return BigDecimal.ZERO;
-		}
-		// Returns the maximum of this BigDecimal and val.
-		value = value.setScale(0, RoundingMode.HALF_UP);
-		return value.max(BigDecimal.ZERO);
-	}
 
 	public BigDecimal getGeschaeftsgewinnDurchschnittGesuchsteller1() {
 		return geschaeftsgewinnDurchschnittGesuchsteller1;

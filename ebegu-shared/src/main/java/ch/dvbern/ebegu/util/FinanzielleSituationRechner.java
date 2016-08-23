@@ -261,7 +261,7 @@ public class FinanzielleSituationRechner {
 		finSitResultDTO.setAnrechenbaresEinkommen(add(finSitResultDTO.getEinkommenBeiderGesuchsteller(), finSitResultDTO.getNettovermoegenFuenfProzent()));
 		finSitResultDTO.setTotalAbzuege(add(finSitResultDTO.getAbzuegeBeiderGesuchsteller(), finSitResultDTO.getAbzugAufgrundFamiliengroesse()));
 		finSitResultDTO.setMassgebendesEinkommen(
-			finSitResultDTO.positiveNonNullAndRound(
+			MathUtil.positiveNonNullAndRound(
 				subtract(finSitResultDTO.getAnrechenbaresEinkommen(), finSitResultDTO.getTotalAbzuege())));
 	}
 

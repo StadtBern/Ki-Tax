@@ -32,7 +32,6 @@ describe('einkommensverschlechterungResultateView', function () {
         berechnungsManager = $injector.get('BerechnungsManager');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
-        let ebeguRestUtil = $injector.get('EbeguRestUtil');
         let $q = $injector.get('$q');
         stateParams = $injector.get('$stateParams');
         state = $injector.get('$state');
@@ -41,8 +40,6 @@ describe('einkommensverschlechterungResultateView', function () {
 
 
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue($q.when({}));
-        // ekvrvc = new EinkommensverschlechterungResultateViewController($injector.get('$stateParams'), $injector.get('$state'), gesuchModelManager,
-        //     berechnungsManager, $injector.get('CONSTANTS'), $injector.get('ErrorService'));
 
     }));
 
@@ -61,7 +58,6 @@ describe('einkommensverschlechterungResultateView', function () {
 
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
-            //spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue($q.when({}));
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, state, gesuchModelManager,
                 berechnungsManager, consta, errorservice);
 
