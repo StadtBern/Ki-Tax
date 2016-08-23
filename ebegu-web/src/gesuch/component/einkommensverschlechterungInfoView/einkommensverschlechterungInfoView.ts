@@ -44,10 +44,10 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     getGesuch(): TSGesuch {
-        if (!this.gesuchModelManager.gesuch) {
+        if (!this.gesuchModelManager.getGesuch()) {
             this.gesuchModelManager.initGesuch(false);
         }
-        return this.gesuchModelManager.gesuch;
+        return this.gesuchModelManager.getGesuch();
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
@@ -70,7 +70,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public getBasisJahrPlusAsString(jahr: number): string {
-        return this.ebeguUtil.getBasisJahrPlusAsString(this.gesuchModelManager.gesuch.gesuchsperiode, jahr);
+        return this.ebeguUtil.getBasisJahrPlusAsString(this.gesuchModelManager.getGesuch().gesuchsperiode, jahr);
     }
 
     /**

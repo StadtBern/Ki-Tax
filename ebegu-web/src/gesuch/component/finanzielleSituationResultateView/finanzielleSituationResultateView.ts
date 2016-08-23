@@ -78,7 +78,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     }
 
     calculate() {
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch);
+        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
     }
 
     resetForm() {
@@ -87,8 +87,8 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
         if (!this.gesuchsteller1FinSit) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller1) {
-                this.gesuchsteller1FinSit = this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchsteller1FinSit = this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer;
             } else {
                 this.gesuchsteller1FinSit = new TSFinanzielleSituationContainer();
             }
@@ -99,8 +99,8 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
         if (!this.gesuchsteller2FinSit) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller2) {
-                this.gesuchsteller2FinSit = this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                this.gesuchsteller2FinSit = this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer;
             } else {
                 this.gesuchsteller2FinSit = new TSFinanzielleSituationContainer();
             }

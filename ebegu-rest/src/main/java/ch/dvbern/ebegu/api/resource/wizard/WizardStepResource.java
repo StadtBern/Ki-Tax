@@ -66,8 +66,8 @@ public class WizardStepResource {
 	 * @throws EbeguException
 	 */
 	@Nullable
-	@PUT
-	@Path("/{gesuchId}")
+	@GET
+	@Path("/createWizardSteps/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxWizardStep> createWizardStepList(
@@ -92,7 +92,7 @@ public class WizardStepResource {
 	}
 
 	@Nullable
-	@PUT
+	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxWizardStep saveWizardStep(

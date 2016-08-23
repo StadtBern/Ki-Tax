@@ -24,8 +24,8 @@ export class GesuchToolbarController {
     }
 
     public getVerantwortlicherFullName(): string {
-        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.fall && this.gesuchModelManager.gesuch.fall.verantwortlicher) {
-            return this.gesuchModelManager.gesuch.fall.verantwortlicher.getFullName();
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().fall && this.gesuchModelManager.getGesuch().fall.verantwortlicher) {
+            return this.gesuchModelManager.getGesuch().fall.verantwortlicher.getFullName();
         }
         return '';
     }
@@ -48,7 +48,7 @@ export class GesuchToolbarController {
     }
 
     /**
-     * 
+     *
      * @param user
      * @returns {boolean} true if the given user is already the verantwortlicher of the current fall
      */

@@ -19,8 +19,8 @@ export class GesuchRouteController extends AbstractGesuchViewController {
 
 
     public getDateErstgesuch(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.eingangsdatum, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().eingangsdatum, 'DD.MM.YYYY');
         }
         return undefined;
     }

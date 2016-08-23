@@ -101,7 +101,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     }
 
     calculate() {
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch);
+        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
     }
 
     resetForm() {

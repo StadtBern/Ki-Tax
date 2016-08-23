@@ -63,8 +63,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     showResult(): boolean {
         if (this.parsedBasisJahrPlusNum === 1) {
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
             return ekvFuerBasisJahrPlus1 === true;
 
         } else {
@@ -126,8 +126,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         if (this.parsedBasisJahrPlusNum === 2) {
             this.state.go('gesuch.dokumente');
         } else {
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
             if (ekvFuerBasisJahrPlus2) {
                 this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
             } else {
@@ -137,9 +137,9 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     };
 
     calculate() {
-        if (this.gesuchModelManager.gesuch && this.parsedBasisJahrPlusNum) {
+        if (this.gesuchModelManager.getGesuch() && this.parsedBasisJahrPlusNum) {
             this.berechnungsManager
-                .calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.parsedBasisJahrPlusNum)
+                .calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), this.parsedBasisJahrPlusNum)
                 .then(() => {
                     this.resultatProzent = this.calculateVeraenderung();
                 });
@@ -150,8 +150,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public getEinkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {
         if (!this.gesuchsteller1EkvCont) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller1) {
-                this.gesuchsteller1EkvCont = this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchsteller1EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer;
             } else {
                 this.gesuchsteller1EkvCont = new TSEinkommensverschlechterungContainer();
             }
@@ -178,8 +178,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public getEinkommensverschlechterungContainerGS2(): TSEinkommensverschlechterungContainer {
         if (!this.gesuchsteller2EkvCont) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller2) {
-                this.gesuchsteller2EkvCont = this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                this.gesuchsteller2EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer;
             } else {
                 this.gesuchsteller2EkvCont = new TSEinkommensverschlechterungContainer();
             }
@@ -214,12 +214,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     public calculateResultateVorjahr() {
 
         if (this.parsedBasisJahrPlusNum === 2) {
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1).then((resultatVorjahr) => {
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });
         } else {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch).then((resultatVorjahr) => {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });

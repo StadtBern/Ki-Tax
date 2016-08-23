@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -50,6 +51,9 @@ public class GesuchResource {
 	private BenutzerService benutzerService;
 
 	@Inject
+	private WizardStepResource wizardStepResource;
+
+	@Inject
 	private Principal principal;
 
 	@Inject
@@ -68,14 +72,16 @@ public class GesuchResource {
 
 		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
+		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
+		wizardStepResource.createWizardStepList(new JaxId(persistedGesuch.getId()));
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(GesuchResource.class)
 			.path("/" + persistedGesuch.getId())
 			.build();
 
-		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
 
+		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
 		return Response.created(uri).entity(jaxGesuch).build();
 	}
 

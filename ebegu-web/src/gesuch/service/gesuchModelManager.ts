@@ -38,9 +38,10 @@ import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlec
 import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
+import WizardStepManager from './wizardStepManager';
 
 export default class GesuchModelManager {
-    gesuch: TSGesuch;
+    private gesuch: TSGesuch;
     gesuchSnapshot: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
@@ -59,13 +60,14 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
-                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS) {
+                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
+                private wizardStepManager: WizardStepManager) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -73,6 +75,20 @@ export default class GesuchModelManager {
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+    }
+
+    /**
+     * In dieser Methode wird das Gesuch ersetzt. Das Gesuch ist jetzt private und darf nur ueber diese Methode geaendert werden.
+     *
+     * @param gesuch das Gesuch. Null und undefined werden erlaubt.
+     */
+    public setGesuch(gesuch: TSGesuch): void {
+        this.gesuch = gesuch;
+        this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+    }
+
+    public getGesuch(): TSGesuch {
+        return this.gesuch;
     }
 
     /**
@@ -133,7 +149,9 @@ export default class GesuchModelManager {
             return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
                 this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
-                    return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+                    this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+                    this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+                    return this.gesuch;
                 });
             });
         }
@@ -442,6 +460,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
         }
         this.backupCurrentGesuch();

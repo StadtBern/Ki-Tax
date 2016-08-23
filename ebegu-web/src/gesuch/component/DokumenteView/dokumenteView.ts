@@ -46,9 +46,9 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     }
 
     calculate() {
-        if (this.gesuchModelManager.gesuch) {
+        if (this.gesuchModelManager.getGesuch()) {
             this.berechnungsManager
-                .getDokumente(this.gesuchModelManager.gesuch)
+                .getDokumente(this.gesuchModelManager.getGesuch())
                 .then((promiseValue: TSDokumenteDTO) => {
                     this.searchDokumente(promiseValue, this.dokumenteEkv, TSDokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
                     this.searchDokumente(promiseValue, this.dokumenteFinSit, TSDokumentGrundTyp.FINANZIELLESITUATION);
@@ -76,10 +76,10 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     previousStep(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
             if (ekvFuerBasisJahrPlus2) {
                 this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
             } else if (ekvFuerBasisJahrPlus1) {

@@ -46,19 +46,19 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
         //Berechnung aller finanziellen Daten
         if (!this.berechnungsManager.finanzielleSituationResultate) {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
         }
-        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
 
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1); //.then(() => {});
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
         }
-        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
 
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.gesuchModelManager.calculateVerfuegungen();
@@ -81,8 +81,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public getFall() {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return this.gesuchModelManager.gesuch.fall;
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().fall;
         }
         return undefined;
     }

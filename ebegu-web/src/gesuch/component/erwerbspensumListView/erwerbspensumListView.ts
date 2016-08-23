@@ -49,9 +49,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS1 === undefined) {
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
-            if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.gesuchsteller1 &&
-                this.gesuchModelManager.gesuch.gesuchsteller1.erwerbspensenContainer) {
-                let gesuchsteller1: TSGesuchsteller = this.gesuchModelManager.gesuch.gesuchsteller1;
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1 &&
+                this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer) {
+                let gesuchsteller1: TSGesuchsteller = this.gesuchModelManager.getGesuch().gesuchsteller1;
                 this.erwerbspensenGS1 = gesuchsteller1.erwerbspensenContainer;
 
             } else {
@@ -64,9 +64,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     getErwerbspensenListGS2(): Array<TSErwerbspensumContainer> {
         if (this.erwerbspensenGS2 === undefined) {
             //todo team, hier die daten vielleicht reingeben statt sie zu lesen
-            if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.gesuchsteller2 &&
-                this.gesuchModelManager.gesuch.gesuchsteller2.erwerbspensenContainer) {
-                let gesuchsteller2: TSGesuchsteller = this.gesuchModelManager.gesuch.gesuchsteller2;
+            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2 &&
+                this.gesuchModelManager.getGesuch().gesuchsteller2.erwerbspensenContainer) {
+                let gesuchsteller2: TSGesuchsteller = this.gesuchModelManager.getGesuch().gesuchsteller2;
                 this.erwerbspensenGS2 = gesuchsteller2.erwerbspensenContainer;
 
             } else {

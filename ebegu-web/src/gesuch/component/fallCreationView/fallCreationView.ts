@@ -42,7 +42,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     public getGesuchModel(): TSGesuch {
-        return this.gesuchModelManager.gesuch;
+        return this.gesuchModelManager.getGesuch();
     }
 
     nextStep(form: IFormController): void {

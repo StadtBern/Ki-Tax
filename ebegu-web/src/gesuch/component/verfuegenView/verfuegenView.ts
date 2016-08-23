@@ -76,8 +76,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getFall() {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return this.gesuchModelManager.gesuch.fall;
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().fall;
         }
         return undefined;
     }
@@ -147,15 +147,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getAnfangsVerschlechterung1(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
         }
         return undefined;
     }
 
     public getAnfangsVerschlechterung2(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
         }
         return undefined;
     }

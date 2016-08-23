@@ -209,7 +209,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     };
 
     calculate() {
-        this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.gesuchModelManager.getBasisJahrPlusNumber());
+        this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), this.gesuchModelManager.getBasisJahrPlusNumber());
     }
 
     resetForm() {

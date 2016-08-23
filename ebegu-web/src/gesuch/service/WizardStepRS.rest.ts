@@ -15,22 +15,10 @@ export default class WizardStepRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-
-    public createWizardStepList(gesuchId: string): IPromise<any> {
-        return this.http.post(this.serviceURL, gesuchId, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        }).then((response: any) => {
-            this.$log.debug('PARSING WizardStep REST objects ', response.data);
-            return this.ebeguRestUtil.parseWizardStepList(response.data);
-        });
-    }
-
     public updateWizardStep(wizardStep: TSWizardStep): IPromise<any> {
         let wizardStepObject = this.ebeguRestUtil.wizardStepToRestObject({}, wizardStep);
 
-        return this.http.put(this.serviceURL, wizardStepObject, {
+        return this.http.post(this.serviceURL, wizardStepObject, {
             headers: {
                 'Content-Type': 'application/json'
             }

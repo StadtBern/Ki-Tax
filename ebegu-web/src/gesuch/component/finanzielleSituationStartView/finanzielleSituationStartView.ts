@@ -61,18 +61,18 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
-        return this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA;
+        return this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA;
     }
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
-        return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA;
+        return this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA;
     }
 
     private gemeinsameStekClicked(): void {
         // Wenn neu NEIN -> Fragen loeschen
         if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false) {
-            this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer = undefined;
-            this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer = undefined;
+            this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer = undefined;
+            this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer = undefined;
         } else {
             this.gesuchModelManager.initFinanzielleSituation();
         }

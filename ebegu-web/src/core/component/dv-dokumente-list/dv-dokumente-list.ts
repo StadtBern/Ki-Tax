@@ -55,8 +55,8 @@ export class DVDokumenteListController {
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
 
-        if (this.gesuchModelManager.gesuch) {
-            let gesuchID = this.gesuchModelManager.gesuch.id;
+        if (this.gesuchModelManager.getGesuch()) {
+            let gesuchID = this.gesuchModelManager.getGesuch().id;
             console.log('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
                 console.log('File: ' + file.name);

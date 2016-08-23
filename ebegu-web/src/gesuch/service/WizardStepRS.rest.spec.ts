@@ -39,9 +39,6 @@ describe('WizardStepRS', function () {
         it('check Service name', function () {
             expect(wizardStepRS.getServiceName()).toBe('WizardStepRS');
         });
-        it('should include a createWizardStepList() function', function () {
-            expect(wizardStepRS.createWizardStepList).toBeDefined();
-        });
         it('should include a updateWizardStep() function', function () {
             expect(wizardStepRS.updateWizardStep).toBeDefined();
         });
@@ -60,7 +57,6 @@ describe('WizardStepRS', function () {
                     foundSteps = result;
                 });
                 $httpBackend.flush();
-                console.log('-------------------', foundSteps);
                 expect(foundSteps).toBeDefined();
                 expect(foundSteps.length).toEqual(1);
                 expect(foundSteps[0]).toEqual(mockWizardStep);

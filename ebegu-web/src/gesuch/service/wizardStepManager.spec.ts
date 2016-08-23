@@ -4,18 +4,24 @@ import WizardStepManager from './wizardStepManager';
 import {EbeguWebCore} from '../../core/core.module';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import WizardStepRS from './WizardStepRS.rest';
+import TSWizardStep from '../../models/TSWizardStep';
+import {IScope, IQService} from 'angular';
 
 describe('wizardStepManager', function () {
 
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
     let wizardStepRS: WizardStepRS;
+    let scope: IScope;
+    let $q: IQService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         authServiceRS = $injector.get('AuthServiceRS');
         wizardStepRS = $injector.get('WizardStepRS');
+        scope = $injector.get('$rootScope').$new();
+        $q = $injector.get('$q');
     }));
 
     describe('construct the object', function() {
@@ -43,6 +49,23 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getAllowedSteps()[7]).toBe(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             expect(wizardStepManager.getAllowedSteps()[8]).toBe(TSWizardStepName.DOKUMENTE);
             expect(wizardStepManager.getAllowedSteps()[9]).toBe(TSWizardStepName.VERFUEGEN);
+        });
+    });
+    describe('findStepsFromGesuch', function() {
+        it('retrieves the steps from server', function() {
+            wizardStepManager = new WizardStepManager(authServiceRS, wizardStepRS);
+            let step: TSWizardStep = new TSWizardStep();
+            step.bemerkungen = 'step1';
+            let steps: TSWizardStep[] = [step];
+            spyOn(wizardStepRS, 'findWizardStepsFromGesuch').and.returnValue($q.when(steps));
+
+            wizardStepManager.findStepsFromGesuch('123');
+            scope.$apply();
+
+            expect(wizardStepRS.findWizardStepsFromGesuch).toHaveBeenCalledWith('123');
+            expect(wizardStepManager.getWizardSteps()).toBeDefined();
+            expect(wizardStepManager.getWizardSteps().length).toBe(1);
+            expect(wizardStepManager.getWizardSteps()[0]).toBe(step);
         });
     });
 });
