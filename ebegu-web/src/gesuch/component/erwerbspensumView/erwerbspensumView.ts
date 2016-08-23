@@ -48,7 +48,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager,  private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
@@ -68,9 +68,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         } else {
             console.log('kein gesuchsteller gefunden');
         }
-        //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.reset();
+        //Wir verlassen uns hier darauf, dass zuerst das popup vom unsavedChanges plugin kommt welches den user fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            //Wenn die Maske verlassen wird, werden automatisch die Eintraege entfernt, die noch nicht in der DB gespeichert wurden
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                this.reset();
+            }
         });
     }
 
@@ -102,13 +105,15 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
             this.errorService.clearAll();
             this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
+                form.$setPristine();
                 this.state.go('gesuch.erwerbsPensen');
             });
         }
     }
 
-    cancel() {
+    cancel(form: IFormController) {
         this.reset();
+        form.$setPristine();
         this.state.go('gesuch.erwerbsPensen');
     }
 
@@ -122,5 +127,19 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         ewpContainer.erwerbspensumJA = ewp;
         return ewpContainer;
 
+    }
+
+    viewZuschlag(): boolean {
+        return this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.ANGESTELLT ||
+            this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.AUSBILDUNG ||
+            this.erwerbspensum.erwerbspensumJA.taetigkeit === TSTaetigkeit.SELBSTAENDIG;
+    }
+
+    taetigkeitChanged() {
+        if (!this.viewZuschlag()) {
+            this.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum = false;
+            this.erwerbspensum.erwerbspensumJA.zuschlagsprozent = undefined;
+            this.erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
+        }
     }
 }

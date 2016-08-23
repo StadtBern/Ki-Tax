@@ -44,10 +44,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	@Column(nullable = true)
 	private Integer zuschlagsprozent;
 
-	@Column(nullable = false)
-	@NotNull
-	private boolean gesundheitlicheEinschraenkungen;
-
 	@Column(nullable = true)
 	@Nullable
 	private String bezeichnung;
@@ -72,14 +68,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		this.zuschlagZuErwerbspensum = zuschlagZuErwerbspensum;
 	}
 
-	public boolean getGesundheitlicheEinschraenkungen() {
-		return gesundheitlicheEinschraenkungen;
-	}
-
-	public void setGesundheitlicheEinschraenkungen(boolean gesundheitlicheEinschraenkungen) {
-		this.gesundheitlicheEinschraenkungen = gesundheitlicheEinschraenkungen;
-	}
-
 	public Integer getZuschlagsprozent() {
 		return zuschlagsprozent;
 	}
@@ -101,8 +89,7 @@ public class Erwerbspensum extends AbstractPensumEntity {
 		boolean pensumIsSame = super.isSame(otherErwerbspensum);
 		boolean taetigkeitSame = Objects.equals(taetigkeit, otherErwerbspensum.getTaetigkeit());
 		boolean zuschlagSame = Objects.equals(zuschlagZuErwerbspensum, otherErwerbspensum.getZuschlagZuErwerbspensum());
-		boolean gesundhSame = Objects.equals(gesundheitlicheEinschraenkungen, otherErwerbspensum.getGesundheitlicheEinschraenkungen());
-		return pensumIsSame && taetigkeitSame && zuschlagSame && gesundhSame;
+		return pensumIsSame && taetigkeitSame && zuschlagSame;
 	}
 
 	public String getName() {
