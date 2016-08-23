@@ -35,7 +35,8 @@
                     <div class="col-md-6 form-group">
                         <label data-translate="GEBURTSDATUM"></label>
                         <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-disabled="true"
-                               ng-value="vm.getKindModel().kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'" class="form-control">
+                               ng-value="vm.getKindModel().kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"
+                               class="form-control">
                     </div>
                 </div>
             </div>
@@ -75,8 +76,9 @@
             </div>
 
             <!--vertrag-->
-            <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                dv-show-expression="!vm.isTagesschule()">
+            <div class="row" dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                 dv-show-expression="!vm.isTagesschule()">
                 <div class="col-md-6">
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.getBetreuungModel().vertrag" name="vertrag"
@@ -95,79 +97,85 @@
             <!--Nur Institutionen duerfen neue Pensen eintragen. Bei anderen Rollen werden nur die existierenden Pensen angezeigt-->
             <div ng-if="!vm.isTagesschule()">
                 <fieldset dv-enable-element
+                          dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData"
                           dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
-                <!--Betreuungspensen-->
-                <div ng-repeat="betpen in vm.getBetreuungspensen()">
-                    <!--Betreuungspensum-->
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label data-translate="BETREUUNGSPENSUM"
-                                       data-translate-value-betreuungspensumnumber="{{$index + 1}}"
-                                       for="betreuungspensum-{{$index}}"></label>
-                                <input id="betreuungspensum-{{$index}}" type="text" name="betreuungspensum-{{$index}}"
-                                       ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
-                                       dv-max-length class="form-control" ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                       ng-required="true">
-                                <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form['betreuungspensum-' + $index].$error"
-                                                   class="error hint"></dv-error-messages>
-                                <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
-                            </dv-input-container>
-                        </div>
-                    </div>
-
-                    <!-- gueltig ab / gueltig bis -->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label data-translate="VON" for="datumAb-{{$index}}">
-                                </label>
-                                <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}"
-                                               class="input-element"
-                                               ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
-                                               ng-required="true" placeholder="">
-                                </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form['datumAb-' + $index].$error"
-                                                   class="error hint"></dv-error-messages>
-                            </dv-input-container>
+                    <!--Betreuungspensen-->
+                    <div ng-repeat="betpen in vm.getBetreuungspensen()">
+                        <!--Betreuungspensum-->
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dv-input-container class="form-group">
+                                    <label data-translate="BETREUUNGSPENSUM"
+                                           data-translate-value-betreuungspensumnumber="{{$index + 1}}"
+                                           for="betreuungspensum-{{$index}}"></label>
+                                    <input id="betreuungspensum-{{$index}}" type="text"
+                                           name="betreuungspensum-{{$index}}"
+                                           ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.pensum"
+                                           dv-max-length class="form-control"
+                                           ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
+                                           ng-required="true">
+                                    <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                                    <dv-error-messages for="form['betreuungspensum-' + $index].$error"
+                                                       class="error hint"></dv-error-messages>
+                                    <dv-bisher gs="vm.getModel().pensum"></dv-bisher>
+                                </dv-input-container>
+                            </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label data-translate="BIS" for="datumBis-{{$index}}">
-                                </label>
-                                <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}"
-                                               class="input-element"
-                                               ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
-                                               ng-required="false" placeholder="">
-                                </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form['datumBis-' + $index].$error"
-                                                   class="error"></dv-error-messages>
-                            </dv-input-container>
-                        </div>
-                    </div>
+                        <!-- gueltig ab / gueltig bis -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dv-input-container class="form-group">
+                                    <label data-translate="VON" for="datumAb-{{$index}}">
+                                    </label>
+                                    <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}"
+                                                   class="input-element"
+                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigAb"
+                                                   ng-required="true" placeholder="">
+                                    </dv-datepicker>
+                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                    <dv-error-messages for="form['datumAb-' + $index].$error"
+                                                       class="error hint"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
 
-                    <!--Betreuungspensum entfernen. Wird nur angezeigt wenn status=AUSSTEHEND und es mehrere Betreuungspensen gibt und role=institution-->
-                    <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                         dv-show-expression="($index > 0) || (vm.getBetreuungspensen().length > 1)">
-                        <div class="col-md-12">
-                            <dv-loading-button type="button" ng-click="vm.removeBetreuungspensum(betpen)"
-                                               button-class="btn btn-sm btn-warning">
-                                <i class="glyphicon glyphicon-minus"></i>
-                                <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
-                            </dv-loading-button>
+                            <div class="col-md-6">
+                                <dv-input-container class="form-group">
+                                    <label data-translate="BIS" for="datumBis-{{$index}}">
+                                    </label>
+                                    <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}"
+                                                   class="input-element"
+                                                   ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.gueltigkeit.gueltigBis"
+                                                   ng-required="false" placeholder="">
+                                    </dv-datepicker>
+                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                                    <dv-error-messages for="form['datumBis-' + $index].$error"
+                                                       class="error"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+
+                        <!--Betreuungspensum entfernen. Wird nur angezeigt wenn status=AUSSTEHEND und es mehrere Betreuungspensen gibt und role=institution-->
+                        <div class="row" dv-show-element
+                             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                             dv-show-expression="($index > 0) || (vm.getBetreuungspensen().length > 1)">
+                            <div class="col-md-12">
+                                <dv-loading-button type="button" ng-click="vm.removeBetreuungspensum(betpen)"
+                                                   button-class="btn btn-sm btn-warning">
+                                    <i class="glyphicon glyphicon-minus"></i>
+                                    <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
+                                </dv-loading-button>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </fieldset>
 
                 <br>
                 <!--Neues Betreuungspensum hinzufuegen-->
-                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                <div class="row" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                     dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                     <div class="col-md-12">
                         <dv-loading-button type="button" ng-click="vm.createBetreuungspensum()"
                                            button-class="btn btn-sm btn-success" dv-enable-element
@@ -186,18 +194,22 @@
                             <label class="inlineHint" for="notes" data-translate="BEMERKUNGEN"></label>
                             <textarea md-no-autogrow class="form-control" rows="6" id="notes"
                                       ng-model="vm.getBetreuungModel().bemerkungen"
-                                      ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
+                                      ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"
+                                      ng-disabled="!vm.isBetreuungsstatusAusstehend()">
+                            </textarea>
                         </dv-input-container>
                     </div>
                 </div>
 
                 <!--grund Ablehnung-->
-                <div class="row marginTop20" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                <div class="row marginTop20" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                     <div class="col-md-12">
                         <dv-input-container class="form-group">
                             <label class="inlineHint" for="grundAblehnung" data-translate="GRUND_ABLEHNUNG"></label>
                             <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
-                                      ng-model="vm.getBetreuungModel().grundAblehnung">
+                                      ng-model="vm.getBetreuungModel().grundAblehnung"
+                                      ng-disabled="!vm.isBetreuungsstatusWarten() || vm.isSavingData">
                             </textarea>
                         </dv-input-container>
                     </div>
@@ -210,7 +222,8 @@
                             <md-checkbox ng-model="vm.getBetreuungModel().erweiterteBeduerfnisse"
                                          name="erweiterteBeduerfnisse"
                                          aria-label="erweiterteBeduerfnisse" dv-enable-element
-                                         dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                                         dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                                         dv-enable-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                                 <span data-translate="ERWEITERTE_BEDUERFNISSE"></span>
                             </md-checkbox>
                             <dv-error-messages for="form.erweiterteBeduerfnisse.$error"
@@ -267,17 +280,19 @@
                 </div>
 
                 <!--Institution Buttons-->
-                <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                <div class="row" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                      dv-show-expression="vm.isBetreuungsstatusWarten()">
                     <div class="col-md-6">
-                        <dv-loading-button button-click="vm.platzBestaetigen(form)" type="submit" button-class="btn btn-md btn-success"
-                                   aria-label="{{BESTAETIGEN_UPPER | translate}}">
+                        <dv-loading-button button-click="vm.platzBestaetigen(form)" type="submit"
+                                           button-class="btn btn-md btn-success"
+                                           aria-label="{{BESTAETIGEN_UPPER | translate}}">
                             <span data-translate="BESTAETIGEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
                     <div class="col-md-6">
                         <dv-loading-button button-click="vm.platzAbweisen(form)" button-class="btn btn-md btn-danger"
-                                   aria-label="{{ABWEISEN_UPPER | translate}}">
+                                           aria-label="{{ABWEISEN_UPPER | translate}}">
                             <span data-translate="ABWEISEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
@@ -296,9 +311,11 @@
                         <span data-translate="ABBRECHEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
-                <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                <div class="col-md-6 text-right" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                      dv-show-expression="vm.isBetreuungsstatusSchulamt()">
-                    <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit" button-class="btn btn-link save">
+                    <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit"
+                                       button-class="btn btn-link save">
                         <span data-translate="SPEICHERN_UPPER"></span>
                     </dv-loading-button>
                 </div>
