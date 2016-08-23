@@ -64,14 +64,15 @@ public final class RestUtil {
 	public static Response buildDownloadResponse(Dokument dokument, boolean attachment) throws IOException {
 
 		Path filePath = Paths.get(dokument.getDokumentPfad());
-
-		final String contentType = Files.probeContentType(filePath);
-		//final long size = Files.size(filePath);
+		//if no guess can be made assume application/octet-stream
+		final String contentType = Files.probeContentType(filePath) == null ? "application/octet-stream" : Files.probeContentType(filePath);
 		final byte[] bytes = Files.readAllBytes(filePath);
 
 		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + dokument.getDokumentName() + '"';
 
-		return Response.ok(bytes).header("Content-Disposition", disposition)
+		return Response.ok(bytes)
+			.header("Content-Disposition", disposition)
+			.header("Content-Length", bytes.length)
 			.type(MediaType.valueOf(contentType)).build();
 
 
