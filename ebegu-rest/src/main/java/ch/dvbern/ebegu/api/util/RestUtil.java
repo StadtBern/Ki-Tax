@@ -65,7 +65,10 @@ public final class RestUtil {
 
 		Path filePath = Paths.get(dokument.getDokumentPfad());
 		//if no guess can be made assume application/octet-stream
-		final String contentType = Files.probeContentType(filePath) == null ? "application/octet-stream" : Files.probeContentType(filePath);
+		String contentType = Files.probeContentType(filePath);
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
 		final byte[] bytes = Files.readAllBytes(filePath);
 
 		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + dokument.getDokumentName() + '"';
@@ -98,14 +101,14 @@ public final class RestUtil {
 	public static void purgeSingleKindAndBetreuungenOfInstitutionen(JaxKindContainer kind, Collection<Institution> userInstitutionen) {
 		final Iterator<JaxBetreuung> betreuungIterator = kind.getBetreuungen().iterator();
 		while (betreuungIterator.hasNext()) {
-            final JaxBetreuung betreuung = betreuungIterator.next();
-            if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
-                || !(Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())
-					|| Betreuungsstatus.BESTAETIGT.equals(betreuung.getBetreuungsstatus())
-					|| Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus()))) {
-                betreuungIterator.remove();
-            }
-        }
+			final JaxBetreuung betreuung = betreuungIterator.next();
+			if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
+				|| !(Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())
+				|| Betreuungsstatus.BESTAETIGT.equals(betreuung.getBetreuungsstatus())
+				|| Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus()))) {
+				betreuungIterator.remove();
+			}
+		}
 	}
 
 	private static boolean isInstitutionInList(Collection<Institution> userInstitutionen, JaxInstitution institutionToLookFor) {
