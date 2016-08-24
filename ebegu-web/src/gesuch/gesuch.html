@@ -64,6 +64,21 @@
 
         </ul>
     </div>
-    <div ui-view class="col-md-5"></div>
+
+    <div class="col-md-9">
+        <div class="row gesuchbody">
+            <!--linke Seite zum ausfüllen des Formulars-->
+            <div ui-view="gesuchViewPort" class=" col-md-7"></div>
+
+            <!--rechte Seite für Kommentare und Papiergesuch öffnen-->
+            <div class="col-md-4 col-md-offset-1 right-side"
+                  dv-show-element
+                  dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.STEUERAMT ,vm.TSRole.SCHULAMT]">
+                <div ui-view="kommentarViewPort"></div>
+            </div>
+
+        </div>
+    </div>
+
 
 </div>

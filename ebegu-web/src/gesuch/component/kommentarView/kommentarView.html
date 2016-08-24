@@ -1,0 +1,47 @@
+<div class="kommentar row">
+
+    <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+
+        <br/>
+
+        <!--bemerkungen intern-->
+        <div class="col-md-12">
+            <dv-input-container class="form-group kommentar-feld">
+                <label class="inlineHint" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
+                        <textarea md-no-autogrow class="form-control" rows="3" id="kommentarIntern"
+                                  ng-model="vm.getFamiliensituation().bemerkungen">
+                        </textarea>
+            </dv-input-container>
+        </div>
+
+        <!--Just some spare to avoid overwriting by bottom alignment elements-->
+        <div class="col-md-12">
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+
+        <!--bemerkungen Verfügung-->
+        <div class="kommentar-verfuegung-align col-md-12">
+            <dv-input-container class="form-group kommentar-feld">
+                <label class="inlineHint" for="kommentarVerfuegung"
+                       data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
+                        <textarea md-no-autogrow class="form-control" rows="3" id="kommentarVerfuegung"
+                                  ng-model="vm.getFamiliensituation().bemerkungen">
+                        </textarea>
+            </dv-input-container>
+        </div>
+
+        <div class="bottom-align col-md-12">
+            <dv-loading-button button-class="btn kommentar-button">
+                <!--<span class="fa fa-chevron-left"></span>-->
+                <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
+            </dv-loading-button>
+        </div>
+    </form>
+
+</div>

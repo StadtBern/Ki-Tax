@@ -1,0 +1,2 @@
+ALTER TABLE gesuch ADD COLUMN bemerkungen VARCHAR(1000);
+ALTER TABLE gesuch_aud ADD COLUMN bemerkungen VARCHAR(1000);

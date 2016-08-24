@@ -49,116 +49,269 @@ export class EbeguGesuchState implements IState {
 
 export class EbeguNewFallState implements IState {
     name = 'gesuch.fallcreation';
-    template = '<fall-creation-view>';
     url = '/fall/:createNew';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<fall-creation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
+
 
 export class EbeguFamiliensituationState implements IState {
     name = 'gesuch.familiensituation';
-    template = '<familiensituation-view>';
     url = '/familiensituation';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<familiensituation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguStammdatenState implements IState {
     name = 'gesuch.stammdaten';
-    template = '<stammdaten-view>';
     url = '/stammdaten/:gesuchstellerNumber';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<stammdaten-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguKinderListState implements IState {
     name = 'gesuch.kinder';
-    template = '<kinder-list-view>';
     url = '/kinder';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<kinder-list-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguKindState implements IState {
     name = 'gesuch.kind';
-    template = '<kind-view>';
     url = '/kinder/kind/:kindNumber';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<kind-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguBetreuungListState implements IState {
     name = 'gesuch.betreuungen';
-    template = '<betreuung-list-view>';
     url = '/betreuungen';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<betreuung-list-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguBetreuungState implements IState {
     name = 'gesuch.betreuung';
-    template = '<betreuung-view>';
     url = '/betreuungen/betreuung';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<betreuung-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
-    template = '<erwerbspensum-list-view>';
     url = '/erwerbspensen';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<erwerbspensum-list-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguErwerbspensumState implements IState {
     name = 'gesuch.erwerbsPensum';
-    template = '<erwerbspensum-view>';
     url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<erwerbspensum-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
-    template = '<finanzielle-situation-view>';
     url = '/finanzielleSituation/:gesuchstellerNumber';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<finanzielle-situation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguFinanzielleSituationStartState implements IState {
     name = 'gesuch.finanzielleSituationStart';
-    template = '<finanzielle-situation-start-view>';
     url = '/finanzielleSituationStart';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<finanzielle-situation-start-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
-    template = '<finanzielle-situation-resultate-view>';
     url = '/finanzielleSituationResultate';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<finanzielle-situation-resultate-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguVerfuegenListState implements IState {
     name = 'gesuch.verfuegen';
-    template = '<verfuegen-list-view>';
     url = '/verfuegen';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<verfuegen-list-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguVerfuegenState implements IState {
     name = 'gesuch.verfuegenView';
-    template = '<verfuegen-view>';
     url = '/verfuegenView';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<verfuegen-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
-    template = '<einkommensverschlechterung-info-view>';
     url = '/einkommensverschlechterungInfo';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<einkommensverschlechterung-info-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguEinkommensverschlechterungSteuernState implements IState {
     name = 'gesuch.einkommensverschlechterungSteuern';
-    template = '<einkommensverschlechterung-steuern-view>';
     url = '/einkommensverschlechterungSteuern';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<einkommensverschlechterung-steuern-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguEinkommensverschlechterungState implements IState {
     name = 'gesuch.einkommensverschlechterung';
-    template = '<einkommensverschlechterung-view>';
     url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<einkommensverschlechterung-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguEinkommensverschlechterungResultateState implements IState {
     name = 'gesuch.einkommensverschlechterungResultate';
-    template = '<einkommensverschlechterung-resultate-view>';
     url = '/einkommensverschlechterungResultate/:basisjahrPlus';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<einkommensverschlechterung-resultate-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 export class EbeguDokumenteState implements IState {
     name = 'gesuch.dokumente';
-    template = '<dokumente-view>';
     url = '/dokumente/:gesuchstellerNumber';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<dokumente-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
 }
 
 //PARAMS
