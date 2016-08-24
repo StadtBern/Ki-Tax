@@ -1,7 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.*;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -165,6 +166,31 @@ public class GesuchResource {
 		RestUtil.purgeKinderAndBetreuungenOfInstitutionen(completeGesuch.getKindContainers(), userInstitutionen);
 
 		return completeGesuch;
+	}
+
+	@Nullable
+	@PUT
+	@Path("/bemerkung/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateBemerkung(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull String bemerkung,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
+
+		if (!gesuchOptional.isPresent()) {
+			return Response.serverError().entity("Unknown gesuchID").build();
+		}
+		gesuchOptional.get().setBemerkungen(bemerkung);
+
+		final Gesuch gesuchPersisted = gesuchService.updateGesuch(gesuchOptional.get());
+
+		return Response.ok().build();
 	}
 
 }

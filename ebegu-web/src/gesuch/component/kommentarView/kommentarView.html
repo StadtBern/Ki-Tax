@@ -8,14 +8,15 @@
         <div class="col-md-12">
             <dv-input-container class="form-group kommentar-feld">
                 <label class="inlineHint" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="3" id="kommentarIntern"
-                                  ng-model="vm.getFamiliensituation().bemerkungen">
+                        <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
+                                  ng-model="vm.getFamiliensituation().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>
 
         <!--Just some spare to avoid overwriting by bottom alignment elements-->
         <div class="col-md-12">
+            <br/>
             <br/>
             <br/>
             <br/>
@@ -30,8 +31,8 @@
             <dv-input-container class="form-group kommentar-feld">
                 <label class="inlineHint" for="kommentarVerfuegung"
                        data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
-                        <textarea md-no-autogrow class="form-control" rows="3" id="kommentarVerfuegung"
-                                  ng-model="vm.getFamiliensituation().bemerkungen">
+                        <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
+                                  ng-model="vm.getGesuch().bemerkungen" ng-blur="vm.saveBemerkung()" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>
