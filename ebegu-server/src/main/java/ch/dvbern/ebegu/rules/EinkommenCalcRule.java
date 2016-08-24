@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 /**
  * Setzt fuer die Zeitabschnitte das Massgebende Einkommen. Sollte der Maximalwert uebschritte werden so wird das Pensum auf 0 gesetzt
  * ACHTUNG: Diese Regel gilt nur fuer Kita und Tageseltern Kleinkinder.  Bei Tageseltern Schulkinder und Tagesstaetten
- * gibt es keine Reduktion des Anspruchs.
+ * gibt es keine Reduktion des Anspruchs, sie bezahlen aber den Volltarif
  * Regel 16.7 Maximales Einkommen
  */
 public class EinkommenCalcRule extends AbstractCalcRule {
@@ -26,10 +26,15 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
-				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN.name() + ": Maximales Einkommen überschritten");
+				if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN.name() + ": Maximales Einkommen überschritten");
+				} else {
+					verfuegungZeitabschnitt.setBezahltVollkosten(true);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN.name() + ": Maximales Einkommen überschritten, bezahlt Vollkosten");
+				}
 			}
 		}
 	}

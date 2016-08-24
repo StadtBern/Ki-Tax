@@ -68,7 +68,13 @@ public class KitaRechner extends AbstractBGRechner {
 
 		// Runden und auf Zeitabschnitt zurückschreiben
 		BigDecimal vollkostenIntervall = MathUtil.EXACT.multiply(vollkosten, faktor, anteilMonat);
-		BigDecimal elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
+		BigDecimal elternbeitragIntervall;
+		if (verfuegungZeitabschnitt.isBezahltVollkosten()) {
+			elternbeitragIntervall = vollkostenIntervall;
+		} else {
+			elternbeitragIntervall = MathUtil.EXACT.multiply(elternbeitrag, anteilMonat);
+		}
+
 
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkostenIntervall));
 		verfuegungZeitabschnitt.setElternbeitrag(MathUtil.roundToFrankenRappen(elternbeitragIntervall));

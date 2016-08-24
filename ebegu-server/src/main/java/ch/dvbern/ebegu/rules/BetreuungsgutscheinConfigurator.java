@@ -58,6 +58,10 @@ public class BetreuungsgutscheinConfigurator {
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
+		// - Einreichungsfrist
+		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
+		rules.add(einreichungsfristAbschnittRule);
+
 
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
@@ -69,11 +73,11 @@ public class BetreuungsgutscheinConfigurator {
 		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
 		rules.add(betreuungspensumCalcRule);
 
-		// - Fachstelle
+		// - Fachstelle: Muss zwingend nach Erwerbspensum und Betreuungspensum durchgefuehrt werden
 		FachstelleCalcRule fachstelleCalcRule = new FachstelleCalcRule(defaultGueltigkeit);
 		rules.add(fachstelleCalcRule);
 
-		// - Kind wohnt im gleichen Haushalt
+		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
 
@@ -106,7 +110,7 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(wohnsitzRule);
 
 		// Einreichungsfrist
-		EinreichungsfristRule einreichungsfristRule = new EinreichungsfristRule(defaultGueltigkeit);
+		EinreichungsfristCalcRule einreichungsfristRule = new EinreichungsfristCalcRule(defaultGueltigkeit);
 		rules.add(einreichungsfristRule);
 	}
 }

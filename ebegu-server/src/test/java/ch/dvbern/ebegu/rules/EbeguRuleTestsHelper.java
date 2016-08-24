@@ -25,11 +25,12 @@ public class EbeguRuleTestsHelper {
 	private static final BetreuungspensumAbschnittRule betreuungspensumAbschnittRule = new BetreuungspensumAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(Constants.DEFAULT_GUELTIGKEIT);
-	private static final RestanspruchEvaluator restanspruchEvaluator = new RestanspruchEvaluator(Constants.DEFAULT_GUELTIGKEIT);
 	private static final WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final EinkommenCalcRule maximalesEinkommenCalcRule = new EinkommenCalcRule(Constants.DEFAULT_GUELTIGKEIT, MAX_EINKOMMEN);
 	private static final BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(Constants.DEFAULT_GUELTIGKEIT);
+	private static final EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
+	private static final EinreichungsfristCalcRule einreichungsfristCalcRule = new EinreichungsfristCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 
 	protected final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	protected final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
@@ -41,6 +42,7 @@ public class EbeguRuleTestsHelper {
 		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
 		result = fachstelleAbschnittRule.calculate(betreuung, result);
 		result = einkommenAbschnittRule.calculate(betreuung, result);
+		result = einreichungsfristAbschnittRule.calculate(betreuung, result);
 		// Anspruch
 		result = erwerbspensumCalcRule.calculate(betreuung, result);
 		result = betreuungspensumCalcRule.calculate(betreuung, result);
@@ -52,6 +54,7 @@ public class EbeguRuleTestsHelper {
 		// Reduktionen
 		result = maximalesEinkommenCalcRule.calculate(betreuung, result);
 		result = betreuungsangebotTypCalcRule.calculate(betreuung, result);
+		result = einreichungsfristCalcRule.calculate(betreuung, result);
 		return result;
 	}
 }

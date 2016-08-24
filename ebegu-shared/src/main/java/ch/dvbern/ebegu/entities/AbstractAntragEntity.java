@@ -25,7 +25,6 @@ public class AbstractAntragEntity extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_antrag_gesuchsperiode_id"))
 	private Gesuchsperiode gesuchsperiode;
 
-	@Nonnull
 	@NotNull
 	@Column(nullable = false)
 	private LocalDate eingangsdatum;
@@ -46,7 +45,6 @@ public class AbstractAntragEntity extends AbstractEntity {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
-	@Nonnull
 	public LocalDate getEingangsdatum() {
 		return eingangsdatum;
 	}

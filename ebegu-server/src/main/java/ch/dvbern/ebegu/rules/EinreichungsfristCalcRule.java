@@ -5,8 +5,6 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Regel bezüglich der Einreichungsfrist des Gesuchs:
@@ -19,20 +17,24 @@ import java.util.List;
  * 		Ihnen wird für den Monat August aber der Volltarif verrechnet.
  * 	Verweis 16.11 Gesuch zu Speat
  */
-public class EinreichungsfristRule extends AbstractEbeguRule {
+public class EinreichungsfristCalcRule extends AbstractCalcRule {
 
-	public EinreichungsfristRule(@Nonnull DateRange validityPeriod) {
+	public EinreichungsfristCalcRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.EINREICHUNGSFRIST, RuleType.REDUKTIONSREGEL, validityPeriod);
-	}
-
-	@Nonnull
-	@Override
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
-		return new ArrayList<>();
 	}
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-
+		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+			if (verfuegungZeitabschnitt.isZuSpaetEingereicht()) {
+				if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+					verfuegungZeitabschnitt.setBemerkungen(RuleKey.EINREICHUNGSFRIST.name() + ". Gesuch wurde zu spaet eingereicht");
+				} else {
+					verfuegungZeitabschnitt.setBezahltVollkosten(true);
+					verfuegungZeitabschnitt.setBemerkungen(RuleKey.EINREICHUNGSFRIST.name() + ". Gesuch wurde zu spaet eingereicht. Es muss der Volltarif bezahlt werden");
+				}
+			}
+		}
 	}
 }

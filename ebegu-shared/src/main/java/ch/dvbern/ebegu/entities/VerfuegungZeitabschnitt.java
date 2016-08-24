@@ -28,6 +28,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
+
+	// Zwischenresulate aus DATA-Rules ("Abschnitt") TODO (team) diese koennten transient sein
+
 	@Max(100)
 	@Min(0)
 	@NotNull
@@ -51,6 +54,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@NotNull
 	@Column(nullable = false)
 	private int fachstellenpensum;
+
+
+	@Transient
+	private boolean zuSpaetEingereicht;
+
+	@Transient // TODO dies hier muesste dann vermutlich gespeichert werden
+	// Wenn Vollkosten bezahlt werden muessen, werden die Vollkosten berechnet und als Elternbeitrag gesetzt
+	private boolean bezahltVollkosten;
 
 	@Max(100)
 	@Min(0)
@@ -215,6 +226,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.verfuegung = verfuegung;
 	}
 
+	public boolean isZuSpaetEingereicht() {
+		return zuSpaetEingereicht;
+	}
+
+	public void setZuSpaetEingereicht(boolean zuSpaetEingereicht) {
+		this.zuSpaetEingereicht = zuSpaetEingereicht;
+	}
+
+	public boolean isBezahltVollkosten() {
+		return bezahltVollkosten;
+	}
+
+	public void setBezahltVollkosten(boolean bezahltVollkosten) {
+		this.bezahltVollkosten = bezahltVollkosten;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -243,6 +270,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setMassgebendesEinkommen(massgebendesEinkommen);
 
 		this.addBemerkung(other.getBemerkungen());
+		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
 	}
 
 	/**
@@ -315,7 +343,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);
+			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen) &&
+			zuSpaetEingereicht == that.zuSpaetEingereicht;
 	}
 
 	/**

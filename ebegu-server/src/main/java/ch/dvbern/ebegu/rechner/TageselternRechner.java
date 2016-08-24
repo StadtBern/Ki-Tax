@@ -36,7 +36,12 @@ public class TageselternRechner extends AbstractBGRechner {
 
 		// Vollkosten und Elternbeitrag
 		BigDecimal vollkosten = MathUtil.EXACT.multiply(parameterDTO.getKostenProStundeMaximalTageseltern(), betreuungsstundenIntervall);
-		BigDecimal elternbeitrag = MathUtil.EXACT.multiply(kostenProBetreuungsstunde, betreuungsstundenIntervall);
+		BigDecimal elternbeitrag;
+		if (verfuegungZeitabschnitt.isBezahltVollkosten()) {
+			elternbeitrag = vollkosten;
+		} else {
+			elternbeitrag = MathUtil.EXACT.multiply(kostenProBetreuungsstunde, betreuungsstundenIntervall);
+		}
 
 		// Runden und auf Zeitabschnitt zurückschreiben
 		verfuegungZeitabschnitt.setVollkosten(MathUtil.roundToFrankenRappen(vollkosten));
