@@ -12,7 +12,7 @@ import java.util.List;
 import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialenRestanspruch;
 
 /**
- * Created by hefr on 24.08.16.
+ * Hilfsklasse fuer Ebegu-Rule-Tests
  */
 public class EbeguRuleTestsHelper {
 

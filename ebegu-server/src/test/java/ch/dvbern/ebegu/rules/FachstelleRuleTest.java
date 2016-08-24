@@ -13,8 +13,6 @@ import java.time.Month;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialenRestanspruch;
-
 /**
  * Tests für Fachstellen-Regel
  */
@@ -32,17 +30,6 @@ public class FachstelleRuleTest {
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 
-	private List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung) {
-		List<VerfuegungZeitabschnitt> result = erwerbspensumAbschnittRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
-		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
-		result = fachstelleAbschnittRule.calculate(betreuung, result);
-		result = erwerbspensumCalcRule.calculate(betreuung, result);
-		result = betreuungspensumCalcRule.calculate(betreuung, result);
-		result = fachstelleCalcRule.calculate(betreuung, result);
-		result = restanspruchCalcRule.calculate(betreuung, result);
-		return result;
-	}
-
 	@Test
 	public void testKitaMitFachstelleWenigerAlsPensum() {
 		Betreuung betreuung = createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
@@ -50,7 +37,7 @@ public class FachstelleRuleTest {
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(40);
 		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
-		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
@@ -68,7 +55,7 @@ public class FachstelleRuleTest {
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(80);
 		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 40, 0));
-		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());

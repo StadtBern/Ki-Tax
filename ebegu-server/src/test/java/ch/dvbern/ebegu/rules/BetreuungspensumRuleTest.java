@@ -16,7 +16,7 @@ import java.time.Month;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialenRestanspruch;
+import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
 
 /**
  * Tests für Betreuungspensum-Regel
@@ -34,17 +34,6 @@ public class BetreuungspensumRuleTest {
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
-
-	private List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung) {
-		List<VerfuegungZeitabschnitt> result = erwerbspensumAbschnittRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
-		result = betreuungspensumAbschnittRule.calculate(betreuung, result);
-		result = fachstelleAbschnittRule.calculate(betreuung, result);
-		result = erwerbspensumCalcRule.calculate(betreuung, result);
-		result = betreuungspensumCalcRule.calculate(betreuung, result);
-		result = fachstelleCalcRule.calculate(betreuung, result);
-		result = restanspruchCalcRule.calculate(betreuung, result);
-		return result;
-	}
 
 	@Test
 	public void testKitaNormalfall() {
