@@ -27,7 +27,7 @@ public class KitaRechner extends AbstractBGRechner {
 		LocalDate geburtsdatum = verfuegung.getBetreuung().getKind().getKindJA().getGeburtsdatum();
 		BigDecimal oeffnungsstunden = verfuegung.getBetreuung().getInstitutionStammdaten().getOeffnungsstunden();
 		BigDecimal oeffnungstage = verfuegung.getBetreuung().getInstitutionStammdaten().getOeffnungstage();
-		BigDecimal anspruch = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getAnspruchberechtigtesPensum()));
+		BigDecimal anspruch = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getBgPensum()));
 		BigDecimal massgebendesEinkommen = verfuegungZeitabschnitt.getMassgebendesEinkommen();
 
 		// Inputdaten validieren

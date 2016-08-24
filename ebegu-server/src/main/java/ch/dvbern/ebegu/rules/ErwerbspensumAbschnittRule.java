@@ -2,12 +2,10 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.MathUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -16,10 +14,10 @@ import java.util.Set;
  * Die weiteren Rules müssen diesen Wert gegebenenfalls korrigieren.
  * Verweis 16.9.2
  */
-public class ErwerbspensumRule extends AbstractEbeguRule{
+public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 
-	public ErwerbspensumRule(DateRange validityPeriod) {
-		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_CALC, validityPeriod);
+	public ErwerbspensumAbschnittRule(DateRange validityPeriod) {
+		super(RuleKey.ERWERBSPENSUM, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 
 	//TODO (hefr) Achtung, es muss ncoh das Eingangsdatum beachtet werden!
@@ -46,44 +44,10 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 		return erwerbspensumAbschnitte;
 	}
 
-	@Override
-	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
-		Objects.requireNonNull(betreuung.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");
-		boolean hasSecondGesuchsteller = betreuung.extractGesuch().getFamiliensituation().hasSecondGesuchsteller();
-		int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
-		// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
-		// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden
-		int erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1();
-		if (erwerbspensum1 > 100) {
-			erwerbspensum1 = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Erwerbspensum GS 1 wurde auf 100% limitiert");
-		}
-		int erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2();
-		if (erwerbspensum2 > 100) {
-			erwerbspensum2 = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Erwerbspensum GS 2 wurde auf 100% limitiert");
-		}
-		int anspruch = erwerbspensum1 + erwerbspensum2 - erwerbspensumOffset;
-		if (anspruch <= 0) {
-			anspruch = 0;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM.name() + ": Anspruch wurde aufgrund Erwerbspensum auf 0% gesetzt");
-		}
-		// Der Anspruch wird immer auf 10-er Schritten gerundet.
-		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
-		verfuegungZeitabschnitt.setErwerbspensumMinusOffset(roundedAnspruch);
-		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
-		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) { //wurde schon mal ein Rest berechnet?
-			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
-			verfuegungZeitabschnitt.setAnspruchspensumRest(roundedAnspruch);
-		}
-	}
-
 	/**
 	 * geht durch die Erwerpspensen des Gesuchstellers und gibt Abschnitte zurueck
 	 * @param gesuchsteller Der Gesuchsteller dessen Erwerbspensumcontainers zu Abschnitte konvertiert werden
 	 * @param gs2 handelt es sich um gesuchsteller1 -> false oder gesuchsteller2 -> true
-	 * @return
 	 */
 	@Nonnull
 	private List<VerfuegungZeitabschnitt> getErwerbspensumAbschnittForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, boolean gs2) {
@@ -99,9 +63,6 @@ public class ErwerbspensumRule extends AbstractEbeguRule{
 	/**
 	 * Konvertiert ein Erwerbspensum in einen Zeitabschnitt von entsprechender dauer und erwerbspensumGS1 (falls gs2=false)
 	 * oder erwerpspensuGS2 (falls gs2=true)
-	 * @param erwerbspensum
-	 * @param gs2
-	 * @return
 	 */
 	@Nonnull
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Erwerbspensum erwerbspensum, boolean gs2) {

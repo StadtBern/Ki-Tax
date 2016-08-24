@@ -41,12 +41,12 @@ public class AbstractBGRechnerTest {
 		return new BetreuungsgutscheinEvaluator(rules);
 	}
 
-	public static void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int beantragtesPensum, int anspruchsberechtigtesPensum, int betreuungspensum, double vollkosten,
+	public static void assertZeitabschnitt(VerfuegungZeitabschnitt abschnitt, int betreuungspensum, int anspruchsberechtigtesPensum, int bgPensum, double vollkosten,
 			double verguenstigung, double elternbeitrag) {
 
-		Assert.assertEquals("Beantragtes Pensum " + beantragtesPensum + " entspricht nicht " + abschnitt, beantragtesPensum, abschnitt.getBetreuungspensum());
-		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getErwerbspensumMinusOffset());
-		Assert.assertEquals(betreuungspensum, abschnitt.getAnspruchberechtigtesPensum());
+		Assert.assertEquals("Beantragtes Pensum " + betreuungspensum + " entspricht nicht " + abschnitt, betreuungspensum, abschnitt.getBetreuungspensum());
+		Assert.assertEquals(anspruchsberechtigtesPensum, abschnitt.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(bgPensum, abschnitt.getBgPensum());
 		Assert.assertEquals(MATH.from(vollkosten), abschnitt.getVollkosten());
 		Assert.assertEquals(MATH.from(verguenstigung), abschnitt.getVerguenstigung());
 		Assert.assertEquals(MATH.from(elternbeitrag), abschnitt.getElternbeitrag());

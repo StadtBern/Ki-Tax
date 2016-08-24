@@ -28,7 +28,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
-	//TODO (team) hier hats im Moment ziemlich viele Attribute, mal schauen, was wir alles davon brauchen
 	@Max(100)
 	@Min(0)
 	@NotNull
@@ -65,12 +64,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
-	@Max(100)
-	@Min(0)
-	@NotNull
-	@Column(nullable = false)
-	private int bgPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
-
 
 	@Column(nullable = true)
 	private BigDecimal betreuungsstunden;
@@ -86,7 +79,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
-	private int erwerbspensumMinusOffset; // Bei 1 GS: Erwerbspensum GS1, bei 2 GS: Erwerbspensum GS1 + GS2 - 100
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -215,14 +207,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.status = status;
 	}
 
-	public int getErwerbspensumMinusOffset() {
-		return erwerbspensumMinusOffset;
-	}
-
-	public void setErwerbspensumMinusOffset(int erwerbspensumMinusOffset) {
-		this.erwerbspensumMinusOffset = erwerbspensumMinusOffset;
-	}
-
 	public Verfuegung getVerfuegung() {
 		return verfuegung;
 	}
@@ -249,7 +233,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setBetreuungsstunden(newBetreuungsstunden);
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
-		this.setErwerbspensumMinusOffset(this.getErwerbspensumMinusOffset() + other.getErwerbspensumMinusOffset());
 		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
 		if (this.getMassgebendesEinkommen() != null) {
 			massgebendesEinkommen = massgebendesEinkommen.add(this.getMassgebendesEinkommen());
@@ -292,7 +275,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 */
 
 	public int getAnspruchberechtigtesPensum() {
-		//todo aktuell wird das Betreuungspensum hier schon abgezogen, das darf aber nicht sein
 		return anspruchberechtigtesPensum;
 	}
 
@@ -304,14 +286,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 * Ein Kind mit einem Betreuungspensum von 60% und einem anspruchsberechtigten Pensum von 40% hat ein BG-Pensum von 40%.
 	 * Ein Kind mit einem Betreuungspensum von 40% und einem anspruchsberechtigten Pensum von 60% hat ein BG-Pensum von 40%.
 	 */
-	public int getBgPensum() {
-		return bgPensum;
-	}
-
-	public void setBgPensum(int bgPensum) {
-		this.bgPensum = bgPensum;
-	}
-
+    public int getBgPensum() {
+        return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
+    }
 
 	@Override
 	public String toString() {
@@ -320,7 +297,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
 			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
-			.append(" Maximaler Anspruch: ").append(erwerbspensumMinusOffset).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
@@ -338,11 +314,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-			erwerbspensumMinusOffset == that.erwerbspensumMinusOffset &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen);
 	}
-
 
 	/**
 	 * Gibt den Betrag des Gutscheins zurück.

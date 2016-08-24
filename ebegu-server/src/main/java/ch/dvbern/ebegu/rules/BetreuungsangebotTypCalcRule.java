@@ -5,22 +5,14 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Regel für Betreuungsangebot: Es werden nur die Nicht-Schulamt-Angebote berechnet.
  */
-public class BetreuungsangebotTypRule extends AbstractEbeguRule {
+public class BetreuungsangebotTypCalcRule extends AbstractCalcRule {
 
-	public BetreuungsangebotTypRule(DateRange validityPeriod) {
+	public BetreuungsangebotTypCalcRule(DateRange validityPeriod) {
 		super(RuleKey.BETREUUNGSANGEBOT_TYP, RuleType.REDUKTIONSREGEL, validityPeriod);
-	}
-
-	@Nonnull
-	@Override
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
-		return new ArrayList<>();
 	}
 
 	@Override

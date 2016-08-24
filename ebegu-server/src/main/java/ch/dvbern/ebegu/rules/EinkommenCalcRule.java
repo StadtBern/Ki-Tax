@@ -13,27 +13,24 @@ import java.math.BigDecimal;
  * gibt es keine Reduktion des Anspruchs.
  * Regel 16.7 Maximales Einkommen
  */
-public class MaximalesEinkommenCalcRule extends AbstractCalcRule {
+public class EinkommenCalcRule extends AbstractCalcRule {
 
 
 	private BigDecimal maximalesEinkommen;
 
 
-	public MaximalesEinkommenCalcRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
-		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.REDUKTIONSREGEL, validityPeriod);
+	public EinkommenCalcRule(DateRange validityPeriod, BigDecimal maximalesEinkommen) {
+		super(RuleKey.EINKOMMEN, RuleType.REDUKTIONSREGEL, validityPeriod);
 		this.maximalesEinkommen = maximalesEinkommen;
 	}
 
-
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-//		BetreuungsangebotTyp typ = betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp();
-//todo team Alter Kind pruefen
-//		if (BetreuungsangebotTyp.KITA.equals(typ) || BetreuungsangebotTyp.TAGESELTERN.equals(typ)) {
+		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 			if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.MAXIMALES_EINKOMMEN.name() + ": Maximales Einkommen überschritten");
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN.name() + ": Maximales Einkommen überschritten");
 			}
-//		}
+		}
 	}
 }

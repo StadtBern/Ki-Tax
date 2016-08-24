@@ -30,6 +30,8 @@ public class WohnsitzRule extends AbstractEbeguRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-
+		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+			// TODO (Team) Wohnsitz pruefen
+		}
 	}
 }

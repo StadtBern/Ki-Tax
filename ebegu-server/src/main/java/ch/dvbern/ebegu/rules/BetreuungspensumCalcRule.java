@@ -22,37 +22,28 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		// Initialisierung: Wir geben mal das gewünschte Pensum. Falls dies gekürzt werden muss, so geschieht dies später
-		int betreuungberechnet = verfuegungZeitabschnitt.getBetreuungspensum();
-		int anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest();
-		// Das Betreuungspensum darf pro Betreuung nie mehr als 100% betragen (gilt für alle Angebote)
-		if (betreuungberechnet > 100) {
-			betreuungberechnet = 100;
+		// Betreuungspensum darf nie mehr als 100% sein
+		int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
+		if (betreuungspensum > 100) {
+			betreuungspensum = 100;
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
 		}
-		// Fachstelle: Überschreibt alles
+		// Fachstelle: Wird in einer separaten Rule behandelt
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
 		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
-		if (roundedPensumFachstelle > 0) {
-			// Anspruch ist immer genau das Pensum der Fachstelle
-			betreuungberechnet = roundedPensumFachstelle;
-			// Den neuen "AnspruchRest" bestimmen:
-			if (roundedPensumFachstelle > verfuegungZeitabschnitt.getBetreuungspensum()) {
-				anspruchRest = roundedPensumFachstelle - verfuegungZeitabschnitt.getBetreuungspensum();
-			} else {
-				anspruchRest = 0;
+		if (roundedPensumFachstelle <= 0) {
+			// Keine Fachstelle
+			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				// Kita und Tageseltern-Kleinkinder:
+				// Sie bekommen maximal soviel, wie der (Rest-) Anspruch ist
+				int anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest();
+				if (betreuungspensum > anspruchRest) {
+					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruchRest);
+				}
+			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+				// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
+				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(verfuegungZeitabschnitt.getBetreuungspensum());
 			}
-		} else if (betreuung.isAngebotKita() || betreuung.isAngebotTageselternKleinkinder()) {
-			// Kita und Tageseltern-Kleinkinder: Anspruch ist das kleinere von Betreuungspensum und Erwerbspensum
-			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
-
-			// Ausserdem: Nur soviel, wie noch nicht von einer anderen Kita oder Tageseltern Kleinkinder verwendet wurde:
-			betreuungberechnet = Math.min(betreuungberechnet, verfuegungZeitabschnitt.getAnspruchspensumRest());
-			// Den neuen "AnspruchRest" bestimmen:
-			anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest() - betreuungberechnet;
 		}
-		// Den berechneten Wert setzen, sowie den Restanspruch aktualisieren
-		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungberechnet);
-		verfuegungZeitabschnitt.setAnspruchspensumRest(anspruchRest);
 	}
 }

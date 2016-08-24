@@ -16,7 +16,7 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 
 	public EinkommenAbschnittRule(DateRange validityPeriod) {
-		super(RuleKey.MAXIMALES_EINKOMMEN, RuleType.GRUNDREGEL_DATA, validityPeriod);
+		super(RuleKey.EINKOMMEN, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 
 	@Nonnull

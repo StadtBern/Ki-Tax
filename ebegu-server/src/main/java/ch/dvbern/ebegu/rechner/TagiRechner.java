@@ -19,7 +19,7 @@ public class TagiRechner extends AbstractBGRechner {
 		// Benoetigte Daten
 		LocalDate von = verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb();
 		LocalDate bis = verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis();
-		BigDecimal anspruch = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getAnspruchberechtigtesPensum()));
+		BigDecimal anspruch = MathUtil.EXACT.pctToFraction(new BigDecimal(verfuegungZeitabschnitt.getBgPensum()));
 		BigDecimal massgebendesEinkommen = verfuegungZeitabschnitt.getMassgebendesEinkommen();
 
 		// Inputdaten validieren
