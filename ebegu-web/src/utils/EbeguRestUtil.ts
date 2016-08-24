@@ -353,7 +353,6 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
-            restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
 
             return restFamiliensituation;
@@ -383,7 +382,6 @@ export default class EbeguRestUtil {
     public parseFamiliensituation(familiensituation: TSFamiliensituation, familiensituationFromServer: any): TSFamiliensituation {
         if (familiensituationFromServer) {
             this.parseAbstractEntity(familiensituation, familiensituationFromServer);
-            familiensituation.bemerkungen = familiensituationFromServer.bemerkungen;
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
@@ -440,6 +438,7 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
+        restGesuch.bemerkungen = gesuch.bemerkungen;
         return restGesuch;
     }
 
@@ -451,6 +450,7 @@ export default class EbeguRestUtil {
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
+            gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             return gesuchTS;
         }
         return undefined;
@@ -816,7 +816,6 @@ export default class EbeguRestUtil {
         if (kind.pensumFachstelle) {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
         }
-        restKind.bemerkungen = kind.bemerkungen;
         return restKind;
     }
 
@@ -855,7 +854,6 @@ export default class EbeguRestUtil {
             if (kindFromServer.pensumFachstelle) {
                 kindTS.pensumFachstelle = this.parsePensumFachstelle(new TSPensumFachstelle(), kindFromServer.pensumFachstelle);
             }
-            kindTS.bemerkungen = kindFromServer.bemerkungen;
             return kindTS;
         }
         return undefined;
@@ -895,7 +893,6 @@ export default class EbeguRestUtil {
     public betreuungToRestObject(restBetreuung: any, betreuung: TSBetreuung): any {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
-        restBetreuung.bemerkungen = betreuung.bemerkungen;
         restBetreuung.grundAblehnung = betreuung.grundAblehnung;
         restBetreuung.datumAblehnung = DateUtil.momentToLocalDate(betreuung.datumAblehnung);
         restBetreuung.datumBestaetigung = DateUtil.momentToLocalDate(betreuung.datumBestaetigung);
@@ -945,7 +942,6 @@ export default class EbeguRestUtil {
     public parseBetreuung(betreuungTS: TSBetreuung, betreuungFromServer: any): TSBetreuung {
         if (betreuungFromServer) {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
-            betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
             betreuungTS.grundAblehnung = betreuungFromServer.grundAblehnung;
             betreuungTS.datumAblehnung = DateUtil.localDateToMoment(betreuungFromServer.datumAblehnung);
             betreuungTS.datumBestaetigung = DateUtil.localDateToMoment(betreuungFromServer.datumBestaetigung);

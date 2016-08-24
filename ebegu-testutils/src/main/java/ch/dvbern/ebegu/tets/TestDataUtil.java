@@ -105,7 +105,6 @@ public final class TestDataUtil {
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		familiensituation.setBemerkungen("DVBern");
 		return familiensituation;
 	}
 
@@ -218,7 +217,6 @@ public final class TestDataUtil {
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
@@ -279,7 +277,6 @@ public final class TestDataUtil {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
