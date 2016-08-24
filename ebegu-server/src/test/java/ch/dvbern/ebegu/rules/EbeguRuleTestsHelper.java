@@ -1,12 +1,17 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Betreuungspensum;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator.createInitialenRestanspruch;
@@ -32,10 +37,6 @@ public class EbeguRuleTestsHelper {
 	private static final EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final EinreichungsfristCalcRule einreichungsfristCalcRule = new EinreichungsfristCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 
-	protected final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
-	protected final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
-
-
 	protected static List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung) {
 		// Abschnitte
 		List<VerfuegungZeitabschnitt> result = erwerbspensumAbschnittRule.calculate(betreuung, createInitialenRestanspruch(betreuung.extractGesuchsperiode()));
@@ -56,5 +57,18 @@ public class EbeguRuleTestsHelper {
 		result = betreuungsangebotTypCalcRule.calculate(betreuung, result);
 		result = einreichungsfristCalcRule.calculate(betreuung, result);
 		return result;
+	}
+
+	protected static Betreuung createBetreuungWithPensum(LocalDate von, LocalDate bis, BetreuungsangebotTyp angebot, int pensum) {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
+		betreuung.setBetreuungspensumContainers(new LinkedHashSet<>());
+		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
+		betreuungspensumContainer.setBetreuung(betreuung);
+		DateRange gueltigkeit = new DateRange(von, bis);
+		betreuungspensumContainer.setBetreuungspensumJA(new Betreuungspensum(gueltigkeit));
+		betreuungspensumContainer.getBetreuungspensumJA().setPensum(pensum);
+		betreuung.getBetreuungspensumContainers().add(betreuungspensumContainer);
+		return betreuung;
 	}
 }

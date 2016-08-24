@@ -271,6 +271,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
+		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 	}
 
 	/**
@@ -344,7 +345,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen) &&
-			zuSpaetEingereicht == that.zuSpaetEingereicht;
+			zuSpaetEingereicht == that.zuSpaetEingereicht &&
+			bezahltVollkosten == that.bezahltVollkosten;
 	}
 
 	/**
