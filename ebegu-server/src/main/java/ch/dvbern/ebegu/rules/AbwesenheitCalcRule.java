@@ -5,8 +5,6 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Regel für Abwesenheiten. Sie beachtet:
@@ -16,16 +14,12 @@ import java.util.List;
  * - Wann dieses Ereignis gemeldet wird, spielt keine Rolle.
  * Verweis 16.14.4
  */
-public class AbwesenheitRule extends AbstractEbeguRule {
+public class AbwesenheitCalcRule extends AbstractCalcRule {
 
-	public AbwesenheitRule(@Nonnull DateRange validityPeriod) {
+	//TODO (Team) Kann erst umgesetzt werden, wenn wir die Mutationen haben!
+
+	public AbwesenheitCalcRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.ABWESENHEIT, RuleType.REDUKTIONSREGEL, validityPeriod);
-	}
-
-	@Nonnull
-	@Override
-	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
-		return new ArrayList<>();
 	}
 
 	@Override

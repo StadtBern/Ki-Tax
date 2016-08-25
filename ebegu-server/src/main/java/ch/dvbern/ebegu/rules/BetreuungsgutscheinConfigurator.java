@@ -70,6 +70,10 @@ public class BetreuungsgutscheinConfigurator {
 		MindestalterAbschnittRule mindestalterAbschnittRule = new MindestalterAbschnittRule(defaultGueltigkeit);
 		rules.add(mindestalterAbschnittRule);
 
+		// Abwesenheit
+		AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(defaultGueltigkeit);
+		rules.add(abwesenheitAbschnittRule);
+
 
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
@@ -105,10 +109,6 @@ public class BetreuungsgutscheinConfigurator {
 		BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(defaultGueltigkeit);
 		rules.add(betreuungsangebotTypCalcRule);
 
-		// Abwesenheit
-		AbwesenheitRule abwesenheitRule = new AbwesenheitRule(defaultGueltigkeit);
-		rules.add(abwesenheitRule);
-
 		// Mindestalter Kind
 		MindestalterCalcRule mindestalterRule = new MindestalterCalcRule(defaultGueltigkeit);
 		rules.add(mindestalterRule);
@@ -124,5 +124,9 @@ public class BetreuungsgutscheinConfigurator {
 		// Mindestalter Kind
 		MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(defaultGueltigkeit);
 		rules.add(mindestalterCalcRule);
+
+		// Abwesenheit
+		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
+		rules.add(abwesenheitCalcRule);
 	}
 }
