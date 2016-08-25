@@ -29,32 +29,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	private static final long serialVersionUID = 7250339356897563374L;
 
 
-	// Zwischenresulate aus DATA-Rules ("Abschnitt") TODO (team) diese koennten transient sein
+	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
-	@Max(100)
-	@Min(0)
-	@NotNull
-	@Column(nullable = false)
+	@Transient
 	private int erwerbspensumGS1;
 
-	@Max(100)
-	@Min(0)
-	@NotNull
-	@Column(nullable = false)
+	@Transient
 	private int erwerbspensumGS2;
 
-	@Max(100)
-	@Min(0)
-	@NotNull
-	@Column(nullable = false)
-	private int betreuungspensum;
-
-	@Max(100)
-	@Min(0)
-	@NotNull
-	@Column(nullable = false)
+	@Transient
 	private int fachstellenpensum;
-
 
 	@Transient
 	private boolean zuSpaetEingereicht;
@@ -68,15 +52,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Transient
 	private boolean kindMinestalterUnterschritten;
 
-	@Transient // TODO dies hier muesste dann vermutlich gespeichert werden
+	@Transient
 	// Wenn Vollkosten bezahlt werden muessen, werden die Vollkosten berechnet und als Elternbeitrag gesetzt
 	private boolean bezahltVollkosten;
+
+	@Transient
+	private int anspruchspensumRest;
 
 	@Max(100)
 	@Min(0)
 	@NotNull
 	@Column(nullable = false)
-	private int anspruchspensumRest;
+	private int betreuungspensum;
 
 	@Max(100)
 	@Min(0)
@@ -314,11 +301,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	 * Fügt eine Bemerkung zur Liste hinzu
 	 */
 	public void addBemerkung(String bem) {
-		String joinedString = Joiner.on("\n").skipNulls().join(
+		this.bemerkungen = Joiner.on("\n").skipNulls().join(
 			StringUtils.defaultIfBlank(this.bemerkungen, null),
 			StringUtils.defaultIfBlank(bem, null)
 		);
-		this.bemerkungen = joinedString;
 	}
 
 	/**
