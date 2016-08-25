@@ -1,7 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
-
-import java.util.List;
-
+package ch.dvbern.ebegu.vorlagen;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,58 +8,27 @@ import java.util.List;
 * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
 * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
 *
-* Ersteller: zeab am: 12.08.2016
+* Ersteller: zeab am: 22.08.2016
 */
-public interface VerfuegungPrint {
 
+public interface EinkommensverschlechterungPrint extends FinanzDatenPrint {
 	// ****************************************************************************************************************
 	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getGesuchstellerName();
-
-	String getGesuchstellerStrasse();
-
-	String getGesuchstellerPLZStadt();
-
-	String getReferenzNummer();
-
-	String getVerfuegungsdatum();
-
-	String getGesuchsteller1();
-
-	String getGesuchsteller2();
-
-	String getKindNameVorname();
-
-	String getKindGeburtsdatum();
-
-	String getKitaBezeichnung();
-
-	String getAnspruchAb();
-
-	String getAnspruchBis();
-
-	List<VerfuegungZeitabschnittPrint> getVerfuegungZeitabschnitt();
+	/**
+	 * @return Einkommenverschlescherungsjahr
+	 */
+	String getEinkommensverschlechterungJahr();
 
 	/**
-	 * @return die Bemerkung
+	 * @return das Ereingis eintritt
 	 */
-	String getBemerkungen();
+	String getEreigniseintritt();
 
 	/**
-	 * @return true falls Gesuchstelller 2 existiert
+	 * @return Grund des Einkommensverschlechterung
 	 */
-	boolean existGesuchsteller2();
-
-	/**
-	 * @return true falls Pensum groesser 0 ist
-	 */
-	boolean isPensumGrosser0();
-
-	/**
-	 * @return true falls eine Mutation ist
-	 */
-	boolean isMutation();
+	String getGrund();
 }

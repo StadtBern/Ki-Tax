@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,22 +11,21 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
 
 public class VerfuegungPrintMergeSource implements MergeSource {
 
-	private VerfuegungPrintDTO verfuegung;
+	private VerfuegungPrint verfuegung;
 
 	/**
 	 * @param verfuegung
 	 */
-	public VerfuegungPrintMergeSource(VerfuegungPrintDTO verfuegung) {
+	public VerfuegungPrintMergeSource(VerfuegungPrint verfuegung) {
 		this.verfuegung = verfuegung;
 	}
 
@@ -42,20 +41,7 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		// TODO ZEAB new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key); wieder einschalten
-		// und anpassen
-		if ("verfuegung.Mutation".equalsIgnoreCase(key)) {
-			return verfuegung.isMutation();
-		} else if ("verfuegung.gesuchsteller2Exist".equalsIgnoreCase(key)) {
-			return verfuegung.existGesuchsteller2();
-		} else if ("verfuegung.PensumIstGroesser0".equalsIgnoreCase(key)) {
-			return verfuegung.isPensumGrosser0();
-		} else if ("verfuegung.pensumIst0".equalsIgnoreCase(key)) {
-			return !verfuegung.isPensumGrosser0();
-		} else if ("verfuegung.printbemerkung".equalsIgnoreCase(key)) {
-			return StringUtils.isNotEmpty(verfuegung.getBemerkungen().trim());
-		}
-		return Boolean.FALSE;// new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key);
+		return new BeanMergeSource(verfuegung, "verfuegung.").ifStatement(mergeContext, key);
 	}
 
 	@Override
