@@ -36,6 +36,8 @@ public class EbeguRuleTestsHelper {
 	private static final BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
 	private static final EinreichungsfristCalcRule einreichungsfristCalcRule = new EinreichungsfristCalcRule(Constants.DEFAULT_GUELTIGKEIT);
+	private static final WohnsitzAbschnittRule wohnsitzAbschnittRule = new WohnsitzAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
+	private static final WohnsitzCalcRule wohnsitzCalcRule = new WohnsitzCalcRule(Constants.DEFAULT_GUELTIGKEIT);
 
 	protected static List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung) {
 		// Abschnitte
@@ -44,6 +46,7 @@ public class EbeguRuleTestsHelper {
 		result = fachstelleAbschnittRule.calculate(betreuung, result);
 		result = einkommenAbschnittRule.calculate(betreuung, result);
 		result = einreichungsfristAbschnittRule.calculate(betreuung, result);
+		result = wohnsitzAbschnittRule.calculate(betreuung, result);
 		// Anspruch
 		result = erwerbspensumCalcRule.calculate(betreuung, result);
 		result = betreuungspensumCalcRule.calculate(betreuung, result);
@@ -56,10 +59,11 @@ public class EbeguRuleTestsHelper {
 		result = maximalesEinkommenCalcRule.calculate(betreuung, result);
 		result = betreuungsangebotTypCalcRule.calculate(betreuung, result);
 		result = einreichungsfristCalcRule.calculate(betreuung, result);
+		result = wohnsitzCalcRule.calculate(betreuung, result);
 		return result;
 	}
 
-	protected static Betreuung createBetreuungWithPensum(LocalDate von, LocalDate bis, BetreuungsangebotTyp angebot, int pensum) {
+	public static Betreuung createBetreuungWithPensum(LocalDate von, LocalDate bis, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
 		betreuung.setBetreuungspensumContainers(new LinkedHashSet<>());

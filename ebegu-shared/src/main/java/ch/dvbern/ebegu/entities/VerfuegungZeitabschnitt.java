@@ -59,6 +59,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Transient
 	private boolean zuSpaetEingereicht;
 
+	@Transient
+	private boolean wohnsitzNichtInGemeindeGS1;
+
+	@Transient
+	private boolean wohnsitzNichtInGemeindeGS2;
+
 	@Transient // TODO dies hier muesste dann vermutlich gespeichert werden
 	// Wenn Vollkosten bezahlt werden muessen, werden die Vollkosten berechnet und als Elternbeitrag gesetzt
 	private boolean bezahltVollkosten;
@@ -242,6 +248,22 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.bezahltVollkosten = bezahltVollkosten;
 	}
 
+	public boolean isWohnsitzNichtInGemeindeGS1() {
+		return wohnsitzNichtInGemeindeGS1;
+	}
+
+	public void setWohnsitzNichtInGemeindeGS1(boolean wohnsitzNichtInGemeindeGS1) {
+		this.wohnsitzNichtInGemeindeGS1 = wohnsitzNichtInGemeindeGS1;
+	}
+
+	public boolean isWohnsitzNichtInGemeindeGS2() {
+		return wohnsitzNichtInGemeindeGS2;
+	}
+
+	public void setWohnsitzNichtInGemeindeGS2(boolean wohnsitzNichtInGemeindeGS2) {
+		this.wohnsitzNichtInGemeindeGS2 = wohnsitzNichtInGemeindeGS2;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -271,6 +293,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
+		this.setWohnsitzNichtInGemeindeGS1(this.isWohnsitzNichtInGemeindeGS1() || other.isWohnsitzNichtInGemeindeGS1());
+		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 	}
 
@@ -346,6 +370,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
+			wohnsitzNichtInGemeindeGS1 == that.wohnsitzNichtInGemeindeGS1 &&
+			wohnsitzNichtInGemeindeGS2 == that.wohnsitzNichtInGemeindeGS2 &&
 			bezahltVollkosten == that.bezahltVollkosten;
 	}
 
