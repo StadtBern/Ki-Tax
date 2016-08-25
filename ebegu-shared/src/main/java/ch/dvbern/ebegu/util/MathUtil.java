@@ -240,4 +240,17 @@ public enum MathUtil {
 	public static int roundIntToTens(int pensumFachstelle) {
 		return (int) (Math.round((double) pensumFachstelle / 10) * 10);
 	}
+
+
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	public static BigDecimal positiveNonNullAndRound(BigDecimal value) {
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		// Returns the maximum of this BigDecimal and val.
+		value = value.setScale(0, RoundingMode.HALF_UP);
+		return value.max(BigDecimal.ZERO);
+	}
 }
