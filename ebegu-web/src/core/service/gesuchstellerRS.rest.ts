@@ -33,10 +33,10 @@ export default class GesuchstellerRS {
         );
     }
 
-    public create(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
+    public create(gesuchsteller: TSGesuchsteller, gesuchId: string): IPromise<TSGesuchsteller> {
         let gessteller = {};
         gessteller = this.ebeguRestUtil.gesuchstellerToRestObject(gessteller, gesuchsteller);
-        return this.http.post(this.serviceURL, gessteller, {
+        return this.http.post(this.serviceURL + '/' + gesuchId, gessteller, {
             headers: {
                 'Content-Type': 'application/json'
             }

@@ -16,20 +16,20 @@ export default class FamiliensituationRS {
         this.ebeguRestUtil = ebeguRestUtil;
     }
 
-    public create(familiensituation: TSFamiliensituation): IHttpPromise<any> {
+    public create(familiensituation: TSFamiliensituation, gesuchId: string): IHttpPromise<any> {
         let returnedFamiliensituation = {};
         returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation, familiensituation);
-        return this.http.post(this.serviceURL, returnedFamiliensituation, {
+        return this.http.post(this.serviceURL + '/' + gesuchId, returnedFamiliensituation, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
     }
 
-    public update(familiensituation: TSFamiliensituation): IHttpPromise<any> {
+    public update(familiensituation: TSFamiliensituation, gesuchId: string): IHttpPromise<any> {
         let returnedFamiliensituation = {};
         returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation, familiensituation);
-        return this.http.put(this.serviceURL, returnedFamiliensituation, {
+        return this.http.put(this.serviceURL + '/' + gesuchId, returnedFamiliensituation, {
             headers: {
                 'Content-Type': 'application/json'
             }

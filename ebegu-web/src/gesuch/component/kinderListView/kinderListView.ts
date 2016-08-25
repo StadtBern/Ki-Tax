@@ -33,6 +33,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
+        this.gesuchModelManager.initKinderStatus();
     }
 
     getKinderList(): Array<TSKindContainer> {

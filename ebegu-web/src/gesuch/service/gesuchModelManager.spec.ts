@@ -89,6 +89,7 @@ describe('gesuchModelManager', function () {
                 kindToWorkWith.nextNumberBetreuung = 5;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
                 spyOn(betreuungRS, 'createBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.updateBetreuung();
                 scope.$apply();
@@ -97,6 +98,7 @@ describe('gesuchModelManager', function () {
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
+                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalled();
             });
         });
         describe('saveGesuchAndFall', () => {
@@ -105,7 +107,7 @@ describe('gesuchModelManager', function () {
                 let gesuch: TSGesuch = new TSGesuch();
                 gesuch.id = '123123';
                 spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({data: gesuch}));
-                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue({});
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch(false);

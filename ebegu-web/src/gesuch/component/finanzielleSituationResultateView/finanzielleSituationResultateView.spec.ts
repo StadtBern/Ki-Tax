@@ -20,6 +20,7 @@ describe('finanzielleSituationResultateView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
+        spyOn(gesuchModelManager, 'initFinanzielleSituationStatus').and.returnValue({});
         berechnungsManager = $injector.get('BerechnungsManager');
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();

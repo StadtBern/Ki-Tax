@@ -64,7 +64,6 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
                 //wenn erwerbspensum nummer nicht definiert ist heisst dass, das wir ein neues erstellen sollten
                 this.erwerbspensum = this.initEmptyEwpContainer();
             }
-
         } else {
             console.log('kein gesuchsteller gefunden');
         }

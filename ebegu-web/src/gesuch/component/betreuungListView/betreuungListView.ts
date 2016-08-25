@@ -35,6 +35,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
+        this.gesuchModelManager.initBetreuungStatus();
     }
 
     previousStep(): void {

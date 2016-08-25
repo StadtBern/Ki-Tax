@@ -18,6 +18,7 @@ describe('kinderListView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
+        spyOn(gesuchModelManager, 'initKinderStatus').and.returnValue({});
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));

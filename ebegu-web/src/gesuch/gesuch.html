@@ -5,65 +5,80 @@
 
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
+
             <li ui-sref-active="active" ui-sref="gesuch.fallcreation"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+
                 <a ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM"
-                   data-translate-value-date="{{vm.getDateErstgesuch()}}"></a>
-                <a ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></a>
+                   data-translate-value-date="{{vm.getDateErstgesuch()}}" class="col-md-10"></a>
+                <a ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.familiensituation">
-                <a data-translate="MENU_FAMSITUATION"></a>
+                <a data-translate="MENU_FAMSITUATION" class="col-md-10 link-disabled"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true" ></i>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.stammdaten"><a data-translate="MENU_GESUCHSTELLER"></a></li>
+            <li ui-sref-active="active" ui-sref="gesuch.stammdaten">
+                <a data-translate="MENU_GESUCHSTELLER" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true" ></i>
+            </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.kinder"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_KINDER"></a>
+                <a data-translate="MENU_KINDER" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('KINDER')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.betreuungen">
-                <a data-translate="MENU_BETREUUNG"></a>
+                <a data-translate="MENU_BETREUUNG" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.erwerbsPensen"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_ERWERBSPENSUM"></a>
+                <a data-translate="MENU_ERWERBSPENSUM" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituationStart"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="vm.showFinanzsituationStart()">
-                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+                <a data-translate="MENU_FINANZIELLE_SITUATION" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituation"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="!vm.showFinanzsituationStart()">
-                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+                <a data-translate="MENU_FINANZIELLE_SITUATION" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.einkommensverschlechterungInfo"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a>
+                <a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.dokumente"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_DOKUMENTE"></a>
+                <a data-translate="MENU_DOKUMENTE" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true" ></i>
             </li>
 
             <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_FREIGABEQUITTUNG"></a>
+                <a data-translate="MENU_FREIGABEQUITTUNG" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true" ></i>
             </li>
 
             <li ui-sref-active="active" ui-sref="gesuch.verfuegen">
-                <a data-translate="MENU_VERFUEGEN"></a>
+                <a data-translate="MENU_VERFUEGEN" class="col-md-10"></a>
+                <i class="col-md-2 ng-class:vm.getIcon('VERFUEGEN')" aria-hidden="true" ></i>
             </li>
 
         </ul>
     </div>
     <div ui-view class="col-md-5"></div>
-
 </div>

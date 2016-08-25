@@ -9,10 +9,13 @@ import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -47,6 +50,10 @@ public class EinkommensverschlechterungResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private WizardStepService wizardStepService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -60,29 +67,36 @@ public class EinkommensverschlechterungResource {
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{gesuchstellerId}")
+	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungContainer(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-		if (gesuchsteller.isPresent()) {
-			EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
-			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-			EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
-				einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			if (gesuchsteller.isPresent()) {
+				EinkommensverschlechterungContainer convertedFinSitCont = converter.einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainerJAXP);
+				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
+				EinkommensverschlechterungContainer persistedEinkommensverschlechterungContainer =
+					einkVerschlService.saveEinkommensverschlechterungContainer(convertedFinSitCont);
 
-			URI uri = uriInfo.getBaseUriBuilder()
-				.path(EinkommensverschlechterungResource.class)
-				.path("/" + persistedEinkommensverschlechterungContainer.getId())
-				.build();
+				URI uri = uriInfo.getBaseUriBuilder()
+					.path(EinkommensverschlechterungResource.class)
+					.path("/" + persistedEinkommensverschlechterungContainer.getId())
+					.build();
 
-			JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = converter.einkommensverschlechterungContainerToJAX(persistedEinkommensverschlechterungContainer);
-			return Response.created(uri).entity(jaxEinkommensverschlechterungContainer).build();
+				wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedFinSitCont,
+					persistedEinkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+
+				JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = converter.einkommensverschlechterungContainerToJAX(persistedEinkommensverschlechterungContainer);
+				return Response.created(uri).entity(jaxEinkommensverschlechterungContainer).build();
+			}
 		}
 		throw new EbeguEntityNotFoundException("saveEinkommensverschlechterungContainer", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}

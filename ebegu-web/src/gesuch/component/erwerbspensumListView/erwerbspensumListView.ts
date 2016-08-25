@@ -43,6 +43,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService) {
         super(state, gesuchModelManager, berechnungsManager);
         var vm = this;
+        this.gesuchModelManager.initErwerbspensumStatus();
     }
 
 

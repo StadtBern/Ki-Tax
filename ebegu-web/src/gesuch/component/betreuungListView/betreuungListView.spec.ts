@@ -16,6 +16,7 @@ describe('betreuungListViewTest', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
+        spyOn(gesuchModelManager, 'initBetreuungStatus').and.returnValue({});
         $state = $injector.get('$state');
         let mddialog = $injector.get('$mdDialog');
         let dialog = $injector.get('DvDialog');

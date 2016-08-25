@@ -31,6 +31,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
+        this.gesuchModelManager.initFinanzielleSituationStatus();
     }
 
     showSteuerveranlagung(): boolean {

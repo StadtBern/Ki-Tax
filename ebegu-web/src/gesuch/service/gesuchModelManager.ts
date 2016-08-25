@@ -39,6 +39,8 @@ import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -150,8 +152,9 @@ export default class GesuchModelManager {
                 this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
-                    return this.gesuch;
+                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                        return this.gesuch;
+                    });
                 });
             });
         }
@@ -160,12 +163,18 @@ export default class GesuchModelManager {
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
         //testen ob aktuelles familiensituation schon gespeichert ist
         if (this.getFamiliensituation().timestampErstellt) {
-            return this.familiensituationRS.update(this.getFamiliensituation()).then((familienResponse: any) => {
-                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+            return this.familiensituationRS.update(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
+                this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.gesuch.familiensituation;
+                });
             });
         } else {
-            return this.familiensituationRS.create(this.getFamiliensituation()).then((familienResponse: any) => {
-                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+            return this.familiensituationRS.create(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
+                this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.gesuch.familiensituation;
+                });
             });
         }
     }
@@ -199,14 +208,18 @@ export default class GesuchModelManager {
             return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getStammdatenToWorkWith();
+                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                        return this.getStammdatenToWorkWith();
+                    });
                 });
             });
         } else {
-            return this.gesuchstellerRS.create(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
+            return this.gesuchstellerRS.create(this.getStammdatenToWorkWith(), this.gesuch.id).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getStammdatenToWorkWith();
+                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                        return this.getStammdatenToWorkWith();
+                    });
                 });
             });
         }
@@ -214,19 +227,23 @@ export default class GesuchModelManager {
 
     public saveFinanzielleSituation(): IPromise<TSFinanzielleSituationContainer> {
         return this.finanzielleSituationRS.saveFinanzielleSituation(
-            this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith())
+            this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
                 this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
-                return finSitContRespo;
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return finSitContRespo;
+                });
             });
     }
 
     public saveEinkommensverschlechterungContainer(): IPromise<TSEinkommensverschlechterungContainer> {
         return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
-            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith())
+            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
-                return ekvContRespo;
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return ekvContRespo;
+                });
             });
     }
 
@@ -495,6 +512,22 @@ export default class GesuchModelManager {
         }
     }
 
+    public initKinderStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initBetreuungStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initErwerbspensumStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initFinanzielleSituationStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
         if (showKorrespondadr) {
             this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();
@@ -642,14 +675,18 @@ export default class GesuchModelManager {
             return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
-                return this.setBetreuungToWorkWith(betreuungResponse);
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.setBetreuungToWorkWith(betreuungResponse);
+                });
             });
             //neu -> create
         } else {
             return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
-                return this.setBetreuungToWorkWith(betreuungResponse);
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.setBetreuungToWorkWith(betreuungResponse);
+                });
             });
         }
     }
@@ -660,14 +697,18 @@ export default class GesuchModelManager {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
                 this.backupCurrentGesuch();
-                return this.getKindToWorkWith();
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.getKindToWorkWith();
+                });
             });
         } else {
             return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
                 this.setKindToWorkWith(kindResponse);
                 this.getFallFromServer();
                 this.backupCurrentGesuch();
-                return this.getKindToWorkWith();
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.getKindToWorkWith();
+                });
             });
         }
     }
@@ -868,21 +909,25 @@ export default class GesuchModelManager {
 
     saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
-            return this.erwerbspensumRS.updateErwerbspensum(erwerbspensum, gesuchsteller.id)
+            return this.erwerbspensumRS.updateErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
                     let i = gesuchsteller.erwerbspensenContainer.indexOf(erwerbspensum);
                     if (i >= 0) {
                         gesuchsteller.erwerbspensenContainer[i] = erwerbspensum;
                     }
                     this.backupCurrentGesuch();
-                    return response;
+                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                        return response;
+                    });
                 });
         } else {
-            return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
+            return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((storedErwerbspensum: TSErwerbspensumContainer) => {
                     gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
                     this.backupCurrentGesuch();
-                    return storedErwerbspensum;
+                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                        return storedErwerbspensum;
+                    });
                 });
         }
 

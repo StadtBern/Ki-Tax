@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxWizardStep;
 import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -53,22 +52,22 @@ public class WizardStepResourceTest extends AbstractEbeguRestTest {
 		final List<JaxWizardStep> wizardStepList = wizardStepResource.createWizardStepList(new JaxId(gesuch.getId()));
 
 		Assert.assertEquals(10, wizardStepList.size());
-		assertWizardStep(wizardStepList.get(0), WizardStepName.GESUCH_ERSTELLEN);
-		assertWizardStep(wizardStepList.get(1), WizardStepName.FAMILIENSITUATION);
-		assertWizardStep(wizardStepList.get(2), WizardStepName.GESUCHSTELLER);
-		assertWizardStep(wizardStepList.get(3), WizardStepName.KINDER);
-		assertWizardStep(wizardStepList.get(4), WizardStepName.BETREUUNG);
-		assertWizardStep(wizardStepList.get(5), WizardStepName.ERWERBSPENSUM);
-		assertWizardStep(wizardStepList.get(6), WizardStepName.FINANZIELLE_SITUATION);
-		assertWizardStep(wizardStepList.get(7), WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-		assertWizardStep(wizardStepList.get(8), WizardStepName.DOKUMENTE);
-		assertWizardStep(wizardStepList.get(9), WizardStepName.VERFUEGEN);
+		assertWizardStep(wizardStepList.get(0), WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK);
+		assertWizardStep(wizardStepList.get(1), WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(2), WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(3), WizardStepName.KINDER, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(4), WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(5), WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(6), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(7), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(8), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT);
+		assertWizardStep(wizardStepList.get(9), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT);
 	}
 
-	private void assertWizardStep(JaxWizardStep wizardStep, WizardStepName wizardStepName) {
+	private void assertWizardStep(JaxWizardStep wizardStep, WizardStepName wizardStepName, WizardStepStatus status) {
 		Assert.assertEquals(gesuch.getId(), wizardStep.getGesuchId());
 		Assert.assertEquals(wizardStepName, wizardStep.getWizardStepName());
-		Assert.assertEquals(WizardStepStatus.UNBESUCHT, wizardStep.getWizardStepStatus());
+		Assert.assertEquals(status, wizardStep.getWizardStepStatus());
 		Assert.assertNull(wizardStep.getBemerkungen());
 	}
 }

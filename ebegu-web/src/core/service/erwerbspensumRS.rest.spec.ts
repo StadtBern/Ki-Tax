@@ -1,7 +1,6 @@
 import {IHttpBackendService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';
-import TSAbstractEntity from '../../models/TSAbstractEntity';
 import ErwerbspensumRS from './erwerbspensumRS.rest';
 import TSErwerbspensumContainer from '../../models/TSErwerbspensumContainer';
 import TSErwerbspensum from '../../models/TSErwerbspensum';
@@ -17,6 +16,7 @@ describe('ErwerbspensumRS', function () {
     let mockErwerbspensum: TSErwerbspensumContainer;
     let mockErwerbspensumRS: any;
     let gesuchId: string;
+    let gesuchstellerId: string;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -30,6 +30,8 @@ describe('ErwerbspensumRS', function () {
     beforeEach(() => {
         mockErwerbspensum = TestDataUtil.createErwerbspensumContainer();
         mockErwerbspensum.id = '2afc9d9a-957e-4550-9a22-97624a1d8feb';
+        gesuchstellerId = '2afc9d9a-957e-4550-9a22-97624a1d8fe1';
+        gesuchId = '2afc9d9a-957e-4550-9a22-97624a1d8fe2';
         mockErwerbspensumRS = ebeguRestUtil.erwerbspensumContainerToRestObject({}, mockErwerbspensum);
     });
 
@@ -71,9 +73,9 @@ describe('ErwerbspensumRS', function () {
     describe('createErwerbspensumContainer', () => {
         it('should create a ErwerbspensumContainer', () => {
             let createdEWPContainer: TSErwerbspensumContainer;
-            $httpBackend.expectPUT(erwerbspensumRS.serviceURL + '/' + gesuchId, mockErwerbspensumRS).respond(mockErwerbspensumRS);
+            $httpBackend.expectPUT(erwerbspensumRS.serviceURL + '/' + gesuchstellerId + '/' + gesuchId, mockErwerbspensumRS).respond(mockErwerbspensumRS);
 
-            erwerbspensumRS.createErwerbspensum(mockErwerbspensum, gesuchId)
+            erwerbspensumRS.createErwerbspensum(mockErwerbspensum, gesuchstellerId, gesuchId)
                 .then((result) => {
                     createdEWPContainer = result;
                 });
@@ -90,9 +92,9 @@ describe('ErwerbspensumRS', function () {
             mockErwerbspensum.erwerbspensumJA = changedEwp;
             mockErwerbspensumRS = ebeguRestUtil.erwerbspensumContainerToRestObject({}, mockErwerbspensum);
             let updatedErwerbspensumContainerContainer: TSErwerbspensumContainer;
-            $httpBackend.expectPUT(erwerbspensumRS.serviceURL + '/' + gesuchId, mockErwerbspensumRS).respond(mockErwerbspensumRS);
+            $httpBackend.expectPUT(erwerbspensumRS.serviceURL + '/' + gesuchstellerId + '/' + gesuchId, mockErwerbspensumRS).respond(mockErwerbspensumRS);
 
-            erwerbspensumRS.updateErwerbspensum(mockErwerbspensum, gesuchId)
+            erwerbspensumRS.updateErwerbspensum(mockErwerbspensum, gesuchstellerId, gesuchId)
                 .then((result) => {
                     updatedErwerbspensumContainerContainer = result;
                 });

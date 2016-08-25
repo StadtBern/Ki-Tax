@@ -34,6 +34,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
+        this.gesuchModelManager.initFinanzielleSituationStatus();
         this.showSelbstaendig = this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer.finanzielleSituationJA.isSelbstaendig();
     }
 

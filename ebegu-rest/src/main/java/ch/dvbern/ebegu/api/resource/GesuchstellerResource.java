@@ -3,11 +3,15 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -35,6 +39,10 @@ public class GesuchstellerResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private WizardStepService wizardStepService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -45,17 +53,26 @@ public class GesuchstellerResource {
 		"umzugadresse are both stored as consecutive wohnadressen in the database")
 	@Nonnull
 	@POST
+	@Path("/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchsteller createGesuchsteller(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
-		Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, new Gesuchsteller());
-		Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.updateGesuchsteller(convertedGesuchsteller); //immer update
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, new Gesuchsteller());
+			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.updateGesuchsteller(convertedGesuchsteller); //immer update
 
-		return converter.gesuchstellerToJAX(persistedGesuchsteller);
+			wizardStepService.updateSteps(gesuchJAXPId.getId(), null,
+				persistedGesuchsteller, WizardStepName.GESUCHSTELLER);
+
+			return converter.gesuchstellerToJAX(persistedGesuchsteller);
+		}
+		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
 
 	@Nullable

@@ -15,9 +15,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * comments homa
@@ -498,5 +496,38 @@ public final class TestDataUtil {
 		persistence.persist(gesuch.getGesuchsperiode());
 		gesuch = persistence.persist(gesuch);
 		return gesuch;
+	}
+
+	public static void persistEntities(Gesuch gesuch, Persistence<Gesuch> persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+
+		gesuch.getFall().setVerantwortlicher(verantwortlicher);
+		persistence.persist(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		persistence.persist(gesuch.getGesuchsperiode());
+
+		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		KindContainer kind = betreuung.getKind();
+
+		Set<Betreuung> betreuungen = new LinkedHashSet<>();
+		betreuungen.add(betreuung);
+		kind.setBetreuungen(betreuungen);
+
+		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
+		kind.setGesuch(gesuch);
+		kindContainers.add(kind);
+		gesuch.setKindContainers(kindContainers);
+
+
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+
+		persistence.persist(gesuch);
 	}
 }
