@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -74,8 +75,34 @@ public class DokumenteResource {
 
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded, gesuch.get());
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuch(gesuch.get());
+
+			final Set<DokumentGrund> dokumentGrundsMerged = mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
+
+			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
+		}
+		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
+
+	@Nullable
+	@GET
+	@Path("/byTyp/{gesuchId}/{dokumentGrundTyp}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxDokumente getDokumente(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam("dokumentGrundTyp") DokumentGrundTyp dokumentGrundTyp) throws EbeguException {
+
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+
+			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<DokumentGrund>();
+
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
+
+			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
 
 			final Set<DokumentGrund> dokumentGrundsMerged = mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund);
 

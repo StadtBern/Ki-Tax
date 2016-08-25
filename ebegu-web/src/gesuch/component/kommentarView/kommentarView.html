@@ -27,7 +27,7 @@
         </div>
 
         <!--bemerkungen Verfügung-->
-        <div class="kommentar-verfuegung-align col-md-12">
+        <div class="kommentar-verfuegung-align col-md-12" ng-if="!vm.isFallEroeffnen()">
             <dv-input-container class="form-group kommentar-feld">
                 <label class="inlineHint" for="kommentarVerfuegung"
                        data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
@@ -37,12 +37,20 @@
             </dv-input-container>
         </div>
 
-        <div class="bottom-align col-md-12">
-            <dv-loading-button button-class="btn kommentar-button">
-                <!--<span class="fa fa-chevron-left"></span>-->
+        <div class="bottom-align col-md-12" ng-if="!vm.isFallEroeffnen()">
+            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
-            </dv-loading-button>
+            </div>
+
+            <div ng-if="!vm.hasPapiergesuch()"
+                 ngf-select="vm.upload($files)" ngf-multiple="false"
+                 ngf-max-size="'10MB'" ngf-max-total-size="100MB"
+                 class="btn kommentar-button">
+                <span data-translate="PAPIERGESUCH_LADEN"></span>
+            </div>
         </div>
+
+
     </form>
 
 </div>

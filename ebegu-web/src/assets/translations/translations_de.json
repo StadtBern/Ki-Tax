@@ -598,6 +598,7 @@
     "DOK_JAHR": "Jahr ",
     "DOK_TAETIGKEIT": "Tätigkeit",
     "DOK_SONSTIGES": "Sonstige Nachweise",
+    "DOK_PAPIERGESUCH": "Papiergesuch",
     "ERROR_FILE_TOO_LARGE": "File ist zu gross (Maximal 10MB)",
     "NACHWEIS_TRENNUNG": "Trennungsvereinbarung / Scheidungsurteil / Sonstiger Nachweis über Trennung / Eheschutzverfahren",
     "SORGERECHTSVEREINBARUNG": "Sorgerechtsvereinbarung",
@@ -625,6 +626,7 @@
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
     "DIV": "Hier können Sie zusätzliche Dokumente hochladen",
+    "ORIGINAL_PAPIERGESUCH": "Hier können Sie das Papiergesuch hochladen",
     "ANSPRUCH": "Anspruch",
     "VOLLKOSTEN": "Vollkosten",
     "ELTERNBEITRAG": "Elternbeitrag",
@@ -633,9 +635,9 @@
     "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
     "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
-
     "BEMERKUNGEN_INTERN": "Interner Kommentar verfassen",
     "BEMERKUNGEN_VERFUEGUNG": "Bemerkungen zur Verfügung",
-    "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN"
+    "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
+    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN"
 }
 

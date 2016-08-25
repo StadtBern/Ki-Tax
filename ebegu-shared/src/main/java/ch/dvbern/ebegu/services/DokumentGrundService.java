@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ public interface DokumentGrundService {
 
 	/**
 	 * Speichert den DokumentGrund neu in der DB falls der Key noch nicht existiert. Sonst wird das existierende DokumentGrund aktualisiert
+	 *
 	 * @param dokumentGrund Das DokumentGrund als DTO
 	 */
 	@Nonnull
@@ -30,8 +32,12 @@ public interface DokumentGrundService {
 	@Nonnull
 	Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch);
 
+	@Nonnull
+	Collection<DokumentGrund> getAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp);
+
 	/**
 	 * Aktualisiert die DokumentGrund in der DB
+	 *
 	 * @param dokumentGrund Die DokumentGrund als DTO
 	 */
 	@Nullable

@@ -5,7 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
-describe('dokumenteView', function () {
+describe('kommentarView', function () {
 
     let gesuchModelManager: GesuchModelManager;
 

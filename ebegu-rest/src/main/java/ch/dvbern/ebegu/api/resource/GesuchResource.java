@@ -188,7 +188,7 @@ public class GesuchResource {
 		}
 		gesuchOptional.get().setBemerkungen(bemerkung);
 
-		final Gesuch gesuchPersisted = gesuchService.updateGesuch(gesuchOptional.get());
+		gesuchService.updateGesuch(gesuchOptional.get());
 
 		return Response.ok().build();
 	}
