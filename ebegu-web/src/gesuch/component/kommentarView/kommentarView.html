@@ -45,6 +45,8 @@
             <div ng-if="!vm.hasPapiergesuch()"
                  ngf-select="vm.upload($files)" ngf-multiple="false"
                  ngf-max-size="'10MB'" ngf-max-total-size="100MB"
+                 ngf-drop="vm.upload($files)"
+                 ngf-drag-over-class="'dragover'"
                  class="btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_LADEN"></span>
             </div>
