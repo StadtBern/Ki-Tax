@@ -24,6 +24,7 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 		this.maximalesEinkommen = maximalesEinkommen;
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {

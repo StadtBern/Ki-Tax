@@ -42,7 +42,7 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 				}
 			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 				// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
-				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(verfuegungZeitabschnitt.getBetreuungspensum());
+				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(100);
 			}
 		}
 	}

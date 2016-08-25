@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.testfaelle;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
+import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.util.MathUtil;
 
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
 		// Kinder
-		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), true);
+		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen

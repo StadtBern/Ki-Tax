@@ -23,6 +23,7 @@ public class EinreichungsfristCalcRule extends AbstractCalcRule {
 		super(RuleKey.EINREICHUNGSFRIST, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {

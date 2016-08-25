@@ -20,6 +20,7 @@ public class MindestalterCalcRule extends AbstractCalcRule {
 		super(RuleKey.MINDESTALTER, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {

@@ -18,6 +18,7 @@ public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 		super(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT, RuleType.GRUNDREGEL_CALC, validityPeriod);
 	}
 
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {

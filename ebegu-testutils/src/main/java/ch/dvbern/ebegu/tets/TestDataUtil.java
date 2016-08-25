@@ -24,6 +24,7 @@ import java.util.List;
  */
 public final class TestDataUtil {
 
+	private static final String iban = "CH39 0900 0000 3066 3817 2";
 	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
 	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
 	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
@@ -171,7 +172,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
@@ -184,7 +185,7 @@ public final class TestDataUtil {
 	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
@@ -196,10 +197,25 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId("9253e9b1-9cae-4278-b578-f1ce93306d29");
+		instStammdaten.getInstitution().setName("Tagi Aaregg");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
