@@ -16,7 +16,7 @@ import static ch.dvbern.ebegu.rules.EbeguRuleTestsHelper.calculate;
 /**
  * Tests für Einreichungsfrist-Regel
  */
-public class EinreichtungsfristRuleTest {
+public class EinreichungsfristRuleTest {
 
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);

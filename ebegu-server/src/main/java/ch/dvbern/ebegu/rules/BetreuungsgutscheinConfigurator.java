@@ -66,6 +66,10 @@ public class BetreuungsgutscheinConfigurator {
 		WohnsitzAbschnittRule wohnsitzAbschnittRule = new WohnsitzAbschnittRule(defaultGueltigkeit);
 		rules.add(wohnsitzAbschnittRule);
 
+		// Mindestalter Kind
+		MindestalterAbschnittRule mindestalterAbschnittRule = new MindestalterAbschnittRule(defaultGueltigkeit);
+		rules.add(mindestalterAbschnittRule);
+
 
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
@@ -106,7 +110,7 @@ public class BetreuungsgutscheinConfigurator {
 		rules.add(abwesenheitRule);
 
 		// Mindestalter Kind
-		MindestalterRule mindestalterRule = new MindestalterRule(defaultGueltigkeit);
+		MindestalterCalcRule mindestalterRule = new MindestalterCalcRule(defaultGueltigkeit);
 		rules.add(mindestalterRule);
 
 		// Wohnsitz (Zuzug und Wegzug)
@@ -116,5 +120,9 @@ public class BetreuungsgutscheinConfigurator {
 		// Einreichungsfrist
 		EinreichungsfristCalcRule einreichungsfristRule = new EinreichungsfristCalcRule(defaultGueltigkeit);
 		rules.add(einreichungsfristRule);
+
+		// Mindestalter Kind
+		MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(defaultGueltigkeit);
+		rules.add(mindestalterCalcRule);
 	}
 }

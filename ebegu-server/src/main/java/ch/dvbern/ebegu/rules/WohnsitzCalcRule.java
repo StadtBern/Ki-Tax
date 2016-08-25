@@ -25,6 +25,7 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1() && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2()) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ.name() + ": Kein Wohnsitz in Bern");
 			}
 		}
 	}

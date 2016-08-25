@@ -65,6 +65,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Transient
 	private boolean wohnsitzNichtInGemeindeGS2;
 
+	@Transient
+	private boolean kindMinestalterUnterschritten;
+
 	@Transient // TODO dies hier muesste dann vermutlich gespeichert werden
 	// Wenn Vollkosten bezahlt werden muessen, werden die Vollkosten berechnet und als Elternbeitrag gesetzt
 	private boolean bezahltVollkosten;
@@ -264,6 +267,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.wohnsitzNichtInGemeindeGS2 = wohnsitzNichtInGemeindeGS2;
 	}
 
+	public boolean isKindMinestalterUnterschritten() {
+		return kindMinestalterUnterschritten;
+	}
+
+	public void setKindMinestalterUnterschritten(boolean kindMinestalterUnterschritten) {
+		this.kindMinestalterUnterschritten = kindMinestalterUnterschritten;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -296,6 +307,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setWohnsitzNichtInGemeindeGS1(this.isWohnsitzNichtInGemeindeGS1() || other.isWohnsitzNichtInGemeindeGS1());
 		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
+		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
 	}
 
 	/**
@@ -372,7 +384,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			wohnsitzNichtInGemeindeGS1 == that.wohnsitzNichtInGemeindeGS1 &&
 			wohnsitzNichtInGemeindeGS2 == that.wohnsitzNichtInGemeindeGS2 &&
-			bezahltVollkosten == that.bezahltVollkosten;
+			bezahltVollkosten == that.bezahltVollkosten &&
+			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
 	}
 
 	/**
