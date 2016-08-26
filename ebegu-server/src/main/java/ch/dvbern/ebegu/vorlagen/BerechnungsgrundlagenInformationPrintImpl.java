@@ -34,8 +34,8 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
 
 		this.gesuch = gesuch;
-		FinanzSituationGesuchsteller fG1 = FinanzSituationGesuchstellerFactory.getInstance().getFinanzSituationGesuchsteller1(gesuch);
-		FinanzSituationGesuchsteller fG2 = FinanzSituationGesuchstellerFactory.getInstance().getFinanzSituationGesuchsteller2(gesuch);
+		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
+		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
 
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
@@ -62,7 +62,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller1Name() {
 
-		return gesuch.getGesuchsteller1().getFullName();
+		return gesuch.getGesuchsteller1() != null ?  gesuch.getGesuchsteller1().getFullName(): null;
 	}
 
 	@Override

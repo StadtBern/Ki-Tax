@@ -29,8 +29,8 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	 * @param ereigniseintritt Ereingis datum
 	 * @param grund Grund
 	 */
-	public EinkommensverschlechterungPrintImpl(FinanzSituationGesuchsteller fsGesuchsteller1, FinanzSituationGesuchsteller fsGesuchsteller2, String einkommensverschlechterungJahr,
-			String ereigniseintritt, String grund) {
+	public EinkommensverschlechterungPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2, String einkommensverschlechterungJahr,
+											   String ereigniseintritt, String grund) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 
@@ -41,19 +41,16 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 
 	@Override
 	public String getEinkommensverschlechterungJahr() {
-
 		return einkommensverschlechterungJahr;
 	}
 
 	@Override
 	public String getEreigniseintritt() {
-
 		return ereigniseintritt;
 	}
 
 	@Override
 	public String getGrund() {
-
 		return grund;
 	}
 }

@@ -62,7 +62,7 @@ public interface VerfuegungPrint {
 	boolean isPensumGrosser0();
 
 	/**
-	 * @return true falls Pensum groesser 0 ist
+	 * @return true wenn Pensum gleich 0 ist
 	 */
 	boolean isPensumIst0();
 

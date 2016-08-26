@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import java.math.BigDecimal;
-
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 
+import java.math.BigDecimal;
+
 /**
- * Implementiert den FinanzielleSituationPrint
+ * DTO fuer die Finazdaten die im Print gebraucht werden, implementiert den FinanzielleSituationPrint
  */
 public class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
-	private FinanzSituationGesuchsteller fsGesuchsteller1;
-	private FinanzSituationGesuchsteller fsGesuchsteller2;
+	private FinanzSituationPrintGesuchsteller fsGesuchsteller1;
+	private FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
 	/**
 	 * Konstruktor
@@ -29,7 +29,7 @@ public class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	 * @param finanzielleSituationG1 {@link AbstractFinanzielleSituation}
 	 * @param finanzielleSituationG2 {@link AbstractFinanzielleSituation}
 	 */
-	public FinanzDatenPrintImpl(FinanzSituationGesuchsteller fsGesuchsteller1, FinanzSituationGesuchsteller fsGesuchsteller2) {
+	public FinanzDatenPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2) {
 
 		this.fsGesuchsteller1 = fsGesuchsteller1;
 		this.fsGesuchsteller2 = fsGesuchsteller2;

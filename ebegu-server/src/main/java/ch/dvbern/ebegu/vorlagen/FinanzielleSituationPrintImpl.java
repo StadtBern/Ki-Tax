@@ -11,6 +11,9 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 22.08.2016
 */
 
+/**
+ * DTO fuer den den FinanzielleSituation Print. Ergenzt FinanzDatenPrintImpl um einige Funktionen
+ */
 public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implements FinanzielleSituationPrint {
 
 	private String finanzielleSituationJahr;
@@ -23,8 +26,8 @@ public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implemen
 	 * @param finanzielleSituationG1
 	 * @param finanzielleSituationG2
 	 */
-	public FinanzielleSituationPrintImpl(FinanzSituationGesuchsteller fsGesuchsteller1, FinanzSituationGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
-			String berechnungVon, String referenznummer) {
+	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
+										 String berechnungVon, String referenznummer) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 		this.finanzielleSituationJahr = finanzielleSituationJahr;
