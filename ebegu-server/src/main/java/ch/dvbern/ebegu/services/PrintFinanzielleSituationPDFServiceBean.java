@@ -35,7 +35,7 @@ public  class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseServic
 
 	@Nonnull
 	@Override
-	public final byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public  byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
