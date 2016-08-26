@@ -16,8 +16,6 @@ import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 public final class FinanzSituationPrintGesuchstellerHelper {
 
-	private static FinanzSituationPrintGesuchstellerHelper instance;
-
 	/**
 	 * Konstruktor
 	 */

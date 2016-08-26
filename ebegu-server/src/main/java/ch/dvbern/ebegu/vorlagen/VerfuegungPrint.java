@@ -26,7 +26,7 @@ public interface VerfuegungPrint {
 
 	String getGesuchstellerPLZStadt();
 
-	String getReferenzNummer();
+	String getReferenznummer();
 
 	String getVerfuegungsdatum();
 

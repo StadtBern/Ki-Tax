@@ -78,7 +78,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
 	@Override
-	public String getReferenzNummer() {
+	public String getReferenznummer() {
 
 		return betreuung.getBGNummer();
 	}
@@ -246,7 +246,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintbemerkungen() {
 
-		return getBemerkungen() != null && !"".equalsIgnoreCase(getBemerkungen());
+		return !"".equalsIgnoreCase(getBemerkungen());
 	}
 
 	@Nonnull
