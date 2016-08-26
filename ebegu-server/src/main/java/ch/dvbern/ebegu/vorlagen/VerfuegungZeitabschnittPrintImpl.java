@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -15,11 +15,11 @@ import ch.dvbern.ebegu.util.Constants;
 
 import java.math.BigDecimal;
 
-public class VerfuegungZeitabschnittPrintDTO implements VerfuegungZeitabschnittPrint {
+public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnittPrint {
 
 	private ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
-	public VerfuegungZeitabschnittPrintDTO(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	public VerfuegungZeitabschnittPrintImpl(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
 	}
 

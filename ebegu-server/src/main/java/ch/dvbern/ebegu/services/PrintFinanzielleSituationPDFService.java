@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -15,17 +14,17 @@ import java.util.List;
 * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
 * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
 *
-* Ersteller: zeab am: 09.08.2016
+* Ersteller: zeab am: 19.08.2016
 */
-public interface VerfuegungsGenerierungPDFService {
+public interface PrintFinanzielleSituationPDFService {
 
 	/**
 	 * Bereitet die Verfuegungsdokumente auf
 	 *
 	 * @param gesuch das Gesuch
-	 * @return Liste der generierten Verfuegungen Pro Kind
-	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
+	 * @return das Dokument FinanzielleSituation
+	 * @throws MergeDocException Falls bei der Generierung von FinanzielleSituation einen Fehler auftritt
 	 */
 	@Nonnull
-	List<byte[]> generiereVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException;
+	byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException;
 }

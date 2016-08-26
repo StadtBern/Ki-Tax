@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 
 import java.math.BigDecimal;
 
