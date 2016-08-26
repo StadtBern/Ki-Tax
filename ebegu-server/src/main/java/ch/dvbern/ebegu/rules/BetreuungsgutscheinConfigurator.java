@@ -97,7 +97,7 @@ public class BetreuungsgutscheinConfigurator {
 		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
 		rules.add(restanspruchCalcRule);
 
-		// REDUKTIONSREGELN
+		// REDUKTIONSREGELN: Setzen Anpsruch auf 0
 
 		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
 		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);

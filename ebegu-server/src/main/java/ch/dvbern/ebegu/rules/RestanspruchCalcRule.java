@@ -12,16 +12,16 @@ import javax.annotation.Nonnull;
 public class RestanspruchCalcRule extends AbstractCalcRule {
 
 	public RestanspruchCalcRule(@Nonnull DateRange validityPeriod) {
-		super(RuleKey.FACHSTELLE, RuleType.GRUNDREGEL_CALC, validityPeriod);
+		super(RuleKey.NO_RULE, RuleType.NO_RULE, validityPeriod);
 	}
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-			int anspruchberechtigtesPensumNeu = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+			int anspruchberechtigtesPensum = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 			int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
-			if (betreuungspensum < anspruchberechtigtesPensumNeu) {
-				verfuegungZeitabschnitt.setAnspruchspensumRest(anspruchberechtigtesPensumNeu - betreuungspensum);
+			if (betreuungspensum < anspruchberechtigtesPensum) {
+				verfuegungZeitabschnitt.setAnspruchspensumRest(anspruchberechtigtesPensum - betreuungspensum);
 			} else {
 				verfuegungZeitabschnitt.setAnspruchspensumRest(0);
 			}

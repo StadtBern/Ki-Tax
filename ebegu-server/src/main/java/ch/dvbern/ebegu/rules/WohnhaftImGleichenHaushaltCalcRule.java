@@ -26,7 +26,7 @@ public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 				final Kind kindJA = betreuung.getKind().getKindJA();
 				if (kindJA.getWohnhaftImGleichenHaushalt() != null) {
 					int pensumGleicherHaushalt = MathUtil.roundIntToTens(kindJA.getWohnhaftImGleichenHaushalt());
-					int anspruch = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+					int anspruch = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum(); //TODO (team ) vermutlich hier Restanpsruch verwenden. Analog die anderen Calc-rules ausser Reduktionsrules
 					if (pensumGleicherHaushalt < anspruch) {
 						anspruch = pensumGleicherHaushalt;
 						verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);

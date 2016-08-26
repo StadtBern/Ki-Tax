@@ -32,7 +32,7 @@ public class GesuchstellerAdresse extends Adresse {
 	private Gesuchsteller gesuchsteller;
 
 	@Column(nullable = false)
-	private boolean nichtInGemeinde = false; //TODO (team) DB Skript!
+	private boolean nichtInGemeinde = false;
 
 
 	public GesuchstellerAdresse() {

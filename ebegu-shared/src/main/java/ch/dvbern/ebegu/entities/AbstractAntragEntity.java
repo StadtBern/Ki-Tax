@@ -25,7 +25,7 @@ public class AbstractAntragEntity extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_antrag_gesuchsperiode_id"))
 	private Gesuchsperiode gesuchsperiode;
 
-	@NotNull
+	@NotNull //TODO (team) Wegnehmen: Online-Gesuch hat anfangs noch kein Eingangsdatum!
 	@Column(nullable = false)
 	private LocalDate eingangsdatum;
 

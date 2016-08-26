@@ -330,7 +330,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	}
 
 	/**
-	 * Das BG-Pensum wird zum BG-Tarif berechnet und kann höchstens so gross sein, wie das Betreuungspensum.
+	 * Das BG-Pensum (Pensum des Gutscheins) wird zum BG-Tarif berechnet und kann höchstens so gross sein, wie das Betreuungspensum.
 	 * Falls das anspruchsberechtigte Pensum unter dem Betreuungspensum liegt, entspricht das BG-Pensum dem
 	 * anspruchsberechtigten Pensum.
 	 * <p>
@@ -349,6 +349,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
 			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
+			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
 			.append(" Bemerkungen: ").append(bemerkungen);

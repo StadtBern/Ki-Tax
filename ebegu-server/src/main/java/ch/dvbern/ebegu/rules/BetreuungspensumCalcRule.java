@@ -42,6 +42,7 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 				}
 			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 				// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
+				//TODO (team) In Excel Tests ist immer 100%, nicht gewünschtes Pensum
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(100);
 			}
 		}

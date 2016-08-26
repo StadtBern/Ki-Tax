@@ -28,7 +28,6 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		checkTestfall01WaeltiDagmar(gesuch);
 	}
 
-
 	@Test
 	public void testfall02_FeutzYvonne() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();

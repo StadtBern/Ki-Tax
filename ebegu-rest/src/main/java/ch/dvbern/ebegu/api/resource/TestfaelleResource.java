@@ -60,7 +60,7 @@ public class TestfaelleResource {
 		}
 		if ("1".equals(fallid)) {
 			createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Waelti Dagmar erstellt").build();
+			return Response.ok("Fall Dagmar Waelti erstellt").build();
 		} else if ("2".equals(fallid)) {
 			createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList));
 			return Response.ok("Fall Yvonne Feutz erstellt").build();
