@@ -22,7 +22,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	public Gesuch createGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.JULY, 13));
+		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller("Wälti", "Dagmar");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum

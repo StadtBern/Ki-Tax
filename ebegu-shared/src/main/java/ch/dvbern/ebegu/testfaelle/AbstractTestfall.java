@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * Superklasse für Testfaelle des JA
  */
-public class AbstractTestfall {
+public abstract class AbstractTestfall {
 
 	public static final String idInstitutionAaregg = "11111111-1111-1111-1111-111111111101";
 	public static final String idInstitutionBruennen = "11111111-1111-1111-1111-111111111107";
@@ -24,6 +24,8 @@ public class AbstractTestfall {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
 	}
+
+	public abstract Gesuch createGesuch();
 
 	protected Gesuch createAlleinerziehend(LocalDate eingangsdatum) {
 		// Fall

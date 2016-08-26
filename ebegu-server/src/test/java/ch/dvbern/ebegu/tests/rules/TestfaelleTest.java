@@ -3,10 +3,7 @@ package ch.dvbern.ebegu.tests.rules;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
-import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
-import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
-import ch.dvbern.ebegu.testfaelle.Testfall03_PerreiraMarcia;
-import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
+import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.junit.Test;
 
@@ -28,7 +25,7 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
-		checkTestfallWaeltiDagmar(gesuch);
+		checkTestfall01WaeltiDagmar(gesuch);
 	}
 
 
@@ -42,11 +39,11 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
-		checkTestfallFeutzYvonne(gesuch);
+		checkTestfall02FeutzYvonne(gesuch);
 	}
 
 	@Test
-	public void testfall02_PerreiraMarcia() {
+	public void testfall03_PerreiraMarcia() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall03_PerreiraMarcia testfall = new Testfall03_PerreiraMarcia(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
@@ -54,7 +51,31 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
-		checkTestfallPerreiraMarcia(gesuch);
+		checkTestfall03PerreiraMarcia(gesuch);
+	}
+
+	@Test
+	public void testfall04_WaltherLaura() {
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall04_WaltherLaura testfall = new Testfall04_WaltherLaura(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Gesuch gesuch = testfall.createGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		evaluator.evaluate(gesuch, getParameter());
+		checkTestfall04WaltherLaura(gesuch);
+	}
+
+	@Test
+	public void testfall05_LuethiMeret() {
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall05_LuethiMeret testfall = new Testfall05_LuethiMeret(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Gesuch gesuch = testfall.createGesuch();
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		evaluator.evaluate(gesuch, getParameter());
+		checkTestfall05LuethiMeret(gesuch);
 	}
 
 	@Test
@@ -67,7 +88,6 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
-		checkTestfallBeckerNora(gesuch);
+		checkTestfall06BeckerNora(gesuch);
 	}
-
 }
