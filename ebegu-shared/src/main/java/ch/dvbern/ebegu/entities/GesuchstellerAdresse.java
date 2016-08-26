@@ -31,6 +31,9 @@ public class GesuchstellerAdresse extends Adresse {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_adresse_gesuchsteller_id"))
 	private Gesuchsteller gesuchsteller;
 
+	@Column(nullable = false)
+	private boolean nichtInGemeinde = false;
+
 
 	public GesuchstellerAdresse() {
 	}
@@ -52,7 +55,15 @@ public class GesuchstellerAdresse extends Adresse {
 		this.gesuchsteller = gesuchsteller;
 	}
 
-//	public Adresse getAdresse() {
+	public boolean isNichtInGemeinde() {
+		return nichtInGemeinde;
+	}
+
+	public void setNichtInGemeinde(boolean nichtInGemeinde) {
+		this.nichtInGemeinde = nichtInGemeinde;
+	}
+
+	//	public Adresse getAdresse() {
 //		return adresse;
 //	}
 //

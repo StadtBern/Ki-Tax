@@ -1,27 +1,21 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Tests fuer die Regel WohnhaftImGleichenHaushaltRule
  */
 public class WohnhaftImGleichenHaushaltRuleTest {
-
-	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final WohnhaftImGleichenHaushaltRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltRule(defaultGueltigkeit);
-	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
@@ -32,11 +26,8 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 	 */
 	@Test
 	public void testWohnhaftImGleichenHaushaltNullValue() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(prepareData(100, null, 0));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, 100, null);
-
-		List<VerfuegungZeitabschnitt> result = wohnhaftImGleichenHaushaltRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
@@ -45,11 +36,8 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 
 	@Test
 	public void testWohnhaftImGleichenHaushalt() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(prepareData(100, 25, 0));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, 100, 25);
-
-		List<VerfuegungZeitabschnitt> result = wohnhaftImGleichenHaushaltRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(30, result.get(0).getAnspruchberechtigtesPensum());
@@ -62,22 +50,48 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 	 */
 	@Test
 	public void testWohnhaftImGleichenHaushaltHoeherWert() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(prepareData(12, 26, 0));
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteAusGrundregeln = prepareData(betreuung, 12, 26);
-
-		List<VerfuegungZeitabschnitt> result = wohnhaftImGleichenHaushaltRule.calculate(betreuung, zeitabschnitteAusGrundregeln);
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(10, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
+	/**
+	 * Wenn mehr im gleichen Haushalt als die Fachstelle attestiert, gilt die Fachstelle
+	 */
+	@Test
+	public void testWohnhaftImGleichenHaushaltHoeherAlsFachstelle() {
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(prepareData(100, 30, 20));
 
-	private List<VerfuegungZeitabschnitt> prepareData(Betreuung betreuung, final int pensum, final Integer prozentImGleichemHaushalt) {
-		Gesuch gesuch = betreuung.extractGesuch();
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(20, result.get(0).getAnspruchberechtigtesPensum());
+	}
+
+	/**
+	 * Wenn weniger im gleichen Haushalt als die Fachstelle attestiert, gilt der gleiche Haushalt
+	 */
+	@Test
+	public void testWohnhaftImGleichenHaushaltTieferAlsFachstelle() {
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(prepareData(100, 30, 40));
+
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(30, result.get(0).getAnspruchberechtigtesPensum());
+	}
+
+
+	private Betreuung prepareData(final int pensum, final Integer prozentImGleichemHaushalt, int fachstelle) {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		betreuung.getKind().getKindJA().setWohnhaftImGleichenHaushalt(prozentImGleichemHaushalt);
-		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, pensum, 0));
-		return erwerbspensumRule.calculate(betreuung, new ArrayList<>());
+		if (fachstelle > 0) {
+			betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
+			betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(fachstelle);
+			betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
+		}
+		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, pensum, 0));
+		return betreuung;
 	}
 }

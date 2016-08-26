@@ -8,5 +8,6 @@ public enum Betreuungsstatus {
 	WARTEN,
 	SCHULAMT,
 	ABGEWIESEN,
-	BESTAETIGT
+	BESTAETIGT,
+	VERFUEGT
 }

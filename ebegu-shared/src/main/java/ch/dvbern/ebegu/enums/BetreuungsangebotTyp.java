@@ -17,4 +17,16 @@ public enum BetreuungsangebotTyp {
 	public boolean isTageseltern() {
 		return TAGESELTERN_KLEINKIND.equals(this) || TAGESELTERN_SCHULKIND.equals(this);
 	}
+
+	public boolean isAngebotJugendamtKleinkind() {
+		return KITA.equals(this) || TAGESELTERN_KLEINKIND.equals(this);
+	}
+
+	public boolean isAngebotJugendamtSchulkind() {
+		return TAGI.equals(this) || TAGESELTERN_SCHULKIND.equals(this);
+	}
+
+	public boolean isJugendamt() {
+		return !isSchulamt();
+	}
 }
