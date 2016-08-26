@@ -33,9 +33,6 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 	@Max(20) //Maximal 20%
 	private Integer zuschlagsprozent;
 
-	@NotNull
-	private boolean gesundheitlicheEinschraenkungen;
-
 	private String bezeichnung;
 
 	public Taetigkeit getTaetigkeit() {
@@ -68,14 +65,6 @@ public class JaxErwerbspensum extends JaxAbstractPensumDTO {
 
 	public void setZuschlagsprozent(Integer zuschlagsprozent) {
 		this.zuschlagsprozent = zuschlagsprozent;
-	}
-
-	public boolean getGesundheitlicheEinschraenkungen() {
-		return gesundheitlicheEinschraenkungen;
-	}
-
-	public void setGesundheitlicheEinschraenkungen(boolean gesundheitlicheEinschraenkungen) {
-		this.gesundheitlicheEinschraenkungen = gesundheitlicheEinschraenkungen;
 	}
 
 	public String getBezeichnung() {

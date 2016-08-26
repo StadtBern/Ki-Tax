@@ -10,7 +10,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Erwerbspensum.class)
 public abstract class Erwerbspensum_ extends ch.dvbern.ebegu.entities.AbstractPensumEntity_ {
 
-	public static volatile SingularAttribute<Erwerbspensum, Boolean> gesundheitlicheEinschraenkungen;
 	public static volatile SingularAttribute<Erwerbspensum, Boolean> zuschlagZuErwerbspensum;
 	public static volatile SingularAttribute<Erwerbspensum, String> bezeichnung;
 	public static volatile SingularAttribute<Erwerbspensum, Taetigkeit> taetigkeit;
