@@ -10,8 +10,8 @@ import java.time.Month;
 import java.util.Collection;
 
 /**
- * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/2
- * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/2
+ * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/6
+ * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/6
  */
 public class Testfall06_BeckerNora extends AbstractTestfall {
 
@@ -26,13 +26,9 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.AUGUST, 25));
 		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Nora");
 		gesuch.setGesuchsteller1(gesuchsteller1);
-//		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Tizian");
-//		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(60, 0);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensumGS1);
-//		ErwerbspensumContainer erwerbspensumGS2 = createErwerbspensum(100, 0);
-//		gesuchsteller2.addErwerbspensumContainer(erwerbspensumGS2);
 		// Kinder
 		KindContainer kind1 = createKind(Geschlecht.MAENNLICH, FAMILIENNAME, "Timon", LocalDate.of(2006, Month.DECEMBER, 25), Kinderabzug.HALBER_ABZUG, true);
 		kind1.setGesuch(gesuch);
@@ -57,16 +53,6 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 
-		// Finanzielle Situation
-//		FinanzielleSituationContainer finanzielleSituationGS1 = createFinanzielleSituationContainer();
-//		finanzielleSituationGS1.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(34022));
-//		finanzielleSituationGS1.setGesuchsteller(gesuchsteller1);
-//		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationGS1);
-//
-//		FinanzielleSituationContainer finanzielleSituationGS2 = createFinanzielleSituationContainer();
-//		finanzielleSituationGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(98521));
-//		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
-//		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
 		return gesuch;
 	}
 }

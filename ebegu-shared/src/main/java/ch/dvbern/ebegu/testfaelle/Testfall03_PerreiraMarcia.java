@@ -11,8 +11,8 @@ import java.time.Month;
 import java.util.Collection;
 
 /**
- * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/1
- * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/1
+ * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/3
+ * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/3
  */
 public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
