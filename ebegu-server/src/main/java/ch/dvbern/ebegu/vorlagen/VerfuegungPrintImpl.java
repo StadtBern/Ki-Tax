@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,26 +11,32 @@ package ch.dvbern.ebegu.services.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.util.Constants;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.AdresseTyp;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.util.Constants;
+
 /**
  * Transferobjekt
  */
-public class VerfuegungPrintDTO implements VerfuegungPrint {
+public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
 	/**
 	 * @param betreuung
 	 */
-	public VerfuegungPrintDTO(Betreuung betreuung) {
+	public VerfuegungPrintImpl(Betreuung betreuung) {
 
 		this.betreuung = betreuung;
 	}
@@ -179,7 +185,7 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		List<VerfuegungZeitabschnittPrint> result = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintDTO::new).collect(Collectors.toList()));
+			result.addAll(verfuegung.get().getZeitabschnitte().stream().map(VerfuegungZeitabschnittPrintImpl::new).collect(Collectors.toList()));
 		}
 		return result;
 	}
@@ -208,7 +214,7 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 	 * @return true falls Gesuchsteller 2 existiert
 	 */
 	@Override
-	public boolean existGesuchsteller2() {
+	public boolean isExistGesuchsteller2() {
 
 		return betreuung.extractGesuch().getGesuchsteller2() != null;
 	}
@@ -228,6 +234,12 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 		return value > 0;
 	}
 
+	@Override
+	public boolean isPensumIst0() {
+
+		return !isPensumGrosser0();
+	}
+
 	/**
 	 * @return true falls es sich um eine Mutation handelt
 	 */
@@ -235,6 +247,12 @@ public class VerfuegungPrintDTO implements VerfuegungPrint {
 
 		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
 		return false;
+	}
+
+	@Override
+	public boolean isPrintbemerkungen() {
+
+		return getBemerkungen() != null && !"".equalsIgnoreCase(getBemerkungen());
 	}
 
 	@Nonnull

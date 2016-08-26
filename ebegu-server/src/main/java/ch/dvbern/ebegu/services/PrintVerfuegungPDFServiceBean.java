@@ -11,37 +11,39 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 09.08.2016
 */
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.services.vorlagen.GeneratePDFDocumentHelper;
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintDTO;
-import ch.dvbern.ebegu.services.vorlagen.VerfuegungPrintMergeSource;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
-import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
+import ch.dvbern.ebegu.vorlagen.VerfuegungPrintImpl;
+import ch.dvbern.ebegu.vorlagen.VerfuegungPrintMergeSource;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
+import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementiert VerfuegungsGenerierungPDFService
  */
 @Stateless
-@Local(VerfuegungsGenerierungPDFService.class)
-public class VerfuegungsGenerierungPDFServiceBean extends AbstractBaseService implements VerfuegungsGenerierungPDFService {
+@Local(PrintVerfuegungPDFService.class)
+public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implements PrintVerfuegungPDFService {
 
 	@Nonnull
 	@Override
 	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
-	public List<byte[]> generiereVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
@@ -56,7 +58,7 @@ public class VerfuegungsGenerierungPDFServiceBean extends AbstractBaseService im
 					// Pro Betreuung ein Dokument
 					InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
 					Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
-					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintDTO(betreuung)))));
+					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung)))));
 					is.close();
 				}
 			}

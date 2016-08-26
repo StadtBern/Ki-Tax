@@ -5,7 +5,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.VerfuegungsGenerierungPDFService;
+import ch.dvbern.ebegu.services.PrintVerfuegungPDFService;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -14,16 +14,12 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,18 +29,15 @@ import java.util.List;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class VerfuegungsGenerierungPDFServiceBeanTest extends AbstractEbeguTest {
+public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 
 	protected BetreuungsgutscheinEvaluator evaluator;
 
 	@Inject
-	private VerfuegungsGenerierungPDFService verfuegungsGenerierungPDFService;
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
 	private GesuchService gesuchService;
-
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -62,7 +55,7 @@ public class VerfuegungsGenerierungPDFServiceBeanTest extends AbstractEbeguTest 
 	 * @throws Exception
 	 */
 	@Test
-	public void testGeneriereVerfuegungsmuster() throws Exception {
+	public void testGeneriereVerfuegung() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
@@ -73,43 +66,12 @@ public class VerfuegungsGenerierungPDFServiceBeanTest extends AbstractEbeguTest 
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 
-		List<byte[]> bytesList = verfuegungsGenerierungPDFService.generiereVerfuegungen(gesuch);
-
+		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegung(gesuch);
 		int i = 0;
-		for (byte[] b : bytesList) {
-			writeToTempDir(b, "testdokument" + i + ".pdf");
+		for (byte[] verfDoc : verfuegungsPDFs) {
+			Assert.assertNotNull(verfDoc);
+			writeToTempDir(verfDoc, "testdokument" + i + ".pdf");
 			i++;
 		}
-	}
-
-	/**
-	 * Erstellt das byte Dokument in einem temp File in einem temp folder
-	 * <p/>
-	 * <b>ACHTUNG: </b> die temp files werden nach dem Test <b>sofort wieder geloescht</b>
-	 *
-	 * @param data
-	 * @param fileName
-	 * @return das Temp file oder <code>null</code>
-	 * @throws IOException
-	 */
-	protected final File writeToTempDir(final byte[] data, final String fileName) throws IOException {
-
-		File tempFile = null;
-
-		FileOutputStream fos = null;
-		try {
-			// create temp file in junit temp folder
-			tempFile = tempFolder.newFile(fileName);
-			System.out.println("Writing tempfile to: " + tempFile);
-			fos = new FileOutputStream(tempFile);
-			fos.write(data);
-			fos.close();
-		} finally {
-			if (fos != null) {
-				fos.close();
-			}
-
-		}
-		return tempFile;
 	}
 }

@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -53,7 +53,7 @@ public class GeneratePDFDocumentHelper {
 			final PdfOptions options = PdfOptions.create();
 			options.setConfiguration(this::setXDocReportPDFWriterOptions);
 
-			java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			PdfConverter.getInstance().convert(document, out, options);
 
 			return manipulatePdf(out.toByteArray());

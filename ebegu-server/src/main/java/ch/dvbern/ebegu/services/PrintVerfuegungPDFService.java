@@ -17,15 +17,15 @@ import java.util.List;
 *
 * Ersteller: zeab am: 09.08.2016
 */
-public interface VerfuegungsGenerierungPDFService {
+public interface PrintVerfuegungPDFService {
 
 	/**
 	 * Bereitet die Verfuegungsdokumente auf
 	 *
 	 * @param gesuch das Gesuch
-	 * @return Liste der generierten Verfuegungen Pro Kind
+	 * @return Liste der generierten Verfuegungsdokumente  pro Betreuung
 	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
 	 */
 	@Nonnull
-	List<byte[]> generiereVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException;
+	List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException;
 }

@@ -9,7 +9,7 @@
  *
  * $Id$
  */
-package ch.dvbern.ebegu.services.vorlagen;
+package ch.dvbern.ebegu.vorlagen;
 
 import com.lowagie.text.FontFactory;
 
