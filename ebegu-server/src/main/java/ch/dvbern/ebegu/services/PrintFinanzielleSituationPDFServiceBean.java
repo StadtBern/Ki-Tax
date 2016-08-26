@@ -11,14 +11,6 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 19.08.2016
 */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.vorlagen.BerechnungsgrundlagenInformationPrintImpl;
@@ -26,6 +18,13 @@ import ch.dvbern.ebegu.vorlagen.FinanzielleSituationEinkommensverschlechterungPr
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * Implementiert PrintFinanzielleSituationService
