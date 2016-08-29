@@ -29,9 +29,20 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 public class PrintPDFDelegateServiceBean extends AbstractBaseService implements PrintDokumentDelegateService {
 
 	@Inject
+	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
+
+	@Inject
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+
 	@Inject
 	private PrintFinanzielleSituationPDFService printFinanzielleSituationService;
+
+	@Nonnull
+	@Override
+	public byte[] printBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
+
+		return printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
+	}
 
 	@Nonnull
 	@Override

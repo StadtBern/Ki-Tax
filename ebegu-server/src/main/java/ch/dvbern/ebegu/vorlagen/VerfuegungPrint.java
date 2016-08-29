@@ -26,10 +26,13 @@ public interface VerfuegungPrint {
 
 	String getGesuchstellerPLZStadt();
 
+	// TODO ZEAB auf Fallnummer umbennen
 	String getReferenzNummer();
 
+	// TODO ZEAB entfernen gibt es nicht merh
 	String getVerfuegungsdatum();
 
+	// TODO ZEAB entfernen gibt es nicht merh
 	String getGesuchsteller1();
 
 	String getGesuchsteller2();
@@ -54,6 +57,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return true falls Gesuchstelller 2 existiert
 	 */
+	// TODO ZEAB entfernen gibt es nicht merh
 	boolean isExistGesuchsteller2();
 
 	/**
@@ -69,6 +73,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return true falls eine Mutation ist
 	 */
+	// TODO ZEAB entfernen gibt es nicht merh
 	boolean isMutation();
 
 	/**
