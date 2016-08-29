@@ -18,6 +18,7 @@ describe('stammdatenView', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
         gesuchModelManager = $injector.get('GesuchModelManager');
+        spyOn(gesuchModelManager, 'initGesuchstellerStatus').and.returnValue({});
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));

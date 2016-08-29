@@ -528,6 +528,26 @@ export default class GesuchModelManager {
         this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
+    public initFamiliensituationStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initGesuchstellerStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.GESUCHSTELLER, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initEinkommensverschlechterungStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.IN_BEARBEITUNG);
+    }
+
+    public initDokumenteStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.NOK);
+    }
+
+    public initVerfuegungenStatus(): void {
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.NOK);
+    }
+
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {
         if (showKorrespondadr) {
             this.getStammdatenToWorkWith().korrespondenzAdresse = this.initKorrespondenzAdresse();

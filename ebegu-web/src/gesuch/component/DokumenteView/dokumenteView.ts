@@ -42,6 +42,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 private dokumenteRS: DokumenteRS, private $log: ILogService) {
         super($state, gesuchModelManager, berechnungsManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.gesuchModelManager.initDokumenteStatus();
         this.calculate();
     }
 

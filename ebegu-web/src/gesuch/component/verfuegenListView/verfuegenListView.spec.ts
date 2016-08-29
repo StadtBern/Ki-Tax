@@ -22,6 +22,7 @@ describe('verfuegenListViewTest', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         tsKindContainer = new TSKindContainer();
+        spyOn(gesuchModelManager, 'initVerfuegungenStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
         spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue({});
 

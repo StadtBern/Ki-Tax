@@ -43,6 +43,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     private initViewModel(): void {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
+        this.gesuchModelManager.initVerfuegungenStatus();
 
         //Berechnung aller finanziellen Daten
         if (!this.berechnungsManager.finanzielleSituationResultate) {

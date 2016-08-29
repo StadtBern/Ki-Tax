@@ -38,6 +38,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     private initViewModel() {
         this.gesuchModelManager.initEinkommensverschlechterungInfo();
+        this.gesuchModelManager.initEinkommensverschlechterungStatus();
         this.monthsStichtage = getTSMonthValues();
         this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
         this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);

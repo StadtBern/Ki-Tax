@@ -88,11 +88,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 			}
-			else if (wizardStep.getWizardStepName().equals(nextStep(WizardStepName.FAMILIENSITUATION))
-				&& WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
-
-				wizardStep.setWizardStepStatus(WizardStepStatus.IN_BEARBEITUNG);
-			}
 			else if ((WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()))
 				&& fromOneGSToTwoGS(oldEntity, newEntity)) {
@@ -124,29 +119,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (wizardStep.getWizardStepName().equals(stepName)) {
 				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 			}
-			else if (wizardStep.getWizardStepName().equals(nextStep(stepName)) && WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.IN_BEARBEITUNG);
-			}
-		}
-	}
-
-	/**
-	 * Gibt den Namen des Steps zurueck, der gerade nach dem eingegebenen Step kommt.
-	 * @param stepName
-	 * @return
-	 */
-	private WizardStepName nextStep(WizardStepName stepName) {
-		switch (stepName) {
-			case GESUCH_ERSTELLEN: return WizardStepName.FAMILIENSITUATION;
-			case FAMILIENSITUATION: return WizardStepName.GESUCHSTELLER;
-			case GESUCHSTELLER: return WizardStepName.KINDER;
-			case KINDER: return null;
-			case BETREUUNG: return null;
-			case ERWERBSPENSUM: return null;
-			case FINANZIELLE_SITUATION: return WizardStepName.EINKOMMENSVERSCHLECHTERUNG;
-			case EINKOMMENSVERSCHLECHTERUNG: return WizardStepName.DOKUMENTE;
-			case DOKUMENTE: return WizardStepName.VERFUEGEN;
-			default: return null;
 		}
 	}
 

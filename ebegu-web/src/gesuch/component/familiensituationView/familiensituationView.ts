@@ -41,6 +41,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
+        this.gesuchModelManager.initFamiliensituationStatus();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 

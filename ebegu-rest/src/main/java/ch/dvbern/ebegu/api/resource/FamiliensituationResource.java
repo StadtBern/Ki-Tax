@@ -101,10 +101,11 @@ public class FamiliensituationResource {
 			if (!loadedFamiliensituation.isPresent()) {
 				throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituationJAXP.getId());
 			}
+			Familiensituation oldData = new Familiensituation(loadedFamiliensituation.get());
 			Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, loadedFamiliensituation.get());
 			Familiensituation persistedFamiliensituation = this.familiensituationService.updateFamiliensituation(convertedFamiliensituation);
 
-			wizardStepService.updateSteps(gesuchJAXPId.getId(), loadedFamiliensituation.get(),
+			wizardStepService.updateSteps(gesuchJAXPId.getId(), oldData,
 				persistedFamiliensituation, WizardStepName.FAMILIENSITUATION);
 
 			return converter.familiensituationToJAX(persistedFamiliensituation);
