@@ -6,6 +6,9 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -19,14 +22,14 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager'];
     private kinderWithBetreuungList: Array<TSKindContainer>;
 
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
@@ -43,7 +46,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     private initViewModel(): void {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
-        this.gesuchModelManager.initVerfuegungenStatus();
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.WARTEN);
 
         //Berechnung aller finanziellen Daten
         if (!this.berechnungsManager.finanzielleSituationResultate) {

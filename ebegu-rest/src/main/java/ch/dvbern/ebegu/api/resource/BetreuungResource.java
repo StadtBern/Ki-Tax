@@ -65,7 +65,7 @@ public class BetreuungResource {
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
 
 			wizardStepService.updateSteps(kind.get().getGesuch().getId(), null,
-				persistedBetreuung, WizardStepName.BETREUUNG);
+				null, WizardStepName.BETREUUNG);
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}

@@ -9,6 +9,7 @@ import DateUtil from '../../../utils/DateUtil';
 import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -22,14 +23,14 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private $scope: any) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
             console.log('resetting state due to navigation change, ');

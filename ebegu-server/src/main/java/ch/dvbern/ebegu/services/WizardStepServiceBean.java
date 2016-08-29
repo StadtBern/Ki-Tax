@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -27,6 +28,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	@Inject
 	private Persistence<WizardStep> persistence;
+	@Inject
+	private BetreuungService betreuungService;
 
 
 	@Override
@@ -75,23 +78,55 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (WizardStepName.FAMILIENSITUATION.equals(stepName) && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		}
-//		else if (WizardStepName.BETREUUNG.equals(stepName) && oldEntity instanceof Betreuung && newEntity instanceof Betreuung) {
-//			updateAllStatusForBetreuung(wizardSteps, (Betreuung) oldEntity, (Betreuung) newEntity);
-//		}
+		else if (WizardStepName.BETREUUNG.equals(stepName)) {
+			updateAllStatusForBetreuung(wizardSteps);
+		}
 		else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
 	}
 
+	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
+		final List<Betreuung> betreuungenFromGesuch = betreuungService.getAllBetreuungenFromGesuch(wizardSteps.get(0).getGesuch().getId());
+		for (WizardStep wizardStep: wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // zu vermeiden, dass der Status eines unbesuchten Steps geaendert wird
+				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
+					WizardStepStatus status = WizardStepStatus.OK;
+					for (Betreuung betreuung : betreuungenFromGesuch) {
+						if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+							status = WizardStepStatus.NOK;
+							break;
+						} else if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+							status = WizardStepStatus.PLATZBESTAETIGUNG;
+						}
+					}
+					wizardStep.setWizardStepStatus(status);
+				}
+//				else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+//					WizardStepStatus status = WizardStepStatus.OK;
+//					for (Betreuung betreuung : betreuungenFromGesuch) {
+//						if (!Betreuungsstatus.SCHULAMT.equals(betreuung.getBetreuungsstatus())) {
+//							status = WizardStepStatus.IN_BEARBEITUNG;
+//							break;
+//						}
+//					}
+//					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+//				}
+			}
+		}
+	}
+
 	private void updateAllStatusForFamiliensituation(List<WizardStep> wizardSteps, Familiensituation oldEntity, Familiensituation newEntity) {
 		for (WizardStep wizardStep: wizardSteps) {
-			if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-			}
-			else if ((WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
-				|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()))
-				&& fromOneGSToTwoGS(oldEntity, newEntity)) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // zu vermeiden, dass der Status eines unbesuchten Steps geaendert wird
+				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+				}
+				else if ((WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
+					|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()))
+					&& fromOneGSToTwoGS(oldEntity, newEntity)) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				}
 			}
 		}
 	}

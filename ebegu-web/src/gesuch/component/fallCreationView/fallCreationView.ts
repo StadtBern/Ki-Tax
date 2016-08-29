@@ -8,6 +8,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {INewFallStateParams} from '../../gesuch.route';
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -22,11 +23,11 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-                private errorService: ErrorService, $stateParams: INewFallStateParams) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private errorService: ErrorService, $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.createNewParam = $stateParams.createNew;
         this.initViewModel();
     }

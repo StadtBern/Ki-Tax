@@ -17,10 +17,11 @@ describe('kinderListView', function () {
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
 
     beforeEach(angular.mock.inject(function ($injector: any) {
+        let wizardStepManager = $injector.get('WizardStepManager');
+        spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         gesuchModelManager = $injector.get('GesuchModelManager');
-        spyOn(gesuchModelManager, 'initKinderStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'initKinder').and.returnValue({});
-        kinderListViewController = new KinderListViewController(null, gesuchModelManager, null, null, null, null);
+        kinderListViewController = new KinderListViewController(null, gesuchModelManager, null, null, null, null, wizardStepManager);
         let $rootScope = $injector.get('$rootScope');
         scope = $rootScope.$new();
     }));

@@ -41,7 +41,7 @@ describe('betreuungView', function () {
         authServiceRS = $injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'isRole').and.returnValue(true);
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS);
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, null);
     }));
 
     describe('Public API', function () {
@@ -54,7 +54,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS);
+                    $rootScope, null, null, authServiceRS, null);
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(1);
             });

@@ -12,6 +12,9 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import DokumenteRS from '../../service/dokumenteRS.rest';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -35,14 +38,14 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteSonst: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-                                'DokumenteRS', '$log'];
+                                'DokumenteRS', '$log', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                private dokumenteRS: DokumenteRS, private $log: ILogService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
-        this.gesuchModelManager.initDokumenteStatus();
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.NOK);
         this.calculate();
     }
 

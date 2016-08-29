@@ -17,6 +17,7 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
 import Moment = moment.Moment;
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -35,11 +36,13 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     initialBetreuung: TSBetreuung;
     flagErrorVertrag: boolean;
 
-    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService', 'AuthServiceRS'];
+    static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
+        'AuthServiceRS', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
-                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService, private authServiceRS: AuthServiceRS) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initialBetreuung = angular.copy(this.getBetreuungModel());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;

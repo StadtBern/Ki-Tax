@@ -13,8 +13,8 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$scope', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any,
-                public wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager);
+                wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
     }
 
     showFinanzsituationStart(): boolean {

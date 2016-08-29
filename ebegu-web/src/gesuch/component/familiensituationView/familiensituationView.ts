@@ -12,6 +12,9 @@ import {
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 
@@ -30,10 +33,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
     allowedRoles: Array<TSRole>;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
         this.initViewModel();
@@ -41,7 +45,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
-        this.gesuchModelManager.initFamiliensituationStatus();
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 

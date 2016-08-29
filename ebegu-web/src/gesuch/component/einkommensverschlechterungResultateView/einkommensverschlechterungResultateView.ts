@@ -9,6 +9,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -30,11 +31,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
         this.initViewModel();

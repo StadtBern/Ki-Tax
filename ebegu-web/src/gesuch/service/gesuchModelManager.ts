@@ -39,8 +39,6 @@ import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
-import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
-import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -511,42 +509,6 @@ export default class GesuchModelManager {
         if (!this.getKindToWorkWith().betreuungen) {
             this.getKindToWorkWith().betreuungen = [];
         }
-    }
-
-    public initKinderStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initBetreuungStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initErwerbspensumStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initFinanzielleSituationStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initFamiliensituationStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initGesuchstellerStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.GESUCHSTELLER, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initEinkommensverschlechterungStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.IN_BEARBEITUNG);
-    }
-
-    public initDokumenteStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.NOK);
-    }
-
-    public initVerfuegungenStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.WARTEN);
     }
 
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {

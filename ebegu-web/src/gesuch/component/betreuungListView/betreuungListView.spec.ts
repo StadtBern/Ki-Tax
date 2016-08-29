@@ -18,13 +18,15 @@ describe('betreuungListViewTest', function () {
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
-        spyOn(gesuchModelManager, 'initBetreuungStatus').and.returnValue({});
+        let wizardStepManager = $injector.get('WizardStepManager');
+        spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         $state = $injector.get('$state');
         let mddialog = $injector.get('$mdDialog');
         let dialog = $injector.get('DvDialog');
         let ebeguRestUtil = $injector.get('EbeguRestUtil');
         let errorService = $injector.get('ErrorService');
-        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined, errorService);
+        betreuungListView = new BetreuungListViewController($state, gesuchModelManager, mddialog, dialog, ebeguRestUtil, undefined,
+            errorService, wizardStepManager);
     }));
 
     describe('Public API', function () {
