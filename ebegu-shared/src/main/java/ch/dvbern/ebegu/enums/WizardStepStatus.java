@@ -7,6 +7,7 @@ public enum WizardStepStatus {
 	OK,
 	NOK,
 	PLATZBESTAETIGUNG,
+	WARTEN,
 	IN_BEARBEITUNG,
 	UNBESUCHT
 }

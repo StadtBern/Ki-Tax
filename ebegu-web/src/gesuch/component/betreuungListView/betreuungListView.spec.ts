@@ -4,6 +4,8 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import {BetreuungListViewController} from './betreuungListView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
+import TSBetreuung from '../../../models/TSBetreuung';
+import TSKind from '../../../models/TSKind';
 
 describe('betreuungListViewTest', function () {
 
@@ -64,6 +66,28 @@ describe('betreuungListViewTest', function () {
                 spyOn($state, 'go');
                 betreuungListView.previousStep();
                 expect($state.go).toHaveBeenCalledWith('gesuch.kinder');
+            });
+        });
+        describe('exist at least one Betreuung among all kinder', function () {
+            it('should return false for empty list', function() {
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([]);
+                expect(betreuungListView.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return false for a list with Kinder but no Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = false;
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(betreuungListView.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return true for a list with Kinder needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = true;
+                let betreuung: TSBetreuung = new TSBetreuung();
+                kind.betreuungen = [betreuung];
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(betreuungListView.isThereAnyBetreuung()).toBe(true);
             });
         });
     });

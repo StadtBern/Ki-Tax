@@ -546,7 +546,7 @@ export default class GesuchModelManager {
     }
 
     public initVerfuegungenStatus(): void {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.NOK);
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.WARTEN);
     }
 
     public setKorrespondenzAdresse(showKorrespondadr: boolean): void {

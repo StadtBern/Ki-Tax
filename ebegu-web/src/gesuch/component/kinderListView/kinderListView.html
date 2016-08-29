@@ -56,7 +56,8 @@
                 </dv-loading-button>
             </div>
             <div class="col-md-6 text-right">
-                <dv-loading-button ng-click="vm.nextStep()" button-class="btn btn-link next">
+                <dv-loading-button button-click="vm.nextStep()" button-class="btn btn-link next"
+                                   button-disabled="!vm.isThereAnyKindWithBetreuungsbedarf()">
                     <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </dv-loading-button>

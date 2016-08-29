@@ -103,4 +103,18 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         }
         return '';
     }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

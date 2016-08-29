@@ -83,4 +83,14 @@ export class KinderListViewController extends AbstractGesuchViewController {
     nextStep(): void {
         this.state.go('gesuch.betreuungen');
     }
+
+    public isThereAnyKindWithBetreuungsbedarf(): boolean {
+        let kinderList: Array<TSKindContainer> = this.getKinderList();
+        for (let kind of kinderList) {
+            if (kind.kindJA.familienErgaenzendeBetreuung) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
