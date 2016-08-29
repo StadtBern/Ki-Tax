@@ -53,11 +53,12 @@ public class GesuchstellerResource {
 		"umzugadresse are both stored as consecutive wohnadressen in the database")
 	@Nonnull
 	@POST
-	@Path("/{gesuchId}")
+	@Path("/{gesuchId}/gsNumber/{gsNumber}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchsteller createGesuchsteller(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
@@ -67,8 +68,11 @@ public class GesuchstellerResource {
 			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, new Gesuchsteller());
 			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.updateGesuchsteller(convertedGesuchsteller); //immer update
 
-			wizardStepService.updateSteps(gesuchJAXPId.getId(), null,
-				persistedGesuchsteller, WizardStepName.GESUCHSTELLER);
+			if ((gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+				|| (!gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+				wizardStepService.updateSteps(gesuchJAXPId.getId(), null,
+					persistedGesuchsteller, WizardStepName.GESUCHSTELLER);
+			}
 
 			return converter.gesuchstellerToJAX(persistedGesuchsteller);
 		}

@@ -61,7 +61,7 @@ public class ErwerbspensumResourceTest {
 	@Test
 	public void createGesuchstelelrWithErwerbspensumTest() {
 		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithErwerbsbensum();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, testJaxGesuchsteller, null, null);
+		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 
 	}
@@ -69,7 +69,7 @@ public class ErwerbspensumResourceTest {
 	@Test
 	public void createErwerbspensumTest() throws EbeguException {
 		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller gesuchsteller = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, jaxGesuchsteller, null, null);
+		JaxGesuchsteller gesuchsteller = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(gesuchsteller), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		Assert.assertNotNull(jaxErwerbspensum);
@@ -79,7 +79,7 @@ public class ErwerbspensumResourceTest {
 	@Test
 	public void updateGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller storedGS = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, jaxGesuchsteller, null, null);
+		JaxGesuchsteller storedGS = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		JaxErwerbspensumContainer loadedEwp = erwerbspensumResource.findErwerbspensum(converter.toJaxId(jaxErwerbspensum));
@@ -96,7 +96,7 @@ public class ErwerbspensumResourceTest {
 	@Test
 	public void invalidPercentErwerbspensumTest() throws EbeguException {
 		JaxGesuchsteller jaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller storedGS = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, jaxGesuchsteller, null, null);
+		JaxGesuchsteller storedGS = gesuchstellerResource.createGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 		Response response = erwerbspensumResource.saveErwerbspensum(gesuchJAXPId, converter.toJaxId(storedGS), TestJaxDataUtil.createTestJaxErwerbspensumContainer(), null, null);
 		JaxErwerbspensumContainer jaxErwerbspensum = (JaxErwerbspensumContainer) response.getEntity();
 		JaxErwerbspensumContainer loadedEwp = erwerbspensumResource.findErwerbspensum(converter.toJaxId(jaxErwerbspensum));

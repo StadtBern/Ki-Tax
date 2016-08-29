@@ -214,13 +214,14 @@ export default class GesuchModelManager {
                 });
             });
         } else {
-            return this.gesuchstellerRS.create(this.getStammdatenToWorkWith(), this.gesuch.id).then((gesuchstellerResponse: any) => {
-                this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
-                        return this.getStammdatenToWorkWith();
+            return this.gesuchstellerRS.createGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
+                .then((gesuchstellerResponse: any) => {
+                    this.setStammdatenToWorkWith(gesuchstellerResponse);
+                    return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                        return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                            return this.getStammdatenToWorkWith();
+                        });
                     });
-                });
             });
         }
     }
