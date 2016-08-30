@@ -90,9 +90,6 @@ public class FinanzielleSituationResource {
 					.path("/" + persistedFinanzielleSituation.getId())
 					.build();
 
-				wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedFinSitCont,
-					persistedFinanzielleSituation, WizardStepName.FINANZIELLE_SITUATION);
-
 				JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
 				return Response.created(uri).entity(jaxFinanzielleSituation).build();
 			}

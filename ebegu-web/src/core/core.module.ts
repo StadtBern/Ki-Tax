@@ -55,6 +55,7 @@ import {DVEnableElement} from './directive/dv-enable-element/dv-enable-element';
 import {DVRoleElementController} from './controller/DVRoleElementController';
 import WizardStepManager from '../gesuch/service/wizardStepManager';
 import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
+import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -115,6 +116,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('GesuchRS', GesuchRS)
     .service('FinanzielleSituationRS', FinanzielleSituationRS)
     .service('EinkommensverschlechterungContainerRS', EinkommensverschlechterungContainerRS)
+    .service('EinkommensverschlechterungInfoRS', EinkommensverschlechterungInfoRS)
     .service('MandantRS', MandantRS)
     .service('TraegerschaftRS', TraegerschaftRS)
     .service('InstitutionRS', InstitutionRS)

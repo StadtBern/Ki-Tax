@@ -39,6 +39,7 @@ import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
+import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -60,14 +61,14 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
-                private wizardStepManager: WizardStepManager) {
+                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -242,6 +243,17 @@ export default class GesuchModelManager {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
                 return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
                     return ekvContRespo;
+                });
+            });
+    }
+
+    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
+        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
+            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
+            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
+                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
+                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return ekvInfoRespo;
                 });
             });
     }

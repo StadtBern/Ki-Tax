@@ -131,8 +131,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
-
+            this.gesuchModelManager.updateEinkommensverschlechterungsInfo().then(navigationFunction);
         }
     }
 

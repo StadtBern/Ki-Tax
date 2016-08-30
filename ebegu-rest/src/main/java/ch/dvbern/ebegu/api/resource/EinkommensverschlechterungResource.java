@@ -92,12 +92,6 @@ public class EinkommensverschlechterungResource {
 					.path("/" + persistedEinkommensverschlechterungContainer.getId())
 					.build();
 
-				if ((gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-					|| (!gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
-					wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedFinSitCont,
-						persistedEinkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-				}
-
 				JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = converter.einkommensverschlechterungContainerToJAX(persistedEinkommensverschlechterungContainer);
 				return Response.created(uri).entity(jaxEinkommensverschlechterungContainer).build();
 			}

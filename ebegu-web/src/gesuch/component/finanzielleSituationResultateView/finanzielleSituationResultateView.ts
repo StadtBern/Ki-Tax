@@ -9,6 +9,8 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -67,15 +69,26 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     nextStep(form: IFormController): void {
         this.save(form, (gesuch: any) => {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK).then(() => {
+                this.state.go('gesuch.einkommensverschlechterungInfo');
+            });
         });
-
     }
 
     private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchModelManager.setGesuchstellerNumber(1);
+                if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                    this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+                        this.gesuchModelManager.setGesuchstellerNumber(2);
+                        this.gesuchModelManager.saveFinanzielleSituation().then((navigationFunction));
+                    });
+                } else {
+                    this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+                }
+            }
         }
     }
 
