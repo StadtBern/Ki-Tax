@@ -99,12 +99,12 @@ public interface FinanzDatenPrint {
 	BigDecimal getBruttovermoegenG2();
 
 	/**
-	 * @return Schulden
+	 * @return Schulden von G1
 	 */
 	BigDecimal getSchuldenG1();
 
 	/**
-	 * @return Schulden
+	 * @return Schulden von G2
 	 */
 	BigDecimal getSchuldenG2();
 

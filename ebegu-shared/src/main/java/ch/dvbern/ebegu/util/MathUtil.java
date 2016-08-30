@@ -134,15 +134,21 @@ public enum MathUtil {
 	 */
 	@Nullable
 	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal... augment) {
-
-		if (value == null || augment == null || augment.length == 0) {
+		//TODO  if Bedingung ist falsch und  zwar wenn den'value' null ist, werden die argumente garnicht berechnet.
+		//if (value == null || augment == null || augment.length == 0) {
+		//	return null;
+		//}
+		if ( augment.length == 0) {
 			return null;
 		}
-		BigDecimal result = value;
+
+		BigDecimal result = value!=null? value:BigDecimal.ZERO;
 		for (int i = 0; i < augment.length; i++) {
 			BigDecimal valueToAdd = augment[i];
 			if (valueToAdd == null) {
-				return null;
+				//TODO REVIEW ZEAB return null ist falsch
+				//return null;
+				continue;
 			} else {
 				result = result
 					.add(valueToAdd)

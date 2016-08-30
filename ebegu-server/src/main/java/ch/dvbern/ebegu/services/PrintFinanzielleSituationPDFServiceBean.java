@@ -11,6 +11,14 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 19.08.2016
 */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.vorlagen.BerechnungsgrundlagenInformationPrintImpl;
@@ -19,23 +27,16 @@ import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
-
 /**
  * Implementiert PrintFinanzielleSituationService
  */
 @Stateless
 @Local(PrintFinanzielleSituationPDFService.class)
-public  class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseService implements PrintFinanzielleSituationPDFService {
+public class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseService implements PrintFinanzielleSituationPDFService {
 
 	@Nonnull
 	@Override
-	public  byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
@@ -45,8 +46,8 @@ public  class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseServic
 			// Pro Betreuung ein Dokument
 			InputStream is = AbstractBaseService.class.getResourceAsStream("/vorlagen/Berechnungsgrundlagen.docx");
 			Objects.requireNonNull(is, "Berechnungsgrundlagen.docx nicht gefunden");
-			byte[] bytes = new GeneratePDFDocumentHelper()
-					.generatePDFDocument(docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch))));
+			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
+					docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {

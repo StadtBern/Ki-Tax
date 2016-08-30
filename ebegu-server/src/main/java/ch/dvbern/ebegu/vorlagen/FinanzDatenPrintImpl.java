@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
-
 import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 
 /**
  * DTO fuer die Finazdaten die im Print gebraucht werden, implementiert den FinanzielleSituationPrint
  */
-public class FinanzDatenPrintImpl implements FinanzDatenPrint {
+public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
-	private FinanzSituationPrintGesuchsteller fsGesuchsteller1;
-	private FinanzSituationPrintGesuchsteller fsGesuchsteller2;
+	protected FinanzSituationPrintGesuchsteller fsGesuchsteller1;
+	protected FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
 	/**
 	 * Konstruktor
