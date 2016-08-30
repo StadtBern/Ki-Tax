@@ -131,14 +131,14 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	@Override
 	public BigDecimal getZwischentotalEinkuenfteG1() {
 
-		// TODO Implementieren
+		// TODO Implementieren. Aus dem ev1 Daten holen
 		return new BigDecimal(11111);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalEinkuenfteG2() {
 
-		// TODO Implementieren
+		// TODO Implementieren. Aus dem ev2 Daten holen
 		return new BigDecimal(11111);
 	}
 
@@ -176,14 +176,14 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	@Override
 	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
 
-		// TODO Implementieren
+		// TODO Implementieren. Aus dem ev1 Daten holen
 		return new BigDecimal(11111);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
 
-		// TODO Implementieren
+		// TODO Implementieren. Aus dem ev2 Daten holen
 		return new BigDecimal(11111);
 	}
 
