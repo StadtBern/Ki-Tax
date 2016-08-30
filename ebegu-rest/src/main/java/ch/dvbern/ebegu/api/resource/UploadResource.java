@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.activation.MimeTypeParseException;
+import javax.annotation.Nullable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -85,12 +86,7 @@ public class UploadResource {
 
 		request.setAttribute(InputPart.DEFAULT_CONTENT_TYPE_PROPERTY, "*/*; charset=UTF-8");
 
-		// get filenames from Header
-		String filenamesJson = request.getHeader(FILENAME_HEADER);
-		String[] filenames = null;
-		if (!StringUtils.isEmpty(filenamesJson)) {
-			filenames = filenamesJson.split(";");
-		}
+		String[] filenames = getFilenamesFromHeader(request);
 
 		// check if filenames available
 		if (filenames == null || filenames.length == 0) {
@@ -156,6 +152,17 @@ public class UploadResource {
 
 		final JaxDokumentGrund jaxDokumentGrundToReturn = converter.dokumentGrundToJax(persistedDokumentGrund);
 
+		updateWizardStep(gesuchId);
+
+		URI uri = uriInfo.getBaseUriBuilder()
+			.path(EinkommensverschlechterungInfoResource.class)
+			.path("/" + persistedDokumentGrund.getId())
+			.build();
+
+		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
+	}
+
+	private void updateWizardStep(String gesuchId) throws EbeguException {
 		final JaxDokumente dokumente = dokumenteResource.getDokumente(new JaxId(gesuchId));
 		boolean allNeededDokumenteUploaded = true;
 		for (JaxDokumentGrund dokumentGrund : dokumente.getDokumentGruende()) {
@@ -167,13 +174,16 @@ public class UploadResource {
 		if (allNeededDokumenteUploaded) { //only set status to OK if all required documents have been uploaded
 			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.DOKUMENTE);
 		}
+	}
 
-		URI uri = uriInfo.getBaseUriBuilder()
-			.path(EinkommensverschlechterungInfoResource.class)
-			.path("/" + persistedDokumentGrund.getId())
-			.build();
-
-		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
+	@Nullable
+	private String[] getFilenamesFromHeader(@Context HttpServletRequest request) {
+		String filenamesJson = request.getHeader(FILENAME_HEADER);
+		String[] filenames = null;
+		if (!StringUtils.isEmpty(filenamesJson)) {
+			filenames = filenamesJson.split(";");
+		}
+		return filenames;
 	}
 
 	private void extractFilesFromInput(MultipartFormDataInput input, String[] filenames, String gesuchId, JaxDokumentGrund jaxDokumentGrund) throws MimeTypeParseException, IOException {

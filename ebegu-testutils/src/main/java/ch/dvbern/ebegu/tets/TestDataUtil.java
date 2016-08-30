@@ -435,17 +435,20 @@ public final class TestDataUtil {
 		}
 		if (gesuch.getEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 	}
 

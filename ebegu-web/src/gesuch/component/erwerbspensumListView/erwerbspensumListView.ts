@@ -137,7 +137,8 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten && TSBetreuungsangebotTyp.TAGESSCHULE !== betreuung.institutionStammdaten.betreuungsangebotTyp)
+                if (betreuung.institutionStammdaten && (TSBetreuungsangebotTyp.TAGESSCHULE !== betreuung.institutionStammdaten.betreuungsangebotTyp
+                    || TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND !== betreuung.institutionStammdaten.betreuungsangebotTyp))
                 return true;
             }
         }

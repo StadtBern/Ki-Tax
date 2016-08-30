@@ -29,8 +29,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private Persistence<WizardStep> persistence;
 	@Inject
 	private BetreuungService betreuungService;
-	@Inject
-	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
 
 	@Override
@@ -90,19 +88,18 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.getAllBetreuungenFromGesuch(wizardSteps.get(0).getGesuch().getId());
 		for (WizardStep wizardStep: wizardSteps) {
-			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // zu vermeiden, dass der Status eines unbesuchten Steps geaendert wird
-				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
-					WizardStepStatus status = WizardStepStatus.OK;
-					for (Betreuung betreuung : betreuungenFromGesuch) {
-						if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
-							status = WizardStepStatus.NOK;
-							break;
-						} else if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
-							status = WizardStepStatus.PLATZBESTAETIGUNG;
-						}
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
+				WizardStepStatus status = WizardStepStatus.OK;
+				for (Betreuung betreuung : betreuungenFromGesuch) {
+					if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+						status = WizardStepStatus.NOK;
+						break;
+					} else if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+						status = WizardStepStatus.PLATZBESTAETIGUNG;
 					}
-					wizardStep.setWizardStepStatus(status);
 				}
+				wizardStep.setWizardStepStatus(status);
 			}
 		}
 	}

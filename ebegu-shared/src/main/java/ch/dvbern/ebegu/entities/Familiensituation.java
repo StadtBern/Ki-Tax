@@ -43,10 +43,10 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	public Familiensituation(Familiensituation that) {
-		this.setBemerkungen(that.getBemerkungen());
-		this.setFamilienstatus(that.getFamilienstatus());
-		this.setGemeinsameSteuererklaerung(that.getGemeinsameSteuererklaerung());
-		this.setGesuchstellerKardinalitaet(that.getGesuchstellerKardinalitaet());
+		this.bemerkungen = that.getBemerkungen();
+		this.familienstatus = that.getFamilienstatus();
+		this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
+		this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
 		this.setId(that.getId());
 		this.setTimestampErstellt(that.getTimestampErstellt());
 		this.setTimestampMutiert(that.getTimestampMutiert());
