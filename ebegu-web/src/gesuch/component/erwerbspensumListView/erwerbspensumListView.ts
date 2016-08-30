@@ -12,6 +12,8 @@ import ILogService = angular.ILogService;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSKindContainer from '../../../models/TSKindContainer';
+import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -46,8 +48,15 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         var vm = this;
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.IN_BEARBEITUNG);
+        this.initErwerbspensumStepStatus();
+    }
 
+    private initErwerbspensumStepStatus() {
+        if (this.isErwerbspensumRequired()) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.IN_BEARBEITUNG);
+        } else {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.OK);
+        }
     }
 
     getErwerbspensenListGS1(): Array<TSErwerbspensumContainer> {
@@ -100,10 +109,8 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     editPensum(pensum: any, gesuchstellerNumber: any): void {
-
         let index: number = this.gesuchModelManager.findIndexOfErwerbspensum(parseInt(gesuchstellerNumber), pensum);
         this.openErwerbspensumView(gesuchstellerNumber, index);
-
     }
 
     private openErwerbspensumView(gesuchstellerNumber: number, erwerbspensumNum: number): void {
@@ -124,6 +131,32 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         } else {
             this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
         }
+    }
+
+    private isErwerbspensumRequired(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.institutionStammdaten && TSBetreuungsangebotTyp.TAGESSCHULE !== betreuung.institutionStammdaten.betreuungsangebotTyp)
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber welche bereits eingetragen wurden
+     * @returns {boolean}
+     */
+    public isSaveDisabled(): boolean {
+        let erwerbspensenNumber: number = 0;
+        if (this.getErwerbspensenListGS1() && this.getErwerbspensenListGS1().length > 0) {
+            erwerbspensenNumber += this.getErwerbspensenListGS1().length;
+        }
+        if (this.getErwerbspensenListGS2() && this.getErwerbspensenListGS2().length > 0) {
+            erwerbspensenNumber += this.getErwerbspensenListGS2().length;
+        }
+        return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
     }
 }
 

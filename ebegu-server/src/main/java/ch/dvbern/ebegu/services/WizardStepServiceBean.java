@@ -103,16 +103,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					}
 					wizardStep.setWizardStepStatus(status);
 				}
-//				else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
-//					WizardStepStatus status = WizardStepStatus.OK;
-//					for (Betreuung betreuung : betreuungenFromGesuch) {
-//						if (!Betreuungsstatus.SCHULAMT.equals(betreuung.getBetreuungsstatus())) {
-//							status = WizardStepStatus.IN_BEARBEITUNG;
-//							break;
-//						}
-//					}
-//					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-//				}
 			}
 		}
 	}

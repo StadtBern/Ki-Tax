@@ -42,9 +42,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
-
-
-
     previousStep(): void {
         this.state.go('gesuch.kinder');
     }
