@@ -13,6 +13,8 @@ import {UploadRS} from '../../../core/service/uploadRS.rest';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import WizardStepManager from '../../service/wizardStepManager';
+import TSWizardStep from '../../../models/TSWizardStep';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 
@@ -30,10 +32,11 @@ export class KommentarViewController {
 
     dokumentePapiergesuch: TSDokumentGrund;
 
-    static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS'];
+    static $inject: string[] = ['$log', 'GesuchModelManager', 'GesuchRS', 'DokumenteRS', 'DownloadRS', '$q', 'UploadRS', 'WizardStepManager'];
     /* @ngInject */
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
-                private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService, private uploadRS: UploadRS) {
+                private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
+                private uploadRS: UploadRS, private wizardStepManager: WizardStepManager) {
         if (!this.isFallEroeffnen()) {
             this.getPapiergesuchFromServer();
         }
@@ -55,15 +58,21 @@ export class KommentarViewController {
     }
 
     getGesuch(): TSGesuch {
-        return this.gesuchModelManager.gesuch;
+        return this.gesuchModelManager.getGesuch();
     }
 
-    saveBemerkung(): void {
+    public saveBemerkungZurVerfuegung(): void {
         if (!this.isFallEroeffnen()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
         } else {
             this.$log.error('Kein Gesuch zum speichern der Bemerkung vorhanden!');
+        }
+    }
+
+    public saveStepBemerkung(): void {
+        if (!this.isFallEroeffnen()) {
+            this.wizardStepManager.updateCurrentWizardStep();
         }
     }
 
@@ -124,4 +133,9 @@ export class KommentarViewController {
     isFallEroeffnen(): boolean {
         return this.getGesuch().id == null;
     }
+
+    public getCurrentWizardStep(): TSWizardStep {
+        return this.wizardStepManager.getCurrentStep();
+    }
+
 }

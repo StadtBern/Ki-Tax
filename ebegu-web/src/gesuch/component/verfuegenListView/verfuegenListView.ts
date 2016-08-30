@@ -46,7 +46,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     private initViewModel(): void {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.VERFUEGEN, TSWizardStepStatus.WARTEN);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
 
         //Berechnung aller finanziellen Daten
         if (!this.berechnungsManager.finanzielleSituationResultate) {

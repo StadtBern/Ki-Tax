@@ -9,7 +9,8 @@
             <dv-input-container class="form-group kommentar-feld">
                 <label class="inlineHint" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
                         <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
-                                  ng-model="vm.getFamiliensituation().bemerkungen" maxlength="1000">
+                                  ng-blur="vm.saveStepBemerkung()"
+                                  ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>
@@ -32,7 +33,8 @@
                 <label class="inlineHint" for="kommentarVerfuegung"
                        data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
                         <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
-                                  ng-model="vm.getGesuch().bemerkungen" ng-blur="vm.saveBemerkung()" maxlength="1000">
+                                  ng-blur="vm.saveBemerkungZurVerfuegung()"
+                                  ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>

@@ -39,7 +39,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
     previousStep(): void {

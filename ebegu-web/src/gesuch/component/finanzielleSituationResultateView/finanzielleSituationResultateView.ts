@@ -69,7 +69,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     nextStep(form: IFormController): void {
         this.save(form, (gesuch: any) => {
-            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK).then(() => {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
                 this.state.go('gesuch.einkommensverschlechterungInfo');
             });
         });

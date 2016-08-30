@@ -10,7 +10,7 @@ export default class WizardStepManager {
 
     private allowedSteps: Array<TSWizardStepName> = [];
     private wizardSteps: Array<TSWizardStep> = [];
-    private currentStep: TSWizardStepName; // keeps track of the name of the current step
+    private currentStepName: TSWizardStepName; // keeps track of the name of the current step
 
 
     static $inject = ['AuthServiceRS', 'WizardStepRS'];
@@ -19,12 +19,21 @@ export default class WizardStepManager {
         this.setAllowedStepsForRole(authServiceRS.getPrincipalRole());
     }
 
+    public getCurrentStep(): TSWizardStep {
+        return this.getStepByName(this.currentStepName);
+    }
+
+    public setCurrentStep(stepName: TSWizardStepName): void {
+        this.currentStepName = stepName;
+    }
+
     /**
      * Initializes WizardSteps with one single Step GESUCH_ERSTELLEN which status is IN_BEARBEITUNG.
      * This method must be called only when the Gesuch doesn't exist yet.
      */
     public initWizardSteps() {
         this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined)];
+        this.currentStepName = TSWizardStepName.GESUCH_ERSTELLEN;
     }
 
     public getAllowedSteps(): Array<TSWizardStepName> {
@@ -71,8 +80,9 @@ export default class WizardStepManager {
      * nichts wird gemacht und undefined wird zurueckgegeben.
      * @param stepName
      * @param stepStatus
+     * @returns {any}
      */
-    public updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
+    private updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
         step.wizardStepStatus = this.getNewStatus(step.wizardStepStatus, stepStatus);
         if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat
@@ -81,6 +91,26 @@ export default class WizardStepManager {
             });
         }
         return undefined;
+    }
+
+    /**
+     * Der aktuelle Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
+     * nichts wird gemacht und undefined wird zurueckgegeben.
+     * @param stepStatus
+     * @returns {IPromise<void>}
+     */
+    public updateCurrentWizardStepStatus(stepStatus: TSWizardStepStatus): IPromise<void> {
+        return this.updateWizardStepStatus(this.currentStepName, stepStatus);
+    }
+
+    /**
+     * Just updates the current step as is
+     * @returns {IPromise<void>}
+     */
+    public updateCurrentWizardStep(): IPromise<void> {
+        return this.wizardStepRS.updateWizardStep(this.getCurrentStep()).then((response: TSWizardStep) => {
+            return this.findStepsFromGesuch(response.gesuchId);
+        });
     }
 
     /**
