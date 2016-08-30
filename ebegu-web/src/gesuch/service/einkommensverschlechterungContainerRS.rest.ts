@@ -1,7 +1,6 @@
 import {IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSEinkommensverschlechterungContainer from '../../models/TSEinkommensverschlechterungContainer';
-import TSGesuchsteller from '../../models/TSGesuchsteller';
 import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 import IPromise = angular.IPromise;
@@ -24,11 +23,11 @@ export default class EinkommensverschlechterungContainerRS {
     }
 
     public saveEinkommensverschlechterungContainer(einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer,
-                                                   gesuchstellerId: string, gesuchId: string): IPromise<TSEinkommensverschlechterungContainer> {
+                                                   gesuchstellerId: string, gesuchId: string, gsNumber: number): IPromise<TSEinkommensverschlechterungContainer> {
         let returnedEinkommensverschlechterungContainer = {};
         returnedEinkommensverschlechterungContainer =
             this.ebeguRestUtil.einkommensverschlechterungContainerToRestObject(returnedEinkommensverschlechterungContainer, einkommensverschlechterungContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerId + '/' + gesuchId, returnedEinkommensverschlechterungContainer, {
+        return this.http.put(this.serviceURL + '/' + gesuchstellerId + '/' + gsNumber + '/' + gesuchId, returnedEinkommensverschlechterungContainer, {
             headers: {
                 'Content-Type': 'application/json'
             }

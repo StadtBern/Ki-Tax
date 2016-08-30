@@ -237,7 +237,7 @@ export default class GesuchModelManager {
 
     public saveEinkommensverschlechterungContainer(): IPromise<TSEinkommensverschlechterungContainer> {
         return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
-            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
+            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id, this.gesuchstellerNumber)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
                 return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {

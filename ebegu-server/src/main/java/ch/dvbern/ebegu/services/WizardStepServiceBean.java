@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.Validate;
 
@@ -15,9 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Gesuch
@@ -30,6 +29,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private Persistence<WizardStep> persistence;
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
 
 	@Override

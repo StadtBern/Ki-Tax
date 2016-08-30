@@ -67,12 +67,13 @@ public class EinkommensverschlechterungResource {
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{gesuchstellerId}/{gesuchId}")
+	@Path("/{gesuchstellerId}/{gsNumber}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungContainer(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
+		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -91,8 +92,11 @@ public class EinkommensverschlechterungResource {
 					.path("/" + persistedEinkommensverschlechterungContainer.getId())
 					.build();
 
-				wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedFinSitCont,
-					persistedEinkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+				if ((gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+					|| (!gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+					wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedFinSitCont,
+						persistedEinkommensverschlechterungContainer, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+				}
 
 				JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = converter.einkommensverschlechterungContainerToJAX(persistedEinkommensverschlechterungContainer);
 				return Response.created(uri).entity(jaxEinkommensverschlechterungContainer).build();

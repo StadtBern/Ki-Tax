@@ -45,7 +45,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
         super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.NOK);
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();
     }
 

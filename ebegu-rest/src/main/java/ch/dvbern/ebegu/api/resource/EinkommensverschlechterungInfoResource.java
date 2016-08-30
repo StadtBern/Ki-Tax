@@ -6,10 +6,12 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -41,6 +43,8 @@ public class EinkommensverschlechterungInfoResource {
 
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -75,6 +79,11 @@ public class EinkommensverschlechterungInfoResource {
 				convertedEkvi.setGesuch(gesuchEntity);
 				gesuchEntity.setEinkommensverschlechterungInfo(convertedEkvi);
 				persistedEinkommensverschlechterungInfo = gesuchService.updateGesuch(gesuchEntity).getEinkommensverschlechterungInfo();
+			}
+
+			if (!persistedEinkommensverschlechterungInfo.getEinkommensverschlechterung()) {
+				//Nur wenn keine EV eingetragen wird, setzen wir den Status direkt auf OK
+				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 			}
 
 			URI uri = uriInfo.getBaseUriBuilder()
