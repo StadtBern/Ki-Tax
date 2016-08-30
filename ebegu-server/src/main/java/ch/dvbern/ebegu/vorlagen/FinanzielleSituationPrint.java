@@ -22,11 +22,6 @@ public interface FinanzielleSituationPrint extends FinanzDatenPrint {
 	String getReferenznummer();
 
 	/**
-	 * @return das Berechnungdatum
-	 */
-	String getBerechnungVon();
-
-	/**
 	 * @return das Jahr der FinanzielleSituation
 	 */
 	String getFinanzielleSituationJahr();

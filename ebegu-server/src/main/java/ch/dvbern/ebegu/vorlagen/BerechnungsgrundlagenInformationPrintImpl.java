@@ -40,9 +40,8 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
 		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
-		String berechnungVon = "TODO datum"; // TODO
 		String referenznummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
-		fs = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, berechnungVon, referenznummer);
+		fs = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, referenznummer);
 
 		// Einkommensverschleschtereung 1
 		String einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
@@ -62,7 +61,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller1Name() {
 
-		return gesuch.getGesuchsteller1() != null ?  gesuch.getGesuchsteller1().getFullName(): null;
+		return gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFullName() : null;
 	}
 
 	@Override
