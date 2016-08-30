@@ -23,10 +23,10 @@ export default class FinanzielleSituationRS {
         this.log = $log;
     }
 
-    public saveFinanzielleSituation(finanzielleSituationContainer: TSFinanzielleSituationContainer, gesuchsteller: TSGesuchsteller): IPromise<TSFinanzielleSituationContainer> {
+    public saveFinanzielleSituation(finanzielleSituationContainer: TSFinanzielleSituationContainer, gesuchstellerId: string, gesuchId: string): IPromise<TSFinanzielleSituationContainer> {
         let returnedFinanzielleSituation = {};
         returnedFinanzielleSituation = this.ebeguRestUtil.finanzielleSituationContainerToRestObject(returnedFinanzielleSituation, finanzielleSituationContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchsteller.id, returnedFinanzielleSituation, {
+        return this.http.put(this.serviceURL + '/' + gesuchstellerId + '/' + gesuchId, returnedFinanzielleSituation, {
             headers: {
                 'Content-Type': 'application/json'
             }

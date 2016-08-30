@@ -11,6 +11,9 @@ import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -35,11 +38,12 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
-                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
@@ -50,6 +54,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
     private initViewmodel() {
         this.gesuchModelManager.initStammdaten();
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.GESUCHSTELLER, TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
         this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;

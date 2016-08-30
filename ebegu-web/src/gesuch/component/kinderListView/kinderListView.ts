@@ -9,6 +9,9 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -23,16 +26,18 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private $translate: ITranslateService, private DvDialog: DvDialog, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private $translate: ITranslateService, private DvDialog: DvDialog, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
     getKinderList(): Array<TSKindContainer> {
@@ -81,5 +86,15 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     nextStep(): void {
         this.state.go('gesuch.betreuungen');
+    }
+
+    public isThereAnyKindWithBetreuungsbedarf(): boolean {
+        let kinderList: Array<TSKindContainer> = this.getKinderList();
+        for (let kind of kinderList) {
+            if (kind.kindJA.familienErgaenzendeBetreuung) {
+                return true;
+            }
+        }
+        return false;
     }
 }

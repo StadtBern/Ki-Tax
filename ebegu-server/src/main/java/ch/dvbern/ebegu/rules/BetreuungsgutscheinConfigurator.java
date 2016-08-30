@@ -40,56 +40,93 @@ public class BetreuungsgutscheinConfigurator {
 
 	private void useBernerRules(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 
-		// GRUNDREGELN
+		// GRUNDREGELN_DATA: Abschnitte erstellen
 
-		// 1. Erwerbspensum: Erstellt die grundlegenden Zeitschnitze (keine Korrekturen, nur einfügen)
-		ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
-		rules.add(erwerbspensumRule);
+		// - Erwerbspensum: Erstellt die grundlegenden Zeitschnitze (keine Korrekturen, nur einfügen)
+		ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
+		rules.add(erwerbspensumAbschnittRule);
 
-		// 2. Betreuungspensum
-		// - Daten Fachstelle
-		FachstelleDataRule fachstelleDataRule = new FachstelleDataRule(defaultGueltigkeit);
-		rules.add(fachstelleDataRule);
-		// - Daten Betreuung
+		// - Betreuungspensum
 		BetreuungspensumAbschnittRule betreuungspensumAbschnittRule = new BetreuungspensumAbschnittRule(defaultGueltigkeit);
 		rules.add(betreuungspensumAbschnittRule);
-		// - Berechnen
-		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
-		rules.add(betreuungspensumCalcRule);
 
-		// 3. Einkommen / Einkommensverschlechterung / Maximales Einkommen
+		// - Fachstelle
+		FachstelleAbschnittRule fachstelleAbschnittRule = new FachstelleAbschnittRule(defaultGueltigkeit);
+		rules.add(fachstelleAbschnittRule);
+
+		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
-		// 4. Kind wohnt im gleichen Haushalt
-		WohnhaftImGleichenHaushaltRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltRule(defaultGueltigkeit);
-		rules.add(wohnhaftImGleichenHaushaltRule);
+		// - Einreichungsfrist
+		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
+		rules.add(einreichungsfristAbschnittRule);
 
-		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
-		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
-		MaximalesEinkommenCalcRule maxEinkommenCalcRule = new MaximalesEinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());
-		rules.add(maxEinkommenCalcRule);
-
-		// REDUKTIONSREGELN
-
-		// Abwesenheit
-		AbwesenheitRule abwesenheitRule = new AbwesenheitRule(defaultGueltigkeit);
-		rules.add(abwesenheitRule);
-
-		// Betreuungsangebot Tagesschule nicht berechnen
-		BetreuungsangebotTypRule betreuungsangebotTypRule = new BetreuungsangebotTypRule(defaultGueltigkeit);
-		rules.add(betreuungsangebotTypRule);
+		// Wohnsitz (Zuzug und Wegzug)
+		WohnsitzAbschnittRule wohnsitzAbschnittRule = new WohnsitzAbschnittRule(defaultGueltigkeit);
+		rules.add(wohnsitzAbschnittRule);
 
 		// Mindestalter Kind
-		MindestalterRule mindestalterRule = new MindestalterRule(defaultGueltigkeit);
+		MindestalterAbschnittRule mindestalterAbschnittRule = new MindestalterAbschnittRule(defaultGueltigkeit);
+		rules.add(mindestalterAbschnittRule);
+
+		// Abwesenheit
+		AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(defaultGueltigkeit);
+		rules.add(abwesenheitAbschnittRule);
+
+
+		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
+
+		// - Erwerbspensum
+		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
+		rules.add(erwerbspensumCalcRule);
+
+		// - Betreuungspensum
+		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
+		rules.add(betreuungspensumCalcRule);
+
+		// - Fachstelle: Muss zwingend nach Erwerbspensum und Betreuungspensum durchgefuehrt werden
+		FachstelleCalcRule fachstelleCalcRule = new FachstelleCalcRule(defaultGueltigkeit);
+		rules.add(fachstelleCalcRule);
+
+		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
+		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
+		rules.add(wohnhaftImGleichenHaushaltRule);
+
+		// Nach den "Calc"-Regeln muss der Restanspruch (fuer das naechste Angebot) berechnet werden
+		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
+		rules.add(restanspruchCalcRule);
+
+		// REDUKTIONSREGELN: Setzen Anpsruch auf 0
+
+		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
+		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
+		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
+		EinkommenCalcRule maxEinkommenCalcRule = new EinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());
+		rules.add(maxEinkommenCalcRule);
+
+		// Betreuungsangebot Tagesschule nicht berechnen
+		BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(defaultGueltigkeit);
+		rules.add(betreuungsangebotTypCalcRule);
+
+		// Mindestalter Kind
+		MindestalterCalcRule mindestalterRule = new MindestalterCalcRule(defaultGueltigkeit);
 		rules.add(mindestalterRule);
 
 		// Wohnsitz (Zuzug und Wegzug)
-		WohnsitzRule wohnsitzRule = new WohnsitzRule(defaultGueltigkeit);
-		rules.add(wohnsitzRule);
+		WohnsitzCalcRule wohnsitzCalcRule = new WohnsitzCalcRule(defaultGueltigkeit);
+		rules.add(wohnsitzCalcRule);
 
 		// Einreichungsfrist
-		EinreichungsfristRule einreichungsfristRule = new EinreichungsfristRule(defaultGueltigkeit);
+		EinreichungsfristCalcRule einreichungsfristRule = new EinreichungsfristCalcRule(defaultGueltigkeit);
 		rules.add(einreichungsfristRule);
+
+		// Mindestalter Kind
+		MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(defaultGueltigkeit);
+		rules.add(mindestalterCalcRule);
+
+		// Abwesenheit
+		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
+		rules.add(abwesenheitCalcRule);
 	}
 }

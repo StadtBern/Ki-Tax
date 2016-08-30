@@ -130,7 +130,7 @@ export class PendenzenListViewController {
     private openGesuch(gesuch: TSGesuch): void {
         if (gesuch) {
             this.berechnungsManager.clear();
-            this.gesuchModelManager.gesuch = gesuch;
+            this.gesuchModelManager.setGesuch(gesuch);
             this.$state.go('gesuch.fallcreation');
         }
     }

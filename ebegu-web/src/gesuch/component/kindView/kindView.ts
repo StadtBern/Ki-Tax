@@ -11,6 +11,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -27,11 +28,13 @@ export class KindViewController extends AbstractGesuchViewController {
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
+                                'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 

@@ -12,6 +12,7 @@ import TSKindContainer from '../../models/TSKindContainer';
 import TSGesuch from '../../models/TSGesuch';
 import TSUser from '../../models/TSUser';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import WizardStepManager from './wizardStepManager';
 
 describe('gesuchModelManager', function () {
 
@@ -24,6 +25,7 @@ describe('gesuchModelManager', function () {
     let $httpBackend: IHttpBackendService;
     let $q: IQService;
     let authServiceRS: AuthServiceRS;
+    let wizardStepManager: WizardStepManager;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -34,9 +36,10 @@ describe('gesuchModelManager', function () {
         fallRS = $injector.get('FallRS');
         gesuchRS = $injector.get('GesuchRS');
         kindRS = $injector.get('KindRS');
-        scope = $injector.get('$rootScope').$new();
+        scope = $injector.get('$rootScope');
         $q = $injector.get('$q');
         authServiceRS = $injector.get('AuthServiceRS');
+        wizardStepManager = $injector.get('WizardStepManager');
     }));
 
     describe('Public API', function () {
@@ -86,6 +89,7 @@ describe('gesuchModelManager', function () {
                 kindToWorkWith.nextNumberBetreuung = 5;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
                 spyOn(betreuungRS, 'createBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.updateBetreuung();
                 scope.$apply();
@@ -94,12 +98,16 @@ describe('gesuchModelManager', function () {
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
+                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalled();
             });
         });
         describe('saveGesuchAndFall', () => {
             it('creates a Fall with a linked Gesuch', () => {
                 spyOn(fallRS, 'createFall').and.returnValue($q.when({}));
-                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123123';
+                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({data: gesuch}));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch(false);
@@ -108,13 +116,14 @@ describe('gesuchModelManager', function () {
                 scope.$apply();
                 expect(fallRS.createFall).toHaveBeenCalled();
                 expect(gesuchRS.createGesuch).toHaveBeenCalled();
+                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(gesuch.id);
             });
             it('only updates the Gesuch because it already exists', () => {
                 spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch(false);
-                gesuchModelManager.gesuch.timestampErstellt = DateUtil.today();
+                gesuchModelManager.getGesuch().timestampErstellt = DateUtil.today();
                 gesuchModelManager.saveGesuchAndFall();
 
                 scope.$apply();
@@ -123,16 +132,16 @@ describe('gesuchModelManager', function () {
         });
         describe('initGesuch', () => {
             beforeEach(() => {
-                expect(gesuchModelManager.gesuch).toBeUndefined();
+                expect(gesuchModelManager.getGesuch()).toBeUndefined();
             });
             it('links the fall with the undefined user', () => {
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
 
                 gesuchModelManager.initGesuch(false);
 
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(undefined);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(undefined);
             });
             it('links the fall with the current user', () => {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
@@ -140,35 +149,35 @@ describe('gesuchModelManager', function () {
 
                 gesuchModelManager.initGesuch(false);
 
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(currentUser);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(currentUser);
             });
             it('does not force to create a new fall and gesuch', () => {
                 gesuchModelManager.initGesuch(false);
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('does force to create a new fall and gesuch', () => {
                 gesuchModelManager.initGesuch(true);
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('forces to create a new gesuch and fall even though one already exists', () => {
                 gesuchModelManager.initGesuch(false);
-                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
 
                 gesuchModelManager.initGesuch(true);
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(oldGesuch).not.toBe(gesuchModelManager.gesuch);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(oldGesuch).not.toBe(gesuchModelManager.getGesuch());
             });
             it('does not force to create a new gesuch and fall and the old ones will remain', () => {
                 gesuchModelManager.initGesuch(false);
-                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
 
                 gesuchModelManager.initGesuch(false);
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(oldGesuch).toBe(gesuchModelManager.gesuch);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(oldGesuch).toBe(gesuchModelManager.getGesuch());
             });
         });
         describe('setUserAsFallVerantwortlicher', () => {
@@ -177,7 +186,7 @@ describe('gesuchModelManager', function () {
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
                 let user: TSUser = new TSUser('Emiliano', 'Camacho');
                 gesuchModelManager.setUserAsFallVerantwortlicher(user);
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(user);
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(user);
             });
         });
     });

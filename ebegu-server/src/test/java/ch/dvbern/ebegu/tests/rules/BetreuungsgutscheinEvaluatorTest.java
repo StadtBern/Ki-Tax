@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
+import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
@@ -73,7 +74,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		for (KindContainer kindContainer : testgesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				Assert.assertFalse(betreuung.getVerfuegung().getGeneratedBemerkungen().isEmpty());
-				Assert.assertTrue(betreuung.getVerfuegung().getGeneratedBemerkungen().startsWith("MAXIMALES"));
+				Assert.assertTrue(betreuung.getVerfuegung().getGeneratedBemerkungen().startsWith(RuleKey.EINKOMMEN.name()));
 			}
 		}
 	}

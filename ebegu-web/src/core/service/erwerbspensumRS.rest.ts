@@ -29,18 +29,18 @@ export default class ErwerbspensumRS {
             });
     }
 
-    public createErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string): IPromise<TSErwerbspensumContainer> {
-        return this.saveErwerbspensum(erwerbspensenContainer, gesuchstellerID);
+    public createErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string, gesuchId: string): IPromise<TSErwerbspensumContainer> {
+        return this.saveErwerbspensum(erwerbspensenContainer, gesuchstellerID, gesuchId);
     }
 
-    public updateErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string): IPromise<TSErwerbspensumContainer> {
-        return this.saveErwerbspensum(erwerbspensenContainer, gesuchstellerID);
+    public updateErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string, gesuchId: string): IPromise<TSErwerbspensumContainer> {
+        return this.saveErwerbspensum(erwerbspensenContainer, gesuchstellerID, gesuchId);
     }
 
-    private saveErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string): IPromise<TSErwerbspensumContainer> {
+    private saveErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string, gesuchId: string): IPromise<TSErwerbspensumContainer> {
         let restErwerbspensum = {};
         restErwerbspensum = this.ebeguRestUtil.erwerbspensumContainerToRestObject(restErwerbspensum, erwerbspensenContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerID, restErwerbspensum, {
+        return this.http.put(this.serviceURL + '/' + gesuchstellerID + '/' + gesuchId, restErwerbspensum, {
             headers: {
                 'Content-Type': 'application/json'
             }

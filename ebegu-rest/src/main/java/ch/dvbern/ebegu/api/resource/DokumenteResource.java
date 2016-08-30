@@ -74,7 +74,7 @@ public class DokumenteResource {
 		if (gesuch.isPresent()) {
 
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
-			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded, gesuch.get());
+			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
 			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
 
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.getAllDokumentGrundByGesuch(gesuch.get());

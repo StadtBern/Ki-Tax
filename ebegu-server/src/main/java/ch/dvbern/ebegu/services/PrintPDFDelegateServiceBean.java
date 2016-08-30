@@ -1,0 +1,48 @@
+package ch.dvbern.ebegu.services;
+/*
+* Copyright (c) 2016 DV Bern AG, Switzerland
+*
+* Das vorliegende Dokument, einschliesslich aller seiner Teile, ist urheberrechtlich
+* geschuetzt. Jede Verwertung ist ohne Zustimmung der DV Bern AG unzulaessig. Dies gilt
+* insbesondere fuer Vervielfaeltigungen, die Einspeicherung und Verarbeitung in
+* elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
+* Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
+*
+* Ersteller: zeab am: 18.08.2016
+*/
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.errors.MergeDocException;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+
+/**
+ * Implementiert PrintDokumentDelegateService
+ */
+@Stateless
+@Local(PrintDokumentDelegateService.class)
+public class PrintPDFDelegateServiceBean extends AbstractBaseService implements PrintDokumentDelegateService {
+
+	@Inject
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+	@Inject
+	private PrintFinanzielleSituationPDFService printFinanzielleSituationService;
+
+	@Nonnull
+	@Override
+	public List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException {
+
+		return verfuegungsGenerierungPDFService.printVerfuegung(gesuch);
+	}
+
+	@Nonnull
+	@Override
+	public byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
+
+		return printFinanzielleSituationService.printFinanzielleSituation(gesuch);
+	}
+}

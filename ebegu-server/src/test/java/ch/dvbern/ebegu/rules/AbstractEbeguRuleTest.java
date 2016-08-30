@@ -21,7 +21,7 @@ public class AbstractEbeguRuleTest {
 
 
 	private final DateRange defaultGueltigkeit = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
-	private final ErwerbspensumRule erwerbspensumRule = new ErwerbspensumRule(defaultGueltigkeit);
+	private final ErwerbspensumAbschnittRule erwerbspensumRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 
 	private final LocalDate DATUM_1 = LocalDate.of(2016, Month.APRIL, 1);
 	private final LocalDate DATUM_2 = LocalDate.of(2016, Month.SEPTEMBER, 1);

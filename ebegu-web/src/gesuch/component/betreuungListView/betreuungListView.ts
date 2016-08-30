@@ -12,6 +12,9 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -29,12 +32,14 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
+        'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
     previousStep(): void {
@@ -101,5 +106,19 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
             return TSBetreuungsangebotTyp[betreuung.institutionStammdaten.betreuungsangebotTyp];
         }
         return '';
+    }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

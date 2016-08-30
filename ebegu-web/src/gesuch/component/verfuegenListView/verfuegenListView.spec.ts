@@ -22,6 +22,8 @@ describe('verfuegenListViewTest', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
         tsKindContainer = new TSKindContainer();
+        let wizardStepManager = $injector.get('WizardStepManager');
+        spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
         spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue({});
 
@@ -29,7 +31,7 @@ describe('verfuegenListViewTest', function () {
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
         spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
 
-        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined);
+        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined, wizardStepManager);
     }));
 
     describe('Public API', function () {

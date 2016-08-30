@@ -28,12 +28,12 @@ public class DokumentenverzeichnisEvaluator {
 			einkommensverschlechterungDokumente.getAllDokumente(gesuch, anlageVerzeichnis);
 		}
 
-
 		return anlageVerzeichnis;
 	}
 
-	public void addSonstige(Set<DokumentGrund> dokumentGrunds, Gesuch gesuch) {
+	public void addSonstige(Set<DokumentGrund> dokumentGrunds) {
 		DokumentGrund dokumentGrund = new DokumentGrund(DokumentGrundTyp.SONSTIGE_NACHWEISE , DokumentTyp.DIV);
+		dokumentGrund.setNeeded(false);
 		dokumentGrunds.add(dokumentGrund);
 	}
 

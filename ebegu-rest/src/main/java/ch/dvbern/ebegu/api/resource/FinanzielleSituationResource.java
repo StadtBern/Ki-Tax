@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,41 +48,47 @@ public class FinanzielleSituationResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
 
 	@Resource
- 	private EJBContext context;    //fuer rollback
+	private EJBContext context;    //fuer rollback
 
 
 	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{gesuchstellerId}")
+	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveFinanzielleSituation (
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-		if (gesuchsteller.isPresent()) {
-			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
-			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-			FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			if (gesuchsteller.isPresent()) {
+				FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
+				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
+				FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
 
-			URI uri = uriInfo.getBaseUriBuilder()
-				.path(FinanzielleSituationResource.class)
-				.path("/" + persistedFinanzielleSituation.getId())
-				.build();
+				URI uri = uriInfo.getBaseUriBuilder()
+					.path(FinanzielleSituationResource.class)
+					.path("/" + persistedFinanzielleSituation.getId())
+					.build();
 
-			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
-			return Response.created(uri).entity(jaxFinanzielleSituation).build();
+				JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
+				return Response.created(uri).entity(jaxFinanzielleSituation).build();
+			}
 		}
 		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}

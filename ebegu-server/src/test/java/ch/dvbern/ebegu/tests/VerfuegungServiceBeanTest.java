@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
-import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfallWaeltiDagmar;
+import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01WaeltiDagmar;
 
 /**
  * Tests fuer die Klasse FinanzielleSituationService
@@ -93,7 +93,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next()));
 		Assert.assertNotNull(berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung());
 		Verfuegung verfuegung = berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung();
-		checkTestfallWaeltiDagmar(gesuch);
+		checkTestfall01WaeltiDagmar(gesuch);
 
 	}
 

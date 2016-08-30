@@ -12,6 +12,9 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import DokumenteRS from '../../service/dokumenteRS.rest';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./dokumenteView.html');
 require('./dokumenteView.less');
 
@@ -36,20 +39,21 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-        'DokumenteRS', '$log'];
+                                'DokumenteRS', '$log', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                private dokumenteRS: DokumenteRS, private $log: ILogService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
+        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();
     }
 
     calculate() {
-        if (this.gesuchModelManager.gesuch) {
+        if (this.gesuchModelManager.getGesuch()) {
             this.berechnungsManager
-                .getDokumente(this.gesuchModelManager.gesuch)
+                .getDokumente(this.gesuchModelManager.getGesuch())
                 .then((promiseValue: TSDokumenteDTO) => {
                     this.searchDokumente(promiseValue, this.dokumenteEkv, TSDokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
                     this.searchDokumente(promiseValue, this.dokumenteFinSit, TSDokumentGrundTyp.FINANZIELLESITUATION);
@@ -78,10 +82,10 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     previousStep(form: IFormController): void {
         if (form.$valid) {
             this.errorService.clearAll();
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
             if (ekvFuerBasisJahrPlus2) {
                 this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
             } else if (ekvFuerBasisJahrPlus1) {

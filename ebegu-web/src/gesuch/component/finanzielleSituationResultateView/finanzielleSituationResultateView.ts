@@ -8,6 +8,9 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -26,11 +29,12 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     gesuchsteller1FinSit: TSFinanzielleSituationContainer;
     gesuchsteller2FinSit: TSFinanzielleSituationContainer;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
         this.calculate();
     }
@@ -65,20 +69,31 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     nextStep(form: IFormController): void {
         this.save(form, (gesuch: any) => {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FINANZIELLE_SITUATION, TSWizardStepStatus.OK).then(() => {
+                this.state.go('gesuch.einkommensverschlechterungInfo');
+            });
         });
-
     }
 
     private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchModelManager.setGesuchstellerNumber(1);
+                if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                    this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+                        this.gesuchModelManager.setGesuchstellerNumber(2);
+                        this.gesuchModelManager.saveFinanzielleSituation().then((navigationFunction));
+                    });
+                } else {
+                    this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+                }
+            }
         }
     }
 
     calculate() {
-        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch);
+        this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch());
     }
 
     resetForm() {
@@ -87,8 +102,8 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituationContainer {
         if (!this.gesuchsteller1FinSit) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller1) {
-                this.gesuchsteller1FinSit = this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchsteller1FinSit = this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer;
             } else {
                 this.gesuchsteller1FinSit = new TSFinanzielleSituationContainer();
             }
@@ -99,8 +114,8 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     public getFinanzielleSituationGS2(): TSFinanzielleSituationContainer {
         if (!this.gesuchsteller2FinSit) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller2) {
-                this.gesuchsteller2FinSit = this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                this.gesuchsteller2FinSit = this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer;
             } else {
                 this.gesuchsteller2FinSit = new TSFinanzielleSituationContainer();
             }
