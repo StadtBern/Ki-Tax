@@ -19,7 +19,7 @@ public interface FinanzielleSituationPrint extends FinanzDatenPrint {
 	/**
 	 * @return die Referenznummer
 	 */
-	String getReferenznummer();
+	String getFallNummer();
 
 	/**
 	 * @return das Jahr der FinanzielleSituation

@@ -17,27 +17,28 @@ package ch.dvbern.ebegu.vorlagen;
 public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implements FinanzielleSituationPrint {
 
 	private String finanzielleSituationJahr;
-	private String referenznummer;
+	private String fallNummer;
 
 	/**
 	 * Konstruktor
 	 *
 	 * @param finanzielleSituationG1
 	 * @param finanzielleSituationG2
+	 * @param fallNummer
 	 */
 	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
-			String referenznummer) {
+			String fallNummer) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 		this.finanzielleSituationJahr = finanzielleSituationJahr;
-		this.referenznummer = referenznummer;
+		this.fallNummer = fallNummer;
 
 	}
 
 	@Override
-	public String getReferenznummer() {
+	public String getFallNummer() {
 
-		return referenznummer;
+		return fallNummer;
 	}
 
 	@Override

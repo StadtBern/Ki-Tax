@@ -1,5 +1,8 @@
 package ch.dvbern.ebegu.tests;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +79,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		writeToTempDir(bytes, "finanzielleSituation.pdf");
+		// openPDF(file);
 	}
 
 	/**
@@ -99,6 +103,16 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		writeToTempDir(bytes, "finanzielleSituation.pdf");
+		File file = writeToTempDir(bytes, "finanzielleSituation.pdf");
+		// openPDF(file);
+	}
+
+	private void openPDF(File file) {
+
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException ex) {
+			// no application registered for PDFs
+		}
 	}
 }
