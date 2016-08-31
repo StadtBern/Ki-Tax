@@ -11,14 +11,17 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.util.Constants;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Transferobjekt
@@ -35,43 +38,24 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		this.betreuung = betreuung;
 	}
 
-	/**
-	 * @return GesuchstellerName
-	 */
 	@Override
-	public String getGesuchstellerName() {
+	public String getTitel() {
 
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
-		return "";
+		// TODO ZEAB Implementieren
+		return "Verfügung / Bestätigung";
 	}
 
-	/**
-	 * @return Gesuchsteller-Strasse
-	 */
 	@Override
-	public String getGesuchstellerStrasse() {
+	public String getAngebot() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getStrasse();
-		}
-		return "";
+		// TODO ZEAB Implementieren
+		return "Kita";
 	}
 
-	/**
-	 * @return Gesuchsteller-PLZ Stadt
-	 */
 	@Override
-	public String getGesuchstellerPLZStadt() {
+	public String getInstitution() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
-		}
-		return "";
+		return betreuung.getInstitutionStammdaten().getInstitution().getName();
 	}
 
 	/**
@@ -97,32 +81,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 				return Constants.DATE_FORMATTER.format(verfuegung1.getTimestampErstellt());
 			}
 		}
-		return "";
-	}
-
-	/**
-	 * @return Name des Gesuchsteller1
-	 */
-	@Override
-	public String getGesuchsteller1() {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
-		return "";
-	}
-
-	/**
-	 * @return Name des Gesuchsteller2
-	 */
-	@Override
-	public String getGesuchsteller2() {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller2();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
+		// TODO ZEAB was muss hier passieren?? Leer ausdrucken??
 		return "";
 	}
 
@@ -205,15 +164,6 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	/**
-	 * @return true falls Gesuchsteller 2 existiert
-	 */
-	@Override
-	public boolean isExistGesuchsteller2() {
-
-		return betreuung.extractGesuch().getGesuchsteller2() != null;
-	}
-
-	/**
 	 * @return true falls Pensum groesser 0 ist
 	 */
 	@Override
@@ -250,49 +200,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller1() {
-
-		Gesuchsteller gs1 = betreuung.extractGesuch().getGesuchsteller1();
-		if (gs1 != null) {
-			return Optional.of(gs1);
-		}
-		return Optional.empty();
-	}
-
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller2() {
-
-		Gesuchsteller gs2 = betreuung.extractGesuch().getGesuchsteller2();
-		if (gs2 != null) {
-			return Optional.of(gs2);
-		}
-		return Optional.empty();
-	}
-
-	@Nonnull
 	private Kind extractKind() {
 
 		return betreuung.getKind().getKindJA();
-	}
-
-	@Nonnull
-	private Optional<GesuchstellerAdresse> getGesuchstellerAdresse() {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
-			GesuchstellerAdresse wohnadresse = null;
-			for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
-				if (gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)) {
-					return Optional.of(gesuchstellerAdresse);
-				}
-				wohnadresse = gesuchstellerAdresse;
-			}
-			if (wohnadresse != null) {
-				return Optional.of(wohnadresse);
-			}
-		}
-		return Optional.empty();
 	}
 
 	@Nonnull

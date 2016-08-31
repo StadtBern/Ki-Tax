@@ -20,19 +20,15 @@ public interface VerfuegungPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getGesuchstellerName();
+	String getTitel();
 
-	String getGesuchstellerStrasse();
+	String getAngebot();
 
-	String getGesuchstellerPLZStadt();
+	String getInstitution();
 
 	String getReferenznummer();
 
 	String getVerfuegungsdatum();
-
-	String getGesuchsteller1();
-
-	String getGesuchsteller2();
 
 	String getKindNameVorname();
 
@@ -50,11 +46,6 @@ public interface VerfuegungPrint {
 	 * @return die Bemerkung
 	 */
 	String getBemerkungen();
-
-	/**
-	 * @return true falls Gesuchstelller 2 existiert
-	 */
-	boolean isExistGesuchsteller2();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist
