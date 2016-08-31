@@ -39,6 +39,9 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 				int anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest();
 				if (betreuungspensum > anspruchRest) {
 					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruchRest);
+					//todo homa kommentar
+					//verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
+
 				}
 			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 				// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
