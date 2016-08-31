@@ -160,22 +160,12 @@ export default class GesuchModelManager {
     }
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        //testen ob aktuelles familiensituation schon gespeichert ist
-        if (this.getFamiliensituation().timestampErstellt) {
-            return this.familiensituationRS.update(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-                this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
-                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
-                    return this.gesuch.familiensituation;
-                });
+        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
+            this.gesuch.familiensituation = familienResponse;
+            return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                return this.gesuch.familiensituation;
             });
-        } else {
-            return this.familiensituationRS.create(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-                this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
-                return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
-                    return this.gesuch.familiensituation;
-                });
-            });
-        }
+        });
     }
 
     /**
@@ -203,8 +193,8 @@ export default class GesuchModelManager {
      * Speichert den StammdatenToWorkWith.
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
-        if (this.getStammdatenToWorkWith().timestampErstellt) {
-            return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber).then((gesuchstellerResponse: any) => {
+        return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
+            .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
@@ -212,17 +202,6 @@ export default class GesuchModelManager {
                     });
                 });
             });
-        } else {
-            return this.gesuchstellerRS.createGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
-                .then((gesuchstellerResponse: any) => {
-                    this.setStammdatenToWorkWith(gesuchstellerResponse);
-                    return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                        return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
-                            return this.getStammdatenToWorkWith();
-                        });
-                    });
-            });
-        }
     }
 
     public saveFinanzielleSituation(): IPromise<TSFinanzielleSituationContainer> {

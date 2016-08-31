@@ -74,8 +74,7 @@ public class KindResource {
 			convertedKind.setGesuch(gesuch.get());
 			KindContainer persistedKind = this.kindService.saveKind(convertedKind);
 
-			wizardStepService.updateSteps(gesuchId.getId(), null,
-				convertedKind, WizardStepName.KINDER);
+			wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.KINDER);
 
 			return converter.kindContainerToJAX(persistedKind);
 		}

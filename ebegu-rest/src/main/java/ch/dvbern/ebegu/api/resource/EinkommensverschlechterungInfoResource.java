@@ -82,7 +82,7 @@ public class EinkommensverschlechterungInfoResource {
 			}
 
 			if (!persistedEinkommensverschlechterungInfo.getEinkommensverschlechterung()) {
-				// wenn keine EV eingetragen wird, setzen wir den Status direkt auf OK
+				//wenn der Benutzer keine EV eintragen will, setzen wir den Status direkt auf OK
 				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 			}
 

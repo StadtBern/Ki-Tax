@@ -32,14 +32,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
-	public Gesuchsteller createGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
-		Objects.requireNonNull(gesuchsteller);
-		return persistence.persist(gesuchsteller);
-	}
-
-	@Nonnull
-	@Override
-	public Gesuchsteller updateGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
+	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
 		Objects.requireNonNull(gesuchsteller);
 		return persistence.merge(gesuchsteller);
 	}

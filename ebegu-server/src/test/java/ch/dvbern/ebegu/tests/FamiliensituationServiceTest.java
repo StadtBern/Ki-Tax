@@ -60,7 +60,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(EnumFamilienstatus.ALLEINERZIEHEND, familiensituation.get().getFamilienstatus());
 
 		familiensituation.get().setFamilienstatus(EnumFamilienstatus.KONKUBINAT);
-		Familiensituation updatedFamsit = familiensituationService.updateFamiliensituation(familiensituation.get());
+		Familiensituation updatedFamsit = familiensituationService.saveFamiliensituation(familiensituation.get());
 		Assert.assertEquals(EnumFamilienstatus.KONKUBINAT, updatedFamsit.getFamilienstatus());
 		Assert.assertEquals(EnumFamilienstatus.KONKUBINAT,
 			familiensituationService.findFamiliensituation(updatedFamsit.getId()).get().getFamilienstatus());
@@ -82,7 +82,7 @@ public class FamiliensituationServiceTest extends AbstractEbeguTest {
 	@Nonnull
 	private Familiensituation insertNewEntity() {
 		Familiensituation familiensituation = TestDataUtil.createDefaultFamiliensituation();
-		familiensituationService.createFamiliensituation(familiensituation);
+		familiensituationService.saveFamiliensituation(familiensituation);
 		return familiensituation;
 	}
 
