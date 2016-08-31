@@ -58,7 +58,6 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
-                expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toEqual([]);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten).toBeUndefined();
@@ -81,7 +80,6 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
                 gesuchModelManager.getKindToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
@@ -96,7 +94,6 @@ describe('gesuchModelManager', function () {
 
                 expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
-                expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
                 expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalled();
             });

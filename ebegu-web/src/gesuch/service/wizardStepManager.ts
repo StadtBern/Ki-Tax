@@ -126,4 +126,19 @@ export default class WizardStepManager {
         }
         return newStepStatus;
     }
+
+    /**
+     * Diese Methode ist eine Ausnahme. Im ersten Step haben wir das Problem, dass das Gesuch noch nicht existiert. Deswegen koennen
+     * wir die Kommentare nicht direkt speichern. Die Loesung ist: nach dem das Gesuch erstellt wird und somit auch die WizardSteps,
+     * holen wir diese aus der Datenbank, aktualisieren den Step GESUCH_ERSTELLEN mit den Kommentaren und speichern dieses nochmal.
+     * @param gesuchId
+     * @returns {IPromise<void>}
+     */
+    public updateFirstWizardStep(gesuchId: string): IPromise<void> {
+        let firstStepBemerkungen = angular.copy(this.getCurrentStep().bemerkungen);
+        return this.findStepsFromGesuch(gesuchId).then(() => {
+            this.getCurrentStep().bemerkungen = firstStepBemerkungen;
+            return this.updateCurrentWizardStep();
+        });
+    }
 }

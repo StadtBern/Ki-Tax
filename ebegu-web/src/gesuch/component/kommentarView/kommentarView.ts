@@ -65,8 +65,6 @@ export class KommentarViewController {
         if (!this.isFallEroeffnen()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
-        } else {
-            this.$log.error('Kein Gesuch zum speichern der Bemerkung vorhanden!');
         }
     }
 

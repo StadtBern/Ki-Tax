@@ -62,6 +62,7 @@ export default class TestDataUtil {
         $httpBackend.when('GET', '/ebegu/api/v1/institutionstammdaten/date?date=' + DateUtil.momentToLocalDate(DateUtil.today())).respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/wizard-steps').respond({});
+        $httpBackend.when('POST', '/ebegu/api/v1/wizard-steps').respond({});
     }
 
     public static createWizardStep(gesuchId: string): TSWizardStep {
