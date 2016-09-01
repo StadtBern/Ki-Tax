@@ -89,6 +89,7 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 		this.needed = needed;
 	}
 
+	//todo ask Pascal
 	/**
 	 * Checkt ob die Liste von Dokumenten leer ist.
 	 * @return false wenn mindestens ein Dokumente existiert. Sonst true

@@ -50,6 +50,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	private WizardStep gesuchstellerStep;
 	private WizardStep finanSitStep;
 	private WizardStep einkVerStep;
+	private WizardStep dokStep;
 
 
 	@Before
@@ -64,7 +65,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		erwerbStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT));
 		finanSitStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT));
 		einkVerStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT));
-		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT));
+		dokStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT));
 		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT));
 	}
 
@@ -271,14 +272,49 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
 	@Test
 	public void updateWizardStepDokumente() {
+		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
+
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.FINANZIELLESITUATION, DokumentTyp.STEUERVERANLAGUNG);
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_ERWERBSPENSUM);
+
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(10, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
 
+	@Test
+	public void updateWizardStepDokumenteNOK() {
+		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
+
+		//nicht alle notwendige dokumente
+		createAndPersistDokumentGrundWithDokument(DokumentGrundTyp.ERWERBSPENSUM, DokumentTyp.NACHWEIS_LANG_ARBEITSWEG);
+
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
+	}
+
 
 	// HELP METHODS
+
+	private void createAndPersistDokumentGrundWithDokument(DokumentGrundTyp dokGrundTyp, DokumentTyp dokTyp) {
+		DokumentGrund dokGrund = new DokumentGrund();
+		dokGrund.setDokumentGrundTyp(dokGrundTyp);
+		dokGrund.setDokumentTyp(dokTyp);
+		dokGrund.setNeeded(true);
+		dokGrund.setGesuch(gesuch);
+		dokGrund.setFullName("name");
+		persistence.persist(dokGrund);
+		Dokument dok1 = new Dokument();
+		dok1.setDokumentName("name");
+		dok1.setDokumentPfad("pfad");
+		dok1.setDokumentSize("23");
+		dok1.setDokumentGrund(dokGrund);
+		persistence.persist(dok1);
+	}
 
 	@Nullable
 	private WizardStep findStepByName(List<WizardStep> wizardSteps, WizardStepName stepName) {

@@ -1,12 +1,10 @@
-package ch.dvbern.ebegu.rest.test;
+package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.api.resource.DokumenteResource;
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -17,14 +15,8 @@ import java.util.Set;
  * Testet BetreuungResource
  */
 
-public class DokumenteResourceTest extends AbstractEbeguRestTest {
+public class DokumenteUtilTest {
 
-	private DokumenteResource dokumenteResource;
-
-	@Before
-	public void init() {
-		dokumenteResource = new DokumenteResource();
-	}
 
 	@Test
 	public void testAllPersistedInNeeded() {
@@ -38,7 +30,7 @@ public class DokumenteResourceTest extends AbstractEbeguRestTest {
 
 		createGrundPersisted(persistedDokumentGrunds, DokumentGrundTyp.FAMILIENSITUATION, DokumentTyp.JAHRESLOHNAUSWEISE, 3);
 
-		final Set<DokumentGrund> mergeNeededAndPersisted = dokumenteResource.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrunds);
+		final Set<DokumentGrund> mergeNeededAndPersisted = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrunds);
 
 		Set<DokumentGrund> mergedFamsit = getByGrundTyp(mergeNeededAndPersisted, DokumentGrundTyp.FAMILIENSITUATION);
 

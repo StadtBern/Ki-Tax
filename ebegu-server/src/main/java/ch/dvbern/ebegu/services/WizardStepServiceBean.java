@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.Validate;
 
@@ -34,6 +36,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private KindService kindService;
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+	@Inject
+	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
 
 	@Override
@@ -92,8 +98,32 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
 			updateAllStatusForErwerbspensum(wizardSteps);
 		}
+		else if (WizardStepName.DOKUMENTE.equals(stepName)) {
+			updateAllStatusForDokumente(wizardSteps);
+		}
 		else {
 			updateStatusSingleStep(wizardSteps, stepName);
+		}
+	}
+
+	private void updateAllStatusForDokumente(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& WizardStepName.DOKUMENTE.equals(wizardStep.getWizardStepName())) {
+
+				final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
+					.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(wizardStep.getGesuch()),
+						dokumentGrundService.getAllDokumentGrundByGesuch(wizardStep.getGesuch()));
+
+				boolean allNeededDokumenteUploaded = true;
+				for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
+					if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+						allNeededDokumenteUploaded = false;
+						break;
+					}
+				}
+				wizardStep.setWizardStepStatus(allNeededDokumenteUploaded ? WizardStepStatus.OK : WizardStepStatus.NOK);
+			}
 		}
 	}
 
