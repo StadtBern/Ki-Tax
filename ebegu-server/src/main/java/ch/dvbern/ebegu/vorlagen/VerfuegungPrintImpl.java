@@ -194,7 +194,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	@Override
-	public boolean isPrintbemerkungen() {
+	public boolean isPrintbemerkung() {
 
 		return !"".equalsIgnoreCase(getBemerkungen());
 	}

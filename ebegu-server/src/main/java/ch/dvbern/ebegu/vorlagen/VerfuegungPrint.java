@@ -65,5 +65,5 @@ public interface VerfuegungPrint {
 	/**
 	 * @return true ob die Bermerkungen ausgedruckt werden muessen
 	 */
-	boolean isPrintbemerkungen();
+	boolean isPrintbemerkung();
 }
