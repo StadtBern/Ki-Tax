@@ -37,7 +37,12 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
+
+        if (this.isThereAnyKindWithBetreuungsbedarf()) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.OK);
+        } else {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
+        }
     }
 
     getKinderList(): Array<TSKindContainer> {
@@ -91,7 +96,8 @@ export class KinderListViewController extends AbstractGesuchViewController {
     public isThereAnyKindWithBetreuungsbedarf(): boolean {
         let kinderList: Array<TSKindContainer> = this.getKinderList();
         for (let kind of kinderList) {
-            if (kind.kindJA.familienErgaenzendeBetreuung) {
+            //das kind muss schon gespeichert sein damit es zahelt
+            if (kind.kindJA.familienErgaenzendeBetreuung && !kind.kindJA.isNew()) {
                 return true;
             }
         }

@@ -86,12 +86,13 @@ export default class WizardStepManager {
     /**
      * Den Status einer Seite setzen auf newStepStatus wenn dies erlaubt ist. Wenn nicht kommt der alte zurueck.
      * Im normalen Fall wird diese Methode gebraucht um von UNBESUCHT auf IN_BEARBEITUNG zu wechseln.
-     * 
+     *
      * @param oldStepStatus
      * @param newStepStatus
      * @returns {TSWizardStepStatus}
      */
     private maybeChangeStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
+        //wenn wir vorher auf was anderem sind als unbesucht dann bleiben wir da statt auf IN_BEARBEITUNG zu gehen.
         if (newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
             return oldStepStatus;
         }

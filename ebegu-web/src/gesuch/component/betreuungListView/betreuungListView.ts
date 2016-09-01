@@ -10,11 +10,11 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IDialogService = angular.material.IDialogService;
-import ITranslateService = angular.translate.ITranslateService;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IDialogService = angular.material.IDialogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungListView.html');
 require('./betreuungListView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -39,7 +39,11 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
+        if (this.isThereAnyBetreuung()) {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
+        } else {
+            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.IN_BEARBEITUNG);
+        }
     }
 
     previousStep(): void {
