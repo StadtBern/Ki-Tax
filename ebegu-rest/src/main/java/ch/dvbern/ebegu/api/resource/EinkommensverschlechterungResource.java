@@ -63,13 +63,12 @@ public class EinkommensverschlechterungResource {
 		"it is stored in the database as well.")
 	@Nullable
 	@PUT
-	@Path("/{gesuchstellerId}/{gsNumber}/{gesuchId}")
+	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEinkommensverschlechterungContainer(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
-		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @Valid JaxEinkommensverschlechterungContainer einkommensverschlechterungContainerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {

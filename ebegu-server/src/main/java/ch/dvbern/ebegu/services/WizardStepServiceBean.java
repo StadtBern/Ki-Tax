@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.Validate;
 
@@ -16,7 +15,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service fuer Gesuch
@@ -68,6 +69,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	/**
 	 * Hier wird es geschaut, was fuer ein Objekttyp aktualisiert wurde. Dann wird die entsprechende Logik durchgefuehrt, um zu wissen welche anderen
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
+	 * Dazu werden die Angaben in oldEntity mit denen in newEntity verglichen und dann wird entsprechend reagiert
 	 * @param wizardSteps
 	 * @param oldEntity
 	 * @param newEntity
@@ -106,7 +108,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private void updateAllStatusForFamiliensituation(List<WizardStep> wizardSteps, Familiensituation oldEntity, Familiensituation newEntity) {
 		for (WizardStep wizardStep: wizardSteps) {
-			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // zu vermeiden, dass der Status eines unbesuchten Steps geaendert wird
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 				}

@@ -57,7 +57,8 @@
             </div>
             <div class="col-md-6 text-right">
                 <dv-loading-button button-click="vm.nextStep()" button-class="btn btn-link next"
-                                   button-disabled="!vm.isThereAnyKindWithBetreuungsbedarf()">
+                                   button-disabled="!vm.isThereAnyKindWithBetreuungsbedarf()"
+                                   title="{{vm.getKinderTooltip()}}">
                     <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </dv-loading-button>

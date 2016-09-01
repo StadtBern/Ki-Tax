@@ -7,11 +7,11 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IDialogService = angular.material.IDialogService;
-import ITranslateService = angular.translate.ITranslateService;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import IDialogService = angular.material.IDialogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -96,5 +96,12 @@ export class KinderListViewController extends AbstractGesuchViewController {
             }
         }
         return false;
+    }
+
+    public getKinderTooltip(): string {
+        if (!this.isThereAnyKindWithBetreuungsbedarf()) {
+            return this.$translate.instant('KINDER_TOOLTIP_REQUIRED');
+        }
+        return '';
     }
 }

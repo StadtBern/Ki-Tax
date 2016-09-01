@@ -68,14 +68,14 @@ export default class WizardStepManager {
 
     /**
      * Der Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
-     * nichts wird gemacht und undefined wird zurueckgegeben.
+     * wird nichts gemacht und undefined wird zurueckgegeben.
      * @param stepName
      * @param stepStatus
      */
     public updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
-        step.wizardStepStatus = this.getNewStatus(step.wizardStepStatus, stepStatus);
-        if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat
+        step.wizardStepStatus = this.maybeChangeStatus(step.wizardStepStatus, stepStatus);
+        if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat updaten und steps laden
             return this.wizardStepRS.updateWizardStep(step).then((response: TSWizardStep) => {
                 return this.findStepsFromGesuch(response.gesuchId);
             });
@@ -84,13 +84,14 @@ export default class WizardStepManager {
     }
 
     /**
-     * Anhand des alten und neuen Status, wird es berechnet, welcher Status gesetzt werden muss. Im normalen Fall wird der neue Status
-     * immer gesetzt aber in bestimmten Faellen kann auch ein anderer Status gebraucht werden.
+     * Den Status einer Seite setzen auf newStepStatus wenn dies erlaubt ist. Wenn nicht kommt der alte zurueck.
+     * Im normalen Fall wird diese Methode gebraucht um von UNBESUCHT auf IN_BEARBEITUNG zu wechseln.
+     * 
      * @param oldStepStatus
      * @param newStepStatus
      * @returns {TSWizardStepStatus}
      */
-    private getNewStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
+    private maybeChangeStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
         if (newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
             return oldStepStatus;
         }

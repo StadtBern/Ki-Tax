@@ -215,7 +215,7 @@ public class FinanzielleSituationRechner {
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = calculateResultateFinanzielleSituation(gesuch);
 		finanzDatenDTO.setMassgebendesEinkommenBasisjahr(finanzielleSituationResultateDTO.getMassgebendesEinkommen());
 		finanzDatenDTO.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
-
+		//Berechnung wird nur ausgefuehrt wenn Daten vorhanden, wenn es keine gibt machen wir nichts
 		if (gesuch.getEinkommensverschlechterungInfo() != null && gesuch.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
 			EinkommensverschlechterungInfo einkommensverschlechterungInfo = gesuch.getEinkommensverschlechterungInfo();
 			FinanzielleSituationResultateDTO resultateEKV1 = calculateResultateEinkommensverschlechterung(gesuch, 1);
