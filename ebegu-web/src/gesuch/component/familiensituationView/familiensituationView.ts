@@ -1,3 +1,4 @@
+
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {IComponentOptions, IFormController} from 'angular';
 import {IStateService} from 'angular-ui-router';
@@ -45,7 +46,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.IN_BEARBEITUNG);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.FAMILIENSITUATION);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 

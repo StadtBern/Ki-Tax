@@ -54,7 +54,8 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
     private initViewmodel() {
         this.gesuchModelManager.initStammdaten();
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.GESUCHSTELLER, TSWizardStepStatus.IN_BEARBEITUNG);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
         this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;

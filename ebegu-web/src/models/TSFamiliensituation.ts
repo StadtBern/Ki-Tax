@@ -6,7 +6,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
 
     private _familienstatus: TSFamilienstatus;
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
-    private _bemerkungen: string;
     private _gemeinsameSteuererklaerung: boolean;
 
 
@@ -15,7 +14,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-        this._bemerkungen = bemerkungen;
         this._gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
     }
 
@@ -33,14 +31,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
 
     public set gesuchstellerKardinalitaet(gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet) {
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-    }
-
-    public get bemerkungen(): string {
-        return this._bemerkungen;
-    }
-
-    public set bemerkungen(bemerkungen: string) {
-        this._bemerkungen = bemerkungen;
     }
 
     get gemeinsameSteuererklaerung(): boolean {

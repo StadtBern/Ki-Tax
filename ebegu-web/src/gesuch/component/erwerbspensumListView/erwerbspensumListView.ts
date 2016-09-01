@@ -52,10 +52,11 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     private initErwerbspensumStepStatus() {
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
         if (this.isSaveDisabled()) {
-            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.IN_BEARBEITUNG);
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         } else {
-            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.ERWERBSPENSUM, TSWizardStepStatus.OK);
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         }
     }
 

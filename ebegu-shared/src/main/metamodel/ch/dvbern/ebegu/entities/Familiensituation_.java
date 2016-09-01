@@ -10,7 +10,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Familiensituation.class)
 public abstract class Familiensituation_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
-	public static volatile SingularAttribute<Familiensituation, String> bemerkungen;
 	public static volatile SingularAttribute<Familiensituation, Boolean> gemeinsameSteuererklaerung;
 	public static volatile SingularAttribute<Familiensituation, EnumGesuchstellerKardinalitaet> gesuchstellerKardinalitaet;
 	public static volatile SingularAttribute<Familiensituation, EnumFamilienstatus> familienstatus;

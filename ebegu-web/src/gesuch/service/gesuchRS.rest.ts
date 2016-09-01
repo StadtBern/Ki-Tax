@@ -52,4 +52,12 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
+    public updateBemerkung(gesuchID: string, bemerkung: string): IHttpPromise<any> {
+        return this.http.put(this.serviceURL + '/bemerkung/' + encodeURIComponent(gesuchID), bemerkung, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
 }

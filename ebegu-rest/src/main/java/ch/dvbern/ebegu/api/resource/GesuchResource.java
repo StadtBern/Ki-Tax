@@ -173,4 +173,29 @@ public class GesuchResource {
 		return completeGesuch;
 	}
 
+	@Nullable
+	@PUT
+	@Path("/bemerkung/{gesuchId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateBemerkung(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull String bemerkung,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(gesuchJAXPId.getId());
+		String gesuchID = converter.toEntityId(gesuchJAXPId);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
+
+		if (!gesuchOptional.isPresent()) {
+			return Response.serverError().entity("Unknown gesuchID").build();
+		}
+		gesuchOptional.get().setBemerkungen(bemerkung);
+
+		gesuchService.updateGesuch(gesuchOptional.get());
+
+		return Response.ok().build();
+	}
+
 }

@@ -36,6 +36,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteErwp: TSDokumentGrund[] = [];
     dokumenteKinder: TSDokumentGrund[] = [];
     dokumenteSonst: TSDokumentGrund[] = [];
+    dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
                                 'DokumenteRS', '$log', 'WizardStepManager'];
@@ -45,7 +46,8 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
         super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.DOKUMENTE, TSWizardStepStatus.IN_BEARBEITUNG);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.calculate();
     }
 
@@ -60,6 +62,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     this.searchDokumente(promiseValue, this.dokumenteErwp, TSDokumentGrundTyp.ERWERBSPENSUM);
                     this.searchDokumente(promiseValue, this.dokumenteKinder, TSDokumentGrundTyp.KINDER);
                     this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
+                    this.searchDokumente(promiseValue, this.dokumentePapiergesuch, TSDokumentGrundTyp.PAPIERGESUCH);
                 });
         } else {
             this.$log.debug('No gesuch für dokumente');

@@ -45,12 +45,6 @@ public class Kind extends AbstractPersonEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_pensum_fachstelle_id"), nullable = true)
 	private PensumFachstelle pensumFachstelle;
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
-	private String bemerkungen;
-
-
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
 	}
@@ -82,15 +76,6 @@ public class Kind extends AbstractPersonEntity {
 
 	public void setMutterspracheDeutsch(@Nullable Boolean mutterspracheDeutsch) {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	public PensumFachstelle getPensumFachstelle() {

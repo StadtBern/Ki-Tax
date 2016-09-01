@@ -37,11 +37,12 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
-
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
+        
         if (this.isThereAnyKindWithBetreuungsbedarf()) {
-            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.OK);
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
         } else {
-            this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.KINDER, TSWizardStepStatus.IN_BEARBEITUNG);
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         }
     }
 

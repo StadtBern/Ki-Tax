@@ -151,7 +151,7 @@ export default class GesuchModelManager {
                 this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
-                    return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                    return this.wizardStepManager.updateFirstWizardStep(this.gesuch.id).then(() => {
                         return this.gesuch;
                     });
                 });

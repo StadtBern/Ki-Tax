@@ -153,7 +153,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      * Goes to the view of documents and updates before the status of the WizardStep Einkommensverschlechterung to OK
      */
     private goToDokumenteView() {
-        this.wizardStepManager.updateWizardStepStatus(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG, TSWizardStepStatus.OK).then(() => {
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
             this.state.go('gesuch.dokumente');
         });
     }
