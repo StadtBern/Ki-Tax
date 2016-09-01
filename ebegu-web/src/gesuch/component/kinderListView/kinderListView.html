@@ -13,7 +13,6 @@
                         <th st-sort="kindJA.vorname" class="sortable"  data-translate="VORNAME" ></th>
                         <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME" ></th>
                         <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
-                        <th data-translate="KIND_ANDERERFALL"></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -23,7 +22,6 @@
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>TODO anderer Fall</td>
                         <td ng-click="$event.stopPropagation()">
                             <dv-loading-button type="button" ng-click="vm.removeKind(row)" button-class="btn btn-sm">
                                 <i class="fa fa-minus">
@@ -57,7 +55,8 @@
             </div>
             <div class="col-md-6 text-right">
                 <dv-loading-button button-click="vm.nextStep()" button-class="btn btn-link next"
-                                   button-disabled="!vm.isThereAnyKindWithBetreuungsbedarf()">
+                                   button-disabled="!vm.isThereAnyKindWithBetreuungsbedarf()"
+                                   title="{{vm.getKinderTooltip()}}">
                     <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </dv-loading-button>

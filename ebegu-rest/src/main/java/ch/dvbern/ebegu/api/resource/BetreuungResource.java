@@ -63,7 +63,7 @@ public class BetreuungResource {
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
-
+			//jetzt noch wizard step updaten
 			wizardStepService.updateSteps(kind.get().getGesuch().getId(), null,
 				null, WizardStepName.BETREUUNG);
 

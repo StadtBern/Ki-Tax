@@ -7,11 +7,11 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import IDialogService = angular.material.IDialogService;
-import ITranslateService = angular.translate.ITranslateService;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import IDialogService = angular.material.IDialogService;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 require('./kinderListView.less');
@@ -38,7 +38,12 @@ export class KinderListViewController extends AbstractGesuchViewController {
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
         this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
-        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        
+        if (this.isThereAnyKindWithBetreuungsbedarf()) {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+        } else {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        }
     }
 
     getKinderList(): Array<TSKindContainer> {
@@ -92,10 +97,18 @@ export class KinderListViewController extends AbstractGesuchViewController {
     public isThereAnyKindWithBetreuungsbedarf(): boolean {
         let kinderList: Array<TSKindContainer> = this.getKinderList();
         for (let kind of kinderList) {
-            if (kind.kindJA.familienErgaenzendeBetreuung) {
+            //das kind muss schon gespeichert sein damit es zahelt
+            if (kind.kindJA.familienErgaenzendeBetreuung && !kind.kindJA.isNew()) {
                 return true;
             }
         }
         return false;
+    }
+
+    public getKinderTooltip(): string {
+        if (!this.isThereAnyKindWithBetreuungsbedarf()) {
+            return this.$translate.instant('KINDER_TOOLTIP_REQUIRED');
+        }
+        return '';
     }
 }

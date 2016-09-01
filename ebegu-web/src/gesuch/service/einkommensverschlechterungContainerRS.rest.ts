@@ -23,11 +23,11 @@ export default class EinkommensverschlechterungContainerRS {
     }
 
     public saveEinkommensverschlechterungContainer(einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer,
-                                                   gesuchstellerId: string, gesuchId: string, gsNumber: number): IPromise<TSEinkommensverschlechterungContainer> {
+                                                   gesuchstellerId: string, gesuchId: string): IPromise<TSEinkommensverschlechterungContainer> {
         let returnedEinkommensverschlechterungContainer = {};
         returnedEinkommensverschlechterungContainer =
             this.ebeguRestUtil.einkommensverschlechterungContainerToRestObject(returnedEinkommensverschlechterungContainer, einkommensverschlechterungContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerId + '/' + gsNumber + '/' + gesuchId, returnedEinkommensverschlechterungContainer, {
+        return this.http.put(this.serviceURL + '/' + gesuchstellerId  + '/' + gesuchId, returnedEinkommensverschlechterungContainer, {
             headers: {
                 'Content-Type': 'application/json'
             }

@@ -204,7 +204,7 @@ export default class GesuchModelManager {
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
         if (this.getStammdatenToWorkWith().timestampErstellt) {
-            return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
+            return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber).then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
@@ -238,7 +238,7 @@ export default class GesuchModelManager {
 
     public saveEinkommensverschlechterungContainer(): IPromise<TSEinkommensverschlechterungContainer> {
         return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
-            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id, this.gesuchstellerNumber)
+            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
                 this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
                 return this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {

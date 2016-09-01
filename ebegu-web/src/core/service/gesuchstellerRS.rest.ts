@@ -18,11 +18,11 @@ export default class GesuchstellerRS {
 
     }
 
-    public updateGesuchsteller(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(gesuchsteller: TSGesuchsteller,  gesuchId: string, gsNumber: number): IPromise<TSGesuchsteller> {
         let restPers = {};
         restPers = this.ebeguRestUtil.gesuchstellerToRestObject(restPers, gesuchsteller);
 
-        return this.http.put(this.serviceURL, restPers, {
+        return this.http.put(this.serviceURL + '/' + gesuchId + '/gsNumber/' + gsNumber, restPers, {
             headers: {
                 'Content-Type': 'application/json'
             }

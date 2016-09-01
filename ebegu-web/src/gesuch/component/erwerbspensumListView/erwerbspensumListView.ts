@@ -8,12 +8,12 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import ILogService = angular.ILogService;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 require('./erwerbspensumListView.less');
@@ -53,7 +53,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     private initErwerbspensumStepStatus() {
         this.wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
-        if (this.isErwerbspensumRequired()) {
+        if (this.isSaveDisabled()) {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         } else {
             this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);

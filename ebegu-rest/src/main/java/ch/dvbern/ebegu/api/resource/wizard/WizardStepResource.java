@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Path("wizard-steps")
 @Stateless
-@Api
+@Api()
 public class WizardStepResource {
 
 	@Inject

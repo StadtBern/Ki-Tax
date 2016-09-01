@@ -61,7 +61,7 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTes
 
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainerReturned =
 			(JaxEinkommensverschlechterungContainer) einkommensverschlechterungResource.
-				saveEinkommensverschlechterungContainer(new JaxId(testGesuch.getId()), converter.toJaxId(jaxGesuchsteller), 1,
+				saveEinkommensverschlechterungContainer(new JaxId(testGesuch.getId()), converter.toJaxId(jaxGesuchsteller),
 					jaxEinkommensverschlechterungContainer, uri, null).getEntity();
 
 		Assert.assertNotNull(jaxEinkommensverschlechterungContainerReturned);

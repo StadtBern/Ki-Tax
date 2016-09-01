@@ -5,6 +5,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {KinderListViewController} from './kinderListView';
 import TSKindContainer from '../../../models/TSKindContainer';
 import TSKind from '../../../models/TSKind';
+import DateUtil from '../../../utils/DateUtil';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 
@@ -45,6 +46,7 @@ describe('kinderListView', function () {
         it('should return true for a list with Kinder needing Betreuung', function() {
             let kind: TSKindContainer = new TSKindContainer();
             kind.kindJA = new TSKind();
+            kind.kindJA.timestampErstellt = DateUtil.today()
             kind.kindJA.familienErgaenzendeBetreuung = true;
             spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
             expect(kinderListViewController.isThereAnyKindWithBetreuungsbedarf()).toBe(true);
