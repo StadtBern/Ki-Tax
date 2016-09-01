@@ -18,11 +18,11 @@ export default class GesuchstellerRS {
 
     }
 
-    public updateGesuchsteller(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
+    public updateGesuchsteller(gesuchsteller: TSGesuchsteller,  gesuchId: string, gsNumber: number): IPromise<TSGesuchsteller> {
         let restPers = {};
         restPers = this.ebeguRestUtil.gesuchstellerToRestObject(restPers, gesuchsteller);
 
-        return this.http.put(this.serviceURL, restPers, {
+        return this.http.put(this.serviceURL + '/' + gesuchId + '/gsNumber/' + gsNumber, restPers, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -33,10 +33,9 @@ export default class GesuchstellerRS {
         );
     }
 
-    public create(gesuchsteller: TSGesuchsteller): IPromise<TSGesuchsteller> {
-        let gessteller = {};
-        gessteller = this.ebeguRestUtil.gesuchstellerToRestObject(gessteller, gesuchsteller);
-        return this.http.post(this.serviceURL, gessteller, {
+    public createGesuchsteller(gesuchsteller: TSGesuchsteller, gesuchId: string, gsNumber: number): IPromise<TSGesuchsteller> {
+        let gessteller = this.ebeguRestUtil.gesuchstellerToRestObject({}, gesuchsteller);
+        return this.http.post(this.serviceURL + '/' + gesuchId + '/gsNumber/' + gsNumber, gessteller, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -44,7 +43,6 @@ export default class GesuchstellerRS {
             this.log.debug('PARSING gesuchsteller REST object ', response.data);
             return this.ebeguRestUtil.parseGesuchsteller(new TSGesuchsteller(), response.data);
         });
-
     }
 
     public findGesuchsteller(gesuchstellerID: string): IPromise<TSGesuchsteller> {

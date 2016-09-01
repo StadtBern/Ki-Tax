@@ -1603,4 +1603,21 @@ public class JaxBConverter {
 		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
 		return jaxTempDokument;
 	}
+
+	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {
+		final JaxWizardStep jaxWizardStep = convertAbstractFieldsToJAX(wizardStep, new JaxWizardStep());
+		jaxWizardStep.setGesuchId(wizardStep.getGesuch().getId());
+		jaxWizardStep.setWizardStepName(wizardStep.getWizardStepName());
+		jaxWizardStep.setWizardStepStatus(wizardStep.getWizardStepStatus());
+		jaxWizardStep.setBemerkungen(wizardStep.getBemerkungen());
+		return jaxWizardStep;
+	}
+
+	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep) {
+		convertAbstractFieldsToEntity(jaxWizardStep, wizardStep);
+		wizardStep.setWizardStepName(jaxWizardStep.getWizardStepName());
+		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
+		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());
+		return wizardStep;
+	}
 }

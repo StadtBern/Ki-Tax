@@ -45,6 +45,7 @@ import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import TSTempDokument from '../models/TSTempDokument';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
+import TSWizardStep from '../models/TSWizardStep';
 
 
 export default class EbeguRestUtil {
@@ -1282,7 +1283,7 @@ export default class EbeguRestUtil {
         return resultList;
     }
 
-    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any) {
+    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any): TSVerfuegungZeitabschnitt {
         if (zeitabschnittFromServer) {
             this.parseDateRangeEntity(verfuegungZeitabschnittTS, zeitabschnittFromServer);
             verfuegungZeitabschnittTS.abzugFamGroesse = zeitabschnittFromServer.abzugFamGroesse;
@@ -1311,5 +1312,35 @@ export default class EbeguRestUtil {
             return tsTempDokument;
         }
         return undefined;
+    }
+
+    public parseWizardStep(wizardStepTS: TSWizardStep, wizardStepFromServer: any): TSWizardStep {
+        this.parseAbstractEntity(wizardStepTS, wizardStepFromServer);
+        wizardStepTS.gesuchId = wizardStepFromServer.gesuchId;
+        wizardStepTS.wizardStepName = wizardStepFromServer.wizardStepName;
+        wizardStepTS.wizardStepStatus = wizardStepFromServer.wizardStepStatus;
+        wizardStepTS.bemerkungen = wizardStepFromServer.bemerkungen;
+        return wizardStepTS;
+    }
+
+    public wizardStepToRestObject(restWizardStep: any, wizardStep: TSWizardStep): any {
+        this.abstractEntityToRestObject(restWizardStep, wizardStep);
+        restWizardStep.gesuchId = wizardStep.gesuchId;
+        restWizardStep.wizardStepName = wizardStep.wizardStepName;
+        restWizardStep.wizardStepStatus = wizardStep.wizardStepStatus;
+        restWizardStep.bemerkungen = wizardStep.bemerkungen;
+        return restWizardStep;
+    }
+
+    public parseWizardStepList(data: any): TSWizardStep[] {
+        var wizardSteps: TSWizardStep[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                wizardSteps[i] = this.parseWizardStep(new TSWizardStep(), data[i]);
+            }
+        } else {
+            wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
+        }
+        return wizardSteps;
     }
 }
