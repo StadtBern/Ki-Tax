@@ -69,7 +69,7 @@
             </div>
             <div class="col-md-6 text-right">
                 <dv-loading-button button-click="vm.nextStep()" button-class="btn btn-link next"
-                                   button-disabled="!vm.isThereAnyBetreuung()">
+                                   button-disabled="!vm.isThereAnyBetreuung() && !vm.wizardStepManager.isNextStepAvailable()">
                     <span data-translate="WEITER_UPPER"></span>
                     <span class="fa fa-chevron-right"></span>
                 </dv-loading-button>

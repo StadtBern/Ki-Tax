@@ -105,11 +105,11 @@ describe('ErwerbspensumRS', function () {
 
     describe('removeErwerbspensumContainer', () => {
         it('should remove a ErwerbspensumContainer', () => {
-            $httpBackend.expectDELETE(erwerbspensumRS.serviceURL + '/' + encodeURIComponent(mockErwerbspensum.id))
+            $httpBackend.expectDELETE(erwerbspensumRS.serviceURL + '/gesuchId/11/erwPenId/' + encodeURIComponent(mockErwerbspensum.id))
                 .respond(200);
 
             let deleteResult: any;
-            erwerbspensumRS.removeErwerbspensum(mockErwerbspensum.id)
+            erwerbspensumRS.removeErwerbspensum(mockErwerbspensum.id, '11')
                 .then((result) => {
                     deleteResult = result;
                 });

@@ -4,8 +4,8 @@ import GesuchstellerRS from './gesuchstellerRS.rest.ts';
 import {EbeguWebCore} from '../core.module';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpBackendService} from 'angular';
 import IInjectorService = angular.auto.IInjectorService;
+import {IHttpBackendService} from 'angular';
 
 
 describe('GesuchstellerRS', function () {
@@ -42,7 +42,7 @@ describe('GesuchstellerRS', function () {
             expect(gesuchstellerRS.findGesuchsteller).toBeDefined();
         });
         it('should include a updateGesuchsteller() function', function () {
-            expect(gesuchstellerRS.updateGesuchsteller).toBeDefined();
+            expect(gesuchstellerRS.saveGesuchsteller).toBeDefined();
         });
     });
 
@@ -55,7 +55,7 @@ describe('GesuchstellerRS', function () {
                         .respond(ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller));
 
 
-                    gesuchstellerRS.updateGesuchsteller(mockGesuchsteller, dummyGesuchID, 1).then((result) => {
+                    gesuchstellerRS.saveGesuchsteller(mockGesuchsteller, dummyGesuchID, 1).then((result) => {
                         updatedGesuchsteller = result;
                     });
                     $httpBackend.flush();

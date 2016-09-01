@@ -6,6 +6,7 @@ import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import WizardStepRS from './WizardStepRS.rest';
 import TSWizardStep from '../../models/TSWizardStep';
 import {IScope, IQService} from 'angular';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 describe('wizardStepManager', function () {
 
@@ -68,4 +69,25 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getWizardSteps()[0]).toBe(step);
         });
     });
+    describe('isNextStepAvailable', function() {
+        it('next step is available because status != UNBESUCHT', function() {
+            wizardStepManager = new WizardStepManager(authServiceRS, wizardStepRS);
+            createTwoSteps(TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.OK);
+            wizardStepManager.findStepsFromGesuch('123');
+            scope.$apply();
+
+            wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
+            expect(wizardStepManager.isNextStepAvailable()).toBe(true);
+        });
+    });
+
+    function createTwoSteps(name1: TSWizardStepName, name2: TSWizardStepName, status: TSWizardStepStatus) {
+        let step: TSWizardStep = new TSWizardStep();
+        step.wizardStepName = name1;
+        let step2: TSWizardStep = new TSWizardStep();
+        step2.wizardStepName = name2;
+        step2.wizardStepStatus = status;
+        let steps: TSWizardStep[] = [step, step2];
+        spyOn(wizardStepRS, 'findWizardStepsFromGesuch').and.returnValue($q.when(steps));
+    }
 });

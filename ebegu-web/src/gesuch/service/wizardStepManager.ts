@@ -143,4 +143,29 @@ export default class WizardStepManager {
             return this.updateCurrentWizardStep();
         });
     }
+
+    /**
+     * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
+     * @returns {boolean}
+     */
+    public isNextStepAvailable(): boolean {
+        return this.getNextStep().wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    }
+
+    private getNextStep(): TSWizardStep {
+        let nextStepName: TSWizardStepName = TSWizardStepName.GESUCH_ERSTELLEN;
+        switch (this.currentStepName) {
+            case TSWizardStepName.GESUCH_ERSTELLEN: nextStepName = TSWizardStepName.FAMILIENSITUATION; break;
+            case TSWizardStepName.FAMILIENSITUATION: nextStepName = TSWizardStepName.GESUCHSTELLER; break;
+            case TSWizardStepName.GESUCHSTELLER: nextStepName = TSWizardStepName.KINDER; break;
+            case TSWizardStepName.KINDER: nextStepName = TSWizardStepName.BETREUUNG; break;
+            case TSWizardStepName.BETREUUNG: nextStepName = TSWizardStepName.ERWERBSPENSUM; break;
+            case TSWizardStepName.ERWERBSPENSUM: nextStepName = TSWizardStepName.FINANZIELLE_SITUATION; break;
+            case TSWizardStepName.FINANZIELLE_SITUATION: nextStepName = TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG; break;
+            case TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG: nextStepName = TSWizardStepName.DOKUMENTE; break;
+            case TSWizardStepName.DOKUMENTE: nextStepName = TSWizardStepName.VERFUEGEN; break;
+            case TSWizardStepName.VERFUEGEN: nextStepName = TSWizardStepName.VERFUEGEN;
+        }
+        return this.getStepByName(nextStepName);
+    }
 }
