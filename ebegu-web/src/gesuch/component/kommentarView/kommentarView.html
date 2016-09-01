@@ -39,7 +39,7 @@
             </dv-input-container>
         </div>
 
-        <div class="bottom-align col-md-12" ng-if="!vm.isFallEroeffnen()">
+        <div class="bottom-align col-md-12" ng-if="!vm.isGesuchUnsaved()">
             <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
             </div>

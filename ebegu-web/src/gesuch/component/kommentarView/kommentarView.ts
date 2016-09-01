@@ -10,11 +10,11 @@ import TSDokument from '../../../models/TSDokument';
 import TSTempDokument from '../../../models/TSTempDokument';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
+import WizardStepManager from '../../service/wizardStepManager';
+import TSWizardStep from '../../../models/TSWizardStep';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
-import WizardStepManager from '../../service/wizardStepManager';
-import TSWizardStep from '../../../models/TSWizardStep';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 
@@ -37,7 +37,7 @@ export class KommentarViewController {
     constructor(private $log: ILogService, private gesuchModelManager: GesuchModelManager, private gesuchRS: GesuchRS,
                 private dokumenteRS: DokumenteRS, private downloadRS: DownloadRS, private $q: IQService,
                 private uploadRS: UploadRS, private wizardStepManager: WizardStepManager) {
-        if (!this.isFallEroeffnen()) {
+        if (!this.isGesuchUnsaved()) {
             this.getPapiergesuchFromServer();
         }
     }
@@ -62,14 +62,14 @@ export class KommentarViewController {
     }
 
     public saveBemerkungZurVerfuegung(): void {
-        if (!this.isFallEroeffnen()) {
+        if (!this.isGesuchUnsaved()) {
             // Bemerkungen auf dem Gesuch werden nur gespeichert, wenn das gesuch schon persisted ist!
             this.gesuchRS.updateBemerkung(this.getGesuch().id, this.getGesuch().bemerkungen);
         }
     }
 
     public saveStepBemerkung(): void {
-        if (!this.isFallEroeffnen()) {
+        if (!this.isGesuchUnsaved()) {
             this.wizardStepManager.updateCurrentWizardStep();
         }
     }
@@ -128,8 +128,8 @@ export class KommentarViewController {
         });
     }
 
-    isFallEroeffnen(): boolean {
-        return this.getGesuch().id == null;
+    isGesuchUnsaved(): boolean {
+        return this.getGesuch().isNew();
     }
 
     public getCurrentWizardStep(): TSWizardStep {
