@@ -85,6 +85,7 @@
     "GEBURTSDATUM": "Geburtsdatum",
     "GEBURTSDATUM_UPPER": "GEBURTSTAG",
     "UMZUG": "geplanter Umzug?",
+    "NICHT_IN_BERN_WOHNHAFT" : "Nicht in Bern wohnhaft",
     "TELEFON_AUSLAND": "Telefon Ausland",
     "KEIN_EINTRAG": "Es ist aktuell kein Eintrag vorhanden",
     "GESUCHSTELLER_DIPLOMATENSTATUS": "Diplomatenstatus",

@@ -13,10 +13,11 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
     private _gemeinde: string;
     private _showDatumVon: boolean;
     private _adresseTyp: TSAdressetyp = TSAdressetyp.WOHNADRESSE;
+    private _nichtInGemeinde: boolean;
     private _organisation: string;
 
     constructor(strasse?: string, hausnummer?: string, zusatzzeile?: string, plz?: string, ort?: string,
-                land?: string, gemeinde?: string, gueltigkeit?: TSDateRange, adresseTyp?: TSAdressetyp, organisation?: string) {
+                land?: string, gemeinde?: string, gueltigkeit?: TSDateRange, adresseTyp?: TSAdressetyp, nichtInGemeinde?: boolean, organisation?: string) {
         super(gueltigkeit);
         this._strasse = strasse;
         this._hausnummer = hausnummer;
@@ -26,6 +27,7 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         this._land = land || 'CH';
         this._gemeinde = gemeinde;
         this._adresseTyp = adresseTyp;
+        this._nichtInGemeinde = nichtInGemeinde;
         this._organisation = organisation;
     }
 
@@ -100,6 +102,14 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
 
     set adresseTyp(value: TSAdressetyp) {
         this._adresseTyp = value;
+    }
+
+    public get nichtInGemeinde(): boolean {
+        return this._nichtInGemeinde;
+    }
+
+    public set nichtInGemeinde(value: boolean) {
+        this._nichtInGemeinde = value;
     }
 
     get organisation(): string {

@@ -261,6 +261,7 @@ public class JaxBConverter {
 
 		adresseToEntity(jaxAdresse, gesuchstellerAdresse);
 		gesuchstellerAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
+		gesuchstellerAdresse.setNichtInGemeinde(jaxAdresse.isNichtInGemeinde());
 
 		return gesuchstellerAdresse;
 	}
@@ -269,6 +270,7 @@ public class JaxBConverter {
 	public JaxAdresse gesuchstellerAdresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		final JaxAdresse jaxAdresse = adresseToJAX(gesuchstellerAdresse);
 		jaxAdresse.setAdresseTyp(gesuchstellerAdresse.getAdresseTyp());
+		jaxAdresse.setNichtInGemeinde(gesuchstellerAdresse.isNichtInGemeinde());
 		return jaxAdresse;
 	}
 

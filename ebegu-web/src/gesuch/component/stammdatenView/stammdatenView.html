@@ -63,7 +63,7 @@
             </div>
 
             <!-- Adresse-->
-            <dv-adresse adresse="vm.getModel().adresse" prefix="wohn"></dv-adresse>
+            <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true" prefix="wohn"></dv-adresse>
 
             <!--Korrenspondenzadr Checkbox-->
             <div class="row">
@@ -114,7 +114,7 @@
             </div>
 
             <!-- Umzugadresse -->
-            <dv-adresse adresse="vm.getModel().umzugAdresse" ng-if="vm.showUmzug" prefix="umzug"></dv-adresse>
+            <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug" prefix="umzug"></dv-adresse>
 
             <!--Email-->
             <div class="row">
