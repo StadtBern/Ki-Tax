@@ -530,4 +530,21 @@ public final class TestDataUtil {
 
 		persistence.persist(gesuch);
 	}
+
+	public static Gesuch createAndPersistGesuch(Persistence<Gesuch> persistence) {
+		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
+		persistence.persist(gesuch);
+		return gesuch;
+	}
+
+	public static WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus) {
+		final WizardStep jaxWizardStep = new WizardStep();
+		jaxWizardStep.setGesuch(gesuch);
+		jaxWizardStep.setWizardStepName(wizardStepName);
+		jaxWizardStep.setWizardStepStatus(stepStatus);
+		jaxWizardStep.setBemerkungen("");
+		return jaxWizardStep;
+	}
 }

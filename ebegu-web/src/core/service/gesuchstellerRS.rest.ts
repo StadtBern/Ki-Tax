@@ -20,7 +20,7 @@ export default class GesuchstellerRS {
 
     public saveGesuchsteller(gesuchsteller: TSGesuchsteller, gesuchId: string, gsNumber: number): IPromise<TSGesuchsteller> {
         let gessteller = this.ebeguRestUtil.gesuchstellerToRestObject({}, gesuchsteller);
-        return this.http.put(this.serviceURL + '/' + gesuchId + '/gsNumber/' + gsNumber, gessteller, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/gsNumber/' + gsNumber, gessteller, {
             headers: {
                 'Content-Type': 'application/json'
             }

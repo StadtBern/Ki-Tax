@@ -25,7 +25,7 @@ export default class EinkommensverschlechterungInfoRS {
         let returnedEinkommensverschlechterungInfo = {};
         returnedEinkommensverschlechterungInfo =
             this.ebeguRestUtil.einkommensverschlechterungInfoToRestObject(returnedEinkommensverschlechterungInfo, einkommensverschlechterungInfo);
-        return this.http.put(this.serviceURL + '/' + gesuchId, returnedEinkommensverschlechterungInfo, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId), returnedEinkommensverschlechterungInfo, {
             headers: {
                 'Content-Type': 'application/json'
             }

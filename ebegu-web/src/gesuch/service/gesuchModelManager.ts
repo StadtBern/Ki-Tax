@@ -817,10 +817,12 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public removeKind(): IPromise<TSKindContainer> {
+    public removeKind(): IPromise<void> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
             this.removeKindFromList();
-            return this.gesuchRS.updateGesuch(this.gesuch);
+            return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+            });
         });
     }
 
@@ -847,10 +849,12 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public removeBetreuung(): IPromise<TSKindContainer> {
+    public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
-            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id);
+            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then(() => {
+                this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+            });
         });
     }
 
@@ -862,9 +866,11 @@ export default class GesuchModelManager {
         if (index >= 0) {
             let pensumToRemove: TSErwerbspensumContainer = this.getStammdatenToWorkWith().erwerbspensenContainer[index];
             if (pensumToRemove.id) { //wenn id vorhanden dann aus der DB loeschen
-                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id)
+                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id, this.getGesuch().id)
                     .then((ewpContainer: TSErwerbspensumContainer) => {
-                        erwerbspensenOfCurrentGS.splice(index, 1);
+                        this.wizardStepManager.findStepsFromGesuch(this.gesuch.id).then(() => {
+                            erwerbspensenOfCurrentGS.splice(index, 1);
+                        });
                     });
             } else {
                 //sonst nur vom gui wegnehmen

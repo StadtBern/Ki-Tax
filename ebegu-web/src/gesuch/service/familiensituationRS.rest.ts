@@ -19,7 +19,7 @@ export default class FamiliensituationRS {
     public saveFamiliensituation(familiensituation: TSFamiliensituation, gesuchId: string): IPromise<TSFamiliensituation> {
         let returnedFamiliensituation = {};
         returnedFamiliensituation = this.ebeguRestUtil.familiensituationToRestObject(returnedFamiliensituation, familiensituation);
-        return this.http.put(this.serviceURL + '/' + gesuchId, returnedFamiliensituation, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId), returnedFamiliensituation, {
             headers: {
                 'Content-Type': 'application/json'
             }

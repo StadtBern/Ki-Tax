@@ -40,7 +40,7 @@ export default class ErwerbspensumRS {
     private saveErwerbspensum(erwerbspensenContainer: TSErwerbspensumContainer, gesuchstellerID: string, gesuchId: string): IPromise<TSErwerbspensumContainer> {
         let restErwerbspensum = {};
         restErwerbspensum = this.ebeguRestUtil.erwerbspensumContainerToRestObject(restErwerbspensum, erwerbspensenContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerID + '/' + gesuchId, restErwerbspensum, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchstellerID) + '/' + gesuchId, restErwerbspensum, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -50,7 +50,7 @@ export default class ErwerbspensumRS {
         });
     }
 
-    public removeErwerbspensum(erwerbspensumContID: string): IHttpPromise<TSErwerbspensumContainer> {
-        return this.http.delete(this.serviceURL + '/' + encodeURIComponent(erwerbspensumContID));
+    public removeErwerbspensum(erwerbspensumContID: string, gesuchId: string): IHttpPromise<TSErwerbspensumContainer> {
+        return this.http.delete(this.serviceURL + '/gesuchId/' + encodeURIComponent(gesuchId) + '/erwPenId/' + encodeURIComponent(erwerbspensumContID));
     }
 }

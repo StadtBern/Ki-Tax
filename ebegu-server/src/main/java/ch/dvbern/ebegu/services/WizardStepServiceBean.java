@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
@@ -15,9 +16,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service fuer Gesuch
@@ -30,13 +30,17 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private Persistence<WizardStep> persistence;
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private KindService kindService;
+	@Inject
+	private ErwerbspensumService erwerbspensumService;
 
 
 	@Override
 	@Nonnull
-	public WizardStep saveWizardStep(@Nonnull WizardStep kind) {
-		Objects.requireNonNull(kind);
-		return persistence.merge(kind);
+	public WizardStep saveWizardStep(@Nonnull WizardStep wizardStep) {
+		Objects.requireNonNull(wizardStep);
+		return persistence.merge(wizardStep);
 	}
 
 	@Override
@@ -82,28 +86,82 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		else if (WizardStepName.BETREUUNG.equals(stepName)) {
 			updateAllStatusForBetreuung(wizardSteps);
 		}
+		else if (WizardStepName.KINDER.equals(stepName)) {
+			updateAllStatusForKinder(wizardSteps);
+		}
+		else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
+			updateAllStatusForErwerbspensum(wizardSteps);
+		}
 		else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
 	}
 
-	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
-		final List<Betreuung> betreuungenFromGesuch = betreuungService.getAllBetreuungenFromGesuch(wizardSteps.get(0).getGesuch().getId());
+	/**
+	 * Holt alle Erwerbspensen und Betreuungen von der Datenbank. Nur die Betreuungen vom Typ anders als TAGESSCHULE und TAGESELTERN_SCHULKIND werden beruecksichtigt
+	 * Wenn die Anzahl solcher Betreuungen grosser als 0 ist, dann wird es geprueft, ob es Erwerbspensen gibt, wenn nicht der Status aendert auf NOK.
+	 * In allen anderen Faellen wird der Status auf OK gesetzt
+	 * @param wizardSteps
+	 */
+	private void updateAllStatusForErwerbspensum(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep: wizardSteps) {
-			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
-				&& WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
-				WizardStepStatus status = WizardStepStatus.OK;
-				for (Betreuung betreuung : betreuungenFromGesuch) {
-					if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
-						status = WizardStepStatus.NOK;
-						break;
-					} else if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
-						status = WizardStepStatus.PLATZBESTAETIGUNG;
-					}
-				}
+			if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+
+				final List<Betreuung> allBetreuungenRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
+					.stream().filter(betreuung ->
+						BetreuungsangebotTyp.TAGESSCHULE != betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()
+						&& BetreuungsangebotTyp.TAGESELTERN_SCHULKIND != betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp())
+					.collect(Collectors.toList());
+
+				final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
+				WizardStepStatus status = (allBetreuungenRequiringErwerbspensum.size() > 0 && erwerbspensenForGesuch.size() <= 0)
+					? WizardStepStatus.NOK: WizardStepStatus.OK ;
 				wizardStep.setWizardStepStatus(status);
 			}
 		}
+	}
+
+	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
+				checkStepStatusForBetreuung(wizardStep);
+			}
+		}
+	}
+
+	private void updateAllStatusForKinder(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
+				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
+					checkStepStatusForBetreuung(wizardStep);
+				}
+				else if (WizardStepName.KINDER.equals(wizardStep.getWizardStepName())) {
+					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId());
+					WizardStepStatus status = (kinderFromGesuch.size() > 0) ? WizardStepStatus.OK : WizardStepStatus.NOK;
+					wizardStep.setWizardStepStatus(status);
+				}
+			}
+		}
+	}
+
+	private void checkStepStatusForBetreuung(WizardStep wizardStep) {
+		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
+		WizardStepStatus status = WizardStepStatus.OK;
+		if (betreuungenFromGesuch.size() <= 0) {
+			status = WizardStepStatus.NOK;
+		}
+		else {
+			for (Betreuung betreuung : betreuungenFromGesuch) {
+				if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+					status = WizardStepStatus.NOK;
+					break;
+				} else if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+					status = WizardStepStatus.PLATZBESTAETIGUNG;
+				}
+			}
+		}
+		wizardStep.setWizardStepStatus(status);
 	}
 
 	private void updateAllStatusForFamiliensituation(List<WizardStep> wizardSteps, Familiensituation oldEntity, Familiensituation newEntity) {
@@ -112,9 +170,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 				}
-				else if ((WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
-					|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()))
-					&& fromOneGSToTwoGS(oldEntity, newEntity)) {
+				else if (fromOneGSToTwoGS(oldEntity, newEntity)
+					&& (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 				}
 			}

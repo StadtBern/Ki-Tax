@@ -46,7 +46,6 @@ public class ErwerbspensumResource {
 
 	@Inject
 	private ErwerbspensumService erwerbspensumService;
-
 	@Inject
 	private GesuchstellerService gesuchstellerService;
 	@Inject
@@ -142,16 +141,21 @@ public class ErwerbspensumResource {
 
 	@Nullable
 	@DELETE
-	@Path("/{erwerbspensumContID}")
+	@Path("/gesuchId/{gesuchId}/erwPenId/{erwerbspensumContID}")
 	@Consumes(MediaType.WILDCARD)
 	public Response removeErwerbspensum(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("erwerbspensumContID") JaxId erwerbspensumContIDJAXPId,
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(erwerbspensumContIDJAXPId.getId());
-		erwerbspensumService.removeErwerbspensum(converter.toEntityId(erwerbspensumContIDJAXPId));
-		return Response.ok().build();
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			erwerbspensumService.removeErwerbspensum(converter.toEntityId(erwerbspensumContIDJAXPId));
+			wizardStepService.updateSteps(gesuchJAXPId.getId(), null, null, WizardStepName.ERWERBSPENSUM);
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
-
 
 }

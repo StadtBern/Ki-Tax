@@ -27,7 +27,7 @@ export default class EinkommensverschlechterungContainerRS {
         let returnedEinkommensverschlechterungContainer = {};
         returnedEinkommensverschlechterungContainer =
             this.ebeguRestUtil.einkommensverschlechterungContainerToRestObject(returnedEinkommensverschlechterungContainer, einkommensverschlechterungContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerId  + '/' + gesuchId, returnedEinkommensverschlechterungContainer, {
+        return this.http.put(this.serviceURL + '/' + gesuchstellerId  + '/' + encodeURIComponent(gesuchId), returnedEinkommensverschlechterungContainer, {
             headers: {
                 'Content-Type': 'application/json'
             }

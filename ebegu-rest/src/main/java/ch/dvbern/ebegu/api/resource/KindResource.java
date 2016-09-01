@@ -119,8 +119,15 @@ public class KindResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(kindJAXPId.getId());
-		kindService.removeKind(converter.toEntityId(kindJAXPId));
-		return Response.ok().build();
+		Optional<KindContainer> kind = kindService.findKind(kindJAXPId.getId());
+		if (kind.isPresent()) {
+			final String gesuchId = kind.get().getGesuch().getId();
+			kindService.removeKind(kind.get());
+			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.KINDER);
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindID invalid: " + kindJAXPId.getId());
+
 	}
 
 }

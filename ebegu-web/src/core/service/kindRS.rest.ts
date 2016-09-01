@@ -40,7 +40,7 @@ export default class KindRS {
     private saveKind(kindContainer: TSKindContainer, gesuchId: string): IPromise<TSKindContainer> {
         let restKind = {};
         restKind = this.ebeguRestUtil.kindContainerToRestObject(restKind, kindContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchId, restKind, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchId), restKind, {
             headers: {
                 'Content-Type': 'application/json'
             }

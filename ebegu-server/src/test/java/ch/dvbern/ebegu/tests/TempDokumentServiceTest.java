@@ -28,7 +28,7 @@ import javax.inject.Inject;
 public class TempDokumentServiceTest extends AbstractEbeguTest {
 
 	@Inject
-	private Persistence<DokumentGrund> persistence;
+	private Persistence<Gesuch> persistence;
 
 	@Inject
 	private TempDokumentService tempDokumentService;
@@ -42,10 +42,7 @@ public class TempDokumentServiceTest extends AbstractEbeguTest {
 	public void createAndFindTempDokument() {
 
 		DokumentGrund dokumentGrund = TestDataUtil.createDefaultDokumentGrund();
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		dokumentGrund.setGesuch(gesuch);
 
 		persistence.persist(dokumentGrund);

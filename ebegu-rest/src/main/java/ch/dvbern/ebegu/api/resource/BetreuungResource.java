@@ -80,8 +80,14 @@ public class BetreuungResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(betreuungJAXPId.getId());
-		betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
-		return Response.ok().build();
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungJAXPId.getId());
+		if (betreuung.isPresent()) {
+			final String gesuchId = betreuung.get().getKind().getGesuch().getId();
+			betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
+			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG);
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());
 	}
 
 }

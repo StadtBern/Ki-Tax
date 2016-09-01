@@ -37,6 +37,12 @@ public interface BetreuungService {
 	void removeBetreuung(@Nonnull String betreuungId);
 
 	/**
+	 * entfernt ein Kind aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass das Kind existiert
+	 * @param betreuung
+	 */
+	void removeBetreuung(@Nonnull Betreuung betreuung);
+
+	/**
 	 * Gibt die Pendenzen fuer einen Benutzer mit Rolle Institution oder Traegerschaft zurueck.
 	 * Dies sind Betreuungen, welche zu einer Institution gehoeren, fuer welche der Benutzer berechtigt ist,
 	 * und deren Status "WARTEN" ist.
@@ -45,5 +51,5 @@ public interface BetreuungService {
 	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
 
 	@Nonnull
-	List<Betreuung> getAllBetreuungenFromGesuch(String gesuchId);
+	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 }

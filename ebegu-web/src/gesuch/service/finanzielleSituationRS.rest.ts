@@ -1,11 +1,10 @@
-import {IHttpPromise, IHttpService} from 'angular';
+import {IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFinanzielleSituationContainer from '../../models/TSFinanzielleSituationContainer';
-import TSGesuchsteller from '../../models/TSGesuchsteller';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
+import IPromise = angular.IPromise;
+import ILogService = angular.ILogService;
 
 
 export default class FinanzielleSituationRS {
@@ -26,7 +25,7 @@ export default class FinanzielleSituationRS {
     public saveFinanzielleSituation(finanzielleSituationContainer: TSFinanzielleSituationContainer, gesuchstellerId: string, gesuchId: string): IPromise<TSFinanzielleSituationContainer> {
         let returnedFinanzielleSituation = {};
         returnedFinanzielleSituation = this.ebeguRestUtil.finanzielleSituationContainerToRestObject(returnedFinanzielleSituation, finanzielleSituationContainer);
-        return this.http.put(this.serviceURL + '/' + gesuchstellerId + '/' + gesuchId, returnedFinanzielleSituation, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(gesuchstellerId) + '/' + encodeURIComponent(gesuchId), returnedFinanzielleSituation, {
             headers: {
                 'Content-Type': 'application/json'
             }
