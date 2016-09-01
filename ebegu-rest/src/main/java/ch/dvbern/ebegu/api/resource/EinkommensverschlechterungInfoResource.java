@@ -64,34 +64,30 @@ public class EinkommensverschlechterungInfoResource {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
-			EinkommensverschlechterungInfo convertedEkvi = new EinkommensverschlechterungInfo();
-			converter.einkommensverschlechterungInfoToEntity(jaxEinkommensverschlechterungInfo, convertedEkvi);
 
-			EinkommensverschlechterungInfo persistedEinkommensverschlechterungInfo;
+			EinkommensverschlechterungInfo oldData = null;
+			EinkommensverschlechterungInfo ekviToMerge = new EinkommensverschlechterungInfo();
+
 			if (jaxEinkommensverschlechterungInfo.getId() != null) {
-				//case of update existing
-				convertedEkvi.setGesuch(gesuch.get());
-				persistedEinkommensverschlechterungInfo = einkommensverschlechterungInfoService.
-					updateEinkommensverschlechterungInfo(convertedEkvi);
-			} else {
-				// case of creation new one
-				final Gesuch gesuchEntity = gesuch.get();
-				convertedEkvi.setGesuch(gesuchEntity);
-				gesuchEntity.setEinkommensverschlechterungInfo(convertedEkvi);
-				persistedEinkommensverschlechterungInfo = gesuchService.updateGesuch(gesuchEntity).getEinkommensverschlechterungInfo();
+				Optional<EinkommensverschlechterungInfo> optional = einkommensverschlechterungInfoService.
+					findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfo.getId());
+				ekviToMerge = optional.orElse(new EinkommensverschlechterungInfo());
+				oldData = new EinkommensverschlechterungInfo(ekviToMerge);
 			}
+			EinkommensverschlechterungInfo convertedEkvi = converter.einkommensverschlechterungInfoToEntity(jaxEinkommensverschlechterungInfo, ekviToMerge);
+			convertedEkvi.setGesuch(gesuch.get());
+			gesuch.get().setEinkommensverschlechterungInfo(convertedEkvi);
+			convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch.get())); // saving gesuch cascades and saves Ekvi too
 
-			if (!persistedEinkommensverschlechterungInfo.getEinkommensverschlechterung()) {
-				//wenn der Benutzer keine EV eintragen will, setzen wir den Status direkt auf OK
-				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-			}
+			wizardStepService.updateSteps(gesuchId.getId(), oldData,
+				convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
 			URI uri = uriInfo.getBaseUriBuilder()
 				.path(EinkommensverschlechterungInfoResource.class)
-				.path("/" + persistedEinkommensverschlechterungInfo.getId())
+				.path("/" + convertedEkvi.getId())
 				.build();
 
-			JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfoReturn = converter.einkommensverschlechterungInfoToJAX(persistedEinkommensverschlechterungInfo);
+			JaxEinkommensverschlechterungInfo jaxEinkommensverschlechterungInfoReturn = converter.einkommensverschlechterungInfoToJAX(convertedEkvi);
 			return Response.created(uri).entity(jaxEinkommensverschlechterungInfoReturn).build();
 		}
 		throw new EbeguEntityNotFoundException("saveEinkommensverschlechterungInfo", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());

@@ -98,11 +98,30 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
 			updateAllStatusForErwerbspensum(wizardSteps);
 		}
+		else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && oldEntity instanceof EinkommensverschlechterungInfo
+			&& newEntity instanceof EinkommensverschlechterungInfo) {
+			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfo) oldEntity, (EinkommensverschlechterungInfo) newEntity);
+		}
 		else if (WizardStepName.DOKUMENTE.equals(stepName)) {
 			updateAllStatusForDokumente(wizardSteps);
 		}
 		else {
 			updateStatusSingleStep(wizardSteps, stepName);
+		}
+	}
+
+	private void updateAllStatusForEinkommensverschlechterungInfo(List<WizardStep> wizardSteps, EinkommensverschlechterungInfo oldEntity,
+																  EinkommensverschlechterungInfo newEntity) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
+				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+				if (oldEntity.getEinkommensverschlechterung() && !newEntity.getEinkommensverschlechterung()) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+				}
+				else if (!oldEntity.getEinkommensverschlechterung() && newEntity.getEinkommensverschlechterung()) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				}
+			}
 		}
 	}
 

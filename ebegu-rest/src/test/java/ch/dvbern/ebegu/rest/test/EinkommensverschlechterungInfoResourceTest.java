@@ -90,7 +90,7 @@ public class EinkommensverschlechterungInfoResourceTest {
 		testJaxGesuch.getFall().setVerantwortlicher(converter.benutzerToAuthLoginElement(verantwortlicher));
 
 
-		JaxFall returnedFall = (JaxFall) fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
+		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuch.getGesuchsperiode(), uri, null));
 		testJaxGesuch.setFall(returnedFall);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
