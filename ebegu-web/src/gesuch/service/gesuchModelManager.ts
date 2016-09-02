@@ -158,7 +158,10 @@ export default class GesuchModelManager {
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
         return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
-            return this.gesuch.familiensituation = familienResponse;
+            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+                this.gesuch = gesuchResponse;
+                return this.gesuch.familiensituation = familienResponse;
+            });
         });
     }
 
@@ -168,7 +171,7 @@ export default class GesuchModelManager {
      */
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
-            return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+            return this.gesuch = gesuchResponse;
         });
     }
 

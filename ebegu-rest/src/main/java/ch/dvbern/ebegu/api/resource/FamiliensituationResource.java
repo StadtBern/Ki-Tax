@@ -11,6 +11,7 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 
@@ -40,6 +41,8 @@ public class FamiliensituationResource {
 	private WizardStepService wizardStepService;
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private GesuchstellerService gesuchstellerService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -69,12 +72,27 @@ public class FamiliensituationResource {
 			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(convertedFamiliensituation);
 			gesuch.get().setFamiliensituation(persistedFamiliensituation);
 
+			//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
+			if (isNeededToRemoveGesuchsteller2(gesuch.get(), oldData, persistedFamiliensituation)) {
+				gesuchstellerService.removeGesuchsteller(gesuch.get().getGesuchsteller2());
+				gesuch.get().setGesuchsteller2(null);
+			}
+
 			wizardStepService.updateSteps(gesuchJAXPId.getId(), oldData,
 				persistedFamiliensituation, WizardStepName.FAMILIENSITUATION);
 
 			return converter.familiensituationToJAX(persistedFamiliensituation);
 		}
 		throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXPId.getId());
+	}
+
+	/**
+	 * Wenn die Familiensituation von 2GS auf 1GS wechselt und der zweite GS schon existiert, wird dieser
+	 * und seine Daten endgueltig geloescht
+	 * @return
+	 */
+	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
+		return gesuch.getGesuchsteller2() != null && oldFamiliensituation.hasSecondGesuchsteller() && !newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 }

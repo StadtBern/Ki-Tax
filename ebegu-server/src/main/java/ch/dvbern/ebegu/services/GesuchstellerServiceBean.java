@@ -54,8 +54,8 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 	@Override
 	public void removeGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
-		Optional<Gesuchsteller> propertyToRemove = findGesuchsteller(gesuchsteller.getId());
-		propertyToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsteller));
-		persistence.remove(propertyToRemove.get());
+		Optional<Gesuchsteller> gesuchstellerToRemove = findGesuchsteller(gesuchsteller.getId());
+		gesuchstellerToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsteller));
+		persistence.remove(gesuchstellerToRemove.get());
 	}
 }

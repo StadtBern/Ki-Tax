@@ -141,7 +141,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						break;
 					}
 				}
-				wizardStep.setWizardStepStatus(allNeededDokumenteUploaded ? WizardStepStatus.OK : WizardStepStatus.NOK);
+				wizardStep.setWizardStepStatus(allNeededDokumenteUploaded ? WizardStepStatus.OK : WizardStepStatus.IN_BEARBEITUNG);
 			}
 		}
 	}
