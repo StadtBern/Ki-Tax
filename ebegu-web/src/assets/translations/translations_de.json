@@ -640,6 +640,8 @@
     "BEMERKUNGEN_INTERN": "Interner Kommentar verfassen",
     "BEMERKUNGEN_VERFUEGUNG": "Bemerkungen zur Verfügung",
     "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
-    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN"
+    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN",
+    "FAMILIENSITUATION_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
+    "FAMILIENSITUATION_WARNING_BESCHREIIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht."
 }
 
