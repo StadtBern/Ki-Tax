@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.services;
 
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
+
+import javax.annotation.Nonnull;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -19,7 +19,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 public interface PrintBegleitschreibenPDFService {
 
 	/**
-	 * Druckt den BegleitschreibenPDFService aus
+	 * Druckt den den Begleitbrief aus
 	 *
 	 * @param gesuch das Gesuch
 	 * @return Liste der generierten Verfuegungen Pro Kind

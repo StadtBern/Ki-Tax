@@ -11,15 +11,14 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+
+import javax.annotation.Nonnull;
+import java.util.Optional;
+
+import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
 
 /**
  * Transferobjekt
@@ -55,9 +54,11 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerStrasse() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getStrasse();
+		if(extractGesuchsteller1().isPresent()) {
+			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
+			if (gesuchstellerAdresse.isPresent()) {
+				return gesuchstellerAdresse.get().getStrasse();
+			}
 		}
 		return "";
 	}
@@ -68,9 +69,11 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerPLZStadt() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
+		if(extractGesuchsteller1().isPresent()) {
+			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
+			if (gesuchstellerAdresse.isPresent()) {
+				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
+			}
 		}
 		return "";
 	}
@@ -104,23 +107,5 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 		return Optional.empty();
 	}
 
-	@Nonnull
-	private Optional<GesuchstellerAdresse> getGesuchstellerAdresse() {
 
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
-			GesuchstellerAdresse wohnadresse = null;
-			for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
-				if (gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)) {
-					return Optional.of(gesuchstellerAdresse);
-				}
-				wohnadresse = gesuchstellerAdresse;
-			}
-			if (wohnadresse != null) {
-				return Optional.of(wohnadresse);
-			}
-		}
-		return Optional.empty();
-	}
 }

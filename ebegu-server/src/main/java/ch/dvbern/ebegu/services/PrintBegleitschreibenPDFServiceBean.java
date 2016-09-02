@@ -11,14 +11,6 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 09.08.2016
 */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
@@ -26,6 +18,13 @@ import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
+
+import javax.annotation.Nonnull;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * Implementiert VerfuegungsGenerierungPDFService
@@ -45,7 +44,7 @@ public class PrintBegleitschreibenPDFServiceBean extends AbstractBaseService imp
 		try {
 
 			// Pro Betreuung ein Dokument
-			InputStream is = this.getClass().getResourceAsStream("/vorlagen/Begleitschreiben.docx");
+			InputStream is = AbstractBaseService.class.getResourceAsStream("/vorlagen/Begleitschreiben.docx");
 			Objects.requireNonNull(is, "Begleitschreiben.docx nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
 			is.close();

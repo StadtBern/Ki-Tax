@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
+
 /**
  * Transferobjekt
  */
@@ -54,9 +56,11 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public String getGesuchstellerStrasse() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getStrasse();
+		if(extractGesuchsteller1().isPresent()) {
+			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
+			if (gesuchstellerAdresse.isPresent()) {
+				return gesuchstellerAdresse.get().getStrasse();
+			}
 		}
 		return "";
 	}
@@ -67,9 +71,11 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public String getGesuchstellerPLZStadt() {
 
-		Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse();
-		if (gesuchstellerAdresse.isPresent()) {
-			return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
+		if(extractGesuchsteller1().isPresent()) {
+			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
+			if (gesuchstellerAdresse.isPresent()) {
+				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
+			}
 		}
 		return "";
 	}
@@ -275,25 +281,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return betreuung.getKind().getKindJA();
 	}
 
-	@Nonnull
-	private Optional<GesuchstellerAdresse> getGesuchstellerAdresse() {
 
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
-			GesuchstellerAdresse wohnadresse = null;
-			for (GesuchstellerAdresse gesuchstellerAdresse : adressen) {
-				if (gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE)) {
-					return Optional.of(gesuchstellerAdresse);
-				}
-				wohnadresse = gesuchstellerAdresse;
-			}
-			if (wohnadresse != null) {
-				return Optional.of(wohnadresse);
-			}
-		}
-		return Optional.empty();
-	}
 
 	@Nonnull
 	private Optional<Verfuegung> extractVerfuegung() {
