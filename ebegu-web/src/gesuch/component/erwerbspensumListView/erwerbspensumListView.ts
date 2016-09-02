@@ -139,7 +139,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.institutionStammdaten && (TSBetreuungsangebotTyp.TAGESSCHULE !== betreuung.institutionStammdaten.betreuungsangebotTyp
-                    || TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND !== betreuung.institutionStammdaten.betreuungsangebotTyp))
+                    && TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND !== betreuung.institutionStammdaten.betreuungsangebotTyp))
                 return true;
             }
         }

@@ -40,11 +40,8 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
                 private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
-        if (this.isThereAnyBetreuung()) {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-        } else {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
-        }
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+
     }
 
     previousStep(): void {

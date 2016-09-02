@@ -143,6 +143,22 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	public void updateWizardStepKinderNOKIfKindNoBedarf() {
+		updateStatus(betreuungStep, WizardStepStatus.IN_BEARBEITUNG);
+		updateStatus(kinderStep, WizardStepStatus.IN_BEARBEITUNG);
+
+		final Iterator<KindContainer> kinderIterator = gesuch.getKindContainers().iterator();
+		KindContainer kind = kinderIterator.next();
+		kind.getKindJA().setFamilienErgaenzendeBetreuung(false);
+		persistence.merge(kind);
+
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.KINDER);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
+	}
+
+	@Test
 	public void updateWizardStepBetreuungUnbesucht() {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
 		Assert.assertEquals(10, wizardSteps.size());

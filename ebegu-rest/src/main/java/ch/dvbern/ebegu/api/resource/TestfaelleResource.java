@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.testfaelle.*;
@@ -93,5 +90,9 @@ public class TestfaelleResource {
 		Gesuch gesuch = fromTestfall.createGesuch();
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch);
+		final List<WizardStep> wizardSteps = fromTestfall.createWizardSteps(gesuch);
+		for (final WizardStep wizardStep: wizardSteps) {
+			persistence.persist(wizardStep);
+		}
 	}
 }

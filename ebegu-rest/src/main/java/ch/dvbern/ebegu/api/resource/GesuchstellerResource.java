@@ -56,7 +56,7 @@ public class GesuchstellerResource {
 	@Path("/{gesuchId}/gsNumber/{gsNumber}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuchsteller updateGesuchsteller(
+	public JaxGesuchsteller saveGesuchsteller(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
