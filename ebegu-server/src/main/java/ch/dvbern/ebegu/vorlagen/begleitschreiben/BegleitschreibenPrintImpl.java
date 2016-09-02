@@ -98,7 +98,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	}
 
 	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller2() {
+	protected Optional<Gesuchsteller> extractGesuchsteller2() {
 
 		Gesuchsteller gs2 = gesuch.getGesuchsteller2();
 		if (gs2 != null) {
