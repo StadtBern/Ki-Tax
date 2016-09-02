@@ -78,8 +78,8 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		writeToTempDir(bytes, "finanzielleSituation.pdf");
-		// openPDF(file);
+		File file = writeToTempDir(bytes, "finanzielleSituation1G.pdf");
+		openPDF(file);
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		File file = writeToTempDir(bytes, "finanzielleSituation.pdf");
-		// openPDF(file);
+		File file = writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
+		openPDF(file);
 	}
 
 	private void openPDF(File file) {

@@ -21,9 +21,9 @@ import javax.ejb.Stateless;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.ebegu.vorlagen.BerechnungsgrundlagenInformationPrintImpl;
-import ch.dvbern.ebegu.vorlagen.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInformationPrintImpl;
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 

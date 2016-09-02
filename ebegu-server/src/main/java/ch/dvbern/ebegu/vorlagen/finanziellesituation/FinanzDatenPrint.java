@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -119,7 +119,7 @@ public interface FinanzDatenPrint {
 	BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2();
 
 	/**
-	 * @return Zwischentotal Nettovermögen insgesamt2
+	 * @return Zwischentotal Nettovermögen insgesamt
 	 */
 	BigDecimal getZwischentotalNettovermoegenInsgesamt();
 

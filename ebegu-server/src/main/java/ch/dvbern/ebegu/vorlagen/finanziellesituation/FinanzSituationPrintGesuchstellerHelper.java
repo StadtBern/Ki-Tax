@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *

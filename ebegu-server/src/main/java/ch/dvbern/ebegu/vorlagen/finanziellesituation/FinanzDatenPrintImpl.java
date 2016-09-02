@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -20,6 +20,7 @@ import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
  */
 public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
+	public static final int DEFAULT_WERT = 250;
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller1;
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
@@ -40,24 +41,28 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	public BigDecimal getNettolohnG1() {
 
 		return fsGesuchsteller1.getFinanzielleSituation().getNettolohn();
+
 	}
 
 	@Override
 	public BigDecimal getNettolohnG2() {
 
 		return fsGesuchsteller2.getFinanzielleSituation().getNettolohn();
+
 	}
 
 	@Override
 	public BigDecimal getFamilienzulagenG1() {
 
 		return fsGesuchsteller1.getFinanzielleSituation().getFamilienzulage();
+
 	}
 
 	@Override
 	public BigDecimal getFamilienzulagenG2() {
 
 		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getFamilienzulage() : null;
+
 	}
 
 	@Override
@@ -70,112 +75,119 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	public BigDecimal getErsatzeinkommenG2() {
 
 		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getErsatzeinkommen() : null;
+
 	}
 
 	@Override
 	public BigDecimal getUnterhaltsbeitraegeG1() {
 
 		return fsGesuchsteller1.getFinanzielleSituation().getErhalteneAlimente();
+
 	}
 
 	@Override
 	public BigDecimal getUnterhaltsbeitraegeG2() {
 
 		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getErhalteneAlimente() : null;
+
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG2() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalEinkuenfteG1() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalEinkuenfteG2() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getTotalEinkuenfte() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getBruttovermoegenG1() {
 
 		return fsGesuchsteller1.getFinanzielleSituation().getBruttovermoegen();
+
 	}
 
 	@Override
 	public BigDecimal getBruttovermoegenG2() {
 
 		return fsGesuchsteller2.getFinanzielleSituation() != null ? fsGesuchsteller2.getFinanzielleSituation().getBruttovermoegen() : null;
+
 	}
 
 	@Override
 	public BigDecimal getSchuldenG1() {
 
 		return fsGesuchsteller1.getFinanzielleSituation().getSchulden();
+
 	}
 
 	@Override
 	public BigDecimal getSchuldenG2() {
 
-		return null;
+		// TODO Implementieren
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZwischentotalNettovermoegenInsgesamt() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getNettovermoegen() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
@@ -189,34 +201,34 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	public BigDecimal getTotalAbzuege() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZusammenzugTotaleinkuenfte() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZusammenzugNettovermoegen() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getZusammenzugTotalAbzuege() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
 	public BigDecimal getMassgebendesEinkommen() {
 
 		// TODO Implementieren
-		return new BigDecimal(11111);
+		return new BigDecimal(DEFAULT_WERT);
 	}
 }
