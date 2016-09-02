@@ -30,16 +30,23 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet;
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
-	private String bemerkungen;
-
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
 
 
 	public Familiensituation() {
+	}
+
+	public Familiensituation(Familiensituation that) {
+		this.familienstatus = that.getFamilienstatus();
+		this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
+		this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
+		this.setId(that.getId());
+		this.setTimestampErstellt(that.getTimestampErstellt());
+		this.setTimestampMutiert(that.getTimestampMutiert());
+		this.setUserErstellt(that.getUserErstellt());
+		this.setUserMutiert(that.getUserMutiert());
+		this.setVersion(that.getVersion());
 	}
 
 	@Nonnull
@@ -58,15 +65,6 @@ public class Familiensituation extends AbstractEntity {
 
 	public void setGesuchstellerKardinalitaet(@Nullable EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet) {
 		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	public Boolean getGemeinsameSteuererklaerung() {

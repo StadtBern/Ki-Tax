@@ -371,6 +371,7 @@
     "VERFUEGUNGEN_UPPER": "VERFÜGUNGEN",
     "KINDER_HINT1": "Bitte erfassen Sie sowohl die familienergänzend betreuten Kinder wie auch die weiteren Kinder, die in Ihrem Haushalt wohnen.",
     "KINDER_HINT2": "Ebenfalls sind Kinder zu erfassen, welche nicht mehr zu Hause wohnen, sich aber noch in Erstausbildung befinden.",
+    "KINDER_TOOLTIP_REQUIRED": "Es muss mindestens ein Kind mit externer Betreuung erfasst werden",
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
     "BETREUUNGEN_NOCH_KEINE": "noch keine Betreuung für dieses Kind erfasst",
     "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Wohnt das Kind im gleichen Haushalt?",
@@ -600,6 +601,7 @@
     "DOK_JAHR": "Jahr ",
     "DOK_TAETIGKEIT": "Tätigkeit",
     "DOK_SONSTIGES": "Sonstige Nachweise",
+    "DOK_PAPIERGESUCH": "Papiergesuch",
     "ERROR_FILE_TOO_LARGE": "File ist zu gross (Maximal 10MB)",
     "NACHWEIS_TRENNUNG": "Trennungsvereinbarung / Scheidungsurteil / Sonstiger Nachweis über Trennung / Eheschutzverfahren",
     "SORGERECHTSVEREINBARUNG": "Sorgerechtsvereinbarung",
@@ -627,6 +629,7 @@
     "ERFOLGSRECHNUNGEN": "Erfolgsrechnungen der letzten drei Jahre ",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
     "DIV": "Hier können Sie zusätzliche Dokumente hochladen",
+    "ORIGINAL_PAPIERGESUCH": "Hier können Sie das Papiergesuch hochladen",
     "ANSPRUCH": "Anspruch",
     "VOLLKOSTEN": "Vollkosten",
     "ELTERNBEITRAG": "Elternbeitrag",
@@ -634,6 +637,10 @@
     "AUFGRUND_FIN_SITUATION": "ab {{anfangsperiode}} aufgrund der finanziellen Situation",
     "AUFGRUND_EINKOMMENSVERSCHLECHTERUNG": "ab {{anfangsverschlechterung}} aufgrund der Einkommensverschlechterung",
     "ABZUG_AUFGRUND_FAM_GROESSE": "Abzug (aufgrund Familiengrösse {{famgroesse}})",
-    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen"
+    "MASSGEBENDES_EINKOMMEN": "massgebendes Einkommen",
+    "BEMERKUNGEN_INTERN": "Interner Kommentar verfassen",
+    "BEMERKUNGEN_VERFUEGUNG": "Bemerkungen zur Verfügung",
+    "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
+    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN"
 }
 

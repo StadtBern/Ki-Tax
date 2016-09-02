@@ -9,6 +9,9 @@ import {TSMonth, getTSMonthValues} from '../../../models/enums/TSMonth';
 import TSGesuch from '../../../models/TSGesuch';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -27,27 +30,29 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     selectedStichtagBjP1: TSMonth = undefined;
     selectedStichtagBjP2: TSMonth = undefined;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil', 'WizardStepManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
     }
 
     private initViewModel() {
         this.gesuchModelManager.initEinkommensverschlechterungInfo();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();
         this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
         this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
     }
 
     getGesuch(): TSGesuch {
-        if (!this.gesuchModelManager.gesuch) {
+        if (!this.gesuchModelManager.getGesuch()) {
             this.gesuchModelManager.initGesuch(false);
         }
-        return this.gesuchModelManager.gesuch;
+        return this.gesuchModelManager.getGesuch();
     }
 
     getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
@@ -70,7 +75,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     public getBasisJahrPlusAsString(jahr: number): string {
-        return this.ebeguUtil.getBasisJahrPlusAsString(this.gesuchModelManager.gesuch.gesuchsperiode, jahr);
+        return this.ebeguUtil.getBasisJahrPlusAsString(this.gesuchModelManager.getGesuch().gesuchsperiode, jahr);
     }
 
     /**
@@ -127,8 +132,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
             this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
-            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
-
+            this.gesuchModelManager.updateEinkommensverschlechterungsInfo().then(navigationFunction);
         }
     }
 

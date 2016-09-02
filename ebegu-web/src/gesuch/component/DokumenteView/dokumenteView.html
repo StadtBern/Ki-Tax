@@ -43,12 +43,23 @@
                                on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
             </dv-dokumente-list>
 
+
             <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
                                table-title="DOK_SONSTIGES"
                                on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
                                on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)"
                                sonstige="true">
             </dv-dokumente-list>
+
+
+            <div dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
+                <dv-dokumente-list dokumente="vm.dokumentePapiergesuch" table-id="dokumentePapiergesuch"
+                                   table-title="DOK_PAPIERGESUCH"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumentePapiergesuch)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumentePapiergesuch)"
+                                   sonstige="true">
+                </dv-dokumente-list>
+            </div>
 
             <!-- -------------------------------------------Navigation--------------------------------------------  -->
             <div class="row">

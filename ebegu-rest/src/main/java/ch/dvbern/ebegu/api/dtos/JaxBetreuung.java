@@ -36,10 +36,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
-	private String bemerkungen;
-
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
 	private String grundAblehnung;
 
 	@Min(1)
@@ -86,15 +82,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setBetreuungspensumContainers(List<JaxBetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	@Nullable

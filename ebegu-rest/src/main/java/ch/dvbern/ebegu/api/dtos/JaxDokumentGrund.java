@@ -88,4 +88,22 @@ public class JaxDokumentGrund extends JaxAbstractDTO {
 	public void setNeeded(boolean needed) {
 		this.needed = needed;
 	}
+
+	/**
+	 * Checkt ob die Liste von Dokumenten leer ist.
+	 * @return false wenn mindestens ein Dokumente existiert. Sonst true
+	 */
+	public boolean isEmpty() {
+		if (getDokumente() == null || getDokumente().size() <= 0) {
+			return true;
+		}
+		else {
+			for (JaxDokument dok : getDokumente()) {
+				if (dok.getDokumentName() == null || dok.getDokumentPfad() == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

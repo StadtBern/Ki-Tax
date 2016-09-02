@@ -1,0 +1,17 @@
+package ch.dvbern.ebegu.enums;
+
+/**
+ * Enum fuer die Namen des WizardSteps
+ */
+public enum WizardStepName {
+	GESUCH_ERSTELLEN,
+	FAMILIENSITUATION,
+	GESUCHSTELLER,
+	KINDER,
+	BETREUUNG,
+	ERWERBSPENSUM,
+	FINANZIELLE_SITUATION,
+	EINKOMMENSVERSCHLECHTERUNG,
+	DOKUMENTE,
+	VERFUEGEN
+}

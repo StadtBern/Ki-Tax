@@ -7,6 +7,9 @@ import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -20,17 +23,20 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
     }
 
     private initViewModel() {
         this.gesuchModelManager.initFinanzielleSituation();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.FINANZIELLE_SITUATION);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
 
     showSteuerveranlagung(): boolean {
@@ -61,18 +67,18 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {
-        return this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA;
+        return this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer.finanzielleSituationJA;
     }
 
     private getFinanzielleSituationGS2(): TSFinanzielleSituation {
-        return this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA;
+        return this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer.finanzielleSituationJA;
     }
 
     private gemeinsameStekClicked(): void {
         // Wenn neu NEIN -> Fragen loeschen
         if (this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false) {
-            this.gesuchModelManager.gesuch.gesuchsteller1.finanzielleSituationContainer = undefined;
-            this.gesuchModelManager.gesuch.gesuchsteller2.finanzielleSituationContainer = undefined;
+            this.gesuchModelManager.getGesuch().gesuchsteller1.finanzielleSituationContainer = undefined;
+            this.gesuchModelManager.getGesuch().gesuchsteller2.finanzielleSituationContainer = undefined;
         } else {
             this.gesuchModelManager.initFinanzielleSituation();
         }

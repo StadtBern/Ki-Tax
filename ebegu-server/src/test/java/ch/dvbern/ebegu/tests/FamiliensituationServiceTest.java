@@ -50,7 +50,6 @@ public class FamiliensituationServiceTest extends AbstractEbeguTest {
 		Familiensituation nextFamsit = allFamiliensituation.iterator().next();
 		Assert.assertEquals(EnumFamilienstatus.ALLEINERZIEHEND, nextFamsit.getFamilienstatus());
 		Assert.assertEquals(EnumGesuchstellerKardinalitaet.ALLEINE, nextFamsit.getGesuchstellerKardinalitaet());
-		Assert.assertEquals("DVBern", nextFamsit.getBemerkungen());
 	}
 
 	@Test

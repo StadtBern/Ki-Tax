@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,4 +44,6 @@ public interface BetreuungService {
 	@Nonnull
 	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
 
+	@Nonnull
+	List<Betreuung> getAllBetreuungenFromGesuch(String gesuchId);
 }

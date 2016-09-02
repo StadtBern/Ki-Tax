@@ -20,6 +20,16 @@ import java.util.List;
 public interface PrintDokumentDelegateService {
 
 	/**
+	 * Bereitet das Begleitschreiben auf
+	 *
+	 * @param gesuch das Gesuch
+	 * @return Liste der generierten Verfuegungen Pro Kind
+	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
+	 */
+	@Nonnull
+	byte[] printBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException;
+
+	/**
 	 * Bereitet die Verfuegungsdokumente auf
 	 *
 	 * @param gesuch das Gesuch
