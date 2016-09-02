@@ -11,12 +11,12 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.List;
-
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
+
+import java.util.List;
 
 public class BegleitschreibenPrintMergeSource implements MergeSource {
 
@@ -40,8 +40,7 @@ public class BegleitschreibenPrintMergeSource implements MergeSource {
 
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-
-		return null;
+		return new BeanMergeSource(begleitschreiben, "begleitschreiben.").ifStatement(mergeContext, key);
 	}
 
 	@Override
