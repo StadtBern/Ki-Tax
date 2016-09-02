@@ -147,20 +147,31 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return Bemerkungen
 	 */
 	@Override
-	public String getBemerkungen() {
+	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			StringBuilder bemerkungen = new StringBuilder();
 			if (betreuung.getVerfuegung().getGeneratedBemerkungen() != null) {
-				bemerkungen.append(betreuung.getVerfuegung().getGeneratedBemerkungen());
+				// TODO einkomentieren return betreuung.getVerfuegung().getGeneratedBemerkungen();
 			}
-			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
-				bemerkungen.append(betreuung.getVerfuegung().getManuelleBemerkungen());
-			}
-			return bemerkungen.toString();
 		}
-		return "";
+		// TODO entfernen
+		return "Hier werden manuelle Bemerkungen ausgedruckt";
+	}
+
+	public String getGeneratedBemerkungen() {
+
+		Optional<Verfuegung> verfuegung = extractVerfuegung();
+		if (verfuegung.isPresent()) {
+
+			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
+				// TODO einkomentieren return betreuung.getVerfuegung().getManuelleBemerkungen();
+			}
+
+		}
+		// TODO entfernen
+		return "Hier werden generierten Bemerkungen ausgedruckt";
+
 	}
 
 	/**
@@ -196,7 +207,19 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintbemerkung() {
 
-		return !"".equalsIgnoreCase(getBemerkungen());
+		return isPrintManuellebemerkung() || isPrintGeneratedBemerkung();
+	}
+
+	@Override
+	public boolean isPrintManuellebemerkung() {
+
+		return !"".equalsIgnoreCase(getManuelleBemerkungen());
+	}
+
+	@Override
+	public boolean isPrintGeneratedBemerkung() {
+
+		return !"".equalsIgnoreCase(getGeneratedBemerkungen());
 	}
 
 	@Nonnull
