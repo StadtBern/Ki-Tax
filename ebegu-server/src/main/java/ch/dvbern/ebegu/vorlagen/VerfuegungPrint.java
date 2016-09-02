@@ -26,8 +26,7 @@ public interface VerfuegungPrint {
 
 	String getGesuchstellerPLZStadt();
 
-	// TODO ZEAB auf Fallnummer umbennen
-	String getReferenzNummer();
+	String getReferenznummer();
 
 	// TODO ZEAB entfernen gibt es nicht merh
 	String getVerfuegungsdatum();
@@ -66,7 +65,7 @@ public interface VerfuegungPrint {
 	boolean isPensumGrosser0();
 
 	/**
-	 * @return true falls Pensum groesser 0 ist
+	 * @return true wenn Pensum gleich 0 ist
 	 */
 	boolean isPensumIst0();
 

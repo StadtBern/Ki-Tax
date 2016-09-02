@@ -1,11 +1,8 @@
 package ch.dvbern.ebegu.tests;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.lib.cdipersistence.ISessionContextService;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -15,9 +12,10 @@ import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.lib.cdipersistence.ISessionContextService;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen

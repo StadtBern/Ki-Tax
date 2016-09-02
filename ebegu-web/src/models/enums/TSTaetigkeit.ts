@@ -2,7 +2,8 @@ export enum TSTaetigkeit {
     ANGESTELLT = <any> 'ANGESTELLT',
     SELBSTAENDIG = <any> 'SELBSTAENDIG',
     AUSBILDUNG = <any> 'AUSBILDUNG',
-    RAV = <any> 'RAV'
+    RAV = <any> 'RAV',
+    GESUNDHEITLICHE_EINSCHRAENKUNGEN = <any> 'GESUNDHEITLICHE_EINSCHRAENKUNGEN'
 }
 
 export function getTSTaetigkeit(): Array<TSTaetigkeit> {
@@ -11,5 +12,6 @@ export function getTSTaetigkeit(): Array<TSTaetigkeit> {
         TSTaetigkeit.SELBSTAENDIG,
         TSTaetigkeit.AUSBILDUNG,
         TSTaetigkeit.RAV,
+        TSTaetigkeit.GESUNDHEITLICHE_EINSCHRAENKUNGEN
     ];
 }

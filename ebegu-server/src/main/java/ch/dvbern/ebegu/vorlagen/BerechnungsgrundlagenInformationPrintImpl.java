@@ -34,25 +34,25 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
 
 		this.gesuch = gesuch;
-		FinanzSituationGesuchsteller fG1 = FinanzSituationGesuchstellerFactory.getInstance().getFinanzSituationGesuchsteller1(gesuch);
-		FinanzSituationGesuchsteller fG2 = FinanzSituationGesuchstellerFactory.getInstance().getFinanzSituationGesuchsteller2(gesuch);
+		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
+		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
 
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
-		String finanzielleSituationJahr = Integer.valueOf(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).toString();
+		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
 		String berechnungVon = "TODO datum"; // TODO
 		String referenznummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
 		fs = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, berechnungVon, referenznummer);
 
 		// Einkommensverschleschtereung 1
-		String einkommensverschlechterungJahr = Integer.valueOf(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear()).toString();
+		String einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
 		String ereigniseintritt = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
 		String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
 		ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv1);
 
 		// Einkommensverschleschtereung 2
 		if (fG2 != null) {
-			einkommensverschlechterungJahr = Integer.valueOf(fG2.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear()).toString();
+			einkommensverschlechterungJahr = Integer.toString(fG2.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
 			ereigniseintritt = Constants.DATE_FORMATTER.format(fG2.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
 			String grundEv2 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus2();
 			ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv2);
@@ -62,7 +62,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller1Name() {
 
-		return gesuch.getGesuchsteller1().getFullName();
+		return gesuch.getGesuchsteller1() != null ?  gesuch.getGesuchsteller1().getFullName(): null;
 	}
 
 	@Override

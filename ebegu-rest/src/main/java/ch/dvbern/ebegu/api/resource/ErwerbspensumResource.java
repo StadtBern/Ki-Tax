@@ -4,12 +4,16 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxErwerbspensumContainer;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.ErwerbspensumService;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -45,6 +49,10 @@ public class ErwerbspensumResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private WizardStepService wizardStepService;
+	@Inject
+	private GesuchService gesuchService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -55,30 +63,38 @@ public class ErwerbspensumResource {
 		", those will be created as well")
 	@Nonnull
 	@PUT
-	@Path("/{gesuchstellerId}")
+	@Path("/{gesuchstellerId}/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveErwerbspensum(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam("gesuchstellerId") JaxId gesuchstellerId,
 		@Nonnull @NotNull @Valid JaxErwerbspensumContainer jaxErwerbspensumContainer,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguRuntimeException {
 
-		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-		if (gesuchsteller.isPresent()) {
-			ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
-			convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
-			ErwerbspensumContainer storedEwpCont = this.erwerbspensumService.saveErwerbspensum(convertedEwpContainer);
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
+			if (gesuchsteller.isPresent()) {
+				ErwerbspensumContainer convertedEwpContainer = converter.erwerbspensumContainerToStoreableEntity(jaxErwerbspensumContainer);
+				convertedEwpContainer.setGesuchsteller(gesuchsteller.get());
+				ErwerbspensumContainer storedEwpCont = this.erwerbspensumService.saveErwerbspensum(convertedEwpContainer);
 
-			URI uri = null;
-			if (uriInfo != null) {
-				uri = uriInfo.getBaseUriBuilder()
-					.path(ErwerbspensumResource.class)
-					.path("/" + storedEwpCont.getId())
-					.build();
+				URI uri = null;
+				if (uriInfo != null) {
+					uri = uriInfo.getBaseUriBuilder()
+						.path(ErwerbspensumResource.class)
+						.path("/" + storedEwpCont.getId())
+						.build();
+				}
+				JaxErwerbspensumContainer jaxEwpCont = converter.erwerbspensumContainerToJAX(storedEwpCont);
+
+				wizardStepService.updateSteps(gesuchJAXPId.getId(), convertedEwpContainer,
+					storedEwpCont, WizardStepName.ERWERBSPENSUM);
+
+				return Response.created(uri).entity(jaxEwpCont).build();
 			}
-			JaxErwerbspensumContainer jaxEwpCont = converter.erwerbspensumContainerToJAX(storedEwpCont);
-			return Response.created(uri).entity(jaxEwpCont).build();
 		}
 		throw new EbeguEntityNotFoundException("saveErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
 	}

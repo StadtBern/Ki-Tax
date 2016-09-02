@@ -1,11 +1,10 @@
 package ch.dvbern.ebegu.services;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland

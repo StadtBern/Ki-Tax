@@ -16,17 +16,17 @@ import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.FinanzielleSituation;
 
 /**
- * Abstrakte Klasse um die Relevante Daten des Gesuch fuer Berechnung und darstellung festzuhalten
+ * Klasse um die relevante Daten des Gesuch fuer Berechnung und Darstellung festzuhalten
  */
-public class FinanzSituationGesuchsteller {
+public class FinanzSituationPrintGesuchsteller {
 
 	private FinanzielleSituation finanzielleSituation;
 	private Einkommensverschlechterung einkommensverschlechterung1;
 	private Einkommensverschlechterung einkommensverschlechterung2;
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
-	public FinanzSituationGesuchsteller(FinanzielleSituation finanzielleSituation, Einkommensverschlechterung einkommensverschlechterung1,
-			Einkommensverschlechterung einkommensverschlechterung2, EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
+	public FinanzSituationPrintGesuchsteller(FinanzielleSituation finanzielleSituation, Einkommensverschlechterung einkommensverschlechterung1,
+											 Einkommensverschlechterung einkommensverschlechterung2, EinkommensverschlechterungInfo einkommensverschlechterungInfo) {
 		this.finanzielleSituation = finanzielleSituation;
 		this.einkommensverschlechterung1 = einkommensverschlechterung1;
 		this.einkommensverschlechterung2 = einkommensverschlechterung2;
@@ -47,7 +47,7 @@ public class FinanzSituationGesuchsteller {
 	}
 
 	/**
-	 * @return Einkommensverschlechterung
+	 * @return Einkommensverschlechterung erste einkommensverschlechterung
 	 */
 	public Einkommensverschlechterung getEinkommensverschlechterung1() {
 
@@ -55,7 +55,7 @@ public class FinanzSituationGesuchsteller {
 	}
 
 	/**
-	 * @return Einkommensverschlechterung
+	 * @return Einkommensverschlechterung  zweite einkommensverschlechterung
 	 */
 	public Einkommensverschlechterung getEinkommensverschlechterung2() {
 

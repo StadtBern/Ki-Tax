@@ -11,20 +11,14 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.util.Constants;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.entities.AdresseTyp;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Transferobjekt
@@ -84,7 +78,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
 	@Override
-	public String getReferenzNummer() {
+	public String getReferenznummer() {
 
 		return betreuung.getBGNummer();
 	}
@@ -252,7 +246,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintbemerkungen() {
 
-		return getBemerkungen() != null && !"".equalsIgnoreCase(getBemerkungen());
+		return !"".equalsIgnoreCase(getBemerkungen());
 	}
 
 	@Nonnull

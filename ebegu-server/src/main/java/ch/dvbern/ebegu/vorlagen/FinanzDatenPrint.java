@@ -14,7 +14,7 @@ package ch.dvbern.ebegu.vorlagen;
 import java.math.BigDecimal;
 
 /**
- * Definiert die Finanzdaten des Berechnungsformulare
+ * Definiert die Finanzdaten des Berechnungsformulars
  */
 public interface FinanzDatenPrint {
 

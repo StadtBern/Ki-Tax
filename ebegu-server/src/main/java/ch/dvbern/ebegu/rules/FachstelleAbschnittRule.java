@@ -14,9 +14,9 @@ import java.util.List;
  * Zeitabschnitt generiert
  * Verweis 16.13 Fachstelle
  */
-public class FachstelleDataRule extends AbstractAbschnittRule {
+public class FachstelleAbschnittRule extends AbstractAbschnittRule {
 
-	public FachstelleDataRule(@Nonnull DateRange validityPeriod) {
+	public FachstelleAbschnittRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.FACHSTELLE, RuleType.GRUNDREGEL_DATA, validityPeriod);
 	}
 

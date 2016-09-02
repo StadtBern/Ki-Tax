@@ -8,6 +8,7 @@ import {DownloadRS} from '../../service/downloadRS.rest';
 import TSTempDokument from '../../../models/TSTempDokument';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 let template = require('./dv-dokumente-list.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 require('./dv-dokumente-list.less');
@@ -42,10 +43,10 @@ export class DVDokumenteListController {
     onRemove: (attrs: any) => void;
     sonstige: boolean;
 
-    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog'];
+    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
-                private downloadRS: DownloadRS, private dvDialog: DvDialog) {
+                private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager) {
 
     }
 
@@ -55,8 +56,8 @@ export class DVDokumenteListController {
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
 
-        if (this.gesuchModelManager.gesuch) {
-            let gesuchID = this.gesuchModelManager.gesuch.id;
+        if (this.gesuchModelManager.getGesuch()) {
+            let gesuchID = this.gesuchModelManager.getGesuch().id;
             console.log('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
                 console.log('File: ' + file.name);
@@ -64,7 +65,9 @@ export class DVDokumenteListController {
 
             this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
                 let returnedDG: TSDokumentGrund = angular.copy(response);
-                this.handleUpload(returnedDG);
+                this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id).then(() => {
+                    this.handleUpload(returnedDG);
+                });
             });
         } else {
             console.log('No gesuch found to store file ');

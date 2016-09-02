@@ -11,6 +11,9 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 22.08.2016
 */
 
+/**
+ * Definiert noetige Daten fuer FinanzielleSituationPrint
+ */
 public interface FinanzielleSituationPrint extends FinanzDatenPrint {
 
 	/**

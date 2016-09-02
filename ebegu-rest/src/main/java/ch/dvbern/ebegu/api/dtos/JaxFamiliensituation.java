@@ -26,10 +26,6 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 	@Nullable
 	private EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet;
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	private String bemerkungen;
-
 	@NotNull
 	private JaxGesuch gesuch;
 
@@ -56,15 +52,6 @@ public class JaxFamiliensituation extends JaxAbstractDTO{
 
 	public void setGesuchstellerKardinalitaet(@Nullable EnumGesuchstellerKardinalitaet gesuchstellerKardinalitaet) {
 		this.gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	public JaxGesuch getGesuch() {

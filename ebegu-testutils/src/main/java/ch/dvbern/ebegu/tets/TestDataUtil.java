@@ -15,15 +15,14 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * comments homa
  */
 public final class TestDataUtil {
 
+	private static final String iban = "CH39 0900 0000 3066 3817 2";
 	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
 	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
 	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
@@ -105,7 +104,6 @@ public final class TestDataUtil {
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		familiensituation.setBemerkungen("DVBern");
 		return familiensituation;
 	}
 
@@ -171,7 +169,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createDefaultInstitutionStammdaten() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
 		instStammdaten.setGueltigkeit(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2010, 12, 31)));
@@ -184,7 +182,7 @@ public final class TestDataUtil {
 	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
@@ -196,10 +194,25 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
+	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
+		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
+		instStammdaten.setId("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+		instStammdaten.setIban(new IBAN(iban));
+		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
+		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
+		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		instStammdaten.setInstitution(createDefaultInstitution());
+		instStammdaten.getInstitution().setId("9253e9b1-9cae-4278-b578-f1ce93306d29");
+		instStammdaten.getInstitution().setName("Tagi Aaregg");
+		instStammdaten.setAdresse(createDefaultAdresse());
+		return instStammdaten;
+	}
+
 	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
-		instStammdaten.setIban(new IBAN("CH39 0900 0000 3066 3817 2"));
+		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
@@ -218,7 +231,6 @@ public final class TestDataUtil {
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
@@ -270,7 +282,6 @@ public final class TestDataUtil {
 		ep.setZuschlagZuErwerbspensum(true);
 		ep.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		ep.setZuschlagsprozent(10);
-		ep.setGesundheitlicheEinschraenkungen(false);
 		return ep;
 	}
 
@@ -280,7 +291,6 @@ public final class TestDataUtil {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
@@ -307,13 +317,12 @@ public final class TestDataUtil {
 		gesuchsperiode.setActive(true);
 
 		boolean isSecondHalbjahr = LocalDate.now().isAfter(LocalDate.of(LocalDate.now().getYear(), Month.JULY, 31));
-		int startyear = isSecondHalbjahr ? LocalDate.now().getYear()  : LocalDate.now().getYear() -1 ;
+		int startyear = isSecondHalbjahr ? LocalDate.now().getYear() : LocalDate.now().getYear() - 1;
 		LocalDate start = LocalDate.of(startyear, Month.AUGUST, 1);
-		LocalDate end = LocalDate.of(startyear + 1 , Month.JULY, 31);
+		LocalDate end = LocalDate.of(startyear + 1, Month.JULY, 31);
 		gesuchsperiode.setGueltigkeit(new DateRange(start, end));
 		return gesuchsperiode;
 	}
-
 
 
 	public static Gesuchsperiode createGesuchsperiode1617() {
@@ -322,7 +331,6 @@ public final class TestDataUtil {
 		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31)));
 		return gesuchsperiode;
 	}
-
 
 
 	public static EbeguParameter createDefaultEbeguParameter() {
@@ -402,7 +410,7 @@ public final class TestDataUtil {
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
-	public static Gesuch createTestgesuchDagmar(){
+	public static Gesuch createTestgesuchDagmar() {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
@@ -424,17 +432,20 @@ public final class TestDataUtil {
 		}
 		if (gesuch.getEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 	}
 
@@ -485,5 +496,38 @@ public final class TestDataUtil {
 		persistence.persist(gesuch.getGesuchsperiode());
 		gesuch = persistence.persist(gesuch);
 		return gesuch;
+	}
+
+	public static void persistEntities(Gesuch gesuch, Persistence<Gesuch> persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+
+		gesuch.getFall().setVerantwortlicher(verantwortlicher);
+		persistence.persist(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		persistence.persist(gesuch.getGesuchsperiode());
+
+		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		KindContainer kind = betreuung.getKind();
+
+		Set<Betreuung> betreuungen = new LinkedHashSet<>();
+		betreuungen.add(betreuung);
+		kind.setBetreuungen(betreuungen);
+
+		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
+		kind.setGesuch(gesuch);
+		kindContainers.add(kind);
+		gesuch.setKindContainers(kindContainers);
+
+
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+
+		persistence.persist(gesuch);
 	}
 }

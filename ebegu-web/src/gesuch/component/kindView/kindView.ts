@@ -11,6 +11,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -27,18 +28,25 @@ export class KindViewController extends AbstractGesuchViewController {
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
+                                'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 
-        //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
-        $scope.$on('$stateChangeStart', () => {
-            this.reset();
+        //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den User fragt ob er die ungesp. changes verwerfen will
+        $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
+            // wenn der user die changes verwerfen will koennen wir die view resetten, ansonsten machen wir nichts da wir hier bleiben
+            if (navEvent.defaultPrevented !== undefined && navEvent.defaultPrevented === false) {
+                //Wenn die Maske KindView verlassen wird, werden automatisch die Kinder entfernt, die noch nicht in der DB gespeichert wurden
+                this.reset();
+            }
         });
+
     }
 
     private initViewModel(): void {
@@ -63,8 +71,9 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    cancel() {
+    cancel(form: IFormController) {
         this.reset();
+        form.$setPristine();
         this.state.go('gesuch.kinder');
     }
 

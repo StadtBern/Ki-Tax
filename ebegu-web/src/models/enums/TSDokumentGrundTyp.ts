@@ -5,7 +5,8 @@ export enum TSDokumentGrundTyp {
     ERWERBSPENSUM = <any> 'ERWERBSPENSUM',
     FINANZIELLESITUATION = <any> 'FINANZIELLESITUATION',
     EINKOMMENSVERSCHLECHTERUNG = <any> 'EINKOMMENSVERSCHLECHTERUNG',
-    SONSTIGE_NACHWEISE = <any> 'SONSTIGE_NACHWEISE'
+    SONSTIGE_NACHWEISE = <any> 'SONSTIGE_NACHWEISE',
+    PAPIERGESUCH = <any> 'PAPIERGESUCH'
 
 }
 
@@ -17,5 +18,6 @@ export function getTSTSDokumentTypValues(): Array<TSDokumentGrundTyp> {
         TSDokumentGrundTyp.FINANZIELLESITUATION,
         TSDokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG,
         TSDokumentGrundTyp.SONSTIGE_NACHWEISE,
+        TSDokumentGrundTyp.PAPIERGESUCH,
     ];
 }

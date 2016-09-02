@@ -14,24 +14,13 @@ package ch.dvbern.ebegu.vorlagen;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 
-public class FinanzSituationGesuchstellerFactory {
-
-	private static FinanzSituationGesuchstellerFactory instance;
+public final class FinanzSituationPrintGesuchstellerHelper {
 
 	/**
 	 * Konstruktor
 	 */
-	private FinanzSituationGesuchstellerFactory() {
+	private FinanzSituationPrintGesuchstellerHelper() {
 		// NOP
-	}
-
-	public static FinanzSituationGesuchstellerFactory getInstance() {
-
-		if (instance == null) {
-			instance = new FinanzSituationGesuchstellerFactory();
-		}
-
-		return instance;
 	}
 
 	/**
@@ -40,15 +29,15 @@ public class FinanzSituationGesuchstellerFactory {
 	 * @param gesuch
 	 * @return FinanzSituationGesuchsteller
 	 */
-	public FinanzSituationGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
+	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller1(Gesuch gesuch) {
 
 		Gesuchsteller gesuchsteller1 = gesuch.getGesuchsteller1();
-		FinanzSituationGesuchsteller finanzSituationGesuchsteller = new FinanzSituationGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
+		FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller = new FinanzSituationPrintGesuchsteller(gesuchsteller1.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 				gesuchsteller1.getEinkommensverschlechterungContainer() != null ? gesuchsteller1.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
 				gesuch.getEinkommensverschlechterungInfo());
 
-		return finanzSituationGesuchsteller;
+		return finanzSituationPrintGesuchsteller;
 	}
 
 	/**
@@ -57,17 +46,17 @@ public class FinanzSituationGesuchstellerFactory {
 	 * @param gesuch
 	 * @return FinanzSituationGesuchsteller
 	 */
-	public FinanzSituationGesuchsteller getFinanzSituationGesuchsteller2(Gesuch gesuch) {
+	public static FinanzSituationPrintGesuchsteller getFinanzSituationGesuchsteller2(Gesuch gesuch) {
 
 		Gesuchsteller gesuchsteller2 = gesuch.getGesuchsteller2();
 		if (gesuchsteller2 != null) {
 
-			FinanzSituationGesuchsteller finanzSituationGesuchsteller2 = new FinanzSituationGesuchsteller(
+			FinanzSituationPrintGesuchsteller finanzSituationPrintGesuchsteller2 = new FinanzSituationPrintGesuchsteller(
 					gesuchsteller2.getFinanzielleSituationContainer().getFinanzielleSituationJA(), //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() : null, //
 					gesuchsteller2.getEinkommensverschlechterungContainer() != null ? gesuchsteller2.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() : null, //
 					gesuch.getEinkommensverschlechterungInfo());
-			return finanzSituationGesuchsteller2;
+			return finanzSituationPrintGesuchsteller2;
 		}
 		return null;
 	}

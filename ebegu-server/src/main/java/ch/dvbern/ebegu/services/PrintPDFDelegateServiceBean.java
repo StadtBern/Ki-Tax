@@ -11,15 +11,14 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 18.08.2016
 */
 
-import java.util.List;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import java.util.List;
 
 /**
  * Implementiert PrintDokumentDelegateService

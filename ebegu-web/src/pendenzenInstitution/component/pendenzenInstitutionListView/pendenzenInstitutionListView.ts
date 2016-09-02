@@ -93,7 +93,7 @@ export class PendenzenInstitutionListViewController {
         if (pendenz) {
             this.gesuchRS.findGesuchForInstitution(pendenz.gesuchId).then((response) => {
                 if (response) {
-                    this.gesuchModelManager.gesuch = response;
+                    this.gesuchModelManager.setGesuch(response);
                     this.openBetreuung(pendenz);
                 }
             });
@@ -101,7 +101,7 @@ export class PendenzenInstitutionListViewController {
     }
 
     private openBetreuung(pendenz: TSPendenzInstitution): void {
-        if (this.gesuchModelManager.gesuch && pendenz) {
+        if (this.gesuchModelManager.getGesuch() && pendenz) {
             this.gesuchModelManager.findKindById(pendenz.kindId);
             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
             if (betreuungNumber > 0) {

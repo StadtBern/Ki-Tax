@@ -37,7 +37,7 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private PendenzResource pendenzResource;
 	@Inject
-	private Persistence<?> persistence;
+	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
 
@@ -51,9 +51,9 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	@Test
 	public void getAllPendenzenJATest() {
 		Gesuch gesuch1 = TestDataUtil.createDefaultGesuch();
-		persistEntities(gesuch1);
+		TestDataUtil.persistEntities(gesuch1, persistence);
 		Gesuch gesuch2 = TestDataUtil.createDefaultGesuch();
-		persistEntities(gesuch2);
+		TestDataUtil.persistEntities(gesuch2, persistence);
 
 		List<JaxPendenzJA> pendenzenList = pendenzResource.getAllPendenzenJA();
 
@@ -80,36 +80,5 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	// HELP METHOD
 
 
-	private void persistEntities(Gesuch gesuch) {
-		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
-		persistence.persist(verantwortlicher.getMandant());
-		persistence.persist(verantwortlicher);
 
-		gesuch.getFall().setVerantwortlicher(verantwortlicher);
-		persistence.persist(gesuch.getFall());
-		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
-		persistence.persist(gesuch.getGesuchsperiode());
-
-		Set<KindContainer> kindContainers = new LinkedHashSet<>();
-		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
-		KindContainer kind = betreuung.getKind();
-
-		Set<Betreuung> betreuungen = new LinkedHashSet<>();
-		betreuungen.add(betreuung);
-		kind.setBetreuungen(betreuungen);
-
-		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
-		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
-		kind.setGesuch(gesuch);
-		kindContainers.add(kind);
-		gesuch.setKindContainers(kindContainers);
-
-
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
-		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
-		persistence.persist(betreuung.getInstitutionStammdaten());
-
-		persistence.persist(gesuch);
-	}
 }

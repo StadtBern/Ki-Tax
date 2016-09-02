@@ -25,7 +25,9 @@ export enum TSDokumentTyp {
     NACHWEIS_SCHULDEN = <any> 'NACHWEIS_SCHULDEN',
     ERFOLGSRECHNUNGEN = <any> 'ERFOLGSRECHNUNGEN',
     NACHWEIS_EINKOMMENSSITUATION_MONAT = <any> 'NACHWEIS_EINKOMMENSSITUATION_MONAT',
-    DIV = <any> 'DIV'
+    DIV = <any> 'DIV',
+    ORIGINAL_PAPIERGESUCH = <any> 'ORIGINAL_PAPIERGESUCH',
+
 }
 
 export function getTSTSDokumentTypValues(): Array<TSDokumentTyp> {
@@ -56,6 +58,7 @@ export function getTSTSDokumentTypValues(): Array<TSDokumentTyp> {
         TSDokumentTyp.NACHWEIS_SCHULDEN,
         TSDokumentTyp.ERFOLGSRECHNUNGEN,
         TSDokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT,
-        TSDokumentTyp.DIV
+        TSDokumentTyp.DIV,
+        TSDokumentTyp.ORIGINAL_PAPIERGESUCH
     ];
 }
