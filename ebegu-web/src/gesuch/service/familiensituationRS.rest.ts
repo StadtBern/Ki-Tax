@@ -1,6 +1,7 @@
 import {IPromise, IHttpService, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
+import WizardStepManager from './wizardStepManager';
 
 
 export default class FamiliensituationRS {
@@ -8,9 +9,10 @@ export default class FamiliensituationRS {
     http: IHttpService;
     ebeguRestUtil: EbeguRestUtil;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, private $log: ILogService,
+                private wizardStepManager: WizardStepManager) {
         this.serviceURL = REST_API + 'familiensituation';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -24,8 +26,10 @@ export default class FamiliensituationRS {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.$log.debug('PARSING Familiensituation REST object ', response.data);
-            return this.ebeguRestUtil.parseFamiliensituation(new TSFamiliensituation(), response.data);
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.$log.debug('PARSING Familiensituation REST object ', response.data);
+                return this.ebeguRestUtil.parseFamiliensituation(new TSFamiliensituation(), response.data);
+            });
         });
     }
 

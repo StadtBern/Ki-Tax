@@ -5,6 +5,7 @@ import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import WizardStepManager from './wizardStepManager';
 
 
 export default class FinanzielleSituationRS {
@@ -13,9 +14,10 @@ export default class FinanzielleSituationRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
+                private wizardStepManager: WizardStepManager) {
         this.serviceURL = REST_API + 'finanzielleSituation';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -30,8 +32,10 @@ export default class FinanzielleSituationRS {
                 'Content-Type': 'application/json'
             }
         }).then((httpresponse: any) => {
-            this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
-            return this.ebeguRestUtil.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), httpresponse.data);
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING finanzielle Situation  REST object ', httpresponse.data);
+                return this.ebeguRestUtil.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), httpresponse.data);
+            });
         });
     }
 

@@ -5,7 +5,8 @@ import {EbeguWebCore} from '../core.module';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IInjectorService = angular.auto.IInjectorService;
-import {IHttpBackendService} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 
 describe('GesuchstellerRS', function () {
@@ -16,6 +17,8 @@ describe('GesuchstellerRS', function () {
     let mockGesuchsteller: TSGesuchsteller;
     let mockGesuchstellerRest: any;
     let dummyGesuchID: string = '123';
+    let $q: IQService;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -24,6 +27,9 @@ describe('GesuchstellerRS', function () {
         gesuchstellerRS = $injector.get('GesuchstellerRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        wizardStepManager = $injector.get('WizardStepManager');
+        $q = $injector.get('$q');
+        spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
     }));
 
     beforeEach(() => {
@@ -59,6 +65,7 @@ describe('GesuchstellerRS', function () {
                         updatedGesuchsteller = result;
                     });
                     $httpBackend.flush();
+                    expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(dummyGesuchID);
                     expect(updatedGesuchsteller).toBeDefined();
                     expect(updatedGesuchsteller.nachname).toEqual(mockGesuchsteller.nachname);
                     expect(updatedGesuchsteller.id).toEqual(mockGesuchsteller.id);

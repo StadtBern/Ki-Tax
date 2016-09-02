@@ -5,6 +5,7 @@ import TSGesuch from '../../models/TSGesuch';
 import TSFinanzielleSituationResultateDTO from '../../models/dto/TSFinanzielleSituationResultateDTO';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import WizardStepManager from './wizardStepManager';
 
 
 export default class EinkommensverschlechterungContainerRS {
@@ -13,9 +14,10 @@ export default class EinkommensverschlechterungContainerRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
+                private wizardStepManager: WizardStepManager) {
         this.serviceURL = REST_API + 'einkommensverschlechterung';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -32,8 +34,10 @@ export default class EinkommensverschlechterungContainerRS {
                 'Content-Type': 'application/json'
             }
         }).then((httpresponse: any) => {
-            this.log.debug('PARSING Einkommensverschlechterung Container REST object ', httpresponse.data);
-            return this.ebeguRestUtil.parseEinkommensverschlechterungContainer(new TSEinkommensverschlechterungContainer(), httpresponse.data);
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Einkommensverschlechterung Container REST object ', httpresponse.data);
+                return this.ebeguRestUtil.parseEinkommensverschlechterungContainer(new TSEinkommensverschlechterungContainer(), httpresponse.data);
+            });
         });
     }
 
