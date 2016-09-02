@@ -40,6 +40,8 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
 	private AdresseTyp adresseTyp;
 
+	private boolean nichtInGemeinde;
+
 	@Nullable
 	private String organisation;
 
@@ -105,6 +107,14 @@ public class JaxAdresse extends JaxAbstractDateRangedDTO {
 
 	public AdresseTyp getAdresseTyp() {
 		return adresseTyp;
+	}
+
+	public boolean isNichtInGemeinde() {
+		return nichtInGemeinde;
+	}
+
+	public void setNichtInGemeinde(boolean nichtInGemeinde) {
+		this.nichtInGemeinde = nichtInGemeinde;
 	}
 
 	@Nullable

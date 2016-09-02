@@ -100,6 +100,7 @@ public class TestJaxDataUtil {
 		jaxAdresse.setPlz("3014" + postfix);
 		jaxAdresse.setZusatzzeile("Test" + postfix);
 		jaxAdresse.setStrasse("Nussbaumstrasse" + postfix);
+		jaxAdresse.setNichtInGemeinde(false);
 		return jaxAdresse;
 	}
 

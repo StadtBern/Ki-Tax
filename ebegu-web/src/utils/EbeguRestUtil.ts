@@ -198,6 +198,7 @@ export default class EbeguRestUtil {
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
+            restAdresse.nichtInGemeinde = adresse.nichtInGemeinde;
             restAdresse.organisation = adresse.organisation;
             return restAdresse;
         }
@@ -216,6 +217,7 @@ export default class EbeguRestUtil {
             adresseTS.land = (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
+            adresseTS.nichtInGemeinde = receivedAdresse.nichtInGemeinde;
             adresseTS.organisation = receivedAdresse.organisation;
             return adresseTS;
         }
