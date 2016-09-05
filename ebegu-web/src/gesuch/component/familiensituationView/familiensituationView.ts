@@ -74,7 +74,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private confirmAndSave(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
         if (this.isConfirmationRequired()) {
-            let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIIBUNG', {
+            let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                 gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
             });
             this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {

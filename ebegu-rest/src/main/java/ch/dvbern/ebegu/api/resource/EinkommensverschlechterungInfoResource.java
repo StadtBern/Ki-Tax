@@ -5,13 +5,12 @@ import ch.dvbern.ebegu.api.dtos.JaxEinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.WizardStepService;
+import ch.dvbern.ebegu.services.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -28,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Optional;
 
 /**
@@ -45,6 +45,8 @@ public class EinkommensverschlechterungInfoResource {
 	private GesuchService gesuchService;
 	@Inject
 	private WizardStepService wizardStepService;
+	@Inject
+	private EinkommensverschlechterungService  einkommensverschlechterungService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -79,6 +81,10 @@ public class EinkommensverschlechterungInfoResource {
 			gesuch.get().setEinkommensverschlechterungInfo(convertedEkvi);
 			convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch.get())); // saving gesuch cascades and saves Ekvi too
 
+			//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
+			removeEinkommensverschlechterungFromGesuchsteller(gesuch.get().getGesuchsteller1(), oldData, convertedEkvi);
+			removeEinkommensverschlechterungFromGesuchsteller(gesuch.get().getGesuchsteller2(), oldData, convertedEkvi);
+
 			wizardStepService.updateSteps(gesuchId.getId(), oldData,
 				convertedEkvi, WizardStepName.EINKOMMENSVERSCHLECHTERUNG);
 
@@ -91,5 +97,25 @@ public class EinkommensverschlechterungInfoResource {
 			return Response.created(uri).entity(jaxEinkommensverschlechterungInfoReturn).build();
 		}
 		throw new EbeguEntityNotFoundException("saveEinkommensverschlechterungInfo", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
+
+	private void removeEinkommensverschlechterungFromGesuchsteller(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo convertedEkvi) {
+		if (isNeededToRemoveEinkommensverschlechterung(gesuchsteller, oldData, convertedEkvi)) {
+			einkommensverschlechterungService.removeEinkommensverschlechterungContainer(gesuchsteller.getEinkommensverschlechterungContainer());
+			gesuchsteller.setEinkommensverschlechterungContainer(null);
+        }
+	}
+
+	/**
+	 * Returns true when the given GS already has an einkommensverschlechtrung and the new EVInfo says that no EV should be created
+	 * @param gesuchsteller
+	 * @param oldData
+	 * @param newData
+	 * @return
+	 */
+	private boolean isNeededToRemoveEinkommensverschlechterung(Gesuchsteller gesuchsteller, EinkommensverschlechterungInfo oldData, EinkommensverschlechterungInfo newData) {
+		return oldData != null && newData != null && gesuchsteller != null
+			&& oldData.getEinkommensverschlechterung() && !newData.getEinkommensverschlechterung()
+			&& gesuchsteller.getEinkommensverschlechterungContainer() != null;
 	}
 }

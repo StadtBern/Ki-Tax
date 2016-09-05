@@ -642,6 +642,8 @@
     "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
     "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN",
     "FAMILIENSITUATION_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
-    "FAMILIENSITUATION_WARNING_BESCHREIIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht."
+    "FAMILIENSITUATION_WARNING_BESCHREIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht.",
+    "EINKVERS_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
+    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensvershclechterung werden damit gelöscht"
 }
 
