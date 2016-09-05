@@ -171,22 +171,24 @@ public abstract class AbstractTestfall {
 	 */
 	public List<WizardStep> createWizardSteps(final Gesuch gesuch) {
 		List<WizardStep> wizardSteps = new ArrayList<>();
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG, ""));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, ""));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG, "", false));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, "", false));
 		return wizardSteps;
 	}
 
-	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus, String bemerkungen) {
+	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus, String bemerkungen,
+											  boolean verfuegbar) {
 		final WizardStep wizardStep = new WizardStep();
 		wizardStep.setGesuch(gesuch);
+		wizardStep.setVerfuegbar(verfuegbar);
 		wizardStep.setWizardStepName(wizardStepName);
 		wizardStep.setWizardStepStatus(stepStatus);
 		wizardStep.setBemerkungen(bemerkungen);

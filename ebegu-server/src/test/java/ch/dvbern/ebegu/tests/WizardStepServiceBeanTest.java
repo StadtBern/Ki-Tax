@@ -108,11 +108,31 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateWizardStepGesuchsteller() {
+	public void updateWizardStepGesuchstellerNichtFuerUNBESUCHT() {
+		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
+		updateStatusVerfuegbar(finanSitStep, WizardStepStatus.UNBESUCHT, false);
+		updateStatusVerfuegbar(einkVerStep, WizardStepStatus.UNBESUCHT, false);
+
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
 		Assert.assertEquals(10, wizardSteps.size());
 
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCHSTELLER).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCH_ERSTELLEN).getWizardStepStatus());
+		Assert.assertFalse(findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getVerfuegbar());
+		Assert.assertFalse(findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getVerfuegbar());
+	}
+
+	@Test
+	public void updateWizardStepGesuchsteller() {
+		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
+		updateStatusVerfuegbar(finanSitStep, WizardStepStatus.IN_BEARBEITUNG, false);
+		updateStatusVerfuegbar(einkVerStep, WizardStepStatus.IN_BEARBEITUNG, false);
+
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.GESUCH_ERSTELLEN).getWizardStepStatus());
+		Assert.assertTrue(findStepByName(wizardSteps, WizardStepName.FINANZIELLE_SITUATION).getVerfuegbar());
+		Assert.assertTrue(findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getVerfuegbar());
 	}
 
 	@Test
@@ -324,7 +344,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateWizardStepDokumenteNOK() {
+	public void updateWizardStepDokumenteIN_BEARBEITUNG() {
 		updateStatus(dokStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		//nicht alle notwendige dokumente
@@ -333,7 +353,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.DOKUMENTE);
 		Assert.assertEquals(10, wizardSteps.size());
 
-		Assert.assertEquals(WizardStepStatus.NOK, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.IN_BEARBEITUNG, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
 
 
@@ -366,6 +386,12 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	private void updateStatus(WizardStep step, WizardStepStatus status) {
+		step.setWizardStepStatus(status);
+		wizardStepService.saveWizardStep(step);
+	}
+
+	private void updateStatusVerfuegbar(WizardStep step, WizardStepStatus status, boolean verfuegbar) {
+		step.setVerfuegbar(verfuegbar);
 		step.setWizardStepStatus(status);
 		wizardStepService.saveWizardStep(step);
 	}

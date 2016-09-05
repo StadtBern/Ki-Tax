@@ -14,6 +14,7 @@ public abstract class WizardStep_ extends ch.dvbern.ebegu.entities.AbstractEntit
 	public static volatile SingularAttribute<WizardStep, WizardStepStatus> wizardStepStatus;
 	public static volatile SingularAttribute<WizardStep, String> bemerkungen;
 	public static volatile SingularAttribute<WizardStep, Gesuch> gesuch;
+	public static volatile SingularAttribute<WizardStep, Boolean> verfuegbar;
 
 }
 

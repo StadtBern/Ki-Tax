@@ -32,7 +32,7 @@ export default class WizardStepManager {
      * This method must be called only when the Gesuch doesn't exist yet.
      */
     public initWizardSteps() {
-        this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined)];
+        this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined, true)];
         this.currentStepName = TSWizardStepName.GESUCH_ERSTELLEN;
     }
 
@@ -77,13 +77,14 @@ export default class WizardStepManager {
 
     /**
      * Der Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
-     * wird nichts gemacht und undefined wird zurueckgegeben.
+     * wird nichts gemacht und undefined wird zurueckgegeben. Der Status wird auch auf verfuegbar gesetzt
      * @param stepName
      * @param stepStatus
      * @returns {any}
      */
     private updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
+        step.verfuegbar = true;
         step.wizardStepStatus = this.maybeChangeStatus(step.wizardStepStatus, stepStatus);
         if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat updaten und steps laden
             return this.wizardStepRS.updateWizardStep(step).then((response: TSWizardStep) => {

@@ -84,7 +84,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		umzugAdr.setGueltigAb(LocalDate.now().plusDays(7));
 
 		jaxGesuchsteller.setUmzugAdresse(umzugAdr);
-		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
+		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 
 		Assert.assertNotNull(umgezogeneGesuchsteller.getUmzugAdresse());
 		Assert.assertEquals(umgezogeneGesuchsteller.getUmzugAdresse().getStrasse(), umzugAdr.getStrasse());
@@ -99,7 +99,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		pastUmzug.setGueltigAb(LocalDate.now().minusDays(7));
 
 		jaxGesuchsteller.setUmzugAdresse(pastUmzug);
-		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
+		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 		//Die Frage ist was hier das richtige verhalten ist. Fachlich gilt die Umzugadresse ja in der Gegenwart bereits als
 		// Wohnadresse. Die Frage ist ob man trotzdem im GUI die Umzugadr noch anzeigen muesste
 		Assert.assertNull("Umzugadresse ist bereits gueltige Wohnadresse", umgezogeneGesuchsteller.getUmzugAdresse());
@@ -117,7 +117,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(testGesuchsteller.getNachname(), foundGesuchsteller.getNachname());
 		foundGesuchsteller.setNachname("changednachname");
 
-		gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testGesuchsteller, null, null);
+		gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, foundGesuchsteller, null, null);
 		JaxGesuchsteller reloadedGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertEquals(foundGesuchsteller.getNachname(), reloadedGesuchsteller.getNachname());
 		Assert.assertEquals("changednachname", reloadedGesuchsteller.getNachname());
@@ -136,7 +136,7 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 
 		jaxGesuchsteller.setAlternativeAdresse(korrespondenzAdr);
 		jaxGesuchsteller.getAlternativeAdresse().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
-		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
+		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 
 		Assert.assertNotNull(umgezogeneGesuchsteller.getAlternativeAdresse());
 		Assert.assertEquals(umgezogeneGesuchsteller.getAlternativeAdresse().getOrganisation(), korrespondenzAdr.getOrganisation());

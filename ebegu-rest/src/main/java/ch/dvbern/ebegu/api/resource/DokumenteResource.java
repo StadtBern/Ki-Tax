@@ -139,13 +139,13 @@ public class DokumenteResource {
 		DokumentGrund dokumentGrundToMerge = converter.dokumentGrundToEntity(dokumentGrundJAXP, dokumentGrundFromDB);
 		DokumentGrund modifiedDokumentGrund = this.dokumentGrundService.updateDokumentGrund(dokumentGrundToMerge);
 
-		wizardStepService.updateSteps(modifiedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
-
 		if (modifiedDokumentGrund == null) {
 			return null;
 		}
 
+		wizardStepService.updateSteps(modifiedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
 		return converter.dokumentGrundToJax(modifiedDokumentGrund);
+
 	}
 
 	/**

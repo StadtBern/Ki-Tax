@@ -8,13 +8,16 @@ export default class TSWizardStep extends TSAbstractEntity {
     private _wizardStepName: TSWizardStepName;
     private _wizardStepStatus: TSWizardStepStatus;
     private _bemerkungen: string;
+    private _verfuegbar: boolean;
 
-    constructor(gesuchId?: string, wizardStepName?: TSWizardStepName, wizardStepStatus?: TSWizardStepStatus, bemerkungen?: string) {
+    constructor(gesuchId?: string, wizardStepName?: TSWizardStepName, wizardStepStatus?: TSWizardStepStatus, bemerkungen?: string,
+                verfuegbar?: boolean) {
         super();
         this._gesuchId = gesuchId;
         this._wizardStepName = wizardStepName;
         this._wizardStepStatus = wizardStepStatus;
         this._bemerkungen = bemerkungen;
+        this._verfuegbar = verfuegbar;
     }
 
 
@@ -48,5 +51,13 @@ export default class TSWizardStep extends TSAbstractEntity {
 
     set bemerkungen(value: string) {
         this._bemerkungen = value;
+    }
+
+    get verfuegbar(): boolean {
+        return this._verfuegbar;
+    }
+
+    set verfuegbar(value: boolean) {
+        this._verfuegbar = value;
     }
 }

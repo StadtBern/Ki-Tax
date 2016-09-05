@@ -1316,6 +1316,7 @@ export default class EbeguRestUtil {
         this.parseAbstractEntity(wizardStepTS, wizardStepFromServer);
         wizardStepTS.gesuchId = wizardStepFromServer.gesuchId;
         wizardStepTS.wizardStepName = wizardStepFromServer.wizardStepName;
+        wizardStepTS.verfuegbar = wizardStepFromServer.verfuegbar;
         wizardStepTS.wizardStepStatus = wizardStepFromServer.wizardStepStatus;
         wizardStepTS.bemerkungen = wizardStepFromServer.bemerkungen;
         return wizardStepTS;
@@ -1324,6 +1325,7 @@ export default class EbeguRestUtil {
     public wizardStepToRestObject(restWizardStep: any, wizardStep: TSWizardStep): any {
         this.abstractEntityToRestObject(restWizardStep, wizardStep);
         restWizardStep.gesuchId = wizardStep.gesuchId;
+        restWizardStep.verfuegbar = wizardStep.verfuegbar;
         restWizardStep.wizardStepName = wizardStep.wizardStepName;
         restWizardStep.wizardStepStatus = wizardStep.wizardStepStatus;
         restWizardStep.bemerkungen = wizardStep.bemerkungen;

@@ -33,6 +33,9 @@ public class JaxWizardStep extends JaxAbstractDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@NotNull
+	private boolean verfuegbar;
+
 
 
 	public String getGesuchId() {
@@ -66,5 +69,13 @@ public class JaxWizardStep extends JaxAbstractDTO {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public boolean isVerfuegbar() {
+		return verfuegbar;
+	}
+
+	public void setVerfuegbar(boolean verfuegbar) {
+		this.verfuegbar = verfuegbar;
 	}
 }

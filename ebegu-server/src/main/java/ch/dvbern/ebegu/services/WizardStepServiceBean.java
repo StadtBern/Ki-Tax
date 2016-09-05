@@ -89,6 +89,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (WizardStepName.FAMILIENSITUATION.equals(stepName) && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		}
+		else if (WizardStepName.GESUCHSTELLER.equals(stepName)) {
+			updateAllStatusForGesuchsteller(wizardSteps);
+		}
 		else if (WizardStepName.BETREUUNG.equals(stepName)) {
 			updateAllStatusForBetreuung(wizardSteps);
 		}
@@ -160,6 +163,25 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
+	/**
+	 * Wenn der Status von Gesuchsteller auf OK gesetzt wird, koennen wir davon ausgehen, dass die benoetigten GS
+	 * eingetragen wurden. Deswegen kann man die steps FINANZIELLE_SITUATION und EINKOMMENSVERSCHLECHTERUNG aktivieren
+	 * @param wizardSteps
+	 */
+	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+			}
+			else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
+				&& !wizardStep.getVerfuegbar()
+				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
+				wizardStep.setVerfuegbar(true);
+			}
+		}
+	}
+
 	private void updateAllStatusForBetreuung(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep: wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
@@ -196,11 +218,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 				}
-				else if (fromOneGSToTwoGS(oldEntity, newEntity)
-					&& (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())
-					|| WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-					|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				else if (fromOneGSToTwoGS(oldEntity, newEntity)) {
+					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					}
+					else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+					|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						wizardStep.setVerfuegbar(false);
+					}
 				}
 			}
 		}
