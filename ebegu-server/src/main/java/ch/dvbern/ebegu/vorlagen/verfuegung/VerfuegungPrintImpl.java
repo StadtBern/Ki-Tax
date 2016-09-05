@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.verfuegung;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,6 +11,12 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -152,11 +158,10 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			if (betreuung.getVerfuegung().getGeneratedBemerkungen() != null) {
-				// TODO einkomentieren return betreuung.getVerfuegung().getGeneratedBemerkungen();
+				return betreuung.getVerfuegung().getGeneratedBemerkungen();
 			}
 		}
-		// TODO entfernen
-		return "Hier werden manuelle Bemerkungen ausgedruckt";
+		return "";
 	}
 
 	public String getGeneratedBemerkungen() {
@@ -165,12 +170,12 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		if (verfuegung.isPresent()) {
 
 			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
-				// TODO einkomentieren return betreuung.getVerfuegung().getManuelleBemerkungen();
+				return betreuung.getVerfuegung().getManuelleBemerkungen();
 			}
 
 		}
-		// TODO entfernen
-		return "Hier werden generierten Bemerkungen ausgedruckt";
+
+		return "";
 
 	}
 
@@ -201,7 +206,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	public boolean isMutation() {
 
 		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
-		return false;
+		return true;
 	}
 
 	@Override
@@ -236,5 +241,37 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 			return Optional.of(verfuegung);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public boolean isPrintSeitenumbruch() {
+
+		// Fall Zeilen anzahl grosser als 8 muss 'Rechtsmittelbelehrung' auf eine neue Seite gedruckt werden
+		return ermittleAnzahlZeilen() > 8;
+	}
+
+	private int ermittleAnzahlZeilen() {
+
+		int rows = getVerfuegungZeitabschnitt().size();
+		StringBuilder builder = new StringBuilder();
+		builder.append(getManuelleBemerkungen());
+		builder.append("\n");
+		builder.append(getGeneratedBemerkungen());
+		builder.append("\n");
+
+		try {
+			InputStream ins = new ByteArrayInputStream(builder.toString().getBytes());
+			Reader r = new InputStreamReader(ins, "UTF-8");
+			BufferedReader br = new BufferedReader(r);
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				rows++;
+			}
+		} catch (IOException e) {
+			// TUE NIX
+		}
+
+		return rows;
 	}
 }

@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.verfuegung;
 
 import java.util.List;
 
@@ -81,4 +81,10 @@ public interface VerfuegungPrint {
 	 * @return true ob die Bermerkungen ausgedruckt werden muessen
 	 */
 	boolean isPrintGeneratedBemerkung();
+
+	/**
+	 * @return Mit dieser Attribut wird festgestellt ob den Text 'Rechtsmittelbelehrung' auf die nächste Seite gedruckt
+	 *         werden muss
+	 */
+	boolean isPrintSeitenumbruch();
 }
