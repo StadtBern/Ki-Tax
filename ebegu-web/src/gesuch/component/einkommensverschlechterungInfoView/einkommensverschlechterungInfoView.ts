@@ -15,6 +15,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import IFormController = angular.IFormController;
 import ITranslateService = angular.translate.ITranslateService;
+import IPromise = angular.IPromise;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -52,8 +53,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();
-        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
-        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
+        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
+        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
     }
 
     getGesuch(): TSGesuch {
@@ -63,23 +64,16 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return this.gesuchModelManager.getGesuch();
     }
 
-    getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
-        if (this.getGesuch().einkommensverschlechterungInfo == null) {
-            this.gesuchModelManager.initEinkommensverschlechterungInfo();
-        }
-        return this.getGesuch().einkommensverschlechterungInfo;
-    }
-
     showEkvi(): boolean {
-        return this.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
+        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
     }
 
     showJahrPlus1(): boolean {
-        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
+        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
     }
 
     showJahrPlus2(): boolean {
-        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
+        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
     }
 
     public getBasisJahrPlusAsString(jahr: number): string {
@@ -113,82 +107,52 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         }
     }
 
-    /**
-     * Navigation back
-     */
-    previousStep(form: IFormController): void {
-        this.confirmAndSave(form, this.navigatePrevious);
-
-    }
-
-    /**
-     * Navigation forward
-     */
-    nextStep(form: IFormController): void {
-        this.confirmAndSave(form, this.navigateNext);
-    }
-
-    private confirmAndSave(form: angular.IFormController, navigationFunction: (response: any) => any) {
+    public confirmAndSave(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
         if (this.isConfirmationRequired()) {
-            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'EINKVERS_WARNING',
                 deleteText: 'EINKVERS_WARNING_BESCHREIBUNG'
             }).then(() => {   //User confirmed changes
-                this.save(form, navigationFunction);
+                return this.save(form);
             });
         } else {
-            this.save(form, navigationFunction);
+            return this.save(form);
         }
     }
 
-    private save(form: angular.IFormController, navigationFunction: (response: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
         if (form.$valid) {
             this.errorService.clearAll();
-            if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
-                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
-                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+            if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
+                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+                    this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
                 }
-                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
-                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+                    this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
                 }
 
-                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
-                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 =
+                    this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 =
+                    this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
             } else {
                 //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
-                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
-                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
-                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
-                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
-                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
-                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
-                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
-                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
+                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
             }
-            this.gesuchModelManager.updateEinkommensverschlechterungsInfo().then(navigationFunction);
+            return this.gesuchModelManager.updateEinkommensverschlechterungsInfo();
         }
+        return undefined;
     }
 
-    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNext = (response: any) => {
-        if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.einkommensverschlechterungSteuern');
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
-            }
-        } else {
-            this.state.go('gesuch.dokumente');
-        }
-    };
-
-    private navigatePrevious = (response: any) => {
-        this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
-    };
-
-
-    isRequired(basisJahrPlus: number): boolean {
-        let ekv: TSEinkommensverschlechterungInfo = this.getEinkommensverschlechterungsInfo();
+    public isRequired(basisJahrPlus: number): boolean {
+        let ekv: TSEinkommensverschlechterungInfo = this.gesuchModelManager.getEinkommensverschlechterungsInfo();
         if (basisJahrPlus === 2) {
             return ekv.einkommensverschlechterung && !ekv.ekvFuerBasisJahrPlus1;
         } else {

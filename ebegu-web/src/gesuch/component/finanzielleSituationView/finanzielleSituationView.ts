@@ -10,6 +10,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IPromise = angular.IPromise;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -76,34 +77,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-            } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart');
-            } else {
-                this.state.go('gesuch.kinder');
-            }
-        });
-
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
-            } else {
-                this.state.go('gesuch.finanzielleSituationResultate');
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSFinanzielleSituationContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+            return this.gesuchModelManager.saveFinanzielleSituation();
         }
+        return undefined;
     }
 
     calculate() {

@@ -80,30 +80,6 @@ export class DokumenteViewController extends AbstractGesuchViewController {
         }
     }
 
-    previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else if (ekvFuerBasisJahrPlus1) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            } else {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            }
-        }
-    }
-
-    nextStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.state.go('gesuch.verfuegen');
-        }
-    }
-
     addUploadedDokuments(dokumentGrund: any, dokumente: TSDokumentGrund[]): void {
         this.$log.debug('addUploadedDokuments called');
         var index = EbeguUtil.getIndexOfElementwithID(dokumentGrund, dokumente);

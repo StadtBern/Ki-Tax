@@ -9,7 +9,7 @@
                     <div class="form-group">
                         <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
                         <dv-radio-container name="einkommensverschlechterung"
-                                            ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
+                                            ng-model="vm.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
                                             ng-required="true" class="radio input-element">
                         </dv-radio-container>
                         <dv-error-messages for="form.einkommensverschlechterung.$error"
@@ -24,7 +24,7 @@
                     <hr/>
                     <dv-input-container class="form-group dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus1"
-                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
+                                     ng-model="vm.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
                                      aria-label="{vm.getBasisJahrPlusAsString(0)}"
                                      ng-required="vm.isRequired(1)" class="input-element">
                             <span data-translate="EKVI_FUER_JAHR"
@@ -58,7 +58,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus1"></label>
                         <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
-                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
+                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
                                class="form-control" required>
                         <dv-error-messages for="form.grundFuerBasisJahrPlus1.$error"
                                            class="error"></dv-error-messages>
@@ -74,7 +74,7 @@
                     <hr/>
                     <dv-input-container class="form-group dv-radio-container">
                         <md-checkbox name="ekvFuerBasisJahrPlus2"
-                                     ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
+                                     ng-model="vm.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
                                      aria-label="{vm.getBasisJahrPlusAsString(1)}"
                                      ng-required="vm.isRequired(2)" class="input-element">
                             <span data-translate="EKVI_FUER_JAHR"
@@ -108,7 +108,7 @@
                     <dv-input-container class="form-group">
                         <label data-translate="EKVI_GRUND_DES_EREIGNISSES" for="grundFuerBasisJahrPlus2"></label>
                         <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
-                               ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
+                               ng-model="vm.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"
                                class="form-control" required>
                         <dv-error-messages for="form.grundFuerBasisJahrPlus2.$error"
                                            class="error"></dv-error-messages>
@@ -118,20 +118,8 @@
             </div>
 
             <!-- -------------------------------------------Navigation--------------------------------------------  -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.previousStep(form)" button-class="btn btn-link previous">
-                        <span class="fa fa-chevron-left"></span>
-                        <span data-translate="ZURUECK_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.nextStep(form)" button-class="btn btn-link next">
-                        <span data-translate="WEITER_UPPER"></span>
-                        <span class="fa fa-chevron-right"></span>
-                    </dv-loading-button>
-                </div>
-            </div>
+            <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)" dv-sub-step="1">
+            </dv-navigation>
         </form>
     </div>
 

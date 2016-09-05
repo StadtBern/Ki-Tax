@@ -121,19 +121,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         });
     }
 
-    previousStep() {
-        this.state.go('gesuch.betreuungen');
-    }
-
-    nextStep() {
-        this.errorService.clearAll();
-        if (this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-        }
-    }
-
     private isErwerbspensumRequired(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
@@ -148,7 +135,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     /**
-     * Returns true wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber welche bereits eingetragen wurden
+     * Gibt true zurueck wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber mindestens eins bereits eingetragen wurde
      * @returns {boolean}
      */
     public isSaveDisabled(): boolean {
@@ -162,6 +149,3 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
     }
 }
-
-
-

@@ -1,6 +1,6 @@
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
@@ -71,31 +71,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
-            } else {
-                this.state.go('gesuch.familiensituation');
-            }
-        });
-    }
-
-    nextStep(form: IFormController, isJugendamt: boolean): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
-            } else {
-                if (isJugendamt) {
-                    this.state.go('gesuch.kinder');
-                } else {
-                    this.state.go('gesuch.betreuungen');
-                }
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController) {
         if (form.$valid) {
             if (!this.showUmzug) {
                 this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
@@ -104,8 +80,9 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then(navigationFunction);
+            return this.gesuchModelManager.updateGesuchsteller();
         }
+        return undefined;
     }
 
     public getModel(): TSGesuchsteller {

@@ -10,6 +10,8 @@ import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IPromise = angular.IPromise;
+import TSGesuch from '../../../models/TSGesuch';
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -47,23 +49,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.getFinanzielleSituationGS1().steuerveranlagungErhalten === false;
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (gesuch: any) => {
-            this.state.go('gesuch.erwerbsPensen');
-        });
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, (gesuch: any) => {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
+            return this.gesuchModelManager.updateGesuch();
         }
+        return undefined;
     }
 
     public getFinanzielleSituationGS1(): TSFinanzielleSituation {

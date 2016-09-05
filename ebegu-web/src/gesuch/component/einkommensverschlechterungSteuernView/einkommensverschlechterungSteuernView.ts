@@ -9,6 +9,7 @@ import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensversch
 import TSGesuch from '../../../models/TSGesuch';
 import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
+import IPromise = angular.IPromise;
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -83,26 +84,13 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
-        });
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-        });
-
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
             this.removeNotNeededEKV();
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
-
+            return this.gesuchModelManager.updateGesuch();
         }
+        return undefined;
     }
 
     public getEkv_GS1_Bjp1(): TSEinkommensverschlechterung {

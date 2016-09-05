@@ -1,4 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -44,24 +44,17 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
+    save(form: angular.IFormController): IPromise<any> {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            return this.gesuchModelManager.saveGesuchAndFall();
+        }
+        return undefined;
+    }
+
     public getGesuchModel(): TSGesuch {
         return this.gesuchModelManager.getGesuch();
     }
-
-    nextStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.familiensituation');
-        });
-
-    }
-
-    save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.gesuchModelManager.saveGesuchAndFall().then(navigationFunction);
-        }
-    }
-
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
         return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);

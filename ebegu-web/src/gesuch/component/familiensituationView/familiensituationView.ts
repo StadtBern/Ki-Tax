@@ -1,6 +1,5 @@
-
 import AbstractGesuchViewController from '../abstractGesuchView';
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
@@ -19,6 +18,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ITranslateService = angular.translate.ITranslateService;
+import IPromise = angular.IPromise;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -60,39 +60,28 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
-    previousStep(form: IFormController): void {
-        this.confirmAndSave(form, (response: any) => {
-            this.state.go('gesuch.fallcreation');
-        });
-    }
-
-    nextStep(form: IFormController): void {
-        this.confirmAndSave(form, (response: any) => {
-            this.state.go('gesuch.stammdaten');
-        });
-    }
-
-    private confirmAndSave(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
         if (this.isConfirmationRequired()) {
             let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                 gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
             });
-            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
                 title: 'FAMILIENSITUATION_WARNING',
                 deleteText: descriptionText
             }).then(() => {   //User confirmed changes
-                this.save(form, navigationFunction);
+                return this.save(form);
             });
         } else {
-            this.save(form, navigationFunction);
+            return this.save(form);
         }
     }
 
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
+            return this.gesuchModelManager.updateFamiliensituation();
         }
+        return undefined;
     }
 
     showGesuchstellerKardinalitaet(): boolean {

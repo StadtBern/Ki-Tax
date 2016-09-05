@@ -44,14 +44,6 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
 
     }
 
-    previousStep(): void {
-        this.state.go('gesuch.kinder');
-    }
-
-    nextStep(): void {
-        this.state.go('gesuch.erwerbsPensen');
-    }
-
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
         this.gesuchModelManager.findKind(kind);
         let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
@@ -110,17 +102,4 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         return '';
     }
 
-    /**
-     * Schaut dass mindestens eine Betreuung erfasst wurde.
-     * @returns {boolean}
-     */
-    public isThereAnyBetreuung(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        for (let kind of kinderWithBetreuungList) {
-            if (kind.betreuungen && kind.betreuungen.length > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

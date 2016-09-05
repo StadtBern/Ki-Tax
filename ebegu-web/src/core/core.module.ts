@@ -56,6 +56,7 @@ import {DVRoleElementController} from './controller/DVRoleElementController';
 import WizardStepManager from '../gesuch/service/wizardStepManager';
 import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
+import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 
 let dynamicDependencies = function (): string[] {
 
@@ -135,6 +136,7 @@ export const EbeguWebCore: angular.IModule = angular
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())
+    .directive('dvNavigation', DVNavigation.factory())
     .directive('dvLoading', DVLoading.factory())
     .directive('dvLoadingButton', DVLoadingButton.factory())
     .directive('dvSubmitevent', DVSubmitevent.factory())

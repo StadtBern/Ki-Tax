@@ -9,8 +9,8 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import ErrorService from '../../../core/errors/service/ErrorService';
 import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IPromise = angular.IPromise;
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -57,25 +57,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
             this.gesuchModelManager.getFamiliensituation().gemeinsameSteuererklaerung === false;
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (gesuch: any) => {
-            if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 2});
-            } else {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-            }
-        });
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, (gesuch: any) => {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            });
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
@@ -83,13 +65,18 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
                 if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
                     this.gesuchModelManager.saveFinanzielleSituation().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
-                        this.gesuchModelManager.saveFinanzielleSituation().then((navigationFunction));
+                        return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+                            return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                        });
                     });
                 } else {
-                    this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+                    return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+                        return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                    });
                 }
             }
         }
+        return undefined;
     }
 
     calculate() {
