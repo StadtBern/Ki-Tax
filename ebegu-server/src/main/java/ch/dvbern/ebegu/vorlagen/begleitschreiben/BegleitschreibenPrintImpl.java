@@ -11,14 +11,15 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
+
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-
-import javax.annotation.Nonnull;
-import java.util.Optional;
-
-import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
 
 /**
  * Transferobjekt
@@ -41,11 +42,19 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerName() {
 
+		StringBuilder name = new StringBuilder();
 		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
 		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
+			name.append(gesuchsteller.get().getFullName());
 		}
-		return "";
+		if (gesuch.getGesuchsteller2() != null) {
+			Optional<Gesuchsteller> gesuchsteller2 = extractGesuchsteller2();
+			if (gesuchsteller.isPresent()) {
+				name.append("\n");
+				name.append(gesuchsteller2.get().getFullName());
+			}
+		}
+		return name.toString();
 	}
 
 	/**
@@ -54,7 +63,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerStrasse() {
 
-		if(extractGesuchsteller1().isPresent()) {
+		if (extractGesuchsteller1().isPresent()) {
 			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
 			if (gesuchstellerAdresse.isPresent()) {
 				return gesuchstellerAdresse.get().getStrasse();
@@ -69,7 +78,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerPLZStadt() {
 
-		if(extractGesuchsteller1().isPresent()) {
+		if (extractGesuchsteller1().isPresent()) {
 			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
 			if (gesuchstellerAdresse.isPresent()) {
 				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
@@ -98,7 +107,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	}
 
 	@Nonnull
-	protected Optional<Gesuchsteller> extractGesuchsteller2() {
+	private Optional<Gesuchsteller> extractGesuchsteller2() {
 
 		Gesuchsteller gs2 = gesuch.getGesuchsteller2();
 		if (gs2 != null) {
@@ -106,6 +115,5 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 		}
 		return Optional.empty();
 	}
-
 
 }
