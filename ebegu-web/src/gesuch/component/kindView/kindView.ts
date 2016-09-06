@@ -12,6 +12,7 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
+import IPromise = angular.IPromise;
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -28,13 +29,13 @@ export class KindViewController extends AbstractGesuchViewController {
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
                                 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 
@@ -62,19 +63,17 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): IPromise<TSKindContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateKind().then((kindResponse: any) => {
-                this.state.go('gesuch.kinder');
-            });
+            return this.gesuchModelManager.updateKind();
         }
+        return undefined;
     }
 
     cancel(form: IFormController) {
         this.reset();
         form.$setPristine();
-        this.state.go('gesuch.kinder');
     }
 
     reset() {

@@ -1,7 +1,6 @@
 import {IComponentOptions, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {IStammdatenStateParams} from '../../gesuch.route';
@@ -11,7 +10,6 @@ import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import DokumenteRS from '../../service/dokumenteRS.rest';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
@@ -38,13 +36,13 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumenteSonst: TSDokumentGrund[] = [];
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
                                 'DokumenteRS', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
@@ -77,30 +75,6 @@ export class DokumenteViewController extends AbstractGesuchViewController {
             if (tsDokument.dokumentGrundTyp === dokumentGrundTyp) {
                 dokumenteForType.push(tsDokument);
             }
-        }
-    }
-
-    previousStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else if (ekvFuerBasisJahrPlus1) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            } else {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            }
-        }
-    }
-
-    nextStep(form: IFormController): void {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.state.go('gesuch.verfuegen');
         }
     }
 

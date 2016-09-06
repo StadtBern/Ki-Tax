@@ -1,7 +1,6 @@
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
-import {IComponentOptions, IFormController} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
@@ -38,12 +37,12 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
+    static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
+    constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil,
                 gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
@@ -71,31 +70,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
-            } else {
-                this.state.go('gesuch.familiensituation');
-            }
-        });
-    }
-
-    nextStep(form: IFormController, isJugendamt: boolean): void {
-        this.save(form, (gesuchstellerResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
-            } else {
-                if (isJugendamt) {
-                    this.state.go('gesuch.kinder');
-                } else {
-                    this.state.go('gesuch.betreuungen');
-                }
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController) {
         if (form.$valid) {
             if (!this.showUmzug) {
                 this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
@@ -104,8 +79,9 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuchsteller().then(navigationFunction);
+            return this.gesuchModelManager.updateGesuchsteller();
         }
+        return undefined;
     }
 
     public getModel(): TSGesuchsteller {

@@ -1,17 +1,15 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IEinkommensverschlechterungResultateStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -33,11 +31,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
         this.initViewModel();
@@ -47,7 +45,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     private initViewModel() {
-        //this.gesuchModelManager.initEinkommensverschlechterungContainer();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
     }
 
     showGemeinsam(): boolean {
@@ -75,87 +73,26 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, this.navigatePrevious);
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, this.navigateNext);
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
                 this.gesuchModelManager.setGesuchstellerNumber(1);
                 if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
-                    this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                    return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
-                        this.gesuchModelManager.saveEinkommensverschlechterungContainer().then((navigationFunction));
+                        return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                            return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                        });
                     });
                 } else {
-                    this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(navigationFunction);
+                    return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                        return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                    });
                 }
             }
         }
-    }
-
-    private navigatePrevious = (gesuch: any) => {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-        } else {
-            // baisjahrPlus1
-
-            let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
-            let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
-
-            if (gesuchsteller2Required && basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '2'
-                });
-            } else if (gesuchsteller2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '1'
-                });
-            } else if (basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '2'
-                });
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '1'
-                });
-            }
-
-        }
-    };
-
-    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNext = (gesuch: any) => {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.goToDokumenteView();
-        } else {
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else {
-                this.goToDokumenteView();
-            }
-        }
-    };
-
-    /**
-     * Goes to the view of documents and updates before the status of the WizardStep Einkommensverschlechterung to OK
-     */
-    private goToDokumenteView() {
-        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
-            this.state.go('gesuch.dokumente');
-        });
+        return undefined;
     }
 
     calculate() {

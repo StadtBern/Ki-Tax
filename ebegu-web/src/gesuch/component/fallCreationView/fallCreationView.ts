@@ -1,5 +1,4 @@
-import {IComponentOptions, IFormController} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -24,11 +23,11 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams', 'WizardStepManager'];
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
                 private errorService: ErrorService, $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.createNewParam = $stateParams.createNew;
         this.initViewModel();
     }
@@ -44,24 +43,17 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
+    save(form: angular.IFormController): IPromise<any> {
+        if (form.$valid) {
+            this.errorService.clearAll();
+            return this.gesuchModelManager.saveGesuchAndFall();
+        }
+        return undefined;
+    }
+
     public getGesuchModel(): TSGesuch {
         return this.gesuchModelManager.getGesuch();
     }
-
-    nextStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.familiensituation');
-        });
-
-    }
-
-    save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
-        if (form.$valid) {
-            this.errorService.clearAll();
-            this.gesuchModelManager.saveGesuchAndFall().then(navigationFunction);
-        }
-    }
-
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
         return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);

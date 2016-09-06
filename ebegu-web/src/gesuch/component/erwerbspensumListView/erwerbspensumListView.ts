@@ -44,9 +44,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         var vm = this;
         this.initErwerbspensumStepStatus();
     }
@@ -115,23 +115,10 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     private openErwerbspensumView(gesuchstellerNumber: number, erwerbspensumNum: number): void {
-        this.state.go('gesuch.erwerbsPensum', {
+        this.$state.go('gesuch.erwerbsPensum', {
             gesuchstellerNumber: gesuchstellerNumber,
             erwerbspensumNum: erwerbspensumNum
         });
-    }
-
-    previousStep() {
-        this.state.go('gesuch.betreuungen');
-    }
-
-    nextStep() {
-        this.errorService.clearAll();
-        if (this.gesuchModelManager.isGesuchsteller2Required()) {
-            this.state.go('gesuch.finanzielleSituationStart');
-        } else {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-        }
     }
 
     private isErwerbspensumRequired(): boolean {
@@ -148,7 +135,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     /**
-     * Returns true wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber welche bereits eingetragen wurden
+     * Gibt true zurueck wenn Erwerbspensen nicht notwendig sind oder wenn sie notwendig sind aber mindestens eins bereits eingetragen wurde
      * @returns {boolean}
      */
     public isSaveDisabled(): boolean {
@@ -162,6 +149,3 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         return this.isErwerbspensumRequired() && erwerbspensenNumber <= 0;
     }
 }
-
-
-

@@ -1,13 +1,11 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import TSGesuch from '../../../models/TSGesuch';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
@@ -22,11 +20,11 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
 
 export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
     }
@@ -83,26 +81,13 @@ export class EinkommensverschlechterungSteuernViewController extends AbstractGes
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
-        });
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, () => {
-            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
-        });
-
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
             this.removeNotNeededEKV();
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
-
+            return this.gesuchModelManager.updateGesuch();
         }
+        return undefined;
     }
 
     public getEkv_GS1_Bjp1(): TSEinkommensverschlechterung {
