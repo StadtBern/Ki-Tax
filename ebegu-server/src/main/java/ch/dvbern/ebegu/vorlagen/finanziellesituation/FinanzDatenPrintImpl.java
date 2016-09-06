@@ -11,16 +11,16 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import java.math.BigDecimal;
-
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+
+import java.math.BigDecimal;
 
 /**
  * DTO fuer die Finazdaten die im Print gebraucht werden, implementiert den FinanzielleSituationPrint
  */
 public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
-	public static final int DEFAULT_WERT = 250;
+	public static final int DEFAULT_WERT = 123456;
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller1;
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
