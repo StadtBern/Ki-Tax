@@ -39,10 +39,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil, private CONSTANTS: any,
                 private $scope: any, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initialBetreuung = angular.copy(this.getBetreuungModel());
         this.setBetreuungsangebotTypValues();
         this.betreuungsangebot = undefined;
@@ -125,7 +125,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.updateBetreuung().then((betreuungResponse: any) => {
             this.isSavingData = false;
             form.$setPristine();
-            this.state.go(nextStep);
+            this.$state.go(nextStep);
         }).catch((exception) => {
             //todo team Fehler anzeigen
             // starting over
@@ -146,7 +146,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
     public cancel(formCtrl: IFormController) {
         this.reset();
         formCtrl.$setPristine();
-        this.state.go('gesuch.betreuungen');
+        this.$state.go('gesuch.betreuungen');
     }
 
     reset() {

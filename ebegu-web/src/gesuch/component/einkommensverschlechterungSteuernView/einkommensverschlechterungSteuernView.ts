@@ -1,15 +1,12 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import TSGesuch from '../../../models/TSGesuch';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import IPromise = angular.IPromise;
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -23,11 +20,11 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
 
 export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
     }

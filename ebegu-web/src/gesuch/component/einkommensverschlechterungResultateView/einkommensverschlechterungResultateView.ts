@@ -1,18 +1,14 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IEinkommensverschlechterungResultateStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import IPromise = angular.IPromise;
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -34,11 +30,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
         this.initViewModel();

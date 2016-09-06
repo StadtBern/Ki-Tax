@@ -24,7 +24,7 @@ describe('fallCreationView', function () {
         $rootScope = $injector.get('$rootScope');
         form = {};
         form.$valid = true;
-        fallCreationview = new FallCreationViewController($injector.get('$state'), gesuchModelManager, $injector.get('BerechnungsManager'),
+        fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'));
     }));
 

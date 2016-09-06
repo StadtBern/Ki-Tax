@@ -44,9 +44,9 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$log', 'DvDialog', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $log: ILogService, private dvDialog: DvDialog, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         var vm = this;
         this.initErwerbspensumStepStatus();
     }
@@ -115,7 +115,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     }
 
     private openErwerbspensumView(gesuchstellerNumber: number, erwerbspensumNum: number): void {
-        this.state.go('gesuch.erwerbsPensum', {
+        this.$state.go('gesuch.erwerbsPensum', {
             gesuchstellerNumber: gesuchstellerNumber,
             erwerbspensumNum: erwerbspensumNum
         });

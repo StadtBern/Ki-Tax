@@ -1,6 +1,5 @@
 import AbstractGesuchViewController from '../abstractGesuchView';
-import {IComponentOptions} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions, IPromise} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import './familiensituationView.less';
@@ -18,7 +17,6 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ITranslateService = angular.translate.ITranslateService;
-import IPromise = angular.IPromise;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -39,14 +37,14 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     allowedRoles: Array<TSRole>;
     initialFamiliensituation: TSFamiliensituation;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
                       'DvDialog', '$translate'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private $translate: ITranslateService) {
 
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());

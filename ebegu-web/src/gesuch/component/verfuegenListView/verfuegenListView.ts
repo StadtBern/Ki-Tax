@@ -27,9 +27,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
 
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
@@ -80,7 +80,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
             if (betreuungNumber > 0) {
                 this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                this.state.go('gesuch.verfuegenView');
+                this.$state.go('gesuch.verfuegenView');
             }
         }
     }

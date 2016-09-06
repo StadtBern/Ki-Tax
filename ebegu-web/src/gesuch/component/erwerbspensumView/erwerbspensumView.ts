@@ -1,5 +1,4 @@
-import {IComponentOptions} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions, IFormController, IQService, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IErwerbspensumStateParams} from '../../gesuch.route';
@@ -16,10 +15,7 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import IQService = angular.IQService;
-import IPromise = angular.IPromise;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -47,13 +43,13 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     erwerbspensum: TSErwerbspensumContainer;
     patternPercentage: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager',
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
         'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q'];
     /* @ngInject */
-    constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IErwerbspensumStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
                 private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         var vm = this;
         this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
         this.patternPercentage = this.CONSTANTS.PATTERN_PERCENTAGE;

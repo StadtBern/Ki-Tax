@@ -1,7 +1,6 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -13,9 +12,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import IFormController = angular.IFormController;
 import ITranslateService = angular.translate.ITranslateService;
-import IPromise = angular.IPromise;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -36,13 +33,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     selectedStichtagBjP2: TSMonth = undefined;
     initialEinkVersInfo: TSEinkommensverschlechterungInfo;
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
         , 'WizardStepManager', 'DvDialog'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
         this.initialEinkVersInfo = angular.copy(this.getGesuch().einkommensverschlechterungInfo);

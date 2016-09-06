@@ -31,10 +31,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
                 private authServiceRS: AuthServiceRS) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
             console.log('resetting state due to navigation change, ');
@@ -62,7 +62,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
             //TODO (team) das muss in der Direktive dv-navigation gemacht werden. Erst nach der Implementierung von saveVerfuegung.
             // Beim Speichern der Vefuegung gibt es einen Fehler, der mit der Implementierung dieser Methode nicht mehr erscheinen sollte.
-                this.state.go('gesuch.verfuegen');
+                this.$state.go('gesuch.verfuegen');
             // });
         }
     }

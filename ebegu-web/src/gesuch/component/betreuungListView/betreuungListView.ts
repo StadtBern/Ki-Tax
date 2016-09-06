@@ -35,10 +35,10 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
         'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
@@ -86,7 +86,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     private openBetreuungView(): void {
-        this.state.go('gesuch.betreuung');
+        this.$state.go('gesuch.betreuung');
     }
 
     /**

@@ -1,7 +1,6 @@
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {EnumEx} from '../../../utils/EnumEx';
 import {IComponentOptions} from 'angular';
-import {IStateService} from 'angular-ui-router';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {TSGeschlecht} from '../../../models/enums/TSGeschlecht';
 import {IStammdatenStateParams} from '../../gesuch.route';
@@ -38,12 +37,12 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', '$state', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
+    static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, ebeguRestUtil: EbeguRestUtil,
+    constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil,
                 gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);

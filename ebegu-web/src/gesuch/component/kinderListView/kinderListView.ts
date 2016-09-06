@@ -27,10 +27,10 @@ export class KinderListViewController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private $translate: ITranslateService, private DvDialog: DvDialog,
                 wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
@@ -63,7 +63,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     private openKindView(kindNumber: number): void {
-        this.state.go('gesuch.kind', {kindNumber: kindNumber});
+        this.$state.go('gesuch.kind', {kindNumber: kindNumber});
     }
 
     removeKind(kind: any): void {

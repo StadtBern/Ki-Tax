@@ -1,7 +1,6 @@
-import {IComponentOptions, IFormController, ILogService} from 'angular';
+import {IComponentOptions, ILogService, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IEinkommensverschlechterungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
@@ -9,7 +8,6 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import WizardStepManager from '../../service/wizardStepManager';
-import IPromise = angular.IPromise;
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
@@ -28,14 +26,14 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
                                 'WizardStepManager'];
 
     /* @ngInject */
-    constructor($stateParams: IEinkommensverschlechterungStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
                 wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);

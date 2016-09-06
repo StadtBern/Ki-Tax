@@ -1,15 +1,14 @@
 import {IDirective, IDirectiveFactory} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
-import Moment = moment.Moment;
-import INgModelController = angular.INgModelController;
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
-import ITranslateService = angular.translate.ITranslateService;
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 
 /**
@@ -18,7 +17,7 @@ let template = require('./dv-navigation.html');
  *
  * -- dvPrevious: function      Wenn true wird der Button "previous" angezeigt (nicht gleichzeitig mit dvCancel benutzen)
  * -- dvNext: function          Wenn true wird der Button "next" angezeigt
- * -- dvNextDisabled: boolean
+ * -- dvNextDisabled: function  Wenn man eine extra Pruefung braucht, um den Button Next zu disablen
  * -- dvSubStep: number         Manche Steps haben sog. SubSteps (z.B. finanzielle Situation). Dieses Parameter wird benutzt,
  *                              um zwischen SubSteps unterscheiden zu koennen
  * -- dvSave: function          Die callback Methode, die man aufrufen muss, wenn der Button geklickt wird. Verwenden nur um die Daten zu speichern

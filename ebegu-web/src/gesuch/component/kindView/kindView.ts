@@ -29,13 +29,13 @@ export class KindViewController extends AbstractGesuchViewController {
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
                                 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IKindStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
 
