@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.verfuegung;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,14 +11,17 @@ package ch.dvbern.ebegu.vorlagen;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.util.Constants;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Transferobjekt
@@ -159,11 +162,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-
 			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
-				bemerkungen.append(betreuung.getVerfuegung().getManuelleBemerkungen());
+				return betreuung.getVerfuegung().getManuelleBemerkungen();
 			}
-			return bemerkungen.toString();
 		}
 		return "";
 	}

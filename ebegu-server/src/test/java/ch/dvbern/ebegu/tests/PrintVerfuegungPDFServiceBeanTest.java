@@ -1,13 +1,14 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
-import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.PrintVerfuegungPDFService;
-import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
-import ch.dvbern.ebegu.tets.TestDataUtil;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -19,9 +20,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.PrintVerfuegungPDFService;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 
 /**
  * Test der die vom JA gemeldeten Testfaelle ueberprueft.
@@ -72,7 +78,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
 			File file = writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
-			// openPDF(file);
+			openPDF(file);
 			i++;
 		}
 
