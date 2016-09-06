@@ -20,21 +20,15 @@ public interface VerfuegungPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getGesuchstellerName();
+	String getTitel();
 
-	String getGesuchstellerStrasse();
+	String getAngebot();
 
-	String getGesuchstellerPLZStadt();
+	String getInstitution();
 
 	String getReferenznummer();
 
-	// TODO ZEAB entfernen gibt es nicht merh
 	String getVerfuegungsdatum();
-
-	// TODO ZEAB entfernen gibt es nicht merh
-	String getGesuchsteller1();
-
-	String getGesuchsteller2();
 
 	String getKindNameVorname();
 
@@ -51,13 +45,12 @@ public interface VerfuegungPrint {
 	/**
 	 * @return die Bemerkung
 	 */
-	String getBemerkungen();
+	String getManuelleBemerkungen();
 
 	/**
-	 * @return true falls Gesuchstelller 2 existiert
+	 * @return die Generierte Bemerkungen
 	 */
-	// TODO ZEAB entfernen gibt es nicht merh
-	boolean isExistGesuchsteller2();
+	String getGeneratedBemerkungen();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist
@@ -72,11 +65,21 @@ public interface VerfuegungPrint {
 	/**
 	 * @return true falls eine Mutation ist
 	 */
-	// TODO ZEAB entfernen gibt es nicht merh
 	boolean isMutation();
 
 	/**
 	 * @return true ob die Bermerkungen ausgedruckt werden muessen
 	 */
-	boolean isPrintbemerkungen();
+	boolean isPrintbemerkung();
+
+	/**
+	 * @return true ob die Bermerkungen ausgedruckt werden muessen
+	 */
+	boolean isPrintManuellebemerkung();
+
+	/**
+	 * @return true ob die Bermerkungen ausgedruckt werden muessen
+	 */
+	boolean isPrintGeneratedBemerkung();
+
 }

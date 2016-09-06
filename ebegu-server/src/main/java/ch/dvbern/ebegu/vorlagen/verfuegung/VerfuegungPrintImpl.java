@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
-
 /**
  * Transferobjekt
  */
@@ -37,47 +35,24 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		this.betreuung = betreuung;
 	}
 
-	/**
-	 * @return GesuchstellerName
-	 */
 	@Override
-	public String getGesuchstellerName() {
+	public String getTitel() {
 
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
-		return "";
+		// TODO ZEAB Implementieren
+		return "Verfügung / Bestätigung";
 	}
 
-	/**
-	 * @return Gesuchsteller-Strasse
-	 */
 	@Override
-	public String getGesuchstellerStrasse() {
+	public String getAngebot() {
 
-		if(extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getStrasse();
-			}
-		}
-		return "";
+		// TODO ZEAB Implementieren
+		return "Kita";
 	}
 
-	/**
-	 * @return Gesuchsteller-PLZ Stadt
-	 */
 	@Override
-	public String getGesuchstellerPLZStadt() {
+	public String getInstitution() {
 
-		if(extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
-			}
-		}
-		return "";
+		return betreuung.getInstitutionStammdaten().getInstitution().getName();
 	}
 
 	/**
@@ -103,32 +78,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 				return Constants.DATE_FORMATTER.format(verfuegung1.getTimestampErstellt());
 			}
 		}
-		return "";
-	}
-
-	/**
-	 * @return Name des Gesuchsteller1
-	 */
-	@Override
-	public String getGesuchsteller1() {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
-		return "";
-	}
-
-	/**
-	 * @return Name des Gesuchsteller2
-	 */
-	@Override
-	public String getGesuchsteller2() {
-
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller2();
-		if (gesuchsteller.isPresent()) {
-			return gesuchsteller.get().getFullName();
-		}
+		// TODO ZEAB was muss hier passieren?? Leer ausdrucken??
 		return "";
 	}
 
@@ -194,29 +144,28 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return Bemerkungen
 	 */
 	@Override
-	public String getBemerkungen() {
+	public String getGeneratedBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			StringBuilder bemerkungen = new StringBuilder();
 			if (betreuung.getVerfuegung().getGeneratedBemerkungen() != null) {
-				bemerkungen.append(betreuung.getVerfuegung().getGeneratedBemerkungen());
+				return betreuung.getVerfuegung().getGeneratedBemerkungen();
 			}
+		}
+		return "";
+	}
+
+	public String getManuelleBemerkungen() {
+
+		Optional<Verfuegung> verfuegung = extractVerfuegung();
+		if (verfuegung.isPresent()) {
+
 			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
 				bemerkungen.append(betreuung.getVerfuegung().getManuelleBemerkungen());
 			}
 			return bemerkungen.toString();
 		}
 		return "";
-	}
-
-	/**
-	 * @return true falls Gesuchsteller 2 existiert
-	 */
-	@Override
-	public boolean isExistGesuchsteller2() {
-
-		return betreuung.extractGesuch().getGesuchsteller2() != null;
 	}
 
 	/**
@@ -246,33 +195,25 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	public boolean isMutation() {
 
 		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
-		return false;
+		return true;
 	}
 
 	@Override
-	public boolean isPrintbemerkungen() {
+	public boolean isPrintbemerkung() {
 
-		return !"".equalsIgnoreCase(getBemerkungen());
+		return isPrintManuellebemerkung() || isPrintGeneratedBemerkung();
 	}
 
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller1() {
+	@Override
+	public boolean isPrintManuellebemerkung() {
 
-		Gesuchsteller gs1 = betreuung.extractGesuch().getGesuchsteller1();
-		if (gs1 != null) {
-			return Optional.of(gs1);
-		}
-		return Optional.empty();
+		return !"".equalsIgnoreCase(getManuelleBemerkungen());
 	}
 
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller2() {
+	@Override
+	public boolean isPrintGeneratedBemerkung() {
 
-		Gesuchsteller gs2 = betreuung.extractGesuch().getGesuchsteller2();
-		if (gs2 != null) {
-			return Optional.of(gs2);
-		}
-		return Optional.empty();
+		return !"".equalsIgnoreCase(getGeneratedBemerkungen());
 	}
 
 	@Nonnull
@@ -280,8 +221,6 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 		return betreuung.getKind().getKindJA();
 	}
-
-
 
 	@Nonnull
 	private Optional<Verfuegung> extractVerfuegung() {
