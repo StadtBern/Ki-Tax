@@ -11,17 +11,16 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.util.Constants;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Transferobjekt
@@ -150,10 +149,8 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	public String getGeneratedBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent()) {
-			if (betreuung.getVerfuegung().getGeneratedBemerkungen() != null) {
-				return betreuung.getVerfuegung().getGeneratedBemerkungen();
-			}
+		if (verfuegung.isPresent() && verfuegung.get().getGeneratedBemerkungen() != null) {
+			return betreuung.getVerfuegung().getGeneratedBemerkungen();
 		}
 		return "";
 	}
@@ -161,10 +158,8 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent()) {
-			if (betreuung.getVerfuegung().getManuelleBemerkungen() != null) {
-				return betreuung.getVerfuegung().getManuelleBemerkungen();
-			}
+		if (verfuegung.isPresent() && verfuegung.get().getManuelleBemerkungen() != null) {
+			return betreuung.getVerfuegung().getManuelleBemerkungen();
 		}
 		return "";
 	}
