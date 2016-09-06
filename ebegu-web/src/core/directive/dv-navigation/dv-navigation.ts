@@ -12,12 +12,24 @@ import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./dv-navigation.html');
 
-
+/**
+ * Diese Direktive wird benutzt, um die Navigation Buttons darzustellen. Folgende Parameter koennen benutzt werden,
+ * um die Funktionalitaet zu definieren:
+ *
+ * -- dvPrevious: function      Wenn true wird der Button "previous" angezeigt (nicht gleichzeitig mit dvCancel benutzen)
+ * -- dvNext: function          Wenn true wird der Button "next" angezeigt
+ * -- dvNextDisabled: boolean
+ * -- dvSubStep: number         Manche Steps haben sog. SubSteps (z.B. finanzielle Situation). Dieses Parameter wird benutzt,
+ *                              um zwischen SubSteps unterscheiden zu koennen
+ * -- dvSave: function          Die callback Methode, die man aufrufen muss, wenn der Button geklickt wird. Verwenden nur um die Daten zu speichern
+ * -- dvCancel: function        Die callback Methode, um alles zurueckzusetzen (nicht gleichzeitig mit dvPrevious benutzen)
+ */
 export class DVNavigation implements IDirective {
     restrict = 'E';
     scope = {
-        dvPrevious: '<', // boolean
-        dvNext: '<', // boolean
+        dvPrevious: '&?',
+        dvNext: '&?',
+        dvCancel: '&?',
         dvNextDisabled: '<',
         dvSubStep: '<',
         dvSave: '&?'
@@ -41,6 +53,7 @@ export class NavigatorController {
     dvPrevious: boolean;
     dvNext: boolean;
     dvSave: () => any;
+    dvCancel: () => any;
     dvNextDisabled: boolean;
     dvSubStep: number;
 
@@ -48,6 +61,10 @@ export class NavigatorController {
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
         private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
+    }
+
+    public doesCancelExist(): boolean {
+        return this.dvCancel !== undefined && this.dvCancel !== null;
     }
 
     /**
@@ -104,6 +121,15 @@ export class NavigatorController {
         }
     }
 
+    /**
+     * Diese Methode ist aehnlich wie previousStep() aber wird verwendet, um die Aenderungen NICHT zu speichern
+     */
+    public cancel(): void {
+        if (this.dvCancel) {
+            this.dvCancel();
+        }
+        this.navigateToPreviousStep();
+    }
 
     /**
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der naechste Step ist und wechselt zu diesem.
@@ -120,31 +146,40 @@ export class NavigatorController {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
             } else {
-                if (TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
-                    || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()) {
+                if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
+                    || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                     this.state.go('gesuch.betreuungen');
                 } else {
                     this.state.go('gesuch.kinder');
                 }
             }
-        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName()) {
+        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.state.go('gesuch.betreuungen');
 
-        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName()) {
-            if (TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
-                || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()) {
+        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.state.go('gesuch.kinder');
+
+        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
+                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.state.go('gesuch.verfuegen');
             } else {
                 this.state.go('gesuch.erwerbsPensen');
             }
 
-        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName()) {
+        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            // Diese Logik ist ziemlich kompliziert. Deswegen bleibt sie noch in betreuungView.ts -> Hier wird dann nichts gemacht
+
+        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.errorService.clearAll();
             if (this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.finanzielleSituationStart');
             } else {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
             }
+
+        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.state.go('gesuch.erwerbsPensen');
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
@@ -199,19 +234,28 @@ export class NavigatorController {
                 this.state.go('gesuch.familiensituation');
             }
 
-        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName()) {
+        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.moveBackToGesuchsteller();
 
-        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName()) {
-            if (TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
-                || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()) {
+        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.state.go('gesuch.kinder');
+
+        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION )
+                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.moveBackToGesuchsteller();
             } else {
                 this.state.go('gesuch.kinder');
             }
 
-        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName()) {
+        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
             this.state.go('gesuch.betreuungen');
+
+        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            this.state.go('gesuch.betreuungen');
+
+        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.state.go('gesuch.erwerbsPensen');
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
@@ -247,13 +291,16 @@ export class NavigatorController {
         } else if (TSWizardStepName.DOKUMENTE === this.wizardStepManager.getCurrentStepName()) {
             this.navigatePreviousDokumente();
 
-        } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName()) {
-            if (TSRole.SACHBEARBEITER_INSTITUTION === this.authServiceRS.getPrincipalRole()
-                || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === this.authServiceRS.getPrincipalRole()) {
+        } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
+                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.state.go('gesuch.betreuungen');
             } else {
                 this.state.go('gesuch.dokumente');
             }
+
+        } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.state.go('gesuch.verfuegen');
         }
     }
 
@@ -437,17 +484,17 @@ export class NavigatorController {
     }
 
     private navigatePreviousDokumente(): void {
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else if (ekvFuerBasisJahrPlus1) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-            } else {
-                this.state.go('gesuch.einkommensverschlechterungInfo');
-            }
+        let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
+        let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+        if (ekvFuerBasisJahrPlus2) {
+            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+        } else if (ekvFuerBasisJahrPlus1) {
+            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+        } else {
+            this.state.go('gesuch.einkommensverschlechterungInfo');
+        }
     }
 
     private moveBackToGesuchsteller() {

@@ -12,6 +12,7 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
+import IPromise = angular.IPromise;
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -62,19 +63,17 @@ export class KindViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): IPromise<TSKindContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateKind().then((kindResponse: any) => {
-                this.state.go('gesuch.kinder');
-            });
+            return this.gesuchModelManager.updateKind();
         }
+        return undefined;
     }
 
     cancel(form: IFormController) {
         this.reset();
         form.$setPristine();
-        this.state.go('gesuch.kinder');
     }
 
     reset() {

@@ -10,6 +10,8 @@ import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
 import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
+import {TSRole} from '../../../models/enums/TSRole';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -23,13 +25,15 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
+        'AuthServiceRS'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager) {
+                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
+                private authServiceRS: AuthServiceRS) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
@@ -44,7 +48,6 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     cancel(form: IFormController): void {
         this.reset();
         form.$setPristine();
-        this.state.go('gesuch.verfuegen');
     }
 
     reset() {
@@ -57,6 +60,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             //this.errorService.clearAll();
             //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
             // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
+            //TODO (team) das muss in der Direktive dv-navigation gemacht werden. Erst nach der Implementierung von saveVerfuegung.
+            // Beim Speichern der Vefuegung gibt es einen Fehler, der mit der Implementierung dieser Methode nicht mehr erscheinen sollte.
                 this.state.go('gesuch.verfuegen');
             // });
         }
@@ -159,6 +164,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
         }
         return undefined;
+    }
+
+    public showNextButton(): boolean {
+        return !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
+        && !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT);
     }
 
 }

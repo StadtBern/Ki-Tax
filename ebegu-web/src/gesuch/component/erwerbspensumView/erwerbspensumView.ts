@@ -18,6 +18,8 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
+import IQService = angular.IQService;
+import IPromise = angular.IPromise;
 let template = require('./erwerbspensumView.html');
 require('./erwerbspensumView.less');
 
@@ -46,11 +48,11 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
     patternPercentage: string;
 
     static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager',
-        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager'];
+        'CONSTANTS', '$scope', 'ErrorService', 'AuthServiceRS', 'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IErwerbspensumStateParams, state: IStateService, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,
-                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager) {
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, private $q: IQService) {
         super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         var vm = this;
         this.gesuchModelManager.initGesuch(false);  //wird aufgerufen um einen restorepunkt des aktullen gesuchs zu machen
@@ -100,21 +102,21 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         }
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): IPromise<any> {
         if (form.$valid) {
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
             this.errorService.clearAll();
-            this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
+            return this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
                 form.$setPristine();
-                this.state.go('gesuch.erwerbsPensen');
+                return this.$q.when({});
             });
         }
+        return undefined;
     }
 
     cancel(form: IFormController) {
         this.reset();
         form.$setPristine();
-        this.state.go('gesuch.erwerbsPensen');
     }
 
     reset() {
