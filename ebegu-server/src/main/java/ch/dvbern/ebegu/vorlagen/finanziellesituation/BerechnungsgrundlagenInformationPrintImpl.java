@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -20,7 +20,7 @@ import ch.dvbern.ebegu.util.Constants;
  */
 public class BerechnungsgrundlagenInformationPrintImpl implements BerechnungsgrundlagenInformationPrint {
 
-	private FinanzielleSituationPrint fs;
+	private FinanzielleSituationPrint finanz;
 	private EinkommensverschlechterungPrint ev1;
 	private EinkommensverschlechterungPrint ev2;
 
@@ -40,9 +40,8 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
 		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
-		String berechnungVon = "TODO datum"; // TODO
-		String referenznummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
-		fs = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, berechnungVon, referenznummer);
+		String fallNummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
+		finanz = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, fallNummer);
 
 		// Einkommensverschleschtereung 1
 		String einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
@@ -62,7 +61,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller1Name() {
 
-		return gesuch.getGesuchsteller1() != null ?  gesuch.getGesuchsteller1().getFullName(): null;
+		return gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getFullName() : null;
 	}
 
 	@Override
@@ -80,7 +79,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public FinanzielleSituationPrint getFinanz() {
 
-		return fs;
+		return finanz;
 	}
 
 	@Override

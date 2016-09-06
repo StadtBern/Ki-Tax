@@ -129,20 +129,20 @@ public enum MathUtil {
 	}
 
 	/**
-	 * adds augement parameters to value
+	 * adds augement parameters to value, null values are treated as zero
 	 * @throws PrecisionTooLargeException if the resulting value exceeds the defined precision
 	 */
 	@Nullable
 	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal... augment) {
-
-		if (value == null || augment == null || augment.length == 0) {
+		if ( augment.length == 0) {
 			return null;
 		}
-		BigDecimal result = value;
+
+		BigDecimal result = value!=null? value:BigDecimal.ZERO;
 		for (int i = 0; i < augment.length; i++) {
 			BigDecimal valueToAdd = augment[i];
 			if (valueToAdd == null) {
-				return null;
+				continue;
 			} else {
 				result = result
 					.add(valueToAdd)

@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -17,35 +17,28 @@ package ch.dvbern.ebegu.vorlagen;
 public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implements FinanzielleSituationPrint {
 
 	private String finanzielleSituationJahr;
-	private String berechnungVon;
-	private String referenznummer;
+	private String fallNummer;
 
 	/**
 	 * Konstruktor
 	 *
 	 * @param finanzielleSituationG1
 	 * @param finanzielleSituationG2
+	 * @param fallNummer
 	 */
 	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
-										 String berechnungVon, String referenznummer) {
+			String fallNummer) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 		this.finanzielleSituationJahr = finanzielleSituationJahr;
-		this.berechnungVon = berechnungVon;
-		this.referenznummer = referenznummer;
+		this.fallNummer = fallNummer;
 
 	}
 
 	@Override
-	public String getReferenznummer() {
+	public String getFallNummer() {
 
-		return referenznummer;
-	}
-
-	@Override
-	public String getBerechnungVon() {
-
-		return berechnungVon;
+		return fallNummer;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen;
+package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -19,12 +19,7 @@ public interface FinanzielleSituationPrint extends FinanzDatenPrint {
 	/**
 	 * @return die Referenznummer
 	 */
-	String getReferenznummer();
-
-	/**
-	 * @return das Berechnungdatum
-	 */
-	String getBerechnungVon();
+	String getFallNummer();
 
 	/**
 	 * @return das Jahr der FinanzielleSituation
