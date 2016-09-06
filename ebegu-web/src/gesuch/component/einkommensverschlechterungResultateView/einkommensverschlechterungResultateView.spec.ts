@@ -8,6 +8,7 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
+import WizardStepManager from '../../service/wizardStepManager';
 
 describe('einkommensverschlechterungResultateView', function () {
 
@@ -25,6 +26,7 @@ describe('einkommensverschlechterungResultateView', function () {
     var state: any;
     var consta: any;
     var errorservice: any;
+    let wizardStepManager: WizardStepManager;
 
     beforeEach(angular.mock.inject(function ($injector: any) {
         $componentController = $injector.get('$componentController');
@@ -37,6 +39,7 @@ describe('einkommensverschlechterungResultateView', function () {
         state = $injector.get('$state');
         consta = $injector.get('CONSTANTS');
         errorservice = $injector.get('ErrorService');
+        wizardStepManager = $injector.get('WizardStepManager');
 
 
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue($q.when({}));
@@ -59,7 +62,7 @@ describe('einkommensverschlechterungResultateView', function () {
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
             ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, state, gesuchModelManager,
-                berechnungsManager, consta, errorservice);
+                berechnungsManager, consta, errorservice, wizardStepManager);
 
         });
         it('should return + 100.0%', () => {

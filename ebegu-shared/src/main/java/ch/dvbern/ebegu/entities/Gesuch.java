@@ -1,12 +1,14 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -52,6 +54,11 @@ public class Gesuch extends AbstractAntragEntity {
 
 	@Transient
 	private FinanzDatenDTO finanzDatenDTO;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkungen;
 
 
 	@Nullable
@@ -112,5 +119,14 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setFinanzDatenDTO(FinanzDatenDTO finanzDatenDTO) {
 		this.finanzDatenDTO = finanzDatenDTO;
+	}
+
+	@Nullable
+	public String getBemerkungen() {
+		return bemerkungen;
+	}
+
+	public void setBemerkungen(@Nullable String bemerkungen) {
+		this.bemerkungen = bemerkungen;
 	}
 }

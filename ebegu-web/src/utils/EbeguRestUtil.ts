@@ -45,6 +45,7 @@ import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import TSTempDokument from '../models/TSTempDokument';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
+import TSWizardStep from '../models/TSWizardStep';
 
 
 export default class EbeguRestUtil {
@@ -197,6 +198,7 @@ export default class EbeguRestUtil {
             restAdresse.land = adresse.land;
             restAdresse.gemeinde = adresse.gemeinde;
             restAdresse.adresseTyp = TSAdressetyp[adresse.adresseTyp];
+            restAdresse.nichtInGemeinde = adresse.nichtInGemeinde;
             restAdresse.organisation = adresse.organisation;
             return restAdresse;
         }
@@ -215,6 +217,7 @@ export default class EbeguRestUtil {
             adresseTS.land = (this.landCodeToTSLand(receivedAdresse.land)) ? this.landCodeToTSLand(receivedAdresse.land).code : undefined;
             adresseTS.gemeinde = receivedAdresse.gemeinde;
             adresseTS.adresseTyp = receivedAdresse.adresseTyp;
+            adresseTS.nichtInGemeinde = receivedAdresse.nichtInGemeinde;
             adresseTS.organisation = receivedAdresse.organisation;
             return adresseTS;
         }
@@ -353,7 +356,6 @@ export default class EbeguRestUtil {
             this.abstractEntityToRestObject(restFamiliensituation, familiensituation);
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
-            restFamiliensituation.bemerkungen = familiensituation.bemerkungen;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
 
             return restFamiliensituation;
@@ -383,7 +385,6 @@ export default class EbeguRestUtil {
     public parseFamiliensituation(familiensituation: TSFamiliensituation, familiensituationFromServer: any): TSFamiliensituation {
         if (familiensituationFromServer) {
             this.parseAbstractEntity(familiensituation, familiensituationFromServer);
-            familiensituation.bemerkungen = familiensituationFromServer.bemerkungen;
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
@@ -440,6 +441,7 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
+        restGesuch.bemerkungen = gesuch.bemerkungen;
         return restGesuch;
     }
 
@@ -451,6 +453,7 @@ export default class EbeguRestUtil {
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
+            gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             return gesuchTS;
         }
         return undefined;
@@ -816,7 +819,6 @@ export default class EbeguRestUtil {
         if (kind.pensumFachstelle) {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
         }
-        restKind.bemerkungen = kind.bemerkungen;
         return restKind;
     }
 
@@ -855,7 +857,6 @@ export default class EbeguRestUtil {
             if (kindFromServer.pensumFachstelle) {
                 kindTS.pensumFachstelle = this.parsePensumFachstelle(new TSPensumFachstelle(), kindFromServer.pensumFachstelle);
             }
-            kindTS.bemerkungen = kindFromServer.bemerkungen;
             return kindTS;
         }
         return undefined;
@@ -895,7 +896,6 @@ export default class EbeguRestUtil {
     public betreuungToRestObject(restBetreuung: any, betreuung: TSBetreuung): any {
         this.abstractEntityToRestObject(restBetreuung, betreuung);
         restBetreuung.betreuungsstatus = betreuung.betreuungsstatus;
-        restBetreuung.bemerkungen = betreuung.bemerkungen;
         restBetreuung.grundAblehnung = betreuung.grundAblehnung;
         restBetreuung.datumAblehnung = DateUtil.momentToLocalDate(betreuung.datumAblehnung);
         restBetreuung.datumBestaetigung = DateUtil.momentToLocalDate(betreuung.datumBestaetigung);
@@ -945,7 +945,6 @@ export default class EbeguRestUtil {
     public parseBetreuung(betreuungTS: TSBetreuung, betreuungFromServer: any): TSBetreuung {
         if (betreuungFromServer) {
             this.parseAbstractEntity(betreuungTS, betreuungFromServer);
-            betreuungTS.bemerkungen = betreuungFromServer.bemerkungen;
             betreuungTS.grundAblehnung = betreuungFromServer.grundAblehnung;
             betreuungTS.datumAblehnung = DateUtil.localDateToMoment(betreuungFromServer.datumAblehnung);
             betreuungTS.datumBestaetigung = DateUtil.localDateToMoment(betreuungFromServer.datumBestaetigung);
@@ -1282,7 +1281,7 @@ export default class EbeguRestUtil {
         return resultList;
     }
 
-    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any) {
+    public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any): TSVerfuegungZeitabschnitt {
         if (zeitabschnittFromServer) {
             this.parseDateRangeEntity(verfuegungZeitabschnittTS, zeitabschnittFromServer);
             verfuegungZeitabschnittTS.abzugFamGroesse = zeitabschnittFromServer.abzugFamGroesse;
@@ -1311,5 +1310,35 @@ export default class EbeguRestUtil {
             return tsTempDokument;
         }
         return undefined;
+    }
+
+    public parseWizardStep(wizardStepTS: TSWizardStep, wizardStepFromServer: any): TSWizardStep {
+        this.parseAbstractEntity(wizardStepTS, wizardStepFromServer);
+        wizardStepTS.gesuchId = wizardStepFromServer.gesuchId;
+        wizardStepTS.wizardStepName = wizardStepFromServer.wizardStepName;
+        wizardStepTS.wizardStepStatus = wizardStepFromServer.wizardStepStatus;
+        wizardStepTS.bemerkungen = wizardStepFromServer.bemerkungen;
+        return wizardStepTS;
+    }
+
+    public wizardStepToRestObject(restWizardStep: any, wizardStep: TSWizardStep): any {
+        this.abstractEntityToRestObject(restWizardStep, wizardStep);
+        restWizardStep.gesuchId = wizardStep.gesuchId;
+        restWizardStep.wizardStepName = wizardStep.wizardStepName;
+        restWizardStep.wizardStepStatus = wizardStep.wizardStepStatus;
+        restWizardStep.bemerkungen = wizardStep.bemerkungen;
+        return restWizardStep;
+    }
+
+    public parseWizardStepList(data: any): TSWizardStep[] {
+        var wizardSteps: TSWizardStep[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                wizardSteps[i] = this.parseWizardStep(new TSWizardStep(), data[i]);
+            }
+        } else {
+            wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
+        }
+        return wizardSteps;
     }
 }

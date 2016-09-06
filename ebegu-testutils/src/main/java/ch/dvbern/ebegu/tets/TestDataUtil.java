@@ -15,9 +15,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * comments homa
@@ -106,7 +104,6 @@ public final class TestDataUtil {
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
 		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
-		familiensituation.setBemerkungen("DVBern");
 		return familiensituation;
 	}
 
@@ -234,7 +231,6 @@ public final class TestDataUtil {
 		kind.setGeburtsdatum(LocalDate.of(2010, 12, 12));
 		kind.setGeschlecht(Geschlecht.WEIBLICH);
 		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
-		kind.setBemerkungen("notizen");
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
@@ -295,7 +291,6 @@ public final class TestDataUtil {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new HashSet<>());
 		betreuung.setKind(createDefaultKindContainer());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
@@ -437,17 +432,20 @@ public final class TestDataUtil {
 		}
 		if (gesuch.getEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
 			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
+			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 	}
 
@@ -498,5 +496,38 @@ public final class TestDataUtil {
 		persistence.persist(gesuch.getGesuchsperiode());
 		gesuch = persistence.persist(gesuch);
 		return gesuch;
+	}
+
+	public static void persistEntities(Gesuch gesuch, Persistence<Gesuch> persistence) {
+		Benutzer verantwortlicher = TestDataUtil.createDefaultBenutzer();
+		persistence.persist(verantwortlicher.getMandant());
+		persistence.persist(verantwortlicher);
+
+		gesuch.getFall().setVerantwortlicher(verantwortlicher);
+		persistence.persist(gesuch.getFall());
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		persistence.persist(gesuch.getGesuchsperiode());
+
+		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
+		KindContainer kind = betreuung.getKind();
+
+		Set<Betreuung> betreuungen = new LinkedHashSet<>();
+		betreuungen.add(betreuung);
+		kind.setBetreuungen(betreuungen);
+
+		persistence.persist(kind.getKindGS().getPensumFachstelle().getFachstelle());
+		persistence.persist(kind.getKindJA().getPensumFachstelle().getFachstelle());
+		kind.setGesuch(gesuch);
+		kindContainers.add(kind);
+		gesuch.setKindContainers(kindContainers);
+
+
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());
+		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution());
+		persistence.persist(betreuung.getInstitutionStammdaten());
+
+		persistence.persist(gesuch);
 	}
 }

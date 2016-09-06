@@ -30,7 +30,7 @@ describe('betreuungRS', function () {
 
     beforeEach(() => {
         kindId = '2afc9d9a-957e-4550-9a22-97624a000feb';
-        mockBetreuung = new TSBetreuung(undefined, TSBetreuungsstatus.AUSSTEHEND, [], 'bemerkungen');
+        mockBetreuung = new TSBetreuung(undefined, TSBetreuungsstatus.AUSSTEHEND, []);
         TestDataUtil.setAbstractFieldsUndefined(mockBetreuung);
         mockBetreuungRest = ebeguRestUtil.betreuungToRestObject({}, mockBetreuung);
 

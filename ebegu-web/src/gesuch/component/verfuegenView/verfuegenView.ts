@@ -9,6 +9,7 @@ import DateUtil from '../../../utils/DateUtil';
 import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
 import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 
@@ -22,14 +23,14 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, private $scope: any) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
             console.log('resetting state due to navigation change, ');
@@ -76,8 +77,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getFall() {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return this.gesuchModelManager.gesuch.fall;
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().fall;
         }
         return undefined;
     }
@@ -147,15 +148,15 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getAnfangsVerschlechterung1(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
         }
         return undefined;
     }
 
     public getAnfangsVerschlechterung2(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo) {
-            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
+            return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus2, 'DD.MM.YYYY');
         }
         return undefined;
     }

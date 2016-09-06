@@ -8,6 +8,8 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {INewFallStateParams} from '../../gesuch.route';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -22,17 +24,18 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams'];
+    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams', 'WizardStepManager'];
     /* @ngInject */
     constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-                private errorService: ErrorService, $stateParams: INewFallStateParams) {
-        super(state, gesuchModelManager, berechnungsManager);
+                private errorService: ErrorService, $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
+        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
         this.createNewParam = $stateParams.createNew;
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initGesuch(this.createNewParam);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
         if (this.gesuchModelManager.getGesuchsperiode()) {
             this.gesuchsperiodeId = this.gesuchModelManager.getGesuchsperiode().id;
         }
@@ -42,7 +45,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     public getGesuchModel(): TSGesuch {
-        return this.gesuchModelManager.gesuch;
+        return this.gesuchModelManager.getGesuch();
     }
 
     nextStep(form: IFormController): void {

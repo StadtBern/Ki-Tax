@@ -261,6 +261,7 @@ public class JaxBConverter {
 
 		adresseToEntity(jaxAdresse, gesuchstellerAdresse);
 		gesuchstellerAdresse.setAdresseTyp(jaxAdresse.getAdresseTyp());
+		gesuchstellerAdresse.setNichtInGemeinde(jaxAdresse.isNichtInGemeinde());
 
 		return gesuchstellerAdresse;
 	}
@@ -269,6 +270,7 @@ public class JaxBConverter {
 	public JaxAdresse gesuchstellerAdresseToJAX(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		final JaxAdresse jaxAdresse = adresseToJAX(gesuchstellerAdresse);
 		jaxAdresse.setAdresseTyp(gesuchstellerAdresse.getAdresseTyp());
+		jaxAdresse.setNichtInGemeinde(gesuchstellerAdresse.isNichtInGemeinde());
 		return jaxAdresse;
 	}
 
@@ -429,7 +431,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(familiensituationJAXP, familiensituation);
 		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
-		familiensituation.setBemerkungen(familiensituationJAXP.getBemerkungen());
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
 		return familiensituation;
 	}
@@ -439,7 +440,6 @@ public class JaxBConverter {
 		convertAbstractFieldsToJAX(persistedFamiliensituation, jaxFamiliensituation);
 		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
-		jaxFamiliensituation.setBemerkungen(persistedFamiliensituation.getBemerkungen());
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
 		return jaxFamiliensituation;
 	}
@@ -551,6 +551,8 @@ public class JaxBConverter {
 			}
 		}
 
+		gesuch.setBemerkungen(gesuchJAXP.getBemerkungen());
+
 		return gesuch;
 	}
 
@@ -573,6 +575,7 @@ public class JaxBConverter {
 		if (persistedGesuch.getEinkommensverschlechterungInfo() != null) {
 			jaxGesuch.setEinkommensverschlechterungInfo(this.einkommensverschlechterungInfoToJAX(persistedGesuch.getEinkommensverschlechterungInfo()));
 		}
+		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 
 		return jaxGesuch;
 	}
@@ -754,7 +757,6 @@ public class JaxBConverter {
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
 		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
-		jaxKind.setBemerkungen(persistedKind.getBemerkungen());
 		return jaxKind;
 	}
 
@@ -828,7 +830,6 @@ public class JaxBConverter {
 		}
 		kind.setPensumFachstelle(updtPensumFachstelle);
 
-		kind.setBemerkungen(kindJAXP.getBemerkungen());
 		return kind;
 	}
 
@@ -1149,7 +1150,6 @@ public class JaxBConverter {
 		Validate.notNull(betreuung);
 		Validate.notNull(betreuungJAXP);
 		convertAbstractFieldsToEntity(betreuungJAXP, betreuung);
-		betreuung.setBemerkungen(betreuungJAXP.getBemerkungen());
 		betreuung.setGrundAblehnung(betreuungJAXP.getGrundAblehnung());
 		betreuung.setDatumAblehnung(betreuungJAXP.getDatumAblehnung());
 		betreuung.setDatumBestaetigung(betreuungJAXP.getDatumBestaetigung());
@@ -1278,7 +1278,6 @@ public class JaxBConverter {
 	public JaxBetreuung betreuungToJAX(final Betreuung betreuungFromServer) {
 		final JaxBetreuung jaxBetreuung = new JaxBetreuung();
 		convertAbstractFieldsToJAX(betreuungFromServer, jaxBetreuung);
-		jaxBetreuung.setBemerkungen(betreuungFromServer.getBemerkungen());
 		jaxBetreuung.setGrundAblehnung(betreuungFromServer.getGrundAblehnung());
 		jaxBetreuung.setDatumAblehnung(betreuungFromServer.getDatumAblehnung());
 		jaxBetreuung.setDatumBestaetigung(betreuungFromServer.getDatumBestaetigung());
@@ -1602,5 +1601,22 @@ public class JaxBConverter {
 		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(tempDokument, new JaxTempDokument());
 		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
 		return jaxTempDokument;
+	}
+
+	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {
+		final JaxWizardStep jaxWizardStep = convertAbstractFieldsToJAX(wizardStep, new JaxWizardStep());
+		jaxWizardStep.setGesuchId(wizardStep.getGesuch().getId());
+		jaxWizardStep.setWizardStepName(wizardStep.getWizardStepName());
+		jaxWizardStep.setWizardStepStatus(wizardStep.getWizardStepStatus());
+		jaxWizardStep.setBemerkungen(wizardStep.getBemerkungen());
+		return jaxWizardStep;
+	}
+
+	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep) {
+		convertAbstractFieldsToEntity(jaxWizardStep, wizardStep);
+		wizardStep.setWizardStepName(jaxWizardStep.getWizardStepName());
+		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
+		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());
+		return wizardStep;
 	}
 }

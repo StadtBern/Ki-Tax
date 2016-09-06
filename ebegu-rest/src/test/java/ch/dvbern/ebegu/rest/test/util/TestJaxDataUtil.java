@@ -100,6 +100,7 @@ public class TestJaxDataUtil {
 		jaxAdresse.setPlz("3014" + postfix);
 		jaxAdresse.setZusatzzeile("Test" + postfix);
 		jaxAdresse.setStrasse("Nussbaumstrasse" + postfix);
+		jaxAdresse.setNichtInGemeinde(false);
 		return jaxAdresse;
 	}
 
@@ -148,7 +149,6 @@ public class TestJaxDataUtil {
 		jaxKind.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxKind.setGeschlecht(Geschlecht.WEIBLICH);
 		jaxKind.setPensumFachstelle(createTestJaxPensumFachstelle());
-		jaxKind.setBemerkungen("Notizen");
 		jaxKind.setMutterspracheDeutsch(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
 		jaxKind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
@@ -197,7 +197,6 @@ public class TestJaxDataUtil {
 		betreuung.setInstitutionStammdaten(jaxInst);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
 		betreuung.setBetreuungspensumContainers(new ArrayList<>());
-		betreuung.setBemerkungen("Betreuung_Bemerkungen");
 		return betreuung;
 	}
 
