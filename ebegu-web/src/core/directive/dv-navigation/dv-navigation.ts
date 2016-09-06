@@ -30,7 +30,7 @@ export class DVNavigation implements IDirective {
         dvPrevious: '&?',
         dvNext: '&?',
         dvCancel: '&?',
-        dvNextDisabled: '<',
+        dvNextDisabled: '&?',
         dvSubStep: '<',
         dvSave: '&?'
     };
@@ -50,11 +50,11 @@ export class DVNavigation implements IDirective {
  */
 export class NavigatorController {
 
-    dvPrevious: boolean;
-    dvNext: boolean;
+    dvPrevious: () => any;
+    dvNext: () => any;
     dvSave: () => any;
     dvCancel: () => any;
-    dvNextDisabled: boolean;
+    dvNextDisabled: () => any;
     dvSubStep: number;
 
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', 'AuthServiceRS', '$translate', 'ErrorService'];
@@ -309,27 +309,27 @@ export class NavigatorController {
      * @returns {boolean}
      */
     public isNextDisabled(): boolean {
-        if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName()) {
-            return this.dvNextDisabled && !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepAvailable();
+        if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepAvailable();
         }
-        if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName()) {
-            return this.dvNextDisabled && this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepAvailable();
+        if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepAvailable();
         }
-        if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName()) {
-            return this.dvNextDisabled && !this.wizardStepManager.isNextStepAvailable();
+        if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepAvailable();
         }
         return false;
     }
 
     public getTooltip(): string {
-        if (!this.isNextDisabled()) {
-            if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName()) {
+        if (this.isNextDisabled()) {
+            if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return this.$translate.instant('KINDER_TOOLTIP_REQUIRED');
 
-            } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName()) {
+            } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return this.$translate.instant('BETREUUNG_TOOLTIP_REQUIRED');
 
-            } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName()) {
+            } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return this.$translate.instant('ERWERBSPENSUM_TOOLTIP_REQUIRED');
             }
         }
