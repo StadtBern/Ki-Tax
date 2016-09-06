@@ -160,7 +160,7 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Nimmt das uebergebene FinanzielleSituationResultateDTO und mit den Daten vom Gesuch, berechnet alle im
-	 * FinanzielleSituationResultateDTO benoetigten Daten.
+	 * FinanzielleSituationResultateDTO benoetigten Daten und setzt sie direkt im dto.
 	 *
 	 * @param gesuch
 	 * @param finSitResultDTO
