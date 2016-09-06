@@ -84,7 +84,7 @@ public class BetreuungResource {
 		if (betreuung.isPresent()) {
 			final String gesuchId = betreuung.get().getKind().getGesuch().getId();
 			betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
-			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG);
+			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());

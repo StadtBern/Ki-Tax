@@ -12,7 +12,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSKindContainer from '../../../models/TSKindContainer';
-import {TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {TSBetreuungsangebotTypUtil} from '../../../utils/TSBetreuungsangebotTypUtil';
 import ILogService = angular.ILogService;
 let template = require('./erwerbspensumListView.html');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -138,9 +138,10 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.institutionStammdaten && (TSBetreuungsangebotTyp.TAGESSCHULE !== betreuung.institutionStammdaten.betreuungsangebotTyp
-                    && TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND !== betreuung.institutionStammdaten.betreuungsangebotTyp))
-                return true;
+                if (betreuung.institutionStammdaten
+                    && TSBetreuungsangebotTypUtil.isRequireErwerbspensum(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    return true;
+                }
             }
         }
         return false;

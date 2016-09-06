@@ -37,7 +37,7 @@ public interface BetreuungService {
 	void removeBetreuung(@Nonnull String betreuungId);
 
 	/**
-	 * entfernt ein Kind aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass das Kind existiert
+	 * entfernt eine Betreuuung aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass die Betreuuung existiert
 	 * @param betreuung
 	 */
 	void removeBetreuung(@Nonnull Betreuung betreuung);

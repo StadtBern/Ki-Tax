@@ -50,7 +50,7 @@ public class KindServiceBean extends AbstractBaseService implements KindService 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<KindContainer> query = cb.createQuery(KindContainer.class);
 		Root<KindContainer> root = query.from(KindContainer.class);
-		// Betreuung from Gesuch
+		// Kinder from Gesuch
 		Predicate predicateInstitution = root.get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchId);
 
 		query.where(predicateInstitution);

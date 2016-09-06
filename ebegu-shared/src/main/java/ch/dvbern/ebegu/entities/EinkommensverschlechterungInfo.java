@@ -74,6 +74,9 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	public EinkommensverschlechterungInfo(){
 	}
 
+	/**
+	 * Copy Constructor. ACHTUNG kopiert nur daten die in dieser Klasse definiert sind
+	 */
 	public EinkommensverschlechterungInfo(EinkommensverschlechterungInfo that) {
 		this.einkommensverschlechterung = that.einkommensverschlechterung;
 		this.ekvFuerBasisJahrPlus1 = that.ekvFuerBasisJahrPlus1;

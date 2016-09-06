@@ -644,6 +644,6 @@
     "FAMILIENSITUATION_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
     "FAMILIENSITUATION_WARNING_BESCHREIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht.",
     "EINKVERS_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
-    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensvershclechterung werden damit gelöscht"
+    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensverschlechterung werden damit gelöscht"
 }
 

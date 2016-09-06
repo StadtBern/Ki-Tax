@@ -10,7 +10,10 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungInfoService;
+import ch.dvbern.ebegu.services.EinkommensverschlechterungService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -27,11 +30,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Optional;
 
 /**
- * REST Resource fuer FinanzielleSituation
+ * REST Resource fuer Einkommensverschlechterung
  */
 @Path("einkommensverschlechterungInfo")
 @Stateless
@@ -74,7 +76,7 @@ public class EinkommensverschlechterungInfoResource {
 				Optional<EinkommensverschlechterungInfo> optional = einkommensverschlechterungInfoService.
 					findEinkommensverschlechterungInfo(jaxEinkommensverschlechterungInfo.getId());
 				ekviToMerge = optional.orElse(new EinkommensverschlechterungInfo());
-				oldData = new EinkommensverschlechterungInfo(ekviToMerge);
+				oldData = new EinkommensverschlechterungInfo(ekviToMerge); //wir muessen uns merken wie die Daten vorher waren damit wir nachher vergleichen koennen
 			}
 			EinkommensverschlechterungInfo convertedEkvi = converter.einkommensverschlechterungInfoToEntity(jaxEinkommensverschlechterungInfo, ekviToMerge);
 			convertedEkvi.setGesuch(gesuch.get());
@@ -107,7 +109,7 @@ public class EinkommensverschlechterungInfoResource {
 	}
 
 	/**
-	 * Returns true when the given GS already has an einkommensverschlechtrung and the new EVInfo says that no EV should be created
+	 * Returns true when the given GS already has an einkommensverschlechtrung and the new EVInfo says that no EV should be present
 	 * @param gesuchsteller
 	 * @param oldData
 	 * @param newData

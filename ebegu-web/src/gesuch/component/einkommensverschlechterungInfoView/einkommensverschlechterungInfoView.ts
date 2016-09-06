@@ -197,7 +197,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     /**
-     * Confirmation is required when the user already introduced data for the EV
+     * Confirmation is required when the user already introduced data for the EV and is about to remove it
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {

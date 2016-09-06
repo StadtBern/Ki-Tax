@@ -13,7 +13,8 @@ import java.util.Set;
 public class DokumenteUtil {
 
 	/**
-	 * Zusammenfügen der benötigten Dokument Gründe und der Dokument Gründe auf der DB (vorhandene Dokumente)
+	 * Zusammenfügen der benötigten Dokument-Gruende (Dokumente die gem. den Angeben des GS gebraucht werden  und der
+	 * Dokument-Gruende auf der DB (vorhandene Dokumente). Das entspricht allso einer Union der beiden Sets
 	 */
 	public static Set<DokumentGrund> mergeNeededAndPersisted(Set<DokumentGrund> dokumentGrundsNeeded, Collection<DokumentGrund> persistedDokumentGrunds) {
 
