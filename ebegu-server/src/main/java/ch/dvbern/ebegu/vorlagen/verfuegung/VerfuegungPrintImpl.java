@@ -153,7 +153,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return Bemerkungen
 	 */
 	@Override
-	public String getManuelleBemerkungen() {
+	public String getGeneratedBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
@@ -164,7 +164,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return "";
 	}
 
-	public String getGeneratedBemerkungen() {
+	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
