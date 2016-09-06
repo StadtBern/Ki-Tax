@@ -82,9 +82,4 @@ public interface VerfuegungPrint {
 	 */
 	boolean isPrintGeneratedBemerkung();
 
-	/**
-	 * @return Mit dieser Attribut wird festgestellt ob den Text 'Rechtsmittelbelehrung' auf die nächste Seite gedruckt
-	 *         werden muss
-	 */
-	boolean isPrintSeitenumbruch();
 }
