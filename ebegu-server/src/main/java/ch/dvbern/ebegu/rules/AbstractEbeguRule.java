@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,6 +25,7 @@ public abstract class AbstractEbeguRule implements Rule {
 
 	private RuleType ruleType;
 
+	@Valid
 	private DateRange validityPeriod;
 
 
