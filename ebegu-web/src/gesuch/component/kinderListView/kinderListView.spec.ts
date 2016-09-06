@@ -46,7 +46,7 @@ describe('kinderListView', function () {
         it('should return true for a list with Kinder needing Betreuung', function() {
             let kind: TSKindContainer = new TSKindContainer();
             kind.kindJA = new TSKind();
-            kind.kindJA.timestampErstellt = DateUtil.today()
+            kind.kindJA.timestampErstellt = DateUtil.today();
             kind.kindJA.familienErgaenzendeBetreuung = true;
             spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
             expect(kinderListViewController.isThereAnyKindWithBetreuungsbedarf()).toBe(true);

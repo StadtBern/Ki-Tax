@@ -27,7 +27,7 @@ import {InstitutionStammdatenRS} from './service/institutionStammdatenRS.rest';
 import {DvBisherComponentConfig} from './component/dv-bisher/dv-bisher';
 import KindRS from './service/kindRS.rest';
 import {DvDialog} from './directive/dv-dialog/dv-dialog';
-import BetreuungRS from './service/betreuungRS';
+import BetreuungRS from './service/betreuungRS.rest';
 import {DVErwerbspensumListConfig} from './component/dv-erwerbspensum-list/dv-erwerbspensum-list';
 import ErwerbspensumRS from './service/erwerbspensumRS.rest';
 import BerechnungsManager from '../gesuch/service/berechnungsManager';

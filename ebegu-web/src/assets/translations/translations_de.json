@@ -380,7 +380,6 @@
     "KIND_HINZUFUEGEN": "Kind hinzufügen",
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
-    "KIND_ANDERERFALL": "Anderer Fall",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
     "FACHSTELLE": "Fachstelle",
@@ -641,6 +640,10 @@
     "BEMERKUNGEN_INTERN": "Interner Kommentar verfassen",
     "BEMERKUNGEN_VERFUEGUNG": "Bemerkungen zur Verfügung",
     "PAPIERGESUCH_OEFFNEN": "PAPIERGESUCH ÖFFNEN",
-    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN"
+    "PAPIERGESUCH_LADEN": "PAPIERGESUCH SPEICHERN",
+    "FAMILIENSITUATION_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
+    "FAMILIENSITUATION_WARNING_BESCHREIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht.",
+    "EINKVERS_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
+    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensverschlechterung werden damit gelöscht"
 }
 

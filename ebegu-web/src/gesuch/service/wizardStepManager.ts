@@ -32,7 +32,7 @@ export default class WizardStepManager {
      * This method must be called only when the Gesuch doesn't exist yet.
      */
     public initWizardSteps() {
-        this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined)];
+        this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined, true)];
         this.currentStepName = TSWizardStepName.GESUCH_ERSTELLEN;
     }
 
@@ -77,13 +77,14 @@ export default class WizardStepManager {
 
     /**
      * Der Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
-     * wird nichts gemacht und undefined wird zurueckgegeben.
+     * wird nichts gemacht und undefined wird zurueckgegeben. Der Status wird auch auf verfuegbar gesetzt
      * @param stepName
      * @param stepStatus
      * @returns {any}
      */
     private updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
+        step.verfuegbar = true;
         step.wizardStepStatus = this.maybeChangeStatus(step.wizardStepStatus, stepStatus);
         if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat updaten und steps laden
             return this.wizardStepRS.updateWizardStep(step).then((response: TSWizardStep) => {
@@ -142,5 +143,30 @@ export default class WizardStepManager {
             this.getCurrentStep().bemerkungen = firstStepBemerkungen;
             return this.updateCurrentWizardStep();
         });
+    }
+
+    /**
+     * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
+     * @returns {boolean}
+     */
+    public isNextStepAvailable(): boolean {
+        return this.getNextStep().wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    }
+
+    private getNextStep(): TSWizardStep {
+        let nextStepName: TSWizardStepName = TSWizardStepName.GESUCH_ERSTELLEN;
+        switch (this.currentStepName) {
+            case TSWizardStepName.GESUCH_ERSTELLEN: nextStepName = TSWizardStepName.FAMILIENSITUATION; break;
+            case TSWizardStepName.FAMILIENSITUATION: nextStepName = TSWizardStepName.GESUCHSTELLER; break;
+            case TSWizardStepName.GESUCHSTELLER: nextStepName = TSWizardStepName.KINDER; break;
+            case TSWizardStepName.KINDER: nextStepName = TSWizardStepName.BETREUUNG; break;
+            case TSWizardStepName.BETREUUNG: nextStepName = TSWizardStepName.ERWERBSPENSUM; break;
+            case TSWizardStepName.ERWERBSPENSUM: nextStepName = TSWizardStepName.FINANZIELLE_SITUATION; break;
+            case TSWizardStepName.FINANZIELLE_SITUATION: nextStepName = TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG; break;
+            case TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG: nextStepName = TSWizardStepName.DOKUMENTE; break;
+            case TSWizardStepName.DOKUMENTE: nextStepName = TSWizardStepName.VERFUEGEN; break;
+            case TSWizardStepName.VERFUEGEN: nextStepName = TSWizardStepName.VERFUEGEN;
+        }
+        return this.getStepByName(nextStepName);
     }
 }

@@ -1,6 +1,7 @@
 import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSBetreuung from '../../models/TSBetreuung';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 export default class BetreuungRS {
     serviceURL: string;
@@ -8,9 +9,10 @@ export default class BetreuungRS {
     ebeguRestUtil: EbeguRestUtil;
     log: ILogService;
 
-    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log'];
+    static $inject = ['$http', 'REST_API', 'EbeguRestUtil', '$log', 'WizardStepManager'];
     /* @ngInject */
-    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService) {
+    constructor($http: IHttpService, REST_API: string, ebeguRestUtil: EbeguRestUtil, $log: ILogService,
+                private wizardStepManager: WizardStepManager) {
         this.serviceURL = REST_API + 'betreuungen';
         this.http = $http;
         this.ebeguRestUtil = ebeguRestUtil;
@@ -29,28 +31,26 @@ export default class BetreuungRS {
             });
     }
 
-    public createBetreuung(betreuung: TSBetreuung, kindId: string): IPromise<TSBetreuung> {
-        return this.saveBetreuung(betreuung, kindId);
-    }
-
-    public updateBetreuung(betreuung: TSBetreuung, kindId: string): IPromise<TSBetreuung> {
-        return this.saveBetreuung(betreuung, kindId);
-    }
-
-    private saveBetreuung(betreuung: TSBetreuung, kindId: string): IPromise<TSBetreuung> {
+    public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
-        return this.http.put(this.serviceURL + '/' + kindId, restBetreuung, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId), restBetreuung, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then((response: any) => {
-            this.log.debug('PARSING Betreuung REST object ', response.data);
-            return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                return this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), response.data);
+            });
         });
     }
 
-    removeBetreuung(betreuungId: string) {
-        return this.http.delete(this.serviceURL + '/' + encodeURIComponent(betreuungId));
+    removeBetreuung(betreuungId: string, gesuchId: string): IPromise<any> {
+        return this.http.delete(this.serviceURL + '/' + encodeURIComponent(betreuungId))
+            .then((response) => {
+                this.wizardStepManager.findStepsFromGesuch(gesuchId);
+                return response;
+            });
     }
 }

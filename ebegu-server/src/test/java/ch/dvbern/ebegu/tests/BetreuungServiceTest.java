@@ -32,7 +32,7 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 	private BetreuungService betreuungService;
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence<Gesuch> persistence;
 	@Inject
 	private KindService kindService;
 
@@ -84,10 +84,7 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
 		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
 
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 

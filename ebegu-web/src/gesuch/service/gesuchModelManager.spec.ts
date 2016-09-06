@@ -1,7 +1,7 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
 import {IHttpBackendService, IScope, IQService} from 'angular';
-import BetreuungRS from '../../core/service/betreuungRS';
+import BetreuungRS from '../../core/service/betreuungRS.rest';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
@@ -86,16 +86,15 @@ describe('gesuchModelManager', function () {
                 let kindToWorkWith: TSKindContainer = gesuchModelManager.getKindToWorkWith();
                 kindToWorkWith.nextNumberBetreuung = 5;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
-                spyOn(betreuungRS, 'createBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.updateBetreuung();
                 scope.$apply();
 
-                expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
+                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
-                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalled();
             });
         });
         describe('saveGesuchAndFall', () => {
@@ -113,7 +112,6 @@ describe('gesuchModelManager', function () {
                 scope.$apply();
                 expect(fallRS.createFall).toHaveBeenCalled();
                 expect(gesuchRS.createGesuch).toHaveBeenCalled();
-                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(gesuch.id);
             });
             it('only updates the Gesuch because it already exists', () => {
                 spyOn(gesuchRS, 'updateGesuch').and.returnValue($q.when({}));

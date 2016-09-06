@@ -40,4 +40,19 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     set gemeinsameSteuererklaerung(value: boolean) {
         this._gemeinsameSteuererklaerung = value;
     }
+
+    // todo team Dieser Code is gleich wie auf dem Server...
+    public hasSecondGesuchsteller(): boolean {
+        switch (this.familienstatus) {
+            case TSFamilienstatus.ALLEINERZIEHEND:
+            case TSFamilienstatus.WENIGER_FUENF_JAHRE:
+                return TSGesuchstellerKardinalitaet.ZU_ZWEIT === this.gesuchstellerKardinalitaet;
+            case TSFamilienstatus.VERHEIRATET:
+            case TSFamilienstatus.KONKUBINAT:
+            case TSFamilienstatus.LAENGER_FUENF_JAHRE:
+                return true;
+        }
+        //wir sollten hier nie hinkommen
+        return false;
+    }
 }

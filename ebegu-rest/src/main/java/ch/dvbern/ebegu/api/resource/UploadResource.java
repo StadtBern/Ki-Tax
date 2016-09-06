@@ -3,8 +3,6 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
-import ch.dvbern.ebegu.api.dtos.JaxDokumente;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -60,8 +58,6 @@ public class UploadResource {
 
 	@Inject
 	private GesuchService gesuchService;
-	@Inject
-	private DokumenteResource dokumenteResource;
 	@Inject
 	private DokumentGrundService dokumentGrundService;
 	@Inject
@@ -152,7 +148,7 @@ public class UploadResource {
 
 		final JaxDokumentGrund jaxDokumentGrundToReturn = converter.dokumentGrundToJax(persistedDokumentGrund);
 
-		updateWizardStep(gesuchId);
+		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.DOKUMENTE);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(EinkommensverschlechterungInfoResource.class)
@@ -162,19 +158,6 @@ public class UploadResource {
 		return Response.created(uri).entity(jaxDokumentGrundToReturn).build();
 	}
 
-	private void updateWizardStep(String gesuchId) throws EbeguException {
-		final JaxDokumente dokumente = dokumenteResource.getDokumente(new JaxId(gesuchId));
-		boolean allNeededDokumenteUploaded = true;
-		for (JaxDokumentGrund dokumentGrund : dokumente.getDokumentGruende()) {
-			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				allNeededDokumenteUploaded = false;
-				break;
-			}
-		}
-		if (allNeededDokumenteUploaded) { //only set status to OK if all required documents have been uploaded
-			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.DOKUMENTE);
-		}
-	}
 
 	@Nullable
 	private String[] getFilenamesFromHeader(@Context HttpServletRequest request) {

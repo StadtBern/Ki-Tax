@@ -39,6 +39,7 @@ public class DokumentenverzeichnisEvaluator {
 
 	public void addPapiergesuch(Set<DokumentGrund> dokumentGrunds, Gesuch gesuch) {
 		DokumentGrund dokumentGrund = new DokumentGrund(DokumentGrundTyp.PAPIERGESUCH , DokumentTyp.ORIGINAL_PAPIERGESUCH);
+		dokumentGrund.setNeeded(false);
 		dokumentGrunds.add(dokumentGrund);
 	}
 }

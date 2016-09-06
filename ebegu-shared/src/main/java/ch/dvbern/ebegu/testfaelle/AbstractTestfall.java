@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Superklasse für Testfaelle des JA
@@ -158,5 +159,39 @@ public abstract class AbstractTestfall {
 		finanzielleSituationContainer.setJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear()-1);
 		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
 		return finanzielleSituationContainer;
+	}
+
+
+	/**
+	 * Diese Methode erstellt alle WizardSteps fuer das uebergebene Gesuch. Alle Steps bekommen den Status OK by default (nur Dokumente
+	 * hat IN_BEARBEITUNG und Verfuegen WARTEN). Sollte man andere Status haben wollen, muss man diese Methode ueberschreiben.
+	 * Die WizardSteps werden erstellt aber nicht persisted
+	 * @param gesuch
+	 * @return
+	 */
+	public List<WizardStep> createWizardSteps(final Gesuch gesuch) {
+		List<WizardStep> wizardSteps = new ArrayList<>();
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, "", true));
+		return wizardSteps;
+	}
+
+	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus, String bemerkungen,
+											  boolean verfuegbar) {
+		final WizardStep wizardStep = new WizardStep();
+		wizardStep.setGesuch(gesuch);
+		wizardStep.setVerfuegbar(verfuegbar);
+		wizardStep.setWizardStepName(wizardStepName);
+		wizardStep.setWizardStepStatus(stepStatus);
+		wizardStep.setBemerkungen(bemerkungen);
+		return wizardStep;
 	}
 }

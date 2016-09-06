@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,9 +34,7 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	private KindService kindService;
 
 	@Inject
-	private Persistence<Kind> persistence;
-
-	private Gesuch gesuch;
+	private Persistence<Gesuch> persistence;
 
 	@Inject
 	private FallService fallService;
@@ -48,7 +47,8 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void createAndUpdatekindTest() {
 		Assert.assertNotNull(kindService);
-		KindContainer persitedKind = persistKind();
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		KindContainer persitedKind = persistKind(gesuch);
 		Optional<KindContainer> kind = kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(kind.isPresent());
 		KindContainer savedKind = kind.get();
@@ -69,7 +69,8 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void removekindTest() {
 		Assert.assertNotNull(kindService);
-		KindContainer persitedKind = persistKind();
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		KindContainer persitedKind = persistKind(gesuch);
 		Optional<KindContainer> kind = kindService.findKind(persitedKind.getId());
 		Assert.assertTrue(kind.isPresent());
 		kindService.removeKind(kind.get().getId());
@@ -77,16 +78,28 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertFalse(kindAfterRemove.isPresent());
 	}
 
+	@Test
+	public void findKinderFromGesuch() {
+		Assert.assertNotNull(kindService);
+		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		final KindContainer persitedKind1 = persistKind(gesuch);
+		final KindContainer persitedKind2 = persistKind(gesuch);
+
+		final Gesuch otherGesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		final KindContainer persitedKindOtherGesuch = persistKind(otherGesuch);
+
+		final List<KindContainer> allKinderFromGesuch = kindService.findAllKinderFromGesuch(gesuch.getId());
+
+		Assert.assertEquals(2, allKinderFromGesuch.size());
+		Assert.assertEquals(persitedKind1, allKinderFromGesuch.get(0));
+		Assert.assertEquals(persitedKind2, allKinderFromGesuch.get(1));
+	}
+
 
 	// HELP METHODS
 
 	@Nonnull
-	private KindContainer persistKind() {
-		gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch);
-
+	private KindContainer persistKind(Gesuch gesuch) {
 		KindContainer kindContainer = TestDataUtil.createDefaultKindContainer();
 		kindContainer.setGesuch(gesuch);
 		persistence.persist(kindContainer.getKindGS().getPensumFachstelle().getFachstelle());
@@ -95,7 +108,6 @@ public class KindServiceBeanTest extends AbstractEbeguTest {
 		persistence.persist(kindContainer.getKindJA());
 
 		kindService.saveKind(kindContainer);
-
 		return kindContainer;
 	}
 }
