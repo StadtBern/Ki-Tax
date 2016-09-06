@@ -50,8 +50,8 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.monthsStichtage = getTSMonthValues();
-        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
-        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
+        this.selectedStichtagBjP1 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1);
+        this.selectedStichtagBjP2 = this.getMonatFromStichtag(this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2);
     }
 
     getGesuch(): TSGesuch {
@@ -61,16 +61,23 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
         return this.gesuchModelManager.getGesuch();
     }
 
+    getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
+        if (this.getGesuch().einkommensverschlechterungInfo == null) {
+            this.gesuchModelManager.initEinkommensverschlechterungInfo();
+        }
+        return this.getGesuch().einkommensverschlechterungInfo;
+    }
+
     showEkvi(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
+        return this.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
     }
 
     showJahrPlus1(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
+        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1;
     }
 
     showJahrPlus2(): boolean {
-        return this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
+        return this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2;
     }
 
     public getBasisJahrPlusAsString(jahr: number): string {
@@ -120,28 +127,26 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
         if (form.$valid) {
             this.errorService.clearAll();
-            if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
-                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
-                    this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+            if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
+                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
+                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
                 }
-                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
-                    this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 === undefined) {
+                    this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
                 }
 
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 =
-                    this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 =
-                    this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = this.getStichtagFromMonat(this.selectedStichtagBjP1, this.gesuchModelManager.getBasisjahr() + 1);
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = this.getStichtagFromMonat(this.selectedStichtagBjP2, this.gesuchModelManager.getBasisjahr() + 2);
             } else {
                 //wenn keine EV eingetragen wird, setzen wir alles auf undefined, da keine Daten gespeichert werden sollen
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
-                this.gesuchModelManager.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 = false;
+                this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2 = false;
+                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1 = undefined;
+                this.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2 = undefined;
+                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1 = undefined;
+                this.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2 = undefined;
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus1 = undefined;
+                this.getEinkommensverschlechterungsInfo().stichtagFuerBasisJahrPlus2 = undefined;
             }
             return this.gesuchModelManager.updateEinkommensverschlechterungsInfo();
         }

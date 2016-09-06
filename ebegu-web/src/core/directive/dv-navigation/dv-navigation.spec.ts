@@ -3,12 +3,11 @@ import {EbeguWebCore} from '../../core.module';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {IStateService} from 'angular-ui-router';
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import TestDataUtil from '../../../utils/TestDataUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import {TSRole} from '../../../models/enums/TSRole';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 describe('dvNavigation', function () {
 
     let navController: NavigatorController;

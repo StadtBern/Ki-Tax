@@ -102,10 +102,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
         if (form.$valid) {
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
             this.errorService.clearAll();
-            return this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum).then((response: any) => {
-                form.$setPristine();
-                return this.$q.when({});
-            });
+            return this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum);
         }
         return undefined;
     }
