@@ -60,7 +60,7 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
                 this.gesuchModelManager.setGesuchstellerNumber(1);
                 if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
-                    this.gesuchModelManager.saveFinanzielleSituation().then(() => {
+                    return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
                         this.gesuchModelManager.setGesuchstellerNumber(2);
                         return this.gesuchModelManager.saveFinanzielleSituation().then(() => {
                             return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);

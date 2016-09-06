@@ -259,7 +259,7 @@ export class NavigatorController {
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-            } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+            } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.finanzielleSituationStart');
             } else {
                 this.state.go('gesuch.kinder');
@@ -269,7 +269,7 @@ export class NavigatorController {
             this.state.go('gesuch.erwerbsPensen');
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            if ((this.gesuchModelManager.gesuchstellerNumber === 2)) {
+            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 2});
             } else {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
@@ -426,7 +426,7 @@ export class NavigatorController {
     };
 
     private navigatePreviousEVSubStep4(): void {
-        if (this.gesuchModelManager.basisJahrPlusNumber === 2) {
+        if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
             this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
         } else {
             // baisjahrPlus1
@@ -460,7 +460,7 @@ export class NavigatorController {
 
     //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
     private navigateNextEVSubStep4(): void {
-        if (this.gesuchModelManager.basisJahrPlusNumber === 2) {
+        if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
             this.goToDokumenteView();
         } else {
             let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
