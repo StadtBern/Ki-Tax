@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -48,65 +48,40 @@ public class GesuchstellerResource {
 	private JaxBConverter converter;
 
 
-	@ApiOperation(value = "Create a new Gesuchsteller in the database. The transfer object also has a relation to adressen " +
+	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer object also has a relation to adressen " +
 		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +
 		"umzugadresse are both stored as consecutive wohnadressen in the database")
-	@Nonnull
-	@POST
-	@Path("/{gesuchId}/gsNumber/{gsNumber}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuchsteller createGesuchsteller(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
-		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
-		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
-		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) {
-
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
-		if (gesuch.isPresent()) {
-			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, new Gesuchsteller());
-			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.updateGesuchsteller(convertedGesuchsteller); //immer update
-
-			updateWizardstepIfFinished(gesuchJAXPId, gsNumber, gesuch.get(), persistedGesuchsteller);
-
-			return converter.gesuchstellerToJAX(persistedGesuchsteller);
-		}
-		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
-	}
-
-	private void updateWizardstepIfFinished(@Nonnull JaxId gesuchJAXPId, @Nonnull Integer gsNumber, Gesuch gesuch, Gesuchsteller persistedGesuchsteller) {
-		if ((gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-			|| (!gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
-			wizardStepService.updateSteps(gesuchJAXPId.getId(), null,
-				persistedGesuchsteller, WizardStepName.GESUCHSTELLER);
-		}
-	}
-
-
 	@Nullable
 	@PUT
+	@Path("/{gesuchId}/gsNumber/{gsNumber}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{gesuchId}/gsNumber/{gsNumber}")
-	public JaxGesuchsteller updateGesuchsteller(
+	public JaxGesuchsteller saveGesuchsteller(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
+
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			Validate.notNull(gesuchstellerJAXP.getId());
-			Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
-			Gesuchsteller gesuchstellerFromDB = optional.orElseThrow(() -> new EbeguEntityNotFoundException("updateGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchstellerJAXP.getId().toString()));
-			Gesuchsteller gesuchstellerToMerge = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerFromDB);
+			Gesuchsteller gesuchstellerToMerge = new Gesuchsteller();
+			if (gesuchstellerJAXP.getId() != null) {
+				Optional<Gesuchsteller> optional = gesuchstellerService.findGesuchsteller(gesuchstellerJAXP.getId());
+				gesuchstellerToMerge = optional.orElse(new Gesuchsteller());
+			}
 
-			Gesuchsteller modifiedGesuchsteller = this.gesuchstellerService.updateGesuchsteller(gesuchstellerToMerge);
-			updateWizardstepIfFinished(gesuchJAXPId, gsNumber, gesuch.get(), modifiedGesuchsteller);
-			return converter.gesuchstellerToJAX(modifiedGesuchsteller);
+			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
+			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller);
+
+			if ((gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+				|| (!gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+				wizardStepService.updateSteps(gesuchJAXPId.getId(), null, null, WizardStepName.GESUCHSTELLER);
+			}
+
+			return converter.gesuchstellerToJAX(persistedGesuchsteller);
 		}
-		throw new EbeguEntityNotFoundException("updateGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+		throw new EbeguEntityNotFoundException("createGesuchsteller", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 
 	}
 

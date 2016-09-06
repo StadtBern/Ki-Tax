@@ -43,6 +43,10 @@ public class WizardStep extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@NotNull
+	@Column(nullable = false)
+	private Boolean verfuegbar = false;
+
 
 	public Gesuch getGesuch() {
 		return gesuch;
@@ -75,5 +79,13 @@ public class WizardStep extends AbstractEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	public Boolean getVerfuegbar() {
+		return verfuegbar;
+	}
+
+	public void setVerfuegbar(Boolean verfuegbar) {
+		this.verfuegbar = verfuegbar;
 	}
 }

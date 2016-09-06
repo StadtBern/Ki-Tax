@@ -52,14 +52,14 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     }
 
     /**
-     * Steps are only disabled when the status is UNBESUCHT
+     * Steps are only disabled when the field verfuegbar is false
      * @param stepName
      * @returns {boolean} Sollte etwas schief gehen, true wird zurueckgegeben
      */
     public isWizardStepDisabled(stepName: TSWizardStepName): boolean {
         var step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
-            return step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT;
+            return (step.verfuegbar === false);
         }
         return true;
     }

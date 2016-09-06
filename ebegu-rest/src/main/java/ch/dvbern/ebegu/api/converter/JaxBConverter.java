@@ -1606,6 +1606,7 @@ public class JaxBConverter {
 	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {
 		final JaxWizardStep jaxWizardStep = convertAbstractFieldsToJAX(wizardStep, new JaxWizardStep());
 		jaxWizardStep.setGesuchId(wizardStep.getGesuch().getId());
+		jaxWizardStep.setVerfuegbar(wizardStep.getVerfuegbar());
 		jaxWizardStep.setWizardStepName(wizardStep.getWizardStepName());
 		jaxWizardStep.setWizardStepStatus(wizardStep.getWizardStepStatus());
 		jaxWizardStep.setBemerkungen(wizardStep.getBemerkungen());
@@ -1614,6 +1615,7 @@ public class JaxBConverter {
 
 	public WizardStep wizardStepToEntity(final JaxWizardStep jaxWizardStep, final WizardStep wizardStep) {
 		convertAbstractFieldsToEntity(jaxWizardStep, wizardStep);
+		wizardStep.setVerfuegbar(jaxWizardStep.isVerfuegbar());
 		wizardStep.setWizardStepName(jaxWizardStep.getWizardStepName());
 		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
 		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());

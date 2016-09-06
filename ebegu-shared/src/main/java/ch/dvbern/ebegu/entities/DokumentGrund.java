@@ -162,4 +162,23 @@ public class DokumentGrund extends AbstractEntity {
 			", dokumente=" + dokumente +
 			'}';
 	}
+
+	//todo ask Pascal
+	/**
+	 * Checkt ob die Liste von Dokumenten leer ist.
+	 * @return false wenn mindestens ein Dokumente existiert. Sonst true
+	 */
+	public boolean isEmpty() {
+		if (getDokumente() == null || getDokumente().size() <= 0) {
+			return true;
+		}
+		else {
+			for (Dokument dok : getDokumente()) {
+				if (dok.getDokumentName() == null || dok.getDokumentPfad() == null) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

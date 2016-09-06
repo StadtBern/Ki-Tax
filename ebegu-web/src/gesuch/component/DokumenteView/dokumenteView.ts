@@ -144,6 +144,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
                     dokumente.splice(index, 1);
                 }
             }
+            this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id);
         });
 
         this.handleUpdateBug(dokumente);

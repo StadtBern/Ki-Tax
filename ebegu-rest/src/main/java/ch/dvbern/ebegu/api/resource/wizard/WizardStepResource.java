@@ -78,16 +78,16 @@ public class WizardStepResource {
 		final List<JaxWizardStep> wizardStepList= new ArrayList<>();
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.KINDER, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT)));
-			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuchJAXPId.getId(), WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
 		}
 		return wizardStepList;
 	}
@@ -116,9 +116,11 @@ public class WizardStepResource {
 
 
 
-	private JaxWizardStep createWizardStepObject(String gesuchId, WizardStepName wizardStepName, WizardStepStatus stepStatus) {
+	private JaxWizardStep createWizardStepObject(String gesuchId, WizardStepName wizardStepName, WizardStepStatus stepStatus,
+												 boolean verfuegbar) {
 		final JaxWizardStep jaxWizardStep = new JaxWizardStep();
 		jaxWizardStep.setGesuchId(gesuchId);
+		jaxWizardStep.setVerfuegbar(verfuegbar);
 		jaxWizardStep.setWizardStepName(wizardStepName);
 		jaxWizardStep.setWizardStepStatus(stepStatus);
 		return jaxWizardStep;

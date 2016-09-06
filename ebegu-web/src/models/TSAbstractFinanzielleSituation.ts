@@ -17,7 +17,7 @@ export default class TSAbstractFinanzielleSituation extends TSAbstractEntity {
                 familienzulage?: number, ersatzeinkommen?: number, erhalteneAlimente?: number, bruttovermoegen?: number,
                 schulden?: number, geschaeftsgewinnBasisjahr?: number, geleisteteAlimente?: number) {
         super();
-        this._steuerveranlagungErhalten = steuerveranlagungErhalten;
+        this._steuerveranlagungErhalten = steuerveranlagungErhalten || false;
         this._steuererklaerungAusgefuellt = steuererklaerungAusgefuellt;
         this._familienzulage = familienzulage;
         this._ersatzeinkommen = ersatzeinkommen;

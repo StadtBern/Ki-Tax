@@ -12,18 +12,11 @@ import java.util.Optional;
 public interface GesuchstellerService {
 
 	/**
-	 * Speichert die Gesuchsteller neu in der DB falls der Key noch nicht existiert.
-	 * @param gesuchsteller Die Gesuchsteller als DTO
-	 */
-	@Nonnull
-	Gesuchsteller createGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
-
-	/**
 	 * Aktualisiert die Gesuchsteller in der DB.
 	 * @param gesuchsteller Die Gesuchsteller als DTO
 	 */
 	@Nonnull
-	Gesuchsteller updateGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
 
 	/**
 

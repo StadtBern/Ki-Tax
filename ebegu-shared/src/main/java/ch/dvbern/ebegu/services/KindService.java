@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.KindContainer;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,9 +26,22 @@ public interface KindService {
 	Optional<KindContainer> findKind(@Nonnull String key);
 
 	/**
+	 * Gibt alle KindContainer des Gesuchs zurueck
+	 * @param gesuchId
+	 * @return
+	 */
+	@Nonnull
+	List<KindContainer> findAllKinderFromGesuch(@Nonnull String gesuchId);
+
+	/**
 	 * entfernt ein Kind aus der Databse
 	 * @param kindId Id des Kindes zu entfernen
 	 */
 	void removeKind(@Nonnull String kindId);
 
+	/**
+	 * entfernt ein Kind aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass das Kind existiert
+	 * @param kind
+	 */
+	void removeKind(@Nonnull KindContainer kind);
 }
