@@ -25,29 +25,39 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	private String einkommensverschlechterungJahr;
 	private String ereigniseintritt;
 	private String grund;
-	private Einkommensverschlechterung ev1;
-	private Einkommensverschlechterung ev2;
+	private Einkommensverschlechterung ekvGS1;
+	private Einkommensverschlechterung ekvGS2;
 
 	/**
 	 * Konstruktor
-	 *
-	 * @param fsGesuchsteller1 das {@link FinanzSituationGesuchsteller1}
+	 *  @param fsGesuchsteller1 das {@link FinanzSituationGesuchsteller1}
 	 * @param fsGesuchsteller2 das {@link FinanzSituationGesuchsteller2}
 	 * @param einkommensverschlechterungJahr das Jahr des Einkommenverschleschterung
 	 * @param ereigniseintritt Ereingis datum
 	 * @param grund Grund
+	 * @param basisJahrPlus
 	 */
 	public EinkommensverschlechterungPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2,
-			String einkommensverschlechterungJahr, String ereigniseintritt, String grund) {
+											   String einkommensverschlechterungJahr, String ereigniseintritt, String grund, int basisJahrPlus) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 
 		this.einkommensverschlechterungJahr = einkommensverschlechterungJahr;
 		this.ereigniseintritt = ereigniseintritt;
 		this.grund = grund;
-		this.ev1 = fsGesuchsteller1.getEinkommensverschlechterung1();
+		if (basisJahrPlus == 1) {
+			this.ekvGS1 = fsGesuchsteller1.getEinkommensverschlechterung1();
+		}
+		else {
+			this.ekvGS1 = fsGesuchsteller1.getEinkommensverschlechterung2();
+		}
 		if (fsGesuchsteller2 != null && fsGesuchsteller2.getEinkommensverschlechterung2() != null) {
-			this.ev2 = fsGesuchsteller2.getEinkommensverschlechterung2();
+			if (basisJahrPlus == 1) {
+				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung1();
+			}
+			else {
+				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung2();
+			}
 		}
 
 	}
@@ -74,26 +84,26 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {
-		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ev1, this.fsGesuchsteller1.getFinanzielleSituation());
+		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ekvGS1, this.fsGesuchsteller1.getFinanzielleSituation());
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG2() {
 		//hier muessen zum berechnen die Einkommensverschlechterung und die finanzielle Situation benutzt werden
 		if (fsGesuchsteller2 != null ) {
-			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ev2, this.fsGesuchsteller2.getFinanzielleSituation());
+			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ekvGS2, this.fsGesuchsteller2.getFinanzielleSituation());
 		}
 		return null;
 	}
 
 	@Override
 	protected AbstractFinanzielleSituation getFinanzSituationGS1() {
-		return ev1;
+		return ekvGS1;
 	}
 
 	@Override
 	protected AbstractFinanzielleSituation getFinanzSituationGS2() {
-		return ev2;
+		return ekvGS2;
 	}
 
 

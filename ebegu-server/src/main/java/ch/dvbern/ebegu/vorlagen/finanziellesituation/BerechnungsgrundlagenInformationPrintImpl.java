@@ -44,18 +44,18 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 		String fallNummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
 		finanz = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, fallNummer);
 
-		// Einkommensverschleschtereung 1
+		// Einkommensverschleschtereung Jahr 1
 		String einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
 		String ereigniseintritt = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
 		String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
-		ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv1);
+		ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv1, 1);
 
-		// Einkommensverschleschtereung 2
-		if (fG2 != null) {
-			einkommensverschlechterungJahr = Integer.toString(fG2.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
-			ereigniseintritt = Constants.DATE_FORMATTER.format(fG2.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
+		// Einkommensverschleschtereung Jahr 2
+		if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
+			einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2().getYear());
+			ereigniseintritt = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2());
 			String grundEv2 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus2();
-			ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv2);
+			ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv2, 2);
 		}
 	}
 
