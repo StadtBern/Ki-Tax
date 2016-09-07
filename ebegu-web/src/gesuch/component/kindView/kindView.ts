@@ -1,6 +1,5 @@
 import {IComponentOptions, IFormController} from 'angular';
 import {IKindStateParams} from '../../gesuch.route';
-import {IStateService} from 'angular-ui-router';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKind from '../../../models/TSKind';
 import {EnumEx} from '../../../utils/EnumEx';

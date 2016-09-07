@@ -123,7 +123,8 @@
                         <label data-translate="EMAIL" for="email_ID">
                         </label>
                         <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
-                               dv-max-length class="form-control" required placeholder="hans.muster@example.com">
+                               dv-max-length class="form-control" required placeholder="hans.muster@example.com"
+                               ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
                         <dv-error-messages for="form.email.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
@@ -139,7 +140,7 @@
                         </label>
                         <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
                                dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                               ng-pattern="vm.mobilePattern">
+                               ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
                         <dv-error-messages for="form.mobile.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
@@ -150,7 +151,7 @@
                         </label>
                         <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
                                dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
-                               ng-pattern="vm.phonePattern">
+                               ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
                         <dv-error-messages for="form.telefon.$error"
                                            class="error"></dv-error-messages>
                     </dv-input-container>
