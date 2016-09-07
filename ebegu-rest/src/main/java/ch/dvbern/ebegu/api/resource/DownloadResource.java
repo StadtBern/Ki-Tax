@@ -12,8 +12,6 @@ import ch.dvbern.ebegu.services.DokumentService;
 import ch.dvbern.ebegu.services.TempDokumentService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
@@ -49,6 +47,7 @@ public class DownloadResource {
 
 	@GET
 	@Path("blobdata/{accessToken}/{filename}")
+	//mimetyp wird in buildDownloadResponse erraten
 	public Response downloadByAccessToken(
 		@PathParam("accessToken") String blobAccessTokenParam,
 		@PathParam("filename") String filename,

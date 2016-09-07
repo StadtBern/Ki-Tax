@@ -1,3 +1,5 @@
+@import '../variables.less';
+
 .betreuung-status {
     font-style: italic;
 }
@@ -5,14 +7,73 @@
 .AUSSTEHEND {
 }
 
-.WARTEN{
+.WARTEN {
 }
 
-.SCHULAMT{
+.SCHULAMT {
 }
 
-.ABGEWIESEN{
+.ABGEWIESEN {
 }
 
-.BESTAETIGT{
+.BESTAETIGT {
 }
+.sidenav {
+    li {
+        height: 20px;
+        margin-top: 12px;
+        margin-right: 40px;
+        margin-left: 10px;
+        list-style: none;
+        border-bottom: 1px solid lightgray;
+
+        button {
+            text-align: left;
+            padding: 0 0 0 15px;
+        }
+        button:focus, button:active {
+            outline: none !important;
+        }
+        button[disabled]{
+            color: #777777;
+        }
+
+        span {
+            padding-right: 3px;
+            text-align: right;
+        }
+
+    }
+    li.active-element {
+        border-bottom: 2px solid black;
+        border-left: 4px solid @color-guide;;
+    }
+
+    .fa-check.green {
+        color: #16cc77;
+    }
+    .fa-close.red {
+        color: #d50025;
+    }
+    .fa-hourglass.orange{
+        color: #f5a623;
+    }
+
+}
+
+.right-side {
+    background-color: #ECF1F4;
+}
+
+.gesuchbody.row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+}
+.gesuchbody.row > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+

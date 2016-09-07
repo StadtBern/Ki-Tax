@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
-
+import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
@@ -154,7 +154,20 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		this.nettolohnDez = nettolohnDez;
 	}
 
-	public BigDecimal getNettolohnZus() { return nettolohnZus; }
+	public BigDecimal getNettolohnZus() {
 
-	public void setNettolohnZus(BigDecimal nettolohnZus) { this.nettolohnZus = nettolohnZus; }
+		return nettolohnZus;
+	}
+
+	public void setNettolohnZus(BigDecimal nettolohnZus) {
+
+		this.nettolohnZus = nettolohnZus;
+	}
+
+	public BigDecimal getNettolohn() {
+
+		return MathUtil.DEFAULT.add(nettolohnJan, nettolohnFeb, nettolohnMrz, nettolohnApr,
+			nettolohnMai, nettolohnJun, nettolohnJul, nettolohnAug, nettolohnSep,
+			nettolohnOkt, nettolohnNov, nettolohnDez);
+	}
 }

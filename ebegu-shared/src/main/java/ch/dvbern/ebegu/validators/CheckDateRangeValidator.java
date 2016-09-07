@@ -15,6 +15,6 @@ public class CheckDateRangeValidator implements ConstraintValidator<CheckDateRan
 
 	@Override
 	public boolean isValid(@Nonnull DateRange instance, ConstraintValidatorContext context) {
-		return !instance.getGueltigAb().isBefore(instance.getGueltigBis());
+		return instance.getGueltigAb().isBefore(instance.getGueltigBis());
 	}
 }

@@ -32,12 +32,6 @@ public class JaxKind extends JaxAbstractPersonDTO {
 	@Nullable
 	private JaxPensumFachstelle pensumFachstelle;
 
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	private String bemerkungen;
-
-
-
 	@Nullable
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
@@ -70,15 +64,6 @@ public class JaxKind extends JaxAbstractPersonDTO {
 
 	public void setMutterspracheDeutsch(@Nullable Boolean mutterspracheDeutsch) {
 		this.mutterspracheDeutsch = mutterspracheDeutsch;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	@Nullable

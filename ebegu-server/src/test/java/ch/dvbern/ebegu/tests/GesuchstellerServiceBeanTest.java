@@ -45,7 +45,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchstellerService);
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 
-		gesuchstellerService.createGesuchsteller(gesuchsteller);
+		gesuchstellerService.saveGesuchsteller(gesuchsteller);
 		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
 		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
@@ -63,7 +63,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals("tim.tester@example.com", gesuchsteller.getMail());
 
 		gesuchsteller.setMail("fritz.mueller@example.com");
-		Gesuchsteller updatedGesuchsteller = gesuchstellerService.updateGesuchsteller(gesuchsteller);
+		Gesuchsteller updatedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller);
 		Assert.assertEquals("fritz.mueller@example.com", updatedGesuchsteller.getMail());
 	}
 
@@ -82,10 +82,10 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchstellerService);
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchstellerWithEinkommensverschlechterung();
 
-		gesuchstellerService.createGesuchsteller(gesuchsteller);
+		gesuchstellerService.saveGesuchsteller(gesuchsteller);
 		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
-		
+
 		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
 		final EinkommensverschlechterungContainer einkommensverschlechterungContainer = nextGesuchsteller.getEinkommensverschlechterungContainer();
 		Assert.assertNotNull(einkommensverschlechterungContainer);

@@ -3,6 +3,7 @@ import AdresseRS from '../../service/adresseRS.rest';
 import TSLand from '../../../models/types/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import {IComponentOptions, IFormController} from 'angular';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {
@@ -10,7 +11,8 @@ export class AdresseComponentConfig implements IComponentOptions {
     bindings: any = {
         adresse: '<',
         prefix: '@',
-        organisation: '<'
+        organisation: '<',
+        showNichtInGemeinde : '<'
     };
     template = require('./dv-adresse.html');
     controller = DvAdresseController;
@@ -29,9 +31,12 @@ export  class DvAdresseController {
     popup: any;   //todo team welchen datepicker wollen wir
     laenderList: TSLand[];
     organisation: boolean;
+    TSRoleUtil = TSRoleUtil;
+    showNichtInGemeinde : boolean;
 
     /* @ngInject */
     constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS) {
+        this.TSRoleUtil = TSRoleUtil;
         this.adresseRS = adresseRS;
         this.popup = {opened: false};
         listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
@@ -49,7 +54,7 @@ export  class DvAdresseController {
     }
 
     createItem() {
-        this.adresse = new TSAdresse('', '', '', '', '', undefined, '', undefined, undefined);
+        this.adresse = new TSAdresse('', '', '', '', '', undefined, '', undefined, undefined, undefined, undefined);
     }
 
     resetForm() {

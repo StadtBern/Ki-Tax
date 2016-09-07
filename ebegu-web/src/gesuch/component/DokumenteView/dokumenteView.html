@@ -43,6 +43,7 @@
                                on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
             </dv-dokumente-list>
 
+
             <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
                                table-title="DOK_SONSTIGES"
                                on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
@@ -50,21 +51,19 @@
                                sonstige="true">
             </dv-dokumente-list>
 
-            <!-- -------------------------------------------Navigation--------------------------------------------  -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.previousStep(form)" button-class="btn btn-link previous">
-                        <span class="fa fa-chevron-left"></span>
-                        <span data-translate="ZURUECK_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-6 text-right">
-                    <dv-loading-button ng-click="vm.nextStep(form)" button-class="btn btn-link next">
-                        <span data-translate="WEITER_UPPER"></span>
-                        <span class="fa fa-chevron-right"></span>
-                    </dv-loading-button>
-                </div>
+
+            <div dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
+                <dv-dokumente-list dokumente="vm.dokumentePapiergesuch" table-id="dokumentePapiergesuch"
+                                   table-title="DOK_PAPIERGESUCH"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumentePapiergesuch)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumentePapiergesuch)"
+                                   sonstige="true">
+                </dv-dokumente-list>
             </div>
+
+            <!-- -------------------------------------------Navigation--------------------------------------------  -->
+            <dv-navigation dv-previous="true" dv-next="true">
+            </dv-navigation>
 
         </form>
 

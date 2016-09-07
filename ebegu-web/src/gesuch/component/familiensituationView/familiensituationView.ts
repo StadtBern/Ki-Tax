@@ -1,6 +1,5 @@
 import AbstractGesuchViewController from '../abstractGesuchView';
-import {IComponentOptions, IFormController} from 'angular';
-import {IStateService} from 'angular-ui-router';
+import {IComponentOptions, IPromise} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSFamiliensituation from '../../../models/TSFamiliensituation';
 import './familiensituationView.less';
@@ -12,8 +11,15 @@ import {
 import BerechnungsManager from '../../service/berechnungsManager';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TSRole} from '../../../models/enums/TSRole';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
+let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
 
 
 export class FamiliensituationViewComponentConfig implements IComponentOptions {
@@ -29,38 +35,51 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     familienstatusValues: Array<TSFamilienstatus>;
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
     allowedRoles: Array<TSRole>;
+    initialFamiliensituation: TSFamiliensituation;
 
-    static $inject = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService'];
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
+                      'DvDialog', '$translate'];
     /* @ngInject */
-    constructor($state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
+                private $translate: ITranslateService) {
+
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
+        this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initFamiliensituation();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.FAMILIENSITUATION);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (response: any) => {
-            this.state.go('gesuch.fallcreation');
-        });
+    private confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
+        if (this.isConfirmationRequired()) {
+            let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
+                gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
+            });
+            return this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: 'FAMILIENSITUATION_WARNING',
+                deleteText: descriptionText
+            }).then(() => {   //User confirmed changes
+                return this.save(form);
+            });
+        } else {
+            return this.save(form);
+        }
     }
 
-    nextStep(form: IFormController): void {
-        this.save(form, (response: any) => {
-            this.state.go('gesuch.stammdaten');
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateFamiliensituation().then(navigationFunction);
+            return this.gesuchModelManager.updateFamiliensituation();
         }
+        return undefined;
     }
 
     showGesuchstellerKardinalitaet(): boolean {
@@ -72,4 +91,13 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         return this.gesuchModelManager.getFamiliensituation();
     }
 
+    /**
+     * Confirmation is required when the GS2 already exists and the familiensituation changes from 2GS to 2GS
+     * @returns {boolean}
+     */
+    private isConfirmationRequired(): boolean {
+        return (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+                && this.initialFamiliensituation.hasSecondGesuchsteller()
+                && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+    }
 }

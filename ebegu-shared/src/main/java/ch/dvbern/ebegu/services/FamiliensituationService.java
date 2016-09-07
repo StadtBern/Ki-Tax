@@ -12,20 +12,12 @@ import java.util.Optional;
 public interface FamiliensituationService {
 
 	/**
-	 * Erstellt eine neue Familiensituation in der DB, falls der key noch nicht existiert
-	 * @param familiensituation die Familiensituation als DTO
-	 * @return die gespeicherte Familiensituation
-	 */
-	@Nonnull
-	Familiensituation createFamiliensituation(@Nonnull Familiensituation familiensituation);
-
-	/**
-	 * Aktualisiert idn Familiensituation in der DB
+	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
 	 * @param familiensituation die Familiensituation als DTO
 	 * @return Die aktualisierte Familiensituation
 	 */
 	@Nonnull
-	Familiensituation updateFamiliensituation(@Nonnull Familiensituation familiensituation);
+	Familiensituation saveFamiliensituation(@Nonnull Familiensituation familiensituation);
 
 	/**
 	 *

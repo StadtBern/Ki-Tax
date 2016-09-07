@@ -30,14 +30,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 	@Nonnull
 	@Override
-	public Familiensituation createFamiliensituation(@Nonnull Familiensituation familiensituation) {
-		Objects.requireNonNull(familiensituation);
-		return persistence.persist(familiensituation);
-	}
-
-	@Nonnull
-	@Override
-	public Familiensituation updateFamiliensituation(@Nonnull Familiensituation familiensituation) {
+	public Familiensituation saveFamiliensituation(@Nonnull Familiensituation familiensituation) {
 		Objects.requireNonNull(familiensituation);
 		return persistence.merge(familiensituation);
 	}

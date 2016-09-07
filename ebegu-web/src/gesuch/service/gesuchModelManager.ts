@@ -29,7 +29,7 @@ import TSBetreuung from '../../models/TSBetreuung';
 import TSInstitutionStammdaten from '../../models/TSInstitutionStammdaten';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import DateUtil from '../../utils/DateUtil';
-import BetreuungRS from '../../core/service/betreuungRS';
+import BetreuungRS from '../../core/service/betreuungRS.rest';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
@@ -38,9 +38,11 @@ import TSEinkommensverschlechterungInfo from '../../models/TSEinkommensverschlec
 import TSUser from '../../models/TSUser';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
+import WizardStepManager from './wizardStepManager';
+import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 
 export default class GesuchModelManager {
-    gesuch: TSGesuch;
+    private gesuch: TSGesuch;
     gesuchSnapshot: TSGesuch;
     gesuchstellerNumber: number = 1;
     basisJahrPlusNumber: number = 1;
@@ -59,13 +61,14 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
-                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS) {
+                private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
+                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -73,6 +76,20 @@ export default class GesuchModelManager {
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+    }
+
+    /**
+     * In dieser Methode wird das Gesuch ersetzt. Das Gesuch ist jetzt private und darf nur ueber diese Methode geaendert werden.
+     *
+     * @param gesuch das Gesuch. Null und undefined werden erlaubt.
+     */
+    public setGesuch(gesuch: TSGesuch): void {
+        this.gesuch = gesuch;
+        this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+    }
+
+    public getGesuch(): TSGesuch {
+        return this.gesuch;
     }
 
     /**
@@ -133,23 +150,19 @@ export default class GesuchModelManager {
             return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
                 this.gesuch.fall = angular.copy(fallResponse);
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
-                    return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+                    return this.gesuch = gesuchResponse;
                 });
             });
         }
     }
 
     public updateFamiliensituation(): IPromise<TSFamiliensituation> {
-        //testen ob aktuelles familiensituation schon gespeichert ist
-        if (this.getFamiliensituation().timestampErstellt) {
-            return this.familiensituationRS.update(this.getFamiliensituation()).then((familienResponse: any) => {
-                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
+        return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
+            return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+                this.gesuch = gesuchResponse;
+                return this.gesuch.familiensituation = familienResponse;
             });
-        } else {
-            return this.familiensituationRS.create(this.getFamiliensituation()).then((familienResponse: any) => {
-                return this.gesuch.familiensituation = this.ebeguRestUtil.parseFamiliensituation(this.getFamiliensituation(), familienResponse.data);
-            });
-        }
+        });
     }
 
     /**
@@ -158,7 +171,7 @@ export default class GesuchModelManager {
      */
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
-            return this.gesuch = this.ebeguRestUtil.parseGesuch(this.gesuch, gesuchResponse.data);
+            return this.gesuch = gesuchResponse;
         });
     }
 
@@ -177,38 +190,36 @@ export default class GesuchModelManager {
      * Speichert den StammdatenToWorkWith.
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
-        if (this.getStammdatenToWorkWith().timestampErstellt) {
-            return this.gesuchstellerRS.updateGesuchsteller(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
+        return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
+            .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     return this.getStammdatenToWorkWith();
                 });
             });
-        } else {
-            return this.gesuchstellerRS.create(this.getStammdatenToWorkWith()).then((gesuchstellerResponse: any) => {
-                this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    return this.getStammdatenToWorkWith();
-                });
-            });
-        }
     }
 
     public saveFinanzielleSituation(): IPromise<TSFinanzielleSituationContainer> {
         return this.finanzielleSituationRS.saveFinanzielleSituation(
-            this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith())
+            this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
-                this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
-                return finSitContRespo;
+                return this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
             });
     }
 
     public saveEinkommensverschlechterungContainer(): IPromise<TSEinkommensverschlechterungContainer> {
         return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
-            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith())
+            this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
-                this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
-                return ekvContRespo;
+                return this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
+            });
+    }
+
+    public updateEinkommensverschlechterungsInfo(): IPromise<TSEinkommensverschlechterungInfo> {
+        return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
+            this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
+            .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
+                return this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
             });
     }
 
@@ -380,6 +391,13 @@ export default class GesuchModelManager {
         }
     }
 
+    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
+        if (this.getGesuch().einkommensverschlechterungInfo == null) {
+            this.initEinkommensverschlechterungInfo();
+        }
+        return this.getGesuch().einkommensverschlechterungInfo;
+    }
+
     public initEinkommensverschlechterungInfo(): void {
         if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
             this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
@@ -442,6 +460,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
         }
         this.backupCurrentGesuch();
@@ -618,39 +637,21 @@ export default class GesuchModelManager {
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
-        //besteht schon -> update
-        if (this.getBetreuungToWorkWith().timestampErstellt) {
-            return this.betreuungRS.updateBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
+       return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+           .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
             });
-            //neu -> create
-        } else {
-            return this.betreuungRS.createBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id).then((betreuungResponse: any) => {
-                this.getKindFromServer();
-                this.backupCurrentGesuch();
-                return this.setBetreuungToWorkWith(betreuungResponse);
-            });
-        }
     }
 
     public updateKind(): IPromise<TSKindContainer> {
-        if (this.getKindToWorkWith().timestampErstellt) {
-            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
-                this.setKindToWorkWith(kindResponse);
-                this.getFallFromServer();
-                this.backupCurrentGesuch();
-                return this.getKindToWorkWith();
-            });
-        } else {
-            return this.kindRS.createKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
-                this.setKindToWorkWith(kindResponse);
-                this.getFallFromServer();
-                this.backupCurrentGesuch();
-                return this.getKindToWorkWith();
-            });
-        }
+        return this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id).then((kindResponse: any) => {
+            this.setKindToWorkWith(kindResponse);
+            this.getFallFromServer();
+            this.backupCurrentGesuch();
+            return this.getKindToWorkWith();
+        });
     }
 
     /**
@@ -783,10 +784,10 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public removeKind(): IPromise<TSKindContainer> {
-        return this.kindRS.removeKind(this.getKindToWorkWith().id).then((responseKind: any) => {
+    public removeKind(): IPromise<void> {
+        return this.kindRS.removeKind(this.getKindToWorkWith().id, this.gesuch.id).then((responseKind: any) => {
             this.removeKindFromList();
-            return this.gesuchRS.updateGesuch(this.gesuch);
+            this.gesuchRS.updateGesuch(this.gesuch);
         });
     }
 
@@ -813,23 +814,23 @@ export default class GesuchModelManager {
         return -1;
     }
 
-    public removeBetreuung(): IPromise<TSKindContainer> {
-        return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id).then((responseBetreuung: any) => {
+    public removeBetreuung(): IPromise<void> {
+        return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
-            return this.kindRS.updateKind(this.getKindToWorkWith(), this.gesuch.id);
+            this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
 
 
-    public removeErwerbspensum(pensum: TSErwerbspensumContainer) {
+    public removeErwerbspensum(pensum: TSErwerbspensumContainer): void {
         let erwerbspensenOfCurrentGS: Array<TSErwerbspensumContainer>;
         erwerbspensenOfCurrentGS = this.getStammdatenToWorkWith().erwerbspensenContainer;
         let index: number = erwerbspensenOfCurrentGS.indexOf(pensum);
         if (index >= 0) {
             let pensumToRemove: TSErwerbspensumContainer = this.getStammdatenToWorkWith().erwerbspensenContainer[index];
             if (pensumToRemove.id) { //wenn id vorhanden dann aus der DB loeschen
-                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id)
-                    .then((ewpContainer: TSErwerbspensumContainer) => {
+                this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id, this.getGesuch().id)
+                    .then(() => {
                         erwerbspensenOfCurrentGS.splice(index, 1);
                     });
             } else {
@@ -849,7 +850,7 @@ export default class GesuchModelManager {
 
     saveErwerbspensum(gesuchsteller: TSGesuchsteller, erwerbspensum: TSErwerbspensumContainer): IPromise<TSErwerbspensumContainer> {
         if (erwerbspensum.id) {
-            return this.erwerbspensumRS.updateErwerbspensum(erwerbspensum, gesuchsteller.id)
+            return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((response: TSErwerbspensumContainer) => {
                     let i = gesuchsteller.erwerbspensenContainer.indexOf(erwerbspensum);
                     if (i >= 0) {
@@ -859,7 +860,7 @@ export default class GesuchModelManager {
                     return response;
                 });
         } else {
-            return this.erwerbspensumRS.createErwerbspensum(erwerbspensum, gesuchsteller.id)
+            return this.erwerbspensumRS.saveErwerbspensum(erwerbspensum, gesuchsteller.id, this.gesuch.id)
                 .then((storedErwerbspensum: TSErwerbspensumContainer) => {
                     gesuchsteller.erwerbspensenContainer.push(storedErwerbspensum);
                     this.backupCurrentGesuch();
@@ -911,5 +912,30 @@ export default class GesuchModelManager {
             }
         }
         return undefined;
+    }
+
+    public isThereAnyKindWithBetreuungsbedarf(): boolean {
+        let kinderList: Array<TSKindContainer> = this.getKinderList();
+        for (let kind of kinderList) {
+            //das kind muss schon gespeichert sein damit es zahelt
+            if (kind.kindJA.familienErgaenzendeBetreuung && !kind.kindJA.isNew()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

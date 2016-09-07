@@ -59,37 +59,6 @@ public class VerfuegungResource {
 	@Resource
 	private EJBContext context;    //fuer rollback
 
-//
-//	@ApiOperation(value = "Create a new FinanzielleSituation in the database. The transfer object also has a relation to FinanzielleSituation, " +
-//		"it is stored in the database as well.")
-//	@Nullable
-//	@PUT
-//	@Path("/{gesuchstellerId}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response saveFinanzielleSituation (
-//		@Nonnull @NotNull @PathParam ("gesuchstellerId") JaxId gesuchstellerId,
-//		@Nonnull @NotNull @Valid JaxFinanzielleSituationContainer finanzielleSituationJAXP,
-//		@Context UriInfo uriInfo,
-//		@Context HttpServletResponse response) throws EbeguException {
-//
-//		Optional<Gesuchsteller> gesuchsteller = gesuchstellerService.findGesuchsteller(gesuchstellerId.getId());
-//		if (gesuchsteller.isPresent()) {
-//			FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
-//			convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-//			FinanzielleSituationContainer persistedFinanzielleSituation = this.verfuegungService.saveFinanzielleSituation(convertedFinSitCont);
-//
-//			URI uri = uriInfo.getBaseUriBuilder()
-//				.path(VerfuegungResource.class)
-//				.path("/" + persistedFinanzielleSituation.getId())
-//				.build();
-//
-//			JaxFinanzielleSituationContainer jaxFinanzielleSituation = converter.finanzielleSituationContainerToJAX(persistedFinanzielleSituation);
-//			return Response.created(uri).entity(jaxFinanzielleSituation).build();
-//		}
-//		throw new EbeguEntityNotFoundException("saveFinanzielleSituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchstellerId invalid: " + gesuchstellerId.getId());
-//	}
-
 
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
 	@Nullable

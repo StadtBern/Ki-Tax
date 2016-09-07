@@ -8,11 +8,13 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -47,6 +49,8 @@ public class KindResource {
 	private JaxBConverter converter;
 	@Inject
 	private InstitutionService institutionService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Nullable
 	@PUT
@@ -69,6 +73,9 @@ public class KindResource {
 			KindContainer convertedKind = converter.kindContainerToEntity(kindContainerJAXP, kindToMerge);
 			convertedKind.setGesuch(gesuch.get());
 			KindContainer persistedKind = this.kindService.saveKind(convertedKind);
+
+			wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.KINDER);
+
 			return converter.kindContainerToJAX(persistedKind);
 		}
 		throw new EbeguEntityNotFoundException("saveKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
@@ -112,8 +119,15 @@ public class KindResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(kindJAXPId.getId());
-		kindService.removeKind(converter.toEntityId(kindJAXPId));
-		return Response.ok().build();
+		Optional<KindContainer> kind = kindService.findKind(kindJAXPId.getId());
+		if (kind.isPresent()) {
+			final String gesuchId = kind.get().getGesuch().getId();
+			kindService.removeKind(kind.get());
+			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.KINDER);
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("removeKind", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindID invalid: " + kindJAXPId.getId());
+
 	}
 
 }

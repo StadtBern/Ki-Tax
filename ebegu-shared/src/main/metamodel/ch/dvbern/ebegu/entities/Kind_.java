@@ -9,7 +9,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Kind.class)
 public abstract class Kind_ extends ch.dvbern.ebegu.entities.AbstractPersonEntity_ {
 
-	public static volatile SingularAttribute<Kind, String> bemerkungen;
 	public static volatile SingularAttribute<Kind, Integer> wohnhaftImGleichenHaushalt;
 	public static volatile SingularAttribute<Kind, PensumFachstelle> pensumFachstelle;
 	public static volatile SingularAttribute<Kind, Kinderabzug> kinderabzug;

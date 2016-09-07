@@ -6,7 +6,9 @@ import AbstractGesuchViewController from '../abstractGesuchView';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./kinderListView.html');
@@ -23,16 +25,24 @@ export class KinderListViewComponentConfig implements IComponentOptions {
 
 export class KinderListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$translate', 'DvDialog', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private $translate: ITranslateService, private DvDialog: DvDialog, private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private $translate: ITranslateService, private DvDialog: DvDialog,
+                wizardStepManager: WizardStepManager) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
     private initViewModel(): void {
         this.gesuchModelManager.initKinder();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.KINDER);
+
+        if (this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()) {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+        } else {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
+        }
     }
 
     getKinderList(): Array<TSKindContainer> {
@@ -53,7 +63,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     private openKindView(kindNumber: number): void {
-        this.state.go('gesuch.kind', {kindNumber: kindNumber});
+        this.$state.go('gesuch.kind', {kindNumber: kindNumber});
     }
 
     removeKind(kind: any): void {
@@ -71,15 +81,4 @@ export class KinderListViewController extends AbstractGesuchViewController {
             });
     }
 
-    previousStep(): void {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
-        } else {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
-        }
-    }
-
-    nextStep(): void {
-        this.state.go('gesuch.betreuungen');
-    }
 }

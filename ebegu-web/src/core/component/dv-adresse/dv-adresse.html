@@ -103,6 +103,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- nicht in Bern wohnhaft-->
+        <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
+             dv-show-expression="vm.showNichtInGemeinde">
+            <div class="col-md-6">
+                <div class="checkbox">
+                    <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde" aria-label="nichtInGemeinde"
+                                 dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                        <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
+                    </md-checkbox>
+                    <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error" class="error"></dv-error-messages>
+                </div>
+            </div>
+        </div>
+
+
         <!-- gueltig ab / gueltig bis -->
         <div class="row">
             <div class="col-md-6">

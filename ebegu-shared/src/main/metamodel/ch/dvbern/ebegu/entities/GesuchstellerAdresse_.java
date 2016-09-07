@@ -10,6 +10,7 @@ public abstract class GesuchstellerAdresse_ extends ch.dvbern.ebegu.entities.Adr
 
 	public static volatile SingularAttribute<GesuchstellerAdresse, Gesuchsteller> gesuchsteller;
 	public static volatile SingularAttribute<GesuchstellerAdresse, AdresseTyp> adresseTyp;
+	public static volatile SingularAttribute<GesuchstellerAdresse, Boolean> nichtInGemeinde;
 
 }
 

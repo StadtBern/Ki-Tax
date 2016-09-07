@@ -6,6 +6,9 @@ import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import BerechnungsManager from '../../service/berechnungsManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -19,14 +22,14 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager'];
     private kinderWithBetreuungList: Array<TSKindContainer>;
 
 
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil) {
-        super(state, gesuchModelManager, berechnungsManager);
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
@@ -43,22 +46,24 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     private initViewModel(): void {
         this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
 
         //Berechnung aller finanziellen Daten
         if (!this.berechnungsManager.finanzielleSituationResultate) {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch); //.then(() => {});
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()); //.then(() => {});
         }
-        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
 
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1); //.then(() => {});
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1); //.then(() => {});
         }
-        if (this.gesuchModelManager.gesuch && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo
-            && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo
+            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
             && !this.berechnungsManager.einkommensverschlechterungResultateBjP2) {
 
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 2); //.then(() => {});
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.gesuchModelManager.calculateVerfuegungen();
@@ -75,14 +80,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
             if (betreuungNumber > 0) {
                 this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                this.state.go('gesuch.verfuegenView');
+                this.$state.go('gesuch.verfuegenView');
             }
         }
     }
 
     public getFall() {
-        if (this.gesuchModelManager && this.gesuchModelManager.gesuch) {
-            return this.gesuchModelManager.gesuch.fall;
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().fall;
         }
         return undefined;
     }

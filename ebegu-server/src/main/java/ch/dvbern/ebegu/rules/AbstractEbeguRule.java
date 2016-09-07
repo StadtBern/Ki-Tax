@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,6 +25,7 @@ public abstract class AbstractEbeguRule implements Rule {
 
 	private RuleType ruleType;
 
+	@Valid
 	private DateRange validityPeriod;
 
 
@@ -114,7 +116,7 @@ public abstract class AbstractEbeguRule implements Rule {
 	 * dies der Fall wäre, werden sie zu einem neuen Schnitz gemergt.
 	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> normalizeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
+	protected List<VerfuegungZeitabschnitt> normalizeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> mergedZeitabschnitte, @Nonnull Gesuchsperiode gesuchsperiode) {
 		List<VerfuegungZeitabschnitt> normalizedZeitabschnitte = new LinkedList<>();
 		for (VerfuegungZeitabschnitt zeitabschnitt : mergedZeitabschnitte) {
 			// Zuerst überprüfen, ob der Zeitabschnitt innerhalb der Gesuchsperiode liegt
