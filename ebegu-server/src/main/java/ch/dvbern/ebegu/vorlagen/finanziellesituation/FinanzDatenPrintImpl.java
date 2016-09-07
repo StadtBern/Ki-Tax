@@ -12,7 +12,11 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 */
 
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.MathUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
 /**
@@ -22,6 +26,8 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 
 	public static final int DEFAULT_WERT = 123456;
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller1;
+
+	@Nullable
 	protected FinanzSituationPrintGesuchsteller fsGesuchsteller2;
 
 	/**
@@ -30,7 +36,7 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	 * @param finanzielleSituationG1 {@link AbstractFinanzielleSituation}
 	 * @param finanzielleSituationG2 {@link AbstractFinanzielleSituation}
 	 */
-	public FinanzDatenPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2) {
+	public FinanzDatenPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, @Nullable FinanzSituationPrintGesuchsteller fsGesuchsteller2) {
 
 		this.fsGesuchsteller1 = fsGesuchsteller1;
 		this.fsGesuchsteller2 = fsGesuchsteller2;
@@ -38,197 +44,238 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	}
 
 	@Override
-	public BigDecimal getNettolohnG1() {
+	public final BigDecimal getNettolohnG1() {
 
-		return fsGesuchsteller1.getFinanzielleSituation().getNettolohn();
-
-	}
-
-	@Override
-	public BigDecimal getNettolohnG2() {
-
-		return fsGesuchsteller2.getFinanzielleSituation().getNettolohn();
+		return this.getFinanzSituationGS1().getNettolohn();
 
 	}
 
 	@Override
-	public BigDecimal getFamilienzulagenG1() {
-
-		return fsGesuchsteller1.getFinanzielleSituation().getFamilienzulage();
-
-	}
-
-	@Override
-	public BigDecimal getFamilienzulagenG2() {
-
-		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getFamilienzulage() : null;
+	public final BigDecimal getNettolohnG2() {
+		return fsGesuchsteller2 != null ? this.getFinanzSituationGS2().getNettolohn() : null;
 
 	}
 
 	@Override
-	public BigDecimal getErsatzeinkommenG1() {
+	public final BigDecimal getFamilienzulagenG1() {
 
-		return fsGesuchsteller1.getFinanzielleSituation().getErsatzeinkommen();
-	}
-
-	@Override
-	public BigDecimal getErsatzeinkommenG2() {
-
-		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getErsatzeinkommen() : null;
+		return this.getFinanzSituationGS1().getFamilienzulage();
 
 	}
 
 	@Override
-	public BigDecimal getUnterhaltsbeitraegeG1() {
+	public final BigDecimal getFamilienzulagenG2() {
 
-		return fsGesuchsteller1.getFinanzielleSituation().getErhalteneAlimente();
+		return this.getFinanzSituationGS2() != null ? this.getFinanzSituationGS2().getFamilienzulage() : null;
 
 	}
 
 	@Override
-	public BigDecimal getUnterhaltsbeitraegeG2() {
+	public final BigDecimal getErsatzeinkommenG1() {
 
-		return fsGesuchsteller2 != null ? fsGesuchsteller2.getFinanzielleSituation().getErhalteneAlimente() : null;
+		return this.getFinanzSituationGS1().getErsatzeinkommen();
+	}
+
+	@Override
+	public final BigDecimal getErsatzeinkommenG2() {
+
+		return this.getFinanzSituationGS2() != null ? this.getFinanzSituationGS2().getErsatzeinkommen() : null;
+
+	}
+
+	@Override
+	public final BigDecimal getUnterhaltsbeitraegeG1() {
+
+		return this.getFinanzSituationGS1().getErhalteneAlimente();
+
+	}
+
+	@Override
+	public final BigDecimal getUnterhaltsbeitraegeG2() {
+
+		return this.getFinanzSituationGS2() != null ? this.getFinanzSituationGS2().getErhalteneAlimente() : null;
 
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		if (fsGesuchsteller1 != null) {
+			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller1.getFinanzielleSituation());
+		}
+		return null;
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG2() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		if (fsGesuchsteller2 != null) {
+			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller2.getFinanzielleSituation());
+		}
+		return null;
 	}
 
 	@Override
-	public BigDecimal getZwischentotalEinkuenfteG1() {
+	public final BigDecimal getZwischentotalEinkuenfteG1() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal nettolohn = getNettolohnG1() != null ? getNettolohnG1() : BigDecimal.ZERO;
+		BigDecimal familienzulagen = getFamilienzulagenG1() != null ? getFamilienzulagenG1() : BigDecimal.ZERO;
+		BigDecimal ersatzeinkommen = getErsatzeinkommenG1() != null ? getErsatzeinkommenG1() : BigDecimal.ZERO;
+		BigDecimal unterhaltsbeitraege = getUnterhaltsbeitraegeG1() != null ? getUnterhaltsbeitraegeG1() : BigDecimal.ZERO;
+		BigDecimal geschaeftsgewinn = getGeschaeftsgewinnG1() != null ? getGeschaeftsgewinnG1() : BigDecimal.ZERO;
+		return MathUtil.EXACT.add(nettolohn, familienzulagen, ersatzeinkommen, unterhaltsbeitraege, geschaeftsgewinn);
 	}
 
 	@Override
-	public BigDecimal getZwischentotalEinkuenfteG2() {
+	public final BigDecimal getZwischentotalEinkuenfteG2() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal nettolohn = getNettolohnG2() != null ? getNettolohnG2() : BigDecimal.ZERO;
+		BigDecimal familienzulagen = getFamilienzulagenG2() != null ? getFamilienzulagenG2() : BigDecimal.ZERO;
+		BigDecimal ersatzeinkommen = getErsatzeinkommenG2() != null ? getErsatzeinkommenG2() : BigDecimal.ZERO;
+		BigDecimal unterhaltsbeitraege = getUnterhaltsbeitraegeG2() != null ? getUnterhaltsbeitraegeG2() : BigDecimal.ZERO;
+		BigDecimal geschaeftsgewinn = getGeschaeftsgewinnG2() != null ? getGeschaeftsgewinnG2() : BigDecimal.ZERO;
+		return MathUtil.EXACT.add(nettolohn, familienzulagen, ersatzeinkommen, unterhaltsbeitraege, geschaeftsgewinn);
 	}
 
 	@Override
-	public BigDecimal getTotalEinkuenfte() {
+	public final BigDecimal getTotalEinkuenfte() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal total1 = getZwischentotalEinkuenfteG1() != null ? getZwischentotalEinkuenfteG1() : BigDecimal.ZERO;
+		BigDecimal total2 = getZwischentotalEinkuenfteG2() != null ? getZwischentotalEinkuenfteG2() : BigDecimal.ZERO;
+
+		return MathUtil.EXACT.add(total1, total2);
 	}
 
 	@Override
-	public BigDecimal getBruttovermoegenG1() {
+	public final BigDecimal getBruttovermoegenG1() {
 
-		return fsGesuchsteller1.getFinanzielleSituation().getBruttovermoegen();
-
-	}
-
-	@Override
-	public BigDecimal getBruttovermoegenG2() {
-
-		return fsGesuchsteller2.getFinanzielleSituation() != null ? fsGesuchsteller2.getFinanzielleSituation().getBruttovermoegen() : null;
-
-	}
-
-	@Override
-	public BigDecimal getSchuldenG1() {
-
-		return fsGesuchsteller1.getFinanzielleSituation().getSchulden();
+		return this.getFinanzSituationGS1().getBruttovermoegen();
 
 	}
 
 	@Override
-	public BigDecimal getSchuldenG2() {
+	public final BigDecimal getBruttovermoegenG2() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		if (fsGesuchsteller2 != null && this.getFinanzSituationGS2() != null) {
+			this.getFinanzSituationGS2().getBruttovermoegen();
+		}
+		return null;
+
 	}
 
 	@Override
-	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
+	public final BigDecimal getSchuldenG1() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		return this.getFinanzSituationGS1().getSchulden();
+
 	}
 
 	@Override
-	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
+	public final BigDecimal getSchuldenG2() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		if (fsGesuchsteller2 != null && this.getFinanzSituationGS2() != null) {
+			return this.getFinanzSituationGS2().getSchulden();
+		}
+		return null;
 	}
 
 	@Override
-	public BigDecimal getZwischentotalNettovermoegenInsgesamt() {
+	public final BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal bruttovermoegen = getBruttovermoegenG1() != null ? getBruttovermoegenG1() : BigDecimal.ZERO;
+		BigDecimal schulden = getSchuldenG1() != null ? getFamilienzulagenG1() : BigDecimal.ZERO;
+		return MathUtil.EXACT.subtract(bruttovermoegen, schulden);
 	}
 
 	@Override
-	public BigDecimal getNettovermoegen() {
+	public final BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal bruttovermoegen = getBruttovermoegenG2() != null ? getBruttovermoegenG2() : BigDecimal.ZERO;
+		BigDecimal schulden = getSchuldenG2() != null ? getFamilienzulagenG2() : BigDecimal.ZERO;
+
+		return MathUtil.EXACT.subtract(bruttovermoegen, schulden);
+
 	}
 
 	@Override
-	public BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen() {
+	public final BigDecimal getZwischentotalNettovermoegenInsgesamt() {
+		BigDecimal nettovermoegenG1 = getZwischentotalNettovermoegenBeiderGesuchsteller1() != null ?
+			getZwischentotalNettovermoegenBeiderGesuchsteller1() : BigDecimal.ZERO;
+		BigDecimal nettovermoegenG2 = getZwischentotalNettovermoegenBeiderGesuchsteller2() != null ?
+			getZwischentotalNettovermoegenBeiderGesuchsteller2() : BigDecimal.ZERO;
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		return MathUtil.EXACT.add(nettovermoegenG1, nettovermoegenG2);
+
+	}
+
+	//todo homa minor dass sollte eigentlich nettovermoegensabzug heissen oder so
+	@Override
+	@Nonnull
+	public final BigDecimal getNettovermoegen() {
+
+		return FinanzielleSituationRechner.calcVermoegen5Prozent(this.getFinanzSituationGS1(), this.getFinanzSituationGS2());
 	}
 
 	@Override
-	public int getAnzahlPersonen() {
+	@Deprecated
+	public final BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen() {
 
-		// TODO Implementieren
-		return 9;
+		// TODO remove
+		return new BigDecimal(0);
 	}
 
 	@Override
-	public BigDecimal getTotalAbzuege() {
+	@Deprecated
+	public final int getAnzahlPersonen() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		// TODO remove
+		return 0;
 	}
 
 	@Override
-	public BigDecimal getZusammenzugTotaleinkuenfte() {
+	public final BigDecimal getTotalAbzuege() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+		BigDecimal unterhaltGS1 = getUnterhaltsbeitraegeG1() != null ? getUnterhaltsbeitraegeG1() : BigDecimal.ZERO;
+		BigDecimal unterhaltGS2 = getUnterhaltsbeitraegeG2() != null ? getUnterhaltsbeitraegeG2() : BigDecimal.ZERO;
+
+		return MathUtil.EXACT.add(unterhaltGS1, unterhaltGS2);
 	}
 
 	@Override
-	public BigDecimal getZusammenzugNettovermoegen() {
+	public final BigDecimal getZusammenzugTotaleinkuenfte() {
+		return getTotalEinkuenfte();
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
 	}
 
 	@Override
-	public BigDecimal getZusammenzugTotalAbzuege() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+	public final BigDecimal getZusammenzugNettovermoegen() {
+		return getNettovermoegen();
 	}
 
 	@Override
-	public BigDecimal getMassgebendesEinkommen() {
+	public final BigDecimal getZusammenzugTotalAbzuege() {
+		return getTotalAbzuege();
+	}
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
+	@Override
+	public final BigDecimal getMassgebendesEinkommen() {
+		BigDecimal totalEinkuenfte = getZusammenzugTotaleinkuenfte();
+		BigDecimal vermoegensabzug = getZusammenzugNettovermoegen();
+		BigDecimal abzug = getZusammenzugTotalAbzuege();
+		BigDecimal abzugToSubtract = MathUtil.EXACT.add(vermoegensabzug, abzug);
+
+		return MathUtil.EXACT.subtract(totalEinkuenfte, abzugToSubtract);
+	}
+
+	protected AbstractFinanzielleSituation getFinanzSituationGS1() {
+		if (fsGesuchsteller1 != null) {
+			return this.fsGesuchsteller1.getFinanzielleSituation();
+		}
+		return null;
+	}
+
+	protected AbstractFinanzielleSituation getFinanzSituationGS2() {
+		if (fsGesuchsteller2 != null) {
+			return this.fsGesuchsteller2.getFinanzielleSituation();
+		}
+		return null;
 	}
 }

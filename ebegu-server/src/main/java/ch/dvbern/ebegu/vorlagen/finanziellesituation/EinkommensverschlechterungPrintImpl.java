@@ -11,16 +11,17 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 22.08.2016
 */
 
-import java.math.BigDecimal;
-
+import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+
+import java.math.BigDecimal;
 
 /**
  * Implementiert den {@link EinkommensverschlechterungPrint}
  */
 public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl implements EinkommensverschlechterungPrint {
 
-	public static final int DEFAULT_WERT = 8888;
 	private String einkommensverschlechterungJahr;
 	private String ereigniseintritt;
 	private String grund;
@@ -69,199 +70,31 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		return grund;
 	}
 
-	@Override
-	public BigDecimal getNettolohnG1() {
 
-		return ev1.getNettolohn();
-	}
-
-	@Override
-	public BigDecimal getNettolohnG2() {
-
-		return ev2 != null ? ev2.getNettolohn() : null;
-
-	}
-
-	@Override
-	public BigDecimal getFamilienzulagenG1() {
-
-		return ev1.getFamilienzulage();
-	}
-
-	@Override
-	public BigDecimal getFamilienzulagenG2() {
-
-		return ev2 != null ? ev2.getFamilienzulage() : null;
-	}
-
-	@Override
-	public BigDecimal getErsatzeinkommenG1() {
-
-		return ev1.getErsatzeinkommen();
-	}
-
-	@Override
-	public BigDecimal getErsatzeinkommenG2() {
-
-		return ev2 != null ? ev2.getErsatzeinkommen() : null;
-
-	}
-
-	@Override
-	public BigDecimal getUnterhaltsbeitraegeG1() {
-
-		return ev1.getErhalteneAlimente();
-
-	}
-
-	@Override
-	public BigDecimal getUnterhaltsbeitraegeG2() {
-
-		return ev2 != null ? ev2.getErhalteneAlimente() : null;
-
-	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {
-
-		return ev1.getGeschaeftsgewinnBasisjahr();
-
+		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ev1, this.fsGesuchsteller1.getFinanzielleSituation());
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG2() {
-
-		return ev2 != null ? ev2.getGeschaeftsgewinnBasisjahr() : null;
-
+		//hier muessen zum berechnen die Einkommensverschlechterung und die finanzielle Situation benutzt werden
+		if (fsGesuchsteller2 != null ) {
+			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ev2, this.fsGesuchsteller2.getFinanzielleSituation());
+		}
+		return null;
 	}
 
 	@Override
-	public BigDecimal getZwischentotalEinkuenfteG1() {
-
-		// TODO Implementieren. Aus dem ev1 Daten holen
-		return new BigDecimal(DEFAULT_WERT);
+	protected AbstractFinanzielleSituation getFinanzSituationGS1() {
+		return ev1;
 	}
 
 	@Override
-	public BigDecimal getZwischentotalEinkuenfteG2() {
-
-		// TODO Implementieren. Aus dem ev2 Daten holen
-		return new BigDecimal(DEFAULT_WERT);
+	protected AbstractFinanzielleSituation getFinanzSituationGS2() {
+		return ev2;
 	}
 
-	@Override
-	public BigDecimal getTotalEinkuenfte() {
 
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getBruttovermoegenG1() {
-
-		// return ev1.getBruttovermoegen();
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getBruttovermoegenG2() {
-
-		// return ev2 != null ? ev2.getBruttovermoegen() : null;
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getSchuldenG1() {
-
-		// return ev1.getSchulden();
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getSchuldenG2() {
-
-		// return ev2 != null ? ev2.getSchulden() : null;
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
-
-		// TODO Implementieren. Aus dem ev1 Daten holen
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
-
-		// TODO Implementieren. Aus dem ev2 Daten holen
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZwischentotalNettovermoegenInsgesamt() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getNettovermoegen() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public int getAnzahlPersonen() {
-
-		// TODO Implementieren
-		return 9;
-	}
-
-	@Override
-	public BigDecimal getTotalAbzuege() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZusammenzugTotaleinkuenfte() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZusammenzugNettovermoegen() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getZusammenzugTotalAbzuege() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
-
-	@Override
-	public BigDecimal getMassgebendesEinkommen() {
-
-		// TODO Implementieren
-		return new BigDecimal(DEFAULT_WERT);
-	}
 }

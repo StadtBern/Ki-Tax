@@ -74,6 +74,7 @@ public interface FinanzDatenPrint {
 	BigDecimal getGeschaeftsgewinnG2();
 
 	/**
+	 * Zwischentotal zusammengesetzt aus Nettolohn, erhaltenen Familienzulagen, Ersatzeinkommen, Unterhaltsbeitreagen, Geschaeftsgewinn
 	 * @return Zwischentotal Einkünfte beider Gesuchsteller 1
 	 */
 	BigDecimal getZwischentotalEinkuenfteG1();
@@ -129,8 +130,10 @@ public interface FinanzDatenPrint {
 	BigDecimal getNettovermoegen();
 
 	/**
+	 * @deprecated
 	 * @return Abzüge bei einer Familiengrösse von 5 Personen
 	 */
+	@Deprecated
 	BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen();
 
 	/**

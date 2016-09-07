@@ -277,4 +277,14 @@ public enum MathUtil {
 		value = value.setScale(0, RoundingMode.HALF_UP);
 		return value.max(BigDecimal.ZERO);
 	}
+
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	public static BigDecimal positiveNonNull(BigDecimal value) {
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		return value.max(BigDecimal.ZERO);
+	}
 }

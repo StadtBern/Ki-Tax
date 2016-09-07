@@ -34,6 +34,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
 
 		this.gesuch = gesuch;
+		//Finanzdaten abfuellen
 		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
 		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
 

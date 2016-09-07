@@ -69,7 +69,6 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
 
-		TestDataUtil.setFinanzielleSituation(gesuch, new BigDecimal("100000"));
 		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("80000"), true);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("50000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
@@ -94,7 +93,6 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		// Hack damit Dokument mit zwei Gesuchsteller dargestellt wird
 		gesuch.setGesuchsteller2(gesuch.getGesuchsteller1());
 
-		TestDataUtil.setFinanzielleSituation(gesuch, new BigDecimal("100000"));
 		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("80000"), true);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("50000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
