@@ -391,6 +391,13 @@ export default class GesuchModelManager {
         }
     }
 
+    public getEinkommensverschlechterungsInfo(): TSEinkommensverschlechterungInfo {
+        if (this.getGesuch().einkommensverschlechterungInfo == null) {
+            this.initEinkommensverschlechterungInfo();
+        }
+        return this.getGesuch().einkommensverschlechterungInfo;
+    }
+
     public initEinkommensverschlechterungInfo(): void {
         if (this.gesuch && !this.gesuch.einkommensverschlechterungInfo) {
             this.gesuch.einkommensverschlechterungInfo = new TSEinkommensverschlechterungInfo();
@@ -905,5 +912,30 @@ export default class GesuchModelManager {
             }
         }
         return undefined;
+    }
+
+    public isThereAnyKindWithBetreuungsbedarf(): boolean {
+        let kinderList: Array<TSKindContainer> = this.getKinderList();
+        for (let kind of kinderList) {
+            //das kind muss schon gespeichert sein damit es zahelt
+            if (kind.kindJA.familienErgaenzendeBetreuung && !kind.kindJA.isNew()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Schaut dass mindestens eine Betreuung erfasst wurde.
+     * @returns {boolean}
+     */
+    public isThereAnyBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            if (kind.betreuungen && kind.betreuungen.length > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }
