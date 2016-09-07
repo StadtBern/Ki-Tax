@@ -188,7 +188,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
 					checkStepStatusForBetreuung(wizardStep);
 				}
-				if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+				else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
 					checkStepStatusForErwerbspensum(wizardStep);
 				}
 			}
@@ -200,6 +200,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
 					checkStepStatusForBetreuung(wizardStep);
+				}
+				else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
+					checkStepStatusForErwerbspensum(wizardStep);
 				}
 				else if (WizardStepName.KINDER.equals(wizardStep.getWizardStepName())) {
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
@@ -251,12 +254,17 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		wizardStep.setWizardStepStatus(status);
 	}
 
-
+	/**
+	 * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
+	 * und mind. eines dieser Kinder keine Fachstelle involviert hat
+	 * @param wizardStep
+	 */
 	private void checkStepStatusForErwerbspensum(WizardStep wizardStep) {
 		final List<Betreuung> allBetreuungenRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
 			.stream().filter(betreuung ->
-				BetreuungsangebotTyp.TAGESSCHULE != betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()
-					&& BetreuungsangebotTyp.TAGESELTERN_SCHULKIND != betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp())
+				betreuung.getKind().getKindJA().getPensumFachstelle() == null
+				&& (BetreuungsangebotTyp.KITA == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()
+					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()))
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());

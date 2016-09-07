@@ -374,6 +374,7 @@
     "KINDER_TOOLTIP_REQUIRED": "Es muss mindestens ein Kind mit externer Betreuung erfasst werden",
     "BETREUUNG_TOOLTIP_REQUIRED": "Es muss mindestens ein Betreuungsangebot erfasst werden",
     "ERWERBSPENSUM_TOOLTIP_REQUIRED": "Es muss mindestens ein Erwerbspensum erfasst werden",
+    "ERWERBSPENSEN_NOT_REQUIRED": "Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde und mind. eines dieser Kinder keine Fachstelle involviert hat",
     "KINDER_NOCH_KEINE": "noch keine Kinder erfasst",
     "BETREUUNGEN_NOCH_KEINE": "noch keine Betreuung für dieses Kind erfasst",
     "WOHNHAFT_IM_GLEICHEN_HAUSHALT": "Wohnt das Kind im gleichen Haushalt?",

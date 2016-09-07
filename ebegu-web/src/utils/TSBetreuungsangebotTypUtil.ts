@@ -16,7 +16,7 @@ export class TSBetreuungsangebotTypUtil {
     }
 
     public static getBetreuungsangebotTypRequiringErwerbspensum(): Array<TSBetreuungsangebotTyp> {
-        return [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND, TSBetreuungsangebotTyp.TAGI];
+        return [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND];
     }
 
     public static isRequireErwerbspensum(typ: TSBetreuungsangebotTyp): boolean {
