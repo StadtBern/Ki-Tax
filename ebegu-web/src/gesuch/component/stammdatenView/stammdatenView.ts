@@ -30,25 +30,22 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     showUmzug: boolean;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
-    phonePattern: string;
-    mobilePattern: string;
     allowedRoles: Array<TSRole>;
 
     /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
      this.onUpdate({key: data})*/
 
-    static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager'];
+    static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
+        'CONSTANTS'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil,
-                gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager) {
+    constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager, private CONSTANTS: any) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewmodel();
-        this.phonePattern = '(0|\\+41|0041)\\s?([\\d]{2})\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
-        this.mobilePattern = '(0|\\+41|0041)\\s?(74|75|76|77|78|79)\\s?([\\d]{3})\\s?([\\d]{2})\\s?([\\d]{2})';
     }
 
     private initViewmodel() {
