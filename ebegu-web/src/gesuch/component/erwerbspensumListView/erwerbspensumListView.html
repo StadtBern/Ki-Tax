@@ -5,6 +5,10 @@
         </h4>
         <hr class="header"/>
 
+        <div ng-if="!vm.isErwerbspensumRequired()">
+            <span data-translate="ERWERBSPENSEN_NOT_REQUIRED"></span>
+        </div>
+
         <!--Erwerbspensen von Gesuchsteller 1-->
         <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
             <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.getFullName()"></h4>

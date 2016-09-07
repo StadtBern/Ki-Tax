@@ -121,12 +121,18 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         });
     }
 
-    private isErwerbspensumRequired(): boolean {
+    /**
+     * Erwerbspensum muss nur erfasst werden, falls mind. 1 Kita oder 1 Tageseltern Kleinkind Angebot erfasst wurde
+     * und mind. eines dieser Kinder keine Fachstelle involviert hat
+     * @returns {boolean}
+     */
+    public isErwerbspensumRequired(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.gesuchModelManager.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
                 if (betreuung.institutionStammdaten
-                    && TSBetreuungsangebotTypUtil.isRequireErwerbspensum(betreuung.institutionStammdaten.betreuungsangebotTyp)) {
+                    && TSBetreuungsangebotTypUtil.isRequireErwerbspensum(betreuung.institutionStammdaten.betreuungsangebotTyp)
+                    && !kind.kindJA.pensumFachstelle) {
                     return true;
                 }
             }
