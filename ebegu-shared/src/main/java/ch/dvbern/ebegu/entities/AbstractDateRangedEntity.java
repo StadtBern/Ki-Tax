@@ -8,6 +8,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
+import javax.validation.Valid;
 import java.util.Objects;
 
 /**
@@ -21,7 +22,7 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 
 	@Nonnull
 	@Embedded
-	//@Valid todo team dies einkommentieren fuer die Produktion. Auskommentiert damit wir einfacher Daten automatisch eingeben koennen mit FormFiller
+	@Valid
 	private DateRange gueltigkeit = new DateRange();
 
 	@Nonnull
