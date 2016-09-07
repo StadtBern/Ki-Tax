@@ -1,5 +1,4 @@
 import AbstractGesuchViewController from './component/abstractGesuchView';
-import {IStateService} from 'angular-ui-router';
 import GesuchModelManager from './service/gesuchModelManager';
 import BerechnungsManager from './service/berechnungsManager';
 import DateUtil from '../utils/DateUtil';
@@ -10,11 +9,11 @@ import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 export class GesuchRouteController extends AbstractGesuchViewController {
 
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', '$scope', 'WizardStepManager'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', '$scope', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any,
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any,
                 wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
     }
 
     showFinanzsituationStart(): boolean {
@@ -64,4 +63,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         return true;
     }
 
+    public isElementActive(stepName: TSWizardStepName): boolean {
+        return this.wizardStepManager.getCurrentStepName() === stepName;
+    }
 }

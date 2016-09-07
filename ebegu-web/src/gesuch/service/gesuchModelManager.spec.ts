@@ -13,6 +13,8 @@ import TSGesuch from '../../models/TSGesuch';
 import TSUser from '../../models/TSUser';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from './wizardStepManager';
+import TSBetreuung from '../../models/TSBetreuung';
+import TSKind from '../../models/TSKind';
 
 describe('gesuchModelManager', function () {
 
@@ -182,6 +184,50 @@ describe('gesuchModelManager', function () {
                 let user: TSUser = new TSUser('Emiliano', 'Camacho');
                 gesuchModelManager.setUserAsFallVerantwortlicher(user);
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(user);
+            });
+        });
+        describe('exist at least one Betreuung among all kinder', function () {
+            it('should return false for empty list', function() {
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return false for a list with Kinder but no Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = false;
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return true for a list with Kinder needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = true;
+                let betreuung: TSBetreuung = new TSBetreuung();
+                kind.betreuungen = [betreuung];
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(true);
+            });
+        });
+
+        describe('exist kinder with betreuung needed', function () {
+            it('should return false for empty list', function() {
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
+            });
+            it('should return false for a list with no Kind needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = false;
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
+            });
+            it('should return true for a list with Kinder needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.timestampErstellt = DateUtil.today();
+                kind.kindJA.familienErgaenzendeBetreuung = true;
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(true);
             });
         });
     });

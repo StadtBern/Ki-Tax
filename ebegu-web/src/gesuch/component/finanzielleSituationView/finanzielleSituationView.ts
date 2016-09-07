@@ -1,7 +1,6 @@
-import {IComponentOptions, IFormController} from 'angular';
+import {IComponentOptions} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import TSFinanzielleSituationContainer from '../../../models/TSFinanzielleSituationContainer';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -10,6 +9,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IPromise = angular.IPromise;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -24,12 +24,12 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
     public showSelbstaendig: boolean;
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IStammdatenStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
+    constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
                 wizardStepManager: WizardStepManager) {
-        super($state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
         this.initViewModel();
@@ -76,34 +76,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
-            } else if ((this.gesuchModelManager.gesuchstellerNumber === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart');
-            } else {
-                this.state.go('gesuch.kinder');
-            }
-        });
-
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, (finanzielleSituationResponse: any) => {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
-            } else {
-                this.state.go('gesuch.finanzielleSituationResultate');
-            }
-        });
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<TSFinanzielleSituationContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.saveFinanzielleSituation().then(navigationFunction);
+            return this.gesuchModelManager.saveFinanzielleSituation();
         }
+        return undefined;
     }
 
     calculate() {

@@ -27,6 +27,10 @@ export default class WizardStepManager {
         this.currentStepName = stepName;
     }
 
+    public getCurrentStepName(): TSWizardStepName {
+        return this.currentStepName;
+    }
+
     /**
      * Initializes WizardSteps with one single Step GESUCH_ERSTELLEN which status is IN_BEARBEITUNG.
      * This method must be called only when the Gesuch doesn't exist yet.

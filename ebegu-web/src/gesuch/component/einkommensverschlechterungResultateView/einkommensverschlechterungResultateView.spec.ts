@@ -23,7 +23,6 @@ describe('einkommensverschlechterungResultateView', function () {
     var scope: angular.IScope;
     var $componentController: any;
     var stateParams: any;
-    var state: any;
     var consta: any;
     var errorservice: any;
     let wizardStepManager: WizardStepManager;
@@ -36,7 +35,6 @@ describe('einkommensverschlechterungResultateView', function () {
         scope = $rootScope.$new();
         let $q = $injector.get('$q');
         stateParams = $injector.get('$stateParams');
-        state = $injector.get('$state');
         consta = $injector.get('CONSTANTS');
         errorservice = $injector.get('ErrorService');
         wizardStepManager = $injector.get('WizardStepManager');
@@ -61,7 +59,7 @@ describe('einkommensverschlechterungResultateView', function () {
 
     describe('calculateVeraenderung', () => {
         beforeEach(function () {
-            ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, state, gesuchModelManager,
+            ekvrvc = new EinkommensverschlechterungResultateViewController(stateParams, gesuchModelManager,
                 berechnungsManager, consta, errorservice, wizardStepManager);
 
         });

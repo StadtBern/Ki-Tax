@@ -35,21 +35,13 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
         'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager) {
-        super(state, gesuchModelManager, berechnungsManager, wizardStepManager);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
-    }
-
-    previousStep(): void {
-        this.state.go('gesuch.kinder');
-    }
-
-    nextStep(): void {
-        this.state.go('gesuch.erwerbsPensen');
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
@@ -94,7 +86,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     private openBetreuungView(): void {
-        this.state.go('gesuch.betreuung');
+        this.$state.go('gesuch.betreuung');
     }
 
     /**
@@ -110,17 +102,4 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         return '';
     }
 
-    /**
-     * Schaut dass mindestens eine Betreuung erfasst wurde.
-     * @returns {boolean}
-     */
-    public isThereAnyBetreuung(): boolean {
-        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
-        for (let kind of kinderWithBetreuungList) {
-            if (kind.betreuungen && kind.betreuungen.length > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
