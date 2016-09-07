@@ -426,23 +426,23 @@ public final class TestDataUtil {
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(einkommen);
 	}
 
-	public static void setEinkommensverschlechterung(Gesuch gesuch, BigDecimal einkommen, boolean basisJahrPlus1) {
-		if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() == null) {
-			gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
+	public static void setEinkommensverschlechterung(Gesuch gesuch, Gesuchsteller gesuchsteller, BigDecimal einkommen, boolean basisJahrPlus1) {
+		if (gesuchsteller.getEinkommensverschlechterungContainer() == null) {
+			gesuchsteller.setEinkommensverschlechterungContainer(new EinkommensverschlechterungContainer());
 		}
 		if (gesuch.getEinkommensverschlechterungInfo() == null) {
 			gesuch.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo());
 			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		}
 		if (basisJahrPlus1) {
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
+			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(new Einkommensverschlechterung());
+			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus1(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus1(STICHTAG_EKV_1);
 			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
 		} else {
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
-			gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
+			gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(new Einkommensverschlechterung());
+			gesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2().setNettolohnAug(einkommen);
 			gesuch.getEinkommensverschlechterungInfo().setEkvFuerBasisJahrPlus2(true);
 			gesuch.getEinkommensverschlechterungInfo().setStichtagFuerBasisJahrPlus2(STICHTAG_EKV_2);
 			gesuch.getEinkommensverschlechterungInfo().setEinkommensverschlechterung(true);
