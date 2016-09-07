@@ -6,7 +6,7 @@
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
 
-            <li ui-sref-active="active"
+            <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
 
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.fallcreation"
@@ -18,7 +18,8 @@
                 <span class="col-md-2 ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
+            <li ng-class="{'active-element': vm.isElementActive('FAMILIENSITUATION')}"
+                ui-sref-active="active" ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.familiensituation"
                         ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
                     <span data-translate="MENU_FAMSITUATION"></span>
@@ -26,7 +27,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active">
+            <li ng-class="{'active-element': vm.isElementActive('GESUCHSTELLER')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.stammdaten"
                         ng-disabled="vm.isWizardStepDisabled('GESUCHSTELLER')">
                     <span data-translate="MENU_GESUCHSTELLER"></span>
@@ -34,7 +35,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.kinder"
                         ng-disabled="vm.isWizardStepDisabled('KINDER')">
@@ -43,7 +44,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('KINDER')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active">
+            <li ng-class="{'active-element': vm.isElementActive('BETREUUNG')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.betreuungen"
                         ng-disabled="vm.isWizardStepDisabled('BETREUUNG')">
                     <span data-translate="MENU_BETREUUNG"></span>
@@ -51,7 +52,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.erwerbsPensen"
                         ng-disabled="vm.isWizardStepDisabled('ERWERBSPENSUM')">
@@ -60,7 +61,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituationStart"
@@ -70,7 +71,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="!vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituation"
@@ -80,7 +81,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.einkommensverschlechterungInfo"
                         ng-disabled="vm.isWizardStepDisabled('EINKOMMENSVERSCHLECHTERUNG')">
@@ -89,7 +90,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active"
+            <li ng-class="{'active-element': vm.isElementActive('DOKUMENTE')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.dokumente"
                         ng-disabled="vm.isWizardStepDisabled('DOKUMENTE')">
@@ -105,7 +106,7 @@
                 </button>
             </li>
 
-            <li ui-sref-active="active">
+            <li ng-class="{'active-element': vm.isElementActive('VERFUEGEN')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.verfuegen"
                         ng-disabled="vm.isWizardStepDisabled('VERFUEGEN')">
                     <span data-translate="MENU_VERFUEGEN"></span>
