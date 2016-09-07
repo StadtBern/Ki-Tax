@@ -129,12 +129,6 @@ public interface FinanzDatenPrint {
 	 */
 	BigDecimal getNettovermoegen();
 
-	/**
-	 * @deprecated
-	 * @return Abzüge bei einer Familiengrösse von 5 Personen
-	 */
-	@Deprecated
-	BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen();
 
 	/**
 	 * @return Total Abzüge
@@ -161,8 +155,4 @@ public interface FinanzDatenPrint {
 	 */
 	BigDecimal getMassgebendesEinkommen();
 
-	/**
-	 * @return
-	 */
-	int getAnzahlPersonen();
 }

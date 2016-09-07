@@ -214,21 +214,6 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 		return FinanzielleSituationRechner.calcVermoegen5Prozent(this.getFinanzSituationGS1(), this.getFinanzSituationGS2());
 	}
 
-	@Override
-	@Deprecated
-	public final BigDecimal getAbzuegeBeiEinerFamiliengroesseVon5Personen() {
-
-		// TODO remove
-		return new BigDecimal(0);
-	}
-
-	@Override
-	@Deprecated
-	public final int getAnzahlPersonen() {
-
-		// TODO remove
-		return 0;
-	}
 
 	@Override
 	public final BigDecimal getTotalAbzuege() {
@@ -258,11 +243,11 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	@Override
 	public final BigDecimal getMassgebendesEinkommen() {
 		BigDecimal totalEinkuenfte = getZusammenzugTotaleinkuenfte();
-		BigDecimal vermoegensabzug = getZusammenzugNettovermoegen();
+		BigDecimal vermoegenszuschlag = getZusammenzugNettovermoegen();
 		BigDecimal abzug = getZusammenzugTotalAbzuege();
-		BigDecimal abzugToSubtract = MathUtil.EXACT.add(vermoegensabzug, abzug);
+		BigDecimal totalEinkommen = MathUtil.EXACT.add(totalEinkuenfte, vermoegenszuschlag);
 
-		return MathUtil.EXACT.subtract(totalEinkuenfte, abzugToSubtract);
+		return MathUtil.EXACT.subtract(totalEinkommen, abzug);
 	}
 
 	protected AbstractFinanzielleSituation getFinanzSituationGS1() {
