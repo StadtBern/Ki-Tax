@@ -1,9 +1,11 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 /**
@@ -23,6 +25,12 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 
 	@Column(nullable = true)
 	private BigDecimal geschaeftsgewinnBasisjahrMinus1;
+
+
+	@Transient
+	public BigDecimal calcGeschaeftsgewinnDurchschnitt(){
+		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(this);
+	}
 
 
 	public BigDecimal getNettolohn() {

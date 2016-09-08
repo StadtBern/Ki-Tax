@@ -46,7 +46,7 @@ public class FinanzielleSituationRechner {
 		this.abzugFamiliengroesse6 = abzugFamiliengroesse6;
 	}
 
-	@Inject
+	@Inject //wenn die Parameter nicht direkt gesetzt wurden werden sie per service geladen
 	private EbeguParameterService ebeguParameterService;
 
 	/**
@@ -143,6 +143,14 @@ public class FinanzielleSituationRechner {
 		return finSitResultDTO;
 	}
 
+	/**
+	 * Diese Methode wird momentan im Print gebraucht um die Finanzielle Situation zu berechnen. Der Abzug aufgrund Familiengroesse wird
+	 * hier auf 0 gesetzt
+	 * @param gesuch
+	 * @param basisJahrPlus
+	 * @return
+	 */
+
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultateEinkommensverschlechterung(@Nonnull Gesuch gesuch, int basisJahrPlus) {
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
@@ -208,6 +216,10 @@ public class FinanzielleSituationRechner {
 	}
 
 
+	/**
+	 * Berechnet das FinazDaten DTO fuer die Finanzielle Situation
+	 * @param gesuch das Gesuch dessen finazDatenDTO gesetzt werden soll
+	 */
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
 		FinanzDatenDTO finanzDatenDTO = new FinanzDatenDTO();
 
@@ -249,8 +261,10 @@ public class FinanzielleSituationRechner {
 			&& MathUtil.EXACT.divide(massgebendesEinkommenJahr, massgebendesEinkommenVorjahr).compareTo(minimumEKV) <= 0;
 	}
 
-	private void calculateZusammen(final FinanzielleSituationResultateDTO finSitResultDTO, AbstractFinanzielleSituation finanzielleSituationGS1,
-								   BigDecimal nettoJahresLohn1, BigDecimal geschaeftsgewinnDurchschnitt1, AbstractFinanzielleSituation finanzielleSituationGS2,
+	private void calculateZusammen(final FinanzielleSituationResultateDTO finSitResultDTO,
+								   AbstractFinanzielleSituation finanzielleSituationGS1,
+								   BigDecimal nettoJahresLohn1, BigDecimal geschaeftsgewinnDurchschnitt1,
+								   AbstractFinanzielleSituation finanzielleSituationGS2,
 								   BigDecimal nettoJahresLohn2, BigDecimal geschaeftsgewinnDurchschnitt2) {
 
 		finSitResultDTO.setEinkommenBeiderGesuchsteller(calcEinkommen(finanzielleSituationGS1, nettoJahresLohn1,
@@ -271,7 +285,8 @@ public class FinanzielleSituationRechner {
 	 * @param finanzielleSituation
 	 * @return
 	 */
-	private BigDecimal calcGeschaeftsgewinnDurchschnitt(FinanzielleSituation finanzielleSituation) {
+	@Nullable
+	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable FinanzielleSituation finanzielleSituation) {
 		if (finanzielleSituation != null) {
 			return calcGeschaeftsgewinnDurchschnitt(finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
 				finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1(),
@@ -287,7 +302,8 @@ public class FinanzielleSituationRechner {
 	 * @param finanzielleSituation
 	 * @return
 	 */
-	private BigDecimal calcGeschaeftsgewinnDurchschnitt(Einkommensverschlechterung einkVers, FinanzielleSituation finanzielleSituation) {
+	@Nullable
+	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable Einkommensverschlechterung einkVers, @Nullable FinanzielleSituation finanzielleSituation) {
 		if (finanzielleSituation != null && einkVers != null) {
 			return calcGeschaeftsgewinnDurchschnitt(einkVers.getGeschaeftsgewinnBasisjahr(),
 				finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
@@ -304,7 +320,8 @@ public class FinanzielleSituationRechner {
 	 * @param geschaeftsgewinnBasisjahrMinus2
 	 * @return
 	 */
-	private BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable final BigDecimal geschaeftsgewinnBasisjahr,
+	@Nullable
+	private static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable final BigDecimal geschaeftsgewinnBasisjahr,
 														@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1,
 														@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 
@@ -332,7 +349,11 @@ public class FinanzielleSituationRechner {
 	}
 
 
-	private BigDecimal calcVermoegen5Prozent(AbstractFinanzielleSituation abstractFinanzielleSituation1, AbstractFinanzielleSituation abstractFinanzielleSituation2) {
+	/**
+	 * Berechnet 5 prozent des Nettovermoegens von GS1 und GS2. Der Gesamtwert kann dabei nicht kleiner als 0 sein auch
+	 * wenn ein einzelner Gesuchsteller ein negatives Nettovermoegen hat.
+	 */
+	public static  BigDecimal calcVermoegen5Prozent(@Nullable AbstractFinanzielleSituation abstractFinanzielleSituation1, @Nullable AbstractFinanzielleSituation abstractFinanzielleSituation2) {
 		final BigDecimal totalBruttovermoegen = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
 			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getBruttovermoegen() : BigDecimal.ZERO);
 
@@ -342,24 +363,24 @@ public class FinanzielleSituationRechner {
 		BigDecimal total = subtract(totalBruttovermoegen, totalSchulden);
 		if (total.compareTo(BigDecimal.ZERO) < 0) {
 			total = BigDecimal.ZERO;
-		}
+		} //total vermoegen + schulden muss gruesser null sein, individuell pro gs kann es aber negativ sein
 		total = percent(total, 5);
 		return total;
 	}
 
-	protected BigDecimal add(BigDecimal value1, BigDecimal value2) {
+	protected static BigDecimal add(BigDecimal value1, BigDecimal value2) {
 		value1 = value1 != null ? value1 : BigDecimal.ZERO;
 		value2 = value2 != null ? value2 : BigDecimal.ZERO;
 		return value1.add(value2);
 	}
 
-	private BigDecimal subtract(BigDecimal value1, BigDecimal value2) {
+	private static BigDecimal subtract(BigDecimal value1, BigDecimal value2) {
 		value1 = value1 != null ? value1 : BigDecimal.ZERO;
 		value2 = value2 != null ? value2 : BigDecimal.ZERO;
 		return value1.subtract(value2);
 	}
 
-	private BigDecimal percent(BigDecimal value, int percent) {
+	private static BigDecimal percent(BigDecimal value, int percent) {
 		BigDecimal total = value != null ? value : BigDecimal.ZERO;
 		total = total.multiply(new BigDecimal("" + percent));
 		total = total.divide(new BigDecimal("100"), RoundingMode.HALF_UP);
