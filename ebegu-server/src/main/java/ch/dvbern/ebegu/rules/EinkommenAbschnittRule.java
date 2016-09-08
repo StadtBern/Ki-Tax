@@ -28,7 +28,7 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		if (finanzDatenDTO != null) {
 			VerfuegungZeitabschnitt lastAbschnitt;
 
-			// Abschnitt Finanzielle Situation
+			// Abschnitt Finanzielle Situation (Massgebendes Einkommen fuer die Gesuchsperiode)
 			VerfuegungZeitabschnitt abschnittFinanzielleSituation = new VerfuegungZeitabschnitt(betreuung.extractGesuchsperiode().getGueltigkeit());
 			abschnittFinanzielleSituation.setMassgebendesEinkommen(finanzDatenDTO.getMassgebendesEinkommenBasisjahr());
 			einkommensAbschnitte.add(abschnittFinanzielleSituation);
