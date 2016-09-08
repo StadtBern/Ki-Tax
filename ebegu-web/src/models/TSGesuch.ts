@@ -10,6 +10,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
     private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
+    private _bemerkungen: string;
 
 
     public get gesuchsteller1(): TSGesuchsteller {
@@ -52,6 +53,13 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._einkommensverschlechterungInfo = value;
     }
 
+    get bemerkungen(): string {
+        return this._bemerkungen;
+    }
+
+    set bemerkungen(value: string) {
+        this._bemerkungen = value;
+    }
 }
 
 

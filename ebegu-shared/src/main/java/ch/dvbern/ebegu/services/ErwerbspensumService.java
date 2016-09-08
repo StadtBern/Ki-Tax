@@ -33,6 +33,13 @@ public interface ErwerbspensumService {
 	Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
 
 	/**
+	 * Sucht alle Erwerbspensen fuer das eingegebene Gesuch
+	 * @param gesuchId
+	 * @return
+	 */
+	Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId);
+
+	/**
 	 * @return Liste aller ErwerbspensumContainer aus der DB
 	 */
 	@Nonnull

@@ -8,11 +8,12 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Superklasse für Testfaelle des JA
  */
-public class AbstractTestfall {
+public abstract class AbstractTestfall {
 
 	public static final String idInstitutionAaregg = "11111111-1111-1111-1111-111111111101";
 	public static final String idInstitutionBruennen = "11111111-1111-1111-1111-111111111107";
@@ -24,6 +25,8 @@ public class AbstractTestfall {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
 	}
+
+	public abstract Gesuch createGesuch();
 
 	protected Gesuch createAlleinerziehend(LocalDate eingangsdatum) {
 		// Fall
@@ -37,6 +40,22 @@ public class AbstractTestfall {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.setFamiliensituation(familiensituation);
+		return gesuch;
+	}
+
+	protected Gesuch createVerheiratet(LocalDate eingangsdatum) {
+		// Fall
+		Fall fall = new Fall();
+		// Gesuch
+		Gesuch gesuch = new Gesuch();
+		gesuch.setGesuchsperiode(gesuchsperiode);
+		gesuch.setFall(fall);
+		gesuch.setEingangsdatum(eingangsdatum);
+		// Familiensituation
+		Familiensituation familiensituation = new Familiensituation();
+		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
 		gesuch.setFamiliensituation(familiensituation);
 		return gesuch;
 	}
@@ -82,13 +101,13 @@ public class AbstractTestfall {
 		return erwerbspensumContainer;
 	}
 
-	protected KindContainer createKind(Geschlecht geschlecht, String name, String vorname, LocalDate geburtsdatum, boolean betreuung) {
+	protected KindContainer createKind(Geschlecht geschlecht, String name, String vorname, LocalDate geburtsdatum, Kinderabzug kinderabzug, boolean betreuung) {
 		Kind kind = new Kind();
 		kind.setGeschlecht(geschlecht);
 		kind.setNachname(name);
 		kind.setVorname(vorname);
 		kind.setGeburtsdatum(geburtsdatum);
-		kind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
+		kind.setKinderabzug(kinderabzug);
 		kind.setFamilienErgaenzendeBetreuung(betreuung);
 		if (betreuung) {
 			kind.setMutterspracheDeutsch(Boolean.TRUE);
@@ -140,5 +159,39 @@ public class AbstractTestfall {
 		finanzielleSituationContainer.setJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear()-1);
 		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
 		return finanzielleSituationContainer;
+	}
+
+
+	/**
+	 * Diese Methode erstellt alle WizardSteps fuer das uebergebene Gesuch. Alle Steps bekommen den Status OK by default (nur Dokumente
+	 * hat IN_BEARBEITUNG und Verfuegen WARTEN). Sollte man andere Status haben wollen, muss man diese Methode ueberschreiben.
+	 * Die WizardSteps werden erstellt aber nicht persisted
+	 * @param gesuch
+	 * @return
+	 */
+	public List<WizardStep> createWizardSteps(final Gesuch gesuch) {
+		List<WizardStep> wizardSteps = new ArrayList<>();
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, "", true));
+		return wizardSteps;
+	}
+
+	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus, String bemerkungen,
+											  boolean verfuegbar) {
+		final WizardStep wizardStep = new WizardStep();
+		wizardStep.setGesuch(gesuch);
+		wizardStep.setVerfuegbar(verfuegbar);
+		wizardStep.setWizardStepName(wizardStepName);
+		wizardStep.setWizardStepStatus(stepStatus);
+		wizardStep.setBemerkungen(bemerkungen);
+		return wizardStep;
 	}
 }

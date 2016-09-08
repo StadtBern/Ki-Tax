@@ -6,7 +6,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
 
     private _familienstatus: TSFamilienstatus;
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
-    private _bemerkungen: string;
     private _gemeinsameSteuererklaerung: boolean;
 
 
@@ -15,7 +14,6 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
-        this._bemerkungen = bemerkungen;
         this._gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
     }
 
@@ -35,19 +33,26 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
     }
 
-    public get bemerkungen(): string {
-        return this._bemerkungen;
-    }
-
-    public set bemerkungen(bemerkungen: string) {
-        this._bemerkungen = bemerkungen;
-    }
-
     get gemeinsameSteuererklaerung(): boolean {
         return this._gemeinsameSteuererklaerung;
     }
 
     set gemeinsameSteuererklaerung(value: boolean) {
         this._gemeinsameSteuererklaerung = value;
+    }
+
+    // todo team Dieser Code is gleich wie auf dem Server...
+    public hasSecondGesuchsteller(): boolean {
+        switch (this.familienstatus) {
+            case TSFamilienstatus.ALLEINERZIEHEND:
+            case TSFamilienstatus.WENIGER_FUENF_JAHRE:
+                return TSGesuchstellerKardinalitaet.ZU_ZWEIT === this.gesuchstellerKardinalitaet;
+            case TSFamilienstatus.VERHEIRATET:
+            case TSFamilienstatus.KONKUBINAT:
+            case TSFamilienstatus.LAENGER_FUENF_JAHRE:
+                return true;
+        }
+        //wir sollten hier nie hinkommen
+        return false;
     }
 }

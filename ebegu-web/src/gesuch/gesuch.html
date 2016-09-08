@@ -5,65 +5,132 @@
 
     <div class="col-md-3 sidenav">
         <ul class="sidenav">
-            <li ui-sref-active="active" ui-sref="gesuch.fallcreation"
+
+            <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM"
-                   data-translate-value-date="{{vm.getDateErstgesuch()}}"></a>
-                <a ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></a>
+
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.fallcreation"
+                        ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')">
+                    <span ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM"
+                          data-translate-value-date="{{vm.getDateErstgesuch()}}"></span>
+                    <span ng-if="!vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.familiensituation">
-                <a data-translate="MENU_FAMSITUATION"></a>
+            <li ng-class="{'active-element': vm.isElementActive('FAMILIENSITUATION')}"
+                ui-sref-active="active" ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.familiensituation"
+                        ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
+                    <span data-translate="MENU_FAMSITUATION"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.stammdaten"><a data-translate="MENU_GESUCHSTELLER"></a></li>
+            <li ng-class="{'active-element': vm.isElementActive('GESUCHSTELLER')}" ui-sref-active="active">
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.stammdaten"
+                        ng-disabled="vm.isWizardStepDisabled('GESUCHSTELLER')">
+                    <span data-translate="MENU_GESUCHSTELLER"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true" ></span>
+            </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.kinder"
+            <li ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_KINDER"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.kinder"
+                        ng-disabled="vm.isWizardStepDisabled('KINDER')">
+                    <span data-translate="MENU_KINDER"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('KINDER')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.betreuungen">
-                <a data-translate="MENU_BETREUUNG"></a>
+            <li ng-class="{'active-element': vm.isElementActive('BETREUUNG')}" ui-sref-active="active">
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.betreuungen"
+                        ng-disabled="vm.isWizardStepDisabled('BETREUUNG')">
+                    <span data-translate="MENU_BETREUUNG"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.erwerbsPensen"
+            <li ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_ERWERBSPENSUM"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.erwerbsPensen"
+                        ng-disabled="vm.isWizardStepDisabled('ERWERBSPENSUM')">
+                    <span data-translate="MENU_ERWERBSPENSUM"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituationStart"
+            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="vm.showFinanzsituationStart()">
-                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituationStart"
+                        ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
+                    <span data-translate="MENU_FINANZIELLE_SITUATION"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.finanzielleSituation"
+            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
                 dv-show-expression="!vm.showFinanzsituationStart()">
-                <a data-translate="MENU_FINANZIELLE_SITUATION"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituation"
+                        ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
+                    <span data-translate="MENU_FINANZIELLE_SITUATION"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.einkommensverschlechterungInfo"
+            <li ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.einkommensverschlechterungInfo"
+                        ng-disabled="vm.isWizardStepDisabled('EINKOMMENSVERSCHLECHTERUNG')">
+                    <span data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')" aria-hidden="true" ></span>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.dokumente"
+            <li ng-class="{'active-element': vm.isElementActive('DOKUMENTE')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_DOKUMENTE"></a>
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.dokumente"
+                        ng-disabled="vm.isWizardStepDisabled('DOKUMENTE')">
+                    <span data-translate="MENU_DOKUMENTE"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true" ></span>
             </li>
 
             <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
-                <a data-translate="MENU_FREIGABEQUITTUNG"></a>
+                <button type="button" class="col-md-10 btn btn-link"
+                        ng-disabled="true">
+                    <span data-translate="MENU_FREIGABEQUITTUNG"></span>
+                </button>
             </li>
 
-            <li ui-sref-active="active" ui-sref="gesuch.verfuegen">
-                <a data-translate="MENU_VERFUEGEN"></a>
+            <li ng-class="{'active-element': vm.isElementActive('VERFUEGEN')}" ui-sref-active="active">
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.verfuegen"
+                        ng-disabled="vm.isWizardStepDisabled('VERFUEGEN')">
+                    <span data-translate="MENU_VERFUEGEN"></span>
+                </button>
+                <span class="col-md-2 ng-class:vm.getIcon('VERFUEGEN')" aria-hidden="true" ></span>
             </li>
 
         </ul>
     </div>
-    <div ui-view class="col-md-5"></div>
+
+    <div class="col-md-9">
+        <div class="row gesuchbody">
+            <!--linke Seite zum ausfüllen des Formulars-->
+            <div ui-view="gesuchViewPort" class=" col-md-7"></div>
+
+            <!--rechte Seite für Kommentare und Papiergesuch öffnen-->
+            <div class="col-md-4 col-md-offset-1 right-side"
+                  dv-show-element
+                  dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.STEUERAMT ,vm.TSRole.SCHULAMT]">
+                <div ui-view="kommentarViewPort"></div>
+            </div>
+
+        </div>
+    </div>
+
 
 </div>

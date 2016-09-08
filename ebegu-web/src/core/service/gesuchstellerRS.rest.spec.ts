@@ -5,7 +5,8 @@ import {EbeguWebCore} from '../core.module';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IInjectorService = angular.auto.IInjectorService;
-import {IHttpBackendService} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 
 describe('GesuchstellerRS', function () {
@@ -15,6 +16,9 @@ describe('GesuchstellerRS', function () {
     let ebeguRestUtil: EbeguRestUtil;
     let mockGesuchsteller: TSGesuchsteller;
     let mockGesuchstellerRest: any;
+    let dummyGesuchID: string = '123';
+    let $q: IQService;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -23,6 +27,9 @@ describe('GesuchstellerRS', function () {
         gesuchstellerRS = $injector.get('GesuchstellerRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        wizardStepManager = $injector.get('WizardStepManager');
+        $q = $injector.get('$q');
+        spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
     }));
 
     beforeEach(() => {
@@ -41,7 +48,7 @@ describe('GesuchstellerRS', function () {
             expect(gesuchstellerRS.findGesuchsteller).toBeDefined();
         });
         it('should include a updateGesuchsteller() function', function () {
-            expect(gesuchstellerRS.updateGesuchsteller).toBeDefined();
+            expect(gesuchstellerRS.saveGesuchsteller).toBeDefined();
         });
     });
 
@@ -50,14 +57,15 @@ describe('GesuchstellerRS', function () {
             it('should updateGesuchsteller a gesuchsteller and her adresses', () => {
                     mockGesuchsteller.nachname = 'changedname';
                     let updatedGesuchsteller: TSGesuchsteller;
-                    $httpBackend.expectPUT(gesuchstellerRS.serviceURL, ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller))
+                    $httpBackend.expectPUT(gesuchstellerRS.serviceURL + '/' + dummyGesuchID + '/gsNumber/1', ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller))
                         .respond(ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller));
 
 
-                    gesuchstellerRS.updateGesuchsteller(mockGesuchsteller).then((result) => {
+                    gesuchstellerRS.saveGesuchsteller(mockGesuchsteller, dummyGesuchID, 1).then((result) => {
                         updatedGesuchsteller = result;
                     });
                     $httpBackend.flush();
+                    expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(dummyGesuchID);
                     expect(updatedGesuchsteller).toBeDefined();
                     expect(updatedGesuchsteller.nachname).toEqual(mockGesuchsteller.nachname);
                     expect(updatedGesuchsteller.id).toEqual(mockGesuchsteller.id);

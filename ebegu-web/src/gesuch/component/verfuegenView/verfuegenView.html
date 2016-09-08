@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1">
+                <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1">
                     <div class="row marginTop20">
                         <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div ng-if="vm.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2">
+                <div ng-if="vm.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2">
                     <div class="row marginTop20">
                         <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
@@ -158,18 +158,8 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-loading-button ng-click="vm.cancel(form)" button-class="btn btn-link cancel">
-                        <span data-translate="ABBRECHEN_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-6 text-right" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-                    <dv-loading-button ng-click="vm.save(form)" type="submit" button-class="btn btn-link save">
-                        <span data-translate="SPEICHERN_UPPER"></span>
-                    </dv-loading-button>
-                </div>
-            </div>
+            <dv-navigation dv-cancel="vm.cancel(form)" dv-next="vm.showNextButton()" dv-save="vm.save(form)" dv-sub-step="2">
+            </dv-navigation>
         </form>
     </div>
 </div>

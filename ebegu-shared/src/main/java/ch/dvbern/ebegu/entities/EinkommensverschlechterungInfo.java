@@ -71,6 +71,25 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	@OneToOne(optional = false, mappedBy = "einkommensverschlechterungInfo")
 	private Gesuch gesuch;
 
+	public EinkommensverschlechterungInfo(){
+	}
+
+	/**
+	 * Copy Constructor. ACHTUNG kopiert nur daten die in dieser Klasse definiert sind
+	 */
+	public EinkommensverschlechterungInfo(EinkommensverschlechterungInfo that) {
+		this.einkommensverschlechterung = that.einkommensverschlechterung;
+		this.ekvFuerBasisJahrPlus1 = that.ekvFuerBasisJahrPlus1;
+		this.ekvFuerBasisJahrPlus2 = that.ekvFuerBasisJahrPlus2;
+		this.gemeinsameSteuererklaerung_BjP1 = that.gemeinsameSteuererklaerung_BjP1;
+		this.gemeinsameSteuererklaerung_BjP2 = that.gemeinsameSteuererklaerung_BjP2;
+		this.grundFuerBasisJahrPlus1 = that.grundFuerBasisJahrPlus1;
+		this.grundFuerBasisJahrPlus2 = that.grundFuerBasisJahrPlus2;
+		this.stichtagFuerBasisJahrPlus1 = that.stichtagFuerBasisJahrPlus1;
+		this.stichtagFuerBasisJahrPlus2 = that.stichtagFuerBasisJahrPlus2;
+	}
+
+
 	public Boolean getEinkommensverschlechterung() {
 		return einkommensverschlechterung;
 	}

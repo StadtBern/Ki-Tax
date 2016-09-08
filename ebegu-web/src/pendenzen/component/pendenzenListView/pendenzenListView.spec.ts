@@ -13,6 +13,7 @@ import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import TSGesuch from '../../../models/TSGesuch';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
+import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 
 describe('pendenzenListView', function () {
 
@@ -29,6 +30,7 @@ describe('pendenzenListView', function () {
     let berechnungsManager: BerechnungsManager;
     let $state: IStateService;
     let CONSTANTS: any;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -46,6 +48,7 @@ describe('pendenzenListView', function () {
         berechnungsManager = $injector.get('BerechnungsManager');
         $state = $injector.get('$state');
         CONSTANTS = $injector.get('CONSTANTS');
+        wizardStepManager = $injector.get('WizardStepManager');
     }));
 
     describe('API Usage', function () {
@@ -82,6 +85,7 @@ describe('pendenzenListView', function () {
                 let mockPendenz: TSPendenzJA = mockGetPendenzenList();
                 mockRestCalls();
                 spyOn($state, 'go');
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
                 pendenzListViewController = new PendenzenListViewController(pendenzRS, undefined, $filter,
                     institutionRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager, berechnungsManager, $state, CONSTANTS);
 
@@ -94,7 +98,7 @@ describe('pendenzenListView', function () {
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
                 expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockPendenz.antragId);
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation');
-                expect(gesuchModelManager.gesuch).toBe(tsGesuch);
+                expect(gesuchModelManager.getGesuch()).toBe(tsGesuch);
             });
         });
     });

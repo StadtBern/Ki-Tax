@@ -60,11 +60,6 @@ public class Betreuung extends AbstractEntity {
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
-	private String bemerkungen;
-
-	@Size(max = Constants.DB_TEXTAREA_LENGTH)
-	@Nullable
-	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String grundAblehnung;
 
 	@NotNull
@@ -73,7 +68,7 @@ public class Betreuung extends AbstractEntity {
 	private Integer betreuungNummer = 1;
 
 	@Valid
-	@OneToOne (optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 
@@ -92,7 +87,6 @@ public class Betreuung extends AbstractEntity {
 	@Nullable
 	@Column(nullable = true)
 	private LocalDate datumBestaetigung;
-
 
 
 	public KindContainer getKind() {
@@ -125,15 +119,6 @@ public class Betreuung extends AbstractEntity {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
-	}
-
-	@Nullable
-	public String getBemerkungen() {
-		return bemerkungen;
-	}
-
-	public void setBemerkungen(@Nullable String bemerkungen) {
-		this.bemerkungen = bemerkungen;
 	}
 
 	@Nullable
@@ -196,7 +181,6 @@ public class Betreuung extends AbstractEntity {
 	}
 
 
-
 	public boolean isSame(Betreuung otherBetreuung) {
 		if (this == otherBetreuung) {
 			return true;
@@ -205,16 +189,15 @@ public class Betreuung extends AbstractEntity {
 			return false;
 		}
 
-		boolean bemSame = Objects.equals(this.getBemerkungen(), otherBetreuung.getBemerkungen());
-		boolean pensenSame =  this.getBetreuungspensumContainers().stream().allMatch(
+		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
 		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return bemSame && pensenSame && statusSame && stammdatenSame;
+		return pensenSame && statusSame && stammdatenSame;
 	}
 
 	@Transient
-	public Gesuchsperiode extractGesuchsperiode(){
+	public Gesuchsperiode extractGesuchsperiode() {
 		Objects.requireNonNull(this.getKind(), "Can not extract Gesuchsperiode because Kind is null");
 		Objects.requireNonNull(this.getKind().getGesuch(), "Can not extract Gesuchsperiode because Gesuch is null");
 		return this.getKind().getGesuch().getGesuchsperiode();
@@ -238,11 +221,11 @@ public class Betreuung extends AbstractEntity {
 
 	/**
 	 * Erstellt die BG-Nummer als zusammengesetzten String aus Jahr, FallId, KindId und BetreuungsNummer
-     */
+	 */
 	@Transient
 	public String getBGNummer() {
 		String year = "";
-		if(getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
+		if (getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
 			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
 		}
 		String fall = "";

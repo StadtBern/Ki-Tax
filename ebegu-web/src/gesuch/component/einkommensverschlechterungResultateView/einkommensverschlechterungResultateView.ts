@@ -1,14 +1,15 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
-import {IStateService} from 'angular-ui-router';
 import {IEinkommensverschlechterungResultateStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
-import IFormController = angular.IFormController;
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -30,11 +31,11 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     resultatVorjahr: TSFinanzielleSituationResultateDTO;
     resultatProzent: string;
 
-    static $inject: string[] = ['$stateParams', '$state', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, $state: IStateService, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService) {
-        super($state, gesuchModelManager, berechnungsManager);
+    constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
         this.initViewModel();
@@ -44,7 +45,7 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     }
 
     private initViewModel() {
-        //this.gesuchModelManager.initEinkommensverschlechterungContainer();
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
     }
 
     showGemeinsam(): boolean {
@@ -63,8 +64,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     showResult(): boolean {
         if (this.parsedBasisJahrPlusNum === 1) {
-            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
+            let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
+                && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
             return ekvFuerBasisJahrPlus1 === true;
 
         } else {
@@ -72,74 +73,32 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
         }
     }
 
-    previousStep(form: IFormController): void {
-        this.save(form, this.navigatePrevious);
-    }
-
-    nextStep(form: IFormController): void {
-        this.save(form, this.navigateNext);
-    }
-
-    private save(form: angular.IFormController, navigationFunction: (gesuch: any) => any) {
+    private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
             this.errorService.clearAll();
-            this.gesuchModelManager.updateGesuch().then(navigationFunction);
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchModelManager.setGesuchstellerNumber(1);
+                if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                    return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                        this.gesuchModelManager.setGesuchstellerNumber(2);
+                        return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                            return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                        });
+                    });
+                } else {
+                    return this.gesuchModelManager.saveEinkommensverschlechterungContainer().then(() => {
+                        return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+                    });
+                }
+            }
         }
+        return undefined;
     }
 
-    private navigatePrevious = (gesuch: any) => {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
-        } else {
-            // baisjahrPlus1
-
-            let gesuchsteller2Required: boolean = this.gesuchModelManager.isGesuchsteller2Required();
-            let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
-
-            if (gesuchsteller2Required && basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '2'
-                });
-            } else if (gesuchsteller2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '1'
-                });
-            } else if (basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '2'
-                });
-            } else {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '1'
-                });
-            }
-
-        }
-    };
-
-    //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNext = (gesuch: any) => {
-        if (this.parsedBasisJahrPlusNum === 2) {
-            this.state.go('gesuch.dokumente');
-        } else {
-            let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-                && this.gesuchModelManager.gesuch.einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-            if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
-            } else {
-                this.state.go('gesuch.dokumente');
-            }
-        }
-    };
-
     calculate() {
-        if (this.gesuchModelManager.gesuch && this.parsedBasisJahrPlusNum) {
+        if (this.gesuchModelManager.getGesuch() && this.parsedBasisJahrPlusNum) {
             this.berechnungsManager
-                .calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, this.parsedBasisJahrPlusNum)
+                .calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), this.parsedBasisJahrPlusNum)
                 .then(() => {
                     this.resultatProzent = this.calculateVeraenderung();
                 });
@@ -150,8 +109,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public getEinkommensverschlechterungContainerGS1(): TSEinkommensverschlechterungContainer {
         if (!this.gesuchsteller1EkvCont) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller1) {
-                this.gesuchsteller1EkvCont = this.gesuchModelManager.gesuch.gesuchsteller1.einkommensverschlechterungContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
+                this.gesuchsteller1EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer;
             } else {
                 this.gesuchsteller1EkvCont = new TSEinkommensverschlechterungContainer();
             }
@@ -178,8 +137,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     public getEinkommensverschlechterungContainerGS2(): TSEinkommensverschlechterungContainer {
         if (!this.gesuchsteller2EkvCont) {
-            if (this.gesuchModelManager.gesuch.gesuchsteller2) {
-                this.gesuchsteller2EkvCont = this.gesuchModelManager.gesuch.gesuchsteller2.einkommensverschlechterungContainer;
+            if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                this.gesuchsteller2EkvCont = this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer;
             } else {
                 this.gesuchsteller2EkvCont = new TSEinkommensverschlechterungContainer();
             }
@@ -214,12 +173,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     public calculateResultateVorjahr() {
 
         if (this.parsedBasisJahrPlusNum === 2) {
-            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.gesuch, 1).then((resultatVorjahr) => {
+            this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 1).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });
         } else {
-            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.gesuch).then((resultatVorjahr) => {
+            this.berechnungsManager.calculateFinanzielleSituation(this.gesuchModelManager.getGesuch()).then((resultatVorjahr) => {
                 this.resultatVorjahr = resultatVorjahr;
                 this.resultatProzent = this.calculateVeraenderung();
             });

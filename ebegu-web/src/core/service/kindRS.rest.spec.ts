@@ -1,12 +1,12 @@
 import KindRS from './kindRS.rest';
 import IInjectorService = angular.auto.IInjectorService;
-import {IHttpBackendService} from 'angular';
+import {IHttpBackendService, IQService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';
 import TSKindContainer from '../../models/TSKindContainer';
 import TSKind from '../../models/TSKind';
-import TSAbstractEntity from '../../models/TSAbstractEntity';
 import TestDataUtil from '../../utils/TestDataUtil';
+import WizardStepManager from '../../gesuch/service/wizardStepManager';
 
 describe('KindRS', function () {
 
@@ -16,6 +16,8 @@ describe('KindRS', function () {
     let mockKind: TSKindContainer;
     let mockKindRest: any;
     let gesuchId: string;
+    let $q: IQService;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -24,6 +26,9 @@ describe('KindRS', function () {
         kindRS = $injector.get('KindRS');
         $httpBackend = $injector.get('$httpBackend');
         ebeguRestUtil = $injector.get('EbeguRestUtil');
+        wizardStepManager = $injector.get('WizardStepManager');
+        $q = $injector.get('$q');
+        spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
     }));
 
     beforeEach(() => {
@@ -48,11 +53,8 @@ describe('KindRS', function () {
         it('should include a findKind() function', function () {
             expect(kindRS.findKind).toBeDefined();
         });
-        it('should include a createKind() function', function () {
-            expect(kindRS.createKind).toBeDefined();
-        });
-        it('should include a updateKind() function', function () {
-            expect(kindRS.updateKind).toBeDefined();
+        it('should include a saveKind() function', function () {
+            expect(kindRS.saveKind).toBeDefined();
         });
         it('should include a removeKind() function', function () {
             expect(kindRS.removeKind).toBeDefined();
@@ -76,7 +78,7 @@ describe('KindRS', function () {
                 let createdKind: TSKindContainer;
                 $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
 
-                kindRS.createKind(mockKind, gesuchId)
+                kindRS.saveKind(mockKind, gesuchId)
                     .then((result) => {
                         createdKind = result;
                     });
@@ -93,11 +95,12 @@ describe('KindRS', function () {
                 let updatedKindContainer: TSKindContainer;
                 $httpBackend.expectPUT(kindRS.serviceURL + '/' + gesuchId, mockKindRest).respond(mockKindRest);
 
-                kindRS.updateKind(mockKind, gesuchId)
+                kindRS.saveKind(mockKind, gesuchId)
                     .then((result) => {
                         updatedKindContainer = result;
                     });
                 $httpBackend.flush();
+                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(gesuchId);
                 checkFieldValues(updatedKindContainer);
             });
         });
@@ -107,11 +110,12 @@ describe('KindRS', function () {
                     .respond(200);
 
                 let deleteResult: any;
-                kindRS.removeKind(mockKind.id)
+                kindRS.removeKind(mockKind.id, gesuchId)
                     .then((result) => {
                         deleteResult = result;
                     });
                 $httpBackend.flush();
+                expect(wizardStepManager.findStepsFromGesuch).toHaveBeenCalledWith(gesuchId);
                 expect(deleteResult).toBeDefined();
                 expect(deleteResult.status).toEqual(200);
             });

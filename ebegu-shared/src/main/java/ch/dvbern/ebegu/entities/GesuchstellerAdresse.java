@@ -15,12 +15,6 @@ public class GesuchstellerAdresse extends Adresse {
 
 	private static final long serialVersionUID = -7687645920281069260L;
 
-//
-//	@NotNull
-//	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
-//	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pers_adresse_adresse_id"))
-//	private Adresse adresse = new Adresse();
-
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -30,6 +24,9 @@ public class GesuchstellerAdresse extends Adresse {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuchsteller_adresse_gesuchsteller_id"))
 	private Gesuchsteller gesuchsteller;
+
+	@Column(nullable = false)
+	private boolean nichtInGemeinde = false;
 
 
 	public GesuchstellerAdresse() {
@@ -52,77 +49,14 @@ public class GesuchstellerAdresse extends Adresse {
 		this.gesuchsteller = gesuchsteller;
 	}
 
-//	public Adresse getAdresse() {
-//		return adresse;
-//	}
-//
-//	public void setAdresse(Adresse adresse) {
-//		this.adresse = adresse;
-//	}
-//
-//	//delegierte getter und setter
-//	@Nonnull
-//	public String getStrasse() {
-//		return adresse.getStrasse();
-//	}
-//
-//	public void setLand(Land land) {
-//		adresse.setLand(land);
-//	}
-//
-//
-//	public Land getLand() {
-//		return adresse.getLand();
-//	}
-//
-//	@Nullable
-//	public String getHausnummer() {
-//		return adresse.getHausnummer();
-//	}
-//
-//	public void setZusatzzeile(@Nullable String zusatzzeile) {
-//		adresse.setZusatzzeile(zusatzzeile);
-//	}
-//
-//	@Nullable
-//	public String getGemeinde() {
-//		return adresse.getGemeinde();
-//	}
-//
-//	@Nonnull
-//	public String getPlz() {
-//		return adresse.getPlz();
-//	}
-//
-//	public void setStrasse(@Nonnull String strasse) {
-//		adresse.setStrasse(strasse);
-//	}
-//
-//	@Nullable
-//	public String getZusatzzeile() {
-//		return adresse.getZusatzzeile();
-//	}
-//
-//	@Nonnull
-//	public String getOrt() {
-//		return adresse.getOrt();
-//	}
-//
-//	public void setOrt(@Nonnull String ort) {
-//		adresse.setOrt(ort);
-//	}
-//
-//	public void setHausnummer(@Nullable String hausnummer) {
-//		adresse.setHausnummer(hausnummer);
-//	}
-//
-//	public void setGemeinde(@Nullable String gemeinde) {
-//		adresse.setGemeinde(gemeinde);
-//	}
-//
-//	public void setPlz(@Nonnull String plz) {
-//		adresse.setPlz(plz);
-//	}
+	public boolean isNichtInGemeinde() {
+		return nichtInGemeinde;
+	}
+
+	public void setNichtInGemeinde(boolean nichtInGemeinde) {
+		this.nichtInGemeinde = nichtInGemeinde;
+	}
+
 
 	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
 	public boolean isSame(GesuchstellerAdresse otherAdr) {

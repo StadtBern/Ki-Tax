@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuung_;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -66,13 +63,17 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return persistence.getCriteriaSingleResult(query);
 	}
 
-
 	@Override
 	public void removeBetreuung(@Nonnull String betreuungId) {
 		Objects.requireNonNull(betreuungId);
 		Optional<Betreuung> betreuungToRemove = findBetreuung(betreuungId);
 		betreuungToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
 		persistence.remove(betreuungToRemove.get());
+	}
+
+	@Override
+	public void removeBetreuung(@Nonnull Betreuung betreuung) {
+		persistence.remove(betreuung);
 	}
 
 	@Override
@@ -83,6 +84,19 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 			return getPendenzenForInstitution((Institution[]) instForCurrBenutzer.toArray(new Institution[instForCurrBenutzer.size()]));
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	@Nonnull
+	public List<Betreuung> findAllBetreuungenFromGesuch(@Nonnull String gesuchId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+		Root<Betreuung> root = query.from(Betreuung.class);
+		// Betreuung from Gesuch
+		Predicate predicateInstitution = root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.id).in(gesuchId);
+
+		query.where(predicateInstitution);
+		return persistence.getCriteriaResults(query);
 	}
 
 	/**

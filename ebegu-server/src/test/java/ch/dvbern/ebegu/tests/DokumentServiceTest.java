@@ -35,7 +35,7 @@ public class DokumentServiceTest extends AbstractEbeguTest {
 	private DokumentService dokumentService;
 
 	@Inject
-	private Persistence<DokumentGrund> persistence;
+	private Persistence<Gesuch> persistence;
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -48,10 +48,7 @@ public class DokumentServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(dokumentService);
 
 		DokumentGrund dokumentGrund = TestDataUtil.createDefaultDokumentGrund();
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		dokumentGrund.setGesuch(gesuch);
 
 		dokumentGrundService.saveDokumentGrund(dokumentGrund);

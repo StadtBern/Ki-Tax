@@ -118,13 +118,37 @@ public enum MathUtil {
 	 * @throws PrecisionTooLargeException if the resulting value exceeds the defined precision
 	 */
 	@Nullable
-	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal augend) {
-		if (value == null || augend == null) {
+	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal augment) {
+		if (value == null || augment == null) {
 			return null;
 		}
 		BigDecimal result = value
-			.add(augend)
+			.add(augment)
 			.setScale(scale, roundingMode);
+		return validatePrecision(result);
+	}
+
+	/**
+	 * adds augement parameters to value, null values are treated as zero
+	 * @throws PrecisionTooLargeException if the resulting value exceeds the defined precision
+	 */
+	@Nullable
+	public BigDecimal add(@Nullable BigDecimal value, @Nullable BigDecimal... augment) {
+		if ( augment.length == 0) {
+			return null;
+		}
+
+		BigDecimal result = value!=null? value:BigDecimal.ZERO;
+		for (int i = 0; i < augment.length; i++) {
+			BigDecimal valueToAdd = augment[i];
+			if (valueToAdd == null) {
+				continue;
+			} else {
+				result = result
+					.add(valueToAdd)
+					.setScale(scale, roundingMode);
+			}
+		}
 		return validatePrecision(result);
 	}
 
@@ -239,5 +263,28 @@ public enum MathUtil {
      */
 	public static int roundIntToTens(int pensumFachstelle) {
 		return (int) (Math.round((double) pensumFachstelle / 10) * 10);
+	}
+
+
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	public static BigDecimal positiveNonNullAndRound(BigDecimal value) {
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		// Returns the maximum of this BigDecimal and val.
+		value = value.setScale(0, RoundingMode.HALF_UP);
+		return value.max(BigDecimal.ZERO);
+	}
+
+	/**
+	 * rundet auf die naechste Ganzzahl groesser gleich 0
+	 */
+	public static BigDecimal positiveNonNull(BigDecimal value) {
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		return value.max(BigDecimal.ZERO);
 	}
 }

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class BetreuungsgutscheinEvaluator {
 
+	private boolean isDebug = true; // TODO (team) ApplicationProperty machen!
 
 	private List<Rule> rules = new LinkedList<>();
 
@@ -49,11 +51,25 @@ public class BetreuungsgutscheinEvaluator {
 			// Betreuungen werden einzeln berechnet
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 
+				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+					continue;
+				}
+
 				// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
                 List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
+				if (isDebug) {
+					LOG.info("BG-Nummer: " + betreuung.getBGNummer());
+				}
                 for (Rule rule : rulesToRun) {
                     zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
-                }
+					if (isDebug) {
+						LOG.info(rule.getClass().getSimpleName() + " (" + rule.getRuleKey().name() + ": " + rule.getRuleType().name() + ")");
+						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
+							LOG.info(verfuegungZeitabschnitt.toString());
+						}
+					}
+				}
                 // Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
 				restanspruchZeitabschnitte = restanspruchEvaluator.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
@@ -61,24 +77,25 @@ public class BetreuungsgutscheinEvaluator {
 				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 				// Die Verfügung erstellen
-				Verfuegung verfuegung = new Verfuegung();
-				verfuegung.setBetreuung(betreuung);
-				betreuung.setVerfuegung(verfuegung);
+				if (betreuung.getVerfuegung() == null) {
+					Verfuegung verfuegung = new Verfuegung();
+					betreuung.setVerfuegung(verfuegung);
+					verfuegung.setBetreuung(betreuung);
+				}
 
 				// Den richtigen Rechner anwerfen
 				AbstractBGRechner rechner = BGRechnerFactory.getRechner(betreuung);
 				if (rechner != null) {
 					for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
-						rechner.calculate(verfuegungZeitabschnitt, verfuegung, bgRechnerParameterDTO);
+						rechner.calculate(verfuegungZeitabschnitt, betreuung.getVerfuegung(), bgRechnerParameterDTO);
 					}
 				}
 				// Und die Resultate in die Verfügung schreiben
-                verfuegung.setZeitabschnitte(zeitabschnitte);
+				betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
 				Set<String> bemerkungenOfAbschnitt = zeitabschnitte.stream()
 					.map(VerfuegungZeitabschnitt::getBemerkungen)
 					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
-				verfuegung.setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitt));
-
+				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitt));
 			}
 		}
 	}

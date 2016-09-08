@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
 import ch.dvbern.ebegu.entities.ErwerbspensumContainer_;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -13,6 +14,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,6 +30,8 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	private Persistence<ErwerbspensumContainer> persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+	@Inject
+	private GesuchService gesuchService;
 
 	@Nonnull
 	@Override
@@ -47,6 +51,23 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	@Override
 	public Collection<ErwerbspensumContainer> findErwerbspensenForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
 		return criteriaQueryHelper.getEntitiesByAttribute(ErwerbspensumContainer.class, gesuchsteller, ErwerbspensumContainer_.gesuchsteller);
+	}
+
+
+	@Override
+	@Nonnull
+	public Collection<ErwerbspensumContainer> findErwerbspensenFromGesuch(@Nonnull String gesuchId) {
+		Collection<ErwerbspensumContainer> result = new ArrayList<>();
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId);
+		if (gesuch.isPresent()) {
+			if (gesuch.get().getGesuchsteller1() != null) {
+				result.addAll(findErwerbspensenForGesuchsteller(gesuch.get().getGesuchsteller1()));
+			}
+			if (gesuch.get().getGesuchsteller2() != null) {
+				result.addAll(findErwerbspensenForGesuchsteller(gesuch.get().getGesuchsteller2()));
+			}
+		}
+		return result;
 	}
 
 	@Nonnull

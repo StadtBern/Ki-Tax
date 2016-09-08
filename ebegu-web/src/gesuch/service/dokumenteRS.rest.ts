@@ -2,9 +2,10 @@ import {IHttpService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSGesuch from '../../models/TSGesuch';
 import TSDokumenteDTO from '../../models/dto/TSDokumenteDTO';
+import TSDokumentGrund from '../../models/TSDokumentGrund';
+import {TSDokumentGrundTyp} from '../../models/enums/TSDokumentGrundTyp';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
-import TSDokumentGrund from '../../models/TSDokumentGrund';
 
 
 export default class DokumenteRS {
@@ -24,6 +25,14 @@ export default class DokumenteRS {
 
     public getDokumente(gesuch: TSGesuch): IPromise<TSDokumenteDTO> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuch.id))
+            .then((response: any) => {
+                this.log.debug('PARSING dokumentDTA REST object ', response.data);
+                return this.ebeguRestUtil.parseDokumenteDTO(new TSDokumenteDTO(), response.data);
+            });
+    }
+
+    public getDokumenteByType(gesuch: TSGesuch, dokumentGrundTyp: TSDokumentGrundTyp): IPromise<TSDokumenteDTO> {
+        return this.http.get(this.serviceURL + '/byTyp/' + encodeURIComponent(gesuch.id) + '/' + encodeURIComponent(TSDokumentGrundTyp[dokumentGrundTyp]))
             .then((response: any) => {
                 this.log.debug('PARSING dokumentDTA REST object ', response.data);
                 return this.ebeguRestUtil.parseDokumenteDTO(new TSDokumenteDTO(), response.data);

@@ -34,7 +34,7 @@ public interface Constants {
 	Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
 
-	String REGEX_EMAIL = "[\\S\\-.]+@([\\S-]+\\.)+[\\S-]+";
+	String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
 	String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
 	String REGEX_TELEFON_MOBILE = "(0|\\+41|0041)[ ]*(74|75|76|77|78|79)[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
 	String PATTERN_DATE = "dd.MM.yyyy";

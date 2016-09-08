@@ -10,6 +10,9 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import ErrorService from '../../../core/errors/service/ErrorService';
+import WizardStepManager from '../../service/wizardStepManager';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import IDialogService = angular.material.IDialogService;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./betreuungListView.html');
@@ -29,20 +32,16 @@ export class BetreuungListViewComponentConfig implements IComponentOptions {
  */
 export class BetreuungListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager', 'ErrorService'];
+    static $inject: string[] = ['$state', 'GesuchModelManager', '$translate', 'DvDialog', 'EbeguUtil', 'BerechnungsManager',
+        'ErrorService', 'WizardStepManager'];
     /* @ngInject */
-    constructor(state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
+    constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, private $translate: ITranslateService,
                 private DvDialog: DvDialog, private ebeguUtil: EbeguUtil, berechnungsManager: BerechnungsManager,
-                private errorService: ErrorService) {
-        super(state, gesuchModelManager, berechnungsManager);
-    }
+                private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
 
-    previousStep(): void {
-        this.state.go('gesuch.kinder');
-    }
-
-    nextStep(): void {
-        this.state.go('gesuch.erwerbsPensen');
     }
 
     public editBetreuung(kind: TSKindContainer, betreuung: any): void {
@@ -87,7 +86,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     private openBetreuungView(): void {
-        this.state.go('gesuch.betreuung');
+        this.$state.go('gesuch.betreuung');
     }
 
     /**
@@ -102,4 +101,5 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
         }
         return '';
     }
+
 }

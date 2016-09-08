@@ -1,7 +1,7 @@
 import {EbeguWebCore} from '../../core/core.module';
 import GesuchModelManager from './gesuchModelManager';
 import {IHttpBackendService, IScope, IQService} from 'angular';
-import BetreuungRS from '../../core/service/betreuungRS';
+import BetreuungRS from '../../core/service/betreuungRS.rest';
 import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
@@ -12,6 +12,9 @@ import TSKindContainer from '../../models/TSKindContainer';
 import TSGesuch from '../../models/TSGesuch';
 import TSUser from '../../models/TSUser';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import WizardStepManager from './wizardStepManager';
+import TSBetreuung from '../../models/TSBetreuung';
+import TSKind from '../../models/TSKind';
 
 describe('gesuchModelManager', function () {
 
@@ -24,6 +27,7 @@ describe('gesuchModelManager', function () {
     let $httpBackend: IHttpBackendService;
     let $q: IQService;
     let authServiceRS: AuthServiceRS;
+    let wizardStepManager: WizardStepManager;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -34,9 +38,10 @@ describe('gesuchModelManager', function () {
         fallRS = $injector.get('FallRS');
         gesuchRS = $injector.get('GesuchRS');
         kindRS = $injector.get('KindRS');
-        scope = $injector.get('$rootScope').$new();
+        scope = $injector.get('$rootScope');
         $q = $injector.get('$q');
         authServiceRS = $injector.get('AuthServiceRS');
+        wizardStepManager = $injector.get('WizardStepManager');
     }));
 
     describe('Public API', function () {
@@ -55,7 +60,6 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.createBetreuung();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen).toBeDefined();
                 expect(gesuchModelManager.getKindToWorkWith().betreuungen.length).toBe(1);
-                expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toBeUndefined();
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungspensumContainers).toEqual([]);
                 expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.AUSSTEHEND);
                 expect(gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten).toBeUndefined();
@@ -78,28 +82,30 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
-                gesuchModelManager.getBetreuungToWorkWith().bemerkungen = 'Neue_Bemerkung';
                 gesuchModelManager.getKindToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 let kindToWorkWith: TSKindContainer = gesuchModelManager.getKindToWorkWith();
                 kindToWorkWith.nextNumberBetreuung = 5;
                 spyOn(kindRS, 'findKind').and.returnValue($q.when(kindToWorkWith));
-                spyOn(betreuungRS, 'createBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
                 gesuchModelManager.updateBetreuung();
                 scope.$apply();
 
-                expect(betreuungRS.createBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb');
+                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
-                expect(gesuchModelManager.getBetreuungToWorkWith().bemerkungen).toEqual('Neue_Bemerkung');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
             });
         });
         describe('saveGesuchAndFall', () => {
             it('creates a Fall with a linked Gesuch', () => {
                 spyOn(fallRS, 'createFall').and.returnValue($q.when({}));
-                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({}));
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.id = '123123';
+                spyOn(gesuchRS, 'createGesuch').and.returnValue($q.when({data: gesuch}));
+                spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch(false);
@@ -114,7 +120,7 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
                 gesuchModelManager.initGesuch(false);
-                gesuchModelManager.gesuch.timestampErstellt = DateUtil.today();
+                gesuchModelManager.getGesuch().timestampErstellt = DateUtil.today();
                 gesuchModelManager.saveGesuchAndFall();
 
                 scope.$apply();
@@ -123,16 +129,16 @@ describe('gesuchModelManager', function () {
         });
         describe('initGesuch', () => {
             beforeEach(() => {
-                expect(gesuchModelManager.gesuch).toBeUndefined();
+                expect(gesuchModelManager.getGesuch()).toBeUndefined();
             });
             it('links the fall with the undefined user', () => {
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
 
                 gesuchModelManager.initGesuch(false);
 
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(undefined);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(undefined);
             });
             it('links the fall with the current user', () => {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
@@ -140,35 +146,35 @@ describe('gesuchModelManager', function () {
 
                 gesuchModelManager.initGesuch(false);
 
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall).toBeDefined();
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(currentUser);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall).toBeDefined();
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(currentUser);
             });
             it('does not force to create a new fall and gesuch', () => {
                 gesuchModelManager.initGesuch(false);
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('does force to create a new fall and gesuch', () => {
                 gesuchModelManager.initGesuch(true);
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
             });
             it('forces to create a new gesuch and fall even though one already exists', () => {
                 gesuchModelManager.initGesuch(false);
-                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
 
                 gesuchModelManager.initGesuch(true);
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(oldGesuch).not.toBe(gesuchModelManager.gesuch);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(oldGesuch).not.toBe(gesuchModelManager.getGesuch());
             });
             it('does not force to create a new gesuch and fall and the old ones will remain', () => {
                 gesuchModelManager.initGesuch(false);
-                let oldGesuch: TSGesuch = gesuchModelManager.gesuch;
-                expect(gesuchModelManager.gesuch).toBeDefined();
+                let oldGesuch: TSGesuch = gesuchModelManager.getGesuch();
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
 
                 gesuchModelManager.initGesuch(false);
-                expect(gesuchModelManager.gesuch).toBeDefined();
-                expect(oldGesuch).toBe(gesuchModelManager.gesuch);
+                expect(gesuchModelManager.getGesuch()).toBeDefined();
+                expect(oldGesuch).toBe(gesuchModelManager.getGesuch());
             });
         });
         describe('setUserAsFallVerantwortlicher', () => {
@@ -177,7 +183,51 @@ describe('gesuchModelManager', function () {
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
                 let user: TSUser = new TSUser('Emiliano', 'Camacho');
                 gesuchModelManager.setUserAsFallVerantwortlicher(user);
-                expect(gesuchModelManager.gesuch.fall.verantwortlicher).toBe(user);
+                expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(user);
+            });
+        });
+        describe('exist at least one Betreuung among all kinder', function () {
+            it('should return false for empty list', function() {
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return false for a list with Kinder but no Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = false;
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(false);
+            });
+            it('should return true for a list with Kinder needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = true;
+                let betreuung: TSBetreuung = new TSBetreuung();
+                kind.betreuungen = [betreuung];
+                spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyBetreuung()).toBe(true);
+            });
+        });
+
+        describe('exist kinder with betreuung needed', function () {
+            it('should return false for empty list', function() {
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
+            });
+            it('should return false for a list with no Kind needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.familienErgaenzendeBetreuung = false;
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(false);
+            });
+            it('should return true for a list with Kinder needing Betreuung', function() {
+                let kind: TSKindContainer = new TSKindContainer();
+                kind.kindJA = new TSKind();
+                kind.kindJA.timestampErstellt = DateUtil.today();
+                kind.kindJA.familienErgaenzendeBetreuung = true;
+                spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
+                expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(true);
             });
         });
     });

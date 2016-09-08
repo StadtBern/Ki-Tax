@@ -32,7 +32,7 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 	private BetreuungService betreuungService;
 
 	@Inject
-	private Persistence<Betreuung> persistence;
+	private Persistence<Gesuch> persistence;
 	@Inject
 	private KindService kindService;
 
@@ -48,15 +48,12 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		Betreuung betreuung = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
 		Assert.assertNotNull(betreuung);
 		Betreuung savedBetreuung = betreuung;
-		Assert.assertEquals(persitedBetreuung.getBemerkungen(), savedBetreuung.getBemerkungen());
+
 		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), savedBetreuung.getBetreuungsstatus());
 
-		Assert.assertNotEquals("Neue Bemerkung", savedBetreuung.getBemerkungen());
-		savedBetreuung.setBemerkungen("Neue Bemerkung");
 		betreuungService.saveBetreuung(savedBetreuung);
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
-		Assert.assertEquals("Neue Bemerkung", updatedBetreuung.get().getBemerkungen());
 
 		Assert.assertEquals(new Integer(1), updatedBetreuung.get().getBetreuungNummer());
 		Assert.assertEquals(new Integer(2), kindService.findKind(betreuung.getKind().getId()).get().getNextNumberBetreuung());
@@ -87,10 +84,7 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		persistence.persist(betreuung.getKind().getKindGS().getPensumFachstelle().getFachstelle());
 		persistence.persist(betreuung.getKind().getKindJA().getPensumFachstelle().getFachstelle());
 
-		Gesuch gesuch = TestDataUtil.createDefaultGesuch();
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		persistence.persist(gesuch);
+		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		betreuung.getKind().setGesuch(gesuch);
 		persistence.persist(betreuung.getKind());
 

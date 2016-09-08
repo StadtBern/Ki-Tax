@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.DokumentGrund_;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -11,6 +12,10 @@ import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +54,24 @@ public class DokumentGrundServiceBean extends AbstractBaseService implements Dok
 	public Collection<DokumentGrund> getAllDokumentGrundByGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(DokumentGrund.class, gesuch, DokumentGrund_.gesuch);
+	}
+
+	@Override
+	@Nonnull
+	public Collection<DokumentGrund> getAllDokumentGrundByGesuchAndDokumentType(@Nonnull Gesuch gesuch, @Nonnull DokumentGrundTyp dokumentGrundTyp) {
+		Objects.requireNonNull(gesuch);
+
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<DokumentGrund> query = cb.createQuery(DokumentGrund.class);
+
+		Root<DokumentGrund> root = query.from(DokumentGrund.class);
+
+		Predicate predicateGesuch = cb.equal(root.get(DokumentGrund_.gesuch), gesuch);
+		Predicate predicateDokumentGrundTyp = cb.equal(root.get(DokumentGrund_.dokumentGrundTyp), dokumentGrundTyp);
+
+		query.where(predicateGesuch, predicateDokumentGrundTyp);
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
