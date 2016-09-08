@@ -6,7 +6,7 @@ import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.PrintFinanzielleSituationPDFService;
-import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -66,18 +66,17 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
-		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
 
-		TestDataUtil.setFinanzielleSituation(gesuch, new BigDecimal("100000"));
-		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("80000"), true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("50000"), false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		File file = writeToTempDir(bytes, "finanzielleSituation1G.pdf");
-		// openPDF(file);
+		 openPDF(file);
 	}
 
 	/**
@@ -89,20 +88,20 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
-		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
 		// Hack damit Dokument mit zwei Gesuchsteller dargestellt wird
-		gesuch.setGesuchsteller2(gesuch.getGesuchsteller1());
 
-		TestDataUtil.setFinanzielleSituation(gesuch, new BigDecimal("100000"));
-		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("80000"), true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, new BigDecimal("50000"), false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller2(), new BigDecimal("40000"), true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller2(), new BigDecimal("30000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		File file = writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
-		// openPDF(file);
+		openPDF(file);
 	}
 
 	private void openPDF(File file) {

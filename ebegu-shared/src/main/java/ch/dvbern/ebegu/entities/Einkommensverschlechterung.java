@@ -164,6 +164,7 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 		this.nettolohnZus = nettolohnZus;
 	}
 
+	@Override
 	public BigDecimal getNettolohn() {
 
 		return MathUtil.DEFAULT.add(nettolohnJan, nettolohnFeb, nettolohnMrz, nettolohnApr,

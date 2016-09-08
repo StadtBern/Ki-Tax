@@ -108,7 +108,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
@@ -126,7 +126,7 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ANGENOMMEN, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ANGENOMMEN, true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
@@ -144,8 +144,8 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ANGENOMMEN, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ANGENOMMEN, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
@@ -163,8 +163,8 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ANGENOMMEN, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ANGENOMMEN, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ANGENOMMEN, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ANGENOMMEN, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
@@ -182,8 +182,8 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 		TestDataUtil.setFinanzielleSituation(gesuch, EINKOMMEN_FINANZIELLE_SITUATION);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV_ABGELEHNT, true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, EINKOMMEN_EKV2_ABGELEHNT, false);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV_ABGELEHNT, true);
+		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), EINKOMMEN_EKV2_ABGELEHNT, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		Assert.assertEquals(EINKOMMEN_FINANZIELLE_SITUATION, gesuch.getFinanzDatenDTO().getMassgebendesEinkommenBasisjahr());
