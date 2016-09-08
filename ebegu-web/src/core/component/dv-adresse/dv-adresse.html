@@ -106,7 +106,7 @@
 
         <!-- nicht in Bern wohnhaft-->
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
-             dv-show-expression="vm.showNichtInGemeinde">
+             dv-show-expression="vm.showNichtInGemeinde===true">
             <div class="col-md-6">
                 <div class="checkbox">
                     <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde" aria-label="nichtInGemeinde"
