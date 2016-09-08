@@ -42,10 +42,10 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 		// Kita Brünnen
 		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionBruennen);
+		betreuungKitaBruennen.setBetreuungNummer(2);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);
 		BetreuungspensumContainer betreuungspensumKitaBruennen = createBetreuungspensum(40, LocalDate.of(2017, Month.FEBRUARY, 1), LocalDate.of(2017, Month.JULY, 31));
-		betreuungspensumKitaBruennen.setBetreuung(betreuungKitaAaregg);
 		betreuungspensumKitaBruennen.setBetreuung(betreuungKitaBruennen);
 		betreuungKitaBruennen.getBetreuungspensumContainers().add(betreuungspensumKitaBruennen);
 		// Finanzielle Situation
