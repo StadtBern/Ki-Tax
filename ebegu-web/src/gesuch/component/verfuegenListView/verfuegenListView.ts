@@ -9,6 +9,8 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import IPromise = angular.IPromise;
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 
@@ -97,6 +99,33 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             return this.gesuchModelManager.getGesuchsperiode();
         }
         return undefined;
+    }
+
+    public setGesuchStatusGeprueft(): IPromise<TSAntragStatus> {
+        return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
+    }
+
+    public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+        return this.setGesuchStatus(TSAntragStatus.VERFUEGEN);
+    }
+
+    public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (this.gesuchModelManager) {
+        return this.gesuchModelManager.saveGesuchStatus(status);
+    }
+    return undefined;
+    }
+
+    /**
+     * Der Button Geprueft wird nur beim Status IN_BEARBEITUNG_JA eingeblendet
+     * @returns {boolean}
+     */
+    public showGeprueft(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA);
+    }
+
+    public showVerfuegen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT);
     }
 
 }

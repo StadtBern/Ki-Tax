@@ -36,6 +36,7 @@ public abstract class AbstractTestfall {
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
@@ -52,6 +53,7 @@ public abstract class AbstractTestfall {
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);

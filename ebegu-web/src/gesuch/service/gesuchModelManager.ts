@@ -40,6 +40,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -937,5 +938,30 @@ export default class GesuchModelManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Setzt den Status des Gesuchs und speichert es in der Datenbank. Anstatt das ganze Gesuch zu schicken, rufen wir den Service auf
+     * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
+     * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist
+     * @param status
+     * @returns {undefined}
+     */
+    public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (!this.isGesuchStatus(status)) {
+            return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
+                return this.gesuch.status = status;
+            });
+        }
+        return undefined;
+    }
+
+    /**
+     * Returns true if the Gesuch has the given status
+     * @param status
+     * @returns {boolean}
+     */
+    public isGesuchStatus(status: TSAntragStatus): boolean {
+        return this.gesuch.status === status;
     }
 }

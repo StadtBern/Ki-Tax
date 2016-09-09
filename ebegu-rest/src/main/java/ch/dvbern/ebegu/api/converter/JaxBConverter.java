@@ -215,7 +215,7 @@ public class JaxBConverter {
 			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
 		}
 		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
-		antragJAXP.setStatus(AntragStatusConverter.convertStatus(antrag.getStatus()));
+		antragJAXP.setStatus(AntragStatusConverter.convertStatusToDTO(antrag.getStatus()));
 	}
 
 	@Nonnull

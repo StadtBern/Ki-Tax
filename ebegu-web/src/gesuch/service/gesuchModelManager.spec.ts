@@ -15,6 +15,7 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from './wizardStepManager';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSKind from '../../models/TSKind';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 describe('gesuchModelManager', function () {
 
@@ -228,6 +229,18 @@ describe('gesuchModelManager', function () {
                 kind.kindJA.familienErgaenzendeBetreuung = true;
                 spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
                 expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(true);
+            });
+        });
+        describe('saveGesuchStatus', function () {
+            it('should update the status of the Gesuch im Server und Client', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
+
+                gesuchModelManager.saveGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
+
+                scope.$apply();
+                expect(gesuchModelManager.getGesuch().status).toEqual(TSAntragStatus.ERSTE_MAHNUNG);
             });
         });
     });

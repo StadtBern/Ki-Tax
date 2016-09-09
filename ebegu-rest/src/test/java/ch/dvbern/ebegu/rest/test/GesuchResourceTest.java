@@ -2,9 +2,11 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -24,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.util.Iterator;
 
 /**
@@ -130,6 +133,17 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 		Assert.assertNotNull(gesuchForInstitution.getKindContainers());
 		Assert.assertEquals(0, gesuchForInstitution.getKindContainers().size());
+	}
+
+	@Test
+	public void testUpdateStatus() throws EbeguException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+
+		Response response = gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.ERSTE_MAHNUNG);
+		final JaxGesuch persistedGesuch = gesuchResource.findGesuch(new JaxId(gesuch.getId()));
+
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals(AntragStatusDTO.ERSTE_MAHNUNG, persistedGesuch.getStatus());
 	}
 
 

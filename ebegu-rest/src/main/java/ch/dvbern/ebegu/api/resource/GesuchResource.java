@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
@@ -7,6 +8,7 @@ import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -185,17 +187,39 @@ public class GesuchResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(gesuchJAXPId.getId());
-		String gesuchID = converter.toEntityId(gesuchJAXPId);
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
 
-		if (!gesuchOptional.isPresent()) {
-			return Response.serverError().entity("Unknown gesuchID").build();
+		if (gesuchOptional.isPresent()) {
+			gesuchOptional.get().setBemerkungen(bemerkung);
+
+			gesuchService.updateGesuch(gesuchOptional.get());
+
+			return Response.ok().build();
 		}
-		gesuchOptional.get().setBemerkungen(bemerkung);
+		throw new EbeguEntityNotFoundException("updateBemerkung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+	}
 
-		gesuchService.updateGesuch(gesuchOptional.get());
+	@Nullable
+	@PUT
+	@Path("/status/{gesuchId}/{statusDTO}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateStatus(
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
+		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) throws EbeguException {
 
-		return Response.ok().build();
+		Validate.notNull(gesuchJAXPId.getId());
+		Validate.notNull(statusDTO);
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
+
+		if (gesuchOptional.isPresent()) {
+			gesuchOptional.get().setStatus(AntragStatusConverter.convertStatusToEntity(statusDTO));
+
+			gesuchService.updateGesuch(gesuchOptional.get());
+
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
 
 }
