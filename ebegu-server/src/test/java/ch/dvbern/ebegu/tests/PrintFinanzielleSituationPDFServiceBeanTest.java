@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.PrintFinanzielleSituationPDFService;
+import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -66,17 +67,16 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
-		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
 
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
-		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		File file = writeToTempDir(bytes, "finanzielleSituation1G.pdf");
-		 openPDF(file);
+//		 openPDF(file);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		File file = writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
-		openPDF(file);
+//		openPDF(file);
 	}
 
 	private void openPDF(File file) {
