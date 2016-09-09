@@ -178,6 +178,7 @@ export default class EbeguRestUtil {
         restObj.fall = this.fallToRestObject({}, antragEntity.fall);
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
+        restObj.status = antragEntity.status;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -185,6 +186,7 @@ export default class EbeguRestUtil {
         antragTS.fall = this.parseFall(new TSFall(), antragFromServer.fall);
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.status = antragFromServer.status;
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -1049,6 +1051,7 @@ export default class EbeguRestUtil {
         restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.status = pendenz.status;
         return restPendenz;
     }
 
@@ -1062,6 +1065,7 @@ export default class EbeguRestUtil {
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
+        pendenzTS.status = pendenzFromServer.status;
         return pendenzTS;
     }
 

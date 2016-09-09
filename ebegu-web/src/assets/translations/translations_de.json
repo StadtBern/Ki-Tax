@@ -647,6 +647,19 @@
     "FAMILIENSITUATION_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
     "FAMILIENSITUATION_WARNING_BESCHREIBUNG": "Der Gesuchsteller {{gsfullname}} und alle seine Daten werden damit auch gelöscht.",
     "EINKVERS_WARNING": "Wollen Sie diese Änderungen wirklich speichern?",
-    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensverschlechterung werden damit gelöscht"
+    "EINKVERS_WARNING_BESCHREIBUNG": "Die bereits eingetragenen Daten von der Einkommensverschlechterung werden damit gelöscht",
+    "IN_BEARBEITUNG_GS": "In Bearbeitung GS",
+    "FREIGABEQUITTUNG": "Freigabequittung ausstehend",
+    "NUR_SCHULAMT": "Schulamt",
+    "FREIGEGEBEN": "Freigegeben",
+    "IN_BEARBEITUNG_JA": "In Bearbeitung",
+    "ZURUECKGEWIESEN": "Zurückgewiesen",
+    "ERSTE_MAHNUNG": "1. Mahnung",
+    "ERSTE_MAHNUNG_ABGELAUFEN": "1. Mahnung Frist abgelaufen",
+    "ZWEITE_MAHNUNG": "2. Mahnung",
+    "ZWEITE_MAHNUNG_ABGELAUFEN": "2. Mahnung Frist abgelaufen",
+    "GEPRUEFT": "Geprüft",
+    "VERFUEGEN": "Verfügen",
+    "VERFUEGT": "Verfügt"
 }
 
