@@ -900,6 +900,14 @@ export default class GesuchModelManager {
             });
     }
 
+    public saveVerfuegung(): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.setVerfuegenToWorkWith(response);
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            return this.getVerfuegenToWorkWith();
+        });
+    }
+
     public getVerfuegenToWorkWith(): TSVerfuegung {
         if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
             for (let i = 0; i < this.kinderWithBetreuungList.length; i++) {
@@ -913,6 +921,20 @@ export default class GesuchModelManager {
             }
         }
         return undefined;
+    }
+
+    public setVerfuegenToWorkWith(verfuegung: TSVerfuegung): void {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            for (let i = 0; i < this.kinderWithBetreuungList.length; i++) {
+                if (this.kinderWithBetreuungList[i].id === this.getKindToWorkWith().id) {
+                    for (let j = 0; j < this.kinderWithBetreuungList[i].betreuungen.length; j++) {
+                        if (this.kinderWithBetreuungList[i].betreuungen[j].id === this.getBetreuungToWorkWith().id) {
+                            this.kinderWithBetreuungList[i].betreuungen[j].verfuegung = verfuegung;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public isThereAnyKindWithBetreuungsbedarf(): boolean {

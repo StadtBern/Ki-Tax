@@ -16,6 +16,8 @@ import WizardStepManager from './wizardStepManager';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSKind from '../../models/TSKind';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSVerfuegung from '../../models/TSVerfuegung';
+import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 
 describe('gesuchModelManager', function () {
 
@@ -29,6 +31,7 @@ describe('gesuchModelManager', function () {
     let $q: IQService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
+    let verfuegungRS: VerfuegungRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -43,6 +46,7 @@ describe('gesuchModelManager', function () {
         $q = $injector.get('$q');
         authServiceRS = $injector.get('AuthServiceRS');
         wizardStepManager = $injector.get('WizardStepManager');
+        verfuegungRS = $injector.get('VerfuegungRS');
     }));
 
     describe('Public API', function () {
@@ -241,6 +245,25 @@ describe('gesuchModelManager', function () {
 
                 scope.$apply();
                 expect(gesuchModelManager.getGesuch().status).toEqual(TSAntragStatus.ERSTE_MAHNUNG);
+            });
+        });
+        describe('saveVerfuegung', function () {
+            it('should save the current Verfuegung und set the status of the Betreuung to VERFUEGT', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getKinderWithBetreuungList().push(gesuchModelManager.getKindToWorkWith());
+                // gesuchModelManager.getGesuch().kindContainers[0].betreuungen[0].id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let verfuegung: TSVerfuegung = new TSVerfuegung();
+                spyOn(verfuegungRS, 'saveVerfuegung').and.returnValue($q.when(verfuegung));
+
+                gesuchModelManager.saveVerfuegung();
+                scope.$apply();
+
+                expect(gesuchModelManager.getVerfuegenToWorkWith()).toBe(verfuegung);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.VERFUEGT);
             });
         });
     });

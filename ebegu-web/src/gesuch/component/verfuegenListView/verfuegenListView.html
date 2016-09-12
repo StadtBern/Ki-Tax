@@ -16,7 +16,6 @@
                         <th data-translate="BETREUUNG_UPPER" ></th>
                         <th data-translate="ID_UPPER"></th>
                         <th data-translate="STATUS_UPPER"></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody ng-repeat="kindContainer in displayedCollection" >
@@ -47,8 +46,8 @@
                 </md-button>
                 <md-button ng-if="vm.showVerfuegen() && !vm.isStatusVerfuegen()"
                            ng-click="vm.setGesuchStatusVerfuegen()"
-                           class="md-raised md-primary" aria-label="{{VERFUEGUN_STARTEN_UPPER | translate}}">
-                    <span data-translate="VERFUEGUN_STARTEN_UPPER"></span>
+                           class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
                 </md-button>
 
                 <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"

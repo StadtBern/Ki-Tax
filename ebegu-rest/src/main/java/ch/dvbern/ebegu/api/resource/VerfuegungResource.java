@@ -4,14 +4,14 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
+import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.FinanzielleSituationService;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
-import ch.dvbern.ebegu.services.VerfuegungService;
+import ch.dvbern.ebegu.services.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -22,6 +22,7 @@ import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -45,6 +46,9 @@ public class VerfuegungResource {
 
 	@Inject
 	private GesuchService gesuchService;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -93,6 +97,44 @@ public class VerfuegungResource {
 		}
 
 		return Response.ok(kindContainers).build();
+	}
+
+	@Nullable
+	@PUT
+	@Path("/{gesuchId}/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxVerfuegung saveVerfuegung(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId,
+		@Nonnull @NotNull @Valid JaxVerfuegung verfuegungJAXP) throws EbeguException {
+
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+			if (betreuung.isPresent()) {
+				Verfuegung verfuegungToMerge = new Verfuegung();
+				if (verfuegungJAXP.getId() != null) {
+					Optional<Verfuegung> optional = verfuegungService.findVerfuegung(verfuegungJAXP.getId());
+					verfuegungToMerge = optional.orElse(new Verfuegung());
+				}
+				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
+
+				//setting all depending objects
+				convertedVerfuegung.setBetreuung(betreuung.get());
+				betreuung.get().setVerfuegung(convertedVerfuegung);
+				betreuung.get().setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+				convertedVerfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(convertedVerfuegung));
+
+				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung);
+
+//				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.VERFUEGEN);
+
+				return converter.verfuegungToJax(persistedVerfuegung);
+			}
+			throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+		}
+		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 }
 

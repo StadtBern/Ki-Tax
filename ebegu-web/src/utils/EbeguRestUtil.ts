@@ -1273,6 +1273,27 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public verfuegungToRestObject(verfuegung: any, verfuegungTS: TSVerfuegung): any {
+        if (verfuegungTS) {
+            this.abstractEntityToRestObject(verfuegung, verfuegungTS);
+            verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
+            verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
+            verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
+            return verfuegung;
+        }
+        return undefined;
+    }
+
+    private zeitabschnittListToRestObject(zeitabschnitte: Array<TSVerfuegungZeitabschnitt>): Array<any> {
+        let list: any[] = [];
+        if (zeitabschnitte) {
+            for (var i = 0; i < zeitabschnitte.length; i++) {
+                list[i] = this.zeitabschnittToRestObject({}, zeitabschnitte[i]);
+            }
+        }
+        return list;
+    }
+
     private parseVerfuegungZeitabschnitte(zeitabschnitte: Array<any>): TSVerfuegungZeitabschnitt[] {
         let resultList: TSVerfuegungZeitabschnitt[] = [];
         if (zeitabschnitte && Array.isArray(zeitabschnitte)) {
@@ -1283,6 +1304,28 @@ export default class EbeguRestUtil {
             resultList[0] = this.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), zeitabschnitte);
         }
         return resultList;
+    }
+
+    public zeitabschnittToRestObject(zeitabschnitt: any, zeitabschnittTS: TSVerfuegungZeitabschnitt): any {
+        if (zeitabschnittTS) {
+            this.abstractDateRangeEntityToRestObject(zeitabschnitt, zeitabschnittTS);
+            zeitabschnitt.abzugFamGroesse = zeitabschnittTS.abzugFamGroesse;
+            zeitabschnitt.anspruchberechtigtesPensum = zeitabschnittTS.anspruchberechtigtesPensum;
+            zeitabschnitt.bgPensum = zeitabschnittTS.bgPensum;
+            zeitabschnitt.anspruchspensumRest = zeitabschnittTS.anspruchspensumRest;
+            zeitabschnitt.bemerkungen = zeitabschnittTS.bemerkungen;
+            zeitabschnitt.betreuungspensum = zeitabschnittTS.betreuungspensum;
+            zeitabschnitt.betreuungsstunden = zeitabschnittTS.betreuungsstunden;
+            zeitabschnitt.elternbeitrag = zeitabschnittTS.elternbeitrag;
+            zeitabschnitt.erwerbspensumGS1 = zeitabschnittTS.erwerbspensumGS1;
+            zeitabschnitt.erwerbspensumGS2 = zeitabschnittTS.erwerbspensumGS2;
+            zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
+            zeitabschnitt.massgebendesEinkommen = zeitabschnittTS.massgebendesEinkommen;
+            zeitabschnitt.status = zeitabschnittTS.status;
+            zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            return zeitabschnitt;
+        }
+        return undefined;
     }
 
     public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any): TSVerfuegungZeitabschnitt {

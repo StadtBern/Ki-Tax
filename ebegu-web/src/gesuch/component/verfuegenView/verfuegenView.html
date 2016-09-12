@@ -1,7 +1,7 @@
 <div class="verfuegenView row">
     <div class="col-md-12">
 
-        <form  role="form" name="form" class="" novalidate unsaved-warning-form>
+        <form role="form" name="form" class="" novalidate unsaved-warning-form>
 
             <!-- Abzuege -->
             <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
@@ -157,8 +157,18 @@
                 </div>
             </div>
 
+            <div class="row marginTop20">
+                <div class="col-md-12 text-center">
+                    <md-button ng-if="vm.showVerfuegen()"
+                               ng-click="vm.save(form)"
+                               class="md-raised md-primary" aria-label="{{VERFUEGEN_UPPER | translate}}">
+                        <span data-translate="VERFUEGEN_UPPER"></span>
+                    </md-button>
+                </div>
+            </div>
+
             <!-- Navigation Buttons -->
-            <dv-navigation dv-cancel="vm.cancel(form)" dv-next="vm.showNextButton()" dv-save="vm.save(form)" dv-sub-step="2">
+            <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">
             </dv-navigation>
         </form>
     </div>
