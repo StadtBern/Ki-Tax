@@ -1,10 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.WizardStepName;
-import ch.dvbern.ebegu.enums.WizardStepStatus;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -108,6 +105,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		else if (WizardStepName.DOKUMENTE.equals(stepName)) {
 			updateAllStatusForDokumente(wizardSteps);
 		}
+		else if (WizardStepName.VERFUEGEN.equals(stepName)) {
+			updateAllStatusForVerfuegen(wizardSteps);
+		}
 		else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
@@ -159,6 +159,24 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep: wizardSteps) {
 			if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
 				checkStepStatusForErwerbspensum(wizardStep);
+			}
+		}
+	}
+
+	/**
+	 * Wenn der Status aller Betreuungen des Gesuchs VERFUEGT ist, dann wechseln wir den Staus von VERFUEGEN auf OK.
+	 * Der Status des Gesuchs wechselt auch dann auf VERFUEGT, da alle Angebote sind verfuegt
+	 * @param wizardSteps
+	 */
+	private void updateAllStatusForVerfuegen(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep: wizardSteps) {
+			if (WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())
+				&& !WizardStepStatus.OK.equals(wizardStep.getWizardStepStatus())) {
+				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
+				if (betreuungenFromGesuch.stream().filter(betreuung -> !Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())).count() <= 0) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+				}
 			}
 		}
 	}

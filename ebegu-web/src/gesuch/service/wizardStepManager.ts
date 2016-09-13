@@ -128,7 +128,8 @@ export default class WizardStepManager {
      */
     private maybeChangeStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
         //wenn wir vorher auf was anderem sind als unbesucht dann bleiben wir da statt auf IN_BEARBEITUNG zu gehen.
-        if (newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
+        if ((newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG || newStepStatus === TSWizardStepStatus.WARTEN)
+            && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
             return oldStepStatus;
         }
         return newStepStatus;

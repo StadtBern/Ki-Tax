@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.*;
@@ -49,6 +50,9 @@ public class VerfuegungResource {
 
 	@Inject
 	private BetreuungService betreuungService;
+
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -128,7 +132,7 @@ public class VerfuegungResource {
 
 				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung);
 
-//				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.VERFUEGEN);
+				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.VERFUEGEN);
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}

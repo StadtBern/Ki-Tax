@@ -141,8 +141,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             && this.wizardStepManager.areAllStepsOK();
     }
 
-    public showVerfuegen(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT);
+    /**
+     * Der Button Verfuegung starten wird angezeigt, wenn alle Betreuungen bestaetigt und das Gesuch geprueft wurden
+     * @returns {boolean}
+     */
+    public showVerfuegenStarten(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
+            && this.wizardStepManager.getStepByName(TSWizardStepName.BETREUUNG).wizardStepStatus === TSWizardStepStatus.OK;
     }
 
 }
