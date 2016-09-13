@@ -137,7 +137,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      * @returns {boolean}
      */
     public showGeprueft(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA);
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA)
+            && this.wizardStepManager.areAllStepsOK();
     }
 
     public showVerfuegen(): boolean {

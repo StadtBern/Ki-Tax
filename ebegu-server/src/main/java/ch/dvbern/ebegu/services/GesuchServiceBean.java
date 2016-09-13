@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -11,10 +13,11 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.*;
 
 /**
  * Service fuer Gesuch
@@ -55,6 +58,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Collection<Gesuch> getAllGesuche() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Gesuch.class));
+	}
+
+	@Nonnull
+	@Override
+	public Collection<Gesuch> getAllActiveGesuche() {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Predicate predicateGesuch = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		query.where(predicateGesuch);
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Nonnull

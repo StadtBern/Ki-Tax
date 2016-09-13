@@ -1,13 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -83,6 +80,6 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
 		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
-		Assert.assertEquals(gesuch1.getStatus(), pendenzenList.getStatus());
+		Assert.assertEquals(gesuch1.getStatus(), AntragStatusConverter.convertStatusToEntity(pendenzenList.getStatus()));
 	}
 }

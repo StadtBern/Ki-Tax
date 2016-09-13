@@ -52,7 +52,7 @@ export default class WizardStepManager {
         if (TSRole.SACHBEARBEITER_INSTITUTION === role || TSRole.SACHBEARBEITER_TRAEGERSCHAFT === role) {
             this.setAllowedStepsForInstitutionTraegerschaft();
         } else {
-            this.setAllSteps();
+            this.setAllAllowedSteps();
         }
     }
 
@@ -63,7 +63,7 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.VERFUEGEN);
     }
 
-    private setAllSteps(): void {
+    private setAllAllowedSteps(): void {
         this.allowedSteps = getTSWizardStepNameValues();
     }
 
@@ -172,5 +172,32 @@ export default class WizardStepManager {
             case TSWizardStepName.VERFUEGEN: nextStepName = TSWizardStepName.VERFUEGEN;
         }
         return this.getStepByName(nextStepName);
+    }
+
+    /**
+     * Gibt true zurueck, nur wenn alle Steps den Status OK haben.
+     *  - Dokumente duerfen allerdings IN_BEARBEITUNG sein
+     *  - Bei BETREUUNGEN darf es WARTEN sein
+     *  - Der Status von VERFUEGEN wird gar nicht beruecksichtigt
+     */
+    public areAllStepsOK(): boolean {
+        for (let i = 0; i < this.wizardSteps.length; i++) {
+            if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
+                if (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK
+                    && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG) {
+                    return false;
+                }
+
+            } else if (this.wizardSteps[i].wizardStepName === TSWizardStepName.DOKUMENTE) {
+                    if (this.wizardSteps[i].wizardStepStatus === TSWizardStepStatus.NOK) {
+                        return false;
+                    }
+
+            } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
+                && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK) {
+                return false;
+            }
+        }
+        return true;
     }
 }

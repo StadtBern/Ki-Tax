@@ -205,7 +205,7 @@ public class JaxBConverter {
 		}
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
-		// WICHTIG!!!! Der status wird nicht gesetzt, da er nur im Server geaendert werden darf
+		antrag.setStatus(AntragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
 	}
 
 	private void convertAbstractAntragFieldsToJAX(final AbstractAntragEntity antrag, final JaxAbstractAntragDTO antragJAXP) {
