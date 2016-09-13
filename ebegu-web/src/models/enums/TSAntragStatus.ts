@@ -31,3 +31,11 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.VERFUEGT
     ];
 }
+
+/**
+ * Gibt alle Werte zurueck ausser VERFUEGT. Diese Werte sind die, die bei der Pendenzenliste notwendig sind
+ * @returns {TSAntragStatus[]}
+ */
+export function getTSAntragStatusPendenzValues(): Array<TSAntragStatus> {
+    return getTSAntragStatusValues().filter(element => element !== TSAntragStatus.VERFUEGT);
+}

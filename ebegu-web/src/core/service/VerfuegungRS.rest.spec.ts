@@ -4,8 +4,9 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {EbeguWebCore} from '../core.module';
 import TSKindContainer from '../../models/TSKindContainer';
 import VerfuegungRS from './verfuegungRS.rest';
-import TestDataUtil from '../../utils/TestDataUtil';
 import TSKind from '../../models/TSKind';
+import TSVerfuegung from '../../models/TSVerfuegung';
+import TestDataUtil from '../../utils/TestDataUtil';
 
 describe('VerfuegungRS', function () {
 
@@ -14,6 +15,8 @@ describe('VerfuegungRS', function () {
     let ebeguRestUtil: EbeguRestUtil;
     let mockKindContainerListRest: Array<any> = [];
     let mockKind: TSKindContainer;
+    let gesuchId: string = '1234567789';
+    let betreuungId: string = '321123';
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -50,7 +53,6 @@ describe('VerfuegungRS', function () {
     describe('API Usage', function () {
         describe('calculate', () => {
             it('should return all KindContainer', () => {
-                let gesuchId: string = '1234567789';
                 $httpBackend.expectGET(verfuegungRS.serviceURL + '/calculate/' + gesuchId).respond(mockKindContainerListRest);
 
                 let foundKind: Array<TSKindContainer>;
@@ -61,6 +63,21 @@ describe('VerfuegungRS', function () {
                 expect(foundKind).toBeDefined();
                 expect(foundKind.length).toBe(1);
                 expect(foundKind[0]).toEqual(mockKind);
+            });
+        });
+        describe('saveVerfuegung', () => {
+            it('should save the given Verfuegung', () => {
+                let verfuegung: TSVerfuegung = TestDataUtil.createVerfuegung();
+                $httpBackend.expectPUT(verfuegungRS.serviceURL + '/' + gesuchId + '/' + betreuungId).respond(ebeguRestUtil.verfuegungToRestObject({}, verfuegung));
+                $httpBackend.expectGET('/ebegu/api/v1/wizard-steps/' + gesuchId).respond({});
+
+                let savedVerfuegung: TSVerfuegung;
+                verfuegungRS.saveVerfuegung(verfuegung, gesuchId, betreuungId).then((result) => {
+                    savedVerfuegung = result;
+                });
+                $httpBackend.flush();
+                expect(savedVerfuegung).toBeDefined();
+                expect(savedVerfuegung).toEqual(verfuegung);
             });
         });
     });

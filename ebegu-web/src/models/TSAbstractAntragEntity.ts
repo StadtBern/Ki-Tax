@@ -16,7 +16,7 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
         this._fall = fall;
         this._gesuchsperiode = gesuchsperiode;
         this._eingangsdatum = eingangsdatum;
-        this._status = status | TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this._status = status;
     }
 
 

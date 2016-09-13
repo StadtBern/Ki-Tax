@@ -253,8 +253,6 @@ describe('gesuchModelManager', function () {
                 gesuchModelManager.initGesuch(false);
                 createKindContainer();
                 gesuchModelManager.createBetreuung();
-                gesuchModelManager.getKinderWithBetreuungList().push(gesuchModelManager.getKindToWorkWith());
-                // gesuchModelManager.getGesuch().kindContainers[0].betreuungen[0].id = '2afc9d9a-957e-4550-9a22-97624a000feb';
                 gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
                 let verfuegung: TSVerfuegung = new TSVerfuegung();
                 spyOn(verfuegungRS, 'saveVerfuegung').and.returnValue($q.when(verfuegung));
