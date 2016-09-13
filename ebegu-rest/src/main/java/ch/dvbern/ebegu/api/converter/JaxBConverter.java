@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.converter;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
@@ -220,7 +221,7 @@ public class JaxBConverter {
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		final JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
-		jaxProperty.setName(applicationProperty.getName());
+		jaxProperty.setName(applicationProperty.getName().toString());
 		jaxProperty.setValue(applicationProperty.getValue());
 		return jaxProperty;
 	}
@@ -230,7 +231,7 @@ public class JaxBConverter {
 		Validate.notNull(applicationProperty);
 		Validate.notNull(jaxAP);
 		convertAbstractFieldsToEntity(jaxAP, applicationProperty);
-		applicationProperty.setName(jaxAP.getName());
+		applicationProperty.setName(Enum.valueOf(ApplicationPropertyKey.class, jaxAP.getName()));
 		applicationProperty.setValue(jaxAP.getValue());
 
 		return applicationProperty;

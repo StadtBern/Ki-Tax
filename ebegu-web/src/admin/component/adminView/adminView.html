@@ -58,7 +58,7 @@
                         <label data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
                         </label>
                         <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-10 input-element" required
+                               dv-max-length class="col-md-10 input-element smallfont" required
                                ng-disabled="vm.applicationProperty.timestampErstellt">
                         <dv-error-messages for="form.propertyName.$error"
                                            class="error col-md-offset-2 col-md-10"></dv-error-messages>
@@ -69,7 +69,7 @@
                         <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
                         </label>
                         <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               dv-max-length class="col-md-10">
+                               dv-max-length class="col-md-10 smallfont">
 
                         <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
 
@@ -78,17 +78,17 @@
 
             </div>
             <div class="row" style="margin-top:25px">
-                <div class="col-md-1">
-                    <dv-loading-button class="btn btn-primary" type="submit" >
+                <div class="col-md-2">
+                    <dv-loading-button button-class="btn btn-primary" type="submit">
                         <span data-translate="SAVE"></span>
                     </dv-loading-button>
                 </div>
                 <div class="col-md-4 ">
-                                  <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
-                                     ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
-                                      <span data-translate="CANCEL"></span>
-                                  </a>
-                              </div>
+                    <a href="javascript:;" id="cancelLink" unsaved-warning-clear
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                        <span data-translate="CANCEL"></span>
+                    </a>
+                </div>
             </div>
         </form>
     </div>

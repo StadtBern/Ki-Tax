@@ -32,6 +32,11 @@ public class BetreuungsgutscheinEvaluator {
 		this.rules = rules;
 	}
 
+	public BetreuungsgutscheinEvaluator(List<Rule> rules, boolean enableDebugOutput) {
+			this.rules = rules;
+			this.isDebug = enableDebugOutput;
+		}
+
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
