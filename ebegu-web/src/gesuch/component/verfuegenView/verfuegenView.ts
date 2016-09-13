@@ -26,6 +26,8 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
+    public bemerkungen: string;
+
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
         'DvDialog'];
 
@@ -36,6 +38,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
                 private DvDialog: DvDialog) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.setBemerkungen();
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
             console.log('resetting state due to navigation change, ');
@@ -183,8 +186,24 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG'
         })
             .then(() => {
+                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
                 return this.gesuchModelManager.saveVerfuegung();
             });
     }
 
+    /**
+     * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
+     */
+    private setBemerkungen(): void {
+        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
+            this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
+        } else {
+            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen;
+        }
+    }
+
+    public isBemerkungenDisabled(): boolean {
+        return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+    }
 }

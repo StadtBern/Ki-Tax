@@ -142,19 +142,6 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return result;
 	}
 
-	/**
-	 * @return Bemerkungen
-	 */
-	@Override
-	public String getGeneratedBemerkungen() {
-
-		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent() && verfuegung.get().getGeneratedBemerkungen() != null) {
-			return betreuung.getVerfuegung().getGeneratedBemerkungen();
-		}
-		return "";
-	}
-
 	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
@@ -195,21 +182,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	@Override
-	public boolean isPrintbemerkung() {
-
-		return isPrintManuellebemerkung() || isPrintGeneratedBemerkung();
-	}
-
-	@Override
 	public boolean isPrintManuellebemerkung() {
 
 		return !"".equalsIgnoreCase(getManuelleBemerkungen());
-	}
-
-	@Override
-	public boolean isPrintGeneratedBemerkung() {
-
-		return !"".equalsIgnoreCase(getGeneratedBemerkungen());
 	}
 
 	@Nonnull

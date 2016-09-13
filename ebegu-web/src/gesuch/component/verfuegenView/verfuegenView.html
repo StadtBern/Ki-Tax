@@ -141,18 +141,11 @@
             </div>
 
             <!--bemerkungen-->
-            <div class="row" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
-                <div class="col-md-12">
-                    <label class="inlineHint" for="generated_notes" data-translate="GENERATED_BEMERKUNGEN"></label>
-                    <textarea md-no-autogrow class="form-control" rows="6" id="generated_notes" ng-disabled="true"
-                              ng-model="vm.getVerfuegenToWorkWith().generatedBemerkungen"></textarea>
-                </div>
-            </div>
             <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
                 <div class="col-md-12">
-                    <label class="inlineHint" for="manuelle_notes" data-translate="MANUELLE_BEMERKUNGEN"></label>
+                    <label class="inlineHint" for="manuelle_notes" data-translate="BEMERKUNGEN"></label>
                     <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
-                              ng-model="vm.getVerfuegenToWorkWith().manuelleBemerkungen"
+                              ng-model="vm.bemerkungen" ng-disabled="vm.isBemerkungenDisabled()"
                               ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
                 </div>
             </div>
