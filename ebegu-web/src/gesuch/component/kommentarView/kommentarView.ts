@@ -136,4 +136,8 @@ export class KommentarViewController {
         return this.wizardStepManager.getCurrentStep();
     }
 
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
+        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    }
+
 }
