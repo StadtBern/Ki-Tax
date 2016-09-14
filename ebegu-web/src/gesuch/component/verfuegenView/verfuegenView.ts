@@ -131,27 +131,6 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public getFamiliengroesseFS(): number {
-        if (this.berechnungsManager && this.berechnungsManager.finanzielleSituationResultate) {
-            return this.berechnungsManager.finanzielleSituationResultate.familiengroesse;
-        }
-        return undefined;
-    }
-
-    public getFamiliengroesseEV1(): number {
-        if (this.berechnungsManager && this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
-            return this.berechnungsManager.einkommensverschlechterungResultateBjP1.familiengroesse;
-        }
-        return undefined;
-    }
-
-    public getFamiliengroesseEV2(): number {
-        if (this.berechnungsManager && this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
-            return this.berechnungsManager.einkommensverschlechterungResultateBjP2.familiengroesse;
-        }
-        return undefined;
-    }
-
     public getAnfangsVerschlechterung1(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
