@@ -132,7 +132,7 @@ public class AbstractBGRechnerTest {
 					Verfuegung verfuegung = betreuung.getVerfuegung();
 					System.out.println(verfuegung);
 					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
-//					Assert.assertEquals(MathUtil.DEFAULT.from(53872.35), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
+					Assert.assertEquals(MathUtil.DEFAULT.from(53872.35), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
 					// Erster Monat
 					VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
 					assertZeitabschnitt(august, 80, 80, 80, 1827.05, 1562.25, 264.80);

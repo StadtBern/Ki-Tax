@@ -97,10 +97,10 @@ public class BetreuungsgutscheinEvaluator {
 				}
 				// Und die Resultate in die Verfügung schreiben
 				betreuung.getVerfuegung().setZeitabschnitte(zeitabschnitte);
-				Set<String> bemerkungenOfAbschnitt = zeitabschnitte.stream()
+				Set<String> bemerkungenOfAbschnitte = zeitabschnitte.stream()
 					.map(VerfuegungZeitabschnitt::getBemerkungen)
 					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
-				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitt));
+				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitte));
 			}
 		}
 	}

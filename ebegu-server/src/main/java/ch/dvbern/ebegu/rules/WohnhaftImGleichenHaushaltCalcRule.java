@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.rules;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 
@@ -30,8 +31,7 @@ public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 					if (pensumGleicherHaushalt < anspruch) {
 						anspruch = pensumGleicherHaushalt;
 						verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
-						verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT.name() + ": Das Kind wohnt "
-							+ kindJA.getWohnhaftImGleichenHaushalt() + "% im gleichen Haushalt");
+						verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT, MsgKey.WOHNHAFT_MSG, kindJA.getWohnhaftImGleichenHaushalt());
 					}
 				}
 			}

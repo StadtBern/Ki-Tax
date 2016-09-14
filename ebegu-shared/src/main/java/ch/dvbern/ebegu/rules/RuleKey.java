@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.rules;
 
 /**
- * User: homa
- * Date: 17.06.16
- * comments homa
+ * Dieses Enum definiert die moeglichen Regeln. Grundsaetzlich gibt es fuer jede Dokumentierte Regel
+ * einen solchen RuleeKey. Dieser wird dann verwendet um allfaellige Abschnitt und Calc rules dieser Regel
+ * zuzuordnen.
  */
 public enum RuleKey {
 

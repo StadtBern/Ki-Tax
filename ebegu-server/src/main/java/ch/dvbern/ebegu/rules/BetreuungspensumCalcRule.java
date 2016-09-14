@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 
@@ -26,7 +27,7 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 		int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
 		if (betreuungspensum > 100) {
 			betreuungspensum = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM , MsgKey.BETREUUNGSPENSUM_MSG);
 		}
 		// Fachstelle: Wird in einer separaten Rule behandelt
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();

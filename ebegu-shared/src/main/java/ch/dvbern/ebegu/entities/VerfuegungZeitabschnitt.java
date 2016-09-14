@@ -1,7 +1,10 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.MsgKey;
+import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
@@ -295,6 +298,17 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
+	}
+
+	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
+		String bemerkungsText =  ServerMessageUtil.translateEnumValue(msgKey);
+		this.addBemerkung(ruleKey.name() + ": " + bemerkungsText);
+
+		}
+
+	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey, Object... args) {
+		String bemerkungsText =  ServerMessageUtil.translateEnumValue(msgKey, args);
+		this.addBemerkung(ruleKey.name() + ": " + bemerkungsText);
 	}
 
 	/**
