@@ -9,6 +9,7 @@ import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlech
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -25,6 +26,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public showSelbstaendig: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
+    allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
                                 'WizardStepManager'];
@@ -38,6 +40,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
         this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
 

@@ -41,6 +41,7 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import * as moment from 'moment';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -976,5 +977,13 @@ export default class GesuchModelManager {
      */
     public isGesuchStatus(status: TSAntragStatus): boolean {
         return this.gesuch.status === status;
+    }
+
+    /**
+     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
+     * @returns {boolean}
+     */
+    public isGesuchStatusVerfuegenVerfuegt() {
+        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 }

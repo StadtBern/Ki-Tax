@@ -14,7 +14,7 @@ export class DVErwerbspensumListConfig implements IComponentOptions {
         erwerbspensen: '<',
         tableId: '@',
         tableTitle: '@',
-        addButtonVisible: '@',
+        addButtonVisible: '<',
         addButtonText: '@'
     };
     template = template;

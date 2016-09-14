@@ -21,13 +21,14 @@
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
-                    <td>
+                    <td ng-if="vm.addButtonVisible">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
                                 button-class="btn btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>
                         </dv-loading-button>
                     </td>
+                    <td ng-if="!vm.addButtonVisible"></td>
                 </tr>
                 <tr ng-if="vm.erwerbspensen.length === 0">
                     <td colspan="5" class="empty-table" data-translate="KEIN_EINTRAG">...</td>
@@ -38,8 +39,7 @@
         </div>
     </div>
     <!--Addbutton -->
-    <div class="row">
-
+    <div class="row" ng-if="vm.addButtonVisible">
         <div class="col-md-12" style="margin-bottom: 20px">
             <dv-loading-button type="button" ng-click="vm.addClicked()" button-class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-plus">

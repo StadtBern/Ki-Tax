@@ -32,15 +32,20 @@
                             ng-click="vm.editBetreuung(kind, betreuung)">
                             <td ng-bind="vm.getBetreuungsangebotTyp(betreuung) | translate"></td>
                             <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
-                            <td  dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                 ng-click="$event.stopPropagation()">
+                            <td dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                ng-click="$event.stopPropagation()">
                                 <dv-loading-button type="button" ng-click="vm.removeBetreuung(kind, betreuung)"
                                                    button-class="btn btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
                                 </dv-loading-button>
                             </td>
-                            <td  dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
+                            <td dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                dv-show-expression="vm.isGesuchStatusVerfuegenVerfuegt()">
+                                <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen-->
+                            </td>
+                            <td dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                                 <!--Fuer Institutionen und Traegerschaft wird der Button Loeschen nicht angezeigt -->
                             </td>
                         </tr>
@@ -50,7 +55,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-12" style="margin-bottom: 20px" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                <div class="col-md-12" style="margin-bottom: 20px" dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                     dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                     <dv-loading-button type="button" ng-click="vm.createBetreuung(kind)" button-class="btn btn-sm btn-success">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span data-translate="BETREUUNG_HINZUFUEGEN"></span>

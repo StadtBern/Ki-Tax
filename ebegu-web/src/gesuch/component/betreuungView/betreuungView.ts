@@ -16,9 +16,9 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import DateUtil from '../../../utils/DateUtil';
-import Moment = moment.Moment;
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import moment = require('moment');
 let template = require('./betreuungView.html');
 require('./betreuungView.less');
 
@@ -86,7 +86,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    public getGesuchsperiodeBegin(): Moment {
+    public getGesuchsperiodeBegin(): moment.Moment {
         return this.gesuchModelManager.getGesuchsperiodeBegin();
     }
 

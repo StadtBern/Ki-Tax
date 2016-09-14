@@ -7,6 +7,7 @@
         </h4>
         <hr class="header"/>
         <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
             <!-- Total Einkuenfte -->
             <div class="row">
@@ -185,15 +186,12 @@
 
             <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_DOWNLOAD_HINT"></p>
 
+        </fieldset>
+
             <!--Buttons-->
             <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="3">
             </dv-navigation>
-
         </form>
-
-        <!--<pre>{{ vm.getModel() |json}}</pre>-->
-
-        <!--<pre>{{ vm.getResultate() |json}}</pre>-->
 
     </div>
 

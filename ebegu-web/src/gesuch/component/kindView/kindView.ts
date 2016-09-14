@@ -12,6 +12,7 @@ import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKin
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import IPromise = angular.IPromise;
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -27,6 +28,7 @@ export class KindViewController extends AbstractGesuchViewController {
     kinderabzugValues: Array<TSKinderabzug>;
     showFachstelle: boolean;
     fachstelleId: string; //der ausgewaehlte fachstelleId wird hier gespeichert und dann in die entsprechende Fachstelle umgewandert
+    allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
                                 'ErrorService', 'WizardStepManager'];
@@ -37,6 +39,7 @@ export class KindViewController extends AbstractGesuchViewController {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.gesuchModelManager.setKindNumber(parseInt($stateParams.kindNumber, 10));
         this.initViewModel();
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
 
         //Wir verlassen uns hier darauf, dass zuerst das Popup vom unsavedChanges Plugin kommt welches den User fragt ob er die ungesp. changes verwerfen will
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {

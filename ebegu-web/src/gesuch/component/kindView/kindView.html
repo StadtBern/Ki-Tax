@@ -5,6 +5,7 @@
         </h4>
         <hr class="header"/>
         <form role="form" name="form" class="" novalidate unsaved-warning-form>
+        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
             <br />
 
@@ -14,6 +15,9 @@
                     <div class="form-group">
                         <label data-translate="GESCHLECHT"></label>
                         <dv-radio-container name="geschlecht" class="input-element"
+                                            dv-enable-element
+                                            dv-enable-allowed-roles="vm.allowedRoles"
+                                            dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
                                             ng-required="true" items="vm.geschlechter" ng-model="vm.getModel().geschlecht">
                         </dv-radio-container>
                         <dv-error-messages for="form.geschlecht.$error"
@@ -71,6 +75,9 @@
                     <dv-input-container class="form-group">
                         <h4 class="mainQuestion"><span data-translate="KINDERABZUG"></span></h4>
                         <dv-radio-container name="kinderabzug" ng-model="vm.getModel().kinderabzug" ng-required="true"
+                                            dv-enable-element
+                                            dv-enable-allowed-roles="vm.allowedRoles"
+                                            dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
                                             class="input-element" items="vm.kinderabzugValues">
                         </dv-radio-container>
                         <dv-error-messages for="form.kinderabzug.$error"
@@ -88,6 +95,9 @@
                         <label data-translate="FAM_ERGAENZENDE_BETREUUNG"></label>
                         <dv-tooltip text="'FAM_ERGAENZENDE_BETREUUNG_HELP' | translate"></dv-tooltip>
                         <dv-radio-container name="familienErgaenzendeBetreuung" class="input-element"
+                                            dv-enable-element
+                                            dv-enable-allowed-roles="vm.allowedRoles"
+                                            dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
                                             ng-required="true" ng-model="vm.getModel().familienErgaenzendeBetreuung"
                                             ng-change="vm.familienErgaenzendeBetreuungClicked()">
                         </dv-radio-container>
@@ -104,6 +114,9 @@
                         <label><span data-translate="MUTTERSPRACHE_DEUTSCH"> <dv-tooltip text="'MUTTERSPRACHE_DEUTSCH_HELP' | translate"></dv-tooltip></span></label>
 
                         <dv-radio-container name="mutterspracheDeutsch" class="input-element"
+                                            dv-enable-element
+                                            dv-enable-allowed-roles="vm.allowedRoles"
+                                            dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
                                             ng-required="vm.getModel().familienErgaenzendeBetreuung" ng-model="vm.getModel().mutterspracheDeutsch">
                         </dv-radio-container>
                         <dv-error-messages for="form.mutterspracheDeutsch.$error"
@@ -136,6 +149,7 @@
                 <div class="col-md-6">
                     <div class=" checkbox" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                         <md-checkbox ng-model="vm.showFachstelle" name="showFachstelle" aria-label="showFachstelle"
+                                     ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
                                      ng-change="vm.showFachstelleClicked()">
                             <span data-translate="INVOLVIERTE_FACHSTELLE"></span>
                             <dv-tooltip text="'INVOLVIERTE_FACHSTELLE_HELP' | translate"></dv-tooltip>
@@ -214,11 +228,11 @@
                     </div>
                 </div>
             </div>
+        </fieldset>
 
             <!--Buttons-->
             <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2">
             </dv-navigation>
-
         </form>
     </div>
 </div>

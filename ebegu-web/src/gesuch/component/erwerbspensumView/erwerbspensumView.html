@@ -6,6 +6,7 @@
 
         <form ng-submit="form.$valid && vm.submit(form)" role="form" name="form" class="" novalidate
               unsaved-warning-form ng-if="vm.erwerbspensum">
+        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
             <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
             <br/>
@@ -93,6 +94,7 @@
                     <div class="checkbox">
                         <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
                                      name="zuschlag"
+                                     ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
                                      aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                             <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                             <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
@@ -114,8 +116,7 @@
                                 ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsgrund"
                                 class="form-control"
                                 ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
-                                ng-required="true"
-                        >
+                                ng-required="true">
                         </select>
                         <dv-error-messages for="form.zuschlagsgrund.$error"
                                            class="error"></dv-error-messages>
@@ -140,12 +141,17 @@
                 </div>
             </div>
 
+
+        </fieldset>
+
             <!--Buttons-->
             <dv-navigation dv-cancel="vm.cancel(form)" dv-next="true" dv-save="vm.save(form)" dv-sub-step="2">
             </dv-navigation>
 
         </form>
+
         <p ng-if="!vm.erwerbspensum">Keine Erwerbspensum Daten vorhanden</p>
+
     </div>
 </div>
 

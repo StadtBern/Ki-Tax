@@ -4,6 +4,7 @@ import TSLand from '../../../models/types/TSLand';
 import ListResourceRS from '../../service/listResourceRS.rest';
 import {IComponentOptions, IFormController} from 'angular';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 require('./dv-adresse.less');
 
 export class AdresseComponentConfig implements IComponentOptions {
@@ -22,7 +23,7 @@ export class AdresseComponentConfig implements IComponentOptions {
 
 
 export  class DvAdresseController {
-    static $inject = ['AdresseRS', 'ListResourceRS'];
+    static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager'];
 
     adresse: TSAdresse;
     prefix: string;
@@ -33,11 +34,13 @@ export  class DvAdresseController {
     organisation: boolean;
     TSRoleUtil = TSRoleUtil;
     showNichtInGemeinde : boolean;
+    gesuchModelManager: GesuchModelManager;
 
     /* @ngInject */
-    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS) {
+    constructor(adresseRS: AdresseRS, listResourceRS: ListResourceRS, gesuchModelManager: GesuchModelManager) {
         this.TSRoleUtil = TSRoleUtil;
         this.adresseRS = adresseRS;
+        this.gesuchModelManager = gesuchModelManager;
         this.popup = {opened: false};
         listResourceRS.getLaenderList().then((laenderList: TSLand[]) => {
             this.laenderList = laenderList;
@@ -63,6 +66,10 @@ export  class DvAdresseController {
 
     openPopup() {     //todo team welchen datepicker wollen wir
         this.popup.opened = true;
+    }
+
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
+        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
     }
 
 }

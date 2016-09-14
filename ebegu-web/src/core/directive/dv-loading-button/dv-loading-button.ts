@@ -1,6 +1,5 @@
 import {IDirective, IDirectiveFactory} from 'angular';
 import {TSHTTPEvent} from '../../events/TSHTTPEvent';
-import Moment = moment.Moment;
 import INgModelController = angular.INgModelController;
 import IHttpService = angular.IHttpService;
 import ITimeoutService = angular.ITimeoutService;

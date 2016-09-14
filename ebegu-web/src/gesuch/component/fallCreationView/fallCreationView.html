@@ -11,6 +11,7 @@
     </div>
     <hr class="header"/>
     <form  role="form" name="form" class="" novalidate unsaved-warning-form>
+    <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
         <!--Eingangsdatum-->
         <div class="row">
@@ -35,7 +36,8 @@
                         <md-radio-group name="gesuchsperioden" class="input-element radio" ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
                                         ng-required="true">
                             <md-radio-button ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
-                                             ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}">
+                                             ng-value="current.id"  aria-label="{{vm.getGesuchsperiodeAsString(current)}}"
+                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
                                 <span>{{vm.getGesuchsperiodeAsString(current)}}</span>
                             </md-radio-button>
                         </md-radio-group>
@@ -46,6 +48,7 @@
             </div>
 
         </div>
+    </fieldset>
 
         <!--Buttons-->
         <dv-navigation dv-next="true" dv-save="vm.save(form)">

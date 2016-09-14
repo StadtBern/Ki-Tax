@@ -110,7 +110,8 @@
             <div class="col-md-6">
                 <div class="checkbox">
                     <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde" aria-label="nichtInGemeinde"
-                                 dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                                 dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                                 dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                         <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
                     </md-checkbox>
                     <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error" class="error"></dv-error-messages>

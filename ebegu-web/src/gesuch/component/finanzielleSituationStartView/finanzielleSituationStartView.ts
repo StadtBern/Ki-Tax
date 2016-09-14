@@ -9,6 +9,7 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSGesuch from '../../../models/TSGesuch';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -22,6 +23,8 @@ export class FinanzielleSituationStartViewComponentConfig implements IComponentO
 
 export class FinanzielleSituationStartViewController extends AbstractGesuchViewController {
 
+    allowedRoles: Array<TSRoleUtil>;
+
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
@@ -29,6 +32,7 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
                 wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
     }
 

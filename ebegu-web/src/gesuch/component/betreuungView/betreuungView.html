@@ -13,6 +13,7 @@
 
         <form role="form" name="form" class="" novalidate
               unsaved-warning-form>
+        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
             <!--Schuljahr -->
             <div class="row">
                 <div class="col-md-12" ng-if="vm.isTagesschule()">
@@ -258,7 +259,7 @@
                 </div>
                 <!--falsche Angaben-->
                 <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                     dv-show-expression="vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()">
+                     dv-show-expression="(vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()) && !vm.isGesuchStatusVerfuegenVerfuegt()">
                     <div class="col-md-12">
                         <a href="" ng-click="vm.platzAnfordern(form)"
                            data-translate="FALSCHE_ANGABEN"></a>
@@ -289,6 +290,7 @@
                    dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER]"></p>
 
             </div>
+        </fieldset>
 
             <!--Buttons-->
             <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
@@ -308,7 +310,7 @@
                     </dv-loading-button>
                 </div>
             </div>
-
         </form>
+
     </div>
 </div>

@@ -13,6 +13,8 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ITranslateService = angular.translate.ITranslateService;
+import {TSRole} from '../../../models/enums/TSRole';
+import moment = require('moment');
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -32,6 +34,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     selectedStichtagBjP1: TSMonth = undefined;
     selectedStichtagBjP2: TSMonth = undefined;
     initialEinkVersInfo: TSEinkommensverschlechterungInfo;
+    allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
         , 'WizardStepManager', 'DvDialog'];
@@ -43,6 +46,7 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
         this.initViewModel();
         this.initialEinkVersInfo = angular.copy(this.getGesuch().einkommensverschlechterungInfo);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
     private initViewModel() {

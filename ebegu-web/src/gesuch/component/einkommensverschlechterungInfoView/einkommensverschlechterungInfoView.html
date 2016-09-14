@@ -2,6 +2,7 @@
     <div class="col-md-12">
 
         <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
             <!--Einkommensverschlechterung-->
             <div class="row">
@@ -10,7 +11,10 @@
                         <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
                         <dv-radio-container name="einkommensverschlechterung"
                                             ng-model="vm.getEinkommensverschlechterungsInfo().einkommensverschlechterung"
-                                            ng-required="true" class="radio input-element">
+                                            ng-required="true" class="radio input-element"
+                                            dv-enable-element
+                                            dv-enable-allowed-roles="vm.allowedRoles"
+                                            dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                         </dv-radio-container>
                         <dv-error-messages for="form.einkommensverschlechterung.$error"
                                            class="error"></dv-error-messages>
@@ -26,7 +30,8 @@
                         <md-checkbox name="ekvFuerBasisJahrPlus1"
                                      ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1"
                                      aria-label="{vm.getBasisJahrPlusAsString(0)}"
-                                     ng-required="vm.isRequired(1)" class="input-element">
+                                     ng-required="vm.isRequired(1)" class="input-element"
+                                     ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(0)}"></span>
                         </md-checkbox>
@@ -76,7 +81,8 @@
                         <md-checkbox name="ekvFuerBasisJahrPlus2"
                                      ng-model="vm.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus2"
                                      aria-label="{vm.getBasisJahrPlusAsString(1)}"
-                                     ng-required="vm.isRequired(2)" class="input-element">
+                                     ng-required="vm.isRequired(2)" class="input-element"
+                                     ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
                             <span data-translate="EKVI_FUER_JAHR"
                                   translate-values="{basisjahr: vm.getBasisJahrPlusAsString(1)}"></span>
                         </md-checkbox>
@@ -117,6 +123,7 @@
                 </div>
             </div>
 
+        </fieldset>
             <!-- -------------------------------------------Navigation--------------------------------------------  -->
             <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)" dv-sub-step="1">
             </dv-navigation>
