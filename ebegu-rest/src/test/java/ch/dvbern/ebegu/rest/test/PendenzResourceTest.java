@@ -38,6 +38,8 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 
 	@Deployment
@@ -80,6 +82,6 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
 		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
-		Assert.assertEquals(gesuch1.getStatus(), AntragStatusConverter.convertStatusToEntity(pendenzenList.getStatus()));
+		Assert.assertEquals(gesuch1.getStatus(), antragStatusConverter.convertStatusToEntity(pendenzenList.getStatus()));
 	}
 }

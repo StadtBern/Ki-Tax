@@ -70,6 +70,8 @@ public class JaxBConverter {
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 	@Inject
 	private VerfuegungService verfuegungService;
@@ -205,7 +207,7 @@ public class JaxBConverter {
 		}
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
-		antrag.setStatus(AntragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
+		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
 	}
 
 	private void convertAbstractAntragFieldsToJAX(final AbstractAntragEntity antrag, final JaxAbstractAntragDTO antragJAXP) {
@@ -215,7 +217,7 @@ public class JaxBConverter {
 			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
 		}
 		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
-		antragJAXP.setStatus(AntragStatusConverter.convertStatusToDTO(antrag.getStatus()));
+		antragJAXP.setStatus(antragStatusConverter.convertStatusToDTO(antrag, antrag.getStatus()));
 	}
 
 	@Nonnull

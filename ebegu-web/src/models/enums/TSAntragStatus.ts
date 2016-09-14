@@ -10,6 +10,8 @@ export enum TSAntragStatus {
     ZWEITE_MAHNUNG_ABGELAUFEN = <any> 'ZWEITE_MAHNUNG_ABGELAUFEN',
     IN_BEARBEITUNG_JA = <any> 'IN_BEARBEITUNG_JA',
     GEPRUEFT = <any> 'GEPRUEFT',
+    PLATZBESTAETIGUNG_ABGEWIESEN = <any> 'PLATZBESTAETIGUNG_ABGEWIESEN',
+    PLATZBESTAETIGUNG_WARTEN = <any> 'PLATZBESTAETIGUNG_WARTEN',
     VERFUEGEN = <any> 'VERFUEGEN',
     VERFUEGT = <any> 'VERFUEGT'
 }
@@ -27,6 +29,8 @@ export function getTSAntragStatusValues(): Array<TSAntragStatus> {
         TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN,
         TSAntragStatus.IN_BEARBEITUNG_JA,
         TSAntragStatus.GEPRUEFT,
+        TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN,
+        TSAntragStatus.PLATZBESTAETIGUNG_WARTEN,
         TSAntragStatus.VERFUEGEN,
         TSAntragStatus.VERFUEGT
     ];

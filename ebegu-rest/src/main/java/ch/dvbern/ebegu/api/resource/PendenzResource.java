@@ -39,6 +39,8 @@ public class PendenzResource {
 
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
@@ -60,7 +62,7 @@ public class PendenzResource {
 			pendenz.setEingangsdatum(gesuch.getEingangsdatum());
 			pendenz.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 			pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
-			pendenz.setStatus(AntragStatusConverter.convertStatusToDTO(gesuch.getStatus()));
+			pendenz.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
 			pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
 			if (gesuch.getFall().getVerantwortlicher() != null) {

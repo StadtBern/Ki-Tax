@@ -659,6 +659,8 @@
     "ZWEITE_MAHNUNG": "2. Mahnung",
     "ZWEITE_MAHNUNG_ABGELAUFEN": "2. Mahnung Frist abgelaufen",
     "GEPRUEFT": "Geprüft",
+    "PLATZBESTAETIGUNG_ABGEWIESEN": "Platzbestätigung abgewiesen",
+    "PLATZBESTAETIGUNG_WARTEN": "Warten auf Platzbestätigung",
     "VERFUEGEN": "Verfügen",
     "VERFUEGT": "Verfügt",
     "CONFIRM_GESUCH_STATUS_GEPRUEFT": "Möchten Sie das Gesuch wirklich als \"geprüft\" setzen?",

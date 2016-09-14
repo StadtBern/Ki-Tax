@@ -55,6 +55,8 @@ public class GesuchResource {
 	@Inject
 	private WizardStepResource wizardStepResource;
 
+	@Inject AntragStatusConverter antragStatusConverter;
+
 	@Inject
 	private Principal principal;
 
@@ -213,7 +215,7 @@ public class GesuchResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
 
 		if (gesuchOptional.isPresent()) {
-			gesuchOptional.get().setStatus(AntragStatusConverter.convertStatusToEntity(statusDTO));
+			gesuchOptional.get().setStatus(antragStatusConverter.convertStatusToEntity(statusDTO));
 
 			gesuchService.updateGesuch(gesuchOptional.get());
 

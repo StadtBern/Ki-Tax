@@ -128,6 +128,7 @@ public class TestJaxDataUtil {
 		jaxGesuch.setGesuchsperiode(createTestJaxGesuchsperiode());
 		jaxGesuch.setGesuchsteller1(createTestJaxGesuchsteller());
 		jaxGesuch.setEingangsdatum(LocalDate.now());
+		jaxGesuch.setStatus(AntragStatusDTO.IN_BEARBEITUNG_JA);
 		JaxGesuchsteller testJaxGesuchsteller = createTestJaxGesuchsteller();
 		testJaxGesuchsteller.setNachname("Gesuchsteller2");
 		jaxGesuch.setGesuchsteller2(testJaxGesuchsteller);
