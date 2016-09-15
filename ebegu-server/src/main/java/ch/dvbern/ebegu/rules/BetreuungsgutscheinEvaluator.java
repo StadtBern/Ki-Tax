@@ -60,6 +60,7 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
+					LOG.info("Betruung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
 					continue;
 				}
 
