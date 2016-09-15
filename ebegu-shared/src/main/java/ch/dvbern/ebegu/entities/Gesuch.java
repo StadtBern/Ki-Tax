@@ -9,7 +9,9 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -128,5 +130,14 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Transient
+	public List<Betreuung> extractAllBetreuungen() {
+		final List<Betreuung> list = new ArrayList<>();
+		for (final KindContainer kind: getKindContainers()) {
+			list.addAll(kind.getBetreuungen());
+		}
+		return list;
 	}
 }

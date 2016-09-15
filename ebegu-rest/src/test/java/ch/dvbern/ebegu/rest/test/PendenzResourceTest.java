@@ -1,12 +1,10 @@
 package ch.dvbern.ebegu.rest.test;
 
+import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -40,6 +38,8 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 
 	@Deployment
@@ -60,9 +60,8 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Assert.assertNotNull(pendenzenList);
 		Assert.assertEquals(2, pendenzenList.size());
 
-		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.get(0).getFallNummer());
-		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.get(0).getFamilienName());
-		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.get(0).getEingangsdatum());
+		assertGesuchDaten(gesuch1, pendenzenList.get(0));
+		assertGesuchDaten(gesuch2, pendenzenList.get(1));
 
 		Set<BetreuungsangebotTyp> angeboteList = new LinkedHashSet<>();
 		angeboteList.add(BetreuungsangebotTyp.KITA);
@@ -79,6 +78,10 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 
 	// HELP METHOD
 
-
-
+	private void assertGesuchDaten(Gesuch gesuch1, JaxPendenzJA pendenzenList) {
+		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
+		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
+		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
+		Assert.assertEquals(gesuch1.getStatus(), antragStatusConverter.convertStatusToEntity(pendenzenList.getStatus()));
+	}
 }

@@ -14,6 +14,10 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import ITimeoutService = angular.ITimeoutService;
+import {
+    TSAntragStatus,
+    getTSAntragStatusPendenzValues
+} from '../../../models/enums/TSAntragStatus';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -29,6 +33,7 @@ export class PendenzenListViewController {
     private pendenzenList: Array<TSPendenzJA>;
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
+    selectedAntragStatus: string;
     selectedInstitution: string;
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
@@ -63,6 +68,14 @@ export class PendenzenListViewController {
 
     public getAntragTypen(): Array<TSAntragTyp> {
         return getTSAntragTypValues();
+    }
+
+    /**
+     * Alle TSAntragStatus ausser VERFUEGT. Da es in der Pendenzenliste nicht notwendig ist
+     * @returns {Array<TSAntragStatus>}
+     */
+    public getAntragStatus(): Array<TSAntragStatus> {
+        return getTSAntragStatusPendenzValues();
     }
 
     public getBetreuungsangebotTypen(): Array<TSBetreuungsangebotTyp> {
