@@ -60,14 +60,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     save(form: IFormController) {
         if (form.$valid) {
-            //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
-            //this.errorService.clearAll();
-            //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
-            // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
             this.saveVerfuegung().then(() => {
                 this.$state.go('gesuch.verfuegen');
             });
-            // });
         }
     }
 
@@ -184,5 +179,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
             || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+    }
+
+    public openVerfuegungPDF(): void {
+
     }
 }

@@ -672,6 +672,7 @@
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
     "BESCHREIBUNG_SAVE_VERFUEGUNG": "Die aktuellen Daten werden damit gespeichert und dürfen danach nicht mehr geändert werden",
+    "PDF_VERFUEGUNG_ANZEIGEN": "Verfügung als PDF anzeigen",
     "ZULETZT_BEARBEITER": "zuletzt {{username}}",
     "VORLAGE_MAHNUNG_1": "Vorlage erste Mahnung",
     "VORLAGE_MAHNUNG_2": "Vorlage zweite Mahnung",
@@ -685,5 +686,4 @@
     "VORLAGE_BEGLEITSCHREIBEN": "Vorlage Begleitbrief",
     "VORLAGE_VERFUEGUNG_KITA": "Vorlage Verfügung Kita",
     "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder"
-
 }
