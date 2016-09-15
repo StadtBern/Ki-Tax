@@ -111,7 +111,7 @@ module.exports = webpackMerge(commonConfig,  {
             poll: 1000
         },
         proxy: {
-            '/ebegu*': {
+            '/ebegu': {
                 target: 'http://localhost:8080',
                 secure: false
             }
