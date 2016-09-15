@@ -16,7 +16,6 @@
                         <th data-translate="BETREUUNG_UPPER" ></th>
                         <th data-translate="ID_UPPER"></th>
                         <th data-translate="STATUS_UPPER"></th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody ng-repeat="kindContainer in displayedCollection" >
@@ -40,15 +39,24 @@
         <br>
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
             <div class="col-md-12 text-center">
-                <md-button class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+                <md-button ng-if="vm.showGeprueft()"
+                           ng-click="vm.setGesuchStatusGeprueft()"
+                           class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
                     <span data-translate="GEPRUEFT_UPPER"></span>
                 </md-button>
+                <md-button ng-if="vm.showVerfuegenStarten() && !vm.isStatusVerfuegen()"
+                           ng-click="vm.setGesuchStatusVerfuegen()"
+                           class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                </md-button>
 
-                <md-button class="md-raised md-warn md-hue-2" aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
+                <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"
+                           aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
                     <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
                 </md-button>
 
-                <md-button class="md-raised md-warn md-hue-2" aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
+                <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"
+                           aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
                     <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
                 </md-button>
             </div>

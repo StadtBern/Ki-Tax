@@ -40,6 +40,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -51,12 +52,6 @@ export default class GesuchModelManager {
     private fachstellenList: Array<TSFachstelle>;
     private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
-
-    //diese Variable enthaelt alle Kinder die die Methode verfuegungRS.calculateVerfuegung zurueckgibt. Normalerweise sollten die Kinder im
-    // gesuch aktualisiert werden. Das Problem ist, dass die Verfuegungen nicht gespeichert werden duerfen, bis der Benutzer auf den Knopf
-    // Verfuegen klickt
-    // todo dies koennte verbessert werden. Das Problem hier ist, dass wir beim Berechnen der Verfuegung nciht das ganze Gesuch hin und her schicken wollen
-    private kinderWithBetreuungList: Array<TSKindContainer> = [];
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -460,6 +455,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
             this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
         }
@@ -895,23 +891,41 @@ export default class GesuchModelManager {
     public calculateVerfuegungen(): void {
         this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
-                this.kinderWithBetreuungList = response;
+                this.updateKinderListWithCalculatedVerfuegungen(response);
             });
     }
 
-    public getVerfuegenToWorkWith(): TSVerfuegung {
-        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
-            for (let i = 0; i < this.kinderWithBetreuungList.length; i++) {
-                if (this.kinderWithBetreuungList[i].id === this.getKindToWorkWith().id) {
-                    for (let j = 0; j < this.kinderWithBetreuungList[i].betreuungen.length; j++) {
-                        if (this.kinderWithBetreuungList[i].betreuungen[j].id === this.getBetreuungToWorkWith().id) {
-                            return this.kinderWithBetreuungList[i].betreuungen[j].verfuegung;
-                        }
+    private updateKinderListWithCalculatedVerfuegungen(kinderWithVerfuegungen: TSKindContainer[]) {
+        for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
+            for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
+                if (this.gesuch.kindContainers[i].id === kinderWithVerfuegungen[j].id) {
+                    for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
+                        this.gesuch.kindContainers[i].betreuungen[k].verfuegung = kinderWithVerfuegungen[j].betreuungen[k].verfuegung;
                     }
                 }
             }
         }
+    }
+
+    public saveVerfuegung(): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.setVerfuegenToWorkWith(response);
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            return this.getVerfuegenToWorkWith();
+        });
+    }
+
+    public getVerfuegenToWorkWith(): TSVerfuegung {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            return this.getBetreuungToWorkWith().verfuegung;
+        }
         return undefined;
+    }
+
+    public setVerfuegenToWorkWith(verfuegung: TSVerfuegung): void {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            this.getBetreuungToWorkWith().verfuegung = verfuegung;
+        }
     }
 
     public isThereAnyKindWithBetreuungsbedarf(): boolean {
@@ -937,5 +951,30 @@ export default class GesuchModelManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Setzt den Status des Gesuchs und speichert es in der Datenbank. Anstatt das ganze Gesuch zu schicken, rufen wir den Service auf
+     * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
+     * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist
+     * @param status
+     * @returns {undefined}
+     */
+    public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (!this.isGesuchStatus(status)) {
+            return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
+                return this.gesuch.status = status;
+            });
+        }
+        return undefined;
+    }
+
+    /**
+     * Returns true if the Gesuch has the given status
+     * @param status
+     * @returns {boolean}
+     */
+    public isGesuchStatus(status: TSAntragStatus): boolean {
+        return this.gesuch.status === status;
     }
 }

@@ -3,6 +3,7 @@ import TSKindContainer from './TSKindContainer';
 import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
+
 export default class TSGesuch extends TSAbstractAntragEntity {
 
     private _gesuchsteller1: TSGesuchsteller;

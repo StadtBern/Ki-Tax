@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.AntragStatus;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -29,6 +30,11 @@ public class AbstractAntragEntity extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDate eingangsdatum;
 
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private AntragStatus status;
+
 	public Fall getFall() {
 		return fall;
 	}
@@ -51,6 +57,14 @@ public class AbstractAntragEntity extends AbstractEntity {
 
 	public void setEingangsdatum(@Nonnull LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	public AntragStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AntragStatus status) {
+		this.status = status;
 	}
 
 	@SuppressWarnings("ObjectEquality")

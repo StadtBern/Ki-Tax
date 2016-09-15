@@ -113,6 +113,7 @@ public final class TestDataUtil {
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
 		gesuch.setFamiliensituation(createDefaultFamiliensituation());
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		return gesuch;
 	}
 

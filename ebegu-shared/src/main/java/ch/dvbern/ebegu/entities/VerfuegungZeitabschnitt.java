@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 @Entity
 @Audited
-public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
+public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements Comparable<VerfuegungZeitabschnitt> {
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
@@ -91,9 +91,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen = "";
-
-	@Transient
-	private String status;
 
 	@NotNull
 	@ManyToOne(optional = false)
@@ -204,14 +201,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public Verfuegung getVerfuegung() {
@@ -383,5 +372,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity {
 			return vollkosten.subtract(elternbeitrag);
 		}
 		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public int compareTo(VerfuegungZeitabschnitt other) {
+		int result = this.getGueltigkeit().getGueltigAb().compareTo(other.getGueltigkeit().getGueltigAb());
+		if (result == 0) {
+			result = this.getGueltigkeit().getGueltigBis().compareTo(other.getGueltigkeit().getGueltigBis());
+		}
+		return result;
 	}
 }

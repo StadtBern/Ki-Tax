@@ -31,7 +31,7 @@ describe('verfuegenListViewTest', function () {
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
         spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
 
-        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined, wizardStepManager);
+        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined, wizardStepManager, null);
     }));
 
     describe('Public API', function () {

@@ -70,6 +70,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegung(gesuch);
 		int i = 0;

@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,6 +42,13 @@ public interface GesuchService {
 	 */
 	@Nonnull
 	Collection<Gesuch> getAllGesuche();
+
+	/**
+	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
+	 * @return Liste aller Gesuche aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuch> getAllActiveGesuche();
 
 	/**
 	 * entfernt ein Gesuch aus der Database
