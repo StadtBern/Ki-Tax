@@ -122,7 +122,7 @@ public abstract class AbstractTestfall {
 	protected Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createInstitutionStammdaten(betreuungsangebotTyp, institutionsId));
-		betreuung.setBetreuungsstatus(Betreuungsstatus.AUSSTEHEND);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
 		return betreuung;
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractTestfall {
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, "", true));
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, "", true));
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.OK, "", true));
+		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.WARTEN, "", true));
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, "", true));
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, "", true));
 		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, "", true));

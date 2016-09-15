@@ -145,7 +145,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(10, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
 
 	@Test
@@ -243,7 +243,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
 		Assert.assertEquals(10, wizardSteps.size());
 
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
 
 	@Test
