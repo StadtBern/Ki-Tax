@@ -13,33 +13,16 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class Dokument extends File {
+public class Vorlage extends File {
 
 	private static final long serialVersionUID = -895840426585785097L;
 
-	@NotNull
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokument_dokumentgrund_id"), nullable = false)
-	private DokumentGrund dokumentGrund;
-
-	public Dokument() {
-	}
-
-	public Dokument(DokumentGrund dokumentGrund) {
-		this.dokumentGrund = dokumentGrund;
-	}
-
-	public DokumentGrund getDokumentGrund() {
-		return dokumentGrund;
-	}
-
-	public void setDokumentGrund(DokumentGrund dokumentGrund) {
-		this.dokumentGrund = dokumentGrund;
+	public Vorlage() {
 	}
 
 	@Override
 	public String toString() {
-		return "Dokument{" +
+		return "Vorlage{" +
 			"dokumentName='" + getDokumentName() + '\'' +
 			", dokumentPfad='" + getDokumentPfad() + '\'' +
 			", dokumentSize='" + getDokumentSize() + '\'' +

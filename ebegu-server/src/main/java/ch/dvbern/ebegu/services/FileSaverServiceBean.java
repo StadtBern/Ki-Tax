@@ -30,7 +30,7 @@ public class FileSaverServiceBean implements FileSaverService {
 
 
 	@Override
-	public boolean save(UploadFileInfo uploadFileInfo, String gesuchId) {
+	public boolean save(UploadFileInfo uploadFileInfo, String folderName) {
 		Validate.notNull(uploadFileInfo);
 		Validate.notNull(uploadFileInfo.getFilename());
 
@@ -39,7 +39,7 @@ public class FileSaverServiceBean implements FileSaverService {
 		String ending = getFileNameEnding(uploadFileInfo.getFilename());
 
 		// Wir speichern der Name des Files nicht im FS. Kann sonst Probleme mit Umlauten geben
-		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + gesuchId + "/" + uuid + "." + ending;
+		final String absoluteFilePath = ebeguConfiguration.getDocumentFilePath() + "/" + folderName + "/" + uuid + "." + ending;
 		uploadFileInfo.setPath(absoluteFilePath);
 
 		Path file = Paths.get(absoluteFilePath);
