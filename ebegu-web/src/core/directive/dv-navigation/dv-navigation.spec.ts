@@ -17,6 +17,7 @@ describe('dvNavigation', function () {
     let $rootScope: IScope;
     let gesuchModelManager: GesuchModelManager;
     let authServiceRS: AuthServiceRS;
+    let isStatusVerfuegen: boolean;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -33,13 +34,20 @@ describe('dvNavigation', function () {
         navController.dvSave = () => {
             return $q.when({});
         };
+        isStatusVerfuegen = true;
+        spyOn(gesuchModelManager, 'isGesuchStatusVerfuegenVerfuegt').and.callFake(() => {return isStatusVerfuegen; });
     }));
 
     describe('getNextButtonName', function () {
         it('returns WEITER_UPPER if dvSave exists', () => {
+            isStatusVerfuegen = false;
             expect(navController.getNextButtonName()).toEqual('SPEICHERN UND WEITER');
         });
+        it('returns WEITER_ONLY_UPPER if status is VERFUEGEN', () => {
+            expect(navController.getNextButtonName()).toEqual('WEITER');
+        });
         it('returns WEITER_ONLY_UPPER if dvSave does not exist', () => {
+            isStatusVerfuegen = false;
             navController.dvSave = undefined;
             expect(navController.getNextButtonName()).toEqual('WEITER');
         });
@@ -47,9 +55,14 @@ describe('dvNavigation', function () {
 
     describe('getNextButtonName', function () {
         it('returns ZURUECK_UPPER if dvSave exists', () => {
+            isStatusVerfuegen = false;
             expect(navController.getPreviousButtonName()).toEqual('SPEICHERN UND ZURÜCK');
         });
+        it('returns ZURUECK_ONLY_UPPER if status is VERFUEGEN', () => {
+            expect(navController.getPreviousButtonName()).toEqual('ZURÜCK');
+        });
         it('returns ZURUECK_ONLY_UPPER if dvSave does not exist', () => {
+            isStatusVerfuegen = false;
             navController.dvSave = undefined;
             expect(navController.getPreviousButtonName()).toEqual('ZURÜCK');
         });

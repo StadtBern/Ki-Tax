@@ -14,7 +14,6 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ITranslateService = angular.translate.ITranslateService;
 import {TSRole} from '../../../models/enums/TSRole';
-import moment = require('moment');
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');

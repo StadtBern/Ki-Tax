@@ -6,6 +6,8 @@ import {VerfuegenListViewController} from './verfuegenListView';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSKindContainer from '../../../models/TSKindContainer';
 import BerechnungsManager from '../../service/berechnungsManager';
+import {IQService, IScope, IHttpBackendService} from 'angular';
+import TestDataUtil from '../../../utils/TestDataUtil';
 
 describe('verfuegenListViewTest', function () {
 
@@ -14,6 +16,9 @@ describe('verfuegenListViewTest', function () {
     let $state: IStateService;
     let tsKindContainer: TSKindContainer;
     let berechnungsManager: BerechnungsManager;
+    let $q: IQService;
+    let $rootScope: IScope;
+    let $httpBackend: IHttpBackendService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
     beforeEach(angular.mock.module(EbeguWebGesuch.name));
@@ -21,17 +26,22 @@ describe('verfuegenListViewTest', function () {
     beforeEach(angular.mock.inject(function ($injector: any) {
         gesuchModelManager = $injector.get('GesuchModelManager');
         $state = $injector.get('$state');
+        $q = $injector.get('$q');
+        $rootScope = $injector.get('$rootScope');
+        $httpBackend = $injector.get('$httpBackend');
         tsKindContainer = new TSKindContainer();
         let wizardStepManager = $injector.get('WizardStepManager');
         spyOn(wizardStepManager, 'updateWizardStepStatus').and.returnValue({});
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
-        spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue({});
+        spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue($q.when({}));
 
         berechnungsManager = $injector.get('BerechnungsManager');
         spyOn(berechnungsManager, 'calculateFinanzielleSituation').and.returnValue({});
         spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
 
+        TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
         verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined, wizardStepManager, null);
+        $rootScope.$apply();
     }));
 
     describe('Public API', function () {

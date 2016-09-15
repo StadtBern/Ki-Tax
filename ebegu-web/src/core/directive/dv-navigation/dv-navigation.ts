@@ -7,7 +7,6 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 
@@ -71,7 +70,9 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.dvSave) {
+        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+            return this.$translate.instant('ZURUECK_ONLY_UPPER');
+        } else if (this.dvSave) {
             return this.$translate.instant('ZURUECK_UPPER');
         } else {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
@@ -83,7 +84,9 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if (this.dvSave) {
+        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+            return this.$translate.instant('WEITER_ONLY_UPPER');
+        } else if (this.dvSave) {
             return this.$translate.instant('WEITER_UPPER');
         } else {
             return this.$translate.instant('WEITER_ONLY_UPPER');
@@ -96,7 +99,7 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
             this.dvSave().then(() => {
                 this.navigateToNextStep();
             });
@@ -111,7 +114,7 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
             this.dvSave().then(() => {
                 this.navigateToPreviousStep();
             });

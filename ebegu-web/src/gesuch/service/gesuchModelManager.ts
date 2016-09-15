@@ -41,7 +41,6 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
-import * as moment from 'moment';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -889,10 +888,10 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    public calculateVerfuegungen(): void {
-        this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
+    public calculateVerfuegungen(): IPromise<void> {
+        return this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
-                this.updateKinderListWithCalculatedVerfuegungen(response);
+                return this.updateKinderListWithCalculatedVerfuegungen(response);
             });
     }
 
@@ -901,7 +900,7 @@ export default class GesuchModelManager {
             for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
                 if (this.gesuch.kindContainers[i].id === kinderWithVerfuegungen[j].id) {
                     for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
-                        this.gesuch.kindContainers[i].betreuungen[k].verfuegung = kinderWithVerfuegungen[j].betreuungen[k].verfuegung;
+                        this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
                     }
                 }
             }
@@ -912,6 +911,7 @@ export default class GesuchModelManager {
         return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
         });
     }
