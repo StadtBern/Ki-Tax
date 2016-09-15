@@ -27,28 +27,16 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 		int betreuungspensum = verfuegungZeitabschnitt.getBetreuungspensum();
 		if (betreuungspensum > 100) {
 			betreuungspensum = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM , MsgKey.BETREUUNGSPENSUM_MSG);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM, MsgKey.BETREUUNGSPENSUM_MSG);
 		}
 		// Fachstelle: Wird in einer separaten Rule behandelt
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
 		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
-		if (roundedPensumFachstelle <= 0) {
-			// Keine Fachstelle
-			if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-				// Kita und Tageseltern-Kleinkinder:
-				// Sie bekommen maximal soviel, wie der (Rest-) Anspruch ist
-				int anspruchRest = verfuegungZeitabschnitt.getAnspruchspensumRest();
-				if (betreuungspensum > anspruchRest) {
-					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruchRest);
-					//todo homa kommentar
-					//verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSPENSUM.name() + ": Betreuungspensum wurde auf 100% limitiert");
-
-				}
-			} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
-				// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
-				//TODO (team) In Excel Tests ist immer 100%, nicht gewünschtes Pensum
-				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(100);
-			}
+		// Wenn keine Fachstelle  -> Anspruch setzen fuer Schulkinder; bei Kleinkindern muss nichts gemacht werden
+		if (roundedPensumFachstelle <= 0 && betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+			// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
+			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungspensum);
 		}
 	}
+
 }

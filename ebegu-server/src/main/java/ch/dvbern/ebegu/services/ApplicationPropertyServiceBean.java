@@ -44,6 +44,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+	private static final String NAME_MISSING_MSG = "name muss gesetzt sein";;
 
 
 	@Nonnull
@@ -96,7 +97,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nullable
 	public String findApplicationPropertyAsString(@Nonnull ApplicationPropertyKey name) {
-		Objects.requireNonNull(name, "name muss gesetzt sein");
+		Objects.requireNonNull(name, this.NAME_MISSING_MSG);
 		Optional<ApplicationProperty> property = criteriaQueryHelper.getEntityByUniqueAttribute(ApplicationProperty.class, name, ApplicationProperty_.name);
 		if (property.isPresent()) {
 			return property.get().getValue();
@@ -107,7 +108,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nullable
 	public BigDecimal findApplicationPropertyAsBigDecimal(@Nonnull ApplicationPropertyKey name) {
-		Objects.requireNonNull(name, "name muss gesetzt sein");
+		Objects.requireNonNull(name, this.NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
 		if (valueAsString != null) {
 			return new BigDecimal(valueAsString);
@@ -118,7 +119,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nullable
 	public Integer findApplicationPropertyAsInteger(@Nonnull ApplicationPropertyKey name) {
-		Objects.requireNonNull(name, "name muss gesetzt sein");
+		Objects.requireNonNull(name, this.NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
 		if (valueAsString != null) {
 			return Integer.valueOf(valueAsString);
@@ -129,7 +130,8 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 	@Override
 	@Nullable
 	public Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name) {
-		Objects.requireNonNull(name, "name muss gesetzt sein");
+
+		Objects.requireNonNull(name, NAME_MISSING_MSG);
 		String valueAsString = findApplicationPropertyAsString(name);
 		if (valueAsString != null) {
 			return Boolean.valueOf(valueAsString);

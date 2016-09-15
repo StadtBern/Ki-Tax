@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.enums;
 
 import ch.dvbern.ebegu.rules.RuleKey;
 
+
 /**
  * Dieses Enum dient der Verwaltung von Server Seitigen Uebersetzbaren Messages. Die hier definierten keys sollten im
  * server-messages.properties file uebersetzt werden. Die Optionale Verklinkung mit anderen Enums ist rein informativ
@@ -27,7 +28,8 @@ public enum MsgKey {
 	WOHNSITZ_MSG(RuleKey.WOHNSITZ),
 	FACHSTELLE_MSG(RuleKey.FACHSTELLE),
 	EINREICHUNGSFRIST_MSG(RuleKey.EINREICHUNGSFRIST),
-	EINREICHUNGSFRIST_VOLLKOSTEN_MSG(RuleKey.EINREICHUNGSFRIST);
+	EINREICHUNGSFRIST_VOLLKOSTEN_MSG(RuleKey.EINREICHUNGSFRIST),
+	RESTANSPRUCH_MSG(RuleKey.RESTANSPRUCH);
 
 	//todo Mutation
 	//Abwesenheit
@@ -42,4 +44,11 @@ public enum MsgKey {
 	MsgKey() {
 	}
 
+	public RuleKey getReferencedRuleKey() {
+		return referencedRuleKey;
+	}
+
+	public void setReferencedRuleKey(RuleKey referencedRuleKey) {
+		this.referencedRuleKey = referencedRuleKey;
+	}
 }

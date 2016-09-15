@@ -47,9 +47,5 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 		// Der Anspruch wird immer auf 10-er Schritten gerundet.
 		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
 		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
-		if (verfuegungZeitabschnitt.getAnspruchspensumRest() == -1) { //wurde schon mal ein Rest berechnet?
-			// Dies ist die erste Betreuung dieses Kindes. Wir initialisieren den "Rest" auf das Erwerbspensum
-			verfuegungZeitabschnitt.setAnspruchspensumRest(roundedAnspruch);
-		}
 	}
 }

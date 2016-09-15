@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 
 	public WohnhaftImGleichenHaushaltCalcRule(DateRange validityPeriod) {
-		super(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT, RuleType.GRUNDREGEL_CALC, validityPeriod);
+		super(RuleKey.WOHNHAFT_IM_GLEICHEN_HAUSHALT, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
@@ -27,7 +27,7 @@ public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 				final Kind kindJA = betreuung.getKind().getKindJA();
 				if (kindJA.getWohnhaftImGleichenHaushalt() != null) {
 					int pensumGleicherHaushalt = MathUtil.roundIntToTens(kindJA.getWohnhaftImGleichenHaushalt());
-					int anspruch = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum(); //TODO (team ) vermutlich hier Restanpsruch verwenden. Analog die anderen Calc-rules ausser Reduktionsrules
+					int anspruch = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 					if (pensumGleicherHaushalt < anspruch) {
 						anspruch = pensumGleicherHaushalt;
 						verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
