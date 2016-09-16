@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
@@ -44,14 +45,14 @@ public class JaxPendenzJA {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
 
-//	@NotNull
-//	private PendenzStatus pendenzStatus;
-
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
 
 	@NotNull
 	private Set<String> institutionen;
+
+	@NotNull
+	private AntragStatusDTO status;
 
 
 	public String getAntragId() {
@@ -125,5 +126,13 @@ public class JaxPendenzJA {
 
 	public void setInstitutionen(Set<String> institutionen) {
 		this.institutionen = institutionen;
+	}
+
+	public AntragStatusDTO getStatus() {
+		return status;
+	}
+
+	public void setStatus(AntragStatusDTO status) {
+		this.status = status;
 	}
 }

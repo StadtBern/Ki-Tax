@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.resource;
 
+import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
@@ -38,6 +39,8 @@ public class PendenzResource {
 
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
@@ -47,28 +50,27 @@ public class PendenzResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxPendenzJA> getAllPendenzenJA() {
-		//todo team Wenn das Feld Status in AbstractAntragEntity implementiert wird, muessen wir hier nur die Antraege zurueckgeben, die noch nicht bearbeitet wurden
-		Collection<Gesuch> gesucheList = gesuchService.getAllGesuche();
+		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
 
 		List<JaxPendenzJA> pendenzenList = new ArrayList<>();
-		for (Gesuch gesuch : gesucheList) {
-			if (gesuch.getFall() != null) {
-				JaxPendenzJA pendenz = new JaxPendenzJA();
-				pendenz.setAntragId(gesuch.getId());
-				pendenz.setFallNummer(gesuch.getFall().getFallNummer());
-				pendenz.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
-				pendenz.setEingangsdatum(gesuch.getEingangsdatum());
-				pendenz.setAngebote(createAngeboteList(gesuch.getKindContainers()));
-				pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
-				pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
-				pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
-				if (gesuch.getFall().getVerantwortlicher() != null) {
-					pendenz.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
-				}
-
-				pendenzenList.add(pendenz);
+		// todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
+		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null).forEach(gesuch -> {
+			JaxPendenzJA pendenz = new JaxPendenzJA();
+			pendenz.setAntragId(gesuch.getId());
+			pendenz.setFallNummer(gesuch.getFall().getFallNummer());
+			pendenz.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
+			pendenz.setEingangsdatum(gesuch.getEingangsdatum());
+			pendenz.setAngebote(createAngeboteList(gesuch.getKindContainers()));
+			pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
+			pendenz.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
+			pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
+			if (gesuch.getFall().getVerantwortlicher() != null) {
+				pendenz.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 			}
-		}
+
+			pendenzenList.add(pendenz);
+		});
 		return pendenzenList;
 	}
 

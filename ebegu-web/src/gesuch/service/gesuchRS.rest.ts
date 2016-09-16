@@ -3,6 +3,7 @@ import {IHttpPromise, IHttpService, IPromise, ILogService} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -73,4 +74,7 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
+        return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
+    }
 }
