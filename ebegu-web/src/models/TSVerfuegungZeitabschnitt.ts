@@ -14,7 +14,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _vollkosten: number;
     private _elternbeitrag: number;
     private _abzugFamGroesse: number;
-    private _massgebendesEinkommen: number;
+    private _massgebendesEinkommenVorAbzugFamgr: number;
     private _bemerkungen: string;
     private _status: string;
 
@@ -34,7 +34,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._vollkosten = vollkosten;
         this._elternbeitrag = elternbeitrag;
         this._abzugFamGroesse = abzugFamGroesse;
-        this._massgebendesEinkommen = massgebendesEinkommen;
+        this._massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommen;
         this._bemerkungen = bemerkungen;
         this._status = status;
     }
@@ -127,12 +127,12 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._abzugFamGroesse = value;
     }
 
-    get massgebendesEinkommen(): number {
-        return this._massgebendesEinkommen;
+    get massgebendesEinkommenVorAbzugFamgr(): number {
+        return this._massgebendesEinkommenVorAbzugFamgr;
     }
 
-    set massgebendesEinkommen(value: number) {
-        this._massgebendesEinkommen = value;
+    set massgebendesEinkommenVorAbzugFamgr(value: number) {
+        this._massgebendesEinkommenVorAbzugFamgr = value;
     }
 
     get bemerkungen(): string {
