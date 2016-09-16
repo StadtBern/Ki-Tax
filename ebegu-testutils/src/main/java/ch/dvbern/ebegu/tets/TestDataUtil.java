@@ -8,7 +8,6 @@ import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -558,11 +557,13 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
-	public static Benutzer createAndPersistBenutzer(Persistence<?> persistence, UserRole role) {
+	public static Benutzer createAndPersistBenutzer(Persistence<?> persistence) {
 		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		persistence.persist(traegerschaft);
 		final Mandant mandant = TestDataUtil.createDefaultMandant();
 		persistence.persist(mandant);
-		return TestDataUtil.createBenutzer(role, traegerschaft, null, mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
 	}
 }

@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
-import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -40,8 +38,7 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void saveChanges() {
-		final Benutzer benutzer = TestDataUtil.createAndPersistBenutzer(persistence, UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
-		persistence.persist(benutzer);
+		final Benutzer benutzer = TestDataUtil.createAndPersistBenutzer(persistence);
 		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		LocalDateTime time = LocalDateTime.now();
