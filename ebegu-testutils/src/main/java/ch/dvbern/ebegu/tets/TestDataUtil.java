@@ -453,7 +453,7 @@ public final class TestDataUtil {
 		dokumentGrund.setTag("tag");
 		dokumentGrund.setFullName("Hugo");
 		dokumentGrund.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
-		dokumentGrund.setDokumente(new HashSet<Dokument>());
+		dokumentGrund.setDokumente(new HashSet<>());
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
 		dokument.setDokumentName("testdokument");
@@ -543,5 +543,26 @@ public final class TestDataUtil {
 		jaxWizardStep.setWizardStepStatus(stepStatus);
 		jaxWizardStep.setBemerkungen("");
 		return jaxWizardStep;
+	}
+
+	public static Benutzer createBenutzer(UserRole role, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+		final Benutzer benutzer = new Benutzer();
+		benutzer.setUsername("anonymous");
+		benutzer.setNachname("anonymous");
+		benutzer.setVorname("anonymous");
+		benutzer.setEmail("e@e");
+		benutzer.setTraegerschaft(traegerschaft);
+		benutzer.setInstitution(institution);
+		benutzer.setRole(role);
+		benutzer.setMandant(mandant);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistBenutzer(Persistence<?> persistence, UserRole role) {
+		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+		persistence.persist(traegerschaft);
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		return TestDataUtil.createBenutzer(role, traegerschaft, null, mandant);
 	}
 }

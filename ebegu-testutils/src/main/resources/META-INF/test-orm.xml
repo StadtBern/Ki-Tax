@@ -38,5 +38,6 @@
 	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
 	<entity class="ch.dvbern.ebegu.entities.TempDokument"/>
 	<entity class="ch.dvbern.ebegu.entities.WizardStep"/>
+	<entity class="ch.dvbern.ebegu.entities.AntragStatusHistory"/>
 
 </entity-mappings>

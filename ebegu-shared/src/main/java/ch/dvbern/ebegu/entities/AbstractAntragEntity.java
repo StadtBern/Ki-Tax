@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.AntragStatus;
-import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import java.util.Objects;
  * Abstrakte Entitaet. Muss von Entitaeten erweitert werden, die einen Antrag sind z.B. Gesuch und Mutation
  */
 @MappedSuperclass
-@Audited
 public class AbstractAntragEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = -8203487739884704615L;
