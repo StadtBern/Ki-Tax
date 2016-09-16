@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.MathUtil;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -188,6 +189,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = abzugFamGroesse;
 	}
 
+	/**
+	 * @return berechneter Wert. Zieht vom massgebenenEinkommenVorAbzug den Familiengroessen Abzug ab
+	 */
 	public BigDecimal getMassgebendesEinkommen() {
 		return MathUtil.EXACT.subtract(massgebendesEinkommenVorAbzugFamgr,
 			this.abzugFamGroesse == null ? BigDecimal.ZERO : this.abzugFamGroesse);
@@ -292,8 +296,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
-
+		// Der Familiengroessen Abzug kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
 		if (other.getAbzugFamGroesse() != null) {
+			Validate.isTrue(this.getAbzugFamGroesse() == null, "Familiengoressenabzug kann nicht gemerged werden" );
 			this.setAbzugFamGroesse(other.getAbzugFamGroesse());
 		}
 	}

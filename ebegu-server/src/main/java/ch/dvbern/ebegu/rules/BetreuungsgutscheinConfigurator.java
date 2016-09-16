@@ -51,64 +51,6 @@ public class BetreuungsgutscheinConfigurator {
 
 	}
 
-	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
-		// REDUKTIONSREGELN: Setzen Anpsruch auf 0
-
-		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
-		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
-		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
-		EinkommenCalcRule maxEinkommenCalcRule = new EinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());
-		rules.add(maxEinkommenCalcRule);
-
-		// Betreuungsangebot Tagesschule nicht berechnen
-		BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(defaultGueltigkeit);
-		rules.add(betreuungsangebotTypCalcRule);
-
-		// Mindestalter Kind
-		MindestalterCalcRule mindestalterRule = new MindestalterCalcRule(defaultGueltigkeit);
-		rules.add(mindestalterRule);
-
-		// Wohnsitz (Zuzug und Wegzug)
-		WohnsitzCalcRule wohnsitzCalcRule = new WohnsitzCalcRule(defaultGueltigkeit);
-		rules.add(wohnsitzCalcRule);
-
-		// Einreichungsfrist
-		EinreichungsfristCalcRule einreichungsfristRule = new EinreichungsfristCalcRule(defaultGueltigkeit);
-		rules.add(einreichungsfristRule);
-
-		// Mindestalter Kind
-		MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(defaultGueltigkeit);
-		rules.add(mindestalterCalcRule);
-
-		// Abwesenheit
-		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
-		rules.add(abwesenheitCalcRule);
-	}
-
-	private void berechnenAnspruchRegeln() {
-		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
-
-		// - Erwerbspensum
-		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
-		rules.add(erwerbspensumCalcRule);
-
-		// - Betreuungspensum
-		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
-		rules.add(betreuungspensumCalcRule);
-
-		// - Fachstelle: Muss zwingend nach Erwerbspensum und Betreuungspensum durchgefuehrt werden
-		FachstelleCalcRule fachstelleCalcRule = new FachstelleCalcRule(defaultGueltigkeit);
-		rules.add(fachstelleCalcRule);
-
-		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
-		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
-		rules.add(wohnhaftImGleichenHaushaltRule);
-
-		// Nach den "Calc"-Regeln muss der Restanspruch (fuer das naechste Angebot) berechnet werden
-		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
-		rules.add(restanspruchCalcRule);
-	}
-
 	private void abschnitteErstellenRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// GRUNDREGELN_DATA: Abschnitte erstellen
 
@@ -116,6 +58,8 @@ public class BetreuungsgutscheinConfigurator {
 		ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 		rules.add(erwerbspensumAbschnittRule);
 
+
+		//Familenabzug: Berechnet den Familienabzug aufgrund der Familiengroesse
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_3 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3);
 		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_3, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3 muss gesetzt sein");
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_4 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4);
@@ -159,4 +103,64 @@ public class BetreuungsgutscheinConfigurator {
 		AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(defaultGueltigkeit);
 		rules.add(abwesenheitAbschnittRule);
 	}
+
+	private void berechnenAnspruchRegeln() {
+		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
+
+		// - Erwerbspensum
+		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
+		rules.add(erwerbspensumCalcRule);
+
+		// - Betreuungspensum
+		BetreuungspensumCalcRule betreuungspensumCalcRule = new BetreuungspensumCalcRule(defaultGueltigkeit);
+		rules.add(betreuungspensumCalcRule);
+
+		// - Fachstelle: Muss zwingend nach Erwerbspensum und Betreuungspensum durchgefuehrt werden
+		FachstelleCalcRule fachstelleCalcRule = new FachstelleCalcRule(defaultGueltigkeit);
+		rules.add(fachstelleCalcRule);
+
+		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
+		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
+		rules.add(wohnhaftImGleichenHaushaltRule);
+
+		// Nach den "Calc"-Regeln muss der Restanspruch (fuer das naechste Angebot) berechnet werden
+		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
+		rules.add(restanspruchCalcRule);
+	}
+
+
+	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
+		// REDUKTIONSREGELN: Setzen Anpsruch auf 0
+
+		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
+		EbeguParameter paramMassgebendesEinkommenMax = ebeguParameter.get(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
+		Objects.requireNonNull(paramMassgebendesEinkommenMax, "Parameter PARAM_MASSGEBENDES_EINKOMMEN_MAX muss gesetzt sein");
+		EinkommenCalcRule maxEinkommenCalcRule = new EinkommenCalcRule(defaultGueltigkeit, paramMassgebendesEinkommenMax.getValueAsBigDecimal());
+		rules.add(maxEinkommenCalcRule);
+
+		// Betreuungsangebot Tagesschule nicht berechnen
+		BetreuungsangebotTypCalcRule betreuungsangebotTypCalcRule = new BetreuungsangebotTypCalcRule(defaultGueltigkeit);
+		rules.add(betreuungsangebotTypCalcRule);
+
+		// Mindestalter Kind
+		MindestalterCalcRule mindestalterRule = new MindestalterCalcRule(defaultGueltigkeit);
+		rules.add(mindestalterRule);
+
+		// Wohnsitz (Zuzug und Wegzug)
+		WohnsitzCalcRule wohnsitzCalcRule = new WohnsitzCalcRule(defaultGueltigkeit);
+		rules.add(wohnsitzCalcRule);
+
+		// Einreichungsfrist
+		EinreichungsfristCalcRule einreichungsfristRule = new EinreichungsfristCalcRule(defaultGueltigkeit);
+		rules.add(einreichungsfristRule);
+
+		// Mindestalter Kind
+		MindestalterCalcRule mindestalterCalcRule = new MindestalterCalcRule(defaultGueltigkeit);
+		rules.add(mindestalterCalcRule);
+
+		// Abwesenheit
+		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
+		rules.add(abwesenheitCalcRule);
+	}
+
 }

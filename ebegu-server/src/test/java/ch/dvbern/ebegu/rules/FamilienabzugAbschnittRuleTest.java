@@ -14,7 +14,7 @@ import java.util.*;
 
 
 /**
- * Tests fuer EinkommenAbschnittRule
+ * Tests fuer FamilienabzugAbschnittRule
  */
 public class FamilienabzugAbschnittRuleTest {
 
@@ -27,7 +27,9 @@ public class FamilienabzugAbschnittRuleTest {
 	private static final double DELTA = 1e-15;
 	public static final LocalDate DATE_2005 = LocalDate.of(2005, 12, 31);
 
-	private final FamilienabzugAbschnittRule famabAbschnittRule = new FamilienabzugAbschnittRule(Constants.DEFAULT_GUELTIGKEIT, pauschalabzugProPersonFamiliengroesse3, pauschalabzugProPersonFamiliengroesse4, pauschalabzugProPersonFamiliengroesse5, pauschalabzugProPersonFamiliengroesse6);
+	private final FamilienabzugAbschnittRule famabAbschnittRule =
+		new FamilienabzugAbschnittRule(Constants.DEFAULT_GUELTIGKEIT, pauschalabzugProPersonFamiliengroesse3,
+			pauschalabzugProPersonFamiliengroesse4, pauschalabzugProPersonFamiliengroesse5,pauschalabzugProPersonFamiliengroesse6);
 
 
 	@Test

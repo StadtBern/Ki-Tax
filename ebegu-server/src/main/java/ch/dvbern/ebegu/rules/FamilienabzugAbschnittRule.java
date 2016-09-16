@@ -22,7 +22,7 @@ import java.util.TreeMap;
  * 2. Immer aktuelle Familiengrösse
  * <p>
  * Gem. neuer ASIV Verordnung müssen die Kinder für die Berechnung der Familiengrösse ab dem Beginn den Monats NACH dem
- * Ereigniseintritt (Geburt) berücksichtigt werden. Dasselbe gilt bei der Aenderung des Zivilstands. Bei deiner Mutation
+ * Ereigniseintritt (e.g. Geburt) berücksichtigt werden. Dasselbe gilt bei der Aenderung des Zivilstands. Bei einer Mutation
  * der Familiensituation ist das Datum "Aendern per" relevant.
  */
 public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
@@ -44,15 +44,13 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		this.pauschalabzugProPersonFamiliengroesse6 = pauschalabzugProPersonFamiliengroesse6;
 	}
 
-	//TODO (gapa) Achtung, bei einer Aenderung der Familiensituation durch eine Mutation muss noch das Datum der Mutation berücksichtigt werden!
+	//TODO (gapa) Achtung, bei einer Aenderung der Familiensituation durch eine Mutation muss noch das Datum der Mutation berücksichtigt werden! Mutationen werden spaeter behandelt
 
 	@Override
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
 		Gesuch gesuch = betreuung.extractGesuch();
-
-
 		final List<VerfuegungZeitabschnitt> familienAbzugZeitabschnitt = createInitialenFamilienAbzug(gesuch);
 
 		Map<LocalDate, Double> famGrMap = new TreeMap<LocalDate, Double>();
@@ -65,7 +63,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 				famGrMap.put(beginMonatNachGeb, calculateFamiliengroesse(gesuch, beginMonatNachGeb));
 			}
 		}
-
+		// aufsteigend durch die Geburtstage gehen und immer den letzen Abschnitt  unterteilen in zwei Abschnitte
 		for (Map.Entry<LocalDate, Double> entry : famGrMap.entrySet()) {
 			final VerfuegungZeitabschnitt lastVerfuegungZeitabschnitt = familienAbzugZeitabschnitt.get(familienAbzugZeitabschnitt.size() - 1);
 			lastVerfuegungZeitabschnitt.getGueltigkeit().setGueltigBis(entry.getKey().minusDays(1));
@@ -82,15 +80,14 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	}
 
 	public List<VerfuegungZeitabschnitt> createInitialenFamilienAbzug(Gesuch gesuch) {
-		List<VerfuegungZeitabschnitt> initFamilienAbzugList = new ArrayList<>();
-		VerfuegungZeitabschnitt initFamilienAbzug = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
+		List<VerfuegungZeitabschnitt> initialFamAbzugList = new ArrayList<>();
+		VerfuegungZeitabschnitt initialFamAbzug = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
+		//initial gilt die Familiengroesse die am letzten Tag vor dem Start der neuen Gesuchsperiode vorhanden war
+		BigDecimal abzugAufgrundFamiliengroesse = getAbzugFamGroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		initialFamAbzug.setAbzugFamGroesse(abzugAufgrundFamiliengroesse);
 
-		BigDecimal abzugAufgrundFamiliengroesse = getAbzugFamGroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
-
-		initFamilienAbzug.setAbzugFamGroesse(abzugAufgrundFamiliengroesse);
-
-		initFamilienAbzugList.add(initFamilienAbzug);
-		return initFamilienAbzugList;
+		initialFamAbzugList.add(initialFamAbzug);
+		return initialFamAbzugList;
 	}
 
 	private BigDecimal getAbzugFamGroesse(Gesuch gesuch, LocalDate stichtag) {
@@ -110,7 +107,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	 * GANZER_ABZUG = 1
 	 * KEINE_STEUERERKLAERUNG = 1
 	 * <p>
-	 * Nur die Kinder die nach dem uebergebenen Datum geboren sind werden mitberechnet
+	 * Nur die Kinder die vor dem uebergebenen Datum geboren sind werden mitberechnet
 	 * <p>
 	 *
 	 * @param gesuch das Gesuch aus welchem die Daten geholt werden
