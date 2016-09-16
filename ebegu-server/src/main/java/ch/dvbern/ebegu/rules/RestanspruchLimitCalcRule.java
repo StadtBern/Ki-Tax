@@ -8,14 +8,11 @@ import ch.dvbern.ebegu.types.DateRange;
 import javax.annotation.Nonnull;
 
 /**
- *
  * Als allerletzte Reduktionsregel läuft eine Regel die das Feld "AnspruchberechtigtesPensum"
  * mit dem Feld "AnspruchspensumRest" vergleicht. Wenn letzteres -1 ist gilt der Wert im Feld "AnspruchsberechtigtesPensum,
  * ansonsten wir das Minimum der beiden Felder in das Feld "AnspruchberechtigtesPensum" gesetzt wenn es sich um eine
  * Kita/Kleinkinder-Betreuung handelt
  * Dadurch wird das Anspruchspensum limitiert auf den Maximal moeglichen Restanspruch
- *
- *
  */
 public class RestanspruchLimitCalcRule extends AbstractCalcRule {
 
@@ -30,13 +27,12 @@ public class RestanspruchLimitCalcRule extends AbstractCalcRule {
 			int anspruchberechtigtesPensum = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 			int verfuegbarerRestanspruch = verfuegungZeitabschnitt.getAnspruchspensumRest();
 			//wir muessen nur was machen wenn wir schon einen Restanspruch gesetzt haben
-			if(verfuegbarerRestanspruch != -1){
-				if (verfuegbarerRestanspruch < anspruchberechtigtesPensum) {
-					verfuegungZeitabschnitt.addBemerkung(RuleKey.RESTANSPRUCH, MsgKey.RESTANSPRUCH_MSG, anspruchberechtigtesPensum , verfuegbarerRestanspruch);
-					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(verfuegbarerRestanspruch);
-				}
+			if (verfuegbarerRestanspruch != -1 && verfuegbarerRestanspruch < anspruchberechtigtesPensum) {
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.RESTANSPRUCH, MsgKey.RESTANSPRUCH_MSG, anspruchberechtigtesPensum, verfuegbarerRestanspruch);
+				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(verfuegbarerRestanspruch);
 			}
 		}
-		// fuer Schulkinder wird nichts gemacht
 	}
+	// fuer Schulkinder wird nichts gemacht
+
 }

@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 

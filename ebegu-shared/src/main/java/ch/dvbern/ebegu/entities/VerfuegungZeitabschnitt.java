@@ -4,11 +4,12 @@ import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.MathUtil;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -409,10 +410,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Override
 	public int compareTo(VerfuegungZeitabschnitt other) {
-		int result = this.getGueltigkeit().getGueltigAb().compareTo(other.getGueltigkeit().getGueltigAb());
-		if (result == 0) {
-			result = this.getGueltigkeit().getGueltigBis().compareTo(other.getGueltigkeit().getGueltigBis());
-		}
-		return result;
+		CompareToBuilder compareToBuilder = new CompareToBuilder();
+		compareToBuilder.append(this.getGueltigkeit(), other.getGueltigkeit());
+		compareToBuilder.append(this.getId(), other.getId());  // wenn ids nicht gleich sind wollen wir auch compare to nicht gleich
+		return compareToBuilder.toComparison();
 	}
 }
