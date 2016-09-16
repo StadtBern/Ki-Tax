@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 
 /**
  * Configurator, welcher die Regeln und ihre Reihenfolge konfiguriert. Als Parameter erhält er den Mandanten sowie
@@ -28,23 +28,52 @@ public class BetreuungsgutscheinConfigurator {
 		return rules;
 	}
 
-	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nullable Mandant mandant){
+	public Set<EbeguParameterKey> getRequiredParametersForMandant(@Nullable Mandant mandant) {
 		// TODO (team) Mandant abfragen, sobald es mehrere hat!
 		return requiredBernerParameters();
 	}
 
-	public Set<EbeguParameterKey> requiredBernerParameters(){
-		return EnumSet.of(PARAM_MASSGEBENDES_EINKOMMEN_MAX);
+	public Set<EbeguParameterKey> requiredBernerParameters() {
+		return EnumSet.of(
+			PARAM_MASSGEBENDES_EINKOMMEN_MAX,
+			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3,
+			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4,
+			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5,
+			PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6);
 	}
 
 
 	private void useBernerRules(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 
+		abschnitteErstellenRegeln(ebeguParameter);
+		berechnenAnspruchRegeln();
+		reduktionsRegeln(ebeguParameter);
+
+	}
+
+	private void abschnitteErstellenRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// GRUNDREGELN_DATA: Abschnitte erstellen
 
 		// - Erwerbspensum: Erstellt die grundlegenden Zeitschnitze (keine Korrekturen, nur einfügen)
 		ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(defaultGueltigkeit);
 		rules.add(erwerbspensumAbschnittRule);
+
+
+		//Familenabzug: Berechnet den Familienabzug aufgrund der Familiengroesse
+		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_3 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3);
+		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_3, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3 muss gesetzt sein");
+		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_4 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4);
+		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_4, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4 muss gesetzt sein");
+		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_5 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5);
+		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_5, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5 muss gesetzt sein");
+		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_6 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6);
+		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_6, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6 muss gesetzt sein");
+		FamilienabzugAbschnittRule familienabzugAbschnittRule = new FamilienabzugAbschnittRule(defaultGueltigkeit,
+			param_pauschalabzug_pro_person_familiengroesse_3.getValueAsBigDecimal(),
+			param_pauschalabzug_pro_person_familiengroesse_4.getValueAsBigDecimal(),
+			param_pauschalabzug_pro_person_familiengroesse_5.getValueAsBigDecimal(),
+			param_pauschalabzug_pro_person_familiengroesse_6.getValueAsBigDecimal());
+		rules.add(familienabzugAbschnittRule);
 
 		// - Betreuungspensum
 		BetreuungspensumAbschnittRule betreuungspensumAbschnittRule = new BetreuungspensumAbschnittRule(defaultGueltigkeit);
@@ -73,8 +102,9 @@ public class BetreuungsgutscheinConfigurator {
 		// Abwesenheit
 		AbwesenheitAbschnittRule abwesenheitAbschnittRule = new AbwesenheitAbschnittRule(defaultGueltigkeit);
 		rules.add(abwesenheitAbschnittRule);
+	}
 
-
+	private void berechnenAnspruchRegeln() {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
 		// - Erwerbspensum
@@ -96,7 +126,10 @@ public class BetreuungsgutscheinConfigurator {
 		// Nach den "Calc"-Regeln muss der Restanspruch (fuer das naechste Angebot) berechnet werden
 		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
 		rules.add(restanspruchCalcRule);
+	}
 
+
+	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
 		// REDUKTIONSREGELN: Setzen Anpsruch auf 0
 
 		// - Einkommen / Einkommensverschlechterung / Maximales Einkommen
@@ -129,4 +162,5 @@ public class BetreuungsgutscheinConfigurator {
 		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
 		rules.add(abwesenheitCalcRule);
 	}
+
 }

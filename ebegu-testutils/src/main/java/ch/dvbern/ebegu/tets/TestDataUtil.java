@@ -23,10 +23,6 @@ import java.util.*;
 public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
-	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
-	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
-	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
-	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
 
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
@@ -407,7 +403,7 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 

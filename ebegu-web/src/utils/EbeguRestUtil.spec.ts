@@ -29,9 +29,9 @@ import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import TSVerfuegung from '../models/TSVerfuegung';
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
-import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 
 describe('EbeguRestUtil', function () {
 
@@ -383,7 +383,7 @@ describe('EbeguRestUtil', function () {
                 restVerfuegungZeitabschnitt.erwerbspensumGS1 = 8;
                 restVerfuegungZeitabschnitt.erwerbspensumGS2 = 9;
                 restVerfuegungZeitabschnitt.fachstellenpensum = 10;
-                restVerfuegungZeitabschnitt.massgebendesEinkommen = 11;
+                restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr = 11;
                 restVerfuegungZeitabschnitt.vollkosten = 12;
                 restVerfuegungZeitabschnitt.bemerkungen = 'bemerkung1';
                 restVerfuegungZeitabschnitt.status = 'status1';
@@ -400,7 +400,7 @@ describe('EbeguRestUtil', function () {
                 expect(verfuegungTS.erwerbspensumGS1).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS1);
                 expect(verfuegungTS.erwerbspensumGS2).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS2);
                 expect(verfuegungTS.fachstellenpensum).toEqual(restVerfuegungZeitabschnitt.fachstellenpensum);
-                expect(verfuegungTS.massgebendesEinkommen).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommen);
+                expect(verfuegungTS.massgebendesEinkommenVorAbzugFamgr).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr);
                 expect(verfuegungTS.vollkosten).toEqual(restVerfuegungZeitabschnitt.vollkosten);
                 expect(verfuegungTS.bemerkungen).toEqual(restVerfuegungZeitabschnitt.bemerkungen);
                 expect(verfuegungTS.status).toEqual(restVerfuegungZeitabschnitt.status);

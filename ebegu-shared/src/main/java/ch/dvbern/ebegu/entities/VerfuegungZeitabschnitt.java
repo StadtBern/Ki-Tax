@@ -2,8 +2,10 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MathUtil;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -17,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.math.BigDecimal.ZERO;
 
 /**
  * Dieses Objekt repraesentiert einen Zeitabschnitt wahrend eines Betreeungsgutscheinantrags waehrend dem die Faktoren
@@ -76,16 +80,16 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private BigDecimal betreuungsstunden;
 
 	@Column(nullable = true)
-	private BigDecimal vollkosten = BigDecimal.ZERO;
+	private BigDecimal vollkosten = ZERO;
 
 	@Column(nullable = true)
-	private BigDecimal elternbeitrag = BigDecimal.ZERO;
+	private BigDecimal elternbeitrag = ZERO;
 
 	@Column(nullable = true)
-	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
+	private BigDecimal abzugFamGroesse = null;
 
 	@Column(nullable = true)
-	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
+	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -96,7 +100,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
-
 
 
 	public VerfuegungZeitabschnitt() {
@@ -186,12 +189,21 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.abzugFamGroesse = abzugFamGroesse;
 	}
 
+	/**
+	 * @return berechneter Wert. Zieht vom massgebenenEinkommenVorAbzug den Familiengroessen Abzug ab
+	 */
 	public BigDecimal getMassgebendesEinkommen() {
-		return massgebendesEinkommen;
+		return MathUtil.EXACT.subtract(massgebendesEinkommenVorAbzugFamgr,
+			this.abzugFamGroesse == null ? BigDecimal.ZERO : this.abzugFamGroesse);
 	}
 
-	public void setMassgebendesEinkommen(BigDecimal massgebendesEinkommen) {
-		this.massgebendesEinkommen = massgebendesEinkommen;
+
+	public BigDecimal getMassgebendesEinkommenVorAbzFamgr() {
+		return massgebendesEinkommenVorAbzugFamgr;
+	}
+
+	public void setMassgebendesEinkommenVorAbzugFamgr(BigDecimal massgebendesEinkommenVorAbzugFamgr) {
+		this.massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr;
 	}
 
 	@Nullable
@@ -259,7 +271,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setFachstellenpensum(this.getFachstellenpensum() + other.getFachstellenpensum());
 		this.setAnspruchspensumRest(this.getAnspruchspensumRest() + other.getAnspruchspensumRest());
 		this.setAnspruchberechtigtesPensum(this.getAnspruchberechtigtesPensum() + other.getAnspruchberechtigtesPensum());
-		BigDecimal newBetreuungsstunden = BigDecimal.ZERO;
+		BigDecimal newBetreuungsstunden = ZERO;
 		if (this.getBetreuungsstunden() != null) {
 			newBetreuungsstunden = newBetreuungsstunden.add(this.getBetreuungsstunden());
 		}
@@ -269,14 +281,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setBetreuungsstunden(newBetreuungsstunden);
 		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
 		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
-		BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
-		if (this.getMassgebendesEinkommen() != null) {
-			massgebendesEinkommen = massgebendesEinkommen.add(this.getMassgebendesEinkommen());
+		BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
+		if (this.getMassgebendesEinkommenVorAbzFamgr() != null) {
+			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(this.getMassgebendesEinkommenVorAbzFamgr());
 		}
-		if (other.getMassgebendesEinkommen() != null) {
-			massgebendesEinkommen = massgebendesEinkommen.add(other.getMassgebendesEinkommen());
+		if (other.getMassgebendesEinkommenVorAbzFamgr() != null) {
+			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(other.getMassgebendesEinkommenVorAbzFamgr());
 		}
-		this.setMassgebendesEinkommen(massgebendesEinkommen);
+		this.setMassgebendesEinkommenVorAbzugFamgr(massgebendesEinkommenVorAbzugFamgr);
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
@@ -284,6 +296,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
+		// Der Familiengroessen Abzug kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
+		if (other.getAbzugFamGroesse() != null) {
+			Validate.isTrue(this.getAbzugFamGroesse() == null, "Familiengoressenabzug kann nicht gemerged werden" );
+			this.setAbzugFamGroesse(other.getAbzugFamGroesse());
+		}
 	}
 
 	/**
@@ -303,7 +320,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		List<String> listOfStrings = new ArrayList<>();
 		listOfStrings.add(this.bemerkungen);
 		listOfStrings.addAll(bemerkungenList);
-		this.bemerkungen =  String.join(";", listOfStrings);
+		this.bemerkungen = String.join(";", listOfStrings);
 	}
 
 	/**
@@ -326,9 +343,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 * Ein Kind mit einem Betreuungspensum von 60% und einem anspruchsberechtigten Pensum von 40% hat ein BG-Pensum von 40%.
 	 * Ein Kind mit einem Betreuungspensum von 40% und einem anspruchsberechtigten Pensum von 60% hat ein BG-Pensum von 40%.
 	 */
-    public int getBgPensum() {
-        return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
-    }
+	public int getBgPensum() {
+		return Math.min(getBetreuungspensum(), getAnspruchberechtigtesPensum());
+	}
 
 	@Override
 	public String toString() {
@@ -336,12 +353,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		sb.append("[").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigAb())).append(" - ").append(Constants.DATE_FORMATTER.format(getGueltigkeit().getGueltigBis())).append("] ")
 			.append(" EP GS1: ").append(erwerbspensumGS1).append("\t")
 			.append(" EP GS2: ").append(erwerbspensumGS2).append("\t")
-			.append(" Betreuungspensum: ").append(betreuungspensum).append("\t")
+			.append(" BetrPensum: ").append(betreuungspensum).append("\t")
 			.append(" Anspruch: ").append(anspruchberechtigtesPensum).append("\t")
 			.append(" BG-Pensum: ").append(getBgPensum()).append("\t")
 			.append(" Vollkosten: ").append(vollkosten).append("\t")
 			.append(" Elternbeitrag: ").append(elternbeitrag).append("\t")
-			.append(" Bemerkungen: ").append(bemerkungen);
+			.append(" Bemerkungen: ").append(bemerkungen).append("\t")
+			.append(" Einkommen: ").append(massgebendesEinkommenVorAbzugFamgr).append("\t")
+			.append(" Abzug Fam: ").append(abzugFamGroesse);
 		return sb.toString();
 	}
 
@@ -356,7 +375,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-			Objects.equals(massgebendesEinkommen, that.massgebendesEinkommen) &&
+			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			wohnsitzNichtInGemeindeGS1 == that.wohnsitzNichtInGemeindeGS1 &&
 			wohnsitzNichtInGemeindeGS2 == that.wohnsitzNichtInGemeindeGS2 &&
@@ -371,7 +390,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (vollkosten != null && elternbeitrag != null) {
 			return vollkosten.subtract(elternbeitrag);
 		}
-		return BigDecimal.ZERO;
+		return ZERO;
 	}
 
 	@Override

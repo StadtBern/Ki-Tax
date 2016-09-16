@@ -10,6 +10,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class VerfuegungZeitabschnitt_ extends ch.dvbern.ebegu.entities.AbstractDateRangedEntity_ {
 
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> betreuungsstunden;
+	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> massgebendesEinkommenVorAbzugFamgr;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, String> bemerkungen;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Integer> betreuungspensum;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> elternbeitrag;
@@ -17,7 +18,6 @@ public abstract class VerfuegungZeitabschnitt_ extends ch.dvbern.ebegu.entities.
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Verfuegung> verfuegung;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> vollkosten;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> abzugFamGroesse;
-	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> massgebendesEinkommen;
 
 }
 
