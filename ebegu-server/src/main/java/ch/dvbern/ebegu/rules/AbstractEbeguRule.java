@@ -83,18 +83,18 @@ public abstract class AbstractEbeguRule implements Rule {
 	@Override
 	public final List<VerfuegungZeitabschnitt> calculate(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
 
-		Collections.sort(zeitabschnitte, new VerfuegungZeitabschnittComparator());
+		Collections.sort(zeitabschnitte);
 
 		// Zuerst muessen die neuen Zeitabschnitte aus den Daten meiner Rule zusammengestellt werden:
 
 		List<VerfuegungZeitabschnitt> abschnitteCreatedInRule = createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
-		Collections.sort(abschnitteCreatedInRule, new VerfuegungZeitabschnittComparator());
+		Collections.sort(abschnitteCreatedInRule);
 
 
 		// In dieser Funktion muss sichergestellt werden, dass in der neuen Liste keine Ueberschneidungen mehr bestehen
 		// Jetzt muessen diese mit den bestehenden Zeitabschnitten aus früheren Rules gemergt werden
 		List<VerfuegungZeitabschnitt> mergedZeitabschnitte = mergeZeitabschnitte(zeitabschnitte, abschnitteCreatedInRule);
-		Collections.sort(mergedZeitabschnitte, new VerfuegungZeitabschnittComparator());
+		Collections.sort(mergedZeitabschnitte);
 
 		// Die Zeitabschnitte (jetzt ohne Überschneidungen) normalisieren:
 		// - Muss innerhalb Gesuchsperiode sein

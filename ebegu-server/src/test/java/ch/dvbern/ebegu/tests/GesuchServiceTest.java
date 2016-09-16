@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -41,7 +42,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createGesuch() {
 		Assert.assertNotNull(gesuchService);
-		persistNewEntity();
+		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
 		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		Assert.assertEquals(1, allGesuche.size());
@@ -50,7 +51,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void updateGesuch() {
 		Assert.assertNotNull(gesuchService);
-		final Gesuch insertedGesuch = persistNewEntity();
+		final Gesuch insertedGesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(insertedGesuch.getId());
 		Assert.assertEquals(insertedGesuch.getFall().getId(), gesuch.get().getFall().getId());
@@ -64,7 +65,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
-		final Gesuch gesuch = persistNewEntity();
+		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 		Assert.assertEquals(1, gesuchService.getAllGesuche().size());
 
 		gesuchService.removeGesuch(gesuch);
@@ -85,11 +86,30 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Assert.assertFalse(einkommensverschlechterungInfo.getEkvFuerBasisJahrPlus2());
 	}
 
+	@Test
+	public void testGetAllActiveGesucheAllActive() {
+		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
+		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
+
+		final Collection<Gesuch> allActiveGesuche = gesuchService.getAllActiveGesuche();
+		Assert.assertEquals(2, allActiveGesuche.size());
+	}
+
+	@Test
+	public void testGetAllActiveGesucheNotAllActive() {
+		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
+		persistNewEntity(AntragStatus.VERFUEGT);
+
+		final Collection<Gesuch> allActiveGesuche = gesuchService.getAllActiveGesuche();
+		Assert.assertEquals(1, allActiveGesuche.size());
+	}
+
 
 	// HELP METHOD
 
-	private Gesuch persistNewEntity() {
+	private Gesuch persistNewEntity(AntragStatus status) {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setStatus(status);
 		gesuch.setGesuchsperiode(persistence.persist(gesuch.getGesuchsperiode()));
 		gesuch.setFall(persistence.persist(gesuch.getFall()));
 		gesuchService.createGesuch(gesuch);

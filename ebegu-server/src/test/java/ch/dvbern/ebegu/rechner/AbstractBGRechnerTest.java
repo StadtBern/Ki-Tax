@@ -36,6 +36,14 @@ public class AbstractBGRechnerTest {
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = new HashMap<>();
 		EbeguParameter paramMaxEinkommen = new EbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, "159000");
 		ebeguParameter.put(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX, paramMaxEinkommen);
+		EbeguParameter pmab3 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760");
+		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, pmab3);
+		EbeguParameter pmab4 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900");
+		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, pmab4);
+		EbeguParameter pmab5 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970");
+		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, pmab5);
+		EbeguParameter pmab6 = new EbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500");
+		ebeguParameter.put(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, pmab6);
 		BetreuungsgutscheinConfigurator configurator = new BetreuungsgutscheinConfigurator();
 		List<Rule> rules = configurator.configureRulesForMandant(null, ebeguParameter);
 		return new BetreuungsgutscheinEvaluator(rules);
@@ -113,7 +121,7 @@ public class AbstractBGRechnerTest {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(new DateRange(von, bis));
 		zeitabschnitt.setAnspruchberechtigtesPensum(anspruch);
 		zeitabschnitt.setBetreuungspensum(anspruch);
-		zeitabschnitt.setMassgebendesEinkommen(massgebendesEinkommen);
+		zeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(massgebendesEinkommen);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = new ArrayList<>();
 		zeitabschnittList.add(zeitabschnitt);
 		Verfuegung verfuegung = new Verfuegung();

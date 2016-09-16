@@ -14,7 +14,7 @@
 			<property name="hibernate.physical_naming_strategy" value="ch.dvbern.ebegu.persistence.EbeguPhysicalNamingStrategyImpl"/>
 
 			<!-- SQL Logging bitte via Logger konfigurieren -->
-			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.show_sql" value="false"/>
 			<!--<property name="hibernate.hbm2ddl.auto" value="validate"/>-->
 
 		</properties>

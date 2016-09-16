@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, IPromise} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -9,8 +9,12 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
@@ -22,13 +26,15 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
-    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager'];
     private kinderWithBetreuungList: Array<TSKindContainer>;
 
 
+    static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
+        'DvDialog'];
+
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager) {
+                private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
@@ -97,6 +103,51 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             return this.gesuchModelManager.getGesuchsperiode();
         }
         return undefined;
+    }
+
+    public setGesuchStatusGeprueft(): IPromise<TSAntragStatus> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+        })
+            .then(() => {
+                return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
+            });
+    }
+
+    public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
+            deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
+        })
+            .then(() => {
+                return this.setGesuchStatus(TSAntragStatus.VERFUEGEN);
+            });
+    }
+
+    public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (this.gesuchModelManager) {
+        return this.gesuchModelManager.saveGesuchStatus(status);
+    }
+    return undefined;
+    }
+
+    /**
+     * Der Button Geprueft wird nur beim Status IN_BEARBEITUNG_JA eingeblendet
+     * @returns {boolean}
+     */
+    public showGeprueft(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA)
+            && this.wizardStepManager.areAllStepsOK();
+    }
+
+    /**
+     * Der Button Verfuegung starten wird angezeigt, wenn alle Betreuungen bestaetigt und das Gesuch geprueft wurden
+     * @returns {boolean}
+     */
+    public showVerfuegenStarten(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
+            && this.wizardStepManager.getStepByName(TSWizardStepName.BETREUUNG).wizardStepStatus === TSWizardStepStatus.OK;
     }
 
 }

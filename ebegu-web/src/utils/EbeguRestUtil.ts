@@ -178,6 +178,7 @@ export default class EbeguRestUtil {
         restObj.fall = this.fallToRestObject({}, antragEntity.fall);
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
+        restObj.status = antragEntity.status;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -185,6 +186,7 @@ export default class EbeguRestUtil {
         antragTS.fall = this.parseFall(new TSFall(), antragFromServer.fall);
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.status = antragFromServer.status;
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -693,10 +695,7 @@ export default class EbeguRestUtil {
         restFinanzielleSituationResultate.nettovermoegenFuenfProzent = finanzielleSituationResultateDTO.nettovermoegenFuenfProzent;
         restFinanzielleSituationResultate.anrechenbaresEinkommen = finanzielleSituationResultateDTO.anrechenbaresEinkommen;
         restFinanzielleSituationResultate.abzuegeBeiderGesuchsteller = finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller;
-        restFinanzielleSituationResultate.abzugAufgrundFamiliengroesse = finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse;
-        restFinanzielleSituationResultate.totalAbzuege = finanzielleSituationResultateDTO.totalAbzuege;
-        restFinanzielleSituationResultate.massgebendesEinkommen = finanzielleSituationResultateDTO.massgebendesEinkommen;
-        restFinanzielleSituationResultate.familiengroesse = finanzielleSituationResultateDTO.familiengroesse;
+        restFinanzielleSituationResultate.massgebendesEinkVorAbzFamGr = finanzielleSituationResultateDTO.massgebendesEinkVorAbzFamGr;
         return restFinanzielleSituationResultate;
     }
 
@@ -708,10 +707,7 @@ export default class EbeguRestUtil {
             finanzielleSituationResultateDTO.nettovermoegenFuenfProzent = finanzielleSituationResultateFromServer.nettovermoegenFuenfProzent;
             finanzielleSituationResultateDTO.anrechenbaresEinkommen = finanzielleSituationResultateFromServer.anrechenbaresEinkommen;
             finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller = finanzielleSituationResultateFromServer.abzuegeBeiderGesuchsteller;
-            finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse = finanzielleSituationResultateFromServer.abzugAufgrundFamiliengroesse;
-            finanzielleSituationResultateDTO.totalAbzuege = finanzielleSituationResultateFromServer.totalAbzuege;
-            finanzielleSituationResultateDTO.massgebendesEinkommen = finanzielleSituationResultateFromServer.massgebendesEinkommen;
-            finanzielleSituationResultateDTO.familiengroesse = finanzielleSituationResultateFromServer.familiengroesse;
+            finanzielleSituationResultateDTO.massgebendesEinkVorAbzFamGr = finanzielleSituationResultateFromServer.massgebendesEinkVorAbzFamGr;
             return finanzielleSituationResultateDTO;
         }
         return undefined;
@@ -1049,6 +1045,7 @@ export default class EbeguRestUtil {
         restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.status = pendenz.status;
         return restPendenz;
     }
 
@@ -1062,6 +1059,7 @@ export default class EbeguRestUtil {
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
+        pendenzTS.status = pendenzFromServer.status;
         return pendenzTS;
     }
 
@@ -1269,6 +1267,27 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public verfuegungToRestObject(verfuegung: any, verfuegungTS: TSVerfuegung): any {
+        if (verfuegungTS) {
+            this.abstractEntityToRestObject(verfuegung, verfuegungTS);
+            verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
+            verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
+            verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
+            return verfuegung;
+        }
+        return undefined;
+    }
+
+    private zeitabschnittListToRestObject(zeitabschnitte: Array<TSVerfuegungZeitabschnitt>): Array<any> {
+        let list: any[] = [];
+        if (zeitabschnitte) {
+            for (var i = 0; i < zeitabschnitte.length; i++) {
+                list[i] = this.zeitabschnittToRestObject({}, zeitabschnitte[i]);
+            }
+        }
+        return list;
+    }
+
     private parseVerfuegungZeitabschnitte(zeitabschnitte: Array<any>): TSVerfuegungZeitabschnitt[] {
         let resultList: TSVerfuegungZeitabschnitt[] = [];
         if (zeitabschnitte && Array.isArray(zeitabschnitte)) {
@@ -1279,6 +1298,28 @@ export default class EbeguRestUtil {
             resultList[0] = this.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), zeitabschnitte);
         }
         return resultList;
+    }
+
+    public zeitabschnittToRestObject(zeitabschnitt: any, zeitabschnittTS: TSVerfuegungZeitabschnitt): any {
+        if (zeitabschnittTS) {
+            this.abstractDateRangeEntityToRestObject(zeitabschnitt, zeitabschnittTS);
+            zeitabschnitt.abzugFamGroesse = zeitabschnittTS.abzugFamGroesse;
+            zeitabschnitt.anspruchberechtigtesPensum = zeitabschnittTS.anspruchberechtigtesPensum;
+            zeitabschnitt.bgPensum = zeitabschnittTS.bgPensum;
+            zeitabschnitt.anspruchspensumRest = zeitabschnittTS.anspruchspensumRest;
+            zeitabschnitt.bemerkungen = zeitabschnittTS.bemerkungen;
+            zeitabschnitt.betreuungspensum = zeitabschnittTS.betreuungspensum;
+            zeitabschnitt.betreuungsstunden = zeitabschnittTS.betreuungsstunden;
+            zeitabschnitt.elternbeitrag = zeitabschnittTS.elternbeitrag;
+            zeitabschnitt.erwerbspensumGS1 = zeitabschnittTS.erwerbspensumGS1;
+            zeitabschnitt.erwerbspensumGS2 = zeitabschnittTS.erwerbspensumGS2;
+            zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
+            zeitabschnitt.massgebendesEinkommenVorAbzugFamgr = zeitabschnittTS.massgebendesEinkommenVorAbzugFamgr;
+            zeitabschnitt.status = zeitabschnittTS.status;
+            zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            return zeitabschnitt;
+        }
+        return undefined;
     }
 
     public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any): TSVerfuegungZeitabschnitt {
@@ -1295,7 +1336,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.erwerbspensumGS1 = zeitabschnittFromServer.erwerbspensumGS1;
             verfuegungZeitabschnittTS.erwerbspensumGS2 = zeitabschnittFromServer.erwerbspensumGS2;
             verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
-            verfuegungZeitabschnittTS.massgebendesEinkommen = zeitabschnittFromServer.massgebendesEinkommen;
+            verfuegungZeitabschnittTS.massgebendesEinkommenVorAbzugFamgr = zeitabschnittFromServer.massgebendesEinkommenVorAbzugFamgr;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             return verfuegungZeitabschnittTS;

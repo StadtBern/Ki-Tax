@@ -15,15 +15,9 @@ public class FinanzielleSituationResultateDTO {
 	private BigDecimal nettovermoegenFuenfProzent = BigDecimal.ZERO;
 	private BigDecimal anrechenbaresEinkommen = BigDecimal.ZERO;
 	private BigDecimal abzuegeBeiderGesuchsteller = BigDecimal.ZERO;
-	private BigDecimal abzugAufgrundFamiliengroesse = BigDecimal.ZERO;
-	private BigDecimal totalAbzuege = BigDecimal.ZERO;
-	private BigDecimal massgebendesEinkommen = BigDecimal.ZERO;
-	private Double familiengroesse;
+	private BigDecimal massgebendesEinkVorAbzFamGr = BigDecimal.ZERO;
 
-
-	public FinanzielleSituationResultateDTO(double familiengroesse, BigDecimal famGroesseAbz) {
-		this.familiengroesse = familiengroesse;
-		this.abzugAufgrundFamiliengroesse = famGroesseAbz;
+	public FinanzielleSituationResultateDTO() {
 		initToZero();
 	}
 
@@ -36,11 +30,8 @@ public class FinanzielleSituationResultateDTO {
 		nettovermoegenFuenfProzent = MathUtil.positiveNonNullAndRound(nettovermoegenFuenfProzent);
 		anrechenbaresEinkommen = MathUtil.positiveNonNullAndRound(anrechenbaresEinkommen);
 		abzuegeBeiderGesuchsteller = MathUtil.positiveNonNullAndRound(abzuegeBeiderGesuchsteller);
-		abzugAufgrundFamiliengroesse = MathUtil.positiveNonNullAndRound(abzugAufgrundFamiliengroesse);
-		totalAbzuege = MathUtil.positiveNonNullAndRound(totalAbzuege);
-		massgebendesEinkommen = MathUtil.positiveNonNullAndRound(massgebendesEinkommen);
+		massgebendesEinkVorAbzFamGr = MathUtil.positiveNonNullAndRound(massgebendesEinkVorAbzFamGr);
 	}
-
 
 	public BigDecimal getGeschaeftsgewinnDurchschnittGesuchsteller1() {
 		return geschaeftsgewinnDurchschnittGesuchsteller1;
@@ -90,35 +81,11 @@ public class FinanzielleSituationResultateDTO {
 		this.abzuegeBeiderGesuchsteller = abzuegeBeiderGesuchsteller;
 	}
 
-	public BigDecimal getAbzugAufgrundFamiliengroesse() {
-		return abzugAufgrundFamiliengroesse;
+	public BigDecimal getMassgebendesEinkVorAbzFamGr() {
+		return massgebendesEinkVorAbzFamGr;
 	}
 
-	public void setAbzugAufgrundFamiliengroesse(BigDecimal abzugAufgrundFamiliengroesse) {
-		this.abzugAufgrundFamiliengroesse = abzugAufgrundFamiliengroesse;
-	}
-
-	public BigDecimal getTotalAbzuege() {
-		return totalAbzuege;
-	}
-
-	public void setTotalAbzuege(BigDecimal totalAbzuege) {
-		this.totalAbzuege = totalAbzuege;
-	}
-
-	public BigDecimal getMassgebendesEinkommen() {
-		return massgebendesEinkommen;
-	}
-
-	public void setMassgebendesEinkommen(BigDecimal massgebendesEinkommen) {
-		this.massgebendesEinkommen = massgebendesEinkommen;
-	}
-
-	public Double getFamiliengroesse() {
-		return familiengroesse;
-	}
-
-	public void setFamiliengroesse(Double familiengroesse) {
-		this.familiengroesse = familiengroesse;
+	public void setMassgebendesEinkVorAbzFamGr(BigDecimal massgebendesEinkVorAbzFamGr) {
+		this.massgebendesEinkVorAbzFamGr = massgebendesEinkVorAbzFamGr;
 	}
 }
