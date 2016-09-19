@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -11,6 +12,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,11 +37,18 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
 	@Inject
 	private Persistence<Gesuch> persistence;
 
+	private Gesuch gesuch;
+	private Benutzer benutzer;
+
+
+	@Before
+	public void setUp() {
+		gesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		benutzer = TestDataUtil.createAndPersistBenutzer(persistence);
+	}
 
 	@Test
 	public void saveChanges() {
-		final Benutzer benutzer = TestDataUtil.createAndPersistBenutzer(persistence);
-		final Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 
 		LocalDateTime time = LocalDateTime.now();
 		final AntragStatusHistory createdStatusHistory = statusHistoryService.saveStatusChange(gesuch);
@@ -50,6 +59,24 @@ public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(benutzer, createdStatusHistory.getBenutzer());
 		//just check that the generated date is after (or equals) the temporal one we created before
 		Assert.assertTrue(time.isBefore(createdStatusHistory.getDatum()) || time.isEqual(createdStatusHistory.getDatum()));
+	}
+
+	@Test
+	public void findLastStatusChangeTest() {
+		gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG);
+		statusHistoryService.saveStatusChange(gesuch);
+		gesuch.setStatus(AntragStatus.FREIGABEQUITTUNG);
+		statusHistoryService.saveStatusChange(gesuch);
+		gesuch.setStatus(AntragStatus.VERFUEGT);
+		statusHistoryService.saveStatusChange(gesuch);
+		final AntragStatusHistory lastStatusChange = statusHistoryService.findLastStatusChange(gesuch);
+		Assert.assertNotNull(lastStatusChange);
+		Assert.assertEquals(AntragStatus.VERFUEGT, lastStatusChange.getStatus());
+	}
+
+	@Test
+	public void findLastStatusChangeNoChangeNullTest() {
+		Assert.assertNull(statusHistoryService.findLastStatusChange(gesuch));
 	}
 
 }

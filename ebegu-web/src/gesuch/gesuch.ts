@@ -5,15 +5,33 @@ import DateUtil from '../utils/DateUtil';
 import WizardStepManager from './service/wizardStepManager';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
+import EbeguUtil from '../utils/EbeguUtil';
+import ITranslateService = angular.translate.ITranslateService;
+import {TSAntragStatus} from '../models/enums/TSAntragStatus';
+import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
+import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
+    private lastChange: TSAntragStatusHistory;
 
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', '$scope', 'WizardStepManager'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
+                                'AntragStatusHistoryRS', 'AuthServiceRS'];
     /* @ngInject */
-    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any,
-                wizardStepManager: WizardStepManager) {
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil, private antragStatusHistoryRS: AntragStatusHistoryRS,
+                private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.findLastStatusChange();
+    }
+
+    private findLastStatusChange() {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().id) {
+            this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch().id).then((response: TSAntragStatusHistory) => {
+                this.lastChange = response;
+            });
+        }
     }
 
     showFinanzsituationStart(): boolean {
@@ -65,5 +83,33 @@ export class GesuchRouteController extends AbstractGesuchViewController {
 
     public isElementActive(stepName: TSWizardStepName): boolean {
         return this.wizardStepManager.getCurrentStepName() === stepName;
+    }
+
+    /**
+     * Uebersetzt den Status des Gesuchs und gibt ihn zurueck. Sollte das Gesuch noch keinen Status haben IN_BEARBEITUNG_JA
+     * wird zurueckgegeben
+     * @returns {string}
+     */
+    public getGesuchStatus(): string {
+        let toTranslate: TSAntragStatus = TSAntragStatus.IN_BEARBEITUNG_JA;
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            toTranslate = this.gesuchModelManager.getGesuch().status;
+        }
+        return this.ebeguUtil.translateString(TSAntragStatus [toTranslate]);
+    }
+
+    /**
+     * Gibt den FullName des Benutzers zurueck, der den Gesuchsstatus am letzten geaendert hat. Sollte das Gesuch noch nicht
+     * gespeichert sein (fallCreation), wird der FullName des eingeloggten Benutzers zurueckgegeben
+     * @returns {any}
+     */
+    public getUserFullname(): string {
+        if (this.lastChange) {
+            return this.lastChange.benutzer.getFullName();
+        }
+        if (this.authServiceRS && this.authServiceRS.getPrincipal()) {
+            return this.authServiceRS.getPrincipal().getFullName();
+        }
+        return '';
     }
 }

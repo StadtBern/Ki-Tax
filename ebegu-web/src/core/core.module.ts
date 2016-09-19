@@ -57,6 +57,7 @@ import WizardStepManager from '../gesuch/service/wizardStepManager';
 import WizardStepRS from '../gesuch/service/WizardStepRS.rest';
 import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensverschlechterungInfoRS.rest';
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
+import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 
 let dynamicDependencies = function (): string[] {
 
@@ -136,6 +137,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('UploadRS', UploadRS)
     .service('DownloadRS', DownloadRS)
     .service('WizardStepRS', WizardStepRS)
+    .service('AntragStatusHistoryRS', AntragStatusHistoryRS)
     .directive('dvMaxLength', DVMaxLength.factory())
     .directive('dvDatepicker', DVDatepicker.factory())
     .directive('dvUserselect', DVUserselect.factory())

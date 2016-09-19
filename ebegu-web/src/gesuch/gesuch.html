@@ -4,6 +4,12 @@
     </gesuch-toolbar>
 
     <div class="col-md-3 sidenav">
+        <div class="row sidenav gesuch-status marginTop20">
+            <span class="status" ng-bind="vm.getGesuchStatus()"></span>
+            <br>
+            <span class="zuletzt" data-translate="ZULETZT_BEARBEITER" data-translate-value-username="{{vm.getUserFullname()}}"></span>
+        </div>
+
         <ul class="sidenav">
 
             <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
