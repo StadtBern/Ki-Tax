@@ -1,9 +1,9 @@
 package ch.dvbern.ebegu.api.validation;
 
-import ch.dvbern.ebegu.api.util.ServerMessageUtil;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.resteasy.api.validation.Validation;
 

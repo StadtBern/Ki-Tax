@@ -1,13 +1,11 @@
 package ch.dvbern.ebegu.tests.util;
 
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.enums.Kinderabzug;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tests.AbstractEbeguTest;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,12 +17,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Tests fuer FinanzielleSituationRechner

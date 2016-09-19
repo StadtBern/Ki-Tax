@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -34,7 +35,7 @@ import java.util.TreeSet;
 		@UniqueConstraint(columnNames = {"verfuegung_id"}, name = "UK_betreuung_verfuegung_id")    //hibernate ignoriert den namen leider
 	}
 )
-public class Betreuung extends AbstractEntity {
+public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	private static final long serialVersionUID = -6776987863150835840L;
 
@@ -235,5 +236,13 @@ public class Betreuung extends AbstractEntity {
 		String kind = "" + getKind().getKindNummer();
 		String betreuung = "" + getBetreuungNummer();
 		return year + "." + fall + "." + kind + "." + betreuung;
+	}
+
+	@Override
+	public int compareTo(Betreuung other) {
+		CompareToBuilder compareToBuilder = new CompareToBuilder();
+		compareToBuilder.append(this.getBetreuungNummer(), other.getBetreuungNummer());
+		compareToBuilder.append(this.getId(), other.getId());
+		return compareToBuilder.toComparison();
 	}
 }
