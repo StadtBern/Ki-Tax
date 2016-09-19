@@ -11,11 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 /**
  * This is the Evaluator that runs all the rules and calculations for a given Antrag to determine the Betreuungsgutschein
@@ -55,8 +53,12 @@ public class BetreuungsgutscheinEvaluator {
 			// am Schluss kommt dann jeweils eine Reduktionsregel die den Anspruch auf den Restanspruch beschraenkt
 			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
 
-			// Betreuungen werden einzeln berechnet
-			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert nach betreuungsnummer)
+			List<Betreuung> betreuungen = new ArrayList<>(kindContainer.getBetreuungen());
+			Collections.sort(betreuungen);
+
+			for (Betreuung betreuung : betreuungen) {
+
 
 				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden

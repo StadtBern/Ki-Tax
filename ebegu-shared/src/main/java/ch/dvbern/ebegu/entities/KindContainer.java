@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -9,8 +8,8 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Container-Entity fuer die Kinder: Diese muss für jeden Benutzertyp (GS, JA) einzeln gefuehrt werden,
@@ -56,9 +55,9 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 
 	@Nullable
 	@Valid
-	@SortNatural
+	@OrderBy("betreuungNummer")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
-	private Set<Betreuung> betreuungen = new LinkedHashSet<>();
+	private Set<Betreuung> betreuungen = new TreeSet<>();
 
 
 	public Gesuch getGesuch() {
