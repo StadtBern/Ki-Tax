@@ -78,8 +78,8 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 	private void createBemerkungEVK2(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
 		if (ifEKV2Accepted(finanzDatenDTO)) {
-					lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
-				} else {
+			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
+		} else {
 			//ekv2 wurde nicht akzeptiert
 			if (betreuung.extractGesuch().getEinkommensverschlechterungInfo() != null
 				&&betreuung.extractGesuch().getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null
