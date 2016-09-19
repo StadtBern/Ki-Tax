@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
@@ -8,7 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(ApplicationProperty.class)
 public abstract class ApplicationProperty_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
-	public static volatile SingularAttribute<ApplicationProperty, String> name;
+	public static volatile SingularAttribute<ApplicationProperty, ApplicationPropertyKey> name;
 	public static volatile SingularAttribute<ApplicationProperty, String> value;
 
 }

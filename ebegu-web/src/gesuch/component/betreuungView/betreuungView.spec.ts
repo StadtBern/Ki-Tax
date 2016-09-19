@@ -11,8 +11,8 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import DateUtil from '../../../utils/DateUtil';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
+import IFormController = angular.IFormController;
 
 describe('betreuungView', function () {
 

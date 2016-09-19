@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -46,6 +47,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private MandantService mandantService;
+
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 
 	@Nonnull
@@ -100,7 +104,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Set<EbeguParameterKey> keysToLoad = ruleConfigurator.getRequiredParametersForMandant(mandant);
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = loadRuleParameters(mandant, gesuchsperiode, keysToLoad);
 		List<Rule> rules = ruleConfigurator.configureRulesForMandant(mandant, ebeguParameter);
-		return new BetreuungsgutscheinEvaluator(rules);
+		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
+		return new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 	}
 
 	/**

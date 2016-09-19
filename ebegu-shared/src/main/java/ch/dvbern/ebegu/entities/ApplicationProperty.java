@@ -1,11 +1,9 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -23,10 +21,10 @@ import static ch.dvbern.ebegu.util.Constants.DB_TEXTAREA_LENGTH;
 public class ApplicationProperty extends AbstractEntity {
 
 	private static final long serialVersionUID = -7687645920282879260L;
-	@Size(max = DB_DEFAULT_MAX_LENGTH)
 	@NotNull
 	@Column(nullable = false, length = DB_DEFAULT_MAX_LENGTH, unique = true)
-	private String name;
+	@Enumerated(EnumType.STRING)
+	private ApplicationPropertyKey name;
 
 	@Size(max = DB_TEXTAREA_LENGTH)
 	@NotNull
@@ -37,16 +35,16 @@ public class ApplicationProperty extends AbstractEntity {
 	public ApplicationProperty() {
 	}
 
-	public ApplicationProperty(final String key, final String value) {
+	public ApplicationProperty(final ApplicationPropertyKey key, final String value) {
 		this.name = key;
 		this.value = value;
 	}
 
-	public String getName() {
+	public ApplicationPropertyKey getName() {
 		return name;
 	}
 
-	public void setName(final String name) {
+	public void setName(final ApplicationPropertyKey name) {
 		this.name = name;
 	}
 

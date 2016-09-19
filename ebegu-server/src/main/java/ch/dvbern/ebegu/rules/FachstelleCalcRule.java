@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
 
@@ -28,6 +29,7 @@ public class FachstelleCalcRule extends AbstractCalcRule {
 		if (roundedPensumFachstelle > 0) {
 			// Anspruch ist immer genau das Pensum der Fachstelle, ausser das Restpensum lässt dies nicht mehr zu
 			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedPensumFachstelle);
+			verfuegungZeitabschnitt.addBemerkung(RuleKey.FACHSTELLE, MsgKey.FACHSTELLE_MSG);
 		}
 	}
 }

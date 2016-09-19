@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,7 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1() && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2()) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ.name() + ": Kein Wohnsitz in Bern");
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ, MsgKey.WOHNSITZ_MSG);
 			}
 		}
 	}

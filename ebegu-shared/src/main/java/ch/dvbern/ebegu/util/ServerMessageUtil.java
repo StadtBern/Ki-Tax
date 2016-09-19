@@ -1,6 +1,5 @@
-package ch.dvbern.ebegu.api.util;
+package ch.dvbern.ebegu.util;
 
-import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -53,6 +52,30 @@ public final class ServerMessageUtil {
 	public static String getMessage(String key, Locale locale, Object... args) {
 		return MessageFormat.format(getMessage(key, locale), args);
 	}
+
+
+	/**
+	 * Uebersetzt einen Enum-Wert
+	 */
+	@Nonnull
+	public static String translateEnumValue(@Nullable final Enum<?> e) {
+		if (e == null) {
+			return StringUtils.EMPTY;
+		}
+		return getMessage(getKey(e));
+	}
+
+	/**
+	 * Uebersetzt einen Enum-Wert
+	 */
+	@Nonnull
+	public static String translateEnumValue(@Nullable final Enum<?> e, Object... args) {
+		if (e == null) {
+			return StringUtils.EMPTY;
+		}
+		return getMessage(getKey(e), args);
+	}
+
 
 	/**
 	 * Uebersetzt einen Enum-Wert

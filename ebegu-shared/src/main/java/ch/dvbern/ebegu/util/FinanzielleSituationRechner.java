@@ -142,6 +142,9 @@ public class FinanzielleSituationRechner {
 		gesuch.setFinanzDatenDTO(finanzDatenDTO);
 	}
 
+	/**
+	 * @return Berechnet ob die Einkommensverschlechterung mehr als 20 % gegenueber dem vorjahr betraegt, gibt true zurueckk wen ja; false sonst
+	 */
 	private boolean acceptEKV(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenJahr) {
 		BigDecimal minimumEKV = MathUtil.EINE_NACHKOMMASTELLE.from(0.8);
 		// EKV gewährt

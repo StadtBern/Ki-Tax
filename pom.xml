@@ -92,6 +92,13 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${version.hibernate}</version>
+                <!--Diese Exclusion wird gebraucht weil wir eine @OrderBy Annotaion verwenden die nur geparsed werden kann wenn antlr excluded wird-->
+                <exclusions>
+                    <exclusion>
+                       <groupId>antlr</groupId>
+                       <artifactId>antlr</artifactId>
+                    </exclusion>
+                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
