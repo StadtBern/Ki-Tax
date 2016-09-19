@@ -614,8 +614,10 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        this.gesuch.kindContainers.push(new TSKindContainer(undefined, new TSKind()));
+        var tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        this.gesuch.kindContainers.push(tsKindContainer);
         this.kindNumber = this.gesuch.kindContainers.length;
+        tsKindContainer.kindNummer = this.kindNumber;
     }
 
     /**
@@ -629,6 +631,7 @@ export default class GesuchModelManager {
             tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             this.getKindToWorkWith().betreuungen.push(tsBetreuung);
             this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+            tsBetreuung.betreuungNummer = this.betreuungNumber;
         }
     }
 

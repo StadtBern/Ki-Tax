@@ -45,9 +45,10 @@ public class BetreuungsgutscheinEvaluator {
 		if (gesuch.getFinanzDatenDTO() == null) {
 			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationRechner.calculateFinanzDaten()");
 		}
-
 		List<Rule> rulesToRun = findRulesToRunForPeriode(gesuch.getGesuchsperiode());
-		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+		List<KindContainer> kinder = new ArrayList<>(gesuch.getKindContainers());
+		Collections.sort(kinder);
+		for (KindContainer kindContainer : kinder) {
 			// Pro Kind werden (je nach Angebot) die Anspruchspensen aufsummiert. Wir müssen uns also nach jeder Betreuung
 			// den "Restanspruch" merken für die Berechnung der nächsten Betreuung,
 			// am Schluss kommt dann jeweils eine Reduktionsregel die den Anspruch auf den Restanspruch beschraenkt
@@ -58,7 +59,6 @@ public class BetreuungsgutscheinEvaluator {
 			Collections.sort(betreuungen);
 
 			for (Betreuung betreuung : betreuungen) {
-
 
 				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
