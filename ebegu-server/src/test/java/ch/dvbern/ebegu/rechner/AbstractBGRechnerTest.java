@@ -150,14 +150,14 @@ public class AbstractBGRechnerTest {
 					// Kein Anspruch mehr ab Februar
 					VerfuegungZeitabschnitt februar = verfuegung.getZeitabschnitte().get(6);
 					assertZeitabschnitt(februar, 0, 80, 0, 0, 0, 0);
-				} else {
+				} else {     //KITA Bruennen
 					Verfuegung verfuegung = betreuung.getVerfuegung();
 					System.out.println(verfuegung);
 					Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
 					Assert.assertEquals(MathUtil.GANZZAHL.from(MathUtil.DEFAULT.from(53872.35)), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
-					// Noch kein Anspruch bis januar
+					// Noch kein Anspruch im Januar 2017, Kind geht erst ab Feb 2017 in Kita, Anspruch muss ausserdem 0 sein im Januar weil das Kind in die andere Kita geht
 					VerfuegungZeitabschnitt januar = verfuegung.getZeitabschnitte().get(5);
-					assertZeitabschnitt(januar, 0, 80, 0, 0, 0, 0);
+					assertZeitabschnitt(januar, 0, 0, 0, 0, 0, 0);
 					// Erster Monat
 					VerfuegungZeitabschnitt februar = verfuegung.getZeitabschnitte().get(6);
 					assertZeitabschnitt(februar, 40, 80, 40, 913.50, 781.10, 132.40);
@@ -202,10 +202,10 @@ public class AbstractBGRechnerTest {
 				// TODO (team) Die TAGI-Berechnungen scheinen noch nicht zu stimmen
 				// Erster Monat
 				VerfuegungZeitabschnitt august = verfuegung.getZeitabschnitte().get(0);
-				assertZeitabschnitt(august, 60, 100, 60, 1000.45, 362.75, 637.70);
+				assertZeitabschnitt(august, 60, 60, 60, 1000.45, 362.75, 637.70);
 				// Letzter Monat
 				VerfuegungZeitabschnitt juli = verfuegung.getZeitabschnitte().get(11);
-				assertZeitabschnitt(juli, 60, 100, 60, 1000.45, 362.75, 637.70);
+				assertZeitabschnitt(juli, 60, 60, 60, 1000.45, 362.75, 637.70);
 			}
 		}
 	}
