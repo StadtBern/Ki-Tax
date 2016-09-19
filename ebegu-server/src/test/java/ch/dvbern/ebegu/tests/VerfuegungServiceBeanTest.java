@@ -92,9 +92,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next()));
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next()));
 		Assert.assertNotNull(berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung());
-		Verfuegung verfuegung = berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung();
 		checkTestfall01WaeltiDagmar(gesuch);
-
 	}
 
 	@Test

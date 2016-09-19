@@ -4,7 +4,6 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.types.DateRange;
-import ch.dvbern.ebegu.util.VerfuegungZeitabschnittComparator;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
@@ -187,13 +186,15 @@ public abstract class AbstractEbeguRule implements Rule {
 	/**
 	 * Erstellt aus der übergebenen Liste von VerfuegungsZeitabschnitten eine neue Liste, die keine Überschneidungen mehr
 	 * enthält. Überschneiden sich zwei Entitäten in der Ursprungsliste, so werden daraus drei Zeiträume erstellt:
+	 * <pre>
 	 * |------------------------|
 	 * 40
-	 * |-------------------------------------|
-	 * 60
+	 * 	           |-------------------------------------|
+	 * 			   60
 	 * ergibt:
 	 * |-----------|------------|------------------------|
 	 * 40          100                60
+	 * </pre>
 	 */
 	@Nonnull
 	protected List<VerfuegungZeitabschnitt> mergeZeitabschnitte(@Nonnull List<VerfuegungZeitabschnitt> entitiesToMerge) {

@@ -1,8 +1,11 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -20,7 +23,7 @@ public interface ApplicationPropertyService {
 	 * @return ApplicationProperty mit key und value
 	 */
 	@Nonnull
-	ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull String key, @Nonnull String value);
+	ApplicationProperty saveOrUpdateApplicationProperty(@Nonnull ApplicationPropertyKey key, @Nonnull String value);
 
 	/**
 
@@ -28,7 +31,15 @@ public interface ApplicationPropertyService {
 	 * @return Property mit demg egebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<ApplicationProperty> readApplicationProperty(@Nonnull String key);
+	Optional<ApplicationProperty> readApplicationProperty(@Nonnull ApplicationPropertyKey key);
+
+	/**
+	 * Versucht den uebergebenen String in einene  key umzuwandeln und gibt dann das ensprechende property zurueck.
+	 * Wenn der String keinem key enspricht exception
+	 * @param keyParam
+	 * @return
+	 */
+	Optional<ApplicationProperty> readApplicationProperty(String keyParam);
 
 	/**
 	 *
@@ -41,5 +52,36 @@ public interface ApplicationPropertyService {
 	 * removs an Application Property From the Databse
 	 * @param testKey
 	 */
-	void removeApplicationProperty(@Nonnull String testKey);
+	void removeApplicationProperty(@Nonnull ApplicationPropertyKey testKey);
+
+	/**
+	 * Sucht das Property mit dem uebergebenen Key und gibt dessen Wert als String zurueck.
+	 */
+	@Nullable
+	String findApplicationPropertyAsString(@Nonnull ApplicationPropertyKey name);
+
+	/**
+	 * Sucht das Property mit dem uebergebenen Key und gibt dessen Wert als BigDecimal zurueck.
+	 */
+	@Nullable
+	BigDecimal findApplicationPropertyAsBigDecimal(@Nonnull ApplicationPropertyKey name);
+
+	/**
+	 * Sucht das Property mit dem uebergebenen Key und gibt dessen Wert als Integer zurueck.
+	 */
+	@Nullable
+	Integer findApplicationPropertyAsInteger(@Nonnull ApplicationPropertyKey name);
+
+	/**
+	 * Sucht das Property mit dem uebergebenen Key und gibt dessen Wert als Boolean zurueck.
+	 */
+	@Nullable
+	Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name);
+
+	/**
+	 * Sucht das Property mit dem uebergebenen Key und gibt dessen Wert als Boolean zurueck.
+	 * Falls das Property nicht gefunden wird, wird defaultValue zurueckgegeben.
+	 */
+	@Nonnull
+	Boolean findApplicationPropertyAsBoolean(@Nonnull ApplicationPropertyKey name, boolean defaultValue);
 }

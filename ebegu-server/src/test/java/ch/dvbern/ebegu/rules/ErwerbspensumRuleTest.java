@@ -94,6 +94,23 @@ public class ErwerbspensumRuleTest {
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
+	@Test
+	public void testMehrAls100ProzentBeiBeidenGesuchstellern() {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Gesuch gesuch = betreuung.extractGesuch();
+
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
+
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 1"));
+		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 2"));
+	}
+
+
 	/**
 	 * das Pensum muss wie folgt abgerundet werden:
 	 * X0 - X4 = X0

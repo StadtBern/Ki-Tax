@@ -122,11 +122,8 @@ public class BetreuungsgutscheinConfigurator {
 		// - Kind wohnt im gleichen Haushalt: Muss zwingend nach Fachstelle durchgefuehrt werden
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
-
-		// Nach den "Calc"-Regeln muss der Restanspruch (fuer das naechste Angebot) berechnet werden
-		RestanspruchCalcRule restanspruchCalcRule = new RestanspruchCalcRule(defaultGueltigkeit);
-		rules.add(restanspruchCalcRule);
 	}
+
 
 
 	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {
@@ -161,6 +158,11 @@ public class BetreuungsgutscheinConfigurator {
 		// Abwesenheit
 		AbwesenheitCalcRule abwesenheitCalcRule = new AbwesenheitCalcRule(defaultGueltigkeit);
 		rules.add(abwesenheitCalcRule);
+
+		//RESTANSPRUCH REDUKTION limitiert Anspruch auf  minimum(anspruchRest, anspruchPensum)
+		RestanspruchLimitCalcRule restanspruchLimitCalcRule = new RestanspruchLimitCalcRule(defaultGueltigkeit);
+		rules.add(restanspruchLimitCalcRule);
+
 	}
 
 }

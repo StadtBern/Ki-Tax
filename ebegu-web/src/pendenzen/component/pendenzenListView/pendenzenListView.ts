@@ -13,11 +13,8 @@ import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
+import {TSAntragStatus, getTSAntragStatusPendenzValues} from '../../../models/enums/TSAntragStatus';
 import ITimeoutService = angular.ITimeoutService;
-import {
-    TSAntragStatus,
-    getTSAntragStatusPendenzValues
-} from '../../../models/enums/TSAntragStatus';
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 

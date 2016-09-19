@@ -24,6 +24,6 @@ public class AbwesenheitCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-
+		  //todo sobald mutation bereit bemerkung erstellen
 	}
 }

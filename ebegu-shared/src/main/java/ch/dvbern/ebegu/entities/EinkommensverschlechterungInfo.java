@@ -60,7 +60,7 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 
 	@Nullable
 	@Column(nullable = true)
-	private LocalDate stichtagFuerBasisJahrPlus1;
+	private LocalDate stichtagFuerBasisJahrPlus1; //Ereignisdatum
 
 	@Nullable
 	@Column(nullable = true)

@@ -18,6 +18,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.ApplicationProperty;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.services.ApplicationPropertyService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -57,34 +58,34 @@ public class ApplicationPropertyServiceTest extends AbstractEbeguTest {
 	@Test
 	public void saveOrUpdateApplicationPropertyTest() {
 		Assert.assertNotNull(applicationPropertyService);
-		applicationPropertyService.saveOrUpdateApplicationProperty("testKey", "testValue");
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "testValue");
 		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}
 
 	@Test
 	public void removeApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.removeApplicationProperty("testKey");
+		applicationPropertyService.removeApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED);
 		Assert.assertEquals(0, applicationPropertyService.getAllApplicationProperties().size());
 
 	}
 	@Test
 	public void updateApplicationPropertyTest() {
 		insertNewEntity();
-		applicationPropertyService.saveOrUpdateApplicationProperty("testKey","changed");
-		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		applicationPropertyService.saveOrUpdateApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED,"changed");
+		Assert.assertEquals("changed", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 
 	}
 
 	// Help Methods
 
 	private void insertNewEntity() {
-		persistence.persist(new ApplicationProperty("testKey", "testValue"));
+		persistence.persist(new ApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, "testValue"));
 		Assert.assertEquals(1, applicationPropertyService.getAllApplicationProperties().size());
-		Assert.assertNotNull(applicationPropertyService.readApplicationProperty("testKey"));
-		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty("testKey").get().getValue());
+		Assert.assertNotNull(applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED));
+		Assert.assertEquals("testValue", applicationPropertyService.readApplicationProperty(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED).get().getValue());
 	}
 
 }
