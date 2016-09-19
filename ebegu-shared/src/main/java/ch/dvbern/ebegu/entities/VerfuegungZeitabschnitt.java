@@ -197,7 +197,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	 * @return berechneter Wert. Zieht vom massgebenenEinkommenVorAbzug den Familiengroessen Abzug ab
 	 */
 	public BigDecimal getMassgebendesEinkommen() {
-		return MathUtil.EXACT.subtract(massgebendesEinkommenVorAbzugFamgr,
+		return MathUtil.GANZZAHL.subtract(massgebendesEinkommenVorAbzugFamgr,
 			this.abzugFamGroesse == null ? BigDecimal.ZERO : this.abzugFamGroesse);
 	}
 
