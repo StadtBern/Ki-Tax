@@ -128,9 +128,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (this.gesuchModelManager) {
-        return this.gesuchModelManager.saveGesuchStatus(status);
-    }
-    return undefined;
+            return this.gesuchModelManager.saveGesuchStatus(status);
+        }
+        return undefined;
     }
 
     /**
@@ -148,7 +148,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.getStepByName(TSWizardStepName.BETREUUNG).wizardStepStatus === TSWizardStepStatus.OK;
+            && this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
     }
 
 }

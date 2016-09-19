@@ -6,6 +6,7 @@ import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import IHttpBackendService = angular.IHttpBackendService;
 import TestDataUtil from '../../utils/TestDataUtil';
+import TSGesuch from '../../models/TSGesuch';
 
 describe('betreuungRS', function () {
 
@@ -35,13 +36,15 @@ describe('betreuungRS', function () {
 
     describe('findLastStatusChange', () => {
         it('should return the last status change for the given gesuch', () => {
-            let antragStatusHistory: TSAntragStatusHistory = new TSAntragStatusHistory('123456', undefined, DateUtil.today(), TSAntragStatus.VERFUEGEN);
+            let gesuch: TSGesuch = new TSGesuch();
+            gesuch.id = '123456';
+            let antragStatusHistory: TSAntragStatusHistory = new TSAntragStatusHistory(gesuch.id, undefined, DateUtil.today(), TSAntragStatus.VERFUEGEN);
             TestDataUtil.setAbstractFieldsUndefined(antragStatusHistory);
             let restAntStatusHistory: any = ebeguRestUtil.antragStatusHistoryToRestObject({}, antragStatusHistory);
-            $httpBackend.expectGET(antragStatusHistoryRS.serviceURL + '/123456').respond(restAntStatusHistory);
+            $httpBackend.expectGET(antragStatusHistoryRS.serviceURL + '/' + encodeURIComponent(gesuch.id)).respond(restAntStatusHistory);
 
             let lastStatusChange: TSAntragStatusHistory;
-            antragStatusHistoryRS.findLastStatusChange('123456').then((response) => {
+            antragStatusHistoryRS.findLastStatusChange(gesuch).then((response) => {
                 lastStatusChange = response;
             });
             $httpBackend.flush();
@@ -50,6 +53,16 @@ describe('betreuungRS', function () {
             expect(lastStatusChange.datum.isSame(antragStatusHistory.datum)).toBe(true);
             lastStatusChange.datum = antragStatusHistory.datum;
             expect(lastStatusChange).toEqual(antragStatusHistory);
+        });
+        it('should return undefined if the gesuch is undefined', () => {
+            antragStatusHistoryRS.findLastStatusChange(undefined);
+            expect(antragStatusHistoryRS.lastChange).toBeUndefined();
+        });
+        it('should return undefined if the gesuch id is undefined', () => {
+            let gesuch: TSGesuch = new TSGesuch();
+            gesuch.id = undefined;
+            antragStatusHistoryRS.findLastStatusChange(gesuch);
+            expect(antragStatusHistoryRS.lastChange).toBeUndefined();
         });
     });
 

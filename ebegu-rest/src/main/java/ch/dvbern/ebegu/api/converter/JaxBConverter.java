@@ -1627,7 +1627,7 @@ public class JaxBConverter {
 	public JaxAntragStatusHistory antragStatusHistoryToJAX(AntragStatusHistory antragStatusHistory) {
 		final JaxAntragStatusHistory jaxAntragStatusHistory = convertAbstractFieldsToJAX(antragStatusHistory, new JaxAntragStatusHistory());
 		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
-		jaxAntragStatusHistory.setStatus(antragStatusHistory.getStatus());
+		jaxAntragStatusHistory.setStatus(antragStatusConverter.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
 		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
 		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
 		return jaxAntragStatusHistory;

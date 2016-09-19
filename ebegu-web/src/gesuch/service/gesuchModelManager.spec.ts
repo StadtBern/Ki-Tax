@@ -18,6 +18,7 @@ import TSKind from '../../models/TSKind';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import VerfuegungRS from '../../core/service/verfuegungRS.rest';
+import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 
 describe('gesuchModelManager', function () {
 
@@ -32,6 +33,7 @@ describe('gesuchModelManager', function () {
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
     let verfuegungRS: VerfuegungRS;
+    let antragStatusHistoryRS: AntragStatusHistoryRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -47,6 +49,7 @@ describe('gesuchModelManager', function () {
         authServiceRS = $injector.get('AuthServiceRS');
         wizardStepManager = $injector.get('WizardStepManager');
         verfuegungRS = $injector.get('VerfuegungRS');
+        antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
     }));
 
     describe('Public API', function () {
@@ -240,6 +243,7 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false);
                 spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
+                spyOn(antragStatusHistoryRS, 'findLastStatusChange').and.returnValue($q.when({}));
 
                 gesuchModelManager.saveGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
 

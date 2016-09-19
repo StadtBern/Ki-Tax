@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
-import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,7 +28,7 @@ public class JaxAntragStatusHistory extends JaxAbstractDTO {
 	private LocalDateTime datum;
 
 	@NotNull
-	private AntragStatus status;
+	private AntragStatusDTO status;
 
 
 	public String getGesuchId() {
@@ -55,11 +55,11 @@ public class JaxAntragStatusHistory extends JaxAbstractDTO {
 		this.datum = datum;
 	}
 
-	public AntragStatus getStatus() {
+	public AntragStatusDTO getStatus() {
 		return status;
 	}
 
-	public void setStatus(AntragStatus status) {
+	public void setStatus(AntragStatusDTO status) {
 		this.status = status;
 	}
 }

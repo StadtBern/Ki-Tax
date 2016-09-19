@@ -4,13 +4,13 @@
     </gesuch-toolbar>
 
     <div class="col-md-3 sidenav">
-        <div class="row sidenav gesuch-status marginTop20">
+        <div class="row sidenav gesuch-status marginTop20" ng-cloak>
             <span class="status" ng-bind="vm.getGesuchStatus()"></span>
             <br>
             <span class="zuletzt" data-translate="ZULETZT_BEARBEITER" data-translate-value-username="{{vm.getUserFullname()}}"></span>
         </div>
 
-        <ul class="sidenav">
+        <ul class="sidenav marginTop20">
 
             <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
