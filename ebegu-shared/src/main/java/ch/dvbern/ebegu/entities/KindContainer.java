@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -19,7 +21,7 @@ import java.util.Set;
 @Table(
 	uniqueConstraints = @UniqueConstraint(columnNames = {"kindNummer", "gesuch_id"}, name = "UK_kindcontainer_gesuch_kind_nummer")
 )
-public class KindContainer extends AbstractEntity {
+public class KindContainer extends AbstractEntity implements Comparable<KindContainer>{
 
 	private static final long serialVersionUID = -6784985260190035840L;
 
@@ -54,6 +56,7 @@ public class KindContainer extends AbstractEntity {
 
 	@Nullable
 	@Valid
+	@SortNatural
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
 	private Set<Betreuung> betreuungen = new LinkedHashSet<>();
 
@@ -106,4 +109,11 @@ public class KindContainer extends AbstractEntity {
 		this.betreuungen = betreuungen;
 	}
 
+	@Override
+	public int compareTo(KindContainer other) {
+		CompareToBuilder compareToBuilder = new CompareToBuilder();
+		compareToBuilder.append(this.getKindNummer(), other.getKindNummer());
+		compareToBuilder.append(this.getId(), other.getId());
+		return compareToBuilder.toComparison();
+	}
 }
