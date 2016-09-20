@@ -8,13 +8,12 @@
                 <div class="row marginTop20">
                     <div class="col-md-12">
                         <span data-translate="AUFGRUND_FIN_SITUATION"
-                              data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
+                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahr()}}"></span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
-                               for="finSitEinkommen_ID"></label>
+                    <div class="col-md-8">
+                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM" for="finSitEinkommen_ID"></label>
                         <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
                                ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
                                class="form-control" ng-disabled="true">
@@ -25,12 +24,11 @@
                     <div class="row marginTop20">
                         <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
-                              data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung1()}}"></span>
+                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(1)}}"></span>
                         </div>
                     </div>
                     <div class="row">
-
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="einVersEinkommen1_ID"></label>
                             <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
@@ -44,12 +42,11 @@
                     <div class="row marginTop20">
                         <div class="col-md-12">
                         <span data-translate="AUFGRUND_EINKOMMENSVERSCHLECHTERUNG"
-                              data-translate-value-anfangsverschlechterung="{{vm.getAnfangsVerschlechterung2()}}"></span>
+                              data-translate-value-jahr="{{vm.gesuchModelManager.getBasisjahrPlus(2)}}"></span>
                         </div>
                     </div>
                     <div class="row">
-
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="einVersEinkommen2_ID"></label>
                             <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
