@@ -192,9 +192,9 @@ public class EbeguVorlageResource {
 		jaxEbeguVorlage.setGueltigAb(gesuchsperiode.get().getGueltigkeit().getGueltigAb());
 		jaxEbeguVorlage.setGueltigBis(gesuchsperiode.get().getGueltigkeit().getGueltigBis());
 		jaxEbeguVorlage.setVorlage(new JaxVorlage());
-		jaxEbeguVorlage.getVorlage().setFileName(fileInfo.getFilename());
-		jaxEbeguVorlage.getVorlage().setFilePfad(fileInfo.getPath());
-		jaxEbeguVorlage.getVorlage().setFileSize(fileInfo.getSizeString());
+		jaxEbeguVorlage.getVorlage().setFilename(fileInfo.getFilename());
+		jaxEbeguVorlage.getVorlage().setFilepfad(fileInfo.getPath());
+		jaxEbeguVorlage.getVorlage().setFilesize(fileInfo.getSizeString());
 
 
 		final Optional<EbeguVorlage> ebeguVorlageOptional = ebeguVorlageService.getEbeguVorlageByDatesAndKey(jaxEbeguVorlage.getGueltigAb(),

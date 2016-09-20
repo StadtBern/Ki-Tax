@@ -19,9 +19,9 @@ public class Vorlage extends File {
 	@Override
 	public String toString() {
 		return "Vorlage{" +
-			"dokumentName='" + getFileName() + '\'' +
-			", dokumentPfad='" + getFilePfad() + '\'' +
-			", dokumentSize='" + getFileSize() + '\'' +
+			"dokumentName='" + getFilename() + '\'' +
+			", dokumentPfad='" + getFilepfad() + '\'' +
+			", dokumentSize='" + getFilesize() + '\'' +
 			'}';
 	}
 }

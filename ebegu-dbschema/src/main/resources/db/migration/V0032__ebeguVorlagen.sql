@@ -34,9 +34,9 @@ CREATE TABLE vorlage (
 	user_erstellt VARCHAR(36) NOT NULL,
 	user_mutiert VARCHAR(36) NOT NULL,
 	version BIGINT NOT NULL,
-	file_name VARCHAR(255) NOT NULL,
-	file_pfad VARCHAR(255) NOT NULL,
-	file_size VARCHAR(255) NOT NULL,
+	filename VARCHAR(255) NOT NULL,
+	filepfad VARCHAR(255) NOT NULL,
+	filesize VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id)
 	);
 
@@ -48,9 +48,9 @@ CREATE TABLE vorlage_aud (
 	timestamp_mutiert DATETIME,
 	user_erstellt VARCHAR(36),
 	user_mutiert VARCHAR(36),
-	file_name VARCHAR(255),
-	file_pfad VARCHAR(255),
-	file_size VARCHAR(255),
+	filename VARCHAR(255),
+	filepfad VARCHAR(255),
+	filesize VARCHAR(255),
 	PRIMARY KEY (id,rev)
 	);
 
@@ -62,13 +62,13 @@ ALTER TABLE ebegu_vorlage ADD CONSTRAINT FK_ebeguvorlage_vorlage_id FOREIGN KEY 
 
 ALTER TABLE vorlage_aud ADD CONSTRAINT FK_vorlage_aud_revinfo FOREIGN KEY (rev) REFERENCES revinfo (rev);
 
-ALTER TABLE dokument CHANGE dokument_name file_name varchar(255) not null;
-ALTER TABLE dokument CHANGE dokument_pfad file_pfad varchar(255) not null;
-ALTER TABLE dokument CHANGE dokument_size file_size varchar(255) not null;
+ALTER TABLE dokument CHANGE dokument_name filename varchar(255) not null;
+ALTER TABLE dokument CHANGE dokument_pfad filepfad varchar(255) not null;
+ALTER TABLE dokument CHANGE dokument_size filesize varchar(255) not null;
 
-ALTER TABLE dokument_aud CHANGE dokument_name file_name varchar(255);
-ALTER TABLE dokument_aud CHANGE dokument_pfad file_pfad varchar(255);
-ALTER TABLE dokument_aud CHANGE dokument_size file_size varchar(255);
+ALTER TABLE dokument_aud CHANGE dokument_name filename varchar(255);
+ALTER TABLE dokument_aud CHANGE dokument_pfad filepfad varchar(255);
+ALTER TABLE dokument_aud CHANGE dokument_size filesize varchar(255);
 
 DROP TABLE temp_dokument;
 
@@ -80,9 +80,9 @@ CREATE TABLE download_file
      user_erstellt      VARCHAR(36) NOT NULL,
      user_mutiert       VARCHAR(36) NOT NULL,
      version            BIGINT NOT NULL,
-     file_name          VARCHAR(255) NOT NULL,
-     file_pfad          VARCHAR(255) NOT NULL,
-     file_size          VARCHAR(255) NOT NULL,
+     filename          VARCHAR(255) NOT NULL,
+     filepfad          VARCHAR(255) NOT NULL,
+     filesize          VARCHAR(255) NOT NULL,
      access_token       VARCHAR(36) NOT NULL,
      ip                 VARCHAR(45) NOT NULL,
      PRIMARY KEY (id)

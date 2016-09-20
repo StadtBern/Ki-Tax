@@ -50,11 +50,6 @@ public class DownloadResource {
 	@Inject
 	private VorlageService vorlageService;
 
-	@Inject
-	private EbeguVorlageService ebeguVorlageService;
-
-
-
 	@GET
 	@Path("blobdata/{accessToken}/{filename}")
 	//mimetyp wird in buildDownloadResponse erraten

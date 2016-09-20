@@ -77,7 +77,7 @@ export class KommentarViewController {
     hasPapiergesuch(): boolean {
         if (this.dokumentePapiergesuch) {
             if (this.dokumentePapiergesuch.dokumente && this.dokumentePapiergesuch.dokumente.length !== 0) {
-                if (this.dokumentePapiergesuch.dokumente[0].fileName) {
+                if (this.dokumentePapiergesuch.dokumente[0].filename) {
                     return true;
                 }
             }
@@ -93,7 +93,7 @@ export class KommentarViewController {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
                 this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
                     let tempDokument: TSTempDokument = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.fileName, false);
+                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false);
                 });
             }
         });

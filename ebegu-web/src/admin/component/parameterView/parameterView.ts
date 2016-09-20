@@ -186,7 +186,7 @@ export class ParameterViewController {
     }
 
     remove(ebeguVorlage: TSEbeguVorlage) {
-        console.log('component -> remove dokument ' + ebeguVorlage.vorlage.fileName);
+        console.log('component -> remove dokument ' + ebeguVorlage.vorlage.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN'
@@ -208,13 +208,13 @@ export class ParameterViewController {
     }
 
     download(ebeguVorlage: TSEbeguVorlage, attachment: boolean) {
-        console.log('download vorlage ' + ebeguVorlage.vorlage.fileName);
+        console.log('download vorlage ' + ebeguVorlage.vorlage.filename);
 
         this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((response) => {
             let tempDokument: TSTempDokument = angular.copy(response);
             console.log('accessToken: ' + tempDokument.accessToken);
 
-            this.downloadRS.startDownload(tempDokument.accessToken, ebeguVorlage.vorlage.fileName, attachment);
+            this.downloadRS.startDownload(tempDokument.accessToken, ebeguVorlage.vorlage.filename, attachment);
         });
     }
 

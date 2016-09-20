@@ -10,34 +10,34 @@ public class JaxFile extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = 1118235796540488553L;
 
-	private String fileName;
+	private String filename;
 
-	private String filePfad;
+	private String filepfad;
 
-	private String fileSize;
+	private String filesize;
 
-	public String getFileName() {
-		return fileName;
+	public String getFilename() {
+		return filename;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 
-	public String getFilePfad() {
-		return filePfad;
+	public String getFilepfad() {
+		return filepfad;
 	}
 
-	public void setFilePfad(String filePfad) {
-		this.filePfad = filePfad;
+	public void setFilepfad(String filepfad) {
+		this.filepfad = filepfad;
 	}
 
-	public String getFileSize() {
-		return fileSize;
+	public String getFilesize() {
+		return filesize;
 	}
 
-	public void setFileSize(String fileSize) {
-		this.fileSize = fileSize;
+	public void setFilesize(String filesize) {
+		this.filesize = filesize;
 	}
 
 	@Override
@@ -54,22 +54,22 @@ public class JaxFile extends JaxAbstractDTO {
 
 		JaxFile that = (JaxFile) o;
 
-		if (fileName != null ? !fileName.equals(that.fileName) : that.fileName != null) {
+		if (filename != null ? !filename.equals(that.filename) : that.filename != null) {
 			return false;
 		}
-		if (filePfad != null ? !filePfad.equals(that.filePfad) : that.filePfad != null) {
+		if (filepfad != null ? !filepfad.equals(that.filepfad) : that.filepfad != null) {
 			return false;
 		}
-		return fileSize != null ? fileSize.equals(that.fileSize) : that.fileSize == null;
+		return filesize != null ? filesize.equals(that.filesize) : that.filesize == null;
 
 	}
 
 	@Override
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31 * result + (fileName != null ? fileName.hashCode() : 0);
-		result = 31 * result + (filePfad != null ? filePfad.hashCode() : 0);
-		result = 31 * result + (fileSize != null ? fileSize.hashCode() : 0);
+		result = 31 * result + (filename != null ? filename.hashCode() : 0);
+		result = 31 * result + (filepfad != null ? filepfad.hashCode() : 0);
+		result = 31 * result + (filesize != null ? filesize.hashCode() : 0);
 		return result;
 	}
 }

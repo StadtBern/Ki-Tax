@@ -133,7 +133,7 @@ public class DokumenteResource {
 		// Files where no in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {
-			fileSaverService.remove(dokument.getFilePfad());
+			fileSaverService.remove(dokument.getFilepfad());
 		}
 
 		DokumentGrund dokumentGrundToMerge = converter.dokumentGrundToEntity(dokumentGrundJAXP, dokumentGrundFromDB);

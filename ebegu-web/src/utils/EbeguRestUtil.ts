@@ -148,9 +148,9 @@ export default class EbeguRestUtil {
     public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
         if (receivedVorlage) {
             this.parseAbstractEntity(vorlageTS, receivedVorlage);
-            vorlageTS.fileName = receivedVorlage.fileName;
-            vorlageTS.filePfad = receivedVorlage.filePfad;
-            vorlageTS.fileSize = receivedVorlage.fileSize;
+            vorlageTS.filename = receivedVorlage.filename;
+            vorlageTS.filepfad = receivedVorlage.filepfad;
+            vorlageTS.filesize = receivedVorlage.filesize;
             return vorlageTS;
         }
         return undefined;
@@ -169,9 +169,9 @@ export default class EbeguRestUtil {
     public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
         if (vorlage) {
             this.abstractEntityToRestObject(restVorlage, vorlage);
-            restVorlage.fileName = vorlage.fileName;
-            restVorlage.filePfad = vorlage.filePfad;
-            restVorlage.fileSize = vorlage.fileSize;
+            restVorlage.filename = vorlage.filename;
+            restVorlage.filepfad = vorlage.filepfad;
+            restVorlage.filesize = vorlage.filesize;
             return restVorlage;
         }
         return undefined;
@@ -1273,9 +1273,9 @@ export default class EbeguRestUtil {
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
             this.parseAbstractEntity(dokument, dokumentFromServer);
-            dokument.fileName = dokumentFromServer.fileName;
-            dokument.filePfad = dokumentFromServer.filePfad;
-            dokument.fileSize = dokumentFromServer.fileSize;
+            dokument.filename = dokumentFromServer.filename;
+            dokument.filepfad = dokumentFromServer.filepfad;
+            dokument.filesize = dokumentFromServer.filesize;
             return dokument;
         }
         return undefined;
@@ -1309,9 +1309,9 @@ export default class EbeguRestUtil {
     private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
         if (dokumentTS) {
             this.abstractEntityToRestObject(dokument, dokumentTS);
-            dokument.fileName = dokumentTS.fileName;
-            dokument.filePfad = dokumentTS.filePfad;
-            dokument.fileSize = dokumentTS.fileSize;
+            dokument.filename = dokumentTS.filename;
+            dokument.filepfad = dokumentTS.filepfad;
+            dokument.filesize = dokumentTS.filesize;
             return dokument;
         }
         return undefined;

@@ -166,9 +166,9 @@
                                    aria-hidden="true" style="color: black"></a>
                             </td>
 
-                            <td ng-bind="row.vorlage.fileName" width="22%"></td>
+                            <td ng-bind="row.vorlage.filename" width="22%"></td>
                             <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'" width="10%"></td>
-                            <td ng-bind="row.vorlage.fileSize" width="10%"></td>
+                            <td ng-bind="row.vorlage.filesize" width="10%"></td>
                             <td width="2%">
                                 <a ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
                                    style="color: black" ng-if="vm.hasVorlage(row)"></a>

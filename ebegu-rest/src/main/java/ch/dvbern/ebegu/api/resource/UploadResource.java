@@ -204,13 +204,13 @@ public class UploadResource {
 
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
 
-			if (null == jaxDokument.getFileName() ||
-				jaxDokument.getFileName().isEmpty()) {
+			if (null == jaxDokument.getFilename() ||
+				jaxDokument.getFilename().isEmpty()) {
 
 				//set to existing
-				jaxDokument.setFileName(uploadFileInfo.getFilename());
-				jaxDokument.setFilePfad(uploadFileInfo.getPath());
-				jaxDokument.setFileSize(uploadFileInfo.getSizeString());
+				jaxDokument.setFilename(uploadFileInfo.getFilename());
+				jaxDokument.setFilepfad(uploadFileInfo.getPath());
+				jaxDokument.setFilesize(uploadFileInfo.getSizeString());
 				LOG.info("Replace placeholder on " + jaxDokumentGrund.getDokumentTyp() + " by file " + uploadFileInfo.getFilename());
 				return;
 			}
@@ -218,9 +218,9 @@ public class UploadResource {
 
 		//add new
 		JaxDokument dokument = new JaxDokument();
-		dokument.setFileName(uploadFileInfo.getFilename());
-		dokument.setFilePfad(uploadFileInfo.getPath());
-		dokument.setFileSize(uploadFileInfo.getSizeString());
+		dokument.setFilename(uploadFileInfo.getFilename());
+		dokument.setFilepfad(uploadFileInfo.getPath());
+		dokument.setFilesize(uploadFileInfo.getSizeString());
 		jaxDokumentGrund.getDokumente().add(dokument);
 		LOG.info("Add on " + jaxDokumentGrund.getDokumentTyp() + " file " + uploadFileInfo.getFilename());
 	}

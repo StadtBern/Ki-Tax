@@ -1,10 +1,12 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
+import ch.dvbern.ebegu.entities.EbeguVorlage;
+import ch.dvbern.ebegu.entities.EbeguVorlage_;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.Validate;
@@ -33,10 +35,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Inject
 	private Persistence<EbeguVorlage> persistence;
 
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
-
-
 	@Nonnull
 	@Override
 	public EbeguVorlage saveEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage) {
@@ -44,41 +42,9 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		return persistence.merge(ebeguVorlage);
 	}
 
-
-/*	@Override
-	@Nonnull
-	public Optional<EbeguVorlage> getEbeguVorlageByKeyAndDate(@Nonnull EbeguVorlageKey key, @Nonnull LocalDate date, final EntityManager em) {
-		final CriteriaBuilder cb = em.getCriteriaBuilder();
-		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
-		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
-		query.select(root);
-
-		ParameterExpression<LocalDate> dateParam = cb.parameter(LocalDate.class, "date");
-		Predicate intervalPredicate = cb.between(dateParam,
-			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
-			root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
-
-		ParameterExpression<EbeguVorlageKey> keyParam = cb.parameter(EbeguVorlageKey.class, "key");
-		Predicate keyPredicate = cb.equal(root.get(EbeguVorlage_.name), keyParam);
-
-		query.where(intervalPredicate, keyPredicate);
-		TypedQuery<EbeguVorlage> q = em.createQuery(query);
-		q.setParameter(dateParam, date);
-		q.setParameter(keyParam, key);
-		List<EbeguVorlage> resultList = q.getResultList();
-		EbeguVorlage paramOrNull = null;
-		if (!resultList.isEmpty() && resultList.size() == 1) {
-			paramOrNull = resultList.get(0);
-		} else if (resultList.size() > 1) {
-			throw new NonUniqueResultException();
-		}
-		return Optional.ofNullable(paramOrNull);
-	}*/
-
-
 	@Override
 	@Nonnull
-	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate,LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey) {
+	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey) {
 		final EntityManager em = persistence.getEntityManager();
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
@@ -138,12 +104,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Nullable
 	public EbeguVorlage updateEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage) {
 		Objects.requireNonNull(ebeguVorlage);
-
-//		//Wenn EbeguVorlage keine Dokumente mehr hat und nicht gebraucht wird, wird er entfernt
-//		if (!ebeguVorlage.isNeeded() && (ebeguVorlage.getDokumente() == null || ebeguVorlage.getDokumente().isEmpty())) {
-//			persistence.remove(ebeguVorlage);
-//			return null;
-//		}
 		return persistence.merge(ebeguVorlage);
 	}
 
@@ -159,10 +119,9 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Override
 	public Optional<EbeguVorlage> findById(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		EbeguVorlage a =  persistence.find(EbeguVorlage.class, id);
+		EbeguVorlage a = persistence.find(EbeguVorlage.class, id);
 		return Optional.ofNullable(a);
 	}
-
 
 
 }

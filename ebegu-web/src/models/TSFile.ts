@@ -2,34 +2,34 @@ import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSFile extends TSAbstractEntity {
 
-    private _fileName: string;
+    private _filename: string;
 
-    private _filePfad: string;
+    private _filepfad: string;
 
-    private _fileSize: string;
+    private _filesize: string;
 
-    get fileName(): string {
-        return this._fileName;
+    get filename(): string {
+        return this._filename;
     }
 
-    set fileName(value: string) {
-        this._fileName = value;
+    set filename(value: string) {
+        this._filename = value;
     }
 
-    get filePfad(): string {
-        return this._filePfad;
+    get filepfad(): string {
+        return this._filepfad;
     }
 
-    set filePfad(value: string) {
-        this._filePfad = value;
+    set filepfad(value: string) {
+        this._filepfad = value;
     }
 
-    get fileSize(): string {
-        return this._fileSize;
+    get filesize(): string {
+        return this._filesize;
     }
 
-    set fileSize(value: string) {
-        this._fileSize = value;
+    set filesize(value: string) {
+        this._filesize = value;
     }
 }
 

@@ -63,7 +63,7 @@ public final class RestUtil {
 
 	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {
 
-		Path filePath = Paths.get(file.getFilePfad());
+		Path filePath = Paths.get(file.getFilepfad());
 		//if no guess can be made assume application/octet-stream
 		String contentType = Files.probeContentType(filePath);
 		if (contentType == null) {
@@ -71,7 +71,7 @@ public final class RestUtil {
 		}
 		final byte[] bytes = Files.readAllBytes(filePath);
 
-		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + file.getFileName() + '"';
+		String disposition = (attachment ? "attachment; " : "inline;") + "filename=\"" + file.getFilename() + '"';
 
 		return Response.ok(bytes)
 			.header("Content-Disposition", disposition)

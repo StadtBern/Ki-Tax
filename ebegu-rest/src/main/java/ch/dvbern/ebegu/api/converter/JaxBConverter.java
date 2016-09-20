@@ -1649,9 +1649,9 @@ public class JaxBConverter {
 	}
 
 	private JaxFile convertFileToJax(File file, JaxFile jaxFile) {
-		jaxFile.setFileName(file.getFileName());
-		jaxFile.setFilePfad(file.getFilePfad());
-		jaxFile.setFileSize(file.getFileSize());
+		jaxFile.setFilename(file.getFilename());
+		jaxFile.setFilepfad(file.getFilepfad());
+		jaxFile.setFilesize(file.getFilesize());
 		return jaxFile;
 	}
 
@@ -1683,9 +1683,9 @@ public class JaxBConverter {
 	private File convertFileToEnity(JaxFile jaxFile, File file) {
 		Validate.notNull(file);
 		Validate.notNull(jaxFile);
-		file.setFileName(jaxFile.getFileName());
-		file.setFilePfad(jaxFile.getFilePfad());
-		file.setFileSize(jaxFile.getFileSize());
+		file.setFilename(jaxFile.getFilename());
+		file.setFilepfad(jaxFile.getFilepfad());
+		file.setFilesize(jaxFile.getFilesize());
 		return file;
 	}
 
