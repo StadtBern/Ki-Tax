@@ -70,7 +70,7 @@ export class DVDokumenteListController {
                 });
             });
         } else {
-            console.log('No gesuch found to store file ');
+            console.log('No gesuch found to store file or gesuch is status verfuegt');
         }
     }
 

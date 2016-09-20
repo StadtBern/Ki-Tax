@@ -466,7 +466,7 @@ export default class GesuchModelManager {
      * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
      */
     private backupCurrentGesuch() {
-        this.gesuchSnapshot =  angular.copy(this.gesuch);
+        this.gesuchSnapshot = angular.copy(this.gesuch);
     }
 
     public restoreBackupOfPreviousGesuch() {
@@ -636,8 +636,8 @@ export default class GesuchModelManager {
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
-       return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
-           .then((betreuungResponse: any) => {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+            .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);

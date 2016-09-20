@@ -61,7 +61,7 @@ describe('verfuegenListViewTest', function () {
             expect(kinderWithetreuungList[0]).toBe(tsKindContainer);
         });
         describe('openVerfuegen', function () {
-            it('does not find the Kind, so it stops loading and does not move to the next page', function() {
+            it('does not find the Kind, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(-1);
                 spyOn(gesuchModelManager, 'setKindNumber');
                 spyOn($state, 'go');
@@ -73,7 +73,7 @@ describe('verfuegenListViewTest', function () {
                 expect(gesuchModelManager.setKindNumber).not.toHaveBeenCalled();
                 expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView');
             });
-            it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function() {
+            it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
                 spyOn(gesuchModelManager, 'findBetreuung').and.returnValue(-1);
                 spyOn(gesuchModelManager, 'setKindNumber');
@@ -89,7 +89,7 @@ describe('verfuegenListViewTest', function () {
                 expect(gesuchModelManager.setBetreuungNumber).not.toHaveBeenCalled();
                 expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView');
             });
-            it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function() {
+            it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
                 spyOn(gesuchModelManager, 'findBetreuung').and.returnValue(2);
                 spyOn(gesuchModelManager, 'setKindNumber');

@@ -9,8 +9,8 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import IPromise = angular.IPromise;
 import {TSRole} from '../../../models/enums/TSRole';
+import IPromise = angular.IPromise;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 

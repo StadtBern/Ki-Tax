@@ -35,7 +35,9 @@ describe('dvNavigation', function () {
             return $q.when({});
         };
         isStatusVerfuegen = true;
-        spyOn(gesuchModelManager, 'isGesuchStatusVerfuegenVerfuegt').and.callFake(() => {return isStatusVerfuegen; });
+        spyOn(gesuchModelManager, 'isGesuchStatusVerfuegenVerfuegt').and.callFake(() => {
+            return isStatusVerfuegen;
+        });
     }));
 
     describe('getNextButtonName', function () {
@@ -202,7 +204,10 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             navController.dvSubStep = 3;
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {
+                gesuchstellerNumber: '1',
+                basisjahrPlus: '1'
+            });
         });
         it('moves to gesuch.verfuegen when coming from DOKUMENTE', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.DOKUMENTE);

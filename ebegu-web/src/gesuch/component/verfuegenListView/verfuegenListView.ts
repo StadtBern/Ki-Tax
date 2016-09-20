@@ -128,9 +128,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (this.gesuchModelManager) {
-        return this.gesuchModelManager.saveGesuchStatus(status);
-    }
-    return undefined;
+            return this.gesuchModelManager.saveGesuchStatus(status);
+        }
+        return undefined;
     }
 
     /**
