@@ -1,36 +1,6 @@
-import TSAbstractEntity from './TSAbstractEntity';
+import TSFile from './TSFile';
 
-export default class TSDokument extends TSAbstractEntity {
-
-    private _dokumentName: string;
-
-    private _dokumentPfad: string;
-
-    private _dokumentSize: string;
-
-    get dokumentName(): string {
-        return this._dokumentName;
-    }
-
-    set dokumentName(value: string) {
-        this._dokumentName = value;
-    }
-
-    get dokumentPfad(): string {
-        return this._dokumentPfad;
-    }
-
-    set dokumentPfad(value: string) {
-        this._dokumentPfad = value;
-    }
-
-    get dokumentSize(): string {
-        return this._dokumentSize;
-    }
-
-    set dokumentSize(value: string) {
-        this._dokumentSize = value;
-    }
+export default class TSDokument extends TSFile {
 }
 
 

@@ -110,4 +110,11 @@ export default class EbeguUtil {
         }
         return betreuungsId;
     }
+
+    public handleSmarttablesUpdateBug(aList: any[]) {
+        // Ugly Fix:
+        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
+        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
+        aList[0] = angular.copy(aList[0]);
+    }
 }

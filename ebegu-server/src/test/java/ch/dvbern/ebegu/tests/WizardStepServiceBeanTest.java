@@ -388,9 +388,9 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		dokGrund.setFullName("name");
 		persistence.persist(dokGrund);
 		Dokument dok1 = new Dokument();
-		dok1.setDokumentName("name");
-		dok1.setDokumentPfad("pfad");
-		dok1.setDokumentSize("23");
+		dok1.setFilename("name");
+		dok1.setFilepfad("pfad");
+		dok1.setFilesize("23");
 		dok1.setDokumentGrund(dokGrund);
 		persistence.persist(dok1);
 	}

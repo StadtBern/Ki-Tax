@@ -70,14 +70,14 @@
                         <thead>
                         <tr style="background-color: lightgray">
                             <!--without tag-->
-                            <th width="45%" st-sort="dokumentName" class="sortable" st-sort-default="true">
+                            <th width="45%" st-sort="filename" class="sortable" st-sort-default="true">
                                 <span data-translate="DATEINAME"></span>
                             </th>
 
                             <th width="20%" st-sort="timestampMutiert" class="sortable">
                                 <span data-translate="DATUM"></span>
                             </th>
-                            <th width="20%" st-sort="dokumentSize" class="sortable">
+                            <th width="20%" st-sort="filesize" class="sortable">
                                 <span data-translate="SIZE"></span>
                             </th>
 
@@ -88,15 +88,15 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="dokument in table2">
-                            <td ng-bind="dokument.dokumentName"></td>
+                            <td ng-bind="dokument.filename"></td>
                             <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td ng-bind="dokument.dokumentSize"></td>
+                            <td ng-bind="dokument.filesize"></td>
                             <td>
-                                <span ng-click="vm.download(dokument,true)" class="fa fa-download" aria-hidden="true"
+                                <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
                             <td>
-                                <span ng-click="vm.download(dokument,false)" class="fa fa-eye" aria-hidden="true"
+                                <span ng-click="vm.download(dokument, false)" class="fa fa-eye" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
                             <td>

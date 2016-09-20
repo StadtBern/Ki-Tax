@@ -72,14 +72,16 @@
 
             <div class="row">
                 <div class="col-md-2" ng-if="!vm.gesuchsperiode">
-                    <dv-loading-button type="button" ng-click="vm.createGesuchsperiode()" button-class="btn btn-sm btn-success">
+                    <dv-loading-button type="button" ng-click="vm.createGesuchsperiode()"
+                                       button-class="btn btn-sm btn-success">
                         <i class="glyphicon glyphicon-plus">
                         </i> add item
                     </dv-loading-button>
                 </div>
                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
                     <dv-loading-button type="button" ng-click="vm.saveGesuchsperiode()" button-class="btn btn-primary">
-                        <span ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
+                        <span
+                            ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
                     </dv-loading-button>
                 </div>
                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
@@ -132,6 +134,71 @@
                         </dv-loading-button>
                     </div>
                 </div>
+                <br/>
+
+
+                <div class="col-md-12">
+                    <h3 class="mainTitle">
+                        <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
+                        <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
+                        <!--</span>-->
+                        <span data-translate="VORLAGE_PRO_GESUCHSPERIODE"></span>
+                        <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
+                        <span>bis</span>
+                        <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
+                    </h3>
+                </div>
+
+                <!-- Vorlage-Liste -->
+                <div class="col-md-12">
+                    <table st-table="table" st-safe-src="vm.ebeguVorlageListGesuchsperiode"
+                           class="table table-striped" width="100%">
+
+                        <tbody>
+                        <tr ng-repeat="row in table">
+
+                            <td ng-click="$event.stopPropagation()" width="50%">
+                                <a ng-bind="row.name | translate" ngf-select="vm.uploadAnhaenge($files, row)"
+                                   ngf-multiple="false"
+                                   ngf-max-size="'10MB'" ngf-max-total-size="100MB"
+                                   ngf-drop="vm.uploadAnhaenge($files, row)"
+                                   ngf-drag-over-class="'dragover'"
+                                   aria-hidden="true" style="color: black"></a>
+                            </td>
+
+                            <td ng-bind="row.vorlage.filename" width="22%"></td>
+                            <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'" width="10%"></td>
+                            <td ng-bind="row.vorlage.filesize" width="10%"></td>
+                            <td width="2%">
+                                <span ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
+                                <span class="fa fa-download" aria-hidden="true" style="color: lightgray"
+                                      ng-if="!vm.hasVorlage(row)"></span>
+                            </td>
+                            <td width="2%">
+                                <span ng-click="vm.download(row,false)" class="fa fa-eye" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
+                                <span class="fa fa-eye" aria-hidden="true" style="color: lightgray"
+                                      ng-if="!vm.hasVorlage(row)"></span>
+                            </td>
+                            <td width="2%">
+                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
+                                <span class="fa fa-trash" aria-hidden="true" style="color: lightgray"
+                                      ng-if="!vm.hasVorlage(row)"></span>
+                            </td>
+
+                            <td width="2%">
+                                <i ng-if="!vm.hasVorlage(row)" class="fa fa-circle" aria-hidden="true"
+                                   style="color: red"></i>
+                                <i ng-if="vm.hasVorlage(row)" class="fa fa-check" aria-hidden="true"
+                                   style="color: green"></i>
+                            </td>
+                        </tbody>
+                    </table>
+                </div>
+
+
             </div>
 
             <!-- Parameter pro Jahr -->
@@ -169,8 +236,9 @@
                 <!-- Buttons Parameter pro Jahr -->
                 <div class="row col-md-12">
                     <div class="col-md-2" ng-if="vm.jahr">
-                        <dv-loading-button type="button" ng-click="vm.saveParameterByJahr()" button-class="btn btn-primary">
-                            <span  data-translate="SAVE"></span>
+                        <dv-loading-button type="button" ng-click="vm.saveParameterByJahr()"
+                                           button-class="btn btn-primary">
+                            <span data-translate="SAVE"></span>
                         </dv-loading-button>
                     </div>
                 </div>
