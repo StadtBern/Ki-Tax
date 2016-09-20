@@ -1620,16 +1620,6 @@ public class JaxBConverter {
 		return wizardStep;
 	}
 
-	public JaxEbeguVorlagen ebeguVorlagenToJAX(List<EbeguVorlage> ebeguVorlagen) {
-		JaxEbeguVorlagen jaxEbeguVorlagen = new JaxEbeguVorlagen();
-
-		for (EbeguVorlage vorlagen : ebeguVorlagen) {
-			jaxEbeguVorlagen.getEbeguVorlageList().add(ebeguVorlageToJax(vorlagen));
-		}
-
-		return jaxEbeguVorlagen;
-	}
-
 	public JaxEbeguVorlage ebeguVorlageToJax(EbeguVorlage ebeguVorlage) {
 		JaxEbeguVorlage jaxEbeguVorlage = new JaxEbeguVorlage();
 		convertAbstractDateRangedFieldsToJAX(ebeguVorlage, jaxEbeguVorlage);

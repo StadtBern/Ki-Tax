@@ -16,6 +16,6 @@ public interface VorlageService {
 	 * @return Vorlage mit dem gegebenen key oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Vorlage> find(@Nonnull String key);
+	Optional<Vorlage> findVorlage(@Nonnull String key);
 
 }

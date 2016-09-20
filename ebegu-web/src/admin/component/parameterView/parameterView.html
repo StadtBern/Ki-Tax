@@ -170,20 +170,20 @@
                             <td ng-bind="row.vorlage.timestampMutiert | amDateFormat : 'DD.MM.YYYY'" width="10%"></td>
                             <td ng-bind="row.vorlage.filesize" width="10%"></td>
                             <td width="2%">
-                                <a ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
-                                   style="color: black" ng-if="vm.hasVorlage(row)"></a>
+                                <span ng-click="vm.download(row,true)" class="fa fa-download" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
                                 <span class="fa fa-download" aria-hidden="true" style="color: lightgray"
                                       ng-if="!vm.hasVorlage(row)"></span>
                             </td>
                             <td width="2%">
-                                <a ng-click="vm.download(row,false)" class="fa fa-eye" aria-hidden="true"
-                                   style="color: black" ng-if="vm.hasVorlage(row)"></a>
+                                <span ng-click="vm.download(row,false)" class="fa fa-eye" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
                                 <span class="fa fa-eye" aria-hidden="true" style="color: lightgray"
                                       ng-if="!vm.hasVorlage(row)"></span>
                             </td>
                             <td width="2%">
-                                <a ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
-                                   style="color: black" ng-if="vm.hasVorlage(row)"></a>
+                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
+                                   style="color: black" ng-if="vm.hasVorlage(row)"></span>
                                 <span class="fa fa-trash" aria-hidden="true" style="color: lightgray"
                                       ng-if="!vm.hasVorlage(row)"></span>
                             </td>

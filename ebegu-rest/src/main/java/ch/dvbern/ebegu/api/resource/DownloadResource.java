@@ -113,7 +113,7 @@ public class DownloadResource {
 		Validate.notNull(jaxId.getId());
 		String id = converter.toEntityId(jaxId);
 
-		final File dokument = vorlageService.find(id)
+		final File dokument = vorlageService.findVorlage(id)
 			.orElseThrow(() -> new EbeguEntityNotFoundException("getDokumentAccessTokenVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
 
 

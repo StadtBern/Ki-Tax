@@ -154,8 +154,6 @@ export class ParameterViewController {
     }
 
     uploadAnhaenge(files: any[], selectEbeguVorlage: TSEbeguVorlage) {
-
-
         console.log('Uploading files ');
 
         this.ebeguVorlageRS.uploadVorlage(files[0], selectEbeguVorlage, this.gesuchsperiode.id).then((response) => {

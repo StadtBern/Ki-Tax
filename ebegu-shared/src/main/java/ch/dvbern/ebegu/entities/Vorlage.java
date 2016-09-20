@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import ch.dvbern.ebegu.types.DateRange;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;

@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.Vorlage;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -24,7 +23,7 @@ public class VorlageServiceBean extends AbstractBaseService implements VorlageSe
 
 	@Override
 	@Nonnull
-	public Optional<Vorlage> find(@Nonnull String key) {
+	public Optional<Vorlage> findVorlage(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Vorlage a = persistence.find(Vorlage.class, key);
 		return Optional.ofNullable(a);

@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.api.dtos;
 
-import ch.dvbern.ebegu.entities.Vorlage;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 
 import javax.validation.constraints.NotNull;
