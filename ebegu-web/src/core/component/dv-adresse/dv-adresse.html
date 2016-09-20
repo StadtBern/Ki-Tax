@@ -8,7 +8,8 @@
                 <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_ORGANISATION" for="{{vm.prefix}}-organisation">
                     </label>
-                    <input id="{{vm.prefix}}-organisation" type="text" name="organisation" ng-model="vm.adresse.organisation"
+                    <input id="{{vm.prefix}}-organisation" type="text" name="organisation"
+                           ng-model="vm.adresse.organisation"
                            dv-max-length class="form-control">
                     <dv-error-messages for="adresseForm.organisation.$error"
                                        class="error"></dv-error-messages>
@@ -32,9 +33,10 @@
                 <dv-input-container class="form-group secondColumn">
                     <label data-translate="ADRESSE_HAUSNUMMER" for="{{vm.prefix}}-hausnummer">
                     </label>
-                    <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer" ng-model="vm.adresse.hausnummer"
+                    <input id="{{vm.prefix}}-hausnummer" type="text" name="adresseHausnummer"
+                           ng-model="vm.adresse.hausnummer"
                            dv-max-length class="form-control">
-                    <dv-error-messages  for="adresseForm.adresseHausnummer.$error"
+                    <dv-error-messages for="adresseForm.adresseHausnummer.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -45,7 +47,8 @@
                 <dv-input-container class="form-group">
                     <label data-translate="ADRESSE_ZUSATZZEILE" for="{{vm.prefix}}-zusatzzeile">
                     </label>
-                    <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile" ng-model="vm.adresse.zusatzzeile"
+                    <input id="{{vm.prefix}}-zusatzzeile" type="text" name="adresseZusatzzeile"
+                           ng-model="vm.adresse.zusatzzeile"
                            dv-max-length class="form-control">
                     <dv-error-messages for="adresseForm.adresseZusatzzeile.$error"
                                        class="error"></dv-error-messages>
@@ -70,7 +73,7 @@
                     </label>
                     <input id="{{vm.prefix}}-ort" type="text" name="adresseOrt" ng-model="vm.adresse.ort"
                            dv-max-length class="form-control" required>
-                    <dv-error-messages  for="adresseForm.adresseOrt.$error"
+                    <dv-error-messages for="adresseForm.adresseOrt.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -94,11 +97,12 @@
                 <div class="form-group">
                     <label data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
-                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.adresse.land" class="form-control" required>
+                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.adresse.land" class="form-control"
+                            required>
                         <option ng-repeat="land in vm.laenderList | orderBy: 'name'" ng-value="land.code"
                                 ng-bind="land.name" ng-selected="land.code == vm.adresse.land"></option>
                     </select>
-                    <dv-error-messages  for="adresseForm.adresseLand.$error"
+                    <dv-error-messages for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>
                 </div>
             </div>
@@ -109,11 +113,15 @@
              dv-show-expression="vm.showNichtInGemeinde===true">
             <div class="col-md-6">
                 <div class="checkbox">
-                    <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde" aria-label="nichtInGemeinde"
-                                 dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()">
+                    <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde"
+                                 aria-label="nichtInGemeinde"
+                                 dv-enable-element
+                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
+                                 dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                         <span data-translate="NICHT_IN_BERN_WOHNHAFT"></span>
                     </md-checkbox>
-                    <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error" class="error"></dv-error-messages>
+                    <dv-error-messages for="adresseForm.adresseNichtInGemeinde.$error"
+                                       class="error"></dv-error-messages>
                 </div>
             </div>
         </div>
@@ -130,11 +138,11 @@
                                        ng-model="vm.adresse.gueltigkeit.gueltigAb" ng-required="true">
                         </dv-datepicker>
                         <!--<span class="input-group-btn">-->
-                          <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
-                              <!--<i class="fa fa-calendar"></i></button>-->
+                        <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
+                        <!--<i class="fa fa-calendar"></i></button>-->
                         <!--</span>-->
                     </p>
-                    <dv-error-messages  for="adresseForm.adresseGueltigAb.$error"
+                    <dv-error-messages for="adresseForm.adresseGueltigAb.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
@@ -149,7 +157,7 @@
                                    ng-model="vm.adresse.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
 
-                    <dv-error-messages  for="adresseForm.adresseGueltigBis.$error"
+                    <dv-error-messages for="adresseForm.adresseGueltigBis.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>

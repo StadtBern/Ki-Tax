@@ -466,7 +466,7 @@ export default class GesuchModelManager {
      * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
      */
     private backupCurrentGesuch() {
-        this.gesuchSnapshot =  angular.copy(this.gesuch);
+        this.gesuchSnapshot = angular.copy(this.gesuch);
     }
 
     public restoreBackupOfPreviousGesuch() {
@@ -636,8 +636,8 @@ export default class GesuchModelManager {
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
-       return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
-           .then((betreuungResponse: any) => {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+            .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
@@ -891,10 +891,10 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    public calculateVerfuegungen(): void {
-        this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
+    public calculateVerfuegungen(): IPromise<void> {
+        return this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
-                this.updateKinderListWithCalculatedVerfuegungen(response);
+                return this.updateKinderListWithCalculatedVerfuegungen(response);
             });
     }
 
@@ -903,7 +903,7 @@ export default class GesuchModelManager {
             for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
                 if (this.gesuch.kindContainers[i].id === kinderWithVerfuegungen[j].id) {
                     for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
-                        this.gesuch.kindContainers[i].betreuungen[k].verfuegung = kinderWithVerfuegungen[j].betreuungen[k].verfuegung;
+                        this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
                     }
                 }
             }
@@ -914,6 +914,7 @@ export default class GesuchModelManager {
         return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
         });
     }
@@ -979,5 +980,13 @@ export default class GesuchModelManager {
      */
     public isGesuchStatus(status: TSAntragStatus): boolean {
         return this.gesuch.status === status;
+    }
+
+    /**
+     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
+     * @returns {boolean}
+     */
+    public isGesuchStatusVerfuegenVerfuegt() {
+        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
     }
 }

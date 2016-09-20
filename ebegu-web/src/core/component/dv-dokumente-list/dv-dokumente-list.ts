@@ -56,7 +56,7 @@ export class DVDokumenteListController {
 
     uploadAnhaenge(files: any[], selectDokument: TSDokumentGrund) {
 
-        if (this.gesuchModelManager.getGesuch()) {
+        if (!this.isGesuchStatusVerfuegenVerfuegt() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
             console.log('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
@@ -70,7 +70,7 @@ export class DVDokumenteListController {
                 });
             });
         } else {
-            console.log('No gesuch found to store file ');
+            console.log('No gesuch found to store file or gesuch is status verfuegt');
         }
     }
 
@@ -124,6 +124,10 @@ export class DVDokumenteListController {
                 return '60%';
             }
         }
+    }
+
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
+        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
     }
 
 

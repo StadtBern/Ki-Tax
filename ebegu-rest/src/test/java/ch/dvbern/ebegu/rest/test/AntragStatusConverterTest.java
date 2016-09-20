@@ -23,7 +23,7 @@ public class AntragStatusConverterTest {
 
 	@Test
 	public void convertStatusToDTOGEPRUEFTTest() {
-		Gesuch gesuch = TestDataUtil.createTestgesuchDagmar(); // AUSSTEHEND
+		Gesuch gesuch = TestDataUtil.createTestgesuchDagmar(); // WARTEN
 		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN, antragStatusDTO);
 	}

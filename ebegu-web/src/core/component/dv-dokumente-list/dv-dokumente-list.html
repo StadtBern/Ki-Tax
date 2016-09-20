@@ -56,11 +56,13 @@
                     <i ng-if="!row.needed && vm.hasDokuments(row)" class="fa fa-check" aria-hidden="true"
                        style="color: orange"></i>
                 </td>
-                <td ng-click="$event.stopPropagation()">
+
+                <td ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()" ng-click="$event.stopPropagation()">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
                        ngf-max-size="'10MB'" ngf-max-total-size="100MB"
                        class="fa fa-file-text-o" aria-hidden="true" style="color: black"></a>
                 </td>
+                <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
             </tr>
             <tr id="rowexpand" colspan="100%" ng-repeat-end>
                 <td ng-if="vm.hasDokuments(row)" colspan="100%" style="padding: 0px">
@@ -98,7 +100,8 @@
                                       style="color: black"></span>
                             </td>
                             <td>
-                                <span ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
+                                <span ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                      ng-click="vm.remove(row, dokument)" class="fa fa-trash" aria-hidden="true"
                                       style="color: black"></span>
                             </td>
                         </tr>

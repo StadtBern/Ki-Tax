@@ -86,7 +86,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         }
     }
 
-    public getGesuchsperiodeBegin(): Moment {
+    public getGesuchsperiodeBegin(): moment.Moment {
         return this.gesuchModelManager.getGesuchsperiodeBegin();
     }
 

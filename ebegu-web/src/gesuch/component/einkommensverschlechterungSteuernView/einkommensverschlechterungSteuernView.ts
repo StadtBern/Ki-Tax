@@ -7,6 +7,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
 import TSGesuch from '../../../models/TSGesuch';
 import WizardStepManager from '../../service/wizardStepManager';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./einkommensverschlechterungSteuernView.html');
 require('./einkommensverschlechterungSteuernView.less');
 
@@ -20,12 +21,15 @@ export class EinkommensverschlechterungSteuernViewComponentConfig implements ICo
 
 export class EinkommensverschlechterungSteuernViewController extends AbstractGesuchViewController {
 
+    allowedRoles: Array<TSRole>;
+
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
     }
 

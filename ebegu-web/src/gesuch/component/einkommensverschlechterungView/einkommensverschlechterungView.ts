@@ -9,6 +9,7 @@ import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlech
 import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import {TSRole} from '../../../models/enums/TSRole';
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -25,9 +26,10 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     public showSelbstaendig: boolean;
     public geschaeftsgewinnBasisjahrMinus1: number;
     public geschaeftsgewinnBasisjahrMinus2: number;
+    allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-                                'WizardStepManager'];
+        'WizardStepManager'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
@@ -38,6 +40,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedGesuchstelllerNum);
         this.gesuchModelManager.setBasisJahrPlusNumber(parsedBasisJahrPlusNum);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
 
@@ -96,7 +99,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
-    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer>  {
+    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
             return this.gesuchModelManager.saveEinkommensverschlechterungContainer();

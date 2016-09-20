@@ -51,7 +51,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      * wir ueberlegen, ob wir es irgendwie anders berechnen koennen um den Server zu entlasten.
      */
     private initViewModel(): void {
-        this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
         this.wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.WARTEN);
 
@@ -72,7 +71,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             this.berechnungsManager.calculateEinkommensverschlechterung(this.gesuchModelManager.getGesuch(), 2); //.then(() => {});
         }
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
-        this.gesuchModelManager.calculateVerfuegungen();
+        this.gesuchModelManager.calculateVerfuegungen().then(() => {
+            this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
+        });
     }
 
     public getKinderWithBetreuungList(): Array<TSKindContainer> {
@@ -127,9 +128,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (this.gesuchModelManager) {
-        return this.gesuchModelManager.saveGesuchStatus(status);
-    }
-    return undefined;
+            return this.gesuchModelManager.saveGesuchStatus(status);
+        }
+        return undefined;
     }
 
     /**
