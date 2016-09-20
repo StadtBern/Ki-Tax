@@ -43,9 +43,11 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSTempDokument from '../models/TSTempDokument';
+import TSDownloadFile from '../models/TSDownloadFile';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
 import TSWizardStep from '../models/TSWizardStep';
+import TSEbeguVorlage from '../models/TSEbeguVorlage';
+import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 
 
@@ -115,6 +117,61 @@ export default class EbeguRestUtil {
             restEbeguParameter.name = ebeguParameter.name;
             restEbeguParameter.value = ebeguParameter.value;
             return restEbeguParameter;
+        }
+        return undefined;
+    }
+
+    public parseEbeguVorlages(data: any): TSEbeguVorlage[] {
+        var ebeguVorlages: TSEbeguVorlage[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                ebeguVorlages[i] = this.parseEbeguVorlage(new TSEbeguVorlage(), data[i]);
+            }
+        } else {
+            ebeguVorlages[0] = this.parseEbeguVorlage(new TSEbeguVorlage(), data);
+        }
+        return ebeguVorlages;
+    }
+
+    public parseEbeguVorlage(ebeguVorlageTS: TSEbeguVorlage, receivedEbeguVorlage: any): TSEbeguVorlage {
+        if (receivedEbeguVorlage) {
+            this.parseDateRangeEntity(ebeguVorlageTS, receivedEbeguVorlage);
+            ebeguVorlageTS.name = receivedEbeguVorlage.name;
+            ebeguVorlageTS.vorlage = this.parseVorlage(new TSVorlage, receivedEbeguVorlage.vorlage);
+            ebeguVorlageTS.proGesuchsperiode = receivedEbeguVorlage.proGesuchsperiode;
+            return ebeguVorlageTS;
+        }
+        return undefined;
+    }
+
+    public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
+        if (receivedVorlage) {
+            this.parseAbstractEntity(vorlageTS, receivedVorlage);
+            vorlageTS.filename = receivedVorlage.filename;
+            vorlageTS.filepfad = receivedVorlage.filepfad;
+            vorlageTS.filesize = receivedVorlage.filesize;
+            return vorlageTS;
+        }
+        return undefined;
+    }
+
+    public ebeguVorlageToRestObject(restEbeguVorlage: any, ebeguVorlage: TSEbeguVorlage): TSEbeguVorlage {
+        if (ebeguVorlage) {
+            this.abstractDateRangeEntityToRestObject(restEbeguVorlage, ebeguVorlage);
+            restEbeguVorlage.name = ebeguVorlage.name;
+            restEbeguVorlage.value = this.vorlageToRestObject({}, ebeguVorlage.vorlage);
+            return restEbeguVorlage;
+        }
+        return undefined;
+    }
+
+    public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
+        if (vorlage) {
+            this.abstractEntityToRestObject(restVorlage, vorlage);
+            restVorlage.filename = vorlage.filename;
+            restVorlage.filepfad = vorlage.filepfad;
+            restVorlage.filesize = vorlage.filesize;
+            return restVorlage;
         }
         return undefined;
     }
@@ -1213,9 +1270,9 @@ export default class EbeguRestUtil {
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
             this.parseAbstractEntity(dokument, dokumentFromServer);
-            dokument.dokumentName = dokumentFromServer.dokumentName;
-            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
-            dokument.dokumentSize = dokumentFromServer.dokumentSize;
+            dokument.filename = dokumentFromServer.filename;
+            dokument.filepfad = dokumentFromServer.filepfad;
+            dokument.filesize = dokumentFromServer.filesize;
             return dokument;
         }
         return undefined;
@@ -1249,9 +1306,9 @@ export default class EbeguRestUtil {
     private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
         if (dokumentTS) {
             this.abstractEntityToRestObject(dokument, dokumentTS);
-            dokument.dokumentName = dokumentTS.dokumentName;
-            dokument.dokumentPfad = dokumentTS.dokumentPfad;
-            dokument.dokumentSize = dokumentTS.dokumentSize;
+            dokument.filename = dokumentTS.filename;
+            dokument.filepfad = dokumentTS.filepfad;
+            dokument.filesize = dokumentTS.filesize;
             return dokument;
         }
         return undefined;
@@ -1345,7 +1402,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    parseTempDokument(tsTempDokument: TSTempDokument, tempDokumentFromServer: any) {
+    parseTempDokument(tsTempDokument: TSDownloadFile, tempDokumentFromServer: any) {
         if (tempDokumentFromServer) {
             this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
             tsTempDokument.accessToken = tempDokumentFromServer.accessToken;

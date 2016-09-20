@@ -87,7 +87,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		Collection<EbeguParameter> ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
 		List<EbeguParameter> collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		if (collect.isEmpty()) {
-			createEbeguParameterListForGesuchsperiode(gesuchsperiode);
+			copyEbeguParameterListToNewGesuchsperiode(gesuchsperiode);
 			ebeguParameters = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb());
 			collect = ebeguParameters.stream().filter(ebeguParameter -> ebeguParameter.getName().isProGesuchsperiode()).collect(Collectors.toCollection(ArrayList::new));
 		}
@@ -155,7 +155,7 @@ public class EbeguParameterServiceBean extends AbstractBaseService implements Eb
 		return Optional.ofNullable(paramOrNull);
 	}
 
-	private void createEbeguParameterListForGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+	private void copyEbeguParameterListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
 		// Die Parameter des letzten Jahres suchen (datumAb -1 Tag)
 		Collection<EbeguParameter> paramsOfGesuchsperiode = getAllEbeguParameterByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
 		paramsOfGesuchsperiode.stream().filter(lastYearParameter -> lastYearParameter.getName().isProGesuchsperiode()).forEach(lastYearParameter -> {

@@ -2,14 +2,15 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxTempDokument;
+import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Dokument;
-import ch.dvbern.ebegu.entities.TempDokument;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.entities.File;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.DokumentService;
-import ch.dvbern.ebegu.services.TempDokumentService;
+import ch.dvbern.ebegu.services.DownloadFileService;
+import ch.dvbern.ebegu.services.VorlageService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -36,7 +37,7 @@ public class DownloadResource {
 
 
 	@Inject
-	private TempDokumentService tempDokumentService;
+	private DownloadFileService downloadFileService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -44,6 +45,8 @@ public class DownloadResource {
 	@Inject
 	private DokumentService dokumentService;
 
+	@Inject
+	private VorlageService vorlageService;
 
 	@GET
 	@Path("blobdata/{accessToken}/{filename}")
@@ -57,18 +60,18 @@ public class DownloadResource {
 		String ip = getIP(request);
 
 
-		TempDokument tempDokument = tempDokumentService.getTempDownloadByAccessToken(blobAccessTokenParam);
+		DownloadFile downloadFile = downloadFileService.getDownloadFileByAccessToken(blobAccessTokenParam);
 
-		if (tempDokument == null) {
+		if (downloadFile == null) {
 			return Response.status(Response.Status.FORBIDDEN).entity("Ung&uuml;ltige Anfrage f&uuml;r download").build();
 		}
 
-		if (!tempDokument.getIp().equals(ip)) {
+		if (!downloadFile.getIp().equals(ip)) {
 			return Response.status(Response.Status.FORBIDDEN).entity("Keine Berechtigung f&uuml;r download").build();
 		}
 
 		try {
-			return RestUtil.buildDownloadResponse(tempDokument.getDokument(), attachment);
+			return RestUtil.buildDownloadResponse(downloadFile, attachment);
 		} catch (IOException e) {
 			return Response.status(Response.Status.NOT_FOUND).entity("Dokument kann nicht gelesen werden").build();
 		}
@@ -77,10 +80,10 @@ public class DownloadResource {
 
 	@Nonnull
 	@GET
-	@Path("/{dokumentId}/download")
+	@Path("/{dokumentId}/dokument")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
-	public Response getDokumentAccessToken(
+	public Response getDokumentAccessTokenDokument(
 		@Nonnull @Valid @PathParam("dokumentId") JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
 
@@ -89,20 +92,45 @@ public class DownloadResource {
 		Validate.notNull(jaxId.getId());
 		String id = converter.toEntityId(jaxId);
 
-		final Dokument dokument = dokumentService.findDokument(id)
-			.orElseThrow(() -> new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
+		final File dokument = dokumentService.findDokument(id)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("getDokumentAccessTokenDokument", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
 
 
-		final TempDokument tempDokument = tempDokumentService.create(dokument, ip);
+		return getFileDownloadResponse(uriInfo, ip, dokument);
+	}
+
+	@Nonnull
+	@GET
+	@Path("/{dokumentId}/vorlage")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getDokumentAccessTokenVorlage(
+		@Nonnull @Valid @PathParam("dokumentId") JaxId jaxId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException {
+
+		String ip = getIP(request);
+
+		Validate.notNull(jaxId.getId());
+		String id = converter.toEntityId(jaxId);
+
+		final File dokument = vorlageService.findVorlage(id)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("getDokumentAccessTokenVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
+
+
+		return getFileDownloadResponse(uriInfo, ip, dokument);
+	}
+
+	private Response getFileDownloadResponse(@Context UriInfo uriInfo, String ip, File file) {
+		final DownloadFile downloadFile = downloadFileService.create(file, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(DownloadResource.class)
-			.path("/" + tempDokument.getId())
+			.path("/" + downloadFile.getId())
 			.build();
 
-		JaxTempDokument jaxTempDokument = converter.tempDokumentToJAX(tempDokument);
+		JaxDownloadFile jaxDownloadFile = converter.downloadFileToJAX(downloadFile);
 
-		return Response.created(uri).entity(jaxTempDokument).build();
+		return Response.created(uri).entity(jaxDownloadFile).build();
 	}
 
 	private String getIP(HttpServletRequest request) {

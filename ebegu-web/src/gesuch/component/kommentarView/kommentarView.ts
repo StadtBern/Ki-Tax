@@ -7,7 +7,7 @@ import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import TSDokument from '../../../models/TSDokument';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
@@ -77,7 +77,7 @@ export class KommentarViewController {
     hasPapiergesuch(): boolean {
         if (this.dokumentePapiergesuch) {
             if (this.dokumentePapiergesuch.dokumente && this.dokumentePapiergesuch.dokumente.length !== 0) {
-                if (this.dokumentePapiergesuch.dokumente[0].dokumentName) {
+                if (this.dokumentePapiergesuch.dokumente[0].filename) {
                     return true;
                 }
             }
@@ -91,9 +91,9 @@ export class KommentarViewController {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
-                this.downloadRS.getAccessToken(newest.id).then((response) => {
-                    let tempDokument: TSTempDokument = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.dokumentName, false);
+                this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
+                    let tempDokument: TSDownloadFile = angular.copy(response);
+                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false);
                 });
             }
         });

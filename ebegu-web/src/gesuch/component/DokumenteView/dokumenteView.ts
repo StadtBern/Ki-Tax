@@ -37,11 +37,12 @@ export class DokumenteViewController extends AbstractGesuchViewController {
     dokumentePapiergesuch: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
-                                'DokumenteRS', '$log', 'WizardStepManager'];
+        'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager) {
+                private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
+                private ebeguUtil: EbeguUtil) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.DOKUMENTE);
@@ -86,7 +87,7 @@ export class DokumenteViewController extends AbstractGesuchViewController {
             this.$log.debug('add dokument to dokumentList');
             dokumente[index] = dokumentGrund;
         }
-        this.handleUpdateBug(dokumente);
+        this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
 
@@ -121,14 +122,8 @@ export class DokumenteViewController extends AbstractGesuchViewController {
             this.wizardStepManager.findStepsFromGesuch(this.gesuchModelManager.getGesuch().id);
         });
 
-        this.handleUpdateBug(dokumente);
+        this.ebeguUtil.handleSmarttablesUpdateBug(dokumente);
     }
 
-    private handleUpdateBug(dokumente: TSDokumentGrund[]) {
-        // Ugly Fix:
-        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
-        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
-        dokumente[0] = angular.copy(dokumente[0]);
-    }
 
 }

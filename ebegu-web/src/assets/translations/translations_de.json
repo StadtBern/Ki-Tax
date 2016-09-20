@@ -499,6 +499,7 @@
     "GESUCHSPERIODE_GUELTIG_BIS": "Ende",
     "GESUCHSPERIODE_AKTIV": "Aktiv",
     "PARAMETER_PRO_GESUCHSPERIODE": "E-BEGU Parameter für Gesuchsperiode",
+    "VORLAGE_PRO_GESUCHSPERIODE": "E-BEGU Vorlagen für Gesuchsperiode",
     "PARAMETER_PRO_JAHR": "Jahresabhängige E-BEGU Parameter",
     "PARAMETER_JAHR": "Jahr",
     "PARAM_FIXBETRAG_STADT_PRO_TAG_KITA": "Fixbeitrag der Stadt pro Tag",
@@ -668,5 +669,18 @@
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
     "BESCHREIBUNG_SAVE_VERFUEGUNG": "Die aktuellen Daten werden damit gespeichert und dürfen danach nicht mehr geändert werden",
-    "ZULETZT_BEARBEITER": "zuletzt {{username}}"
+    "ZULETZT_BEARBEITER": "zuletzt {{username}}",
+    "VORLAGE_MAHNUNG_1": "Vorlage erste Mahnung",
+    "VORLAGE_MAHNUNG_2": "Vorlage zweite Mahnung",
+    "VORLAGE_NICHT_EINTRETENSVERFUEGUNG": "Vorlage Nichteintretensverfügung",
+    "VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER": "Vorlage Verfügung Tageseltern Kleinkinder",
+    "VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER": "Vorlage Brief Tageseltern Schulkinder",
+    "VORLAGE_FREIGABEQUITTUNG_JUGENDAMT": "Vorlage Freigabequittung Jugendamt",
+    "VORLAGE_FREIGABEQUITTUNG_SCHULAMT": "Vorlage Freigabequittung Schulamt",
+    "VORLAGE_FINANZIELLE_SITUATION": "Vorlage finanzielle Situation ",
+    "VORLAGE_ZURUECKWEISUNG": "Vorlage Zurückweisung",
+    "VORLAGE_BEGLEITSCHREIBEN": "Vorlage Begleitbrief",
+    "VORLAGE_VERFUEGUNG_KITA": "Vorlage Verfügung Kita",
+    "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder"
+
 }

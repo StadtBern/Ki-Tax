@@ -2,9 +2,9 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
+import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.TempDokument;
-import ch.dvbern.ebegu.services.TempDokumentService;
+import ch.dvbern.ebegu.services.DownloadFileService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -25,13 +25,13 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-public class TempDokumentServiceTest extends AbstractEbeguTest {
+public class DownloadFileServiceTest extends AbstractEbeguTest {
 
 	@Inject
 	private Persistence<Gesuch> persistence;
 
 	@Inject
-	private TempDokumentService tempDokumentService;
+	private DownloadFileService downloadFileService;
 
 	@Deployment
 	public static Archive<?> createDeploymentEnvironment() {
@@ -51,13 +51,13 @@ public class TempDokumentServiceTest extends AbstractEbeguTest {
 
 		Assert.assertNotNull(dokument);
 
-		final TempDokument tempDokument = tempDokumentService.create(dokument, "1.2.3.4");
+		final DownloadFile downloadFile = downloadFileService.create(dokument, "1.2.3.4");
 
 		Assert.assertNotNull(dokument);
 
-		final TempDokument tempDownloadByAccessToken = tempDokumentService.getTempDownloadByAccessToken(tempDokument.getAccessToken());
+		final DownloadFile tempDownloadByAccessToken = downloadFileService.getDownloadFileByAccessToken(downloadFile.getAccessToken());
 
-		Assert.assertEquals(tempDokument, tempDownloadByAccessToken);
+		Assert.assertEquals(downloadFile, tempDownloadByAccessToken);
 
 	}
 
