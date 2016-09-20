@@ -1595,10 +1595,10 @@ public class JaxBConverter {
 	}
 
 
-	public JaxTempDokument tempDokumentToJAX(DownloadFile downloadFile) {
-		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(downloadFile, new JaxTempDokument());
-		jaxTempDokument.setAccessToken(downloadFile.getAccessToken());
-		return jaxTempDokument;
+	public JaxDownloadFile downloadFileToJAX(DownloadFile downloadFile) {
+		JaxDownloadFile jaxDownloadFile = convertAbstractFieldsToJAX(downloadFile, new JaxDownloadFile());
+		jaxDownloadFile.setAccessToken(downloadFile.getAccessToken());
+		return jaxDownloadFile;
 	}
 
 	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {

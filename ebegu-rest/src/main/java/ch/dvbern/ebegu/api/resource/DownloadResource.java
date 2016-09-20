@@ -2,16 +2,14 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
-import ch.dvbern.ebegu.api.dtos.JaxTempDokument;
+import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.File;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.DokumentService;
 import ch.dvbern.ebegu.services.DownloadFileService;
-import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.VorlageService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
@@ -130,9 +128,9 @@ public class DownloadResource {
 			.path("/" + downloadFile.getId())
 			.build();
 
-		JaxTempDokument jaxTempDokument = converter.tempDokumentToJAX(downloadFile);
+		JaxDownloadFile jaxDownloadFile = converter.downloadFileToJAX(downloadFile);
 
-		return Response.created(uri).entity(jaxTempDokument).build();
+		return Response.created(uri).entity(jaxDownloadFile).build();
 	}
 
 	private String getIP(HttpServletRequest request) {

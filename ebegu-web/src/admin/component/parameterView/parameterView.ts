@@ -13,7 +13,7 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
@@ -211,7 +211,7 @@ export class ParameterViewController {
         console.log('download vorlage ' + ebeguVorlage.vorlage.filename);
 
         this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((response) => {
-            let tempDokument: TSTempDokument = angular.copy(response);
+            let tempDokument: TSDownloadFile = angular.copy(response);
             console.log('accessToken: ' + tempDokument.accessToken);
 
             this.downloadRS.startDownload(tempDokument.accessToken, ebeguVorlage.vorlage.filename, attachment);

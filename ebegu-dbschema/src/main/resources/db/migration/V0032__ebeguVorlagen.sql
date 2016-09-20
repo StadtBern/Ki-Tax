@@ -72,8 +72,7 @@ ALTER TABLE dokument_aud CHANGE dokument_size filesize varchar(255);
 
 DROP TABLE temp_dokument;
 
-CREATE TABLE download_file
-  (
+CREATE TABLE download_file (
      id                 VARCHAR(36) NOT NULL,
      timestamp_erstellt DATETIME NOT NULL,
      timestamp_mutiert  DATETIME NOT NULL,

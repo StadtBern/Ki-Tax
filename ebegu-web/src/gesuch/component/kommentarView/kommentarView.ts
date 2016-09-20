@@ -7,7 +7,7 @@ import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import TSDokument from '../../../models/TSDokument';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
@@ -92,7 +92,7 @@ export class KommentarViewController {
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
                 this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
-                    let tempDokument: TSTempDokument = angular.copy(response);
+                    let tempDokument: TSDownloadFile = angular.copy(response);
                     this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false);
                 });
             }

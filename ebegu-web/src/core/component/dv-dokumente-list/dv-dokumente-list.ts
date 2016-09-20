@@ -5,7 +5,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import {DownloadRS} from '../../service/downloadRS.rest';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
@@ -105,7 +105,7 @@ export class DVDokumenteListController {
         console.log('download dokument ' + dokument.filename);
 
         this.downloadRS.getAccessTokenDokument(dokument.id).then((response) => {
-            let tempDokument: TSTempDokument = angular.copy(response);
+            let tempDokument: TSDownloadFile = angular.copy(response);
             console.log('accessToken: ' + tempDokument.accessToken);
 
             this.downloadRS.startDownload(tempDokument.accessToken, dokument.filename, attachment);

@@ -43,7 +43,7 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSTempDokument from '../models/TSTempDokument';
+import TSDownloadFile from '../models/TSDownloadFile';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
 import TSWizardStep from '../models/TSWizardStep';
 import TSEbeguVorlage from '../models/TSEbeguVorlage';
@@ -1405,7 +1405,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    parseTempDokument(tsTempDokument: TSTempDokument, tempDokumentFromServer: any) {
+    parseTempDokument(tsTempDokument: TSDownloadFile, tempDokumentFromServer: any) {
         if (tempDokumentFromServer) {
             this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
             tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
