@@ -11,8 +11,10 @@ import TSKindContainer from '../../../models/TSKindContainer';
 import {TSKinderabzug, getTSKinderabzugValues} from '../../../models/enums/TSKinderabzug';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
-import IPromise = angular.IPromise;
 import {TSRole} from '../../../models/enums/TSRole';
+import IPromise = angular.IPromise;
+
+
 let template = require('./kindView.html');
 require('./kindView.less');
 
@@ -31,7 +33,7 @@ export class KindViewController extends AbstractGesuchViewController {
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', '$scope',
-                                'ErrorService', 'WizardStepManager'];
+        'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IKindStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private $scope: any, private errorService: ErrorService,

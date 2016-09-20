@@ -58,7 +58,7 @@ export class NavigatorController {
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', 'AuthServiceRS', '$translate', 'ErrorService'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
-        private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
+                private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
     }
 
     public doesCancelExist(): boolean {
@@ -243,7 +243,7 @@ export class NavigatorController {
             this.state.go('gesuch.kinder');
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION )
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.moveBackToGesuchsteller();
             } else {

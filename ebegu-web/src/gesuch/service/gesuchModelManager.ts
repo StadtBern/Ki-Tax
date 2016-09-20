@@ -471,7 +471,7 @@ export default class GesuchModelManager {
      * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
      */
     private backupCurrentGesuch() {
-        this.gesuchSnapshot =  angular.copy(this.gesuch);
+        this.gesuchSnapshot = angular.copy(this.gesuch);
     }
 
     public restoreBackupOfPreviousGesuch() {

@@ -13,7 +13,7 @@ export class AdresseComponentConfig implements IComponentOptions {
         adresse: '<',
         prefix: '@',
         organisation: '<',
-        showNichtInGemeinde : '<'
+        showNichtInGemeinde: '<'
     };
     template = require('./dv-adresse.html');
     controller = DvAdresseController;
@@ -22,7 +22,7 @@ export class AdresseComponentConfig implements IComponentOptions {
 }
 
 
-export  class DvAdresseController {
+export class DvAdresseController {
     static $inject = ['AdresseRS', 'ListResourceRS', 'GesuchModelManager'];
 
     adresse: TSAdresse;
@@ -33,7 +33,7 @@ export  class DvAdresseController {
     laenderList: TSLand[];
     organisation: boolean;
     TSRoleUtil = TSRoleUtil;
-    showNichtInGemeinde : boolean;
+    showNichtInGemeinde: boolean;
     gesuchModelManager: GesuchModelManager;
 
     /* @ngInject */
