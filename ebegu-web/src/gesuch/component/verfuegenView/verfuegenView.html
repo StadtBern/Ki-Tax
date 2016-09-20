@@ -7,12 +7,14 @@
             <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                 <div class="row marginTop20">
                     <div class="col-md-12">
-                        <span data-translate="AUFGRUND_FIN_SITUATION" data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
+                        <span data-translate="AUFGRUND_FIN_SITUATION"
+                              data-translate-value-anfangsperiode="{{vm.getAnfangsPeriode()}}"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM" for="finSitEinkommen_ID"></label>
+                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                               for="finSitEinkommen_ID"></label>
                         <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
                                ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
                                class="form-control" ng-disabled="true">
@@ -29,7 +31,8 @@
                     <div class="row">
 
                         <div class="col-md-6">
-                            <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM" for="einVersEinkommen1_ID"></label>
+                            <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                   for="einVersEinkommen1_ID"></label>
                             <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
                                    ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkVorAbzFamGr"
                                    class="form-control" ng-disabled="true">
@@ -47,7 +50,8 @@
                     <div class="row">
 
                         <div class="col-md-6">
-                            <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM" for="einVersEinkommen2_ID"></label>
+                            <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                   for="einVersEinkommen2_ID"></label>
                             <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
                                    ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkVorAbzFamGr"
                                    class="form-control" ng-disabled="true">
@@ -92,29 +96,37 @@
                            class="table table-striped">
                         <thead>
                         <tr>
-                            <th class="text-right"  data-translate="VON" ></th>
-                            <th class="text-right"  data-translate="BIS" ></th>
-                            <th class="text-right"  data-translate="BETREUUNGSPENSUM"></th>
-                            <th class="text-right"  data-translate="ANSPRUCH"></th>
-                            <th class="text-right"  data-translate="VOLLKOSTEN"></th>
-                            <th class="text-right"  data-translate="ELTERNBEITRAG"></th>
-                            <th class="text-right"  data-translate="VERGUENSTIGUNG"></th>
+                            <th class="text-right" data-translate="VON"></th>
+                            <th class="text-right" data-translate="BIS"></th>
+                            <th class="text-right" data-translate="BETREUUNGSPENSUM"></th>
+                            <th class="text-right" data-translate="ANSPRUCH"></th>
+                            <th class="text-right" data-translate="VOLLKOSTEN"></th>
+                            <th class="text-right" data-translate="ELTERNBEITRAG"></th>
+                            <th class="text-right" data-translate="VERGUENSTIGUNG"></th>
                         </tr>
                         </thead>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length > 0">
                         <tr ng-repeat="verfuegungZeitabschnitt in displayedCollection">
-                            <td class="text-right" ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%</td>
-                            <td class="text-right" ><span ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%</td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
-                            <td class="text-right"  ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
-                            <td class="text-right"  ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
+                            <td class="text-right"
+                                ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td class="text-right"
+                                ng-bind="verfuegungZeitabschnitt.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td class="text-right"><span ng-bind="verfuegungZeitabschnitt.betreuungspensum"></span>%
+                            </td>
+                            <td class="text-right"><span
+                                ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%
+                            </td>
+                            <td class="text-right"
+                                ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
+                            <td class="text-right"
+                                ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
+                            <td class="text-right"
+                                ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
                         </tr>
                         </tbody>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
                         <tr>
-                            <td colspan="7" class="empty-table" >Zeitabschnitte noch nicht berechnet</td>
+                            <td colspan="7" class="empty-table">Zeitabschnitte noch nicht berechnet</td>
                         </tr>
                         </tbody>
                     </table>
@@ -127,7 +139,8 @@
                     <label class="inlineHint" for="manuelle_notes" data-translate="BEMERKUNGEN"></label>
                     <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
                               ng-model="vm.bemerkungen" ng-disabled="vm.isBemerkungenDisabled()"
-                              ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"></textarea>
+                              ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"
+                              maxlength="1000"></textarea>
                 </div>
             </div>
 

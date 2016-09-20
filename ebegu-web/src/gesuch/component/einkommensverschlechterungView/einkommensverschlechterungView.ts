@@ -29,7 +29,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-                                'WizardStepManager'];
+        'WizardStepManager'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
@@ -99,7 +99,7 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
         }
     }
 
-    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer>  {
+    private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer> {
         if (form.$valid) {
             this.errorService.clearAll();
             return this.gesuchModelManager.saveEinkommensverschlechterungContainer();
