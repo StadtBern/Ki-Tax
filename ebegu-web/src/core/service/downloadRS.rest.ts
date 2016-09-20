@@ -1,6 +1,6 @@
 import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSTempDokument from '../../models/TSTempDokument';
+import TSDownloadFile from '../../models/TSDownloadFile';
 
 
 export class DownloadRS {
@@ -18,12 +18,19 @@ export class DownloadRS {
         this.log = $log;
     }
 
-
-    public getAccessToken(dokumentID: string): IPromise<TSTempDokument> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/download')
+    public getAccessTokenDokument(dokumentID: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/dokument')
             .then((response: any) => {
                 this.log.debug('PARSING tempDokument REST object ', response.data);
-                return this.ebeguRestUtil.parseTempDokument(new TSTempDokument(), response.data);
+                return this.ebeguRestUtil.parseTempDokument(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getAccessTokenVorlage(vorlageID: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(vorlageID) + '/vorlage')
+            .then((response: any) => {
+                this.log.debug('PARSING tempDokument REST object ', response.data);
+                return this.ebeguRestUtil.parseTempDokument(new TSDownloadFile(), response.data);
             });
     }
 

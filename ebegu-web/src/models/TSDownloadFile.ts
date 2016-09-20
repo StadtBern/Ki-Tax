@@ -1,6 +1,6 @@
 import TSAbstractEntity from './TSAbstractEntity';
 
-export default class TSTempDokument extends TSAbstractEntity {
+export default class TSDownloadFile extends TSAbstractEntity {
 
     private _accessToken: string;
 

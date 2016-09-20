@@ -455,9 +455,9 @@ public final class TestDataUtil {
 		dokumentGrund.setDokumente(new HashSet<>());
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentName("testdokument");
-		dokument.setDokumentPfad("testpfad/");
-		dokument.setDokumentSize("123456");
+		dokument.setFilename("testdokument");
+		dokument.setFilepfad("testpfad/");
+		dokument.setFilesize("123456");
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}
