@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlage;
-import ch.dvbern.ebegu.api.dtos.JaxEbeguVorlagen;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxVorlage;
 import ch.dvbern.ebegu.api.util.RestUtil;
@@ -14,8 +13,6 @@ import ch.dvbern.ebegu.services.EbeguVorlageService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.annotations.Api;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
@@ -31,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.rowset.serial.SerialException;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -43,6 +41,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * REST Resource fuer Dokumente
@@ -53,8 +52,9 @@ import java.util.*;
 public class EbeguVorlageResource {
 
 	private static final String PART_FILE = "file";
-	private static final String PART_EBEGU_VORLAGE = "ebeguVorlage";
 	private static final String FILENAME_HEADER = "x-filename";
+	private static final String VORLAGE_KEY_HEADER = "x-vorlagekey";
+	private static final String GESUCHSPERIODE_HEADER = "x-gesuchsperiode";
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(EbeguVorlageResource.class);
@@ -78,7 +78,7 @@ public class EbeguVorlageResource {
 	@Path("/gesuchsperiode/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxEbeguVorlagen getEbeguVorlagenByGesuchsperiode(
+	public List<JaxEbeguVorlage> getEbeguVorlagenByGesuchsperiode(
 		@Nonnull @NotNull @PathParam("id") JaxId id) {
 
 		Validate.notNull(id.getId());
@@ -95,10 +95,13 @@ public class EbeguVorlageResource {
 			allEbeguVorlageList.addAll(emptyVorlagen);
 			Collections.sort(allEbeguVorlageList);
 
-			return converter.ebeguVorlagenToJAX(allEbeguVorlageList);
+			return allEbeguVorlageList.stream()
+				.map(ebeguVorlage -> converter.ebeguVorlageToJax(ebeguVorlage))
+				.collect(Collectors.toList());
+
 		}
 
-		return converter.ebeguVorlagenToJAX(Collections.emptyList());
+		return Collections.emptyList();
 	}
 
 	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {
@@ -135,24 +138,30 @@ public class EbeguVorlageResource {
 			return Response.serverError().entity(problemString).build();
 		}
 
-		// Convert JaxEbeguVorlage from inputStream
-		JaxEbeguVorlage jaxEbeguVorlage = null;
-		try (InputStream dokGrund = input.getFormDataPart(PART_EBEGU_VORLAGE, InputStream.class, null)) {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.registerModule(new JavaTimeModule());
-			jaxEbeguVorlage = mapper.readValue(IOUtils.toString(dokGrund, "UTF-8"), JaxEbeguVorlage.class);
-		} catch (IOException e) {
-			final String problemString = "Can't parse EbeguVorlage from Jax to object";
-			LOG.error(problemString, e);
-			return Response.serverError().entity(problemString).build();
-		}
-
-		if (jaxEbeguVorlage == null) {
-			final String problemString = "\"Can't parse DokumentGrund from Jax to object";
+		EbeguVorlageKey ebeguVorlageKey;
+		try {
+			ebeguVorlageKey = EbeguVorlageKey.valueOf(request.getHeader(VORLAGE_KEY_HEADER));
+		} catch (IllegalArgumentException e) {
+			final String problemString = "ebeguVorlageKey must be given";
 			LOG.error(problemString);
 			return Response.serverError().entity(problemString).build();
-
 		}
+
+		String gesuchsperiodeId = request.getHeader(GESUCHSPERIODE_HEADER);
+
+		// check if filename available
+		if (gesuchsperiodeId == null || gesuchsperiodeId.isEmpty()) {
+			final String problemString = "gesuchsperiodeId must be given";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
+		}
+		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
+		if (!gesuchsperiode.isPresent()) {
+			final String problemString = "gesuchsperiode not found on server";
+			LOG.error(problemString);
+			return Response.serverError().entity(problemString).build();
+		}
+
 
 		List<InputPart> inputParts = input.getFormDataMap().get(PART_FILE);
 		if (inputParts == null || !inputParts.stream().findAny().isPresent()) {
@@ -165,27 +174,33 @@ public class EbeguVorlageResource {
 		fileInfo.setFilename(filename);
 
 
+/*
 		try (InputStream file = input.getFormDataPart(filename, InputStream.class, null)) {
+			fileInfo.setBytes(IOUtils.toByteArray(file));
+		}
+*/
+
+		try (InputStream file = input.getFormDataPart(PART_FILE, InputStream.class, null)) {
 			fileInfo.setBytes(IOUtils.toByteArray(file));
 		}
 
 		// safe File to Filesystem
 		fileSaverService.save(fileInfo, "vorlagen");
 
-		if (jaxEbeguVorlage.getVorlage() == null) {
-			jaxEbeguVorlage.setVorlage(new JaxVorlage());
-		}
-		jaxEbeguVorlage.getVorlage().setDokumentName(fileInfo.getFilename());
-		jaxEbeguVorlage.getVorlage().setDokumentPfad(fileInfo.getPath());
-		jaxEbeguVorlage.getVorlage().setDokumentSize(fileInfo.getSizeString());
+		JaxEbeguVorlage jaxEbeguVorlage = new JaxEbeguVorlage();
+		jaxEbeguVorlage.setName(ebeguVorlageKey);
+		jaxEbeguVorlage.setGueltigAb(gesuchsperiode.get().getGueltigkeit().getGueltigAb());
+		jaxEbeguVorlage.setGueltigBis(gesuchsperiode.get().getGueltigkeit().getGueltigBis());
+		jaxEbeguVorlage.setVorlage(new JaxVorlage());
+		jaxEbeguVorlage.getVorlage().setFileName(fileInfo.getFilename());
+		jaxEbeguVorlage.getVorlage().setFilePfad(fileInfo.getPath());
+		jaxEbeguVorlage.getVorlage().setFileSize(fileInfo.getSizeString());
 
 
-		EbeguVorlage ebeguVorlageToMerge = new EbeguVorlage();
-		if (jaxEbeguVorlage.getId() != null) {
-			final Optional<EbeguVorlage> ebeguVorlageOptional = ebeguVorlageService.getEbeguVorlageByDatesAndKey(jaxEbeguVorlage.getGueltigAb(),
-				jaxEbeguVorlage.getGueltigBis(), jaxEbeguVorlage.getName());
-			ebeguVorlageToMerge = ebeguVorlageOptional.orElse(new EbeguVorlage());
-		}
+		final Optional<EbeguVorlage> ebeguVorlageOptional = ebeguVorlageService.getEbeguVorlageByDatesAndKey(jaxEbeguVorlage.getGueltigAb(),
+			jaxEbeguVorlage.getGueltigBis(), jaxEbeguVorlage.getName());
+		EbeguVorlage ebeguVorlageToMerge = ebeguVorlageOptional.orElse(new EbeguVorlage());
+
 
 		EbeguVorlage ebeguVorlageConverted = converter.ebeguVorlageToEntity(jaxEbeguVorlage, ebeguVorlageToMerge);
 
@@ -201,6 +216,19 @@ public class EbeguVorlageResource {
 			.build();
 
 		return Response.created(uri).entity(jaxEbeguVorlageToReturn).build();
+	}
+
+	@Nullable
+	@DELETE
+	@Path("/{ebeguVorlageId}")
+	@Consumes(MediaType.WILDCARD)
+	public Response removeInstitutionStammdaten(
+		@Nonnull @NotNull @PathParam("ebeguVorlageId") JaxId ebeguVorlageId,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(ebeguVorlageId.getId());
+		ebeguVorlageService.remove(converter.toEntityId(ebeguVorlageId));
+		return Response.ok().build();
 	}
 
 

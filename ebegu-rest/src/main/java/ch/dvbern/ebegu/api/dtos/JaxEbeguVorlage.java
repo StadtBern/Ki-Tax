@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * DTO fuer zeitabhängige E-BEGU-Parameter
  */
-@XmlRootElement(name = "ebeguvorlage")
+@XmlRootElement(name = "ebeguVorlage")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxEbeguVorlage extends JaxAbstractDateRangedDTO {
 

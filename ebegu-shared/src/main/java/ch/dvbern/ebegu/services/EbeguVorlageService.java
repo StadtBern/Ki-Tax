@@ -39,4 +39,8 @@ public interface EbeguVorlageService {
 	EbeguVorlage updateEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage);
 
 
+	void remove(@Nonnull String id);
+
+	Optional<EbeguVorlage> findById(@Nonnull final String id);
+
 }

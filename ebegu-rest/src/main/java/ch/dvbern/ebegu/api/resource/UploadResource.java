@@ -204,24 +204,24 @@ public class UploadResource {
 
 		for (JaxDokument jaxDokument : jaxDokumentGrund.getDokumente()) {
 
-			if (null == jaxDokument.getDokumentName() ||
-				jaxDokument.getDokumentName().isEmpty() ) {
+			if (null == jaxDokument.getFileName() ||
+				jaxDokument.getFileName().isEmpty()) {
 
 				//set to existing
-				jaxDokument.setDokumentName(uploadFileInfo.getFilename());
-				jaxDokument.setDokumentPfad(uploadFileInfo.getPath());
-				jaxDokument.setDokumentSize(uploadFileInfo.getSizeString());
-				LOG.info("Replace placeholder on "+jaxDokumentGrund.getDokumentTyp()+" by file "+ uploadFileInfo.getFilename());
+				jaxDokument.setFileName(uploadFileInfo.getFilename());
+				jaxDokument.setFilePfad(uploadFileInfo.getPath());
+				jaxDokument.setFileSize(uploadFileInfo.getSizeString());
+				LOG.info("Replace placeholder on " + jaxDokumentGrund.getDokumentTyp() + " by file " + uploadFileInfo.getFilename());
 				return;
 			}
 		}
 
 		//add new
 		JaxDokument dokument = new JaxDokument();
-		dokument.setDokumentName(uploadFileInfo.getFilename());
-		dokument.setDokumentPfad(uploadFileInfo.getPath());
-		dokument.setDokumentSize(uploadFileInfo.getSizeString());
+		dokument.setFileName(uploadFileInfo.getFilename());
+		dokument.setFilePfad(uploadFileInfo.getPath());
+		dokument.setFileSize(uploadFileInfo.getSizeString());
 		jaxDokumentGrund.getDokumente().add(dokument);
-		LOG.info("Add on "+jaxDokumentGrund.getDokumentTyp()+" file "+ uploadFileInfo.getFilename());
+		LOG.info("Add on " + jaxDokumentGrund.getDokumentTyp() + " file " + uploadFileInfo.getFilename());
 	}
 }

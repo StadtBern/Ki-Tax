@@ -8,9 +8,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(File.class)
 public abstract class File_ extends ch.dvbern.ebegu.entities.AbstractEntity_ {
 
-	public static volatile SingularAttribute<File, String> dokumentPfad;
-	public static volatile SingularAttribute<File, String> dokumentName;
-	public static volatile SingularAttribute<File, String> dokumentSize;
+	public static volatile SingularAttribute<File, String> fileName;
+	public static volatile SingularAttribute<File, String> filePfad;
+	public static volatile SingularAttribute<File, String> fileSize;
 
 }
 

@@ -18,9 +18,16 @@ export class DownloadRS {
         this.log = $log;
     }
 
+    public getAccessTokenDokument(dokumentID: string): IPromise<TSTempDokument> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/dokument')
+            .then((response: any) => {
+                this.log.debug('PARSING tempDokument REST object ', response.data);
+                return this.ebeguRestUtil.parseTempDokument(new TSTempDokument(), response.data);
+            });
+    }
 
-    public getAccessToken(dokumentID: string): IPromise<TSTempDokument> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/download')
+    public getAccessTokenVorlage(vorlageID: string): IPromise<TSTempDokument> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(vorlageID) + '/vorlage')
             .then((response: any) => {
                 this.log.debug('PARSING tempDokument REST object ', response.data);
                 return this.ebeguRestUtil.parseTempDokument(new TSTempDokument(), response.data);

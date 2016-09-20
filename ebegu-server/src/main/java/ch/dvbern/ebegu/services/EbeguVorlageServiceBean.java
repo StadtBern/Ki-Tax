@@ -2,9 +2,12 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -110,8 +113,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Override
 	@Nonnull
 	public List<EbeguVorlage> getALLEbeguVorlageByGesuchsperiode(Gesuchsperiode gesuchsperiode) {
-		final EntityManager em = persistence.getEntityManager();
-		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);
 		query.select(root);
@@ -123,7 +125,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		Predicate dateBisPredicate = cb.equal(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis), dateBisParam);
 
 		query.where(dateAbPredicate, dateBisPredicate);
-		TypedQuery<EbeguVorlage> q = em.createQuery(query);
+		TypedQuery<EbeguVorlage> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(dateAbParam, gesuchsperiode.getGueltigkeit().getGueltigAb());
 		q.setParameter(dateBisParam, gesuchsperiode.getGueltigkeit().getGueltigBis());
 
@@ -144,5 +146,23 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 //		}
 		return persistence.merge(ebeguVorlage);
 	}
+
+	@Override
+	public void remove(@Nonnull String id) {
+		Validate.notNull(id);
+		Optional<EbeguVorlage> ebeguVorlage = findById(id);
+		ebeguVorlage.orElseThrow(() -> new EbeguEntityNotFoundException("removeEbeguVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
+		persistence.remove(ebeguVorlage.get());
+	}
+
+	@Nonnull
+	@Override
+	public Optional<EbeguVorlage> findById(@Nonnull final String id) {
+		Objects.requireNonNull(id, "id muss gesetzt sein");
+		EbeguVorlage a =  persistence.find(EbeguVorlage.class, id);
+		return Optional.ofNullable(a);
+	}
+
+
 
 }

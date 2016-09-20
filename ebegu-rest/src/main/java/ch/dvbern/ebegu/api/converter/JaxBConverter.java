@@ -1532,9 +1532,7 @@ public class JaxBConverter {
 
 	private JaxDokument dokumentToJax(Dokument dokument) {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
-		jaxDokument.setDokumentName(dokument.getDokumentName());
-		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
-		jaxDokument.setDokumentSize(dokument.getDokumentSize());
+		convertFileToJax(dokument, jaxDokument);
 		return jaxDokument;
 	}
 
@@ -1591,16 +1589,14 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxDokument, dokument);
 
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentName(jaxDokument.getDokumentName());
-		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
-		dokument.setDokumentSize(jaxDokument.getDokumentSize());
+		convertFileToEnity(jaxDokument, dokument);
 		return dokument;
 	}
 
 
-	public JaxTempDokument tempDokumentToJAX(TempDokument tempDokument) {
-		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(tempDokument, new JaxTempDokument());
-		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
+	public JaxTempDokument tempDokumentToJAX(DownloadFile downloadFile) {
+		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(downloadFile, new JaxTempDokument());
+		jaxTempDokument.setAccessToken(downloadFile.getAccessToken());
 		return jaxTempDokument;
 	}
 
@@ -1638,27 +1634,39 @@ public class JaxBConverter {
 		convertAbstractDateRangedFieldsToJAX(ebeguVorlage, jaxEbeguVorlage);
 
 		jaxEbeguVorlage.setName(ebeguVorlage.getName());
-		jaxEbeguVorlage.setVorlage(vorlageToJax(ebeguVorlage.getVorlage()));
+		if (ebeguVorlage.getVorlage() != null) {
+			jaxEbeguVorlage.setVorlage(vorlageToJax(ebeguVorlage.getVorlage()));
+		}
 
 		return jaxEbeguVorlage;
 	}
 
 	private JaxVorlage vorlageToJax(Vorlage vorlage) {
 		JaxVorlage jaxVorlage = convertAbstractFieldsToJAX(vorlage, new JaxVorlage());
-		jaxVorlage.setDokumentName(vorlage.getDokumentName());
-		jaxVorlage.setDokumentPfad(vorlage.getDokumentPfad());
-		jaxVorlage.setDokumentSize(vorlage.getDokumentSize());
+		convertFileToJax(vorlage, jaxVorlage);
 		return jaxVorlage;
+	}
+
+	private JaxFile convertFileToJax(File file, JaxFile jaxFile) {
+		jaxFile.setFileName(file.getFileName());
+		jaxFile.setFilePfad(file.getFilePfad());
+		jaxFile.setFileSize(file.getFileSize());
+		return jaxFile;
 	}
 
 
 	public EbeguVorlage ebeguVorlageToEntity(@Nonnull final JaxEbeguVorlage ebeguVorlageJAXP, @Nonnull final EbeguVorlage ebeguVorlage) {
 		Validate.notNull(ebeguVorlage);
 		Validate.notNull(ebeguVorlageJAXP);
-		convertAbstractDateRangedFieldsToJAX(ebeguVorlage, ebeguVorlageJAXP);
+		convertAbstractDateRangedFieldsToEntity(ebeguVorlageJAXP, ebeguVorlage);
 
 		ebeguVorlage.setName(ebeguVorlageJAXP.getName());
-		vorlageToEntity(ebeguVorlageJAXP.getVorlage(),ebeguVorlage.getVorlage());
+		if (ebeguVorlageJAXP.getVorlage() != null) {
+			if (ebeguVorlage.getVorlage() == null) {
+				ebeguVorlage.setVorlage(new Vorlage());
+			}
+			vorlageToEntity(ebeguVorlageJAXP.getVorlage(), ebeguVorlage.getVorlage());
+		}
 
 		return ebeguVorlage;
 	}
@@ -1667,10 +1675,17 @@ public class JaxBConverter {
 		Validate.notNull(vorlage);
 		Validate.notNull(jaxVorlage);
 		convertAbstractFieldsToEntity(jaxVorlage, vorlage);
-
-		vorlage.setDokumentName(jaxVorlage.getDokumentName());
-		vorlage.setDokumentPfad(jaxVorlage.getDokumentPfad());
-		vorlage.setDokumentSize(jaxVorlage.getDokumentSize());
+		convertFileToEnity(jaxVorlage, vorlage);
 		return vorlage;
 	}
+
+	private File convertFileToEnity(JaxFile jaxFile, File file) {
+		Validate.notNull(file);
+		Validate.notNull(jaxFile);
+		file.setFileName(jaxFile.getFileName());
+		file.setFilePfad(jaxFile.getFilePfad());
+		file.setFileSize(jaxFile.getFileSize());
+		return file;
+	}
+
 }

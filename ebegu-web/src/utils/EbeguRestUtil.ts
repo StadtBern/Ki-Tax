@@ -46,6 +46,8 @@ import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import TSTempDokument from '../models/TSTempDokument';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
 import TSWizardStep from '../models/TSWizardStep';
+import TSEbeguVorlage from '../models/TSEbeguVorlage';
+import TSVorlage from '../models/TSVorlage';
 
 
 export default class EbeguRestUtil {
@@ -117,6 +119,65 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
+
+
+    /*----*/
+    public parseEbeguVorlages(data: any): TSEbeguVorlage[] {
+        var ebeguVorlages: TSEbeguVorlage[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                ebeguVorlages[i] = this.parseEbeguVorlage(new TSEbeguVorlage(), data[i]);
+            }
+        } else {
+            ebeguVorlages[0] = this.parseEbeguVorlage(new TSEbeguVorlage(), data);
+        }
+        return ebeguVorlages;
+    }
+
+    public parseEbeguVorlage(ebeguVorlageTS: TSEbeguVorlage, receivedEbeguVorlage: any): TSEbeguVorlage {
+        if (receivedEbeguVorlage) {
+            this.parseDateRangeEntity(ebeguVorlageTS, receivedEbeguVorlage);
+            ebeguVorlageTS.name = receivedEbeguVorlage.name;
+            ebeguVorlageTS.vorlage = this.parseVorlage(new TSVorlage, receivedEbeguVorlage.vorlage);
+            ebeguVorlageTS.proGesuchsperiode = receivedEbeguVorlage.proGesuchsperiode;
+            return ebeguVorlageTS;
+        }
+        return undefined;
+    }
+
+    public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
+        if (receivedVorlage) {
+            this.parseAbstractEntity(vorlageTS, receivedVorlage);
+            vorlageTS.fileName = receivedVorlage.fileName;
+            vorlageTS.filePfad = receivedVorlage.filePfad;
+            vorlageTS.fileSize = receivedVorlage.fileSize;
+            return vorlageTS;
+        }
+        return undefined;
+    }
+
+    public ebeguVorlageToRestObject(restEbeguVorlage: any, ebeguVorlage: TSEbeguVorlage): TSEbeguVorlage {
+        if (ebeguVorlage) {
+            this.abstractDateRangeEntityToRestObject(restEbeguVorlage, ebeguVorlage);
+            restEbeguVorlage.name = ebeguVorlage.name;
+            restEbeguVorlage.value = this.vorlageToRestObject({}, ebeguVorlage.vorlage);
+            return restEbeguVorlage;
+        }
+        return undefined;
+    }
+
+    public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
+        if (vorlage) {
+            this.abstractEntityToRestObject(restVorlage, vorlage);
+            restVorlage.fileName = vorlage.fileName;
+            restVorlage.filePfad = vorlage.filePfad;
+            restVorlage.fileSize = vorlage.fileSize;
+            return restVorlage;
+        }
+        return undefined;
+    }
+
+    /*----*/
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
         parsedAbstractEntity.id = receivedAbstractEntity.id;
@@ -1218,9 +1279,9 @@ export default class EbeguRestUtil {
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
             this.parseAbstractEntity(dokument, dokumentFromServer);
-            dokument.dokumentName = dokumentFromServer.dokumentName;
-            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
-            dokument.dokumentSize = dokumentFromServer.dokumentSize;
+            dokument.fileName = dokumentFromServer.fileName;
+            dokument.filePfad = dokumentFromServer.filePfad;
+            dokument.fileSize = dokumentFromServer.fileSize;
             return dokument;
         }
         return undefined;
@@ -1254,9 +1315,9 @@ export default class EbeguRestUtil {
     private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
         if (dokumentTS) {
             this.abstractEntityToRestObject(dokument, dokumentTS);
-            dokument.dokumentName = dokumentTS.dokumentName;
-            dokument.dokumentPfad = dokumentTS.dokumentPfad;
-            dokument.dokumentSize = dokumentTS.dokumentSize;
+            dokument.fileName = dokumentTS.fileName;
+            dokument.filePfad = dokumentTS.filePfad;
+            dokument.fileSize = dokumentTS.fileSize;
             return dokument;
         }
         return undefined;

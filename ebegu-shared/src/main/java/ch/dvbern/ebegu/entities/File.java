@@ -24,43 +24,52 @@ public abstract class File extends AbstractEntity {
 
 	private static final long serialVersionUID = -4502262818759522627L;
 
+	public File(File file) {
+		this.fileName = file.fileName;
+		this.filePfad = file.filePfad;
+		this.fileSize = file.fileSize;
+	}
+
+	public File() {
+	}
+
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false)
 	@NotNull
-	private String dokumentName;
+	private String fileName;
 
 	//Dokument soll nicht in DB gespeichert werden, sondern in File-System. Wie genau ist noch nicht klar und muss noch evaluiert werden!
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false)
 	@NotNull
-	private String dokumentPfad;
+	private String filePfad;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Column(nullable = false)
 	@NotNull
-	private String dokumentSize;
+	private String fileSize;
 
-	public String getDokumentName() {
-		return dokumentName;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setDokumentName(String dokumentName) {
-		this.dokumentName = dokumentName;
+	public void setFileName(String dokumentName) {
+		this.fileName = dokumentName;
 	}
 
-	public String getDokumentPfad() {
-		return dokumentPfad;
+	public String getFilePfad() {
+		return filePfad;
 	}
 
-	public void setDokumentPfad(String dokumentPfad) {
-		this.dokumentPfad = dokumentPfad;
+	public void setFilePfad(String dokumentPfad) {
+		this.filePfad = dokumentPfad;
 	}
 
-	public String getDokumentSize() {
-		return dokumentSize;
+	public String getFileSize() {
+		return fileSize;
 	}
 
-	public void setDokumentSize(String dokumentSize) {
-		this.dokumentSize = dokumentSize;
+	public void setFileSize(String dokumentSize) {
+		this.fileSize = dokumentSize;
 	}
 }

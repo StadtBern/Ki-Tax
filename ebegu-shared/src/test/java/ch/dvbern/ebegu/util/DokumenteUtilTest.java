@@ -93,7 +93,7 @@ public class DokumenteUtilTest {
 
 		for (int i = 1; i < number; i++) {
 			Dokument dokument = new Dokument();
-			dokument.setDokumentName(i + " ");
+			dokument.setFileName(i + " ");
 			dokumentGrund.getDokumente().add(dokument);
 		}
 		Dokument dokument = new Dokument();

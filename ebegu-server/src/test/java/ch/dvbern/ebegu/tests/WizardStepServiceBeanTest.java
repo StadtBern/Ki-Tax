@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -389,9 +388,9 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		dokGrund.setFullName("name");
 		persistence.persist(dokGrund);
 		Dokument dok1 = new Dokument();
-		dok1.setDokumentName("name");
-		dok1.setDokumentPfad("pfad");
-		dok1.setDokumentSize("23");
+		dok1.setFileName("name");
+		dok1.setFilePfad("pfad");
+		dok1.setFileSize("23");
 		dok1.setDokumentGrund(dokGrund);
 		persistence.persist(dok1);
 	}

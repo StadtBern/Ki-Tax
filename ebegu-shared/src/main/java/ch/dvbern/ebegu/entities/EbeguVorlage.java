@@ -26,7 +26,7 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	private EbeguVorlageKey name;
 
 	@NotNull
-	@OneToOne(optional = false)
+	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ebeguvorlage_vorlage_id"), nullable = false)
 	private Vorlage vorlage;
 

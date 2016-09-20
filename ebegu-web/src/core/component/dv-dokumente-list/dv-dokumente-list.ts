@@ -77,7 +77,7 @@ export class DVDokumenteListController {
     hasDokuments(selectDokument: TSDokumentGrund): boolean {
         if (selectDokument.dokumente) {
             for (var dokument of selectDokument.dokumente) {
-                if (dokument.dokumentName) {
+                if (dokument.fileName) {
                     return true;
                 }
             }
@@ -90,7 +90,7 @@ export class DVDokumenteListController {
     }
 
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
-        console.log('component -> remove dokument ' + dokument.dokumentName);
+        console.log('component -> remove dokument ' + dokument.fileName);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN'
@@ -102,15 +102,14 @@ export class DVDokumenteListController {
     }
 
     download(dokument: TSDokument, attachment: boolean) {
-        console.log('download dokument ' + dokument.dokumentName);
+        console.log('download dokument ' + dokument.fileName);
 
-        this.downloadRS.getAccessToken(dokument.id).then((response) => {
+        this.downloadRS.getAccessTokenDokument(dokument.id).then((response) => {
             let tempDokument: TSTempDokument = angular.copy(response);
             console.log('accessToken: ' + tempDokument.accessToken);
 
-            this.downloadRS.startDownload(tempDokument.accessToken, dokument.dokumentName, attachment);
+            this.downloadRS.startDownload(tempDokument.accessToken, dokument.fileName, attachment);
         });
-
     }
 
 

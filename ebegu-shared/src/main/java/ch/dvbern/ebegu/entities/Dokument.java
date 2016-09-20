@@ -40,9 +40,9 @@ public class Dokument extends File {
 	@Override
 	public String toString() {
 		return "Dokument{" +
-			"dokumentName='" + getDokumentName() + '\'' +
-			", dokumentPfad='" + getDokumentPfad() + '\'' +
-			", dokumentSize='" + getDokumentSize() + '\'' +
+			"dokumentName='" + getFileName() + '\'' +
+			", dokumentPfad='" + getFilePfad() + '\'' +
+			", dokumentSize='" + getFileSize() + '\'' +
 			'}';
 	}
 }

@@ -77,7 +77,7 @@ export class KommentarViewController {
     hasPapiergesuch(): boolean {
         if (this.dokumentePapiergesuch) {
             if (this.dokumentePapiergesuch.dokumente && this.dokumentePapiergesuch.dokumente.length !== 0) {
-                if (this.dokumentePapiergesuch.dokumente[0].dokumentName) {
+                if (this.dokumentePapiergesuch.dokumente[0].fileName) {
                     return true;
                 }
             }
@@ -91,9 +91,9 @@ export class KommentarViewController {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
-                this.downloadRS.getAccessToken(newest.id).then((response) => {
+                this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
                     let tempDokument: TSTempDokument = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.dokumentName, false);
+                    this.downloadRS.startDownload(tempDokument.accessToken, newest.fileName, false);
                 });
             }
         });

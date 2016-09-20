@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Dokument;
-import ch.dvbern.ebegu.entities.TempDokument;
-import ch.dvbern.ebegu.entities.TempDokument_;
+import ch.dvbern.ebegu.entities.DownloadFile;
+import ch.dvbern.ebegu.entities.DownloadFile_;
+import ch.dvbern.ebegu.entities.File;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -22,45 +22,46 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Stateless
-@Local(TempDokumentService.class)
-public class TempDokumentServiceBean implements TempDokumentService {
+@Local(DownloadFileService.class)
+public class DownloadFileServiceBean implements DownloadFileService {
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(TempDokumentServiceBean.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileServiceBean.class);
 
 	@Inject
-	private Persistence<TempDokument> persistence;
+	private Persistence<DownloadFile> persistence;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Override
-	public TempDokument create(@Nonnull Dokument dokument, String ip) {
-		Objects.requireNonNull(dokument);
+	public DownloadFile create(@Nonnull File file, String ip) {
+		Objects.requireNonNull(file);
 		Objects.requireNonNull(ip);
 
-		return persistence.persist(new TempDokument(dokument, ip));
+		return persistence.persist(new DownloadFile(file, ip));
 	}
 
 	@Nullable
 	@Override
-	public TempDokument getTempDownloadByAccessToken(@Nonnull String accessToken) {
+	public DownloadFile getDownloadFileByAccessToken(@Nonnull String accessToken) {
 		Objects.requireNonNull(accessToken);
 
-		Optional<TempDokument> tempDokumentOptional = criteriaQueryHelper.getEntityByUniqueAttribute(TempDokument.class, accessToken, TempDokument_.accessToken);
+		Optional<DownloadFile> tempDokumentOptional = criteriaQueryHelper.getEntityByUniqueAttribute(DownloadFile.class, accessToken, DownloadFile_.accessToken);
 
 		if (!tempDokumentOptional.isPresent()) {
 			return null;
 		}
 
-		TempDokument tempDokument = tempDokumentOptional.get();
+		DownloadFile downloadFile = tempDokumentOptional.get();
 
-		if (isFileDownloadExpired(tempDokument)) {
+		if (isFileDownloadExpired(downloadFile)) {
 			return null;
 		}
 
-		return tempDokument;
+		return downloadFile;
+
 	}
 
 	@Override
@@ -70,7 +71,7 @@ public class TempDokumentServiceBean implements TempDokumentService {
 
 		try {
 			Objects.requireNonNull(deleteOlderThan);
-			criteriaQueryHelper.deleteAllBefore(TempDokument.class, deleteOlderThan);
+			criteriaQueryHelper.deleteAllBefore(DownloadFile.class, deleteOlderThan);
 		} catch (RuntimeException rte) {
 			// timer methods may not throw exceptions or the timer will get cancelled (as per spec)
 			String msg = "Unexpected error while deleting old TempDocuments";
@@ -79,7 +80,7 @@ public class TempDokumentServiceBean implements TempDokumentService {
 
 	}
 
-	private boolean isFileDownloadExpired(@Nonnull TempDokument tempBlob) {
+	private boolean isFileDownloadExpired(@Nonnull DownloadFile tempBlob) {
 		LocalDateTime timestampMutiert = checkNotNull(tempBlob.getTimestampMutiert());
 		return timestampMutiert.isBefore(LocalDateTime.now().minus(Constants.MAX_TEMP_DOWNLOAD_AGE_MINUTES, ChronoUnit.MINUTES));
 	}
