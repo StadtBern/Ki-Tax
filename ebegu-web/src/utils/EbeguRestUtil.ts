@@ -120,8 +120,6 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-
-    /*----*/
     public parseEbeguVorlages(data: any): TSEbeguVorlage[] {
         var ebeguVorlages: TSEbeguVorlage[] = [];
         if (data && Array.isArray(data)) {
@@ -176,8 +174,6 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
-
-    /*----*/
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
         parsedAbstractEntity.id = receivedAbstractEntity.id;

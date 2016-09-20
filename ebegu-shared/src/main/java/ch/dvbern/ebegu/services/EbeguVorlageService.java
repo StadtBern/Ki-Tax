@@ -38,9 +38,12 @@ public interface EbeguVorlageService {
 	@Nullable
 	EbeguVorlage updateEbeguVorlage(@Nonnull EbeguVorlage ebeguVorlage);
 
-
-	void remove(@Nonnull String id);
+	void removeVorlage(@Nonnull String id);
 
 	Optional<EbeguVorlage> findById(@Nonnull final String id);
+
+	Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date);
+
+	void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 
 }

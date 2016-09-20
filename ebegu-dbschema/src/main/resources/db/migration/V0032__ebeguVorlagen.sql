@@ -23,7 +23,7 @@ CREATE TABLE ebegu_vorlage (
 	gueltig_ab DATE NOT NULL,
 	gueltig_bis DATE NOT NULL,
 	NAME VARCHAR(255) NOT NULL,
-	vorlage_id VARCHAR(36) NOT NULL,
+	vorlage_id VARCHAR(36),
 	PRIMARY KEY (id)
 	);
 

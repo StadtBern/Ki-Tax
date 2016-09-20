@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -25,9 +26,9 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	@Enumerated(EnumType.STRING)
 	private EbeguVorlageKey name;
 
-	@NotNull
-	@OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ebeguvorlage_vorlage_id"), nullable = false)
+	@Nullable
+	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_ebeguvorlage_vorlage_id"), nullable = true)
 	private Vorlage vorlage;
 
 	public EbeguVorlage() {
@@ -65,7 +66,7 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	 * @return a copy of the current Param with the gueltigkeit set to the passed DateRange
 	 */
 	public EbeguVorlage copy(DateRange gueltigkeit) {
-		//TODO: copy file to new location!!!!
+
 		EbeguVorlage copiedParam = new EbeguVorlage();
 		copiedParam.setGueltigkeit(gueltigkeit);
 		copiedParam.setName(this.getName());

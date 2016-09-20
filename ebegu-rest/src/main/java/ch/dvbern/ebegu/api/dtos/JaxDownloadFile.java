@@ -10,7 +10,7 @@ public class JaxDownloadFile extends JaxAbstractDTO {
 
 	private static final long serialVersionUID = 1118235796540488553L;
 
-	//only accessToken needen on server-side
+	//only accessToken needed on server-side
 
 	private String accessToken;
 

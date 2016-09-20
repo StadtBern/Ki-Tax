@@ -40,7 +40,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -86,40 +88,21 @@ public class EbeguVorlageResource {
 		Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
 		if (gesuchsperiode.isPresent()) {
 
-			final Collection<EbeguVorlage> persistedEbeguVorlagen = ebeguVorlageService.getALLEbeguVorlageByGesuchsperiode(gesuchsperiode.get());
+			List<EbeguVorlage> persistedEbeguVorlagen = ebeguVorlageService.getALLEbeguVorlageByGesuchsperiode(gesuchsperiode.get());
 
-			final Set<EbeguVorlage> emptyVorlagen = getEmptyVorlagen(persistedEbeguVorlagen);
+			if (persistedEbeguVorlagen.isEmpty()) {
+				ebeguVorlageService.copyEbeguVorlageListToNewGesuchsperiode(gesuchsperiode.get());
+				persistedEbeguVorlagen = ebeguVorlageService.getALLEbeguVorlageByGesuchsperiode(gesuchsperiode.get());
+			}
 
-			List<EbeguVorlage> allEbeguVorlageList = new ArrayList<EbeguVorlage>();
-			allEbeguVorlageList.addAll(persistedEbeguVorlagen);
-			allEbeguVorlageList.addAll(emptyVorlagen);
-			Collections.sort(allEbeguVorlageList);
+			Collections.sort(persistedEbeguVorlagen);
 
-			return allEbeguVorlageList.stream()
+			return persistedEbeguVorlagen.stream()
 				.map(ebeguVorlage -> converter.ebeguVorlageToJax(ebeguVorlage))
 				.collect(Collectors.toList());
-
 		}
 
 		return Collections.emptyList();
-	}
-
-	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {
-		Set<EbeguVorlage> emptyEbeguVorlagen = new HashSet<EbeguVorlage>();
-		final EbeguVorlageKey[] ebeguVorlageKeys = EbeguVorlageKey.values();
-		for (EbeguVorlageKey ebeguVorlageKey : ebeguVorlageKeys) {
-			boolean exist = false;
-			for (EbeguVorlage ebeguVorlage : persistedEbeguVorlagen) {
-				if (ebeguVorlage.getName().equals(ebeguVorlageKey)) {
-					exist = true;
-					break;
-				}
-			}
-			if (!exist) {
-				emptyEbeguVorlagen.add(new EbeguVorlage(ebeguVorlageKey));
-			}
-		}
-		return emptyEbeguVorlagen;
 	}
 
 	@POST
@@ -173,13 +156,6 @@ public class EbeguVorlageResource {
 		// evil workaround, (Umlaute werden sonst nicht richtig übertragen!)
 		fileInfo.setFilename(filename);
 
-
-/*
-		try (InputStream file = input.getFormDataPart(filename, InputStream.class, null)) {
-			fileInfo.setBytes(IOUtils.toByteArray(file));
-		}
-*/
-
 		try (InputStream file = input.getFormDataPart(PART_FILE, InputStream.class, null)) {
 			fileInfo.setBytes(IOUtils.toByteArray(file));
 		}
@@ -227,7 +203,7 @@ public class EbeguVorlageResource {
 		@Context HttpServletResponse response) {
 
 		Validate.notNull(ebeguVorlageId.getId());
-		ebeguVorlageService.remove(converter.toEntityId(ebeguVorlageId));
+		ebeguVorlageService.removeVorlage(converter.toEntityId(ebeguVorlageId));
 		return Response.ok().build();
 	}
 

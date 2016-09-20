@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang.Validate;
@@ -21,12 +22,10 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
- * Service fuer Kind
+ * Service fuer EbeguVorlage
  */
 @Stateless
 @Local(EbeguVorlageService.class)
@@ -34,6 +33,13 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 
 	@Inject
 	private Persistence<EbeguVorlage> persistence;
+
+
+	@Inject
+	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private FileSaverService fileSaverService;
 
 	@Nonnull
 	@Override
@@ -108,11 +114,16 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	@Override
-	public void remove(@Nonnull String id) {
+	public void removeVorlage(@Nonnull String id) {
 		Validate.notNull(id);
 		Optional<EbeguVorlage> ebeguVorlage = findById(id);
 		ebeguVorlage.orElseThrow(() -> new EbeguEntityNotFoundException("removeEbeguVorlage", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, id));
-		persistence.remove(ebeguVorlage.get());
+		final EbeguVorlage ebeguVorlageEntity = ebeguVorlage.get();
+
+		fileSaverService.remove(ebeguVorlageEntity.getVorlage().getFilepfad());
+
+		ebeguVorlageEntity.setVorlage(null);
+		updateEbeguVorlage(ebeguVorlageEntity);
 	}
 
 	@Nonnull
@@ -121,6 +132,46 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 		Objects.requireNonNull(id, "id muss gesetzt sein");
 		EbeguVorlage a = persistence.find(EbeguVorlage.class, id);
 		return Optional.ofNullable(a);
+	}
+
+	@Nonnull
+	@Override
+	public Collection<EbeguVorlage> getALLEbeguVorlageByDate(@Nonnull LocalDate date) {
+		return new ArrayList<>(criteriaQueryHelper.getAllInInterval(EbeguVorlage.class, date));
+	}
+
+	@Override
+	public void copyEbeguVorlageListToNewGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode) {
+		// Die Vorlagen des letzten Jahres suchen (datumAb -1 Tag)
+		Collection<EbeguVorlage> ebeguVorlageByDate = getALLEbeguVorlageByDate(gesuchsperiode.getGueltigkeit().getGueltigAb().minusDays(1));
+		ebeguVorlageByDate.addAll(getEmptyVorlagen(ebeguVorlageByDate));
+
+		ebeguVorlageByDate.stream().filter(lastYearVoralge -> lastYearVoralge.getName().isProGesuchsperiode()).forEach(lastYearVorlage -> {
+			EbeguVorlage newVorlage = lastYearVorlage.copy(gesuchsperiode.getGueltigkeit());
+			if (lastYearVorlage.getVorlage() != null) {
+				fileSaverService.copy(lastYearVorlage.getVorlage(), "vorlagen");
+				newVorlage.setVorlage(lastYearVorlage.getVorlage().copy());
+			}
+			saveEbeguVorlage(newVorlage);
+		});
+	}
+
+	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {
+		Set<EbeguVorlage> emptyEbeguVorlagen = new HashSet<EbeguVorlage>();
+		final EbeguVorlageKey[] ebeguVorlageKeys = EbeguVorlageKey.values();
+		for (EbeguVorlageKey ebeguVorlageKey : ebeguVorlageKeys) {
+			boolean exist = false;
+			for (EbeguVorlage ebeguVorlage : persistedEbeguVorlagen) {
+				if (ebeguVorlage.getName().equals(ebeguVorlageKey)) {
+					exist = true;
+					break;
+				}
+			}
+			if (!exist) {
+				emptyEbeguVorlagen.add(new EbeguVorlage(ebeguVorlageKey));
+			}
+		}
+		return emptyEbeguVorlagen;
 	}
 
 

@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Service fuer Dokument
+ * Service fuer Vorlage
  */
 @Stateless
 @Local(VorlageService.class)
