@@ -80,9 +80,9 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     public getGesuchStatus(): string {
         let toTranslate: TSAntragStatus = TSAntragStatus.IN_BEARBEITUNG_JA;
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
-            toTranslate = this.gesuchModelManager.getGesuch().status;
+            toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
         }
-        return this.ebeguUtil.translateString(TSAntragStatus [toTranslate]);
+        return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
     }
 
     public getUserFullname(): string {

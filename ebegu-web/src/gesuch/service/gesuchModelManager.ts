@@ -641,8 +641,8 @@ export default class GesuchModelManager {
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
-       return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
-           .then((betreuungResponse: any) => {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+            .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
@@ -1002,12 +1002,18 @@ export default class GesuchModelManager {
      * diese Methode auf, bevor wir den Wert setzen.
      * @param status
      */
-    private calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
-        if (TSAntragStatus.GEPRUEFT === status) {
+    public calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
+        if (TSAntragStatus.GEPRUEFT === status || TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN === status || TSAntragStatus.PLATZBESTAETIGUNG_WARTEN === status) {
             if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)) {
-                return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
+                if (this.isThereAnyBetreuung()) {
+                    return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
+                } else {
+                    return TSAntragStatus.GEPRUEFT;
+                }
             } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.PLATZBESTAETIGUNG)) {
                 return TSAntragStatus.PLATZBESTAETIGUNG_WARTEN;
+            } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK)) {
+                return TSAntragStatus.GEPRUEFT;
             }
         }
         return status;
