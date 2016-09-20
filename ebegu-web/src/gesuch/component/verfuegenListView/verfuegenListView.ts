@@ -12,6 +12,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -80,14 +81,21 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.kinderWithBetreuungList;
     }
 
+    /**
+     * Nur bestaetigte Betreuungen koennen geoeffnet werden
+     * @param kind
+     * @param betreuung
+     */
     public openVerfuegung(kind: TSKindContainer, betreuung: TSBetreuung): void {
-        let kindNumber: number = this.gesuchModelManager.findKind(kind);
-        if (kindNumber > 0) {
-            this.gesuchModelManager.setKindNumber(kindNumber);
-            let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
-            if (betreuungNumber > 0) {
-                this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                this.$state.go('gesuch.verfuegenView');
+        if (TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus) {
+            let kindNumber: number = this.gesuchModelManager.findKind(kind);
+            if (kindNumber > 0) {
+                this.gesuchModelManager.setKindNumber(kindNumber);
+                let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
+                if (betreuungNumber > 0) {
+                    this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
+                    this.$state.go('gesuch.verfuegenView');
+                }
             }
         }
     }
@@ -149,6 +157,14 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
             && this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
+    }
+
+    public openFinanzielleSituationPDF(): void {
+
+    }
+
+    public openBegleitschreibenPDF(): void {
+
     }
 
 }

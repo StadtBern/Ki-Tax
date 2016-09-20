@@ -95,11 +95,12 @@
                         <tr>
                             <th class="text-right" data-translate="VON"></th>
                             <th class="text-right" data-translate="BIS"></th>
-                            <th class="text-right" data-translate="BETREUUNGSPENSUM"></th>
+                            <th class="text-right" data-translate="EFFEKTIVE_BETREUUNG"></th>
                             <th class="text-right" data-translate="ANSPRUCH"></th>
+                            <th class="text-right" data-translate="VERGUENSTIGT"></th>
                             <th class="text-right" data-translate="VOLLKOSTEN"></th>
-                            <th class="text-right" data-translate="ELTERNBEITRAG"></th>
                             <th class="text-right" data-translate="VERGUENSTIGUNG"></th>
+                            <th class="text-right" data-translate="ELTERNBEITRAG"></th>
                         </tr>
                         </thead>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length > 0">
@@ -113,17 +114,20 @@
                             <td class="text-right"><span
                                 ng-bind="verfuegungZeitabschnitt.anspruchberechtigtesPensum"></span>%
                             </td>
+                            <td class="text-right"><span
+                                ng-bind="verfuegungZeitabschnitt.bgPensum"></span>%
+                            </td>
                             <td class="text-right"
                                 ng-bind="verfuegungZeitabschnitt.vollkosten | currency : '' : 2"></td>
                             <td class="text-right"
-                                ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
-                            <td class="text-right"
                                 ng-bind="(verfuegungZeitabschnitt.vollkosten - verfuegungZeitabschnitt.elternbeitrag) | currency : '' : 2"></td>
+                            <td class="text-right"
+                                ng-bind="verfuegungZeitabschnitt.elternbeitrag | currency : '' : 2"></td>
                         </tr>
                         </tbody>
                         <tbody ng-if="vm.getVerfuegungZeitabschnitte().length === 0">
                         <tr>
-                            <td colspan="7" class="empty-table">Zeitabschnitte noch nicht berechnet</td>
+                            <td colspan="8" class="empty-table">Zeitabschnitte noch nicht berechnet</td>
                         </tr>
                         </tbody>
                     </table>
@@ -141,6 +145,7 @@
                 </div>
             </div>
 
+            <!--VerfuegungPDF anzeigen-->
             <div class="row marginTop20 text-left">
                 <div class="col-md-12">
                     <i class="fa fa-file-text-o"></i>
