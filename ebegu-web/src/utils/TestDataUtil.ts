@@ -7,11 +7,11 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
-import Moment = moment.Moment;
 import TSWizardStep from '../models/TSWizardStep';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import TSVerfuegung from '../models/TSVerfuegung';
+import Moment = moment.Moment;
 
 export default class TestDataUtil {
 

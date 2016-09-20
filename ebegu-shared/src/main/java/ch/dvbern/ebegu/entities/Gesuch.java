@@ -40,6 +40,7 @@ public class Gesuch extends AbstractAntragEntity {
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@OrderBy("kindNummer")
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
 	@Valid

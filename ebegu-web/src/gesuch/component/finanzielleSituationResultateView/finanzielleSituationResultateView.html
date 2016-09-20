@@ -124,45 +124,14 @@
             </div>
 
 
-            <!-- Abzuege beider Gesuchsteller -->
+            <!-- Abzuege beider Gesuchsteller aufgrund Alimente-->
             <div class="row">
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS" for="abzuegeBeiderGesuchsteller"
-                               ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_EIN_GS" for="abzuegeBeiderGesuchsteller"
-                               ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
+                        <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE" for="abzuegeBeiderGesuchsteller"></label>
                         <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller"
-                               ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ZWEI_GS|translate}}"
+                               ui-number-mask="0" aria-label="{{FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE|translate}}"
                                ng-model="vm.getResultate().abzuegeBeiderGesuchsteller"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
-
-            <!-- Abzug aufgrund Familiengroesse -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_ABZUG_FAMILIENGROESSE"
-                               for="abzugAufgrundFamiliengroesse"
-                               translate-values="{familiengroesse: vm.getResultate().familiengroesse }">
-                        </label>
-                        <input id="abzugAufgrundFamiliengroesse" type="text" name="abzugAufgrundFamiliengroesse"
-                               ui-number-mask="0"
-                               ng-model="vm.getResultate().abzugAufgrundFamiliengroesse"
-                               dv-max-length max="999999999999" class="form-control" disabled>
-                    </dv-input-container>
-                </div>
-            </div>
-
-            <!-- Total Abzuege -->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_TOTAL_ABZUEGE" for="totalAbzuege"></label>
-                        <input id="totalAbzuege" type="text" name="totalAbzuege" ui-number-mask="0"
-                               ng-model="vm.getResultate().totalAbzuege"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>
@@ -170,14 +139,14 @@
 
             <hr/>
 
-            <!-- Massgebendes Einkommen -->
+            <!-- Massgebendes Einkommen vor Abzug Fam Grösse-->
             <div class="row">
                 <div class="col-md-6">
                     <dv-input-container class="form-group">
-                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN"
-                               for="massgebendesEinkommen"></label>
-                        <input id="massgebendesEinkommen" type="text" name="massgebendesEinkommen" ui-number-mask="0"
-                               ng-model="vm.getResultate().massgebendesEinkommen"
+                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                               for="massgebendesEinkVorAbzFamGr"></label>
+                        <input id="massgebendesEinkVorAbzFamGr" type="text" name="massgebendesEinkVorAbzFamGr" ui-number-mask="0"
+                               ng-model="vm.getResultate().massgebendesEinkVorAbzFamGr"
                                dv-max-length max="999999999999" class="form-control" disabled>
                     </dv-input-container>
                 </div>

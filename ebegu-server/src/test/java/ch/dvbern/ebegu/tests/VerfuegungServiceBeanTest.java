@@ -92,9 +92,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next()));
 		Assert.assertNotNull((berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next()));
 		Assert.assertNotNull(berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung());
-		Verfuegung verfuegung = berechnetesGesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung();
 		checkTestfall01WaeltiDagmar(gesuch);
-
 	}
 
 	@Test
@@ -150,7 +148,12 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit);
 		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12", gueltigkeit);  //waere eigentlich int
 		saveParameter(PARAM_BABY_FAKTOR, "1.5", gueltigkeit);
-		Assert.assertEquals(14, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760", gueltigkeit);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit);
+
+		Assert.assertEquals(18, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
 
 	}
 

@@ -35,7 +35,7 @@ public class BetreuungsangebotTypCalcRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -55,7 +55,7 @@ public class BetreuungsangebotTypCalcRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
