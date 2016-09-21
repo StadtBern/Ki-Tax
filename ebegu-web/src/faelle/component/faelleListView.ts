@@ -8,7 +8,7 @@ import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import EbeguUtil from '../../utils/EbeguUtil';
 import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';
@@ -27,7 +27,7 @@ export class FaelleListViewComponentConfig implements IComponentOptions {
 
 export class FaelleListViewController {
 
-    private antragList: Array<TSPendenzJA>;
+    private antragList: Array<TSAntragDTO>;
     totalResultCount: string = '-';
 
 
@@ -57,7 +57,7 @@ export class FaelleListViewController {
     };
 
 
-    public getAntragList(): Array<TSPendenzJA> {
+    public getAntragList(): Array<TSAntragDTO> {
         return this.antragList;
     }
 
@@ -66,7 +66,7 @@ export class FaelleListViewController {
     }
 
 
-    public editFall(antrag: TSPendenzJA): void {
+    public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
             //todo xaver fragen muessen wir hier was anders machen fuer inst und ja?
             if (antrag && antrag.antragTyp === TSAntragTyp.GESUCH) {

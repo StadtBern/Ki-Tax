@@ -1,5 +1,5 @@
 import {IComponentOptions, IFilterService} from 'angular';
-import TSPendenzJA from '../../../models/TSPendenzJA';
+import TSAntragDTO from '../../../models/TSAntragDTO';
 import PendenzRS from '../../service/PendenzRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -27,7 +27,7 @@ export class PendenzenListViewComponentConfig implements IComponentOptions {
 
 export class PendenzenListViewController {
 
-    private pendenzenList: Array<TSPendenzJA>;
+    private pendenzenList: Array<TSAntragDTO>;
     selectedBetreuungsangebotTyp: string;
     selectedAntragTyp: string;
     selectedAntragStatus: string;
@@ -94,7 +94,7 @@ export class PendenzenListViewController {
         });
     }
 
-    public getPendenzenList(): Array<TSPendenzJA> {
+    public getPendenzenList(): Array<TSAntragDTO> {
         return this.pendenzenList;
     }
 
@@ -126,7 +126,7 @@ export class PendenzenListViewController {
         return result;
     }
 
-    public editPendenzJA(pendenz: TSPendenzJA): void {
+    public editPendenzJA(pendenz: TSAntragDTO): void {
         // todo team hier müssen wir auch MUTATIONEN bekommen koennen
         if (pendenz && pendenz.antragTyp === TSAntragTyp.GESUCH) {
             this.gesuchRS.findGesuch(pendenz.antragId).then((response) => {

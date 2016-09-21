@@ -10,7 +10,7 @@ import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp'
 import TestDataUtil from '../../utils/TestDataUtil';
 import {FaelleListViewController} from './faelleListView';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import TSGesuch from '../../models/TSGesuch';
@@ -59,7 +59,7 @@ describe('faelleListeView', function () {
     describe('API Usage', function () {
         describe('searchFaelle', function () {
             it('should return the list with found Faellen', function () {
-                let mockPendenz: TSPendenzJA = mockGetPendenzenList();
+                let mockPendenz: TSAntragDTO = mockGetPendenzenList();
                 mockRestCalls();
                 faelleListViewController = new FaelleListViewController(undefined, $filter,
                     institutionRS, institutionStammdatenRS, gesuchsperiodeRS, gesuchRS, gesuchModelManager,
@@ -69,7 +69,7 @@ describe('faelleListeView', function () {
                 $scope.$apply();
                 expect(gesuchRS.searchAntraege).toHaveBeenCalled();
 
-                let list: Array<TSPendenzJA> = faelleListViewController.getAntragList();
+                let list: Array<TSAntragDTO> = faelleListViewController.getAntragList();
                 expect(list).toBeDefined();
                 expect(list.length).toBe(1);
                 expect(list[0]).toEqual(mockPendenz);
@@ -77,7 +77,7 @@ describe('faelleListeView', function () {
         });
         describe('editPendenzJA', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it', function () {
-                let mockAntrag: TSPendenzJA = mockGetPendenzenList();
+                let mockAntrag: TSAntragDTO = mockGetPendenzenList();
                 mockRestCalls();
                 spyOn($state, 'go');
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
@@ -98,10 +98,10 @@ describe('faelleListeView', function () {
         });
     });
 
-    function mockGetPendenzenList(): TSPendenzJA {
-        let mockPendenz: TSPendenzJA = new TSPendenzJA('66345345', 123, 'name', TSAntragTyp.GESUCH, undefined,
+    function mockGetPendenzenList(): TSAntragDTO {
+        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH, undefined,
             undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
-        let dtoList: Array<TSPendenzJA> = [mockPendenz];
+        let dtoList: Array<TSAntragDTO> = [mockPendenz];
         let totalSize: number = 1;
         let searchresult: TSAntragSearchresultDTO =  new TSAntragSearchresultDTO(dtoList, totalSize);
         spyOn(gesuchRS, 'searchAntraege').and.returnValue($q.when(searchresult));

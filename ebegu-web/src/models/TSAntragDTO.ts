@@ -3,7 +3,7 @@ import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
 
-export default class TSPendenzJA {
+export default class TSAntragDTO {
 
     private _antragId: string;
     private _fallNummer: number;

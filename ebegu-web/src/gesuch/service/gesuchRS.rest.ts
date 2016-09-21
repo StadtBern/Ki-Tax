@@ -74,7 +74,7 @@ export default class GesuchRS implements IEntityRS {
             }
         }).then((response: any) => {
             this.$log.debug('PARSING antraege REST array object', response.data);
-            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parsePendenzen(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
+            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parseAntragDTOs(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
         });
     }
 

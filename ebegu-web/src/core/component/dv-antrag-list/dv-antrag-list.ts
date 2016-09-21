@@ -4,7 +4,7 @@ import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragT
 import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsangebotTyp, getTSBetreuungsangebotTypValues} from '../../../models/enums/TSBetreuungsangebotTyp';
 import TSInstitution from '../../../models/TSInstitution';
-import TSPendenzJA from '../../../models/TSPendenzJA';
+import TSAntragDTO from '../../../models/TSAntragDTO';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
@@ -37,8 +37,8 @@ export class DVAntragListConfig implements IComponentOptions {
 
 export class DVAntragListController {
 
-    antraege: Array<TSPendenzJA> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
-    displayedCollection: Array<TSPendenzJA> = []; //Liste die im Gui angezeigt wird
+    antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
+    displayedCollection: Array<TSAntragDTO> = []; //Liste die im Gui angezeigt wird
     pagination: any;
     activeGesuchsperiodenList: Array<string>;
     institutionenList: Array<TSInstitution>;

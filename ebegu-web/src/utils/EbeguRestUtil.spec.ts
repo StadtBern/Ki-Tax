@@ -24,7 +24,7 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuch from '../models/TSGesuch';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSFall from '../models/TSFall';
-import TSPendenzJA from '../models/TSPendenzJA';
+import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
@@ -339,17 +339,17 @@ describe('EbeguRestUtil', function () {
 
             });
         });
-        describe('parsePendenz()', () => {
-            it('should transform TSPendenzJA to REST Obj and back', () => {
+        describe('parseAntragDTO()', () => {
+            it('should transform TSAntragDTO to REST Obj and back', () => {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
-                let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
+                let myPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
                     DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
-                let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
+                let restPendenz = ebeguRestUtil.antragDTOToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
 
-                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenzJA(), restPendenz);
+                let transformedPendenz = ebeguRestUtil.parseAntragDTO(new TSAntragDTO(), restPendenz);
                 expect(transformedPendenz).toBeDefined();
                 expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
                 transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
