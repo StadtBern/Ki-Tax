@@ -102,7 +102,7 @@ export class DVAntragListController {
     }
 
     public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
+        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
             this.activeGesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
                 this.activeGesuchsperiodenList.push(this.getGesuchsperiodeAsString(gesuchsperiode));
