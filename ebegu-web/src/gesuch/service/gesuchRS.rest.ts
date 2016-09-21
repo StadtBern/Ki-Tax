@@ -4,6 +4,7 @@ import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -64,6 +65,17 @@ export default class GesuchRS implements IEntityRS {
                 this.$log.debug('PARSING gesuch (fuer Institutionen) REST object ', response.data);
                 return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
             });
+    }
+
+    public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
+        return this.http.post(this.serviceURL, antragSearch, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING antraege REST array object', response.data);
+            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parseAntragDTOs(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
+        });
     }
 
     public updateBemerkung(gesuchID: string, bemerkung: string): IHttpPromise<any> {

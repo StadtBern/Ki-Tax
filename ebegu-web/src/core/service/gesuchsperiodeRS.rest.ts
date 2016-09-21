@@ -60,6 +60,12 @@ export default class GesuchsperiodeRS {
         });
     }
 
+    public getAllGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
+        return this.http.get(this.serviceURL + '/').then((response: any) => {
+            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+        });
+    }
+
     public getAllNichtAbgeschlosseneGesuchsperioden(): IPromise<TSGesuchsperiode[]> {
         return this.http.get(this.serviceURL + '/unclosed').then((response: any) => {
             return this.ebeguRestUtil.parseGesuchsperioden(response.data);

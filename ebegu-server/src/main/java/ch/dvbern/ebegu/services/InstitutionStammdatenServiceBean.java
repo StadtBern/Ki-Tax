@@ -82,6 +82,9 @@ public class InstitutionStammdatenServiceBean extends AbstractBaseService implem
 	@Override
 	public Collection<BetreuungsangebotTyp> getBetreuungsangeboteForInstitutionenOfCurrentBenutzer() {
 		Collection<Institution> institutionenForCurrentBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		if (institutionenForCurrentBenutzer.isEmpty()) {
+			return new ArrayList<>();
+		}
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<BetreuungsangebotTyp> query = cb.createQuery(BetreuungsangebotTyp.class);

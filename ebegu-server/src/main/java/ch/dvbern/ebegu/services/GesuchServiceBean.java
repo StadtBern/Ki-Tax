@@ -1,26 +1,30 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.*;
+
+import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
+
 
 /**
  * Service fuer Gesuch
@@ -28,6 +32,8 @@ import java.util.Optional;
 @Stateless
 @Local(GesuchService.class)
 public class GesuchServiceBean extends AbstractBaseService implements GesuchService {
+
+	private final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
 
 	@Inject
 	private Persistence<Gesuch> persistence;
@@ -53,7 +59,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Optional<Gesuch> findGesuch(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
-		Gesuch a =  persistence.find(Gesuch.class, key);
+		Gesuch a = persistence.find(Gesuch.class, key);
 		return Optional.ofNullable(a);
 	}
 
@@ -71,7 +77,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Predicate predicateGesuch = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateGesuch = cb.notEqual(root.get(status), AntragStatus.VERFUEGT);
 		query.where(predicateGesuch);
 		return persistence.getCriteriaResults(query);
 	}
@@ -85,4 +91,83 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.remove(gesuchToRemove.get());
 	}
 
+	@Override
+	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
+
+		Long count = runCountQuery(antragSearch);
+		//Todo team? Suchquery implementieren, allenfalls mit einem wrapper objekt damit die performance besser ist
+		// dann brauchts wohl 2 queries um jeweils noch die listen zu lesen
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		if (antragSearch.getSort() != null && antragSearch.getSort().getPredicate() != null) {
+			query.orderBy(createOrderClause(cb, root, antragSearch.getSort()));
+		}
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setFirstResult(antragSearch.getPagination().getStart());
+		typedQuery.setMaxResults(antragSearch.getPagination().getNumber());
+
+
+		List<Gesuch> gesuche = typedQuery.getResultList();
+		//Es waere hier evtl besser das query direkt so zu schreiben dass das DTO erstellt wird statt zuerst noch das gesuch
+		//Darum habe ich das DTO hier auch verfuegbar gemacht
+		return new ImmutablePair<Long, List<Gesuch>>(count, gesuche);
+	}
+
+	private Long runCountQuery(AntragTableFilterDTO antragSearch) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+		//order ist bei count egal
+		query.select(cb.count(root));
+//		query.where() gleiche restriktionen wie oben, createWehereClause() oder so implementieren
+		return persistence.getCriteriaSingleResult(query);
+
+	}
+
+	private List<Order> createOrderClause(CriteriaBuilder cb, Root<Gesuch> root, AntragSortDTO sort) {
+		Expression orderField= orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+		switch (sort.getPredicate()) {
+			case "fallNummer":
+				orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+				break;
+			case "familienName":
+				orderField = root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.nachname);
+				break;
+			case "antragTyp":
+				LOG.warn("Sorting by antragTyp is not yet implemented");
+				break;
+			case "gesuchsperiode":
+				orderField = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
+				break;
+			case "eingangsdatum":
+				orderField = root.get(Gesuch_.eingangsdatum);
+				break;
+			case "status":
+				orderField = root.get(Gesuch_.status);
+				break;
+			case "angebote":
+				LOG.warn("Sortig by angebote is not implemented");
+				break;
+			case "institutionen":
+				LOG.warn("Sortig by institutionen is not implemented");
+				break;
+			case "verantwortlicher":
+				orderField = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
+				break;
+			default:
+				LOG.warn("Using default sort because there is no specific clause for predicate" + sort.getPredicate());
+		}
+		List<Order> orders = new ArrayList<>();
+		if (sort.getReverse()) {
+			orders.add(cb.desc(orderField));
+		} else {
+			orders.add(cb.asc(orderField));
+
+		}
+		return orders;
+	}
 }
