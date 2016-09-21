@@ -1,6 +1,31 @@
 <md-content class="gesuch-toolbar small-toolbar">
+
+
     <md-toolbar class="small-toolbar">
         <div class="md-toolbar-tools">
+
+            <!--Fall und Name des Gesuchs-->
+            <span ng-bind="vm.getGesuchName()"></span>
+
+            <!--Gesuchsperioden-->
+            <md-menu-bar>
+                <md-menu>
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getCurrentGesuchsperiode()}}">
+                        <span ng-bind="vm.getCurrentGesuchsperiode()"></span>
+                        <i class="ellipsis-icon fa fa-chevron-down"></i>
+                    </md-button>
+                    <md-menu-content class="toolbar-submenu">
+                        <md-menu-item  ng-repeat="gesuchsperiode in vm.gesuchsperiodeList" ng-value="vm.getGesuchsperiodeAsString(gesuchsperiode)">
+                            <md-button ng-click="vm.setGesuchsperiode(gesuchsperiode)" aria-label="{{vm.getGesuchsperiodeAsString(gesuchsperiode)}}">
+                                <span>
+                                    <a class="toolbar-submenu-a" href="javascript:void(0)">{{vm.getGesuchsperiodeAsString(gesuchsperiode)}}</a>
+                                </span>
+                            </md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </md-menu-bar>
+
             <span flex=""></span>
 
             <md-menu-bar>

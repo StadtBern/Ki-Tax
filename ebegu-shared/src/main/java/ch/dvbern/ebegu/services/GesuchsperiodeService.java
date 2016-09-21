@@ -52,4 +52,11 @@ public interface GesuchsperiodeService {
      */
 	@Nonnull
 	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden();
+
+	/**
+	 * Gibt alle Gesuchsperioden für das Geusch zurück.
+	 * @return Liste aller Gesuchsperiodeen aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuchsperiode> getAllGesuchsperiodenForFall(String gesuchId);
 }

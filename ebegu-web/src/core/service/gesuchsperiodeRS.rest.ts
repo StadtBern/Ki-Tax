@@ -65,4 +65,11 @@ export default class GesuchsperiodeRS {
             return this.ebeguRestUtil.parseGesuchsperioden(response.data);
         });
     }
+
+
+    public getAllGesuchsperiodenForFall(fallId: string): IPromise<TSGesuchsperiode[]> {
+        return this.http.get(this.serviceURL + '/fall/' + encodeURIComponent(fallId)).then((response: any) => {
+            return this.ebeguRestUtil.parseGesuchsperioden(response.data);
+        });
+    }
 }

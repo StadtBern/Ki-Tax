@@ -55,4 +55,14 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 
 		return gesuch;
 	}
+
+	@Override
+	public String getNachname() {
+		return FAMILIENNAME;
+	}
+
+	@Override
+	public String getVorname() {
+		return "Nora";
+	}
 }

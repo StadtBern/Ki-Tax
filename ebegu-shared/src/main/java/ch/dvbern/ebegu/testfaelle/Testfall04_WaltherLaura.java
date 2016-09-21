@@ -65,4 +65,14 @@ public class Testfall04_WaltherLaura extends AbstractTestfall {
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
 		return gesuch;
 	}
+
+	@Override
+	public String getNachname() {
+		return FAMILIENNAME;
+	}
+
+	@Override
+	public String getVorname() {
+		return "Laura";
+	}
 }

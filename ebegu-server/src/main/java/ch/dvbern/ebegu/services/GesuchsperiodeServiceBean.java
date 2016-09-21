@@ -1,8 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Gesuchsperiode_;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -32,6 +30,9 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private GesuchService gesuchService;
 
 
 	@Nonnull
@@ -94,6 +95,24 @@ public class GesuchsperiodeServiceBean extends AbstractBaseService implements Ge
 		TypedQuery<Gesuchsperiode> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(dateParam, LocalDate.now());
 		query.orderBy(cb.asc(root.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return q.getResultList();
+	}
+
+	@Override
+	@Nonnull
+	public Collection<Gesuchsperiode> getAllGesuchsperiodenForFall(String fallId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuchsperiode> query = cb.createQuery(Gesuchsperiode.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+		query.select(root.get(Gesuch_.gesuchsperiode)).distinct(true);
+
+		ParameterExpression<String> dateParam = cb.parameter(String.class, "fallId");
+		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), dateParam);
+
+		query.where(predicate);
+		TypedQuery<Gesuchsperiode> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(dateParam, fallId);
+		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return q.getResultList();
 	}
 }

@@ -23,7 +23,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 	public Gesuch createGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
-		Gesuchsteller gesuchsteller1 = createGesuchsteller("Wälti", "Dagmar");
+		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
@@ -55,5 +55,15 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
 		return gesuch;
+	}
+
+	@Override
+	public String getNachname() {
+		return "Wälti";
+	}
+
+	@Override
+	public String getVorname() {
+		return "Dagmar";
 	}
 }

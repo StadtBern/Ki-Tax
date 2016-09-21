@@ -77,4 +77,12 @@ export default class GesuchRS implements IEntityRS {
     public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
     }
+
+    public findGesuchByFallAndPeriode(fallId: string, gesuchsperiodeId: string) {
+        return this.http.get(this.serviceURL + '/fallId/gesuchsperiodeId/' + encodeURIComponent(fallId) + '/' + encodeURIComponent(gesuchsperiodeId))
+            .then((response: any) => {
+                this.$log.debug('PARSING gesuch (fuer Fall und Periode) REST object ', response.data);
+                return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+            });
+    }
 }

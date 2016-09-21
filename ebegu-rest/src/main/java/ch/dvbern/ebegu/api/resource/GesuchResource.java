@@ -56,7 +56,8 @@ public class GesuchResource {
 	@Inject
 	private WizardStepResource wizardStepResource;
 
-	@Inject AntragStatusConverter antragStatusConverter;
+	@Inject
+	AntragStatusConverter antragStatusConverter;
 
 	@Inject
 	private Principal principal;
@@ -223,6 +224,37 @@ public class GesuchResource {
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
+	}
+
+	/**
+	 * Methode findGesuchByFallAndPeriode fuer fallID und GesuchsperiodeID
+	 *
+	 * @param fallJAXPId          ID des Falles
+	 * @param gesuchperiodeJAXPId ID der Gesuchsperiode
+	 * @return filtriertes Gesuch mit nur den relevanten Daten
+	 */
+	@Nullable
+	@GET
+	@Path("/fallId/gesuchsperiodeId/{fallId}/{gesuchsperiodeId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public JaxGesuch findGesuchByFallAndPeriode(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId,
+		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchperiodeJAXPId) throws EbeguException {
+
+		Validate.notNull(fallJAXPId.getId());
+		String fallID = converter.toEntityId(fallJAXPId);
+
+		Validate.notNull(gesuchperiodeJAXPId.getId());
+		String gesuchsperiodeID = converter.toEntityId(gesuchperiodeJAXPId);
+
+		Optional<Gesuch> gesuchOptional = gesuchService.findGesuchByFallAndGesuchsperiode(fallID, gesuchsperiodeID);
+
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		return converter.gesuchToJAX(gesuchToReturn);
 	}
 
 }

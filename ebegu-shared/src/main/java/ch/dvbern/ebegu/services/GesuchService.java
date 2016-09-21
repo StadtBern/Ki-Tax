@@ -13,6 +13,7 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt ein neues Gesuch in der DB, falls der key noch nicht existiert
+	 *
 	 * @param gesuch der Gesuch als DTO
 	 * @return das gespeicherte Gesuch
 	 */
@@ -21,6 +22,7 @@ public interface GesuchService {
 
 	/**
 	 * Aktualisiert das Gesuch in der DB
+	 *
 	 * @param gesuch das Gesuch als DTO
 	 * @return Das aktualisierte Gesuch
 	 */
@@ -28,7 +30,6 @@ public interface GesuchService {
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch);
 
 	/**
-	 *
 	 * @param key PK (id) des Gesuches
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -37,6 +38,7 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck.
+	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
@@ -44,6 +46,7 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
+	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
@@ -51,9 +54,15 @@ public interface GesuchService {
 
 	/**
 	 * entfernt ein Gesuch aus der Database
+	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
 	@Nonnull
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
+	@Nonnull
+	Optional<Gesuch> findGesuchByGSName(String nachname, String vorname);
+
+	@Nonnull
+	Optional<Gesuch> findGesuchByFallAndGesuchsperiode(String fallID, String gesuchsperiodeID);
 }
