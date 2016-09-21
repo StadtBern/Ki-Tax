@@ -1099,6 +1099,7 @@ export default class EbeguRestUtil {
         restPendenz.angebote = pendenz.angebote;
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
         restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
@@ -1113,6 +1114,7 @@ export default class EbeguRestUtil {
         pendenzTS.angebote = pendenzFromServer.angebote;
         pendenzTS.antragTyp = pendenzFromServer.antragTyp;
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;

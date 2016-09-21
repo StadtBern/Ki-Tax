@@ -344,7 +344,7 @@ describe('EbeguRestUtil', function () {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
                 let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
-                    DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+                    DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
                 let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
@@ -353,6 +353,8 @@ describe('EbeguRestUtil', function () {
                 expect(transformedPendenz).toBeDefined();
                 expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
                 transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
+                expect(transformedPendenz.aenderungsdatum.isSame(myPendenz.aenderungsdatum)).toBe(true);
+                transformedPendenz.aenderungsdatum = myPendenz.aenderungsdatum;
                 expect(transformedPendenz).toEqual(myPendenz);
             });
         });

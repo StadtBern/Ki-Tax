@@ -141,4 +141,15 @@ public class Gesuch extends AbstractAntragEntity {
 		}
 		return list;
 	}
+
+	/**
+	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
+	 */
+	@Transient
+	public String extractFamiliennamenString(){
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		return bothFamiliennamen;
+
+	}
 }

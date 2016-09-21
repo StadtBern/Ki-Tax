@@ -105,7 +105,7 @@ describe('pendenzenListView', function () {
 
     function mockGetPendenzenList(): TSPendenzJA {
         let mockPendenz: TSPendenzJA = new TSPendenzJA('66345345', 123, 'name', TSAntragTyp.GESUCH, undefined,
-            undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+            undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
         let result: Array<TSPendenzJA> = [mockPendenz];
         spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockPendenz;

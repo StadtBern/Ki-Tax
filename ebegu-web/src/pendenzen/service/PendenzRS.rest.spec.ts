@@ -5,7 +5,6 @@ import {EbeguWebPendenzen} from '../pendenzen.module';
 import PendenzRS from './PendenzRS.rest';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
-import TSUser from '../../models/TSUser';
 
 describe('pendenzRS', function () {
 
@@ -24,8 +23,8 @@ describe('pendenzRS', function () {
     }));
 
     beforeEach(() => {
-        mockPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, undefined,
-            undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+        mockPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, undefined, undefined, undefined,
+            [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
         mockPendenzRest = ebeguRestUtil.pendenzToRestObject({}, mockPendenz);
     });
 

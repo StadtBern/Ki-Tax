@@ -11,13 +11,14 @@ export default class TSPendenzJA {
     private _antragTyp: TSAntragTyp;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
+    private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
     private _status: TSAntragStatus;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp, gesuchsperiode?: TSGesuchsperiode,
-                eingangsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
+                eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus) {
 
         this._antragId = antragId;
@@ -26,6 +27,7 @@ export default class TSPendenzJA {
         this._antragTyp = antragTyp;
         this._gesuchsperiode = gesuchsperiode;
         this._eingangsdatum = eingangsdatum;
+        this._aenderungsdatum = aenderungsdatum;
         this._angebote = angebote;
         this._institutionen = institutionen;
         this._verantwortlicher = verantwortlicher;
@@ -79,6 +81,15 @@ export default class TSPendenzJA {
 
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
+    }
+
+
+    get aenderungsdatum(): moment.Moment {
+        return this._aenderungsdatum;
+    }
+
+    set aenderungsdatum(value: moment.Moment) {
+        this._aenderungsdatum = value;
     }
 
     get angebote(): Array<TSBetreuungsangebotTyp> {

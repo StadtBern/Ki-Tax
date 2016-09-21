@@ -3,7 +3,9 @@ package ch.dvbern.ebegu.api.converter;
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
@@ -1679,4 +1681,53 @@ public class JaxBConverter {
 		return file;
 	}
 
+
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
+		JaxAntragDTO antrag = new JaxAntragDTO();
+		antrag.setAntragId(gesuch.getId());
+		antrag.setFallNummer(gesuch.getFall().getFallNummer());
+		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
+		antrag.setEingangsdatum(gesuch.getEingangsdatum());
+		antrag.setAenderungsdatum( gesuch.getTimestampMutiert());
+		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
+		antrag.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
+		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
+		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+		antrag.setGesuchsperiode(this.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
+		if (gesuch.getFall().getVerantwortlicher() != null) {
+			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
+		}
+
+		return antrag;
+	}
+
+	/**
+	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
+	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
+     */
+	private Set<BetreuungsangebotTyp> createAngeboteList(Set<KindContainer> kindContainers) {
+		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
+		kindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			});
+		});
+		return resultSet;
+	}
+
+	/**
+	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
+	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
+     */
+	private Set<String> createInstitutionenList(Set<KindContainer> kindContainers) {
+		Set<String> resultSet = new HashSet<>();
+		kindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				if (betreuung.getInstitutionStammdaten() != null && betreuung.getInstitutionStammdaten().getInstitution() != null) {
+					resultSet.add(betreuung.getInstitutionStammdaten().getInstitution().getName());
+				}
+			});
+		});
+		return resultSet;
+	}
 }
