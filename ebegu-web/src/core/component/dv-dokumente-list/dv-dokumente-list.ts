@@ -5,7 +5,7 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSDokument from '../../../models/TSDokument';
 import {DownloadRS} from '../../service/downloadRS.rest';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DvDialog} from '../../directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
@@ -77,7 +77,7 @@ export class DVDokumenteListController {
     hasDokuments(selectDokument: TSDokumentGrund): boolean {
         if (selectDokument.dokumente) {
             for (var dokument of selectDokument.dokumente) {
-                if (dokument.dokumentName) {
+                if (dokument.filename) {
                     return true;
                 }
             }
@@ -90,7 +90,7 @@ export class DVDokumenteListController {
     }
 
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
-        console.log('component -> remove dokument ' + dokument.dokumentName);
+        console.log('component -> remove dokument ' + dokument.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN'
@@ -102,15 +102,14 @@ export class DVDokumenteListController {
     }
 
     download(dokument: TSDokument, attachment: boolean) {
-        console.log('download dokument ' + dokument.dokumentName);
+        console.log('download dokument ' + dokument.filename);
 
-        this.downloadRS.getAccessToken(dokument.id).then((response) => {
-            let tempDokument: TSTempDokument = angular.copy(response);
+        this.downloadRS.getAccessTokenDokument(dokument.id).then((response) => {
+            let tempDokument: TSDownloadFile = angular.copy(response);
             console.log('accessToken: ' + tempDokument.accessToken);
 
-            this.downloadRS.startDownload(tempDokument.accessToken, dokument.dokumentName, attachment);
+            this.downloadRS.startDownload(tempDokument.accessToken, dokument.filename, attachment);
         });
-
     }
 
 

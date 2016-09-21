@@ -32,13 +32,25 @@ export default class DateUtil {
         return moment(aMoment).startOf('day').format(format);
     }
 
+    /**
+     * @param {Moment} aMoment time instance
+     * @param format format for the time
+     * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. undefined when aMoment is invalid
+     */
+    private static momentToLocalDateTimeFormat(aMoment: Moment, format: string): string {
+        if (!aMoment) {
+            return undefined;
+        }
+        return moment(aMoment).format(format);
+    }
+
 
     /**
      * @param {Moment} aMoment time instance
      * @returns {?string} a Date (YYYY-MM-DD) representation of the given moment. NULL when aMoment is invalid
      */
     public static momentToLocalDateTime(aMoment: Moment): string {
-        return moment(aMoment).format('YYYY-MM-DDTHH:mm:ss.SSS');
+        return DateUtil.momentToLocalDateTimeFormat(aMoment, 'YYYY-MM-DDTHH:mm:ss.SSS');
     }
 
     /**
@@ -52,6 +64,10 @@ export default class DateUtil {
 
     public static today(): Moment {
         return moment().startOf('day');
+    }
+
+    public static now(): Moment {
+        return moment();
     }
 
     public static currentYear(): number {
