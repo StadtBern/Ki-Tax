@@ -6,16 +6,22 @@ import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.File;
+import ch.dvbern.ebegu.entities.GeneratedDokument;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.DokumentService;
-import ch.dvbern.ebegu.services.DownloadFileService;
-import ch.dvbern.ebegu.services.VorlageService;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -26,6 +32,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * REST Resource fuer Institution
@@ -47,6 +55,28 @@ public class DownloadResource {
 
 	@Inject
 	private VorlageService vorlageService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+
+	@Inject
+	private FileSaverService fileSaverService;
+
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
+
+	@Inject
+	private VerfuegungService verfuegungService;
+
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+
+	@Inject
+	private Persistence<Gesuch> persistence;
+
 
 	@GET
 	@Path("blobdata/{accessToken}/{filename}")
@@ -119,6 +149,46 @@ public class DownloadResource {
 
 		return getFileDownloadResponse(uriInfo, ip, dokument);
 	}
+
+	@Nonnull
+	@GET
+	@Path("/{gesuchid}/{dokumentTyp}/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("dokumentTyp") GeneratedDokumentTyp dokumentTyp,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		Validate.notNull(dokumentTyp);
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
+
+			List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegung(gesuchWithVerfuegungen);
+
+			final UploadFileInfo savedDokument = fileSaverService.save(verfuegungsPDFs.get(1), "name.pdf", jaxGesuchId.getId());
+
+			GeneratedDokument generatedDokument = new GeneratedDokument();
+			generatedDokument.setFilename(savedDokument.getFilename());
+			generatedDokument.setFilepfad(savedDokument.getPath());
+			generatedDokument.setFilesize(savedDokument.getSizeString());
+			generatedDokument.setTyp(dokumentTyp);
+			generatedDokument.setGesuch(gesuch.get());
+			final GeneratedDokument persistedDokument = generatedDokumentService.saveGeneratedDokument(generatedDokument);
+
+			persistence.getEntityManager().detach(gesuch.get());
+
+			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+		}
+		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+	}
+
 
 	private Response getFileDownloadResponse(@Context UriInfo uriInfo, String ip, File file) {
 		final DownloadFile downloadFile = downloadFileService.create(file, ip);

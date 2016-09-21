@@ -12,6 +12,9 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -29,14 +32,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog'];
+        'DvDialog', 'DownloadRS'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.setBemerkungen();
 
@@ -182,6 +185,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public openVerfuegungPDF(): void {
+        this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.VERFUEGUNG_KITA)
+            .then((response) => {
+                let downloadFile: TSDownloadFile = angular.copy(response);
+                console.log('accessToken: ' + downloadFile.accessToken);
 
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
     }
 }

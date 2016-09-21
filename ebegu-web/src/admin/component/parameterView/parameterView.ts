@@ -209,10 +209,10 @@ export class ParameterViewController {
         console.log('download vorlage ' + ebeguVorlage.vorlage.filename);
 
         this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((response) => {
-            let tempDokument: TSDownloadFile = angular.copy(response);
-            console.log('accessToken: ' + tempDokument.accessToken);
+            let downloadFile: TSDownloadFile = angular.copy(response);
+            console.log('accessToken: ' + downloadFile.accessToken);
 
-            this.downloadRS.startDownload(tempDokument.accessToken, ebeguVorlage.vorlage.filename, attachment);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
         });
     }
 

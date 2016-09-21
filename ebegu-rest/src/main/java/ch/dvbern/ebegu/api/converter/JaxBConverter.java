@@ -1598,7 +1598,8 @@ public class JaxBConverter {
 
 
 	public JaxDownloadFile downloadFileToJAX(DownloadFile downloadFile) {
-		JaxDownloadFile jaxDownloadFile = convertAbstractFieldsToJAX(downloadFile, new JaxDownloadFile());
+		JaxDownloadFile jaxDownloadFile = new JaxDownloadFile();
+		convertFileToJax(downloadFile, jaxDownloadFile);
 		jaxDownloadFile.setAccessToken(downloadFile.getAccessToken());
 		return jaxDownloadFile;
 	}

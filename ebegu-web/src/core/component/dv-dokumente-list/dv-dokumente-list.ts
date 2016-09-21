@@ -105,10 +105,10 @@ export class DVDokumenteListController {
         console.log('download dokument ' + dokument.filename);
 
         this.downloadRS.getAccessTokenDokument(dokument.id).then((response) => {
-            let tempDokument: TSDownloadFile = angular.copy(response);
-            console.log('accessToken: ' + tempDokument.accessToken);
+            let downloadFile: TSDownloadFile = angular.copy(response);
+            console.log('accessToken: ' + downloadFile.accessToken);
 
-            this.downloadRS.startDownload(tempDokument.accessToken, dokument.filename, attachment);
+            this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
         });
     }
 

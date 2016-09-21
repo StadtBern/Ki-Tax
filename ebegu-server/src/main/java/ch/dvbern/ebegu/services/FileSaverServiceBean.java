@@ -60,6 +60,16 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
+	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) {
+		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, null);
+		uploadFileInfo.setBytes(bytes);
+		if (save(uploadFileInfo, folderName)){
+			return uploadFileInfo;
+		}
+		return null;
+	}
+
+	@Override
 	public boolean copy(File fileToCopy, String folderName) {
 		Validate.notNull(fileToCopy);
 		Validate.notNull(folderName);

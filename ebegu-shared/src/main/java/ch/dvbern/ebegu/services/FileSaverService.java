@@ -13,5 +13,7 @@ public interface FileSaverService {
 
 	boolean remove(String dokumentPaths);
 
+	UploadFileInfo save(byte[] bytes, String fileName, String folderName);
+
 	boolean copy(File fileToCopy, String folderName);
 }

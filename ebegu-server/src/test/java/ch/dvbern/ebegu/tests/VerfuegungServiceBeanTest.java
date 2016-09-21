@@ -85,7 +85,8 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	public void calculateVerfuegung() {
 
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
-		prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit());
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
+		Assert.assertEquals(18, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch berechnetesGesuch = this.verfuegungService.calculateVerfuegung(gesuch);
 		Assert.assertNotNull(berechnetesGesuch);
@@ -130,37 +131,5 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 	}
 
-	private void prepareParameters(DateRange gueltigkeit) {
-
-		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
-		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start, year1End));
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)));
-		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", gueltigkeit);
-		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244", gueltigkeit);
-		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5", gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91", gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MIN, "0.75", gueltigkeit);
-		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MAX, "158690", gueltigkeit);
-		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MIN, "42540", gueltigkeit);
-		saveParameter(PARAM_ANZAHL_TAGE_KANTON, "240", gueltigkeit);
-		saveParameter(PARAM_STUNDEN_PRO_TAG_TAGI, "7", gueltigkeit);
-		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit);
-		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12", gueltigkeit);  //waere eigentlich int
-		saveParameter(PARAM_BABY_FAKTOR, "1.5", gueltigkeit);
-		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760", gueltigkeit);
-		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit);
-		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit);
-		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit);
-
-		Assert.assertEquals(18, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
-
-	}
-
-	private void saveParameter(EbeguParameterKey key, String value, DateRange gueltigkeit) {
-		EbeguParameter ebeguParameter = new EbeguParameter(key, value, gueltigkeit);
-		persistence.persist(ebeguParameter);
-
-	}
 }
 
