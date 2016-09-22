@@ -4,11 +4,11 @@ import TSAntragStatusHistory from '../../models/TSAntragStatusHistory';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IHttpBackendService = angular.IHttpBackendService;
 import TestDataUtil from '../../utils/TestDataUtil';
 import TSGesuch from '../../models/TSGesuch';
+import IHttpBackendService = angular.IHttpBackendService;
 
-describe('betreuungRS', function () {
+describe('antragStatusHistoryRS', function () {
 
     let antragStatusHistoryRS: AntragStatusHistoryRS;
     let $httpBackend: IHttpBackendService;

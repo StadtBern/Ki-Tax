@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
 import javax.annotation.Nonnull;
@@ -16,7 +15,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,8 +58,8 @@ public class AntragStatusHistoryServiceBean extends AbstractBaseService implemen
 			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 			final CriteriaQuery<AntragStatusHistory> query = cb.createQuery(AntragStatusHistory.class);
 			Root<AntragStatusHistory> root = query.from(AntragStatusHistory.class);
-			// Kinder from Gesuch
-			Predicate predicateInstitution = root.get(AntragStatusHistory_.gesuch).get(Gesuch_.id).in(gesuch.getId());
+
+			Predicate predicateInstitution = cb.equal(root.get(AntragStatusHistory_.gesuch).get(Gesuch_.id), gesuch.getId());
 
 			query.where(predicateInstitution);
 			query.orderBy(cb.desc(root.get(AntragStatusHistory_.datum)));

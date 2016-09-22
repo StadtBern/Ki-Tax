@@ -74,7 +74,7 @@ public class AntragStatusConverter {
 	}
 
 	/**
-	 * Konvertieren des DTOStatus in Entity-Status. Die Werte sollen eins-zu-eins konvertiert werden
+	 * Konvertieren des DTOStatus in Entity-Status. Die Werte sollen in die Serverstatus konvertiert werden
 	 * @param statusDTO Der AntragStatusDTO vom Client
 	 * @return Der AntragStatus fuer das Entity
 	 */

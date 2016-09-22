@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
 /**
- * REST Resource fuer Kinder
+ * REST Resource fuer die History von Gesuchen/Mutationen (Antraegen)
  */
 @Path("antragStatusHistory")
 @Stateless

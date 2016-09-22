@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

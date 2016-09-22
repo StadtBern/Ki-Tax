@@ -998,7 +998,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Einige Status wie GEPRUEFT haben "substatus" die berechnet werden muessen. Aus diesem Grund rufen wir
+     * Einige Status wie GEPRUEFT haben "substatus" auf dem Client die berechnet werden muessen. Aus diesem Grund rufen wir
      * diese Methode auf, bevor wir den Wert setzen.
      * @param status
      */

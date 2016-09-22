@@ -77,7 +77,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
      * wird zurueckgegeben
      * @returns {string}
      */
-    public getGesuchStatus(): string {
+    public getGesuchStatusTranslation(): string {
         let toTranslate: TSAntragStatus = TSAntragStatus.IN_BEARBEITUNG_JA;
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
             toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
