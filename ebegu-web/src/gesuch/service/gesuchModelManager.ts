@@ -41,6 +41,9 @@ import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -56,14 +59,15 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
-                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
+                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
+                private antragStatusHistoryRS: AntragStatusHistoryRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -459,6 +463,7 @@ export default class GesuchModelManager {
             this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
         }
+        this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
     }
 
@@ -967,7 +972,9 @@ export default class GesuchModelManager {
     public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (!this.isGesuchStatus(status)) {
             return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
-                return this.gesuch.status = status;
+                return this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch()).then(() => {
+                    return this.gesuch.status = this.calculateNewStatus(status);
+                });
             });
         }
         return undefined;
@@ -988,5 +995,27 @@ export default class GesuchModelManager {
      */
     public isGesuchStatusVerfuegenVerfuegt() {
         return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+    }
+
+    /**
+     * Einige Status wie GEPRUEFT haben "substatus" auf dem Client die berechnet werden muessen. Aus diesem Grund rufen wir
+     * diese Methode auf, bevor wir den Wert setzen.
+     * @param status
+     */
+    public calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
+        if (TSAntragStatus.GEPRUEFT === status || TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN === status || TSAntragStatus.PLATZBESTAETIGUNG_WARTEN === status) {
+            if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)) {
+                if (this.isThereAnyBetreuung()) {
+                    return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
+                } else {
+                    return TSAntragStatus.GEPRUEFT;
+                }
+            } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.PLATZBESTAETIGUNG)) {
+                return TSAntragStatus.PLATZBESTAETIGUNG_WARTEN;
+            } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK)) {
+                return TSAntragStatus.GEPRUEFT;
+            }
+        }
+        return status;
     }
 }

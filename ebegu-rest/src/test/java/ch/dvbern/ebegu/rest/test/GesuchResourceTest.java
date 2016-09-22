@@ -138,6 +138,9 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 	@Test
 	public void testUpdateStatus() throws EbeguException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		persistUser(UserRole.GESUCHSTELLER, null,
+			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
+			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
 
 		Response response = gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.ERSTE_MAHNUNG);
 		final JaxGesuch persistedGesuch = gesuchResource.findGesuch(new JaxId(gesuch.getId()));
@@ -160,9 +163,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 	}
 
 	private void changeStatusToWarten(KindContainer kindContainer) {
-		final Iterator<Betreuung> iterator = kindContainer.getBetreuungen().iterator();
-		while (iterator.hasNext()) {
-			Betreuung betreuung = iterator.next();
+		for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 			betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
 			persistence.merge(betreuung);
 		}

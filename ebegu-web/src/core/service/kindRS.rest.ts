@@ -1,5 +1,5 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import {IHttpService, IPromise, ILogService, IHttpPromise} from 'angular';
+import {IHttpService, IPromise, ILogService} from 'angular';
 import TSKindContainer from '../../models/TSKindContainer';
 import WizardStepManager from '../../gesuch/service/wizardStepManager';
 

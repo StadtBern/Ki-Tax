@@ -359,6 +359,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
 	@Test
 	public void updateWizardStepVerfuegenWARTEN() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		updateStatus(verfStep, WizardStepStatus.WARTEN);
 		Iterator<Betreuung> iterator = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator();
 		Betreuung betreuung1 = iterator.next();

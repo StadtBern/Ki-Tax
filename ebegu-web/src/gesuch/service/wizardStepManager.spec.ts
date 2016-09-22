@@ -99,6 +99,22 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.areAllStepsOK()).toBe(false);
         });
     });
+    describe('hasStepGivenStatus', function() {
+        it('returns true if the Step has the given status', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            expect(wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK)).toBe(true);
+        });
+        it('returns false if the Step does not have the given status', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            expect(wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)).toBe(false);
+        });
+        it('returns false if the Step does not exist', function() {
+            wizardStepManager.getWizardSteps().splice(0, wizardStepManager.getWizardSteps().length);
+            wizardStepManager.getWizardSteps().push(new TSWizardStep('', TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.OK, '', true));
+            expect(wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)).toBe(false);
+        });
+    });
+
 
     function createTwoSteps(name1: TSWizardStepName, name2: TSWizardStepName, status: TSWizardStepStatus) {
         let step: TSWizardStep = new TSWizardStep();
