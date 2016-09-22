@@ -23,6 +23,7 @@ public class FachstelleAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
+		//todo nur fuer kleinkinder laufen lassen
 		List<VerfuegungZeitabschnitt> betreuungspensumAbschnitte = new ArrayList<>();
 		PensumFachstelle pensumFachstelle = betreuung.getKind().getKindJA().getPensumFachstelle();
 		if (pensumFachstelle != null) {

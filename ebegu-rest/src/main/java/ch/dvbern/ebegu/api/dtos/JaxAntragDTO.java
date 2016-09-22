@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.api.dtos;
 
+import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -19,7 +21,7 @@ import java.util.Set;
  */
 @XmlRootElement(name = "pendenz")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxPendenzJA {
+public class JaxAntragDTO {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
@@ -45,6 +47,10 @@ public class JaxPendenzJA {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eingangsdatum = null;
 
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
+	private LocalDateTime aenderungsdatum = null;
+
 	@NotNull
 	private Set<BetreuungsangebotTyp> angebote;
 
@@ -54,6 +60,10 @@ public class JaxPendenzJA {
 	@NotNull
 	private AntragStatusDTO status;
 
+
+	public JaxAntragDTO() {
+
+	}
 
 	public String getAntragId() {
 		return antragId;
@@ -110,6 +120,15 @@ public class JaxPendenzJA {
 
 	public void setEingangsdatum(@Nullable LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
+	}
+
+	@Nullable
+	public LocalDateTime getAenderungsdatum() {
+		return aenderungsdatum;
+	}
+
+	public void setAenderungsdatum(@Nullable LocalDateTime aenderungsdatum) {
+		this.aenderungsdatum = aenderungsdatum;
 	}
 
 	public Set<BetreuungsangebotTyp> getAngebote() {

@@ -1,19 +1,18 @@
 import {EbeguWebPendenzen} from '../pendenzen.module';
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
-import TSUser from '../../models/TSUser';
 
 describe('pendenzFilter', function () {
 
     let pendenzFilter: any;
-    let pendenzArray: Array<TSPendenzJA>;
-    let pendenz1: TSPendenzJA;
-    let pendenz2: TSPendenzJA;
-    let pendenz3: TSPendenzJA;
+    let pendenzArray: Array<TSAntragDTO>;
+    let pendenz1: TSAntragDTO;
+    let pendenz2: TSAntragDTO;
+    let pendenz3: TSAntragDTO;
     let gesuchsperiode: TSGesuchsperiode;
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -26,15 +25,15 @@ describe('pendenzFilter', function () {
         gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
 
         pendenzArray = [];
-        pendenz1 = new TSPendenzJA('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
+        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab, ab,
             [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado');
         pendenzArray.push(pendenz1);
 
-        pendenz2 = new TSPendenzJA('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
+        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab, ab,
             [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez');
         pendenzArray.push(pendenz2);
 
-        pendenz3 = new TSPendenzJA('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
+        pendenz3 = new TSAntragDTO('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab, ab,
             [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
         pendenzArray.push(pendenz3);
 
@@ -81,7 +80,10 @@ describe('pendenzFilter', function () {
             expect(pendenzFilter(pendenzArray, {institutionen: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
         });
         it('should return the elements containing all given params, for a multiple filtering', function () {
-            expect(pendenzFilter(pendenzArray, {familienName: 'Hernandez', institutionen: 'Instit1'})).toEqual([pendenz1]);
+            expect(pendenzFilter(pendenzArray, {
+                familienName: 'Hernandez',
+                institutionen: 'Instit1'
+            })).toEqual([pendenz1]);
         });
     });
 

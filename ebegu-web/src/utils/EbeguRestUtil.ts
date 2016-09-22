@@ -30,7 +30,7 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSEbeguParameter from '../models/TSEbeguParameter';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
-import TSPendenzJA from '../models/TSPendenzJA';
+import TSAntragDTO from '../models/TSAntragDTO';
 import EbeguUtil from './EbeguUtil';
 import TSKindContainer from '../models/TSKindContainer';
 import TSUser from '../models/TSUser';
@@ -1093,13 +1093,14 @@ export default class EbeguRestUtil {
         return gesuchsperioden;
     }
 
-    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
+    public antragDTOToRestObject(restPendenz: any, pendenz: TSAntragDTO): any {
         restPendenz.antragId = pendenz.antragId;
         restPendenz.fallNummer = pendenz.fallNummer;
         restPendenz.familienName = pendenz.familienName;
         restPendenz.angebote = pendenz.angebote;
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
+        restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
         restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
@@ -1107,13 +1108,14 @@ export default class EbeguRestUtil {
         return restPendenz;
     }
 
-    public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
+    public parseAntragDTO(pendenzTS: TSAntragDTO, pendenzFromServer: any): TSAntragDTO {
         pendenzTS.antragId = pendenzFromServer.antragId;
         pendenzTS.fallNummer = pendenzFromServer.fallNummer;
         pendenzTS.familienName = pendenzFromServer.familienName;
         pendenzTS.angebote = pendenzFromServer.angebote;
         pendenzTS.antragTyp = pendenzFromServer.antragTyp;
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
+        pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
         pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
@@ -1121,14 +1123,14 @@ export default class EbeguRestUtil {
         return pendenzTS;
     }
 
-    public parsePendenzen(data: any): TSPendenzJA[] {
-        var pendenzen: TSPendenzJA[] = [];
+    public parseAntragDTOs(data: any): TSAntragDTO[] {
+        var pendenzen: TSAntragDTO[] = [];
         if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
-                pendenzen[i] = this.parsePendenz(new TSPendenzJA(), data[i]);
+                pendenzen[i] = this.parseAntragDTO(new TSAntragDTO(), data[i]);
             }
         } else {
-            pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
+            pendenzen[0] = this.parseAntragDTO(new TSAntragDTO(), data);
         }
         return pendenzen;
     }

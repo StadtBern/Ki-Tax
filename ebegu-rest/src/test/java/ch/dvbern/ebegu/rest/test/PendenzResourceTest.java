@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
+import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
@@ -55,7 +55,7 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Gesuch gesuch2 = TestDataUtil.createDefaultGesuch();
 		TestDataUtil.persistEntities(gesuch2, persistence);
 
-		List<JaxPendenzJA> pendenzenList = pendenzResource.getAllPendenzenJA();
+		List<JaxAntragDTO> pendenzenList = pendenzResource.getAllPendenzenJA();
 
 		Assert.assertNotNull(pendenzenList);
 		Assert.assertEquals(2, pendenzenList.size());
@@ -78,7 +78,7 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 
 	// HELP METHOD
 
-	private void assertGesuchDaten(Gesuch gesuch1, JaxPendenzJA pendenzenList) {
+	private void assertGesuchDaten(Gesuch gesuch1, JaxAntragDTO pendenzenList) {
 		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
 		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
