@@ -42,7 +42,8 @@
         <br>
 
         <!--FinanzielleSituationPDF anzeigen-->
-        <div class="row text-left">
+        <div class="row text-left" dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
             <div class="col-md-12">
                 <i class="fa fa-file-text-o"></i>
                 <button type="button" class="btn btn-link"
