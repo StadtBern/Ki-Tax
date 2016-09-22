@@ -1,7 +1,7 @@
 import TSEbeguParameter from '../../../models/TSEbeguParameter';
 import {EbeguParameterRS} from '../../service/ebeguParameterRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import './parameterView.less';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
@@ -14,10 +14,8 @@ import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogControl
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import IPromise = angular.IPromise;
 import ITranslateService = angular.translate.ITranslateService;
 import Moment = moment.Moment;
-import ILogService = angular.ILogService;
 let template = require('./parameterView.html');
 let style = require('./parameterView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -31,7 +29,7 @@ export class ParameterViewComponentConfig implements IComponentOptions {
 
 export class ParameterViewController {
     static $inject = ['EbeguParameterRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$translate', 'EbeguVorlageRS',
-        'EbeguUtil', 'DvDialog', 'DownloadRS'];
+        'EbeguUtil', 'DvDialog', 'DownloadRS', '$log'];
 
     ebeguParameterRS: EbeguParameterRS;
     ebeguRestUtil: EbeguRestUtil;
@@ -50,7 +48,7 @@ export class ParameterViewController {
     constructor(ebeguParameterRS: EbeguParameterRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 ebeguRestUtil: EbeguRestUtil, private $translate: ITranslateService,
                 private ebeguVorlageRS: EbeguVorlageRS, private ebeguUtil: EbeguUtil,
-                private dvDialog: DvDialog, private downloadRS: DownloadRS) {
+                private dvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         this.ebeguParameterRS = ebeguParameterRS;
         this.ebeguRestUtil = ebeguRestUtil;
         this.readGesuchsperioden();
@@ -154,7 +152,7 @@ export class ParameterViewController {
     }
 
     uploadAnhaenge(files: any[], selectEbeguVorlage: TSEbeguVorlage) {
-        console.log('Uploading files ');
+        this.$log.debug('Uploading files ');
 
         this.ebeguVorlageRS.uploadVorlage(files[0], selectEbeguVorlage, this.gesuchsperiode.id).then((response) => {
             this.addResponseToCurrentList(response);
@@ -184,7 +182,7 @@ export class ParameterViewController {
     }
 
     remove(ebeguVorlage: TSEbeguVorlage) {
-        console.log('component -> remove dokument ' + ebeguVorlage.vorlage.filename);
+        this.$log.debug('component -> remove dokument ' + ebeguVorlage.vorlage.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN'
@@ -195,7 +193,7 @@ export class ParameterViewController {
 
                     var index = EbeguUtil.getIndexOfElementwithID(ebeguVorlage, this.ebeguVorlageListGesuchsperiode);
                     if (index > -1) {
-                        console.log('remove Vorlage in EbeguVorlage');
+                        this.$log.debug('remove Vorlage in EbeguVorlage');
                         ebeguVorlage.vorlage = null;
                         this.ebeguVorlageListGesuchsperiode[index] = ebeguVorlage;
                     }
@@ -206,12 +204,10 @@ export class ParameterViewController {
     }
 
     download(ebeguVorlage: TSEbeguVorlage, attachment: boolean) {
-        console.log('download vorlage ' + ebeguVorlage.vorlage.filename);
+        this.$log.debug('download vorlage ' + ebeguVorlage.vorlage.filename);
 
-        this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((response) => {
-            let downloadFile: TSDownloadFile = angular.copy(response);
-            console.log('accessToken: ' + downloadFile.accessToken);
-
+        this.downloadRS.getAccessTokenVorlage(ebeguVorlage.vorlage.id).then((downloadFile: TSDownloadFile) => {
+            this.$log.debug('accessToken: ' + downloadFile.accessToken);
             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
         });
     }

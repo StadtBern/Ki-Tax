@@ -41,28 +41,35 @@ public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implement
 	@Nonnull
 	@Override
 	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
-	public List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public List<byte[]> printVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
 		List<byte[]> result = new ArrayList<>();
-
-		DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		try {
 
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
 				for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 					// Pro Betreuung ein Dokument
-					InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
-					Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
-					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung)))));
-					is.close();
+					result.add(printVerfuegungForBetreuung(betreuung));
 				}
 			}
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetreten", e, new Objects[] {});
 		}
 		return result;
+	}
+
+	@Nonnull
+	@Override
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException {
+		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
+		InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
+		Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
+		final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME
+			.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung))));
+		is.close();
+		return bytes;
 	}
 }

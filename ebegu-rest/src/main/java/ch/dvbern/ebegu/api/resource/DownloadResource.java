@@ -1,13 +1,10 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.DownloadFile;
-import ch.dvbern.ebegu.entities.File;
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -15,13 +12,12 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -32,7 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -63,6 +58,9 @@ public class DownloadResource {
 	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
 
 	@Inject
+	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
+
+	@Inject
 	private FileSaverService fileSaverService;
 
 	@Inject
@@ -73,6 +71,9 @@ public class DownloadResource {
 
 	@Inject
 	private FinanzielleSituationService finanzielleSituationService;
+
+	@Inject
+	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
 
 	@Inject
 	private Persistence<Gesuch> persistence;
@@ -167,19 +168,21 @@ public class DownloadResource {
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
 			finanzielleSituationService.calculateFinanzDaten(gesuch.get());
-			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
 
-			List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegung(gesuchWithVerfuegungen);
+			byte[] data;
+			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch.get());
+			}
+			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
+			}
+			else {
+				return null;
+			}
 
-			final UploadFileInfo savedDokument = fileSaverService.save(verfuegungsPDFs.get(1), "name.pdf", jaxGesuchId.getId());
+			final UploadFileInfo savedDokument = fileSaverService.save(data, "name.pdf", jaxGesuchId.getId());
 
-			GeneratedDokument generatedDokument = new GeneratedDokument();
-			generatedDokument.setFilename(savedDokument.getFilename());
-			generatedDokument.setFilepfad(savedDokument.getPath());
-			generatedDokument.setFilesize(savedDokument.getSizeString());
-			generatedDokument.setTyp(dokumentTyp);
-			generatedDokument.setGesuch(gesuch.get());
-			final GeneratedDokument persistedDokument = generatedDokumentService.saveGeneratedDokument(generatedDokument);
+			final GeneratedDokument persistedDokument = persistGeneratedDokument(dokumentTyp, gesuch.get(), savedDokument);
 
 			persistence.getEntityManager().detach(gesuch.get());
 
@@ -187,6 +190,55 @@ public class DownloadResource {
 		}
 		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+	}
+
+	@Nonnull
+	@GET
+	@Path("/{gesuchid}/{betreuungId}/generatedVerfuegung")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, DocTemplateException, IOException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		Validate.notNull(jaxBetreuungId.getId());
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
+
+			final Betreuung betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
+			if (betreuung != null) {
+				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+
+				final UploadFileInfo savedDokument = fileSaverService.save(verfuegungsPDF, "name.pdf", jaxGesuchId.getId());
+
+				final GeneratedDokument persistedDokument = persistGeneratedDokument(GeneratedDokumentTyp.VERFUEGUNG_KITA, gesuch.get(), savedDokument);
+
+				persistence.getEntityManager().detach(gesuch.get());
+
+				return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+			}
+			throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+		}
+		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
+	}
+
+	private Betreuung getBetreuungFromGesuch(Gesuch gesuch, String betreuungId) {
+		for (KindContainer kind : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kind.getBetreuungen()) {
+				if (betreuung.getId().equals(betreuungId)) {
+					return betreuung;
+				}
+			}
+		}
+		return null;
 	}
 
 
@@ -209,5 +261,16 @@ public class DownloadResource {
 			ipAddress = request.getRemoteAddr();
 		}
 		return ipAddress;
+	}
+
+	@Nonnull
+	private GeneratedDokument persistGeneratedDokument(@Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, UploadFileInfo savedDokument) {
+		GeneratedDokument generatedDokument = new GeneratedDokument();
+		generatedDokument.setFilename(savedDokument.getFilename());
+		generatedDokument.setFilepfad(savedDokument.getPath());
+		generatedDokument.setFilesize(savedDokument.getSizeString());
+		generatedDokument.setTyp(dokumentTyp);
+		generatedDokument.setGesuch(gesuch);
+		return generatedDokumentService.saveGeneratedDokument(generatedDokument);
 	}
 }

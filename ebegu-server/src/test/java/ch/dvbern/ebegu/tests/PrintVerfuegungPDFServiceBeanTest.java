@@ -72,12 +72,12 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
 
-		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegung(gesuch);
+		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
 			File file = writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
-//			openPDF(file);
+			openPDF(file);
 			i++;
 		}
 

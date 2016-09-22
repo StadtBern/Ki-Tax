@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IComponentOptions, ILogService} from 'angular';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import {UploadRS} from '../../service/uploadRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
@@ -43,10 +43,12 @@ export class DVDokumenteListController {
     onRemove: (attrs: any) => void;
     sonstige: boolean;
 
-    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager'];
+    static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
+                             '$log'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
-                private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager) {
+                private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,
+                private $log: ILogService) {
 
     }
 
@@ -58,9 +60,9 @@ export class DVDokumenteListController {
 
         if (!this.isGesuchStatusVerfuegenVerfuegt() && this.gesuchModelManager.getGesuch()) {
             let gesuchID = this.gesuchModelManager.getGesuch().id;
-            console.log('Uploading files on gesuch ' + gesuchID);
+            this.$log.debug('Uploading files on gesuch ' + gesuchID);
             for (var file of files) {
-                console.log('File: ' + file.name);
+                this.$log.debug('File: ' + file.name);
             }
 
             this.uploadRS.uploadFile(files, selectDokument, gesuchID).then((response) => {
@@ -70,7 +72,7 @@ export class DVDokumenteListController {
                 });
             });
         } else {
-            console.log('No gesuch found to store file or gesuch is status verfuegt');
+            this.$log.debug('No gesuch found to store file or gesuch is status verfuegt');
         }
     }
 
@@ -90,7 +92,7 @@ export class DVDokumenteListController {
     }
 
     remove(dokumentGrund: TSDokumentGrund, dokument: TSDokument) {
-        console.log('component -> remove dokument ' + dokument.filename);
+        this.$log.debug('component -> remove dokument ' + dokument.filename);
         this.dvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
             deleteText: '',
             title: 'FILE_LOESCHEN'
@@ -102,12 +104,10 @@ export class DVDokumenteListController {
     }
 
     download(dokument: TSDokument, attachment: boolean) {
-        console.log('download dokument ' + dokument.filename);
+        this.$log.debug('download dokument ' + dokument.filename);
 
-        this.downloadRS.getAccessTokenDokument(dokument.id).then((response) => {
-            let downloadFile: TSDownloadFile = angular.copy(response);
-            console.log('accessToken: ' + downloadFile.accessToken);
-
+        this.downloadRS.getAccessTokenDokument(dokument.id).then((downloadFile: TSDownloadFile) => {
+            this.$log.debug('accessToken: ' + downloadFile.accessToken);
             this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, attachment);
         });
     }

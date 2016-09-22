@@ -41,7 +41,8 @@ describe('verfuegenListViewTest', function () {
         spyOn(berechnungsManager, 'calculateEinkommensverschlechterung').and.returnValue({});
 
         TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined, wizardStepManager, null);
+        verfuegenListView = new VerfuegenListViewController($state, gesuchModelManager, berechnungsManager, undefined,
+            wizardStepManager, null, $injector.get('DownloadRS'), $injector.get('$log'));
         $rootScope.$apply();
     }));
 

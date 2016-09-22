@@ -44,6 +44,15 @@ export class DownloadRS {
             });
     }
 
+    public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(betreuungId) + '/generatedVerfuegung')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
 
     public getServiceName(): string {
         return 'DownloadRS';
