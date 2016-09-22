@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
@@ -38,8 +37,7 @@ public class PendenzResource {
 
 	@Inject
 	private BetreuungService betreuungService;
-	@Inject
-	private AntragStatusConverter antragStatusConverter;
+
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.

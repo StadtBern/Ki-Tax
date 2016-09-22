@@ -123,7 +123,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		//order ist bei count egal
 		query.select(cb.count(root));
-//		query.where() gleiche restriktionen wie oben, createWehereClause() oder so implementieren
+		antragSearch.getSearch(); //	aus diesen angaben query.where() gleiche restriktionen wie oben, createWehereClause() oder so implementieren
 		return persistence.getCriteriaSingleResult(query);
 
 	}
