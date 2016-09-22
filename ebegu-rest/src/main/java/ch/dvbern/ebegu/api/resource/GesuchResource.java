@@ -253,7 +253,7 @@ public class GesuchResource {
 
 	@Nonnull
 	@POST
-	@Path("/")
+	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchAntraege(

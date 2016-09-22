@@ -68,7 +68,7 @@ export default class GesuchRS implements IEntityRS {
     }
 
     public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
-        return this.http.post(this.serviceURL, antragSearch, {
+        return this.http.post(this.serviceURL + '/search', antragSearch, {
             headers: {
                 'Content-Type': 'application/json'
             }
