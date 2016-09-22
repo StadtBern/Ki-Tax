@@ -566,4 +566,15 @@ public final class TestDataUtil {
 		persistence.persist(benutzer);
 		return benutzer;
 	}
+
+	public static Benutzer createDummyAdminAnonymous(Persistence<?> persistence) {
+		//machmal brauchen wir einen dummy admin in der DB
+		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+		persistence.persist(traegerschaft);
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
 }

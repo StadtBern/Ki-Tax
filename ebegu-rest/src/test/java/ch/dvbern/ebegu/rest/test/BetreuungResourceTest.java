@@ -6,8 +6,8 @@ import ch.dvbern.ebegu.api.resource.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
-import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -68,6 +68,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void createBetreuung() throws EbeguException {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
@@ -163,6 +164,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	}
 
 	private Betreuung storeInitialBetreung() throws EbeguException {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
