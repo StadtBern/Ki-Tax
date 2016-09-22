@@ -129,7 +129,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	private List<Order> createOrderClause(CriteriaBuilder cb, Root<Gesuch> root, AntragSortDTO sort) {
-		Expression orderField= orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+		Expression orderField= root.get(Gesuch_.fall).get(Fall_.fallNummer);
 		switch (sort.getPredicate()) {
 			case "fallNummer":
 				orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
