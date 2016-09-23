@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
-@Transactional(TransactionMode.DEFAULT)
+@Transactional(TransactionMode.DISABLED)  //disabeln sonst existiert in changeVerantwortlicherOfFallTest der Benutzer noch gar nicht
 public class FallServiceTest extends AbstractEbeguTest {
 
 	@Inject
@@ -41,7 +43,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 
 
 	@Test
-	public void createFall() {
+	public void createFallTest() {
 		persistence.getEntityManager().createNativeQuery("ALTER TABLE fall ALTER COLUMN fallNummer RESTART WITH 1").executeUpdate();
 
 		Assert.assertNotNull(fallService);
@@ -65,6 +67,25 @@ public class FallServiceTest extends AbstractEbeguTest {
 			int expectedFallNr = (i + 1); //H2 DB faengt anscheinend im Gegensatz zu PSQL bei 1 an wenn auto increment
 			Assert.assertEquals(expectedFallNr, moreFaelle.get(i).getFallNummer());
 		}
+	}
+
+	@Test
+	public void changeVerantwortlicherOfFallTest() {
+
+		Fall fall = TestDataUtil.createDefaultFall();
+		Fall savedFall = fallService.saveFall(fall);
+		Optional<Fall> loadedFallOpt = fallService.findFall(savedFall.getId());
+		Assert.assertTrue(loadedFallOpt.isPresent());
+		Fall loadedFall = loadedFallOpt.get();
+		Assert.assertNull(loadedFall.getVerantwortlicher());
+		Benutzer benutzerToSet = TestDataUtil.createDummyAdminAnonymous(persistence);
+		Benutzer storedBenutzer = persistence.find(Benutzer.class, benutzerToSet.getId());
+		loadedFall.setVerantwortlicher(storedBenutzer);
+
+		Fall updatedFall = fallService.saveFall(loadedFall);
+		Assert.assertNotNull(loadedFall.getVerantwortlicher());
+		Assert.assertEquals(benutzerToSet.getId(), updatedFall.getVerantwortlicher().getId());
+
 	}
 
 	@Test
