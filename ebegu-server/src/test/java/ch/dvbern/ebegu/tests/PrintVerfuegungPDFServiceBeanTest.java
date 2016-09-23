@@ -77,7 +77,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
 			File file = writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
-			openPDF(file);
+//			openPDF(file);
 			i++;
 		}
 

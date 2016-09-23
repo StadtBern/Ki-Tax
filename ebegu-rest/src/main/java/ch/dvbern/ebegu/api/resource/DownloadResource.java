@@ -151,6 +151,17 @@ public class DownloadResource {
 		return getFileDownloadResponse(uriInfo, ip, dokument);
 	}
 
+	/**
+	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
+	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG_KITA
+	 * @param jaxGesuchId gesuch ID
+	 * @param dokumentTyp Typ der Vorlage
+	 * @param request request
+	 * @param uriInfo uri
+	 * @return ein Response mit dem GeneratedDokument
+	 * @throws EbeguEntityNotFoundException
+	 * @throws MergeDocException
+	 */
 	@Nonnull
 	@GET
 	@Path("/{gesuchid}/{dokumentTyp}/generated")

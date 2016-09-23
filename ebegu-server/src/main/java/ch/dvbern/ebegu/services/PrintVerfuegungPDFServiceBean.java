@@ -14,7 +14,9 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
@@ -36,7 +38,7 @@ import java.util.Objects;
  */
 @Stateless
 @Local(PrintVerfuegungPDFService.class)
-public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implements PrintVerfuegungPDFService {
+public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implements PrintVerfuegungPDFService {
 
 	@Nonnull
 	@Override
@@ -56,7 +58,8 @@ public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implement
 				}
 			}
 		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetreten", e, new Objects[] {});
+			throw new MergeDocException("printVerfuegungen()",
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 		return result;
 	}
@@ -65,11 +68,18 @@ public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implement
 	@Override
 	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException {
 		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
-		InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
-		Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
+
+		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
+		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+			gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA, "/vorlagen/Verfuegungsmuster.docx");
+		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
+
 		final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME
 			.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung))));
+
 		is.close();
+
 		return bytes;
 	}
+
 }
