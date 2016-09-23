@@ -3,38 +3,30 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.OverProtocol;
-import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
  * erweitert werden.
  */
-@ArquillianSuiteDeployment
-//
-@UsingDataSet("datasets/empty.xml")
-@Transactional(TransactionMode.DISABLED)
-public abstract class AbstractEbeguTest {
 
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
+public abstract class EbeguDeployments {
+
+
+	@Deployment(name = "defaultDeployment", order =1 )
+	public static Archive<?>  generateDeployment() {
+		return createTestArchive();
+
+	}
 
 
 	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
@@ -53,7 +45,7 @@ public abstract class AbstractEbeguTest {
 				// .addPackages(true, "ch/dvbern/ebegu/entities")
 				.addPackages(true, "ch/dvbern/ebegu/tests")
 				// .addPackages(true, "ch/dvbern/ebegu/enums")
-				.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
+				.addClasses(EbeguDeployments.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 
 				.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
@@ -72,41 +64,11 @@ public abstract class AbstractEbeguTest {
 		return webArchive;
 	}
 
-	@Deployment
-	@OverProtocol("Servlet 3.0")
 	public static Archive<?> createTestArchive() {
 
 		return createTestArchive(null);
 	}
 
-	/**
-	 * Erstellt das byte Dokument in einem temp File in einem temp folder
-	 * <p/>
-	 * <b>ACHTUNG: </b> die temp files werden nach dem Test <b>sofort wieder geloescht</b>
-	 *
-	 * @param data
-	 * @param fileName
-	 * @return das Temp file oder <code>null</code>
-	 * @throws IOException
-	 */
-	protected final File writeToTempDir(final byte[] data, final String fileName) throws IOException {
 
-		File tempFile = null;
 
-		FileOutputStream fos = null;
-		try {
-			// create temp file in junit temp folder
-			tempFile = tempFolder.newFile(fileName);
-			System.out.println("Writing tempfile to: " + tempFile);
-			fos = new FileOutputStream(tempFile);
-			fos.write(data);
-			fos.close();
-		} finally {
-			if (fos != null) {
-				fos.close();
-			}
-
-		}
-		return tempFile;
-	}
 }

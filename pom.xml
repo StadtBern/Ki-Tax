@@ -374,6 +374,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <version>1.1.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 
