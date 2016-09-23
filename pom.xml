@@ -35,7 +35,7 @@
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
         <version.wildfly-arquillian-containers>1.0.2.Final</version.wildfly-arquillian-containers>
-        <version.wildfly.managed>10.0.0.Final</version.wildfly.managed>
+        <version.wildfly.container>10.0.0.Final</version.wildfly.container>
 
     </properties>
 
@@ -375,24 +375,16 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
-
+        <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
         <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
             <artifactId>arquillian-suite-extension</artifactId>
             <version>1.1.2</version>
             <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>org.jboss.arquillian.protocol</groupId>
             <artifactId>arquillian-protocol-servlet</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Scope: test -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -457,19 +449,14 @@
 
         <profile>
             <id>wildfy10-embedded</id>
-            <!--<activation>-->
-            <!--<property>-->
-            <!--&lt;!&ndash; hiermit wird getestet ob ein property disable-embedded-wildfly existiert, wenn nicht lauft-->
-            <!--arquillian mit embedded container&ndash;&gt;-->
-            <!--<name>!disable-embedded-wildfly</name>-->
-            <!--</property>-->
-            <!--</activation>-->
-            <!-- the dependencies for Wildfly10.0.0.Final  -->
+
             <properties>
-                <jbossHome>${project.build.directory}/wildfly-10.0.0.Final</jbossHome>
+                <!--embedded wird ans gleiche ort enpackt wie managed-->
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
                 <unpack.groupId>org.wildfly</unpack.groupId>
                 <unpack.artifactId>wildfly-dist</unpack.artifactId>
-                <unpack.version>10.0.0.Final</unpack.version>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
             </properties>
             <dependencies>
                 <dependency>
@@ -497,30 +484,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                     </plugin>
-
-
-                    <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                    <!--<version>2.17</version>-->
-                    <!--<configuration>-->
-                    <!--&lt;!&ndash;Port offset um auf jenkins zu funktionieren (port 8080 ist schon besetzt)&ndash;&gt;-->
-                    <!--<argLine>-Djboss.socket.binding.port-offset=200</argLine>-->
-                    <!--&lt;!&ndash; Fork every test because it will launch a separate AS instance &ndash;&gt;-->
-                    <!--<forkMode>always</forkMode>-->
-                    <!--<environmentVariables>-->
-                    <!--<JBOSS_HOME>${jbossHome}</JBOSS_HOME>-->
-                    <!--</environmentVariables>-->
-                    <!--<systemPropertyVariables>-->
-                    <!--<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>-->
-                    <!--&lt;!&ndash; the maven dependency plugin will have already downloaded the server on /target &ndash;&gt;-->
-                    <!--&lt;!&ndash;<jboss.home>${jbossHome}</jboss.home>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<module.path>${project.basedir}/target/wildfly-10.0.0.Final/modules</module.path>&ndash;&gt;-->
-                    <!--<arquillian.launch>standalone</arquillian.launch>-->
-                    <!--</systemPropertyVariables>-->
-                    <!--<redirectTestOutputToFile>false</redirectTestOutputToFile>-->
-                    <!--</configuration>-->
-                    <!--</plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -537,10 +500,11 @@
 
             <id>test-wildfly-managed</id>
             <properties>
-                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.managed}</jbossHome>
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
                 <unpack.groupId>org.wildfly</unpack.groupId>
                 <unpack.artifactId>wildfly-dist</unpack.artifactId>
-                <unpack.version>${version.wildfly.managed}</unpack.version>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
             </properties>
             <dependencies>
                 <dependency>
@@ -591,27 +555,19 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
+                    <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    <!--port offset fuer embedded wildfly -->
+                    <argLine>-Djboss.socket.binding.port-offset=10000</argLine>
                     <environmentVariables>
                         <JBOSS_HOME>${jbossHome}</JBOSS_HOME>
                     </environmentVariables>
                     <systemPropertyVariables>
+                        <!--name des containers im arquillian.xml-->
+                        <arquillian.launch>wildfly-container</arquillian.launch>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                     </systemPropertyVariables>
                 </configuration>
 
-                <!--<configuration>-->
-                <!--&lt;!&ndash;Port offset um auf jenkins zu funktionieren (port 8080 ist schon besetzt)&ndash;&gt;-->
-                <!--<argLine>-Djboss.socket.binding.port-offset=200</argLine>-->
-                <!--&lt;!&ndash; Fork every test because it will launch a separate AS instance &ndash;&gt;-->
-                <!--<forkMode>always</forkMode>-->
-                <!--<systemPropertyVariables>-->
-                <!--<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>-->
-                <!--&lt;!&ndash; the maven dependency plugin will have already downloaded the server on /target &ndash;&gt;-->
-                <!--<jboss.home>${project.basedir}/target/wildfly-10.0.0.Final</jboss.home>-->
-                <!--<module.path>${project.basedir}/target/wildfly-10.0.0.Final/modules</module.path>-->
-                <!--</systemPropertyVariables>-->
-                <!--<redirectTestOutputToFile>false</redirectTestOutputToFile>-->
-                <!--</configuration>-->
             </plugin>
 
             <plugin>
@@ -685,8 +641,6 @@
                 <configuration>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <!--todo team: regeln vom sonar verwenden-->
-
                         <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd
                         </ruleset>
                         <!--<ruleset>file://${base-path}/checkstyle/rules/pmd/pmd-rules.xml</ruleset>-->
@@ -761,7 +715,7 @@
                                         <version>${unpack.version}</version>
                                         <type>zip</type>
                                         <overWrite>false</overWrite>
-                                        <outputDirectory>${project.build.directory}</outputDirectory>
+                                        <outputDirectory>${unpack.directory}</outputDirectory>
                                     </artifactItem>
                                 </artifactItems>
                             </configuration>

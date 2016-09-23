@@ -31,16 +31,11 @@ import javax.inject.Inject;
 @RunWith(Arquillian.class)
 public class ArquilllianWiringTest extends AbstractEbeguTest{
 
-
 	@Inject
 	BenutzerService benutzerService;
-
-//    @Inject
-//	Logger logger;
 
     @Test
     public void doesInjectionWorkTest() {
 		Assert.assertNotNull(benutzerService);
-//		logger.info("injection works in arquillian");
 	}
 }

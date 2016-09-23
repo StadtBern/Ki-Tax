@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.cdi.LoggerProducer;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -60,7 +59,7 @@ public abstract class AbstractEbeguTest {
 			// .addPackages(true, "ch/dvbern/ebegu/entities")
 			.addPackages(true, "ch/dvbern/ebegu/tests")
 			// .addPackages(true, "ch/dvbern/ebegu/enums")
-			.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class, LoggerProducer.class)
+			.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
