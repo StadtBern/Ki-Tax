@@ -640,6 +640,16 @@ public final class TestDataUtil {
 		return benutzer;
 	}
 
+	public static GeneratedDokument createGeneratedDokument(final Gesuch gesuch) {
+		final GeneratedDokument dokument = new GeneratedDokument();
+		dokument.setGesuch(gesuch);
+		dokument.setTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA);
+		dokument.setFilepfad("pfad/to/document/doc.pdf");
+		dokument.setFilename("name.pdf");
+		dokument.setFilesize("32");
+		return dokument;
+	}
+
 	public static Benutzer createDummyAdminAnonymous(Persistence<?> persistence) {
 		//machmal brauchen wir einen dummy admin in der DB
 		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();

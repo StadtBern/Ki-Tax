@@ -8,6 +8,8 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -60,8 +62,8 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	@Override
-	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) {
-		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, null);
+	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
+		final UploadFileInfo uploadFileInfo = new UploadFileInfo(fileName, new MimeType("application/pdf"));
 		uploadFileInfo.setBytes(bytes);
 		if (save(uploadFileInfo, folderName)){
 			return uploadFileInfo;

@@ -10,12 +10,13 @@ import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -59,9 +60,6 @@ public class DownloadResource {
 
 	@Inject
 	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
-
-	@Inject
-	private FileSaverService fileSaverService;
 
 	@Inject
 	private GeneratedDokumentService generatedDokumentService;
@@ -170,7 +168,7 @@ public class DownloadResource {
 	public Response getDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("dokumentTyp") GeneratedDokumentTyp dokumentTyp,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException {
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
 		Validate.notNull(dokumentTyp);
@@ -191,9 +189,8 @@ public class DownloadResource {
 				return null;
 			}
 
-			final UploadFileInfo savedDokument = fileSaverService.save(data, "name.pdf", jaxGesuchId.getId());
-
-			final GeneratedDokument persistedDokument = persistGeneratedDokument(dokumentTyp, gesuch.get(), savedDokument);
+			final GeneratedDokument persistedDokument = generatedDokumentService.updateGeneratedDokument(data, dokumentTyp, gesuch.get(),
+				DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer()));
 
 			persistence.getEntityManager().detach(gesuch.get());
 
@@ -211,7 +208,8 @@ public class DownloadResource {
 	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
-		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, DocTemplateException, IOException {
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException,
+		DocTemplateException, IOException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
 		Validate.notNull(jaxBetreuungId.getId());
@@ -226,13 +224,13 @@ public class DownloadResource {
 			if (betreuung != null) {
 				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
 
-				final UploadFileInfo savedDokument = fileSaverService.save(verfuegungsPDF, "name.pdf", jaxGesuchId.getId());
+				final GeneratedDokument persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG_KITA,
+					gesuch.get(), DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
+						betreuung.getBGNummer()));
 
-				final GeneratedDokument persistedDokument = persistGeneratedDokument(GeneratedDokumentTyp.VERFUEGUNG_KITA, gesuch.get(), savedDokument);
-
+				final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
 				persistence.getEntityManager().detach(gesuch.get());
-
-				return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+				return fileDownloadResponse;
 			}
 			throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
@@ -274,14 +272,6 @@ public class DownloadResource {
 		return ipAddress;
 	}
 
-	@Nonnull
-	private GeneratedDokument persistGeneratedDokument(@Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, UploadFileInfo savedDokument) {
-		GeneratedDokument generatedDokument = new GeneratedDokument();
-		generatedDokument.setFilename(savedDokument.getFilename());
-		generatedDokument.setFilepfad(savedDokument.getPath());
-		generatedDokument.setFilesize(savedDokument.getSizeString());
-		generatedDokument.setTyp(dokumentTyp);
-		generatedDokument.setGesuch(gesuch);
-		return generatedDokumentService.saveGeneratedDokument(generatedDokument);
-	}
+
+
 }

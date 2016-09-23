@@ -49,6 +49,10 @@ public class UploadFileInfo {
 		return path;
 	}
 
+	public String getPathWithoutFileName() {
+		return this.getPath().substring(0, this.getPath().lastIndexOf("/"));
+	}
+
 	public void setPath(String path) {
 		this.path = path;
 	}
