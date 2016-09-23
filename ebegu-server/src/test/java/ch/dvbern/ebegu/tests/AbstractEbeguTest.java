@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.cdi.LoggerProducer;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -28,13 +29,19 @@ import java.io.IOException;
  * erweitert werden.
  */
 @ArquillianSuiteDeployment
-//
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
 public abstract class AbstractEbeguTest {
 
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
+
+	@Deployment
+	@OverProtocol("Servlet 3.0")
+	public static Archive<?> createTestArchive() {
+
+		return createTestArchive(null);
+	}
 
 
 	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
@@ -46,24 +53,24 @@ public abstract class AbstractEbeguTest {
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben
 		// doppelt eingefuegt werden
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war").addPackages(true, "ch/dvbern/ebegu/persistence").addPackages(true, "ch/dvbern/ebegu/rechner")
-				.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
-				.addPackages(true, "ch/dvbern/ebegu/vorlagen")
-			   // .addPackages(true, "ch/dvbern/ebegu/vorlagen/finanziellesituation")
-				// .addPackages(true, "ch/dvbern/ebegu/errors")
-				// .addPackages(true, "ch/dvbern/ebegu/entities")
-				.addPackages(true, "ch/dvbern/ebegu/tests")
-				// .addPackages(true, "ch/dvbern/ebegu/enums")
-				.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
+			.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
+			.addPackages(true, "ch/dvbern/ebegu/vorlagen")
+			// .addPackages(true, "ch/dvbern/ebegu/vorlagen/finanziellesituation")
+			// .addPackages(true, "ch/dvbern/ebegu/errors")
+			// .addPackages(true, "ch/dvbern/ebegu/entities")
+			.addPackages(true, "ch/dvbern/ebegu/tests")
+			// .addPackages(true, "ch/dvbern/ebegu/enums")
+			.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class, LoggerProducer.class)
 
-				.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
+			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
-				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster.docx", "vorlagen/Verfuegungsmuster.docx")
-				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
-				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
-				.addAsResource("font/sRGB.profile", "font/sRGB.profile").addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
-				.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
-				// Deploy our test datasource
-				.addAsWebInfResource("test-ds.xml");
+			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster.docx", "vorlagen/Verfuegungsmuster.docx")
+			.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
+			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
+			.addAsResource("font/sRGB.profile", "font/sRGB.profile").addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
+			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+			// Deploy our test datasource
+			.addAsWebInfResource("test-ds.xml");
 		if (classesToAdd != null) {
 			webArchive.addClasses(classesToAdd);
 		}
@@ -72,12 +79,6 @@ public abstract class AbstractEbeguTest {
 		return webArchive;
 	}
 
-	@Deployment
-	@OverProtocol("Servlet 3.0")
-	public static Archive<?> createTestArchive() {
-
-		return createTestArchive(null);
-	}
 
 	/**
 	 * Erstellt das byte Dokument in einem temp File in einem temp folder
