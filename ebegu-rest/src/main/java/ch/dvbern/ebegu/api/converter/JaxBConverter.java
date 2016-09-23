@@ -1698,6 +1698,7 @@ public class JaxBConverter {
 		antrag.setFallNummer(gesuch.getFall().getFallNummer());
 		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
+		//todo team, hier das datum des letzten statusuebergangs verwenden?
 		antrag.setAenderungsdatum( gesuch.getTimestampMutiert());
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein

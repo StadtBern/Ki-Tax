@@ -143,6 +143,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case "gesuchsperiode":
 				orderField = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 				break;
+			case "aenderungsdatum":
+				//todo team, hier das datum des letzten statusuebergangs verwenden?
+					orderField = root.get(Gesuch_.timestampMutiert);
+					break;
 			case "eingangsdatum":
 				orderField = root.get(Gesuch_.eingangsdatum);
 				break;
@@ -159,7 +163,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				orderField = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
 				break;
 			default:
-				LOG.warn("Using default sort because there is no specific clause for predicate" + sort.getPredicate());
+				LOG.warn("Using default sort because there is no specific clause for predicate " + sort.getPredicate());
 		}
 		List<Order> orders = new ArrayList<>();
 		if (sort.getReverse()) {
