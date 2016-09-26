@@ -18,7 +18,7 @@ export default class TSAntragDTO {
     private _gesuchsperiodeGueltigAb: moment.Moment;
     private _gesuchsperiodeGueltigBis: moment.Moment;
 
-    constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp, gesuchsperiode?: TSGesuchsperiode,
+    constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
                 verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment) {
 

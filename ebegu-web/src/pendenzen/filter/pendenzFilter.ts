@@ -24,13 +24,18 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any
                 let actualString = ebeguUtil.addZerosToNumber(actual, CONSTANTS.FALLNUMMER_LENGTH);
                 return actualString.indexOf(expected) >= 0;
             }
-            if (expression.gesuchsperiode && expression.gesuchsperiode === expected) {
-                let gesuchsperiodeString = actual.gesuchsperiodeString;
-                return gesuchsperiodeString === expected;
+            if (expression.gesuchsperiodeGueltigAb && expression.gesuchsperiodeGueltigAb === expected) {
+                let gesuchsperiodeGueltigAb = dateFilter(new Date(actual), 'dd.MM.yyyy');
+                return gesuchsperiodeGueltigAb === expected;
+            }
+            if (expression.gesuchsperiodeGueltigBis && expression.gesuchsperiodeGueltigBis === expected) {
+                let gesuchsperiodeGueltigBis = dateFilter(new Date(actual), 'dd.MM.yyyy');
+                return gesuchsperiodeGueltigBis === expected;
             }
 
             return standardComparator(actual, expected);
         }
+
         var output = filterFilter(array, expression, customComparator);
         return output;
     };

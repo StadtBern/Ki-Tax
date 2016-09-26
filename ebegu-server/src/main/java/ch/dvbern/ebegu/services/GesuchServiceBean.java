@@ -135,7 +135,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 
-		Long count = runCountQuery();
+		Long count = runCountQuery(antragSearch);
 		//Todo team? Suchquery implementieren, allenfalls mit einem wrapper objekt damit die performance besser ist
 		// dann brauchts wohl 2 queries um jeweils noch die listen zu lesen
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -158,7 +158,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return new ImmutablePair<Long, List<Gesuch>>(count, gesuche);
 	}
 
-	private Long runCountQuery() {
+	private Long runCountQuery(AntragTableFilterDTO antragSearch) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<Gesuch> root = query.from(Gesuch.class);
