@@ -20,7 +20,7 @@
                     </thead>
                     <tbody ng-repeat="kindContainer in displayedCollection">
                     <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
-                        st-select-mode="single" ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT'}"
+                        st-select-mode="single" ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' && betreuung.betreuungsstatus !== 'VERFUEGT'}"
                         ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                         <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                         <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>

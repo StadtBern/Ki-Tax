@@ -4,7 +4,10 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -75,6 +78,9 @@ public class DownloadResource {
 
 	@Inject
 	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
 
 
 	@GET
@@ -176,21 +182,29 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			finanzielleSituationService.calculateFinanzDaten(gesuch.get());
-
-			byte[] data;
-			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
-				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch.get());
-			}
-			else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
-				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
+			final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer());
+			GeneratedDokument persistedDokument;
+			if (AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus())) {
+				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(), fileNameForGeneratedDokumentTyp,
+					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
 			else {
-				return null;
-			}
+				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
 
-			final GeneratedDokument persistedDokument = generatedDokumentService.updateGeneratedDokument(data, dokumentTyp, gesuch.get(),
-				DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer()));
+				byte[] data;
+				if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+					data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch.get());
+				}
+				else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+					data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
+				}
+				else {
+					return null;
+				}
+
+				persistedDokument = generatedDokumentService.updateGeneratedDokument(data, dokumentTyp, gesuch.get(),
+					fileNameForGeneratedDokumentTyp);
+			}
 
 			persistence.getEntityManager().detach(gesuch.get());
 
@@ -217,23 +231,39 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			finanzielleSituationService.calculateFinanzDaten(gesuch.get());
-			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
+			GeneratedDokument persistedDokument;
 
-			final Betreuung betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
-			if (betreuung != null) {
-				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
-
-				final GeneratedDokument persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG_KITA,
-					gesuch.get(), DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
-						betreuung.getBGNummer()));
-
-				final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
-				persistence.getEntityManager().detach(gesuch.get());
-				return fileDownloadResponse;
+			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
+			if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
+					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
+						betreuung.getBGNummer()),
+					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
-			throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
-				ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+			else {
+				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+				final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
+
+				betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
+				if (betreuung != null) {
+					final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+
+					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
+						betreuung.getBGNummer());
+
+					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG_KITA,
+						gesuch.get(), fileNameForGeneratedDokumentTyp);
+				}
+				else {
+					throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+						ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+				}
+			}
+
+			final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
+			persistence.getEntityManager().detach(gesuch.get());
+			persistence.getEntityManager().detach(betreuung);
+			return fileDownloadResponse;
 		}
 		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
