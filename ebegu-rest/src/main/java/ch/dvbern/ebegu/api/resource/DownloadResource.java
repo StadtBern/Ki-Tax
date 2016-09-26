@@ -183,12 +183,14 @@ public class DownloadResource {
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
 			final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer());
-			GeneratedDokument persistedDokument;
+			GeneratedDokument persistedDokument = null;
 			if (AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus())) {
 				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(), fileNameForGeneratedDokumentTyp,
 					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
-			else {
+			if ((!AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus()))
+					|| persistedDokument == null) {
+				// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
 
 				byte[] data;
@@ -231,16 +233,16 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			GeneratedDokument persistedDokument;
+			GeneratedDokument persistedDokument = null;
 
 			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
 			if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
 					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
-						betreuung.getBGNummer()),
-					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
+						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
-			else {
+			// Wenn die Betreuung verfuegt ist aber das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+			if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
 				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
 				final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
 

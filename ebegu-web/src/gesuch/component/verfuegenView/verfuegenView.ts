@@ -63,7 +63,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     save(form: IFormController) {
         if (form.$valid) {
             this.saveVerfuegung().then(() => {
-                this.$state.go('gesuch.verfuegen');
+                this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+                    this.gesuchModelManager.getBetreuungToWorkWith().id).then(() => {
+                    this.$state.go('gesuch.verfuegen');
+                });
             });
         }
     }

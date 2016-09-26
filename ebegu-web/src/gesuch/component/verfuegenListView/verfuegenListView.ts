@@ -122,20 +122,22 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_GEPRUEFT',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
-        })
-            .then(() => {
+        }).then(() => {
+            return this.createNeededPDFs().then(() => {
                 return this.setGesuchStatus(TSAntragStatus.GEPRUEFT);
             });
+        });
     }
 
     public setGesuchStatusVerfuegen(): IPromise<TSAntragStatus> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_GESUCH_STATUS_VERFUEGEN',
             deleteText: 'BESCHREIBUNG_GESUCH_STATUS_WECHSELN'
-        })
-            .then(() => {
+        }).then(() => {
+            return this.createNeededPDFs().then(() => {
                 return this.setGesuchStatus(TSAntragStatus.VERFUEGEN);
             });
+        });
     }
 
     public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
@@ -176,6 +178,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
+    }
+
+    private createNeededPDFs(): IPromise<TSDownloadFile> {
+        return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.FINANZIELLE_SITUATION)
+            .then((downloadFile: TSDownloadFile) => {
+                return this.downloadRS.getAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, TSGeneratedDokumentTyp.BEGLEITSCHREIBEN);
             });
     }
 
