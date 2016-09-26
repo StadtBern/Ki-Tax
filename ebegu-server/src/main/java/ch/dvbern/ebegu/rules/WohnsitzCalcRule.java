@@ -25,10 +25,23 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
-			if (verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1() && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2()) {
+			if (singleGesuchstellerIsNotBern(betreuung, verfuegungZeitabschnitt)
+				|| coupleAndBothNotBern(betreuung, verfuegungZeitabschnitt)) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ, MsgKey.WOHNSITZ_MSG);
 			}
+
 		}
+	}
+
+	private boolean coupleAndBothNotBern(Betreuung betreuung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		return betreuung.extractGesuch().getGesuchsteller2() != null
+			&& verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1()
+			&& verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2();
+
+	}
+
+	private boolean singleGesuchstellerIsNotBern(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		return betreuung.extractGesuch().getGesuchsteller2() == null && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1();
 	}
 }

@@ -37,6 +37,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private DokumentGrundService dokumentGrundService;
 	@Inject
 	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
 
 
 	@Override
@@ -69,7 +71,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	public List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
 		final List<WizardStep> wizardSteps = findWizardStepsFromGesuch(gesuchId);
 		updateAllStatus(wizardSteps, oldEntity, newEntity, stepName);
-		wizardSteps.stream().forEach(wizardStep -> saveWizardStep(wizardStep));
+		wizardSteps.forEach(this::saveWizardStep);
 		return wizardSteps;
 	}
 
@@ -176,6 +178,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (betreuungenFromGesuch.stream().filter(betreuung -> !Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())).count() <= 0) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
+					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());
 				}
 			}
 		}

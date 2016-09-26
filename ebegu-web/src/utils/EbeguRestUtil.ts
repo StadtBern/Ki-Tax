@@ -48,6 +48,7 @@ import TSPendenzInstitution from '../models/TSPendenzInstitution';
 import TSWizardStep from '../models/TSWizardStep';
 import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
+import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 
 
 export default class EbeguRestUtil {
@@ -1446,5 +1447,23 @@ export default class EbeguRestUtil {
             wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
         }
         return wizardSteps;
+    }
+
+    public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {
+        this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
+        antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;
+        antragStatusHistoryTS.benutzer = this.parseUser(new TSUser(), antragStatusHistoryFromServer.benutzer);
+        antragStatusHistoryTS.datum = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.datum);
+        antragStatusHistoryTS.status = antragStatusHistoryFromServer.status;
+        return antragStatusHistoryTS;
+    }
+
+    public antragStatusHistoryToRestObject(restAntragStatusHistory: any, antragStatusHistory: TSAntragStatusHistory): any {
+        this.abstractEntityToRestObject(restAntragStatusHistory, antragStatusHistory);
+        restAntragStatusHistory.gesuchId = antragStatusHistory.gesuchId;
+        restAntragStatusHistory.benutzer = this.userToRestObject({}, antragStatusHistory.benutzer);
+        restAntragStatusHistory.datum = DateUtil.momentToLocalDateTime(antragStatusHistory.datum);
+        restAntragStatusHistory.status = antragStatusHistory.status;
+        return restAntragStatusHistory;
     }
 }

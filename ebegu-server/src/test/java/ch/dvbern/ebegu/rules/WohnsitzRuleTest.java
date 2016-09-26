@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -23,7 +24,33 @@ public class WohnsitzRuleTest {
 
 	@Test
 	public void testNormalfallBeideAdresseInBern() {
-		Betreuung betreuung = createTestdata();
+		Betreuung betreuung = createTestdata(true);
+		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false));
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(1, zeitabschnittList.size());
+		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
+		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(100, abschnittInBern.getBgPensum());
+	}
+
+	@Test
+	public void testEinGesuchstellerAdresseNichtBern() {
+		Betreuung betreuung = createTestdata(false);
+		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(1, zeitabschnittList.size());
+		VerfuegungZeitabschnitt abschnitt = zeitabschnittList.get(0);
+		Assert.assertEquals(true, abschnitt.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertEquals(0, abschnitt.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(0, abschnitt.getBgPensum());
+	}
+
+	@Test
+	public void testEinGesuchstellerAdresseInBern() {
+		Betreuung betreuung = createTestdata(false);
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(zeitabschnittList);
@@ -36,7 +63,7 @@ public class WohnsitzRuleTest {
 
 	@Test
 	public void testZweiGesuchstellerEinerDavonInBern() {
-		Betreuung betreuung = createTestdata();
+		Betreuung betreuung = createTestdata(true);
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false));
 		betreuung.extractGesuch().getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
 		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
@@ -51,7 +78,7 @@ public class WohnsitzRuleTest {
 	@Test
 	public void testZuzug() {
 		LocalDate zuzugsDatum = LocalDate.of(2016, Month.OCTOBER, 16);
-		Betreuung betreuung = createTestdata();
+		Betreuung betreuung = createTestdata(true);
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, zuzugsDatum.minusDays(1), true));
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(zuzugsDatum, ENDE_PERIODE, false));
 		betreuung.extractGesuch().getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
@@ -63,6 +90,7 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(1);
+		Assert.assertEquals(zuzugsDatum, abschnittInBern.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
@@ -71,7 +99,7 @@ public class WohnsitzRuleTest {
 	@Test
 	public void testWegzug() {
 		LocalDate wegzugsDatum = LocalDate.of(2016, Month.OCTOBER, 16);
-		Betreuung betreuung = createTestdata();
+		Betreuung betreuung = createTestdata(true);
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, wegzugsDatum.minusDays(1), false));
 		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(wegzugsDatum, ENDE_PERIODE, true));
 		betreuung.extractGesuch().getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
@@ -84,12 +112,14 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(1);
 		Assert.assertEquals(true, abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		//Anspruch noch 2 Monate nach wegzug auf Ende Monat
+		Assert.assertEquals(wegzugsDatum.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()), abschnittInBern.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 	}
 
-	private Betreuung createTestdata() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+	private Betreuung createTestdata(boolean zweigesuchsteller) {
+		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(zweigesuchsteller);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		betreuung.setBetreuungspensumContainers(new LinkedHashSet<>());
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();
@@ -100,7 +130,9 @@ public class WohnsitzRuleTest {
 		betreuung.getBetreuungspensumContainers().add(betreuungspensumContainer);
 		betreuung.getKind().getKindJA().setWohnhaftImGleichenHaushalt(100);
 		betreuung.getKind().getGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
-		betreuung.getKind().getGesuch().getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		if (zweigesuchsteller) {
+			betreuung.getKind().getGesuch().getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
+		}
 		return betreuung;
 	}
 

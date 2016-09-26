@@ -16,6 +16,7 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -66,6 +67,9 @@ public class GesuchResource {
 	@Inject
 	private AntragStatusConverter antragStatusConverter;
 
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
+
 	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
 
 	@Inject
@@ -89,6 +93,7 @@ public class GesuchResource {
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
 		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
 		wizardStepResource.createWizardStepList(new JaxId(persistedGesuch.getId()));
+		antragStatusHistoryService.saveStatusChange(persistedGesuch);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(GesuchResource.class)
@@ -111,10 +116,16 @@ public class GesuchResource {
 
 		Validate.notNull(gesuchJAXP.getId());
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
+
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
+
+		if (modifiedGesuch.getStatus() != antragStatusConverter.convertStatusToEntity(gesuchJAXP.getStatus())) {
+			//only if status has changed
+			antragStatusHistoryService.saveStatusChange(gesuchFromDB);
+		}
 
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
@@ -226,12 +237,15 @@ public class GesuchResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
 
 		if (gesuchOptional.isPresent()) {
-			gesuchOptional.get().setStatus(antragStatusConverter.convertStatusToEntity(statusDTO));
-
-			gesuchService.updateGesuch(gesuchOptional.get());
-
+			if (gesuchOptional.get().getStatus() != antragStatusConverter.convertStatusToEntity(statusDTO)) {
+				//only if status has changed
+				gesuchOptional.get().setStatus(antragStatusConverter.convertStatusToEntity(statusDTO));
+				gesuchService.updateGesuch(gesuchOptional.get());
+				antragStatusHistoryService.saveStatusChange(gesuchOptional.get());
+			}
 			return Response.ok().build();
 		}
+		LOG.error("Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read");
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
 

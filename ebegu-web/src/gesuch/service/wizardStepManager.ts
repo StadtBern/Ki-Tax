@@ -201,4 +201,16 @@ export default class WizardStepManager {
         }
         return true;
     }
+
+    /**
+     * Gibt true zurueck wenn der Step existiert und sein Status OK ist
+     * @param stepName
+     * @returns {boolean}
+     */
+    public hasStepGivenStatus(stepName: TSWizardStepName, status: TSWizardStepStatus): boolean {
+        if (this.getStepByName(stepName)) {
+            return this.getStepByName(stepName).wizardStepStatus === status;
+        }
+        return false;
+    }
 }

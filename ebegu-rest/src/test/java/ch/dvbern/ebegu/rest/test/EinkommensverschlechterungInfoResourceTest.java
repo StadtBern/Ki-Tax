@@ -93,6 +93,7 @@ public class EinkommensverschlechterungInfoResourceTest {
 		JaxFall returnedFall = fallResource.saveFall(testJaxGesuch.getFall(), uri, null);
 		testJaxGesuch.setGesuchsperiode(gesuchsperiodeResource.saveGesuchsperiode(testJaxGesuch.getGesuchsperiode(), uri, null));
 		testJaxGesuch.setFall(returnedFall);
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		return (JaxGesuch) gesuchResource.create(testJaxGesuch, uri, null).getEntity();
 	}
 

@@ -1687,13 +1687,24 @@ public class JaxBConverter {
 	}
 
 
+	public JaxAntragStatusHistory antragStatusHistoryToJAX(AntragStatusHistory antragStatusHistory) {
+		final JaxAntragStatusHistory jaxAntragStatusHistory = convertAbstractFieldsToJAX(antragStatusHistory, new JaxAntragStatusHistory());
+		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
+		jaxAntragStatusHistory.setStatus(antragStatusConverter.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
+		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
+		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
+		return jaxAntragStatusHistory;
+
+	}
+
 	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
 		JaxAntragDTO antrag = new JaxAntragDTO();
 		antrag.setAntragId(gesuch.getId());
 		antrag.setFallNummer(gesuch.getFall().getFallNummer());
 		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
-		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
+		//todo team, hier das datum des letzten statusuebergangs verwenden?
+		antrag.setAenderungsdatum( gesuch.getTimestampMutiert());
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));

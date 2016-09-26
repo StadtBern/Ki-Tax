@@ -164,13 +164,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		//order ist bei count egal
 		query.select(cb.count(root));
-//		query.where() gleiche restriktionen wie oben, createWehereClause() oder so implementieren
+		antragSearch.getSearch(); //	aus diesen angaben query.where() gleiche restriktionen wie oben, createWehereClause() oder so implementieren
 		return persistence.getCriteriaSingleResult(query);
 
 	}
 
 	private List<Order> createOrderClause(CriteriaBuilder cb, Root<Gesuch> root, AntragSortDTO sort) {
-		Expression orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+		Expression orderField= root.get(Gesuch_.fall).get(Fall_.fallNummer);
 		switch (sort.getPredicate()) {
 			case "fallNummer":
 				orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
@@ -185,6 +185,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				orderField = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 				break;
 			case "aenderungsdatum":
+				//todo team, hier das datum des letzten statusuebergangs verwenden?
+					orderField = root.get(Gesuch_.timestampMutiert);
+					break;
+			case "eingangsdatum":
 				orderField = root.get(Gesuch_.eingangsdatum);
 				break;
 			case "status":
