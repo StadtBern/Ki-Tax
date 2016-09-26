@@ -20,7 +20,7 @@ public class AntragSortDTO implements Serializable {
 	 */
 	private String predicate;
 
-	private Boolean reverse;
+	private Boolean reverse = Boolean.FALSE;
 
 	public String getPredicate() {
 		return predicate;

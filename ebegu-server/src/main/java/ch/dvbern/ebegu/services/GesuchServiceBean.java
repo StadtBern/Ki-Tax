@@ -40,6 +40,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private BenutzerService benutzerService;
+
 
 	@Nonnull
 	@Override
@@ -94,6 +97,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 
+		// Rolle lesen: benutzerService.getCurrentBenutzer().get().getRole()
+		// mit Rolle gelesene Gesuche auf gewisse Status einschranken Gesuch.status
 		Long count = runCountQuery(antragSearch);
 		//Todo team? Suchquery implementieren, allenfalls mit einem wrapper objekt damit die performance besser ist
 		// dann brauchts wohl 2 queries um jeweils noch die listen zu lesen
