@@ -107,6 +107,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testSearchAntraegeOrder() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
