@@ -70,7 +70,7 @@ public class DownloadResourceTest extends AbstractEbeguRestTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getVerfuegungDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), new JaxId(betreuungId), request, uri);
+			.getVerfuegungDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), new JaxId(betreuungId), true, request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.VERFUEGUNG_KITA);
 	}
@@ -84,7 +84,7 @@ public class DownloadResourceTest extends AbstractEbeguRestTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), GeneratedDokumentTyp.BEGLEITSCHREIBEN, request, uri);
+			.getDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), GeneratedDokumentTyp.BEGLEITSCHREIBEN, true, request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.BEGLEITSCHREIBEN);
 	}
@@ -98,7 +98,7 @@ public class DownloadResourceTest extends AbstractEbeguRestTest {
 		UriInfo uri = new ResteasyUriInfo("uri", "query", "path");
 
 		final Response dokumentResponse = downloadResource
-			.getDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), GeneratedDokumentTyp.FINANZIELLE_SITUATION, request, uri);
+			.getDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), GeneratedDokumentTyp.FINANZIELLE_SITUATION, true, request, uri);
 
 		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.FINANZIELLE_SITUATION);
 	}

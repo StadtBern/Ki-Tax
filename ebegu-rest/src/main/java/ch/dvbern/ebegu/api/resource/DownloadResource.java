@@ -168,12 +168,13 @@ public class DownloadResource {
 	 */
 	@Nonnull
 	@GET
-	@Path("/{gesuchid}/{dokumentTyp}/generated")
+	@Path("/{gesuchid}/{dokumentTyp}/{forceCreation}/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("dokumentTyp") GeneratedDokumentTyp dokumentTyp,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -184,7 +185,7 @@ public class DownloadResource {
 		if (gesuch.isPresent()) {
 			final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer());
 			GeneratedDokument persistedDokument = null;
-			if (AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus())) {
+			if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus())) {
 				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(), fileNameForGeneratedDokumentTyp,
 					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
@@ -218,12 +219,13 @@ public class DownloadResource {
 
 	@Nonnull
 	@GET
-	@Path("/{gesuchid}/{betreuungId}/generatedVerfuegung")
+	@Path("/{gesuchid}/{betreuungId}/{forceCreation}/generatedVerfuegung")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException,
 		DocTemplateException, IOException, MimeTypeParseException {
 
@@ -236,7 +238,7 @@ public class DownloadResource {
 			GeneratedDokument persistedDokument = null;
 
 			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
-			if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+			if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
 					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
 						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());

@@ -64,7 +64,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         if (form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-                    this.gesuchModelManager.getBetreuungToWorkWith().id).then(() => {
+                    this.gesuchModelManager.getBetreuungToWorkWith().id, true).then(() => {
                     this.$state.go('gesuch.verfuegen');
                 });
             });
@@ -188,7 +188,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     public openVerfuegungPDF(): void {
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-            this.gesuchModelManager.getBetreuungToWorkWith().id)
+            this.gesuchModelManager.getBetreuungToWorkWith().id, false)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
