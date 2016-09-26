@@ -114,7 +114,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void testSearchAntraege() {
+	public void testSearchAntraegeOrder() {
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
@@ -131,8 +131,6 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(new Long(3), resultpair.getLeft());
 		List<Gesuch> foundGesucheReversed = resultpair.getRight();
 		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(0).getId());
-
-
 
 	}
 
