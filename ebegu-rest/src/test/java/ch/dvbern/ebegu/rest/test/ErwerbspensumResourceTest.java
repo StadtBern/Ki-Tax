@@ -11,11 +11,9 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,19 +23,13 @@ import javax.ejb.EJBException;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import static ch.dvbern.ebegu.rest.test.AbstractEbeguRestTest.createTestArchive;
-
 /**
  * Testet die Erwerbspensum Resource
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
-public class ErwerbspensumResourceTest {
+public class ErwerbspensumResourceTest extends AbstractEbeguRestTest{
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;

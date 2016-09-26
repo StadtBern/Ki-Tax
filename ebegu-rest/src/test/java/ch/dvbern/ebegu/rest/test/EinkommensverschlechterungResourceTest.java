@@ -11,12 +11,10 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +29,7 @@ import javax.ws.rs.core.UriInfo;
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTest {
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
