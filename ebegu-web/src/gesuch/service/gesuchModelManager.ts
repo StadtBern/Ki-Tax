@@ -919,6 +919,9 @@ export default class GesuchModelManager {
         return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            if (!this.isThereAnyOpenBetreuung()) {
+                this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
+            }
             this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
         });
@@ -957,6 +960,22 @@ export default class GesuchModelManager {
         for (let kind of kinderWithBetreuungList) {
             if (kind.betreuungen && kind.betreuungen.length > 0) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders al VERFUEGT oder SCHULAMT ist
+     * @returns {boolean}
+     */
+    public isThereAnyOpenBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT) {
+                    return true;
+                }
             }
         }
         return false;

@@ -1275,7 +1275,7 @@ public class JaxBConverter {
 	}
 
 	private Set<JaxBetreuung> betreuungListToJax(final Set<Betreuung> betreuungen) {
-		final Set<JaxBetreuung> jaxBetreuungen = new HashSet<>();
+		final Set<JaxBetreuung> jaxBetreuungen = new TreeSet<>();
 		if (betreuungen != null) {
 			jaxBetreuungen.addAll(betreuungen.stream().map(this::betreuungToJAX).collect(Collectors.toList()));
 		}
