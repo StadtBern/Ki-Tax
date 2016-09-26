@@ -236,6 +236,7 @@ export default class EbeguRestUtil {
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
         restObj.status = antragEntity.status;
+        restObj.typ = antragEntity.typ;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -244,6 +245,7 @@ export default class EbeguRestUtil {
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.status = antragFromServer.status;
+        antragTS.typ = antragFromServer.typ;
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -1100,7 +1102,8 @@ export default class EbeguRestUtil {
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
         restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
-        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
+        restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
@@ -1115,7 +1118,8 @@ export default class EbeguRestUtil {
         pendenzTS.antragTyp = pendenzFromServer.antragTyp;
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
         pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
-        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigAb);
+        pendenzTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigBis);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;

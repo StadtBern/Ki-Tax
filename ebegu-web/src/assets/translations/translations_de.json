@@ -684,6 +684,9 @@
     "VORLAGE_ZURUECKWEISUNG": "Vorlage Zurückweisung",
     "VORLAGE_BEGLEITSCHREIBEN": "Vorlage Begleitbrief",
     "VORLAGE_VERFUEGUNG_KITA": "Vorlage Verfügung Kita",
-    "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder"
+    "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder",
 
+    "TOOLBAR_GESUCH": "Erstgesuch",
+    "TOOLBAR_MUTATION": "Mutation vom {{date}}",
+    "TOOLBAR_KONTAKT": "KONTAKT"
 }

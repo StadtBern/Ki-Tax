@@ -20,7 +20,7 @@
                         <th st-sort="vorname" class="sortable" data-translate="VORNAME_UPPER"></th>
                         <th st-sort="geburtsdatum" class="sortable" data-translate="GEBURTSDATUM_UPPER"></th>
                         <th st-sort="typ" class="sortable" data-translate="TYP_UPPER"></th>
-                        <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
+                        <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER"></th>
                         <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
                         <th st-sort="betreuungsangebotTyp" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institution" class="sortable" data-translate="INSTITUTION_UPPER"></th>
@@ -32,7 +32,7 @@
                         <th><input st-search="geburtsdatum" class="form-control" type="text"/></th>
                         <th><input st-search="typ" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="gesuchsperiode" id="gesuchsperiode" st-search="gesuchsperiode" class="form-control"
+                            <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString" st-search="gesuchsperiodeString" class="form-control"
                                     ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
                                     ng-model="vm.selectedGesuchsperiode">
                                 <option value="">{{"ALLE" | translate}}</option>
@@ -64,7 +64,7 @@
                         <td ng-bind="row.vorname"></td>
                         <td ng-bind="row.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-bind="row.typ | translate"></td>
-                        <td ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
+                        <td ng-bind="row.gesuchsperiodeString"></td>
                         <td ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-bind="row.betreuungsangebotTyp | translate"></td>
                         <td ng-bind="row.institution.name"></td>

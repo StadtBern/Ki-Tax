@@ -19,7 +19,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String fallNummer;
 	private String familienName;
 	private String antragTyp;
-	private String gesuchsperiode;
+	private String gesuchsperiodeString;
 	private String eingangsdatum;
 	private String status;
 	private String angebote;
@@ -50,12 +50,12 @@ public class PredicateObjectDTO implements Serializable {
 		this.antragTyp = antragTyp;
 	}
 
-	public String getGesuchsperiode() {
-		return gesuchsperiode;
+	public String getGesuchsperiodeString() {
+		return gesuchsperiodeString;
 	}
 
-	public void setGesuchsperiode(String gesuchsperiode) {
-		this.gesuchsperiode = gesuchsperiode;
+	public void setGesuchsperiodeString(String gesuchsperiodeString) {
+		this.gesuchsperiodeString = gesuchsperiodeString;
 	}
 
 	public String getEingangsdatum() {
@@ -105,7 +105,7 @@ public class PredicateObjectDTO implements Serializable {
 			.append("fallNummer", fallNummer)
 			.append("familienName", familienName)
 			.append("antragTyp", antragTyp)
-			.append("gesuchsperiode", gesuchsperiode)
+			.append("gesuchsperiodeString", gesuchsperiodeString)
 			.append("eingangsdatum", eingangsdatum)
 			.append("status", status)
 			.append("angebote", angebote)

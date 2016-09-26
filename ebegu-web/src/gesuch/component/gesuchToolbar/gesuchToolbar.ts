@@ -3,13 +3,14 @@ import UserRS from '../../../core/service/userRS.rest';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
+import TSAntragDTO from '../../../models/TSAntragDTO';
 import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./gesuchToolbar.html');
 require('./gesuchToolbar.less');
 
@@ -23,16 +24,19 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
 export class GesuchToolbarController {
 
     userList: Array<TSUser>;
-    gesuchsperiodeList: Array<TSGesuchsperiode>;
+    antragList: Array<TSAntragDTO>;
 
-    static $inject = ['UserRS', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', 'GesuchsperiodeRS', 'GesuchRS',
+    gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
+    antragTypList: { [key: string]: TSAntragDTO } = {};
+
+    static $inject = ['UserRS', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         'BerechnungsManager', '$state'];
 
     constructor(private userRS: UserRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
-                private CONSTANTS: any, private gesuchsperiodeRS: GesuchsperiodeRS, private gesuchRS: GesuchRS,
+                private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private berechnungsManager: BerechnungsManager, private $state: IStateService) {
         this.updateUserList();
-        this.updateGesuchsperiodenList();
+        this.updateAntragDTOList();
     }
 
     public getVerantwortlicherFullName(): string {
@@ -48,13 +52,49 @@ export class GesuchToolbarController {
         });
     }
 
-    public updateGesuchsperiodenList(): void {
+    public updateAntragDTOList(): void {
         let gesuch = this.gesuchModelManager.getGesuch();
         if (gesuch && gesuch.id) {
-            this.gesuchsperiodeRS.getAllGesuchsperiodenForFall(gesuch.fall.id).then((response) => {
-                this.gesuchsperiodeList = angular.copy(response);
+            this.gesuchRS.getAllAntragDTOForFall(gesuch.fall.id).then((response) => {
+                this.antragList = angular.copy(response);
+                this.updateGesuchperiodeList();
+                this.updateAntragTypList();
             });
         }
+    }
+
+    private updateGesuchperiodeList() {
+
+        for (var i = 0; i < this.antragList.length; i++) {
+            let gs = this.antragList[i].gesuchsperiodeString;
+
+            if (!this.gesuchsperiodeList[gs]) {
+                this.gesuchsperiodeList[gs] = [];
+            }
+            this.gesuchsperiodeList[gs].push(this.antragList[i]);
+        }
+    }
+
+    private updateAntragTypList() {
+        let gesuch = this.gesuchModelManager.getGesuch();
+        for (var i = 0; i < this.antragList.length; i++) {
+            let antrag = this.antragList[i];
+            if (gesuch.gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum);
+
+                this.antragTypList[txt] = antrag;
+            }
+        }
+    }
+
+    getKeys(map: { [key: string]: Array<TSAntragDTO> }): Array<String> {
+        var keys: Array<String> = [];
+        for (var key in map) {
+            if (map.hasOwnProperty(key)) {
+                keys.push(key);
+            }
+        }
+        return keys;
     }
 
     /**
@@ -87,6 +127,10 @@ export class GesuchToolbarController {
         }
     }
 
+    public getGesuch(): TSGesuch {
+        return this.gesuchModelManager.getGesuch();
+    }
+
     public getCurrentGesuchsperiode(): string {
         let gesuch = this.gesuchModelManager.getGesuch();
         if (gesuch && gesuch.gesuchsperiode) {
@@ -96,17 +140,48 @@ export class GesuchToolbarController {
         }
     }
 
-    public getGesuchsperiodeAsString(tsGesuchsperiode: TSGesuchsperiode) {
-        return this.ebeguUtil.getGesuchsperiodeAsString(tsGesuchsperiode);
+    public getAntragTyp(): string {
+        let gesuch = this.gesuchModelManager.getGesuch();
+        if (gesuch) {
+            return this.ebeguUtil.getAntragTextDateAsString(gesuch.typ, gesuch.eingangsdatum);
+        } else {
+            return '';
+        }
     }
 
-    public setGesuchsperiode(tsGesuchsperiode: TSGesuchsperiode) {
-        this.gesuchRS.findGesuchByFallAndPeriode(this.gesuchModelManager.getGesuch().fall.id, tsGesuchsperiode.id)
+    public getAntragDatum(): Moment {
+        let gesuch = this.gesuchModelManager.getGesuch();
+        if (gesuch && gesuch.eingangsdatum) {
+            return gesuch.eingangsdatum;
+        } else {
+            return moment();
+        }
+    }
+
+    public getGesuchsperiodeAsString(tsGesuchsperiode: TSGesuchsperiode) {
+        return tsGesuchsperiode.gesuchsperiodeString;
+    }
+
+    public setGesuchsperiode(gesuchsperiodeKey: string) {
+        let selectedGesuche = this.gesuchsperiodeList[gesuchsperiodeKey];
+        let selectedGesuch: TSAntragDTO = this.getNewest(selectedGesuche);
+        this.gesuchRS.findGesuch(selectedGesuch.antragId)
             .then((response) => {
                 if (response) {
                     this.openGesuch(response);
+                    this.updateAntragTypList();
                 }
             });
+    }
+
+    private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
+        let newest: TSAntragDTO = arrayTSAntragDTO[0];
+        for (var i = 0; i < arrayTSAntragDTO.length; i++) {
+            if (arrayTSAntragDTO[i].eingangsdatum.isAfter(newest.eingangsdatum)) {
+                newest = arrayTSAntragDTO[i];
+            }
+        }
+        return newest;
     }
 
     private openGesuch(gesuch: TSGesuch): void {
@@ -116,4 +191,16 @@ export class GesuchToolbarController {
             this.$state.go('gesuch.fallcreation');
         }
     }
+
+    public setAntragTypDatum(antragTypDatumKey: string) {
+        let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
+
+        this.gesuchRS.findGesuch(selectedAntragTypGesuch.antragId)
+            .then((response) => {
+                if (response) {
+                    this.openGesuch(response);
+                }
+            });
+    }
+
 }

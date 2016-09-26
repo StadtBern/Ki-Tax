@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
 import org.apache.commons.lang3.tuple.Pair;
@@ -64,10 +65,11 @@ public interface GesuchService {
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
-	Optional<Gesuch> findGesuchByGSName(String nachname, String vorname);
+	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
 
 	@Nonnull
 	Optional<Gesuch> findGesuchByFallAndGesuchsperiode(String fallID, String gesuchsperiodeID);
+
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *
@@ -75,4 +77,7 @@ public interface GesuchService {
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+
+	@Nonnull
+	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
 }

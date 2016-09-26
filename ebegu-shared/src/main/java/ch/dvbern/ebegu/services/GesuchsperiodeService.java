@@ -13,6 +13,7 @@ public interface GesuchsperiodeService {
 
 	/**
 	 * Erstellt eine neue Gesuchsperiode in der DB, falls der key noch nicht existiert
+	 *
 	 * @param gesuchsperiode die Gesuchsperiode als DTO
 	 * @return die gespeicherte Gesuchsperiode
 	 */
@@ -20,7 +21,6 @@ public interface GesuchsperiodeService {
 	Gesuchsperiode saveGesuchsperiode(@Nonnull Gesuchsperiode gesuchsperiode);
 
 	/**
-	 *
 	 * @param key PK (id) der Gesuchsperiode
 	 * @return Gesuchsperiode mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -29,6 +29,7 @@ public interface GesuchsperiodeService {
 
 	/**
 	 * Gibt alle existierenden Gesuchsperioden zurueck.
+	 *
 	 * @return Liste aller Gesuchsperiodeen aus der DB
 	 */
 	@Nonnull
@@ -36,12 +37,14 @@ public interface GesuchsperiodeService {
 
 	/**
 	 * entfernt eine Gesuchsperiode aus der Database
+	 *
 	 * @param gesuchsperiode die Gesuchsperiode als DTO
 	 */
 	void removeGesuchsperiode(@Nonnull String gesuchsperiode);
 
 	/**
 	 * Gibt alle aktiven Gesuchsperioden zurueck.
+	 *
 	 * @return Liste aller Gesuchsperiodeen aus der DB
 	 */
 	@Nonnull
@@ -49,14 +52,8 @@ public interface GesuchsperiodeService {
 
 	/**
 	 * Gibt alle Gesuchsperioden zurueck, deren Ende-Datum noch nicht erreicht ist.
-     */
+	 */
 	@Nonnull
 	Collection<Gesuchsperiode> getAllNichtAbgeschlosseneGesuchsperioden();
 
-	/**
-	 * Gibt alle Gesuchsperioden für das Geusch zurück.
-	 * @return Liste aller Gesuchsperiodeen aus der DB
-	 */
-	@Nonnull
-	Collection<Gesuchsperiode> getAllGesuchsperiodenForFall(String gesuchId);
 }

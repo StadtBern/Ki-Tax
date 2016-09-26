@@ -2,12 +2,10 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
-import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
-import ch.dvbern.ebegu.api.dtos.JaxGesuch;
-import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
 import ch.dvbern.ebegu.api.util.RestUtil;
+import ch.dvbern.ebegu.dto.*;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -43,6 +41,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Resource fuer Gesuch
@@ -270,7 +269,7 @@ public class GesuchResource {
 
 	@Nonnull
 	@POST
-	@Path("/")
+	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchAntraege(
@@ -305,6 +304,20 @@ public class GesuchResource {
 		pagination.setTotalItemCount(searchResultPair.getLeft());
 		resultDTO.setPaginationDTO(pagination);
 		return Response.ok(resultDTO).build();
+	}
+
+
+	@Nonnull
+	@GET
+	@Path("/fall/{fallId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxAntragDTO> getAllAntragDTOForFall(
+		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
+
+		Validate.notNull(fallJAXPId.getId());
+
+		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
 	}
 
 }

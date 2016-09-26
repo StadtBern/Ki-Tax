@@ -25,7 +25,7 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any
                 return actualString.indexOf(expected) >= 0;
             }
             if (expression.gesuchsperiode && expression.gesuchsperiode === expected) {
-                let gesuchsperiodeString = ebeguUtil.getGesuchsperiodeAsString(actual);
+                let gesuchsperiodeString = actual.gesuchsperiodeString;
                 return gesuchsperiodeString === expected;
             }
 

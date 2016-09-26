@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractEntity_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.entities.Gesuchsteller_;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
@@ -23,12 +20,6 @@ import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -101,7 +92,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.remove(gesuchToRemove.get());
 	}
 
-	public Optional<Gesuch> findGesuchByGSName(String nachname, String vorname) {
+	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
@@ -118,7 +109,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		q.setParameter(nameParam, nachname);
 		q.setParameter(vornameParam, vorname);
 
-		return Optional.ofNullable(q.getSingleResult());
+		return Optional.ofNullable(q.getResultList());
 	}
 
 	public Optional<Gesuch> findGesuchByFallAndGesuchsperiode(String fallID, String gesuchsperiodeID) {
@@ -144,7 +135,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 
-		Long count = runCountQuery(antragSearch);
+		Long count = runCountQuery();
 		//Todo team? Suchquery implementieren, allenfalls mit einem wrapper objekt damit die performance besser ist
 		// dann brauchts wohl 2 queries um jeweils noch die listen zu lesen
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -167,7 +158,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return new ImmutablePair<Long, List<Gesuch>>(count, gesuche);
 	}
 
-	private Long runCountQuery(AntragTableFilterDTO antragSearch) {
+	private Long runCountQuery() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Long> query = cb.createQuery(Long.class);
 		Root<Gesuch> root = query.from(Gesuch.class);
@@ -179,7 +170,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	private List<Order> createOrderClause(CriteriaBuilder cb, Root<Gesuch> root, AntragSortDTO sort) {
-		Expression orderField= orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
+		Expression orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
 		switch (sort.getPredicate()) {
 			case "fallNummer":
 				orderField = root.get(Gesuch_.fall).get(Fall_.fallNummer);
@@ -193,7 +184,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case "gesuchsperiode":
 				orderField = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 				break;
-			case "eingangsdatum":
+			case "aenderungsdatum":
 				orderField = root.get(Gesuch_.eingangsdatum);
 				break;
 			case "status":
@@ -209,7 +200,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				orderField = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
 				break;
 			default:
-				LOG.warn("Using default sort because there is no specific clause for predicate" + sort.getPredicate());
+				LOG.warn("Using default sort because there is no specific clause for predicate " + sort.getPredicate());
 		}
 		List<Order> orders = new ArrayList<>();
 		if (sort.getReverse()) {
@@ -219,5 +210,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		}
 		return orders;
+	}
+
+	@Nonnull
+	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+		query.multiselect(
+			root.get(Gesuch_.id),
+			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
+			root.get(Gesuch_.eingangsdatum),
+			root.get(Gesuch_.typ)).distinct(true);
+
+		ParameterExpression<String> dateParam = cb.parameter(String.class, "fallId");
+		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), dateParam);
+
+		query.where(predicate);
+		TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(dateParam, fallId);
+		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return q.getResultList();
 	}
 }

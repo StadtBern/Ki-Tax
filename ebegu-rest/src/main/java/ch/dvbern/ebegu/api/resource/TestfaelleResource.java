@@ -91,9 +91,12 @@ public class TestfaelleResource {
 	}
 
 	private void createAndSaveGesuch(AbstractTestfall fromTestfall) {
-		final Optional<Gesuch> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
+		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
 		if (gesuchByGSName.isPresent()) {
-			fromTestfall.setFall(gesuchByGSName.get().getFall());
+			final List<Gesuch> gesuches = gesuchByGSName.get();
+			if (!gesuches.isEmpty()) {
+				fromTestfall.setFall(gesuches.iterator().next().getFall());
+			}
 		}
 
 		Gesuch gesuch = fromTestfall.createGesuch();

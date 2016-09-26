@@ -126,20 +126,4 @@ public class GesuchsperiodeResource {
 			.sorted()
 			.collect(Collectors.toList());
 	}
-
-	@Nonnull
-	@GET
-	@Path("/fall/{fallId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxGesuchsperiode> getAllGesuchsperiodenForFall(
-		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
-
-		Validate.notNull(fallJAXPId.getId());
-
-		return gesuchsperiodeService.getAllGesuchsperiodenForFall(converter.toEntityId(fallJAXPId)).stream()
-			.map(gesuchsperiode -> converter.gesuchsperiodeToJAX(gesuchsperiode))
-			.sorted()
-			.collect(Collectors.toList());
-	}
 }

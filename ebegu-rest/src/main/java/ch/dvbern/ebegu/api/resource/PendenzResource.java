@@ -2,8 +2,8 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.BetreuungService;
@@ -43,7 +43,7 @@ public class PendenzResource {
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
-     */
+	 */
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
