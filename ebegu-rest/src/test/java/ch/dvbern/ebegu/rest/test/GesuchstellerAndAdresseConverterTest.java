@@ -12,11 +12,9 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +35,6 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 	@Inject
 	private JaxBConverter converter;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	/**
 	 * transformiert einen gespeicherten gesuchsteller nach jax und wieder zurueck. wir erwarten das daten gelich beliben

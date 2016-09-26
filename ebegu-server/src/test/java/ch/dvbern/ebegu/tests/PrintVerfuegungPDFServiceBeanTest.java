@@ -8,12 +8,10 @@ import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.PrintVerfuegungPDFService;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,11 +41,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	@Inject
 	private GesuchService gesuchService;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
 
-		return createTestArchive();
-	}
 
 	@Before
 	public void setUpCalcuator() {
