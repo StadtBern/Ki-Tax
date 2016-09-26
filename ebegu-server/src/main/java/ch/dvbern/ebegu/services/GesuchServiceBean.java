@@ -40,6 +40,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private BenutzerService benutzerService;
+
 
 	@Nonnull
 	@Override
@@ -94,6 +97,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 
+		// Rolle lesen: benutzerService.getCurrentBenutzer().get().getRole()
+		benutzerService.getCurrentBenutzer().get().getRole();
+		// mit Rolle gelesene Gesuche auf gewisse Status einschranken Gesuch.status
 		Long count = runCountQuery(antragSearch);
 		//Todo team? Suchquery implementieren, allenfalls mit einem wrapper objekt damit die performance besser ist
 		// dann brauchts wohl 2 queries um jeweils noch die listen zu lesen
@@ -143,6 +149,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case "gesuchsperiode":
 				orderField = root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
 				break;
+			case "aenderungsdatum":
+				//todo team, hier das datum des letzten statusuebergangs verwenden?
+					orderField = root.get(Gesuch_.timestampMutiert);
+					break;
 			case "eingangsdatum":
 				orderField = root.get(Gesuch_.eingangsdatum);
 				break;
@@ -159,7 +169,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				orderField = root.get(Gesuch_.fall).get(Fall_.verantwortlicher);
 				break;
 			default:
-				LOG.warn("Using default sort because there is no specific clause for predicate" + sort.getPredicate());
+				LOG.warn("Using default sort because there is no specific clause for predicate " + sort.getPredicate());
 		}
 		List<Order> orders = new ArrayList<>();
 		if (sort.getReverse()) {
