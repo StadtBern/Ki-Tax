@@ -177,7 +177,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
-            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen;
+            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen + '\n' + this.gesuchModelManager.getGesuch().bemerkungen;
         }
     }
 
