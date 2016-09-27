@@ -34,7 +34,7 @@ ALTER TABLE sequence
   ADD CONSTRAINT UK_sequence UNIQUE (sequence_type, mandant_id);
 
 ALTER TABLE sequence
-  ADD CONSTRAINT FK_mandant_id
+  ADD CONSTRAINT FK_sequence_mandant_id
 FOREIGN KEY (mandant_id)
 REFERENCES mandant (id);
 

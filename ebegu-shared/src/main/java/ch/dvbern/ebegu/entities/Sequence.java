@@ -27,6 +27,11 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "sequence_ix1", columnList = "mandant_id"),
 	}
 )
+@AssociationOverrides({
+   @AssociationOverride(name = "mandant",
+	   //wird von hibernate 5.0.6 ignoriert... https://hibernate.atlassian.net/browse/HHH-10387
+      joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_sequence_mandant_id")))
+})
 @Audited //@reviewer fragt sich ob wir hier auditen wollen
 public class Sequence extends AbstractMandantEntity {
 
