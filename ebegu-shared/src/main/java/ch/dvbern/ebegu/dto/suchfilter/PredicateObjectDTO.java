@@ -16,15 +16,15 @@ public class PredicateObjectDTO implements Serializable {
 
 	private static final long serialVersionUID = -2248051428962150142L;
 
-	private String fallNummer;
-	private String familienName;
-	private String antragTyp;
-	private String gesuchsperiodeString;
-	private String eingangsdatum;
-	private String status;
-	private String angebote;
-	private String institutionen;
-	private String verantwortlicher;
+	private String fallNummer;     //Fall.fallnummer
+	private String familienName;   //Gesuch.Gesuchsteller1.nachname bzw Gesuch.gesuchsteller2.nachname
+	private String antragTyp;      //Gesuch.antragtyp
+	private String gesuchsperiodeString; //Gesuch.gesuchperiode.gueltigAb nach jahr
+	private String eingangsdatum;  //Gesuch.eingangsdatum
+	private String status;  	   //Gesuch.status
+	private String angebote;		//Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
+	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
+	private String verantwortlicher; //Fall.verwantwortlicher.name
 
 	public String getFallNummer() {
 		return fallNummer;

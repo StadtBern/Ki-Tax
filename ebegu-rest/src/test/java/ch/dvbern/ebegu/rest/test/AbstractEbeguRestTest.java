@@ -3,6 +3,11 @@ package ch.dvbern.ebegu.rest.test;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -19,7 +24,17 @@ import java.io.File;
  * von allen Testklassen in REST modul erweitert werden. Es verhaelt sich leicht anders als die Basisklasse in
  * AbstractEbeguTest
  */
+@ArquillianSuiteDeployment
+@UsingDataSet("datasets/empty.xml")
+@Transactional(TransactionMode.DISABLED)
 public abstract class AbstractEbeguRestTest {
+
+
+	@Deployment
+	public static Archive<?> createTestArchive() {
+
+		return createTestArchive(null);
+	}
 
 	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
 
@@ -37,7 +52,7 @@ public abstract class AbstractEbeguRestTest {
 				ISessionContextService.class, AbstractEntity.class )
 
 			.addPackages(true, "ch/dvbern/ebegu/api")
-			.addPackages(true, "ch/dvbern/ebegu/rest/test/util")
+			.addPackages(true, "ch/dvbern/ebegu/rest/test")
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)
 
@@ -50,13 +65,10 @@ public abstract class AbstractEbeguRestTest {
 			webArchive.addClasses(classesToAdd);
 		}
 		//Folgende Zeile gibt im /tmp dir das archiv aus zum debuggen nuetzlich
-		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebArchive.war"), true);
+		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebRestArchive.war"), true);
 		return webArchive;
 	}
 
-	public static Archive<?> createTestArchive() {
 
-		return createTestArchive(null);
-	}
 
 }

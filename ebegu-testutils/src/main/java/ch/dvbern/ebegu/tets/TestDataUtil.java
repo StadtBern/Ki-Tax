@@ -1,5 +1,9 @@
 package ch.dvbern.ebegu.tets;
 
+import ch.dvbern.ebegu.dto.suchfilter.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -577,4 +581,16 @@ public final class TestDataUtil {
 		persistence.persist(benutzer);
 		return benutzer;
 	}
+
+
+	public static  AntragTableFilterDTO createAntragTableFilterDTO(){
+		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
+		filterDTO.setSort(new AntragSortDTO());
+		filterDTO.setSearch(new AntragSearchDTO());
+		filterDTO.setPagination(new PaginationDTO());
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(10);
+		return filterDTO;
+	}
+
 }

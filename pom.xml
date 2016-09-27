@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -34,6 +35,7 @@
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
         <version.wildfly-arquillian-containers>1.0.2.Final</version.wildfly-arquillian-containers>
+        <version.wildfly.container>10.0.0.Final</version.wildfly.container>
 
     </properties>
 
@@ -95,10 +97,10 @@
                 <!--Diese Exclusion wird gebraucht weil wir eine @OrderBy Annotaion verwenden die nur geparsed werden kann wenn antlr excluded wird-->
                 <exclusions>
                     <exclusion>
-                       <groupId>antlr</groupId>
-                       <artifactId>antlr</artifactId>
+                        <groupId>antlr</groupId>
+                        <artifactId>antlr</artifactId>
                     </exclusion>
-                 </exclusions>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
@@ -373,6 +375,18 @@
             <version>1.0.0.Alpha6</version>
             <scope>test</scope>
         </dependency>
+        <!--Um Tests mit arquillian in einem deployment laufen zu lassen-->
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <version>1.1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -435,14 +449,15 @@
 
         <profile>
             <id>wildfy10-embedded</id>
-            <activation>
-                <property>
-                    <!-- hiermit wird getestet ob ein property disable-embedded-wildfly existiert, wenn nicht lauft
-                    arquillian mit embedded container-->
-                    <name>!disable-embedded-wildfly</name>
-                </property>
-            </activation>
-            <!-- the dependencies for Wildfly10.0.0.Final  -->
+
+            <properties>
+                <!--embedded wird ans gleiche ort enpackt wie managed-->
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
+                <unpack.groupId>org.wildfly</unpack.groupId>
+                <unpack.artifactId>wildfly-dist</unpack.artifactId>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
@@ -465,51 +480,45 @@
             <build>
                 <plugins>
 
-                    <!-- You need the maven dependency plugin to download locally a zip with the server,
-                    unless you provide your own, it will download under the /target directory -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
-                        <executions>
-                            <execution>
-                                <id>unpack</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.wildfly</groupId>
-                                            <artifactId>wildfly-dist</artifactId>
-                                            <version>10.0.0.Final</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>target</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <activation>
+                <property>
+                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
+                    arquillian mit embedded container-->
+                    <name>!disable-managed-wildfly</name>
+                </property>
+            </activation>
+
+            <id>test-wildfly-managed</id>
+            <properties>
+                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
+                <unpack.groupId>org.wildfly</unpack.groupId>
+                <unpack.artifactId>wildfly-dist</unpack.artifactId>
+                <unpack.version>${version.wildfly.container}</unpack.version>
+                <unpack.directory>${project.build.directory}</unpack.directory>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>1.1.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.17</version>
-                        <configuration>
-                            <!--Port offset um auf jenkins zu funktionieren (port 8080 ist schon besetzt)-->
-                            <argLine>-Djboss.socket.binding.port-offset=200</argLine>
-                            <!-- Fork every test because it will launch a separate AS instance -->
-                            <forkMode>always</forkMode>
-                            <systemPropertyVariables>
-                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                                <!-- the maven dependency plugin will have already downloaded the server on /target -->
-                                <jboss.home>${project.basedir}/target/wildfly-10.0.0.Final</jboss.home>
-                                <module.path>${project.basedir}/target/wildfly-10.0.0.Final/modules</module.path>
-                            </systemPropertyVariables>
-                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
-                        </configuration>
+                        <artifactId>maven-dependency-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
@@ -542,6 +551,26 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                    <!--port offset fuer embedded wildfly -->
+                    <argLine>-Djboss.socket.binding.port-offset=10000</argLine>
+                    <environmentVariables>
+                        <JBOSS_HOME>${jbossHome}</JBOSS_HOME>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <!--name des containers im arquillian.xml-->
+                        <arquillian.launch>wildfly-container</arquillian.launch>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
+                </configuration>
+
+            </plugin>
+
+            <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>1.0-m5.1</version>
@@ -552,7 +581,7 @@
                         <featureBranchPrefix>feature/</featureBranchPrefix>
                         <releaseBranchPrefix>release/</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-                        <versionTagPrefix />
+                        <versionTagPrefix/>
                     </flowInitContext>
                     <allowUntracked>true</allowUntracked>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -612,8 +641,6 @@
                 <configuration>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <!--todo team: regeln vom sonar verwenden-->
-
                         <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd
                         </ruleset>
                         <!--<ruleset>file://${base-path}/checkstyle/rules/pmd/pmd-rules.xml</ruleset>-->
@@ -667,6 +694,34 @@
 
         <pluginManagement>
             <plugins>
+                <!-- You need the maven dependency plugin to download locally a zip with the server,
+                unless you provide your own, it will download under the /target directory -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.10</version>
+                    <executions>
+                        <execution>
+                            <id>unpack</id>
+                            <phase>process-test-classes</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>${unpack.groupId}</groupId>
+                                        <artifactId>${unpack.artifactId}</artifactId>
+                                        <version>${unpack.version}</version>
+                                        <type>zip</type>
+                                        <overWrite>false</overWrite>
+                                        <outputDirectory>${unpack.directory}</outputDirectory>
+                                    </artifactItem>
+                                </artifactItems>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
                 <plugin>
                     <groupId>org.flywaydb</groupId>
