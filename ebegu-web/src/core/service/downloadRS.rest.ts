@@ -44,13 +44,16 @@ export class DownloadRS {
             });
     }
 
-    public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
-            + encodeURIComponent(betreuungId) + '/' + forceCreation + '/generatedVerfuegung')
-            .then((response: any) => {
-                this.log.debug('PARSING DownloadFile REST object ', response.data);
-                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
-            });
+    public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean, manuelleBemerkungen: string): IPromise<TSDownloadFile> {
+        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(betreuungId) + '/' + forceCreation + '/generatedVerfuegung', manuelleBemerkungen, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING DownloadFile REST object ', response.data);
+            return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+        });
     }
 
 

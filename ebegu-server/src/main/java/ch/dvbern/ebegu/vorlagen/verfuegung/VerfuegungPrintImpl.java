@@ -146,17 +146,17 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	/**
 	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen
 	 * Wenn die Betreuung noch nicht VERFUEGT ist -> generated Bemerkungen
+	 *
 	 * @return
 	 */
 	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) && verfuegung.get().getManuelleBemerkungen() != null) {
-				return betreuung.getVerfuegung().getManuelleBemerkungen();
-			}
-			else if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) && verfuegung.get().getGeneratedBemerkungen() != null) {
-				return betreuung.getVerfuegung().getGeneratedBemerkungen();
+			if (verfuegung.get().getManuelleBemerkungen() != null) {
+				return verfuegung.get().getManuelleBemerkungen();
+			} else if (verfuegung.get().getGeneratedBemerkungen() != null) {
+				return verfuegung.get().getGeneratedBemerkungen();
 			}
 		}
 		return "";

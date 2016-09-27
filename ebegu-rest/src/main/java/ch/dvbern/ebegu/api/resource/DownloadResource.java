@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -158,10 +159,11 @@ public class DownloadResource {
 	/**
 	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
 	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG_KITA
+	 *
 	 * @param jaxGesuchId gesuch ID
 	 * @param dokumentTyp Typ der Vorlage
-	 * @param request request
-	 * @param uriInfo uri
+	 * @param request     request
+	 * @param uriInfo     uri
 	 * @return ein Response mit dem GeneratedDokument
 	 * @throws EbeguEntityNotFoundException
 	 * @throws MergeDocException
@@ -190,18 +192,16 @@ public class DownloadResource {
 					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
 			if ((!AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus()))
-					|| persistedDokument == null) {
+				|| persistedDokument == null) {
 				// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
 				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
 
 				byte[] data;
 				if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 					data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch.get());
-				}
-				else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+				} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 					data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
-				}
-				else {
+				} else {
 					return Response.noContent().build();
 				}
 
@@ -218,7 +218,7 @@ public class DownloadResource {
 	}
 
 	@Nonnull
-	@GET
+	@POST
 	@Path("/{gesuchid}/{betreuungId}/{forceCreation}/generatedVerfuegung")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
@@ -226,6 +226,7 @@ public class DownloadResource {
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
 		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Nonnull @NotNull @Valid String manuelleBemerkungen,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException,
 		DocTemplateException, IOException, MimeTypeParseException {
 
@@ -250,6 +251,10 @@ public class DownloadResource {
 
 				betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
 				if (betreuung != null) {
+					if (!manuelleBemerkungen.isEmpty()) {
+						betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+					}
+
 					final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
 
 					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
@@ -257,8 +262,7 @@ public class DownloadResource {
 
 					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG_KITA,
 						gesuch.get(), fileNameForGeneratedDokumentTyp);
-				}
-				else {
+				} else {
 					throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 						ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
 				}
@@ -305,7 +309,6 @@ public class DownloadResource {
 		}
 		return ipAddress;
 	}
-
 
 
 }
