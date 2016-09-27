@@ -119,9 +119,12 @@ export class GesuchToolbarController {
 
     public getGesuchName(): string {
         let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch && gesuch.gesuchsteller1) {
-            return this.ebeguUtil.addZerosToNumber(gesuch.fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH) +
-                ' ' + gesuch.gesuchsteller1.nachname;
+        if (gesuch) {
+            var text = this.ebeguUtil.addZerosToNumber(gesuch.fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            if (gesuch.gesuchsteller1 && gesuch.gesuchsteller1.nachname) {
+                text = text + ' ' + gesuch.gesuchsteller1.nachname;
+            }
+            return text;
         } else {
             return '--';
         }

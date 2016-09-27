@@ -25,12 +25,10 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any
                 return actualString.indexOf(expected) >= 0;
             }
             if (expression.gesuchsperiodeGueltigAb && expression.gesuchsperiodeGueltigAb === expected) {
-                let gesuchsperiodeGueltigAb = dateFilter(new Date(actual), 'dd.MM.yyyy');
-                return gesuchsperiodeGueltigAb === expected;
+                return compareDates(actual, expected);
             }
             if (expression.gesuchsperiodeGueltigBis && expression.gesuchsperiodeGueltigBis === expected) {
-                let gesuchsperiodeGueltigBis = dateFilter(new Date(actual), 'dd.MM.yyyy');
-                return gesuchsperiodeGueltigBis === expected;
+                return compareDates(actual, expected);
             }
 
             return standardComparator(actual, expected);
@@ -39,4 +37,9 @@ export function PendenzFilter($filter: any, ebeguUtil: EbeguUtil, CONSTANTS: any
         var output = filterFilter(array, expression, customComparator);
         return output;
     };
+
+    function compareDates (actual: any, expected: any): boolean {
+        let gesuchsperiodeGueltigAb = dateFilter(new Date(actual), 'dd.MM.yyyy');
+        return gesuchsperiodeGueltigAb === expected;
+    }
 }

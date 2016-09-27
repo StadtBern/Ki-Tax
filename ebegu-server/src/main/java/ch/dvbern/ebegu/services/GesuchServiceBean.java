@@ -115,26 +115,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.ofNullable(q.getResultList());
 	}
 
-	public Optional<Gesuch> findGesuchByFallAndGesuchsperiode(String fallID, String gesuchsperiodeID) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		ParameterExpression<String> fallParam = cb.parameter(String.class, "fallID");
-		Predicate namePredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallParam);
-
-		ParameterExpression<String> gesuchsperiodeParam = cb.parameter(String.class, "vorname");
-		Predicate vornamePredicate = cb.equal(root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id), gesuchsperiodeParam);
-
-		query.where(namePredicate, vornamePredicate);
-		TypedQuery<Gesuch> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(fallParam, fallID);
-		q.setParameter(gesuchsperiodeParam, gesuchsperiodeID);
-
-		return Optional.ofNullable(q.getSingleResult());
-	}
-
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 

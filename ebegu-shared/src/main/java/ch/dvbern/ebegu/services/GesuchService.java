@@ -67,9 +67,6 @@ public interface GesuchService {
 	@Nonnull
 	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
 
-	@Nonnull
-	Optional<Gesuch> findGesuchByFallAndGesuchsperiode(String fallID, String gesuchsperiodeID);
-
 	/**
 	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
 	 *

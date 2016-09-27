@@ -42,7 +42,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Resource fuer Gesuch
@@ -248,38 +247,6 @@ public class GesuchResource {
 		LOG.error("Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read");
 		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchJAXPId.getId());
 	}
-
-	/**
-	 * Methode findGesuchByFallAndPeriode fuer fallID und GesuchsperiodeID
-	 *
-	 * @param fallJAXPId          ID des Falles
-	 * @param gesuchperiodeJAXPId ID der Gesuchsperiode
-	 * @return filtriertes Gesuch mit nur den relevanten Daten
-	 */
-	@Nullable
-	@GET
-	@Path("/fallId/gesuchsperiodeId/{fallId}/{gesuchsperiodeId}")
-	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.APPLICATION_JSON)
-	public JaxGesuch findGesuchByFallAndPeriode(
-		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId,
-		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchperiodeJAXPId) throws EbeguException {
-
-		Validate.notNull(fallJAXPId.getId());
-		String fallID = converter.toEntityId(fallJAXPId);
-
-		Validate.notNull(gesuchperiodeJAXPId.getId());
-		String gesuchsperiodeID = converter.toEntityId(gesuchperiodeJAXPId);
-
-		Optional<Gesuch> gesuchOptional = gesuchService.findGesuchByFallAndGesuchsperiode(fallID, gesuchsperiodeID);
-
-		if (!gesuchOptional.isPresent()) {
-			return null;
-		}
-		Gesuch gesuchToReturn = gesuchOptional.get();
-		return converter.gesuchToJAX(gesuchToReturn);
-	}
-
 
 	@Nonnull
 	@POST
