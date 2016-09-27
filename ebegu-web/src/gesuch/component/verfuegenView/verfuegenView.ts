@@ -177,7 +177,13 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
-            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen + '\n' + this.gesuchModelManager.getGesuch().bemerkungen;
+            this.bemerkungen = '';
+            if (this.getVerfuegenToWorkWith().generatedBemerkungen && this.getVerfuegenToWorkWith().generatedBemerkungen.length > 0) {
+                this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen + '\n';
+            }
+            if (this.gesuchModelManager.getGesuch().bemerkungen) {
+                this.bemerkungen = this.bemerkungen + this.gesuchModelManager.getGesuch().bemerkungen;
+            }
         }
     }
 
