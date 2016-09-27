@@ -49,6 +49,7 @@ import TSWizardStep from '../models/TSWizardStep';
 import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import TSFile from '../models/TSFile';
 
 
 export default class EbeguRestUtil {
@@ -146,10 +147,7 @@ export default class EbeguRestUtil {
 
     public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
         if (receivedVorlage) {
-            this.parseAbstractEntity(vorlageTS, receivedVorlage);
-            vorlageTS.filename = receivedVorlage.filename;
-            vorlageTS.filepfad = receivedVorlage.filepfad;
-            vorlageTS.filesize = receivedVorlage.filesize;
+            this.parseAbstractFileEntity(vorlageTS, receivedVorlage);
             return vorlageTS;
         }
         return undefined;
@@ -167,13 +165,26 @@ export default class EbeguRestUtil {
 
     public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
         if (vorlage) {
-            this.abstractEntityToRestObject(restVorlage, vorlage);
-            restVorlage.filename = vorlage.filename;
-            restVorlage.filepfad = vorlage.filepfad;
-            restVorlage.filesize = vorlage.filesize;
+            this.abstractFileEntityToRestObject(restVorlage, vorlage);
             return restVorlage;
         }
         return undefined;
+    }
+
+    private parseAbstractFileEntity(fileTS: TSFile, fileFromServer: any) {
+        this.parseAbstractEntity(fileTS, fileFromServer);
+        fileTS.filename = fileFromServer.filename;
+        fileTS.filepfad = fileFromServer.filepfad;
+        fileTS.filesize = fileFromServer.filesize;
+        return fileTS;
+    }
+
+    private abstractFileEntityToRestObject(restObject: any, typescriptObject: TSFile) {
+        this.abstractEntityToRestObject(restObject, typescriptObject);
+        restObject.filename = typescriptObject.filename;
+        restObject.filepfad = typescriptObject.filepfad;
+        restObject.filesize = typescriptObject.filesize;
+        return restObject;
     }
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
@@ -1408,11 +1419,11 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    parseTempDokument(tsTempDokument: TSDownloadFile, tempDokumentFromServer: any) {
-        if (tempDokumentFromServer) {
-            this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
-            tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
-            return tsTempDokument;
+    public parseDownloadFile(tsDownloadFile: TSDownloadFile, downloadFileFromServer: any) {
+        if (downloadFileFromServer) {
+            this.parseAbstractFileEntity(tsDownloadFile, downloadFileFromServer);
+            tsDownloadFile.accessToken = downloadFileFromServer.accessToken;
+            return tsDownloadFile;
         }
         return undefined;
     }

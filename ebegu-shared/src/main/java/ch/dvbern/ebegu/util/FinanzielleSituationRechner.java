@@ -255,7 +255,7 @@ public class FinanzielleSituationRechner {
 			total = BigDecimal.ZERO;
 		} //total vermoegen + schulden muss gruesser null sein, individuell pro gs kann es aber negativ sein
 		total = percent(total, 5);
-		return total;
+		return MathUtil.GANZZAHL.from(total);
 	}
 
 	protected static BigDecimal add(BigDecimal value1, BigDecimal value2) {

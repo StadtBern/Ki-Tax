@@ -12,7 +12,9 @@ package ch.dvbern.ebegu.services;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintImpl;
 import ch.dvbern.ebegu.vorlagen.begleitschreiben.BegleitschreibenPrintMergeSource;
@@ -31,7 +33,7 @@ import java.util.Objects;
  */
 @Stateless
 @Local(PrintBegleitschreibenPDFService.class)
-public class PrintBegleitschreibenPDFServiceBean extends AbstractBaseService implements PrintBegleitschreibenPDFService {
+public class PrintBegleitschreibenPDFServiceBean extends AbstractPrintService implements PrintBegleitschreibenPDFService {
 
 	@Nonnull
 	@Override
@@ -42,17 +44,18 @@ public class PrintBegleitschreibenPDFServiceBean extends AbstractBaseService imp
 		DOCXMergeEngine docxME = new DOCXMergeEngine("Begleitschreiben");
 
 		try {
-
-			// Pro Betreuung ein Dokument
-			InputStream is = AbstractBaseService.class.getResourceAsStream("/vorlagen/Begleitschreiben.docx");
-			Objects.requireNonNull(is, "Begleitschreiben.docx nicht gefunden");
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN, "/vorlagen/Begleitschreiben.docx");
+			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
 			is.close();
 			return bytes;
 		} catch (IOException |
 
 				DocTemplateException e) {
-			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Begleitschreibenvorlage ist einen Fehler aufgetreten", e, new Objects[] {});
+			throw new MergeDocException("printBegleitschreiben()",
+				"Bei der Generierung der Begleitschreibenvorlage ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 	}
 }

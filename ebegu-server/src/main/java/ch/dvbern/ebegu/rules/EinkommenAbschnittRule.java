@@ -64,7 +64,7 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 
 	private void createBemerkungEVK1(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
-		if (ifEKV1Accepted(finanzDatenDTO)) {
+		if (finanzDatenDTO.isEKV1Accepted()) {
 			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG1_ACCEPT_MSG);
 		} else {
 			//ekv wurde nicht akzeptiert
@@ -77,7 +77,7 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 	}
 
 	private void createBemerkungEVK2(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
-		if (ifEKV2Accepted(finanzDatenDTO)) {
+		if (finanzDatenDTO.isEKV2Accepted()) {
 			lastAbschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMENSVERSCHLECHTERUNG2_ACCEPT_MSG);
 		} else {
 			//ekv2 wurde nicht akzeptiert
@@ -90,13 +90,5 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 	}
 
-	private boolean ifEKV2Accepted(FinanzDatenDTO finanzDatenDTO) {
-//		(Feld ist nur gesetzt wenn EKV akzeptiert wurde)
-		return finanzDatenDTO.getDatumVonBasisjahrPlus2() != null;
-	}
 
-	private boolean ifEKV1Accepted(FinanzDatenDTO finanzDatenDTO) {
-//		 (Feld ist nur gesetzt wenn EKV akzeptiert wurde)
-		return finanzDatenDTO.getDatumVonBasisjahrPlus1() != null;
-	}
 }

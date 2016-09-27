@@ -51,7 +51,12 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	@Override
 	@Nonnull
 	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey) {
-		final EntityManager em = persistence.getEntityManager();
+		return getEbeguVorlageByDatesAndKey(abDate, bisDate, ebeguVorlageKey, persistence.getEntityManager());
+	}
+
+	@Override
+	@Nonnull
+	public Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey, final EntityManager em) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<EbeguVorlage> query = cb.createQuery(EbeguVorlage.class);
 		Root<EbeguVorlage> root = query.from(EbeguVorlage.class);

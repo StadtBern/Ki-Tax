@@ -1279,7 +1279,7 @@ public class JaxBConverter {
 	}
 
 	private Set<JaxBetreuung> betreuungListToJax(final Set<Betreuung> betreuungen) {
-		final Set<JaxBetreuung> jaxBetreuungen = new HashSet<>();
+		final Set<JaxBetreuung> jaxBetreuungen = new TreeSet<>();
 		if (betreuungen != null) {
 			jaxBetreuungen.addAll(betreuungen.stream().map(this::betreuungToJAX).collect(Collectors.toList()));
 		}
@@ -1602,7 +1602,8 @@ public class JaxBConverter {
 
 
 	public JaxDownloadFile downloadFileToJAX(DownloadFile downloadFile) {
-		JaxDownloadFile jaxDownloadFile = convertAbstractFieldsToJAX(downloadFile, new JaxDownloadFile());
+		JaxDownloadFile jaxDownloadFile = new JaxDownloadFile();
+		convertFileToJax(downloadFile, jaxDownloadFile);
 		jaxDownloadFile.setAccessToken(downloadFile.getAccessToken());
 		return jaxDownloadFile;
 	}
@@ -1725,7 +1726,7 @@ public class JaxBConverter {
 		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {
 			kindContainer.getBetreuungen().forEach(betreuung -> {
-				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+				resultSet.add(betreuung.getBetreuungsangebotTyp());
 			});
 		});
 		return resultSet;

@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
@@ -92,5 +94,10 @@ public class AbstractAntragEntity extends AbstractEntity {
 		return (Objects.equals(this.getEingangsdatum(), otherAbstAntragEntity.getEingangsdatum())
 			&& Objects.equals(this.getFall(), otherAbstAntragEntity.getFall())
 			&& Objects.equals(this.getGesuchsperiode(), otherAbstAntragEntity.getGesuchsperiode()));
+	}
+
+	public String getAntragNummer() {
+		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
+			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
 	}
 }
