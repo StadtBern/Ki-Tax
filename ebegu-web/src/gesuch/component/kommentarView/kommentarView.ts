@@ -15,6 +15,8 @@ import TSWizardStep from '../../../models/TSWizardStep';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 
@@ -138,6 +140,18 @@ export class KommentarViewController {
 
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    }
+
+    /**
+     * StepsComment sind fuer alle Steps disabled wenn das Gesuch VERFUEGEN oder VERFUEGT ist. Fuer den Step VERFUEGEN ist es nur im
+     * Status VERFUEGT DISABLED
+     * @returns {boolean}
+     */
+    public isStepCommentDisabled(): boolean {
+        return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
+                && this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt())
+            || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
+                && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
     }
 
 }

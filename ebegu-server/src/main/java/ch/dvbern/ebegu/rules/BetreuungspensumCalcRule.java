@@ -33,7 +33,7 @@ public class BetreuungspensumCalcRule extends AbstractCalcRule {
 		int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
 		int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
 		// Wenn keine Fachstelle  -> Anspruch setzen fuer Schulkinder; bei Kleinkindern muss nichts gemacht werden
-		if (roundedPensumFachstelle <= 0 && betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+		if (roundedPensumFachstelle <= 0 && betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 			// Schulkind-Angebote: Sie erhalten IMMER soviel, wie sie wollen. Der Restanspruch wird nicht tangiert
 			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(betreuungspensum);
 		}

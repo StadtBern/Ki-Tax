@@ -20,7 +20,9 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.BerechnungsgrundlagenInformationPrintImpl;
 import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
@@ -32,7 +34,7 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
  */
 @Stateless
 @Local(PrintFinanzielleSituationPDFService.class)
-public class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseService implements PrintFinanzielleSituationPDFService {
+public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintService implements PrintFinanzielleSituationPDFService {
 
 	@Nonnull
 	@Override
@@ -43,15 +45,17 @@ public class PrintFinanzielleSituationPDFServiceBean extends AbstractBaseService
 		DOCXMergeEngine docxME = new DOCXMergeEngine("FinanzielleSituation");
 
 		try {
-			// Pro Betreuung ein Dokument
-			InputStream is = AbstractBaseService.class.getResourceAsStream("/vorlagen/Berechnungsgrundlagen.docx");
-			Objects.requireNonNull(is, "Berechnungsgrundlagen.docx nicht gefunden");
+			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
+			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION, "/vorlagen/Berechnungsgrundlagen.docx");
+			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
 					docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Berechnungsgrundlagen ist einen Fehler aufgetreten", e, new Objects[] {});
+			throw new MergeDocException("printFinanzielleSituation()",
+				"Bei der Generierung der Berechnungsgrundlagen ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 	}
 }

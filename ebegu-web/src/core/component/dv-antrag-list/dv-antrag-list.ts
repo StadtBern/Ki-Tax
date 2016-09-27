@@ -12,6 +12,7 @@ import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import Moment = moment.Moment;
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');
 
@@ -40,7 +41,7 @@ export class DVAntragListController {
     antraege: Array<TSAntragDTO> = []; //muss hier gesuch haben damit Felder die wir anzeigen muessen da sind
     displayedCollection: Array<TSAntragDTO> = []; //Liste die im Gui angezeigt wird
     pagination: any;
-    activeGesuchsperiodenList: Array<string>;
+    gesuchsperiodenList: Array<string>;
     institutionenList: Array<TSInstitution>;
 
     selectedBetreuungsangebotTyp: string;
@@ -73,7 +74,7 @@ export class DVAntragListController {
     private initViewModel() {
         //statt diese Listen zu laden koenne man sie auch von aussen setzen
         this.updateInstitutionenList();
-        this.updateActiveGesuchsperiodenList();
+        this.updateGesuchsperiodenList();
     }
 
     $onInit() {
@@ -101,11 +102,11 @@ export class DVAntragListController {
         });
     }
 
-    public updateActiveGesuchsperiodenList(): void {
+    public updateGesuchsperiodenList(): void {
         this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = [];
+            this.gesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
-                this.activeGesuchsperiodenList.push(this.getGesuchsperiodeAsString(gesuchsperiode));
+                this.gesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
             });
         });
     }
@@ -158,10 +159,6 @@ export class DVAntragListController {
      */
     public getBetreuungsangebotTypen(): Array<TSBetreuungsangebotTyp> {
         return getTSBetreuungsangebotTypValues();
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
     }
 
     /**

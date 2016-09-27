@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,8 +46,24 @@ public class DokumenteUtilTest {
 		Assert.assertNotNull(mergedERWERBSPENSUM);
 		Assert.assertEquals(mergedERWERBSPENSUM.size(), 1);
 		Assert.assertEquals(1, getByDokumentType(mergedERWERBSPENSUM, DokumentTyp.NACHWEIS_AUSBILDUNG).size());
+	}
 
+	@Test
+	public void testGetFileNameForGeneratedDokumentTypBEGLEITSCHREIBEN() {
+		Assert.assertEquals("Begleitbrief_16.000001.pdf", DokumenteUtil
+			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, "16.000001"));
+	}
 
+	@Test
+	public void testGetFileNameForGeneratedDokumentTypFINANZIELLE_SITUATION() {
+		Assert.assertEquals("Finanzielle_Situation_16.000001.pdf", DokumenteUtil
+			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FINANZIELLE_SITUATION, "16.000001"));
+	}
+
+	@Test
+	public void testGetFileNameForGeneratedDokumentTypVERFUEGUNG_KITA() {
+		Assert.assertEquals("Verfuegung_16.000001.1.1.pdf", DokumenteUtil
+			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, "16.000001.1.1"));
 	}
 
 	private Set<Dokument> getByDokumentType(Set<DokumentGrund> dokumentGrunds, DokumentTyp dokumentTyp) {

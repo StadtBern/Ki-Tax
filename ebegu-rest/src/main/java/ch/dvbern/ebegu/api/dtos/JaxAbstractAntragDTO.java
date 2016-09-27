@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
+import ch.dvbern.ebegu.enums.AntragTyp;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -32,6 +33,9 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 
 	@NotNull
 	private AntragStatusDTO status;
+
+	@NotNull
+	private AntragTyp typ;
 
 
 	public JaxFall getFall() {
@@ -65,5 +69,13 @@ public class JaxAbstractAntragDTO extends JaxAbstractDTO {
 
 	public void setStatus(AntragStatusDTO status) {
 		this.status = status;
+	}
+
+	public AntragTyp getTyp() {
+		return typ;
+	}
+
+	public void setTyp(AntragTyp typ) {
+		this.typ = typ;
 	}
 }

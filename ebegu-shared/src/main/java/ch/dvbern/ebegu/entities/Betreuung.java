@@ -6,7 +6,6 @@ import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
@@ -212,12 +211,17 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	@Transient
 	public boolean isAngebotKita() {
-		return BetreuungsangebotTyp.KITA.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.KITA.equals(getBetreuungsangebotTyp());
 	}
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
+	}
+
+	@Transient
+	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
+		return getInstitutionStammdaten().getBetreuungsangebotTyp();
 	}
 
 	/**
@@ -225,17 +229,12 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	 */
 	@Transient
 	public String getBGNummer() {
-		String year = "";
-		if (getKind().getGesuch() != null && getKind().getGesuch().getGesuchsperiode() != null) {
-			year = ("" + getKind().getGesuch().getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2);
+		if (getKind().getGesuch() != null) {
+			String kind = "" + getKind().getKindNummer();
+			String betreuung = "" + getBetreuungNummer();
+			return getKind().getGesuch().getAntragNummer() + "." + kind + "." + betreuung;
 		}
-		String fall = "";
-		if (getKind().getGesuch() != null && getKind().getGesuch().getFall() != null) {
-			fall = StringUtils.leftPad("" + getKind().getGesuch().getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
-		}
-		String kind = "" + getKind().getKindNummer();
-		String betreuung = "" + getBetreuungNummer();
-		return year + "." + fall + "." + kind + "." + betreuung;
+		return "";
 	}
 
 	@Override

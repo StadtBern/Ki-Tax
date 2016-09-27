@@ -12,7 +12,7 @@
                     <th st-sort="fallNummer" class="sortable row-fallnr" data-translate="FALL_UPPER"></th>
                     <th st-sort="familienName" class="sortable- row-name" data-translate="FAMILIE_UPPER"></th>
                     <th st-sort="antragTyp" class="sortable row-antrag" data-translate="TYP_UPPER"></th>
-                    <th st-sort="gesuchsperiode" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
+                    <th st-sort="gesuchsperiodeString" class="sortable row-periode" data-translate="PERIODE_UPPER"></th>
                     <th st-sort="aenderungsdatum" st-sort-default="reverse" class="sortable row-geandert"
                         data-translate="GEANDERT_UPPER"></th>
 
@@ -35,9 +35,9 @@
                         </select>
                     </th>
                     <th>
-                        <select st-input-event="change" name="gesuchsperiode" id="gesuchsperiode"
-                                st-search="gesuchsperiode" class="form-control"
-                                ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
+                        <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString"
+                                st-search="gesuchsperiodeString" class="form-control"
+                                ng-options="periode for periode in vm.gesuchsperiodenList track by periode"
                                 ng-model="vm.selectedGesuchsperiode">
                             <option value="">{{"ALLE" | translate}}</option>
                         </select>
@@ -82,8 +82,9 @@
                     <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
                         ng-bind="row.antragTyp | translate"></td>
-                    <td class="ellipsis" ellipsis-tooltip="{{vm.getGesuchsperiodeAsString(row.gesuchsperiode)}}"
-                        ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
+                    <td class="ellipsis"
+                        ellipsis-tooltip="{{row.gesuchsperiodeString}}"
+                        ng-bind="row.gesuchsperiodeString"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                         ng-bind="row.aenderungsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"

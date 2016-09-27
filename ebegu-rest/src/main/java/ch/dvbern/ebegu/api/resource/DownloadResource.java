@@ -1,24 +1,31 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.DownloadFile;
-import ch.dvbern.ebegu.entities.File;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.services.DokumentService;
-import ch.dvbern.ebegu.services.DownloadFileService;
-import ch.dvbern.ebegu.services.VorlageService;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
+import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -26,6 +33,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * REST Resource fuer Institution
@@ -47,6 +55,34 @@ public class DownloadResource {
 
 	@Inject
 	private VorlageService vorlageService;
+
+	@Inject
+	private GesuchService gesuchService;
+
+	@Inject
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+
+	@Inject
+	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
+
+	@Inject
+	private GeneratedDokumentService generatedDokumentService;
+
+	@Inject
+	private VerfuegungService verfuegungService;
+
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+
+	@Inject
+	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
+
+	@Inject
+	private Persistence<Gesuch> persistence;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
 
 	@GET
 	@Path("blobdata/{accessToken}/{filename}")
@@ -120,6 +156,139 @@ public class DownloadResource {
 		return getFileDownloadResponse(uriInfo, ip, dokument);
 	}
 
+	/**
+	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
+	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
+	 *
+	 * @param jaxGesuchId gesuch ID
+	 * @param dokumentTyp Typ der Vorlage
+	 * @param request     request
+	 * @param uriInfo     uri
+	 * @return ein Response mit dem GeneratedDokument
+	 * @throws EbeguEntityNotFoundException
+	 * @throws MergeDocException
+	 */
+	@Nonnull
+	@GET
+	@Path("/{gesuchid}/{dokumentTyp}/{forceCreation}/generated")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("dokumentTyp") GeneratedDokumentTyp dokumentTyp,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		Validate.notNull(dokumentTyp);
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.get().getAntragNummer());
+			GeneratedDokument persistedDokument = null;
+			if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus())) {
+				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(), fileNameForGeneratedDokumentTyp,
+					ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
+			}
+			if ((!AntragStatus.VERFUEGT.equals(gesuch.get().getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.get().getStatus()))
+				|| persistedDokument == null) {
+				// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+
+				byte[] data;
+				if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+					data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch.get());
+				} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+					data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
+				} else {
+					return Response.noContent().build();
+				}
+
+				persistedDokument = generatedDokumentService.updateGeneratedDokument(data, dokumentTyp, gesuch.get(),
+					fileNameForGeneratedDokumentTyp);
+			}
+
+			persistence.getEntityManager().detach(gesuch.get());
+
+			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+		}
+		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + jaxGesuchId.getId());
+	}
+
+	@Nonnull
+	@POST
+	@Path("/{gesuchid}/{betreuungId}/{forceCreation}/generatedVerfuegung")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getVerfuegungDokumentAccessTokenGeneratedDokument(
+		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
+		@Nonnull @Valid @PathParam("betreuungId") JaxId jaxBetreuungId,
+		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
+		@Nonnull @NotNull @Valid String manuelleBemerkungen,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException,
+		DocTemplateException, IOException, MimeTypeParseException {
+
+		Validate.notNull(jaxGesuchId.getId());
+		Validate.notNull(jaxBetreuungId.getId());
+		String ip = getIP(request);
+
+		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuch.isPresent()) {
+			GeneratedDokument persistedDokument = null;
+
+			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
+			if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
+					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
+			}
+			// Wenn die Betreuung verfuegt ist aber das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+			if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
+				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+				final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
+
+				betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
+				if (betreuung != null) {
+					if (!manuelleBemerkungen.isEmpty()) {
+						betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+					}
+
+					final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+
+					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+						betreuung.getBGNummer());
+
+					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+						gesuch.get(), fileNameForGeneratedDokumentTyp);
+				} else {
+					throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+						ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+				}
+			}
+
+			final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
+			persistence.getEntityManager().detach(gesuch.get());
+			persistence.getEntityManager().detach(betreuung);
+			return fileDownloadResponse;
+		}
+		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
+	}
+
+	private Betreuung getBetreuungFromGesuch(Gesuch gesuch, String betreuungId) {
+		for (KindContainer kind : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kind.getBetreuungen()) {
+				if (betreuung.getId().equals(betreuungId)) {
+					return betreuung;
+				}
+			}
+		}
+		return null;
+	}
+
+
 	private Response getFileDownloadResponse(@Context UriInfo uriInfo, String ip, File file) {
 		final DownloadFile downloadFile = downloadFileService.create(file, ip);
 
@@ -140,4 +309,6 @@ public class DownloadResource {
 		}
 		return ipAddress;
 	}
+
+
 }

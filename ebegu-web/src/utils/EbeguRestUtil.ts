@@ -49,6 +49,7 @@ import TSWizardStep from '../models/TSWizardStep';
 import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import TSFile from '../models/TSFile';
 
 
 export default class EbeguRestUtil {
@@ -146,10 +147,7 @@ export default class EbeguRestUtil {
 
     public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
         if (receivedVorlage) {
-            this.parseAbstractEntity(vorlageTS, receivedVorlage);
-            vorlageTS.filename = receivedVorlage.filename;
-            vorlageTS.filepfad = receivedVorlage.filepfad;
-            vorlageTS.filesize = receivedVorlage.filesize;
+            this.parseAbstractFileEntity(vorlageTS, receivedVorlage);
             return vorlageTS;
         }
         return undefined;
@@ -167,13 +165,26 @@ export default class EbeguRestUtil {
 
     public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
         if (vorlage) {
-            this.abstractEntityToRestObject(restVorlage, vorlage);
-            restVorlage.filename = vorlage.filename;
-            restVorlage.filepfad = vorlage.filepfad;
-            restVorlage.filesize = vorlage.filesize;
+            this.abstractFileEntityToRestObject(restVorlage, vorlage);
             return restVorlage;
         }
         return undefined;
+    }
+
+    private parseAbstractFileEntity(fileTS: TSFile, fileFromServer: any) {
+        this.parseAbstractEntity(fileTS, fileFromServer);
+        fileTS.filename = fileFromServer.filename;
+        fileTS.filepfad = fileFromServer.filepfad;
+        fileTS.filesize = fileFromServer.filesize;
+        return fileTS;
+    }
+
+    private abstractFileEntityToRestObject(restObject: any, typescriptObject: TSFile) {
+        this.abstractEntityToRestObject(restObject, typescriptObject);
+        restObject.filename = typescriptObject.filename;
+        restObject.filepfad = typescriptObject.filepfad;
+        restObject.filesize = typescriptObject.filesize;
+        return restObject;
     }
 
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
@@ -237,6 +248,7 @@ export default class EbeguRestUtil {
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
         restObj.status = antragEntity.status;
+        restObj.typ = antragEntity.typ;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -245,6 +257,7 @@ export default class EbeguRestUtil {
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
         antragTS.status = antragFromServer.status;
+        antragTS.typ = antragFromServer.typ;
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -1101,7 +1114,8 @@ export default class EbeguRestUtil {
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
         restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
-        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
+        restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
@@ -1116,7 +1130,8 @@ export default class EbeguRestUtil {
         pendenzTS.antragTyp = pendenzFromServer.antragTyp;
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
         pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
-        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigAb);
+        pendenzTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigBis);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;
@@ -1404,11 +1419,11 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    parseTempDokument(tsTempDokument: TSDownloadFile, tempDokumentFromServer: any) {
-        if (tempDokumentFromServer) {
-            this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
-            tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
-            return tsTempDokument;
+    public parseDownloadFile(tsDownloadFile: TSDownloadFile, downloadFileFromServer: any) {
+        if (downloadFileFromServer) {
+            this.parseAbstractFileEntity(tsDownloadFile, downloadFileFromServer);
+            tsDownloadFile.accessToken = downloadFileFromServer.accessToken;
+            return tsDownloadFile;
         }
         return undefined;
     }

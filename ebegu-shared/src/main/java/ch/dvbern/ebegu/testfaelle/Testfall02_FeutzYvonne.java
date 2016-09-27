@@ -25,7 +25,7 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 	public Gesuch createGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
-		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Yvonne");
+		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Tizian");
 		gesuch.setGesuchsteller2(gesuchsteller2);
@@ -70,5 +70,15 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
 		return gesuch;
+	}
+
+	@Override
+	public String getNachname() {
+		return FAMILIENNAME;
+	}
+
+	@Override
+	public String getVorname() {
+		return "Yvonne";
 	}
 }

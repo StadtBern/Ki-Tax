@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -142,11 +143,21 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return result;
 	}
 
+	/**
+	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen
+	 * Wenn die Betreuung noch nicht VERFUEGT ist -> generated Bemerkungen
+	 *
+	 * @return
+	 */
 	public String getManuelleBemerkungen() {
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent() && verfuegung.get().getManuelleBemerkungen() != null) {
-			return betreuung.getVerfuegung().getManuelleBemerkungen();
+		if (verfuegung.isPresent()) {
+			if (verfuegung.get().getManuelleBemerkungen() != null) {
+				return verfuegung.get().getManuelleBemerkungen();
+			} else if (verfuegung.get().getGeneratedBemerkungen() != null) {
+				return verfuegung.get().getGeneratedBemerkungen();
+			}
 		}
 		return "";
 	}

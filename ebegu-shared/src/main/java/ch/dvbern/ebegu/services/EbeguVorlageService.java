@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,9 @@ public interface EbeguVorlageService {
 
 	@Nonnull
 	Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey);
+
+	@Nonnull
+	Optional<EbeguVorlage> getEbeguVorlageByDatesAndKey(LocalDate abDate, LocalDate bisDate, EbeguVorlageKey ebeguVorlageKey, EntityManager em);
 
 	@Nonnull
 	List<EbeguVorlage> getALLEbeguVorlageByGesuchsperiode(Gesuchsperiode gesuchsperiode);

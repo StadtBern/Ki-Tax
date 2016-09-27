@@ -22,7 +22,7 @@ public class WohnhaftImGleichenHaushaltCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 			if (betreuung.getKind() != null && betreuung.getKind().getKindJA() != null) {
 				final Kind kindJA = betreuung.getKind().getKindJA();
 				if (kindJA.getWohnhaftImGleichenHaushalt() != null) {

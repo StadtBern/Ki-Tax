@@ -1,8 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.services.BetreuungService;
@@ -41,7 +41,7 @@ public class PendenzResource {
 
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
-     */
+	 */
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
@@ -77,7 +77,7 @@ public class PendenzResource {
 			pendenz.setGeburtsdatum(betreuung.getKind().getKindJA().getGeburtsdatum());
 			pendenz.setEingangsdatum(betreuung.extractGesuch().getEingangsdatum());
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
-			pendenz.setBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			pendenz.setBetreuungsangebotTyp(betreuung.getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
 			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
 			pendenzenList.add(pendenz);

@@ -2,22 +2,16 @@ import TSFall from './TSFall';
 import TSAbstractEntity from './TSAbstractEntity';
 import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSAntragStatus} from './enums/TSAntragStatus';
+import {TSAntragTyp} from './enums/TSAntragTyp';
 
 export default class TSAbstractAntragEntity extends TSAbstractEntity {
+
 
     private _fall: TSFall;
     private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
     private _status: TSAntragStatus;
-
-
-    constructor(fall?: TSFall, gesuchsperiode?: TSGesuchsperiode, eingangsdatum?: moment.Moment, status?: TSAntragStatus) {
-        super();
-        this._fall = fall;
-        this._gesuchsperiode = gesuchsperiode;
-        this._eingangsdatum = eingangsdatum;
-        this._status = status;
-    }
+    private _typ: TSAntragTyp;
 
 
     public get fall(): TSFall {
@@ -50,5 +44,13 @@ export default class TSAbstractAntragEntity extends TSAbstractEntity {
 
     set status(value: TSAntragStatus) {
         this._status = value;
+    }
+
+    get typ(): TSAntragTyp {
+        return this._typ;
+    }
+
+    set typ(value: TSAntragTyp) {
+        this._typ = value;
     }
 }

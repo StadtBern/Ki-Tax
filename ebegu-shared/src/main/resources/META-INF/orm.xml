@@ -42,5 +42,6 @@
 	<entity class="ch.dvbern.ebegu.entities.AntragStatusHistory"/>
 	<entity class="ch.dvbern.ebegu.entities.EbeguVorlage"/>
 	<entity class="ch.dvbern.ebegu.entities.Vorlage"/>
+	<entity class="ch.dvbern.ebegu.entities.GeneratedDokument"/>
 
 </entity-mappings>

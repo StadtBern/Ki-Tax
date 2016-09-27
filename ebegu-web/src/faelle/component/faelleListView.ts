@@ -62,7 +62,7 @@ export class FaelleListViewController {
     }
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
+        return gesuchsperiode.gesuchsperiodeString;
     }
 
 
