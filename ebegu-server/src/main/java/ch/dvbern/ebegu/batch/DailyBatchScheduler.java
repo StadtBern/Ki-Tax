@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.batch;
 
+import ch.dvbern.ebegu.services.DailyBatch;
+
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
