@@ -86,7 +86,7 @@ export class PendenzenInstitutionListViewController {
     }
 
     public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
+        return gesuchsperiode.gesuchsperiodeString;
     }
 
     public editPendenzInstitution(pendenz: TSPendenzInstitution): void {

@@ -2,8 +2,8 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxAntragDTO;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -64,7 +64,8 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Set<String> institutionen = new LinkedHashSet<>();
 		institutionen.add("Institution1");
 		Assert.assertEquals(institutionen, pendenzenList.get(0).getInstitutionen());
-		Assert.assertEquals(converter.gesuchsperiodeToJAX(gesuch1.getGesuchsperiode()), pendenzenList.get(0).getGesuchsperiode());
+		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigAb(), pendenzenList.get(0).getGesuchsperiodeGueltigAb());
+		Assert.assertEquals(gesuch1.getGesuchsperiode().getGueltigkeit().getGueltigBis(), pendenzenList.get(0).getGesuchsperiodeGueltigBis());
 	}
 
 

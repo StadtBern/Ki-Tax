@@ -2,8 +2,8 @@ package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -211,6 +211,9 @@ public class JaxBConverter {
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
 		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
+		if(antragJAXP.getTyp() != null) {
+			antrag.setTyp(antragJAXP.getTyp());
+		}
 	}
 
 	private void convertAbstractAntragFieldsToJAX(final AbstractAntragEntity antrag, final JaxAbstractAntragDTO antragJAXP) {
@@ -221,6 +224,7 @@ public class JaxBConverter {
 		}
 		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
 		antragJAXP.setStatus(antragStatusConverter.convertStatusToDTO(antrag, antrag.getStatus()));
+		antragJAXP.setTyp(antrag.getTyp());
 	}
 
 	@Nonnull
@@ -1702,10 +1706,11 @@ public class JaxBConverter {
 		//todo team, hier das datum des letzten statusuebergangs verwenden?
 		antrag.setAenderungsdatum( gesuch.getTimestampMutiert());
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
-		antrag.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
+		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
 		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
-		antrag.setGesuchsperiode(this.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
+		antrag.setGesuchsperiodeGueltigAb(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 		if (gesuch.getFall().getVerantwortlicher() != null) {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 		}
@@ -1716,7 +1721,7 @@ public class JaxBConverter {
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-     */
+	 */
 	private Set<BetreuungsangebotTyp> createAngeboteList(Set<KindContainer> kindContainers) {
 		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {
@@ -1730,7 +1735,7 @@ public class JaxBConverter {
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-     */
+	 */
 	private Set<String> createInstitutionenList(Set<KindContainer> kindContainers) {
 		Set<String> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {

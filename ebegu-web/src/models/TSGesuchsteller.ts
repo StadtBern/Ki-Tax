@@ -122,5 +122,15 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._einkommensverschlechterungContainer = value;
     }
 
+    public getPhone(): string {
+        if (this.mobile) {
+            return this.mobile;
+        } else if (this.telefon) {
+            return this.telefon;
+        } else {
+            return '';
+        }
+    }
+
 }
 

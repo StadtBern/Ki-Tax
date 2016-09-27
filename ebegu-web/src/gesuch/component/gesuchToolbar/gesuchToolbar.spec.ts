@@ -4,6 +4,10 @@ import {GesuchToolbarController} from './gesuchToolbar';
 import UserRS from '../../../core/service/userRS.rest';
 import TSUser from '../../../models/TSUser';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import GesuchRS from '../../service/gesuchRS.rest';
+import BerechnungsManager from '../../service/berechnungsManager';
+import {IStateService} from 'angular-ui-router';
 
 describe('betreuungView', function () {
 
@@ -11,6 +15,11 @@ describe('betreuungView', function () {
     let gesuchToolbarController: GesuchToolbarController;
     let userRS: UserRS;
     let authServiceRS: AuthServiceRS;
+    let ebeguUtil: EbeguUtil;
+    let CONSTANTS: any;
+    let gesuchRS: GesuchRS;
+    let berechnungsManager: BerechnungsManager;
+    let $state: IStateService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -18,7 +27,15 @@ describe('betreuungView', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         userRS = $injector.get('UserRS');
         authServiceRS = $injector.get('AuthServiceRS');
-        gesuchToolbarController = new GesuchToolbarController(userRS, gesuchModelManager);
+        ebeguUtil = $injector.get('EbeguUtil');
+        CONSTANTS = $injector.get('CONSTANTS');
+        gesuchRS = $injector.get('GesuchRS');
+        berechnungsManager = $injector.get('BerechnungsManager');
+        $state = $injector.get('$state');
+        ebeguUtil = $injector.get('EbeguUtil');
+        gesuchToolbarController = new GesuchToolbarController(userRS, gesuchModelManager, ebeguUtil,
+            CONSTANTS, gesuchRS,
+            berechnungsManager, $state);
     }));
 
     describe('getVerantwortlicherFullName', () => {

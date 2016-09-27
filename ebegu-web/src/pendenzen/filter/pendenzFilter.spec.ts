@@ -5,6 +5,7 @@ import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 describe('pendenzFilter', function () {
 
@@ -25,16 +26,20 @@ describe('pendenzFilter', function () {
         gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
 
         pendenzArray = [];
-        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab, ab,
-            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado');
+        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, ab, ab,
+            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz1);
 
-        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab, ab,
-            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez');
+        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.GESUCH, ab, ab,
+            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz2);
 
-        pendenz3 = new TSAntragDTO('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab, ab,
-            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
+        pendenz3 = new TSAntragDTO('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, ab, ab,
+            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'],
+            'Eustaquio Romualdo', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz3);
 
     }));
@@ -58,10 +63,10 @@ describe('pendenzFilter', function () {
             expect(pendenzFilter(pendenzArray, {antragTyp: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty string returns all elements
             expect(pendenzFilter(pendenzArray, {antragTyp: 'error'})).toEqual([]);
         });
-        it('should return an array with only the elements of the given gesuchsperiode', function () {
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: '2016/2017'})).toEqual([pendenz1, pendenz2, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: '2020/2021'})).toEqual([]);
+        it('should return an array with only the elements of the given gesuchsperiodeGueltigAb', function () {
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: '31.08.2016'})).toEqual([pendenz1, pendenz2, pendenz3]);
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: '2020/2021'})).toEqual([]);
         });
         it('should return an array with only the elements of the given eingangsdatum', function () {
             expect(pendenzFilter(pendenzArray, {eingangsdatum: '31.08.2016'})).toEqual([pendenz1, pendenz2, pendenz3]);

@@ -1,4 +1,3 @@
-import TSGesuchsperiode from './TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from './enums/TSBetreuungsangebotTyp';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 import {TSAntragStatus} from './enums/TSAntragStatus';
@@ -9,29 +8,31 @@ export default class TSAntragDTO {
     private _fallNummer: number;
     private _familienName: string;
     private _antragTyp: TSAntragTyp;
-    private _gesuchsperiode: TSGesuchsperiode;
     private _eingangsdatum: moment.Moment;
     private _aenderungsdatum: moment.Moment;
     private _verantwortlicher: string;
     private _angebote: Array<TSBetreuungsangebotTyp>;
     private _institutionen: Array<string>;
     private _status: TSAntragStatus;
+    private _gesuchsperiodeGueltigAb: moment.Moment;
+    private _gesuchsperiodeGueltigBis: moment.Moment;
 
-    constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp, gesuchsperiode?: TSGesuchsperiode,
+    constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus) {
+                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
         this._familienName = familienName;
         this._antragTyp = antragTyp;
-        this._gesuchsperiode = gesuchsperiode;
         this._eingangsdatum = eingangsdatum;
         this._aenderungsdatum = aenderungsdatum;
         this._angebote = angebote;
         this._institutionen = institutionen;
         this._verantwortlicher = verantwortlicher;
         this._status = status;
+        this._gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
+        this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
     }
 
 
@@ -67,14 +68,6 @@ export default class TSAntragDTO {
         this._antragTyp = value;
     }
 
-    get gesuchsperiode(): TSGesuchsperiode {
-        return this._gesuchsperiode;
-    }
-
-    set gesuchsperiode(value: TSGesuchsperiode) {
-        this._gesuchsperiode = value;
-    }
-
     get eingangsdatum(): moment.Moment {
         return this._eingangsdatum;
     }
@@ -82,7 +75,6 @@ export default class TSAntragDTO {
     set eingangsdatum(value: moment.Moment) {
         this._eingangsdatum = value;
     }
-
 
     get aenderungsdatum(): moment.Moment {
         return this._aenderungsdatum;
@@ -122,5 +114,29 @@ export default class TSAntragDTO {
 
     set status(value: TSAntragStatus) {
         this._status = value;
+    }
+
+    get gesuchsperiodeGueltigAb(): moment.Moment {
+        return this._gesuchsperiodeGueltigAb;
+    }
+
+    set gesuchsperiodeGueltigAb(value: moment.Moment) {
+        this._gesuchsperiodeGueltigAb = value;
+    }
+
+    get gesuchsperiodeGueltigBis(): moment.Moment {
+        return this._gesuchsperiodeGueltigBis;
+    }
+
+    set gesuchsperiodeGueltigBis(value: moment.Moment) {
+        this._gesuchsperiodeGueltigBis = value;
+    }
+
+    get gesuchsperiodeString() {
+        if (this._gesuchsperiodeGueltigAb && this._gesuchsperiodeGueltigBis) {
+            return this._gesuchsperiodeGueltigAb.year() + '/'
+                + this._gesuchsperiodeGueltigBis.year();
+        }
+        return undefined;
     }
 }

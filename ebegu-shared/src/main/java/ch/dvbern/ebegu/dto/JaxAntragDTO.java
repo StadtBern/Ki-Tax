@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.dtos;
+package ch.dvbern.ebegu.dto;
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
@@ -25,6 +25,14 @@ public class JaxAntragDTO {
 
 	private static final long serialVersionUID = -1277026654764135397L;
 
+	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis, LocalDate eingangsdatum, AntragTyp antragTyp) {
+		this.antragId = antragId;
+		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
+		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
+		this.eingangsdatum = eingangsdatum;
+		this.antragTyp = antragTyp;
+	}
+
 	@NotNull
 	private String antragId = null;
 
@@ -38,7 +46,12 @@ public class JaxAntragDTO {
 	private AntragTyp antragTyp;
 
 	@NotNull
-	private JaxGesuchsperiode gesuchsperiode;
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate gesuchsperiodeGueltigAb = null;
+
+	@NotNull
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate gesuchsperiodeGueltigBis = null;
 
 	@NotNull
 	private String verantwortlicher;
@@ -97,12 +110,20 @@ public class JaxAntragDTO {
 		this.antragTyp = antragTyp;
 	}
 
-	public JaxGesuchsperiode getGesuchsperiode() {
-		return gesuchsperiode;
+	public LocalDate getGesuchsperiodeGueltigAb() {
+		return gesuchsperiodeGueltigAb;
 	}
 
-	public void setGesuchsperiode(JaxGesuchsperiode gesuchsperiode) {
-		this.gesuchsperiode = gesuchsperiode;
+	public void setGesuchsperiodeGueltigAb(LocalDate gesuchsperiodeGueltigAb) {
+		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
+	}
+
+	public LocalDate getGesuchsperiodeGueltigBis() {
+		return gesuchsperiodeGueltigBis;
+	}
+
+	public void setGesuchsperiodeGueltigBis(LocalDate gesuchsperiodeGueltigBis) {
+		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 	}
 
 	public String getVerantwortlicher() {
