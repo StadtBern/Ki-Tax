@@ -24,7 +24,7 @@ public class MindestalterCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+		if (betreuung.getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.isKindMinestalterUnterschritten()) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
 				verfuegungZeitabschnitt.addBemerkung(RuleKey.MINDESTALTER, MsgKey.MINDESTALTER_MSG);

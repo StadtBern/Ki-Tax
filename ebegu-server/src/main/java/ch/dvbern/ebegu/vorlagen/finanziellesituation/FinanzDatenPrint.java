@@ -58,6 +58,10 @@ public interface FinanzDatenPrint {
 	 */
 	BigDecimal getUnterhaltsbeitraegeG1();
 
+	BigDecimal getGeleisteteUnterhaltsbeitraegeG1();
+
+	BigDecimal getGeleisteteUnterhaltsbeitraegeG2();
+
 	/**
 	 * @return Erhaltene Unterhaltsbeiträge (Alimente)
 	 */

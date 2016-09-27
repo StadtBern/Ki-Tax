@@ -2,7 +2,9 @@ package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.enums.DokumentTyp;
+import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,4 +60,18 @@ public class DokumenteUtil {
 		return persisted;
 	}
 
+	/**
+	 * Fuer den gegebenen GeneratedDokumentTyp gibt die Methode den entsprechenden Dateinamen zurueck.
+	 * @param typ
+	 * @return
+	 */
+	@Nonnull
+	public static String getFileNameForGeneratedDokumentTyp(final GeneratedDokumentTyp typ, final String identificationNumber) {
+		switch (typ) {
+			case BEGLEITSCHREIBEN: return "Begleitbrief_" + identificationNumber + ".pdf";
+			case FINANZIELLE_SITUATION: return "Finanzielle_Situation_" + identificationNumber + ".pdf";
+			case VERFUEGUNG: return "Verfuegung_" + identificationNumber + ".pdf";
+			default: return "datei.pdf";
+		}
+	}
 }

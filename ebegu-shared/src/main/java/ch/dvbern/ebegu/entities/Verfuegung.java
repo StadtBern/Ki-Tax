@@ -39,6 +39,7 @@ public class Verfuegung extends AbstractEntity{
 	@Nonnull
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "verfuegung")
+	@OrderBy("gueltigkeit ASC")
 	private List<VerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
 

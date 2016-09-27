@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "downloadFile")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxDownloadFile extends JaxAbstractDTO {
+public class JaxDownloadFile extends JaxFile {
 
 	private static final long serialVersionUID = 1118235796540488553L;
 

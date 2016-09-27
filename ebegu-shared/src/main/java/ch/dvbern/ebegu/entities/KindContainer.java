@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -55,7 +56,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 
 	@Nullable
 	@Valid
-	@OrderBy("betreuungNummer")
+	@SortNatural
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
 	private Set<Betreuung> betreuungen = new TreeSet<>();
 

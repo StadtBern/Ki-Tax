@@ -51,7 +51,7 @@ export default class AntragStatusHistoryRS {
      * @returns {any}
      */
     public getUserFullname(): string {
-        if (this.lastChange) {
+        if (this.lastChange && this.lastChange.benutzer) {
             return this.lastChange.benutzer.getFullName();
         } else {
             if (this.authServiceRS && this.authServiceRS.getPrincipal()) {

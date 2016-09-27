@@ -1,4 +1,4 @@
-import {IFormController, IComponentOptions, IPromise} from 'angular';
+import {IFormController, IComponentOptions, IPromise, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -12,6 +12,8 @@ import WizardStepManager from '../../service/wizardStepManager';
 import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -29,14 +31,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog'];
+        'DvDialog', 'DownloadRS', '$log'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.setBemerkungen();
 
@@ -60,14 +62,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     save(form: IFormController) {
         if (form.$valid) {
-            //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
-            //this.errorService.clearAll();
-            //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
-            // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
             this.saveVerfuegung().then(() => {
-                this.$state.go('gesuch.verfuegen');
+                this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+                    this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
+                    this.$state.go('gesuch.verfuegen');
+                });
             });
-            // });
         }
     }
 
@@ -177,12 +177,21 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
-            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen;
+            this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen + '\n' + this.gesuchModelManager.getGesuch().bemerkungen;
         }
     }
 
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
             || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+    }
+
+    public openVerfuegungPDF(): void {
+        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+            this.gesuchModelManager.getBetreuungToWorkWith().id, false, this.bemerkungen)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
     }
 }

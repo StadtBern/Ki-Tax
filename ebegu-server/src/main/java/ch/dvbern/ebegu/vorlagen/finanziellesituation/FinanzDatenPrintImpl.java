@@ -91,6 +91,20 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	}
 
 	@Override
+	public final BigDecimal getGeleisteteUnterhaltsbeitraegeG1() {
+
+		return this.getFinanzSituationGS1() != null ? this.getFinanzSituationGS1().getGeleisteteAlimente() : null;
+
+	}
+
+	@Override
+	public final BigDecimal getGeleisteteUnterhaltsbeitraegeG2() {
+
+		return this.getFinanzSituationGS2() != null ? this.getFinanzSituationGS2().getGeleisteteAlimente() : null;
+
+	}
+
+	@Override
 	public final BigDecimal getUnterhaltsbeitraegeG2() {
 
 		return this.getFinanzSituationGS2() != null ? this.getFinanzSituationGS2().getErhalteneAlimente() : null;
@@ -181,7 +195,7 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	public final BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller1() {
 
 		BigDecimal bruttovermoegen = getBruttovermoegenG1() != null ? getBruttovermoegenG1() : BigDecimal.ZERO;
-		BigDecimal schulden = getSchuldenG1() != null ? getFamilienzulagenG1() : BigDecimal.ZERO;
+		BigDecimal schulden = getSchuldenG1() != null ? getSchuldenG1() : BigDecimal.ZERO;
 		return MathUtil.EXACT.subtract(bruttovermoegen, schulden);
 	}
 
@@ -189,7 +203,7 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	public final BigDecimal getZwischentotalNettovermoegenBeiderGesuchsteller2() {
 
 		BigDecimal bruttovermoegen = getBruttovermoegenG2() != null ? getBruttovermoegenG2() : BigDecimal.ZERO;
-		BigDecimal schulden = getSchuldenG2() != null ? getFamilienzulagenG2() : BigDecimal.ZERO;
+		BigDecimal schulden = getSchuldenG2() != null ? getSchuldenG2() : BigDecimal.ZERO;
 
 		return MathUtil.EXACT.subtract(bruttovermoegen, schulden);
 
@@ -218,8 +232,8 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	@Override
 	public final BigDecimal getTotalAbzuege() {
 
-		BigDecimal unterhaltGS1 = getUnterhaltsbeitraegeG1() != null ? getUnterhaltsbeitraegeG1() : BigDecimal.ZERO;
-		BigDecimal unterhaltGS2 = getUnterhaltsbeitraegeG2() != null ? getUnterhaltsbeitraegeG2() : BigDecimal.ZERO;
+		BigDecimal unterhaltGS1 = getGeleisteteUnterhaltsbeitraegeG1() != null ? getGeleisteteUnterhaltsbeitraegeG1() : BigDecimal.ZERO;
+		BigDecimal unterhaltGS2 = getGeleisteteUnterhaltsbeitraegeG2() != null ? getGeleisteteUnterhaltsbeitraegeG2() : BigDecimal.ZERO;
 
 		return MathUtil.EXACT.add(unterhaltGS1, unterhaltGS2);
 	}

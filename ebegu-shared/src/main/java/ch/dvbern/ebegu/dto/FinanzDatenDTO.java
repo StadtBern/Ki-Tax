@@ -68,4 +68,14 @@ public class FinanzDatenDTO {
 	public void setMassgebendesEinkBjP2VorAbzFamGr(BigDecimal massgebendesEinkBjP2VorAbzFamGr) {
 		this.massgebendesEinkBjP2VorAbzFamGr = massgebendesEinkBjP2VorAbzFamGr;
 	}
+
+	public boolean isEKV2Accepted() {
+//		(Feld ist nur gesetzt wenn EKV akzeptiert wurde)
+		return this.getDatumVonBasisjahrPlus2() != null;
+	}
+
+	public boolean isEKV1Accepted( ) {
+//		 (Feld ist nur gesetzt wenn EKV akzeptiert wurde)
+		return this.getDatumVonBasisjahrPlus1() != null;
+	}
 }

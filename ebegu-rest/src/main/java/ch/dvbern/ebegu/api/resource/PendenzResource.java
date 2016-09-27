@@ -77,7 +77,7 @@ public class PendenzResource {
 			pendenz.setGeburtsdatum(betreuung.getKind().getKindJA().getGeburtsdatum());
 			pendenz.setEingangsdatum(betreuung.extractGesuch().getEingangsdatum());
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
-			pendenz.setBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			pendenz.setBetreuungsangebotTyp(betreuung.getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
 			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
 			pendenzenList.add(pendenz);

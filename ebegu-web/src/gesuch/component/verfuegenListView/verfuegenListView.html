@@ -12,31 +12,59 @@
                        class="table table-striped table-hover" st-delay="20">
                     <thead>
                     <tr>
-                        <th data-translate="KIND_UPPER" ></th>
-                        <th data-translate="BETREUUNG_UPPER" ></th>
+                        <th data-translate="KIND_UPPER"></th>
+                        <th data-translate="BETREUUNG_UPPER"></th>
                         <th data-translate="ID_UPPER"></th>
                         <th data-translate="STATUS_UPPER"></th>
                     </tr>
                     </thead>
-                    <tbody ng-repeat="kindContainer in displayedCollection" >
-                        <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung" st-select-mode="single"
-                            ng-click="vm.openVerfuegung(kindContainer, betreuung)">
-                            <td ng-bind="kindContainer.kindJA.getFullName()"></td>
-                            <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
-                            <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
-                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;" ng-bind="betreuung.betreuungsstatus | translate"></td>
-                        </tr>
+                    <tbody ng-repeat="kindContainer in displayedCollection">
+                    <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
+                        st-select-mode="single" ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' && betreuung.betreuungsstatus !== 'VERFUEGT'}"
+                        ng-click="vm.openVerfuegung(kindContainer, betreuung)">
+                        <td ng-bind="kindContainer.kindJA.getFullName()"></td>
+                        <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
+                        <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
+                        <td class="betreuung-status ng-class:betreuung.betreuungsstatus;"
+                            ng-bind="betreuung.betreuungsstatus | translate"></td>
+                    </tr>
                     </tbody>
                     <tbody ng-if="vm.getKinderWithBetreuungList().length === 0">
-                        <tr>
-                            <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="empty-table" data-translate="VERFUEGUNGEN_NOCH_KEINE"></td>
+                    </tr>
                     </tbody>
                 </table>
 
             </div>
         </div>
+
         <br>
+
+        <!--FinanzielleSituationPDF anzeigen-->
+        <div class="row text-left" dv-show-element
+             dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+            <div class="col-md-12">
+                <i class="fa fa-file-text-o"></i>
+                <button type="button" class="btn btn-link"
+                        ng-click="vm.openFinanzielleSituationPDF()">
+                    <span data-translate="PDF_FINSITUATION_ANZEIGEN"></span>
+                </button>
+            </div>
+        </div>
+        <!--Begleitschreiben anzeigen-->
+        <div class="row text-left">
+            <div class="col-md-12">
+                <i class="fa fa-file-text-o"></i>
+                <button type="button" class="btn btn-link"
+                        ng-click="vm.openBegleitschreibenPDF()">
+                    <span data-translate="PDF_BEGLEITSCHREIBEN_ANZEIGEN"></span>
+                </button>
+            </div>
+        </div>
+
+        <br>
+
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
             <div class="col-md-12 text-center">
                 <md-button ng-if="vm.showGeprueft()"
