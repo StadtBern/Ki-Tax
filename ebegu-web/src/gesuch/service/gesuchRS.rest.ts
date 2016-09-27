@@ -5,6 +5,7 @@ import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
+import TSAntragDTO from '../../models/TSAntragDTO';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -68,7 +69,7 @@ export default class GesuchRS implements IEntityRS {
     }
 
     public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
-        return this.http.post(this.serviceURL + '/search', antragSearch, {
+        return this.http.post(this.serviceURL + '/search/', antragSearch, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -88,5 +89,11 @@ export default class GesuchRS implements IEntityRS {
 
     public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
+    }
+
+    public getAllAntragDTOForFall(fallId: string): IPromise<TSAntragDTO[]> {
+        return this.http.get(this.serviceURL + '/fall/' + encodeURIComponent(fallId)).then((response: any) => {
+            return this.ebeguRestUtil.parseAntragDTOs(response.data);
+        });
     }
 }

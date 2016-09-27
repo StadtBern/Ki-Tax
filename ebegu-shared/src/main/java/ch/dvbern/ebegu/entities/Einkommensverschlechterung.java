@@ -169,6 +169,6 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 
 		return MathUtil.DEFAULT.add(nettolohnJan, nettolohnFeb, nettolohnMrz, nettolohnApr,
 			nettolohnMai, nettolohnJun, nettolohnJul, nettolohnAug, nettolohnSep,
-			nettolohnOkt, nettolohnNov, nettolohnDez);
+			nettolohnOkt, nettolohnNov, nettolohnDez, nettolohnZus);
 	}
 }

@@ -104,8 +104,8 @@ describe('pendenzenListView', function () {
     });
 
     function mockGetPendenzenList(): TSAntragDTO {
-        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH, undefined,
-            undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+        let mockPendenz: TSAntragDTO = new TSAntragDTO('66345345', 123, 'name', TSAntragTyp.GESUCH,
+            undefined, undefined, [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado', undefined, undefined, undefined);
         let result: Array<TSAntragDTO> = [mockPendenz];
         spyOn(pendenzRS, 'getPendenzenList').and.returnValue($q.when(result));
         return mockPendenz;
@@ -116,5 +116,6 @@ describe('pendenzenListView', function () {
         $httpBackend.when('GET', '/ebegu/api/v1/institutionen').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/benutzer').respond({});
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
+        $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/').respond({});
     }
 });

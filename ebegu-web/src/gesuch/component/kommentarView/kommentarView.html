@@ -9,7 +9,7 @@
             <dv-input-container class="form-group kommentar-feld">
                 <label class="inlineHint" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
                         <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
-                                  ng-blur="vm.saveStepBemerkung()" ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
+                                  ng-blur="vm.saveStepBemerkung()" ng-disabled="vm.isStepCommentDisabled()"
                                   ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>

@@ -104,7 +104,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Assert.assertTrue(allParameter.isEmpty());
 		Assert.assertFalse(currentParameterOptional.isPresent());
 
-		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameterService.saveEbeguParameter(param1);
 
 		allParameter = parameterService.getAllEbeguParameter();
@@ -127,7 +127,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Gesuchsperiode gesuchsperiode = TestDataUtil.createDefaultGesuchsperiode();
 		gesuchsperiode.setGueltigkeit(new DateRange(LocalDate.of(2015, Month.AUGUST, 1), LocalDate.of(2016, Month.JULY, 31)));
 
-		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameter.setGueltigkeit(gesuchsperiode.getGueltigkeit());
 		parameterService.saveEbeguParameter(parameter);
 
@@ -145,8 +145,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertTrue(allParameter.isEmpty());
 
-		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter();
-		parameter.setName(PARAM_ABGELTUNG_PRO_TAG_KANTON);
+		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON);
 		parameter.setGueltigkeit(new DateRange(2015));
 		parameterService.saveEbeguParameter(parameter);
 
@@ -159,7 +158,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void getEbeguParameterByKeyAndDate() throws Exception {
-		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameterService.saveEbeguParameter(param1);
 
 		Optional<EbeguParameter> optional = parameterService.getEbeguParameterByKeyAndDate(PARAM_KEY, LocalDate.now());
@@ -167,7 +166,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 	}
 
 	private EbeguParameter insertEbeguParameter() {
-		EbeguParameter ebeguParameter = TestDataUtil.createDefaultEbeguParameter();
+		EbeguParameter ebeguParameter = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		return parameterService.saveEbeguParameter(ebeguParameter);
 	}
 }

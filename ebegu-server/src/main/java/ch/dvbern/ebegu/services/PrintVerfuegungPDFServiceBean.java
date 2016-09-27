@@ -14,7 +14,9 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.vorlagen.GeneratePDFDocumentHelper;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintImpl;
 import ch.dvbern.ebegu.vorlagen.verfuegung.VerfuegungPrintMergeSource;
@@ -36,33 +38,76 @@ import java.util.Objects;
  */
 @Stateless
 @Local(PrintVerfuegungPDFService.class)
-public class PrintVerfuegungPDFServiceBean extends AbstractBaseService implements PrintVerfuegungPDFService {
+public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implements PrintVerfuegungPDFService {
 
 	@Nonnull
 	@Override
 	@SuppressFBWarnings(value = "UI_INHERITANCE_UNSAFE_GETRESOURCE")
-	public List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public List<byte[]> printVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
 		List<byte[]> result = new ArrayList<>();
-
-		DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		try {
 
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
 				for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 					// Pro Betreuung ein Dokument
-					InputStream is = this.getClass().getResourceAsStream("/vorlagen/Verfuegungsmuster.docx");
-					Objects.requireNonNull(is, "Verfuegungsmuster.docx nicht gefunden");
-					result.add(new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung)))));
-					is.close();
+					result.add(printVerfuegungForBetreuung(betreuung));
 				}
 			}
 		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("generiereVerfuegung()", "Bei der Generierung der Verfuegungsmustervorlage ist einen Fehler aufgetreten", e, new Objects[] {});
+			throw new MergeDocException("printVerfuegungen()",
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
 		}
 		return result;
 	}
+
+	@Nonnull
+	@Override
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException {
+		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
+
+		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
+		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
+			gueltigkeit.getGueltigBis(), getVorlageFromBetreuungsangebottyp(betreuung), getDefaultVorlagePathFromBetreuungsangebottyp(betreuung));
+		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
+
+		final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME
+			.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung))));
+
+		is.close();
+
+		return bytes;
+	}
+
+	/**
+	 * Sucht die Vorlage by default je nach dem welchen Angebottype, die Betreuung hat.
+	 * Die Vorlage fuer KITA wird im Fehlerfall zurueckgegeben
+	 * @param betreuung
+	 * @return
+	 */
+	@Nonnull
+	private String getDefaultVorlagePathFromBetreuungsangebottyp(final Betreuung betreuung) {
+		switch (betreuung.getBetreuungsangebotTyp()) {
+			case TAGESELTERN_KLEINKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx";
+			case TAGESELTERN_SCHULKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx";
+			case TAGI: return "/vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx";
+			case KITA:
+			default: return "/vorlagen/Verfuegungsmuster_kita.docx";
+		}
+	}
+
+	@Nonnull
+	private EbeguVorlageKey getVorlageFromBetreuungsangebottyp(final Betreuung betreuung) {
+		switch (betreuung.getBetreuungsangebotTyp()) {
+			case TAGESELTERN_KLEINKIND: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
+			case TAGESELTERN_SCHULKIND: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
+			case TAGI: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER;
+			case KITA:
+			default: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
+		}
+	}
+
 }

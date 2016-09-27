@@ -171,11 +171,13 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param wizardSteps
 	 */
 	private void updateAllStatusForVerfuegen(List<WizardStep> wizardSteps) {
-		for (WizardStep wizardStep: wizardSteps) {
+		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())
 				&& !WizardStepStatus.OK.equals(wizardStep.getWizardStepStatus())) {
 				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-				if (betreuungenFromGesuch.stream().filter(betreuung -> !Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())).count() <= 0) {
+				if (betreuungenFromGesuch.stream().filter(betreuung -> !Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())
+					&& !Betreuungsstatus.SCHULAMT.equals(betreuung.getBetreuungsstatus())).count() <= 0) {
+
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 					wizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
 					antragStatusHistoryService.saveStatusChange(wizardStep.getGesuch());
@@ -284,8 +286,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		final List<Betreuung> allBetreuungenRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
 			.stream().filter(betreuung ->
 				betreuung.getKind().getKindJA().getPensumFachstelle() == null
-				&& (BetreuungsangebotTyp.KITA == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()
-					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()))
+				&& (BetreuungsangebotTyp.KITA == betreuung.getBetreuungsangebotTyp()
+					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getBetreuungsangebotTyp()))
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());

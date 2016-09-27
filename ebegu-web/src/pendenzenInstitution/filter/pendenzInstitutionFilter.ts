@@ -30,8 +30,8 @@ export function PendenzInstitutionFilter($filter: any, ebeguUtil: EbeguUtil) {
                 let actualDate = dateFilter(new Date(actual), 'dd.MM.yyyy');
                 return actualDate === expected;
             }
-            if (expression.gesuchsperiode && expression.gesuchsperiode === expected) {
-                let gesuchsperiodeString = ebeguUtil.getGesuchsperiodeAsString(actual);
+            if (expression.gesuchsperiodeString && expression.gesuchsperiodeString === expected) {
+                let gesuchsperiodeString = actual.gesuchsperiodeString;
                 return gesuchsperiodeString === expected;
             }
             return standardComparator(actual, expected);

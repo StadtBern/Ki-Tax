@@ -31,19 +31,6 @@ describe('EbeguUtil', function () {
         ebeguUtil = $injector.get('EbeguUtil');
     }));
 
-    describe('getGesuchsperiodeAsString', function () {
-        it('should return the current Gesuchsperiode formatted', function () {
-            var momentAb = DateUtil.today().year(2016);
-            var momentBis = DateUtil.today().year(2017);
-            let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(momentAb, momentBis));
-            let result: string = ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
-            expect(result).toEqual('2016/2017');
-        });
-        it('should return undefined for an undefined Gesuchsperiode', function () {
-            let result: string = ebeguUtil.getGesuchsperiodeAsString(undefined);
-            expect(result).not.toBeDefined();
-        });
-    });
     describe('translateStringList', () => {
         it('should translate the given list of words', () => {
             let list: Array<string> = ['FIRST', 'SECOND'];

@@ -67,4 +67,14 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
 		return gesuch;
 	}
+
+	@Override
+	public String getNachname() {
+		return FAMILIENNAME;
+	}
+
+	@Override
+	public String getVorname() {
+		return "Meret";
+	}
 }

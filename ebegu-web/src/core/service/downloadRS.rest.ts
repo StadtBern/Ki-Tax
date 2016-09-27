@@ -1,6 +1,7 @@
 import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import TSDownloadFile from '../../models/TSDownloadFile';
+import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 
 
 export class DownloadRS {
@@ -21,17 +22,38 @@ export class DownloadRS {
     public getAccessTokenDokument(dokumentID: string): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/dokument')
             .then((response: any) => {
-                this.log.debug('PARSING tempDokument REST object ', response.data);
-                return this.ebeguRestUtil.parseTempDokument(new TSDownloadFile(), response.data);
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
     }
 
     public getAccessTokenVorlage(vorlageID: string): IPromise<TSDownloadFile> {
         return this.http.get(this.serviceURL + '/' + encodeURIComponent(vorlageID) + '/vorlage')
             .then((response: any) => {
-                this.log.debug('PARSING tempDokument REST object ', response.data);
-                return this.ebeguRestUtil.parseTempDokument(new TSDownloadFile(), response.data);
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
+    }
+
+    public getAccessTokenGeneratedDokument(gesuchId: string, generatedDokumentTyp: TSGeneratedDokumentTyp, forceCreation: boolean): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(TSGeneratedDokumentTyp[generatedDokumentTyp]) + '/' + forceCreation + '/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean, manuelleBemerkungen: string): IPromise<TSDownloadFile> {
+        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(betreuungId) + '/' + forceCreation + '/generatedVerfuegung', manuelleBemerkungen, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING DownloadFile REST object ', response.data);
+            return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+        });
     }
 
 

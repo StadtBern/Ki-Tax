@@ -63,7 +63,7 @@ public abstract class AbstractEbeguTest {
 
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
-			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster.docx", "vorlagen/Verfuegungsmuster.docx")
+			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
 			.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
 			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
 			.addAsResource("font/sRGB.profile", "font/sRGB.profile").addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")

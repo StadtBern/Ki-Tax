@@ -21,6 +21,8 @@ public abstract class AbstractTestfall {
 	protected Gesuchsperiode gesuchsperiode;
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;
 
+	protected Fall fall = null;
+
 	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
@@ -28,9 +30,15 @@ public abstract class AbstractTestfall {
 
 	public abstract Gesuch createGesuch();
 
+	public abstract String getNachname();
+
+	public abstract String getVorname();
+
 	protected Gesuch createAlleinerziehend(LocalDate eingangsdatum) {
 		// Fall
-		Fall fall = new Fall();
+		if (fall == null) {
+			fall = new Fall();
+		}
 		// Gesuch
 		Gesuch gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(gesuchsperiode);
@@ -65,8 +73,8 @@ public abstract class AbstractTestfall {
 	protected Gesuchsteller createGesuchsteller(String name, String vorname) {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeschlecht(Geschlecht.WEIBLICH);
-		gesuchsteller.setNachname(name);
-		gesuchsteller.setVorname(vorname);
+		gesuchsteller.setNachname(getNachname());
+		gesuchsteller.setVorname(getVorname());
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1980, Month.MARCH, 25));
 		gesuchsteller.setAdressen(new ArrayList<>());
 		gesuchsteller.getAdressen().add(createWohnadresse(gesuchsteller));
@@ -74,6 +82,10 @@ public abstract class AbstractTestfall {
 		gesuchsteller.setMail("test@email.com");
 		gesuchsteller.setMobile("079 000 00 00");
 		return gesuchsteller;
+	}
+
+	protected Gesuchsteller createGesuchsteller() {
+		return createGesuchsteller(getNachname(), getVorname());
 	}
 
 	protected GesuchstellerAdresse createWohnadresse(Gesuchsteller gesuchsteller) {
@@ -158,7 +170,7 @@ public abstract class AbstractTestfall {
 		FinanzielleSituation finanzielleSituation = new FinanzielleSituation();
 		finanzielleSituation.setSteuerveranlagungErhalten(true);
 		finanzielleSituation.setSteuererklaerungAusgefuellt(true);
-		finanzielleSituationContainer.setJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear()-1);
+		finanzielleSituationContainer.setJahr(gesuchsperiode.getGueltigkeit().getGueltigAb().getYear() - 1);
 		finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituation);
 		return finanzielleSituationContainer;
 	}
@@ -168,6 +180,7 @@ public abstract class AbstractTestfall {
 	 * Diese Methode erstellt alle WizardSteps fuer das uebergebene Gesuch. Alle Steps bekommen den Status OK by default (nur Dokumente
 	 * hat IN_BEARBEITUNG und Verfuegen WARTEN). Sollte man andere Status haben wollen, muss man diese Methode ueberschreiben.
 	 * Die WizardSteps werden erstellt aber nicht persisted
+	 *
 	 * @param gesuch
 	 * @return
 	 */
@@ -195,5 +208,13 @@ public abstract class AbstractTestfall {
 		wizardStep.setWizardStepStatus(stepStatus);
 		wizardStep.setBemerkungen(bemerkungen);
 		return wizardStep;
+	}
+
+	public Fall getFall() {
+		return fall;
+	}
+
+	public void setFall(Fall fall) {
+		this.fall = fall;
 	}
 }

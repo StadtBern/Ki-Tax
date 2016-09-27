@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
@@ -94,6 +95,26 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.remove(gesuchToRemove.get());
 	}
 
+	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		ParameterExpression<String> nameParam = cb.parameter(String.class, "nachname");
+		Predicate namePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.nachname), nameParam);
+
+		ParameterExpression<String> vornameParam = cb.parameter(String.class, "vorname");
+		Predicate vornamePredicate = cb.equal(root.get(Gesuch_.gesuchsteller1).get(Gesuchsteller_.vorname), vornameParam);
+
+		query.where(namePredicate, vornamePredicate);
+		TypedQuery<Gesuch> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(nameParam, nachname);
+		q.setParameter(vornameParam, vorname);
+
+		return Optional.ofNullable(q.getResultList());
+	}
+
 	@Override
 	public Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch) {
 
@@ -179,5 +200,27 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		}
 		return orders;
+	}
+
+	@Nonnull
+	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+		query.multiselect(
+			root.get(Gesuch_.id),
+			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
+			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
+			root.get(Gesuch_.eingangsdatum),
+			root.get(Gesuch_.typ)).distinct(true);
+
+		ParameterExpression<String> dateParam = cb.parameter(String.class, "fallId");
+		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), dateParam);
+
+		query.where(predicate);
+		TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(dateParam, fallId);
+		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
+		return q.getResultList();
 	}
 }

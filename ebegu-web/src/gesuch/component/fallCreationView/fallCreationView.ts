@@ -5,10 +5,10 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuch from '../../../models/TSGesuch';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import Moment = moment.Moment;
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -53,18 +53,6 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     public getGesuchModel(): TSGesuch {
         return this.gesuchModelManager.getGesuch();
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
-    }
-
-    /**
-     * Calls getGesuchsperiodeAsString with the Gesuchsperiode of the current Gesuch
-     * @returns {string}
-     */
-    public getCurrentGesuchsperiodeAsString(): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(this.gesuchModelManager.getGesuchsperiode());
     }
 
     public getAllActiveGesuchsperioden() {

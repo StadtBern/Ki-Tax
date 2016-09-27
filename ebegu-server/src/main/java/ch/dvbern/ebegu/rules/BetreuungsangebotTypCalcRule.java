@@ -18,7 +18,7 @@ public class BetreuungsangebotTypCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isSchulamt()) {
+		if (betreuung.getBetreuungsangebotTyp().isSchulamt()) {
 			verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.BETREUUNGSANGEBOT_TYP , MsgKey.BETREUUNGSANGEBOT_MSG);
 		}

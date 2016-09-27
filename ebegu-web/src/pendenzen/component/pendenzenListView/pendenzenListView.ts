@@ -15,6 +15,7 @@ import {IStateService} from 'angular-ui-router';
 import BerechnungsManager from '../../../gesuch/service/berechnungsManager';
 import {TSAntragStatus, getTSAntragStatusPendenzValues} from '../../../models/enums/TSAntragStatus';
 import ITimeoutService = angular.ITimeoutService;
+import Moment = moment.Moment;
 let template = require('./pendenzenListView.html');
 require('./pendenzenListView.less');
 
@@ -34,7 +35,7 @@ export class PendenzenListViewController {
     selectedInstitution: string;
     selectedGesuchsperiode: string;
     institutionenList: Array<TSInstitution>;
-    activeGesuchsperiodenList: Array<string>;
+    gesuchsperiodenList: Array<string>;
     itemsByPage: number = 20;
     numberOfPages: number = 1;
 
@@ -52,7 +53,7 @@ export class PendenzenListViewController {
     private initViewModel() {
         this.updatePendenzenList();
         this.updateInstitutionenList();
-        this.updateActiveGesuchsperiodenList();
+        this.updateGesuchsperiodenList();
     }
 
 
@@ -79,11 +80,11 @@ export class PendenzenListViewController {
         return getTSBetreuungsangebotTypValues();
     }
 
-    public updateActiveGesuchsperiodenList(): void {
-        this.gesuchsperiodeRS.getAllActiveGesuchsperioden().then((response: any) => {
-            this.activeGesuchsperiodenList = [];
+    public updateGesuchsperiodenList(): void {
+        this.gesuchsperiodeRS.getAllGesuchsperioden().then((response: any) => {
+            this.gesuchsperiodenList = [];
             response.forEach((gesuchsperiode: TSGesuchsperiode) => {
-                this.activeGesuchsperiodenList.push(this.getGesuchsperiodeAsString(gesuchsperiode));
+                this.gesuchsperiodenList.push(gesuchsperiode.gesuchsperiodeString);
             });
         });
     }
@@ -96,10 +97,6 @@ export class PendenzenListViewController {
 
     public getPendenzenList(): Array<TSAntragDTO> {
         return this.pendenzenList;
-    }
-
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        return this.ebeguUtil.getGesuchsperiodeAsString(gesuchsperiode);
     }
 
     /**
@@ -127,8 +124,7 @@ export class PendenzenListViewController {
     }
 
     public editPendenzJA(pendenz: TSAntragDTO): void {
-        // todo team hier müssen wir auch MUTATIONEN bekommen koennen
-        if (pendenz && pendenz.antragTyp === TSAntragTyp.GESUCH) {
+        if (pendenz) {
             this.gesuchRS.findGesuch(pendenz.antragId).then((response) => {
                 if (response) {
                     this.openGesuch(response);

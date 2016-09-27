@@ -175,13 +175,24 @@ describe('EbeguRestUtil', function () {
                 myGesuch.kindContainers = [undefined];
                 myGesuch.einkommensverschlechterungInfo = undefined;  //todo createEinkommensverschlechterungInfo
                 myGesuch.bemerkungen = undefined;
+                myGesuch.typ = undefined;
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();
 
                 let transformedGesuch = ebeguRestUtil.parseGesuch(new TSGesuch(), restGesuch);
                 expect(transformedGesuch).toBeDefined();
-                expect(transformedGesuch).toEqual(myGesuch);
+
+                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.fall).toEqual(myGesuch.fall);
+                expect(transformedGesuch.gesuchsteller1).toEqual(myGesuch.gesuchsteller1);
+                expect(transformedGesuch.gesuchsteller2).toEqual(myGesuch.gesuchsteller2);
+                expect(transformedGesuch.gesuchsperiode).toEqual(myGesuch.gesuchsperiode);
+                expect(transformedGesuch.familiensituation).toEqual(myGesuch.familiensituation);
+                expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
+                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
+                expect(transformedGesuch.typ).toEqual(myGesuch.typ);
             });
         });
         describe('parseMandant()', () => {
@@ -343,8 +354,7 @@ describe('EbeguRestUtil', function () {
             it('should transform TSAntragDTO to REST Obj and back', () => {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
-                let myPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
-                    DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+                let myPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
                 let restPendenz = ebeguRestUtil.antragDTOToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
