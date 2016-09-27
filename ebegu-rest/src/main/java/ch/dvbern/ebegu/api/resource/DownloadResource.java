@@ -202,7 +202,7 @@ public class DownloadResource {
 					data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch.get());
 				}
 				else {
-					return null;
+					return Response.noContent().build();
 				}
 
 				persistedDokument = generatedDokumentService.updateGeneratedDokument(data, dokumentTyp, gesuch.get(),

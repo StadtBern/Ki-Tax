@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public class AbstractPrintService extends AbstractBaseService {
 
-	private final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
+	private final Logger LOG = LoggerFactory.getLogger(AbstractPrintService.class.getSimpleName());
 
 	@Inject
 	private EbeguVorlageService ebeguVorlageService;
@@ -50,7 +50,7 @@ public class AbstractPrintService extends AbstractBaseService {
 					+ defaultVorlagePath + ") wird stattdessen benutzt");
 			}
 		}
-		return this.getClass().getResourceAsStream(defaultVorlagePath);
+		return AbstractPrintService.class.getResourceAsStream(defaultVorlagePath);
 	}
 
 	private EntityManager createEntityManager() {

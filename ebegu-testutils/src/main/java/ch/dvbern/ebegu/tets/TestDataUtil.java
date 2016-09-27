@@ -22,7 +22,6 @@ import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6;
 
 /**
  * comments homa
@@ -546,11 +545,11 @@ public final class TestDataUtil {
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
 		persistence.persist(gesuch.getGesuchsperiode());
 
-		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		Set<KindContainer> kindContainers = new TreeSet<>();
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		KindContainer kind = betreuung.getKind();
 
-		Set<Betreuung> betreuungen = new LinkedHashSet<>();
+		Set<Betreuung> betreuungen = new TreeSet<>();
 		betreuungen.add(betreuung);
 		kind.setBetreuungen(betreuungen);
 
