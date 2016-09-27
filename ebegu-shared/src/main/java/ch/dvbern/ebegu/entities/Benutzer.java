@@ -16,8 +16,13 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 	@Index(columnList = "username,mandant_id", name = "IX_benutzer_username_mandant")
 })
 @Audited
+@AssociationOverrides({
+   @AssociationOverride(name = "mandant",
+	   //wird von hibernate 5.0.6 ignoriert... https://hibernate.atlassian.net/browse/HHH-10387
+      joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id")))
+})
 @CheckBenutzerRoles
-public class Benutzer extends AbstractEntity {
+public class Benutzer extends AbstractMandantEntity {
 
 	private static final long serialVersionUID = 6372688971894279665L;
 
@@ -45,10 +50,6 @@ public class Benutzer extends AbstractEntity {
 	@Column(nullable = false)
 	@NotNull
 	private UserRole role;
-
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_benutzer_mandant_id"))
-	private Mandant mandant;
 
 	@Nullable
 	@ManyToOne(optional = true)
@@ -100,14 +101,6 @@ public class Benutzer extends AbstractEntity {
 
 	public void setRole(UserRole role) {
 		this.role = role;
-	}
-
-	public Mandant getMandant() {
-		return mandant;
-	}
-
-	public void setMandant(Mandant mandant) {
-		this.mandant = mandant;
 	}
 
 	@Nullable

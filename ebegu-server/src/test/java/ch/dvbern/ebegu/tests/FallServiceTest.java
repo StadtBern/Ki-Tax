@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * Arquillian Tests fuer die Klasse FallService
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)  //disabeln sonst existiert in changeVerantwortlicherOfFallTest der Benutzer noch gar nicht
 public class FallServiceTest extends AbstractEbeguTest {
 
@@ -39,7 +39,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void createFallTest() {
-		persistence.getEntityManager().createNativeQuery("ALTER TABLE fall ALTER COLUMN fallNummer RESTART WITH 1").executeUpdate();
+
 
 		Assert.assertNotNull(fallService);
 		Fall fall = TestDataUtil.createDefaultFall();
@@ -55,7 +55,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 
 		//Wir erwarten das die Fallnummern 1 und 2 (bzw in PSQL 0 und 1 ) vergeben wurden
 		List<Fall> moreFaelle = new ArrayList<>(fallService.getAllFalle().stream()
-			.sorted((o1, o2) -> Integer.valueOf(o1.getFallNummer()).compareTo(Integer.valueOf(o2.getFallNummer())))
+			.sorted((o1, o2) -> Long.valueOf(o1.getFallNummer()).compareTo(Long.valueOf(o2.getFallNummer())))
 			.collect(Collectors.toList()));
 		Assert.assertEquals(2, moreFaelle.size());
 		for (int i = 0; i < moreFaelle.size(); i++) {

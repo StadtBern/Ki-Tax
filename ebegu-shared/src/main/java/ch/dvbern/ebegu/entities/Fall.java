@@ -1,7 +1,5 @@
 package ch.dvbern.ebegu.entities;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -22,10 +20,9 @@ public class Fall extends AbstractEntity {
 
 	private static final long serialVersionUID = -9154456879261811678L;
 
-	@NotNull
-	@Generated(GenerationTime.INSERT)
-	@Column(columnDefinition = "integer auto_increment")
-	private int fallNummer;
+	@Column()
+	@Min(1)
+	private long fallNummer = 1;
 
 	@Nullable
 	@ManyToOne(optional = true)
@@ -44,11 +41,11 @@ public class Fall extends AbstractEntity {
 	private Integer nextNumberKind = 1;
 
 
-	public int getFallNummer() {
+	public long getFallNummer() {
 		return fallNummer;
 	}
 
-	public void setFallNummer(int fallNummer) {
+	public void setFallNummer(long fallNummer) {
 		this.fallNummer = fallNummer;
 	}
 

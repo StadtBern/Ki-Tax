@@ -20,6 +20,7 @@
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Mandant"/>
+	<entity class="ch.dvbern.ebegu.entities.Sequence"/>
 	<entity class="ch.dvbern.ebegu.entities.Traegerschaft"/>
 	<entity class="ch.dvbern.ebegu.entities.Institution"/>
 	<entity class="ch.dvbern.ebegu.entities.InstitutionStammdaten"/>

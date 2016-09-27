@@ -583,7 +583,7 @@ public final class TestDataUtil {
 	}
 
 
-	public static  AntragTableFilterDTO createAntragTableFilterDTO(){
+	public static AntragTableFilterDTO createAntragTableFilterDTO() {
 		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
 		filterDTO.setSort(new AntragSortDTO());
 		filterDTO.setSearch(new AntragSearchDTO());
