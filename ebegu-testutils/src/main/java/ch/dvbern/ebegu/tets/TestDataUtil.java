@@ -642,7 +642,7 @@ public final class TestDataUtil {
 	public static GeneratedDokument createGeneratedDokument(final Gesuch gesuch) {
 		final GeneratedDokument dokument = new GeneratedDokument();
 		dokument.setGesuch(gesuch);
-		dokument.setTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA);
+		dokument.setTyp(GeneratedDokumentTyp.VERFUEGUNG);
 		dokument.setFilepfad("pfad/to/document/doc.pdf");
 		dokument.setFilename("name.pdf");
 		dokument.setFilesize("32");

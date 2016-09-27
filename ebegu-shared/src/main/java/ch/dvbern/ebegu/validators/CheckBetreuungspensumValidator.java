@@ -66,7 +66,7 @@ public class CheckBetreuungspensumValidator implements ConstraintValidator<Check
 			LocalDate stichtagParameter = betreuungAb.isAfter(gesuchsperiodeStart) ? betreuungAb : gesuchsperiodeStart;
 			int betreuungsangebotTypMinValue = getMinValueFromBetreuungsangebotTyp(
 				stichtagParameter,
-				betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp(), em);
+				betreuung.getBetreuungsangebotTyp(), em);
 
 			if (!validateBetreuungspensum(betPenContainer.getBetreuungspensumGS(), betreuungsangebotTypMinValue, index, "GS", context)
 				|| !validateBetreuungspensum(betPenContainer.getBetreuungspensumJA(), betreuungsangebotTypMinValue, index, "JA", context)) {

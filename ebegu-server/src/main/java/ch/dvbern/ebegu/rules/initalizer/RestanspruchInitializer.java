@@ -44,7 +44,7 @@ public class RestanspruchInitializer {
 
 	protected void restanspruchUebernehmen(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt sourceZeitabschnitt, VerfuegungZeitabschnitt targetZeitabschnitt) {
 		//Die  vom der letzen Berechnung uebernommenen Zeitabschnitte betrachten und den restanspruch berechnen.
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 			int anspruchberechtigtesPensum = sourceZeitabschnitt.getAnspruchberechtigtesPensum();
 			int betreuungspensum = sourceZeitabschnitt.getBetreuungspensum();
 			//wenn nicht der ganze anspruch gebraucht wird gibt es einen rest, ansonsten ist rest 0
@@ -53,7 +53,7 @@ public class RestanspruchInitializer {
 			} else {
 				targetZeitabschnitt.setAnspruchspensumRest(0);
 			}
-		} else if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
+		} else if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtSchulkind()) {
 			// Schulkind-Angebote: Die aktuelle Betreuung ist ein Schulkind Angebot. Diese verkleinern den Restanspruch nicht
 			// der aktuelle Restanspruch wird also AS-IS auf die nachste Betreuung uebernommen
 			targetZeitabschnitt.setAnspruchspensumRest(sourceZeitabschnitt.getAnspruchspensumRest());

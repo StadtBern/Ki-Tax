@@ -4,7 +4,7 @@ package ch.dvbern.ebegu.enums;
  * Enum fuer generierten Dokumente
  */
 public enum GeneratedDokumentTyp {
-	VERFUEGUNG_KITA,
+	VERFUEGUNG,
 	FINANZIELLE_SITUATION,
 	BEGLEITSCHREIBEN
 }

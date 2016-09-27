@@ -24,7 +24,7 @@ public class FachstelleCalcRule extends AbstractCalcRule {
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		// Ohne Fachstelle: Wird in einer separaten Rule behandelt
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 			int pensumFachstelle = verfuegungZeitabschnitt.getFachstellenpensum();
 			int roundedPensumFachstelle = MathUtil.roundIntToTens(pensumFachstelle);
 			if (roundedPensumFachstelle > 0) {

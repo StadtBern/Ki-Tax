@@ -63,7 +63,7 @@ public class DokumenteUtilTest {
 	@Test
 	public void testGetFileNameForGeneratedDokumentTypVERFUEGUNG_KITA() {
 		Assert.assertEquals("Verfuegung_16.000001.1.1.pdf", DokumenteUtil
-			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA, "16.000001.1.1"));
+			.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG, "16.000001.1.1"));
 	}
 
 	private Set<Dokument> getByDokumentType(Set<DokumentGrund> dokumentGrunds, DokumentTyp dokumentTyp) {

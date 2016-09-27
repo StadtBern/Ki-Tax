@@ -1721,7 +1721,7 @@ public class JaxBConverter {
 		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
 		kindContainers.forEach(kindContainer -> {
 			kindContainer.getBetreuungen().forEach(betreuung -> {
-				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+				resultSet.add(betreuung.getBetreuungsangebotTyp());
 			});
 		});
 		return resultSet;

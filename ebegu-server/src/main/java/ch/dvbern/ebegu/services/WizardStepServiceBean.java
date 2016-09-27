@@ -286,8 +286,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		final List<Betreuung> allBetreuungenRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
 			.stream().filter(betreuung ->
 				betreuung.getKind().getKindJA().getPensumFachstelle() == null
-				&& (BetreuungsangebotTyp.KITA == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()
-					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp()))
+				&& (BetreuungsangebotTyp.KITA == betreuung.getBetreuungsangebotTyp()
+					|| BetreuungsangebotTyp.TAGESELTERN_KLEINKIND == betreuung.getBetreuungsangebotTyp()))
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());

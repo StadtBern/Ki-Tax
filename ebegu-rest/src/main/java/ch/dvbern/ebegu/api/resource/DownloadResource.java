@@ -158,7 +158,7 @@ public class DownloadResource {
 
 	/**
 	 * Methode fuer alle GeneratedDokumentTyp. Hier wird es allgemein mit den Daten vom Gesuch gearbeitet.
-	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG_KITA
+	 * Alle anderen Vorlagen, die andere Daten brauchen, muessen ihre eigene Methode haben. So wie bei VERFUEGUNG
 	 *
 	 * @param jaxGesuchId gesuch ID
 	 * @param dokumentTyp Typ der Vorlage
@@ -241,7 +241,7 @@ public class DownloadResource {
 			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
 			if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
-					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
+					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
 			// Wenn die Betreuung verfuegt ist aber das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
@@ -257,10 +257,10 @@ public class DownloadResource {
 
 					final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
 
-					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG_KITA,
+					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 						betreuung.getBGNummer());
 
-					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG_KITA,
+					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
 						gesuch.get(), fileNameForGeneratedDokumentTyp);
 				} else {
 					throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",

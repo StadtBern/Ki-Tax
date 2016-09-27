@@ -24,7 +24,7 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+		if (betreuung.getBetreuungsangebotTyp().isJugendamt()) {
 			if (singleGesuchstellerIsNotBern(betreuung, verfuegungZeitabschnitt)
 				|| coupleAndBothNotBern(betreuung, verfuegungZeitabschnitt)) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);

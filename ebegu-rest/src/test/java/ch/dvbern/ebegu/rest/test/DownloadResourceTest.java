@@ -13,13 +13,11 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,12 +52,6 @@ public class DownloadResourceTest extends AbstractEbeguRestTest {
 	@Inject
 	private EbeguParameterService parameterService;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
-
-
 	@Test
 	public void getVerfuegungDokumentAccessTokenGeneratedDokumentTest() throws MergeDocException, IOException, DocTemplateException, MimeTypeParseException {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
@@ -72,7 +64,7 @@ public class DownloadResourceTest extends AbstractEbeguRestTest {
 		final Response dokumentResponse = downloadResource
 			.getVerfuegungDokumentAccessTokenGeneratedDokument(new JaxId(gesuch.getId()), new JaxId(betreuungId), true, "", request, uri);
 
-		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.VERFUEGUNG_KITA);
+		assertResults(gesuch, dokumentResponse.getEntity(), GeneratedDokumentTyp.VERFUEGUNG);
 	}
 
 	@Test

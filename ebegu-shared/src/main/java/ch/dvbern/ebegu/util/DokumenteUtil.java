@@ -70,7 +70,7 @@ public class DokumenteUtil {
 		switch (typ) {
 			case BEGLEITSCHREIBEN: return "Begleitbrief_" + identificationNumber + ".pdf";
 			case FINANZIELLE_SITUATION: return "Finanzielle_Situation_" + identificationNumber + ".pdf";
-			case VERFUEGUNG_KITA: return "Verfuegung_" + identificationNumber + ".pdf";
+			case VERFUEGUNG: return "Verfuegung_" + identificationNumber + ".pdf";
 			default: return "datei.pdf";
 		}
 	}

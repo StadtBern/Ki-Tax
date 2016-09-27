@@ -28,10 +28,10 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+		if (betreuung.getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.getMassgebendesEinkommen().compareTo(maximalesEinkommen) > 0) {
 				//maximales einkommen wurde ueberschritten
-				if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
 					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMEN_MSG);
 				} else {

@@ -211,12 +211,17 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	@Transient
 	public boolean isAngebotKita() {
-		return BetreuungsangebotTyp.KITA.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.KITA.equals(getBetreuungsangebotTyp());
 	}
 
 	@Transient
 	public boolean isAngebotTageselternKleinkinder() {
-		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getInstitutionStammdaten().getBetreuungsangebotTyp());
+		return BetreuungsangebotTyp.TAGESELTERN_KLEINKIND.equals(getBetreuungsangebotTyp());
+	}
+
+	@Transient
+	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
+		return getInstitutionStammdaten().getBetreuungsangebotTyp();
 	}
 
 	/**
