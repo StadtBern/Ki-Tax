@@ -174,7 +174,10 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.errorService.clearAll();
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            if (this.wizardStepManager.isNextStepBesucht() && !this.wizardStepManager.isNextStepEnabled()) {
+                // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
+                this.state.go('gesuch.dokumente');
+            } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.finanzielleSituationStart');
             } else {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
@@ -312,13 +315,13 @@ export class NavigatorController {
      */
     public isNextDisabled(): boolean {
         if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepAvailable();
+            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepBesucht();
         }
         if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepAvailable();
+            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepBesucht();
         }
         if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepAvailable();
+            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht();
         }
         return false;
     }

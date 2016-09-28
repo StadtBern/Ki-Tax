@@ -131,13 +131,25 @@ describe('dvNavigation', function () {
         });
         it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS required', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
             navController.dvSubStep = 1;
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationStart');
         });
+        it('moves to gesuch.dokumente when coming from ERWERBSPENSUM substep 1 and disabled', () => {
+            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(false);
+            navController.dvSubStep = 1;
+            callNextStep();
+            expect($state.go).toHaveBeenCalledWith('gesuch.dokumente');
+        });
         it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS not required', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
             navController.dvSubStep = 1;
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
             callNextStep();
