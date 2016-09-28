@@ -14,3 +14,8 @@ INSERT INTO sequence (id, timestamp_erstellt, timestamp_mutiert, user_erstellt, 
    FROM fall);
 
 ALTER TABLE fall MODIFY mandant_id VARCHAR(36) NOT NULL;
+
+ALTER TABLE fall
+   ADD CONSTRAINT FK_fall_mandant_id
+FOREIGN KEY (mandant_id)
+REFERENCES mandant (id);
