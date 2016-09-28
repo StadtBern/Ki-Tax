@@ -10,7 +10,6 @@
 
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.AbstractMandantEntity_;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.entities.Sequence;
 import ch.dvbern.ebegu.entities.Sequence_;
@@ -53,7 +52,7 @@ public class SequenceServiceBean implements SequenceService {
 		Root<Sequence> root = query.from(Sequence.class);
 
 		ParameterExpression<Mandant> mandantParam = cb.parameter(Mandant.class, Mandant.MANDANT_PARAMETER);
-		Predicate mandantPredicate = cb.equal(root.get(AbstractMandantEntity_.mandant), mandantParam);
+		Predicate mandantPredicate = cb.equal(root.get(Sequence_.mandant), mandantParam);
 
 		ParameterExpression<SequenceType> typeParam = cb.parameter(SequenceType.class, SEQUENCE_TYPE);
 		Predicate typePredicate = cb.equal(root.get(Sequence_.sequenceType), typeParam);

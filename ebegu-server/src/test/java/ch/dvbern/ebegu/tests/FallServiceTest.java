@@ -69,6 +69,7 @@ public class FallServiceTest extends AbstractEbeguTest {
 
 		Fall fall = TestDataUtil.createDefaultFall();
 		Fall savedFall = fallService.saveFall(fall);
+
 		Optional<Fall> loadedFallOpt = fallService.findFall(savedFall.getId());
 		Assert.assertTrue(loadedFallOpt.isPresent());
 		Fall loadedFall = loadedFallOpt.get();

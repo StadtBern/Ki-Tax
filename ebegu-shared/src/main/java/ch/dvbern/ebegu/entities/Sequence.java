@@ -27,13 +27,7 @@ import javax.validation.constraints.NotNull;
 		@Index(name = "sequence_ix1", columnList = "mandant_id"),
 	}
 )
-@AssociationOverrides({
-   @AssociationOverride(name = "mandant",
-	   //wird von hibernate 5.0.6 ignoriert... https://hibernate.atlassian.net/browse/HHH-10387
-      joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_sequence_mandant_id")))
-})
-@Audited //@reviewer fragt sich ob wir hier auditen wollen
-public class Sequence extends AbstractMandantEntity {
+public class Sequence extends AbstractEntity {
 
 	private static final long serialVersionUID = -8310781486097591752L;
 
@@ -47,6 +41,10 @@ public class Sequence extends AbstractMandantEntity {
 	@NotNull
 	@Column(nullable = false)
 	private Long currentValue;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_sequence_mandant_id"))
+	private Mandant mandant;
 
 	/**
 	 * JPA only
@@ -83,5 +81,13 @@ public class Sequence extends AbstractMandantEntity {
 
 	public void setSequenceType(@Nonnull SequenceType sequenceType) {
 		this.sequenceType = sequenceType;
+	}
+
+	public Mandant getMandant() {
+		return mandant;
+	}
+
+	public void setMandant(Mandant mandant) {
+		this.mandant = mandant;
 	}
 }

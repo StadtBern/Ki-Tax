@@ -74,6 +74,7 @@ public class AbstractEntityListener {
 			Mandant mandant = getMandantService().getFirst(); //todo team der mandant sollte aus dem prinipal gelesen werden
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
+			fall.setMandant(mandant);
 		}
 	}
 

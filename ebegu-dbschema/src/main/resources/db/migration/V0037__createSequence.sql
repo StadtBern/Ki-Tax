@@ -42,3 +42,18 @@ REFERENCES revinfo (rev);
 
 ALTER TABLE fall MODIFY fall_nummer BIGINT NOT NULL;
 ALTER TABLE fall_aud MODIFY fall_nummer BIGINT;
+
+ALTER TABLE fall
+  ADD mandant_id VARCHAR(36) NULL;
+ALTER TABLE fall_aud
+  ADD mandant_id VARCHAR(36) NULL;
+
+UPDATE fall
+SET mandant_id = 'e3736eb8-6eef-40ef-9e52-96ab48d8f220';
+
+CREATE INDEX IX_fall_mandant ON fall (mandant_id);
+
+ALTER TABLE fall
+  ADD CONSTRAINT FK_fall_mandant_id
+FOREIGN KEY (mandant_id)
+REFERENCES mandant (id);

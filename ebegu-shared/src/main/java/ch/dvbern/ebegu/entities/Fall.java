@@ -14,7 +14,10 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(
 	uniqueConstraints = @UniqueConstraint(columnNames = "fallNummer", name = "UK_fall_nummer"),
-	indexes = @Index(name = "IX_fall_fall_nummer", columnList = "fallNummer")
+	indexes = {
+		@Index(name = "IX_fall_fall_nummer", columnList = "fallNummer"),
+		@Index(name = "IX_fall_mandant", columnList = "mandant_id")
+	}
 )
 public class Fall extends AbstractEntity {
 
@@ -29,8 +32,6 @@ public class Fall extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_verantwortlicher_id"))
 	private Benutzer verantwortlicher = null;
 
-
-
 	/**
 	 * nextNumberKind ist die Nummer, die das naechste Kind bekommen wird. Aus diesem Grund ist es by default 1
 	 * Dieses Feld darf nicht mit der Anzahl der Kinder verwechselt werden, da sie sehr unterschiedlich sein koennen falls mehrere Kinder geloescht wurden
@@ -39,6 +40,10 @@ public class Fall extends AbstractEntity {
 	@Min(1)
 	@Column(nullable = false)
 	private Integer nextNumberKind = 1;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_fall_mandant_id"))
+	private Mandant mandant; //TODO (Team) Die Abfrage-Skripts muessten noch den Mandanten beruecksichtigen!
 
 
 	public long getFallNummer() {
@@ -66,4 +71,11 @@ public class Fall extends AbstractEntity {
 		this.nextNumberKind = nextNumberKind;
 	}
 
+	public Mandant getMandant() {
+		return mandant;
+	}
+
+	public void setMandant(Mandant mandant) {
+		this.mandant = mandant;
+	}
 }

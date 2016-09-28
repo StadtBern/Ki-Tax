@@ -13,12 +13,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
  */
 @Audited
 @Entity
-@AssociationOverrides({
-   @AssociationOverride(name = "mandant",
-	   //wird von hibernate 5.0.6 ignoriert... https://hibernate.atlassian.net/browse/HHH-10387
-      joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_mandant_id")))
-})
-public class Institution extends AbstractMandantEntity {
+public class Institution extends AbstractEntity {
 
 	private static final long serialVersionUID = -8706487439884760618L;
 
@@ -30,6 +25,10 @@ public class Institution extends AbstractMandantEntity {
 	@ManyToOne(optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_traegerschaft_id"))
 	private Traegerschaft traegerschaft;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_institution_mandant_id"))
+	private Mandant mandant;
 
 	@NotNull
 	@Column(nullable = false)
@@ -54,6 +53,13 @@ public class Institution extends AbstractMandantEntity {
 		this.traegerschaft = traegerschaft;
 	}
 
+	public Mandant getMandant() {
+		return mandant;
+	}
+
+	public void setMandant(Mandant mandant) {
+		this.mandant = mandant;
+	}
 
 
 	public Boolean getActive() {
