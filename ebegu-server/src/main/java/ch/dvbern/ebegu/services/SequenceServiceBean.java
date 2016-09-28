@@ -34,12 +34,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Local
 public class SequenceServiceBean implements SequenceService {
 
-	public static final String SEQUENCE_TYPE = "sequenceType";
+	private static final String SEQUENCE_TYPE = "sequenceType";
 
 	@Inject
 	private Persistence<Sequence> persistence;
-
-
 
 
 	@Nonnull
@@ -47,7 +45,7 @@ public class SequenceServiceBean implements SequenceService {
 	// Damit die Nummer bei wiederholtem aufruf in derselben (parent-) Transaktion nicht immer dieselbe ist,
 	// muss dieser Aufruf in einer neuen Transaktion ausgeführt werden.
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Long createNumberTransactional(@Nonnull SequenceType seq, Mandant existingMandant) {
+	public Long createNumberTransactional(@Nonnull SequenceType seq, @Nonnull Mandant existingMandant) {
 		checkNotNull(seq);
 
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -67,24 +65,19 @@ public class SequenceServiceBean implements SequenceService {
 			.setParameter(typeParam, seq)
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE);
 
-
 		List<Sequence> resultList = q.getResultList();
 		Sequence sequence;
 		if (resultList.isEmpty()) {
 			//wir sind hier mal liberal und initialisieren automatisch wenn noch nicht gemacht
 			sequence = initFallNrSeqMandant(existingMandant);
-
 		} else if (resultList.size() == 1) {
 			sequence = resultList.get(0);
-
 		} else {
 			throw new IllegalStateException("TooMany Results for sequence query");
 		}
 		Long number = sequence.incrementAndGet();
 		persistence.merge(sequence);
 		return number;
-
-
 	}
 
 	@Override
@@ -96,6 +89,5 @@ public class SequenceServiceBean implements SequenceService {
 		seqFallNr.setMandant(mandant);
 		persistence.persist(seqFallNr);
 		return seqFallNr;
-
 	}
 }
