@@ -1,12 +1,12 @@
 package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.KindService;
+import ch.dvbern.ebegu.services.MandantService;
+import ch.dvbern.ebegu.services.SequenceService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
@@ -19,8 +19,10 @@ import java.util.Optional;
 public class AbstractEntityListener {
 
 	private static PrincipalBean principalBean = null;
+	private static MandantService mandantService = null;
 	private FallService fallService;
 	private KindService kindService;
+	private SequenceService sequenceService;
 
 	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
 	private static PrincipalBean getPrincipalBean() {
@@ -30,6 +32,16 @@ public class AbstractEntityListener {
 			principalBean = CDI.current().select(PrincipalBean.class).get();
 		}
 		return principalBean;
+	}
+
+	@SuppressFBWarnings(value = "LI_LAZY_INIT_STATIC", justification = "Auch wenn das vlt. mehrfach initialisiert wird... das macht nix, solange am Ende was Richtiges drinsteht")
+	private static MandantService getMandantService() {
+		if (mandantService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection (mal wieder) buggy ist.
+			//noinspection NonThreadSafeLazyInitialization
+			mandantService = CDI.current().select(MandantService.class).get();
+		}
+		return mandantService;
 	}
 
 	@PrePersist
@@ -57,6 +69,13 @@ public class AbstractEntityListener {
 				kindContainer.setNextNumberBetreuung(kindContainer.getNextNumberBetreuung() + 1);
 			}
 		}
+		else if (entity instanceof Fall) {
+			Fall fall = (Fall) entity;
+			Mandant mandant = getMandantService().getFirst(); //todo team der mandant sollte aus dem prinipal gelesen werden
+			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
+			fall.setFallNummer(nextFallNr);
+			fall.setMandant(mandant);
+		}
 	}
 
 	@PreUpdate
@@ -82,5 +101,14 @@ public class AbstractEntityListener {
 			kindService = CDI.current().select(KindService.class).get();
 		}
 		return kindService;
+	}
+
+	private SequenceService getSequenceService() {
+		if (sequenceService == null) {
+			//FIXME: das ist nur ein Ugly Workaround, weil CDI-Injection in Wildfly 10 nicht funktioniert.
+			//noinspection NonThreadSafeLazyInitialization
+			sequenceService = CDI.current().select(SequenceService.class).get();
+		}
+		return sequenceService;
 	}
 }

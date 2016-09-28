@@ -9,9 +9,9 @@
 	<filter>
 		<filter-name>javamelody</filter-name>
 		<!-- Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung -->
-		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+		<!--<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>-->
 		<!-- Wir benutzen unseren eigenen Filter in dem wir die IDs aus REST-Resourcen durch Platzhalter entfernen -->
-		<!--<filter-class>ch.dvbern.ebegu.api.resource.monitoring.EbeguMonitoringFilter</filter-class>-->
+		<filter-class>ch.dvbern.ebegu.api.util.EbeguMonitoringFilter</filter-class>
 		<async-supported>true</async-supported>
 	</filter>
 	<filter-mapping>

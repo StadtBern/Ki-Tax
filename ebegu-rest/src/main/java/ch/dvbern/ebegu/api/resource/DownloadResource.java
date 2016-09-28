@@ -244,7 +244,8 @@ public class DownloadResource {
 					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 			}
-			// Wenn die Betreuung verfuegt ist aber das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+			// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+			// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
 			if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
 				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
 				final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
