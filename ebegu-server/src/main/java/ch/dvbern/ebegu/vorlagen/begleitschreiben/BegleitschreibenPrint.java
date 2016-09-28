@@ -24,5 +24,5 @@ public interface BegleitschreibenPrint {
 
 	String getGesuchstellerPLZStadt();
 
-	int getFallnummer();
+	long getFallnummer();
 }

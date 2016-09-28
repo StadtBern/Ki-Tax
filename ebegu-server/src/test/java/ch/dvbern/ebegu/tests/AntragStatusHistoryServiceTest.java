@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
  * Arquillian Tests fuer die Klasse AntragStatusHistoryService
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class AntragStatusHistoryServiceTest extends AbstractEbeguTest {
 
