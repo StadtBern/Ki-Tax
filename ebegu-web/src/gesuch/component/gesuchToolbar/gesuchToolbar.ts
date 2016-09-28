@@ -190,6 +190,8 @@ export class GesuchToolbarController {
     private openGesuch(gesuch: TSGesuch): void {
         if (gesuch) {
             this.berechnungsManager.clear();
+
+            // TODO: Diesbezueglich gibt es Probleme in der Reihenfolge mit stateChange im KindView.ts und dem setzen des Gesuches. Siehe Task https://support.dvbern.ch/browse/EBEGU-506
             this.gesuchModelManager.setGesuch(gesuch);
             this.$state.go('gesuch.fallcreation');
         }

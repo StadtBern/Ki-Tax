@@ -211,7 +211,7 @@ public class JaxBConverter {
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
 		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
-		if(antragJAXP.getTyp() != null) {
+		if (antragJAXP.getTyp() != null) {
 			antrag.setTyp(antragJAXP.getTyp());
 		}
 	}
@@ -767,6 +767,7 @@ public class JaxBConverter {
 		jaxKind.setKinderabzug(persistedKind.getKinderabzug());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
+		jaxKind.setEinschulung(persistedKind.getEinschulung());
 		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
 		return jaxKind;
 	}
@@ -834,6 +835,7 @@ public class JaxBConverter {
 		kind.setKinderabzug(kindJAXP.getKinderabzug());
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
+		kind.setEinschulung(kindJAXP.getEinschulung());
 
 		PensumFachstelle updtPensumFachstelle = null;
 		if (kindJAXP.getPensumFachstelle() != null) {
@@ -1704,7 +1706,7 @@ public class JaxBConverter {
 		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
 		antrag.setEingangsdatum(gesuch.getEingangsdatum());
 		//todo team, hier das datum des letzten statusuebergangs verwenden?
-		antrag.setAenderungsdatum( gesuch.getTimestampMutiert());
+		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setAntragTyp(gesuch.getTyp());
 		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));

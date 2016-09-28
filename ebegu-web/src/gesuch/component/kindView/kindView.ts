@@ -150,5 +150,9 @@ export class KindViewController extends AbstractGesuchViewController {
     public isFachstelleRequired(): boolean {
         return this.getModel() && this.getModel().familienErgaenzendeBetreuung && this.showFachstelle;
     }
+
+    public getDatumEinschulung(): moment.Moment {
+        return this.gesuchModelManager.getGesuchsperiodeBegin();
+    }
 }
 

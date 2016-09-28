@@ -1,11 +1,9 @@
 package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.enums.Kinderabzug;
-import ch.dvbern.ebegu.util.Constants;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -28,6 +26,9 @@ public class JaxKind extends JaxAbstractPersonDTO {
 
 	@Nullable
 	private Boolean mutterspracheDeutsch;
+
+	@Nullable
+	private Boolean einschulung;
 
 	@Nullable
 	private JaxPensumFachstelle pensumFachstelle;
@@ -73,5 +74,14 @@ public class JaxKind extends JaxAbstractPersonDTO {
 
 	public void setPensumFachstelle(@Nullable JaxPensumFachstelle pensumFachstelle) {
 		this.pensumFachstelle = pensumFachstelle;
+	}
+
+	@Nullable
+	public Boolean getEinschulung() {
+		return einschulung;
+	}
+
+	public void setEinschulung(@Nullable Boolean einschulung) {
+		this.einschulung = einschulung;
 	}
 }
