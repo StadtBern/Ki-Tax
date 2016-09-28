@@ -130,6 +130,30 @@
                     </div>
                 </div>
 
+                <!--Das Kind ist per 1.8.XX eingeschult (auch Kindergarten)-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
+                            <label>
+                                <span data-translate="EINSCHULUNG"
+                                      data-translate-value-date="{{vm.getDatumEinschulung() | amDateFormat : 'DD.MM.YYYY'}}">
+                                    <dv-tooltip text="'EINSCHULUNG_HELP' | translate"></dv-tooltip>
+                                </span>
+                            </label>
+
+                            <dv-radio-container name="einschulung" class="input-element"
+                                                dv-enable-element
+                                                dv-enable-allowed-roles="vm.allowedRoles"
+                                                dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                                ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                                ng-model="vm.getModel().einschulung">
+                            </dv-radio-container>
+                            <dv-error-messages for="form.einschulung.$error"
+                                               class="error"></dv-error-messages>
+                        </div>
+                    </div>
+                </div>
+
                 <!--Wohnhaft im gleichen Haushalt-->
                 <div class="row">
                     <div class="col-md-6">

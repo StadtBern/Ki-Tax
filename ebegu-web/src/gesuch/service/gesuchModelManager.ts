@@ -561,7 +561,6 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-
     private initAdresse(): TSAdresse {
         let wohnAdr = new TSAdresse();
         wohnAdr.showDatumVon = false;

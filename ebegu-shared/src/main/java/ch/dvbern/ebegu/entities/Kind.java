@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.Kinderabzug;
-import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -10,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Entity fuer Kinder.
@@ -39,6 +37,10 @@ public class Kind extends AbstractPersonEntity {
 	@Column(nullable = true)
 	@Nullable
 	private Boolean mutterspracheDeutsch;
+
+	@Column(nullable = true)
+	@Nullable
+	private Boolean einschulung;
 
 	@Valid
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -84,5 +86,14 @@ public class Kind extends AbstractPersonEntity {
 
 	public void setPensumFachstelle(PensumFachstelle pensumFachstelle) {
 		this.pensumFachstelle = pensumFachstelle;
+	}
+
+	@Nullable
+	public Boolean getEinschulung() {
+		return einschulung;
+	}
+
+	public void setEinschulung(@Nullable Boolean einschulung) {
+		this.einschulung = einschulung;
 	}
 }
