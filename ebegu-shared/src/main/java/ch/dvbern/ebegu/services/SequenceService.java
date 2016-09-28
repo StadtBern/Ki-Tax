@@ -18,10 +18,7 @@ import javax.annotation.Nonnull;
 
 public interface SequenceService {
 
-
-
 	Long createNumberTransactional(@Nonnull SequenceType seq, Mandant mandant);
-
 
 	Sequence initFallNrSeqMandant(@Nonnull Mandant mandant);
 }

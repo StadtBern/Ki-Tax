@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Test fuer WizardStep Service     WizardStepServiceBeanTest
+ * Test fuer WizardStep Service
  */
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/mandant-dataset.xml")
@@ -49,7 +49,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
 	@Before
 	public void setUp() {
-//		TestDataUtil.createDefaultAndPersistMandant(persistence);
 		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
 
 		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK));

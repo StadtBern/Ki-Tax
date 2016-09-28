@@ -28,7 +28,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	private Gesuch gesuch;
 
 	/**
-	 * @param betreuung
+	 * @param gesuch
 	 */
 	public BegleitschreibenPrintImpl(Gesuch gesuch) {
 

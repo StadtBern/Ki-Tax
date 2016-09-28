@@ -11,4 +11,3 @@ public abstract class AbstractMandantEntity_ extends ch.dvbern.ebegu.entities.Ab
 	public static volatile SingularAttribute<AbstractMandantEntity, Mandant> mandant;
 
 }
-

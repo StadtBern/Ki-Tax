@@ -44,8 +44,6 @@ public class AbstractEntityListener {
 		return mandantService;
 	}
 
-
-
 	@PrePersist
 	protected void prePersist(@Nonnull AbstractEntity entity) {
 		LocalDateTime now = LocalDateTime.now();
@@ -77,7 +75,6 @@ public class AbstractEntityListener {
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
 		}
-
 	}
 
 	@PreUpdate

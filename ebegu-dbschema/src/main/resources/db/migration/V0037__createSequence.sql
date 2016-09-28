@@ -25,9 +25,6 @@ CREATE TABLE sequence_aud (
   PRIMARY KEY (id, rev)
 );
 
-
-
-
 CREATE INDEX sequence_ix1 ON sequence (mandant_id);
 
 ALTER TABLE sequence
@@ -37,7 +34,6 @@ ALTER TABLE sequence
   ADD CONSTRAINT FK_sequence_mandant_id
 FOREIGN KEY (mandant_id)
 REFERENCES mandant (id);
-
 
 ALTER TABLE sequence_aud
   ADD CONSTRAINT FK_sequence_aud_revinfo
