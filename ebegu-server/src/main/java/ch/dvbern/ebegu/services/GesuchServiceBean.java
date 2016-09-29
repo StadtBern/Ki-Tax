@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.services;
 
 import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javax.annotation.Nonnull;
@@ -23,6 +25,8 @@ import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -229,8 +233,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
     @Override
     public Pair<Long, List<Gesuch>> searchGesuche(AntragTableFilterDTO antragTableFilterDto) {
-        PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 
+        Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+        
+        PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
         CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 		Root<Gesuch> root = query.from(Gesuch.class);
@@ -253,35 +259,49 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
             if (predicateObjectDto.getFamilienName() != null) {
                 predicates.add(
                         cb.or(
-                                cb.equal(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName()),
-                                cb.equal(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName())
+                            cb.equal(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName()),
+                            cb.equal(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName())
                         ));
             }
             if (predicateObjectDto.getAntragTyp() != null) {
-                predicates.add(cb.equal(root.get(Gesuch_.typ), predicateObjectDto.getAntragTyp()));
+                predicates.add(cb.equal(root.get(Gesuch_.typ), AntragTyp.valueOf(predicateObjectDto.getAntragTyp())));
             }
             if (predicateObjectDto.getGesuchsperiodeString() != null) {
-                predicates.add(cb.equal(gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb), predicateObjectDto.getGesuchsperiodeString()));
+                String[] years = predicateObjectDto.getGesuchsperiodeString().split("/");
+                predicates.add(
+                        cb.and(
+                            cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)), years[0]),
+                            cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis)), years[1]))
+                        );
             }
             if (predicateObjectDto.getEingangsdatum() != null) {
-                predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), predicateObjectDto.getEingangsdatum()));
+                predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), LocalDate.parse(predicateObjectDto.getEingangsdatum(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
             }
             if (predicateObjectDto.getStatus() != null) {
-                predicates.add(cb.equal(root.get(Gesuch_.status), predicateObjectDto.getStatus()));
+                predicates.add(cb.equal(root.get(Gesuch_.status), AntragStatus.valueOf(predicateObjectDto.getStatus())));
             }
             if (predicateObjectDto.getAngebote() != null) {
-                predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), predicateObjectDto.getAngebote()));
+                predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.valueOf(predicateObjectDto.getAngebote())));
             }
             if (predicateObjectDto.getInstitutionen() != null) {
                 predicates.add(cb.equal(institution.get(Institution_.name), predicateObjectDto.getInstitutionen()));
             }
             if (predicateObjectDto.getVerantwortlicher() != null) {
-                predicates.add(cb.equal(benutzer.get(Benutzer_.username), predicateObjectDto.getVerantwortlicher()));
-            }
-            predicates.stream().forEach((predicate) -> {
-                query.where(predicate);
-            });
+                String[] strings = predicateObjectDto.getVerantwortlicher().split(" ");
+                predicates.add(
+                        cb.and(
+                            cb.equal(benutzer.get(Benutzer_.vorname), strings[0]),
+                            cb.equal(benutzer.get(Benutzer_.nachname), strings[1])
+                        ));
+            }            
         }
+        // where-clause
+        if (!predicates.isEmpty()) {
+            query.where(cb.and(predicates.toArray(new Predicate[0])));
+        }
+
+        Long totalCount = (long) persistence.getCriteriaResults(query).size();
+
         // order-by clause
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
             Expression expression;
@@ -328,8 +348,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		typedQuery.setFirstResult(antragTableFilterDto.getPagination().getStart());
 		typedQuery.setMaxResults(antragTableFilterDto.getPagination().getNumber());
 
+        LOG.info("Exceuting statement for searchGesuche()");
 		List<Gesuch> gesuche = typedQuery.getResultList();
-		return new ImmutablePair<>(runCountQuery(antragTableFilterDto), gesuche);
+		return new ImmutablePair<>(totalCount, gesuche);
     }
-    
+
 }
