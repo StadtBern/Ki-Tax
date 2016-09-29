@@ -87,37 +87,6 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <!-- metamodel generierung, kann eigentlich auch vom compiler plugin gemacht werden aber es gab da einen bug-->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <version>2.2.4</version>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <processors>
-                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-                            </processors>
-                            <outputDirectory>src/main/metamodel</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-jpamodelgen</artifactId>
-                        <!--<version>5.0.0.CR2</version> FIXME LICH warum braucht es eine neuere Version?-->
-                        <version>${version.hibernate}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
     </build>
 
     <!-- Schema Generation-->

@@ -1,20 +1,8 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
+
+import java.util.*;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -22,10 +10,24 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.util.*;
 
-import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 /**
  * Service fuer Gesuch
@@ -203,6 +205,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Nonnull
+    @Override
 	public List<JaxAntragDTO> getAllAntragDTOForFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<JaxAntragDTO> query = cb.createQuery(JaxAntragDTO.class);
@@ -223,4 +226,110 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return q.getResultList();
 	}
+
+    @Override
+    public Pair<Long, List<Gesuch>> searchGesuche(AntragTableFilterDTO antragTableFilterDto) {
+        PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
+
+        CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+        query.select(root).distinct(true);
+        Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
+        Join<Fall, Benutzer> benutzer = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
+        Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
+        Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
+        Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
+        SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.INNER);
+        SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.INNER);
+        Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.INNER);
+        Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution);
+
+        Collection<Predicate> predicates = new ArrayList<>();
+        if (predicateObjectDto != null) {
+            if (predicateObjectDto.getFallNummer() != null) {
+                predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.getFallNummer())));
+            }
+            if (predicateObjectDto.getFamilienName() != null) {
+                predicates.add(
+                        cb.or(
+                                cb.equal(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName()),
+                                cb.equal(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName())
+                        ));
+            }
+            if (predicateObjectDto.getAntragTyp() != null) {
+                predicates.add(cb.equal(root.get(Gesuch_.typ), predicateObjectDto.getAntragTyp()));
+            }
+            if (predicateObjectDto.getGesuchsperiodeString() != null) {
+                predicates.add(cb.equal(gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb), predicateObjectDto.getGesuchsperiodeString()));
+            }
+            if (predicateObjectDto.getEingangsdatum() != null) {
+                predicates.add(cb.equal(root.get(Gesuch_.eingangsdatum), predicateObjectDto.getEingangsdatum()));
+            }
+            if (predicateObjectDto.getStatus() != null) {
+                predicates.add(cb.equal(root.get(Gesuch_.status), predicateObjectDto.getStatus()));
+            }
+            if (predicateObjectDto.getAngebote() != null) {
+                predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), predicateObjectDto.getAngebote()));
+            }
+            if (predicateObjectDto.getInstitutionen() != null) {
+                predicates.add(cb.equal(institution.get(Institution_.name), predicateObjectDto.getInstitutionen()));
+            }
+            if (predicateObjectDto.getVerantwortlicher() != null) {
+                predicates.add(cb.equal(benutzer.get(Benutzer_.username), predicateObjectDto.getVerantwortlicher()));
+            }
+            predicates.stream().forEach((predicate) -> {
+                query.where(predicate);
+            });
+        }
+        // order-by clause
+		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
+            Expression expression;
+            switch (antragTableFilterDto.getSort().getPredicate()) {
+                case "fallNummer":
+                    expression = fall.get(Fall_.fallNummer);
+                    break;
+                case "familienName":
+                    expression = gesuchsteller1.get(Gesuchsteller_.nachname);
+                    break;
+                case "antragTyp":
+                    expression = root.get(Gesuch_.typ);
+                    break;
+                case "gesuchsperiode":
+                    expression = gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb);
+                    break;
+                case "aenderungsdatum":
+                    expression = root.get(Gesuch_.timestampMutiert);
+                    break;
+                case "eingangsdatum":
+                    expression = root.get(Gesuch_.eingangsdatum);
+                    break;
+                case "status":
+                    expression = root.get(Gesuch_.status);
+                    break;
+                case "angebote":
+                    expression = institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp);
+                    break;
+                case "institutionen":
+                    expression = institution.get(Institution_.name);
+                    break;
+                case "verantwortlicher":
+                    expression = fall.get(Fall_.verantwortlicher);
+                    break;
+                default:
+    				LOG.warn("Using default sort because there is no specific clause for predicate " + antragTableFilterDto.getSort().getPredicate());
+                    expression = fall.get(Fall_.fallNummer);
+                    break;
+            }
+            query.orderBy(antragTableFilterDto.getSort().getReverse() ? cb.asc(expression) : cb.desc(expression));
+        }
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setFirstResult(antragTableFilterDto.getPagination().getStart());
+		typedQuery.setMaxResults(antragTableFilterDto.getPagination().getNumber());
+
+		List<Gesuch> gesuche = typedQuery.getResultList();
+		return new ImmutablePair<>(runCountQuery(antragTableFilterDto), gesuche);
+    }
+    
 }

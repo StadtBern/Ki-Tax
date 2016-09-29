@@ -1,14 +1,16 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.entities.Gesuch;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 /**
  * Service zum Verwalten von Gesuche
@@ -74,6 +76,13 @@ public interface GesuchService {
 	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+
+    /**
+     * 
+     * @param antragSearch
+     * @return
+     */
+	Pair<Long, List<Gesuch>> searchGesuche(AntragTableFilterDTO antragSearch);
 
 	@Nonnull
 	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
