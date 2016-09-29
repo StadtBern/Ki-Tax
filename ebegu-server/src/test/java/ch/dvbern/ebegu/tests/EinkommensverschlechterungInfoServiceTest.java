@@ -21,7 +21,7 @@ import java.util.Optional;
  * Tests fuer die Klasse FinanzielleSituationService
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class EinkommensverschlechterungInfoServiceTest extends AbstractEbeguTest {
 

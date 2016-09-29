@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * REST Resource zur Erstellung von (vordefinierten) Testfaellen
+ * REST Resource zur Erstellung von (vordefinierten) Testfaellen.
+ * Alle Testfaelle erstellen:
+ * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/all
  */
 @Path("testfaelle")
 @Stateless

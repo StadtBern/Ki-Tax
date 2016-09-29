@@ -61,21 +61,36 @@ export class DownloadRS {
         return 'DownloadRS';
     }
 
-    public startDownload(accessToken: string, dokumentName: string, attachment: boolean) {
+    public startDownload(accessToken: string, dokumentName: string, attachment: boolean): boolean {
         let name: string = accessToken + '/' + dokumentName;
         let href: string = this.serviceURL + '/blobdata/' + name;
+
+        let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument herunterladen zu können.';
+
 
         if (attachment) {
             // add MatrixParam for to download file instead of inline
             href = href + ';attachment=true;';
-            this.$window.open(href, '_blank');
+            let win = this.$window.open(href, '_blank');
+            if (!win) {
+                this.log.error(warn);
+                this.$window.alert(warn);
+                return false;
+            }
         } else {
             let win = this.$window.open(href, '_blank');
-            win.focus();
+            if (!win) {
+                this.log.error(warn);
+                this.$window.alert(warn);
+                return false;
+            } else {
+                win.focus();
+            }
         }
 
         //This would be the way to open file in new window (for now it's better to open in new tab)
         //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
+        return true;
 
     }
 }
