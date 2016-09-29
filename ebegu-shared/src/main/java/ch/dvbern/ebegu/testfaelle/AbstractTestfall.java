@@ -66,6 +66,7 @@ public abstract class AbstractTestfall {
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
 		familiensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		familiensituation.setGemeinsameSteuererklaerung(Boolean.TRUE);
 		gesuch.setFamiliensituation(familiensituation);
 		return gesuch;
 	}
@@ -122,9 +123,11 @@ public abstract class AbstractTestfall {
 		kind.setVorname(vorname);
 		kind.setGeburtsdatum(geburtsdatum);
 		kind.setKinderabzug(kinderabzug);
+		kind.setWohnhaftImGleichenHaushalt(100);
 		kind.setFamilienErgaenzendeBetreuung(betreuung);
 		if (betreuung) {
 			kind.setMutterspracheDeutsch(Boolean.TRUE);
+			kind.setEinschulung(Boolean.TRUE);
 		}
 		KindContainer kindContainer = new KindContainer();
 		kindContainer.setKindJA(kind);
@@ -135,6 +138,7 @@ public abstract class AbstractTestfall {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createInstitutionStammdaten(betreuungsangebotTyp, institutionsId));
 		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
+		betreuung.setVertrag(Boolean.TRUE);
 		return betreuung;
 	}
 

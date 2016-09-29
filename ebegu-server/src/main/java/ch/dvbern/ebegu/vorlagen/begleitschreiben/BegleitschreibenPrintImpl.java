@@ -11,15 +11,14 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
-
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+
+import javax.annotation.Nonnull;
+import java.util.Optional;
+
+import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
 
 /**
  * Transferobjekt
@@ -29,7 +28,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	private Gesuch gesuch;
 
 	/**
-	 * @param betreuung
+	 * @param gesuch
 	 */
 	public BegleitschreibenPrintImpl(Gesuch gesuch) {
 
@@ -91,7 +90,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
 	@Override
-	public int getFallnummer() {
+	public long getFallnummer() {
 
 		return gesuch.getFall().getFallNummer();
 	}

@@ -37,7 +37,7 @@ public class JaxAntragDTO {
 	private String antragId = null;
 
 	@NotNull
-	private int fallNummer;
+	private long fallNummer;
 
 	@NotNull
 	private String familienName;
@@ -86,11 +86,11 @@ public class JaxAntragDTO {
 		this.antragId = antragId;
 	}
 
-	public int getFallNummer() {
+	public long getFallNummer() {
 		return fallNummer;
 	}
 
-	public void setFallNummer(int fallNummer) {
+	public void setFallNummer(long fallNummer) {
 		this.fallNummer = fallNummer;
 	}
 

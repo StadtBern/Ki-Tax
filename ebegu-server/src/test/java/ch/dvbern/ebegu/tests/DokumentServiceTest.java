@@ -22,7 +22,7 @@ import java.util.Optional;
  * Tests fuer die Klasse DokumentGrundService
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class DokumentServiceTest extends AbstractEbeguTest {
 
