@@ -11,17 +11,17 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.util.Constants;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Transferobjekt
@@ -144,22 +144,24 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	/**
-	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen
-	 * Wenn die Betreuung noch nicht VERFUEGT ist -> generated Bemerkungen
+	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen Wenn die Betreuung noch nicht VERFUEGT ist -> generated
+	 * Bemerkungen
 	 *
 	 * @return
 	 */
-	public String getManuelleBemerkungen() {
+	public List<BemerkungPrint> getManuelleBemerkungen() {
+		//TODO ZEAB Handling mehrere Bemerkungen
+		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			if (verfuegung.get().getManuelleBemerkungen() != null) {
-				return verfuegung.get().getManuelleBemerkungen();
-			} else if (verfuegung.get().getGeneratedBemerkungen() != null) {
-				return verfuegung.get().getGeneratedBemerkungen();
+			if (verfuegung.get().getManuelleBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getManuelleBemerkungen())) {
+				bemerkungen.add(new BemerkungPrintImpl(verfuegung.get().getManuelleBemerkungen()));
+			} else if (verfuegung.get().getGeneratedBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getGeneratedBemerkungen())) {
+				bemerkungen.add(new BemerkungPrintImpl(verfuegung.get().getGeneratedBemerkungen()));
 			}
 		}
-		return "";
+		return bemerkungen;
 	}
 
 	/**
@@ -195,7 +197,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintManuellebemerkung() {
 
-		return !"".equalsIgnoreCase(getManuelleBemerkungen());
+		return getManuelleBemerkungen().size() > 0;
 	}
 
 	@Nonnull

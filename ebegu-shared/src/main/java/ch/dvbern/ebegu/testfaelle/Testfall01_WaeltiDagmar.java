@@ -1,18 +1,25 @@
 package ch.dvbern.ebegu.testfaelle;
 
-import ch.dvbern.ebegu.entities.*;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
+import ch.dvbern.ebegu.entities.ErwerbspensumContainer;
+import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.util.MathUtil;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-
 /**
- * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/1
- * https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/1
+ * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/1 https://ebegu.dvbern.ch/ebegu/api/v1/testfaelle/testfall/1
  */
 public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
@@ -21,8 +28,15 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 	}
 
 	public Gesuch createGesuch() {
+
+		return createGesuch(BetreuungsangebotTyp.KITA);
+	}
+
+	public Gesuch createGesuch(BetreuungsangebotTyp betreuungsangebotTyp) {
+
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum
+																						// nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
@@ -34,14 +48,14 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionAaregg);
+		Betreuung betreuungKitaAaregg = createBetreuung(betreuungsangebotTyp, idInstitutionAaregg);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 		// Kita Brünnen
-		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionBruennen);
+		Betreuung betreuungKitaBruennen = createBetreuung(betreuungsangebotTyp, idInstitutionBruennen);
 		betreuungKitaBruennen.setBetreuungNummer(2);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);
@@ -59,11 +73,13 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	@Override
 	public String getNachname() {
+
 		return "Wälti";
 	}
 
 	@Override
 	public String getVorname() {
+
 		return "Dagmar";
 	}
 }

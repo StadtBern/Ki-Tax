@@ -19,6 +19,8 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import javax.annotation.Nullable;
+
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +66,9 @@ public abstract class AbstractEbeguTest {
 			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
+			.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx")
+			.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")
+			.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx")
 			.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
 			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
 			.addAsResource("font/sRGB.profile", "font/sRGB.profile").addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
@@ -101,6 +106,8 @@ public abstract class AbstractEbeguTest {
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);
 			fos.close();
+			//File external oeffnen
+			openPDF(tempFile);
 		} finally {
 			if (fos != null) {
 				fos.close();
@@ -108,5 +115,14 @@ public abstract class AbstractEbeguTest {
 
 		}
 		return tempFile;
+	}
+
+	private void openPDF(File file) {
+
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException ex) {
+			// no application registered for PDFs
+		}
 	}
 }
