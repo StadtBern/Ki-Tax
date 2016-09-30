@@ -9,10 +9,10 @@ import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../models/enums/TSRole';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
-import {TSRole} from '../../models/enums/TSRole';
 let template = require('./faelleListView.html');
 require('./faelleListView.less');
 
