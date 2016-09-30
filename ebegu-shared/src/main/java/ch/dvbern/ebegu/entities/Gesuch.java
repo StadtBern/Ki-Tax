@@ -43,6 +43,10 @@ public class Gesuch extends AbstractAntragEntity {
 	@OrderBy("kindNummer")
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
 
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "gesuch", fetch = FetchType.LAZY)
+	@OrderBy("datum")
+	private Set<AntragStatusHistory> antragStatusHistories = new LinkedHashSet<>();
+
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
@@ -97,6 +101,14 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setFamiliensituation(@Nullable final Familiensituation familiensituation) {
 		this.familiensituation = familiensituation;
+	}
+
+	public Set<AntragStatusHistory> getAntragStatusHistories() {
+		return antragStatusHistories;
+	}
+
+	public void setAntragStatusHistories(Set<AntragStatusHistory> antragStatusHistories) {
+		this.antragStatusHistories = antragStatusHistories;
 	}
 
 	@Nullable
