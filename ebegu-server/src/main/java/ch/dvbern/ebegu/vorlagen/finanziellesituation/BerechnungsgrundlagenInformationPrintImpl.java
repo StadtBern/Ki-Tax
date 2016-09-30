@@ -13,13 +13,13 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.vorlagen.DocumentMergeAbstract;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
  * Berechnungsvorlage fest.
  */
-public class BerechnungsgrundlagenInformationPrintImpl extends DocumentMergeAbstract implements BerechnungsgrundlagenInformationPrint {
+public class BerechnungsgrundlagenInformationPrintImpl implements BerechnungsgrundlagenInformationPrint {
 
 	private FinanzielleSituationPrint finanz;
 	private EinkommensverschlechterungPrint ev1;
@@ -41,7 +41,7 @@ public class BerechnungsgrundlagenInformationPrintImpl extends DocumentMergeAbst
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
 		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() - 1);
-		String fallNummer = ermittleFallNummer(gesuch);
+		String fallNummer = PrintUtil.createFallNummerString(gesuch);
 
 		finanz = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, fallNummer);
 
