@@ -72,14 +72,14 @@
 
             <div class="row">
                 <div class="col-md-2" ng-if="!vm.gesuchsperiode">
-                    <dv-loading-button type="button" ng-click="vm.createGesuchsperiode()"
+                    <dv-loading-button type="button" button-click="vm.createGesuchsperiode()"
                                        button-class="btn btn-sm btn-success">
                         <i class="glyphicon glyphicon-plus">
                         </i> add item
                     </dv-loading-button>
                 </div>
                 <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                    <dv-loading-button type="button" ng-click="vm.saveGesuchsperiode()" button-class="btn btn-primary">
+                    <dv-loading-button type="button" button-click="vm.saveGesuchsperiode()" button-class="btn btn-primary">
                         <span
                             ng-bind="vm.gesuchsperiode.isNew() ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
                     </dv-loading-button>
@@ -127,7 +127,7 @@
                 <!-- Parameter pro Gesuchsperiode Buttons-->
                 <div class="row col-md-12">
                     <div class="col-md-2" ng-if="vm.gesuchsperiode">
-                        <dv-loading-button type="button" ng-click="vm.saveParameterByGesuchsperiode()"
+                        <dv-loading-button type="button" button-click="vm.saveParameterByGesuchsperiode()"
                                            button-class="btn btn-primary">
                             <span ng-bind="(vm.ebeguParameterListGesuchsperiode && vm.ebeguParameterListGesuchsperiode[0].isNew())
                                                              ? ('SAVE' | translate) : ('UPDATE' | translate)"></span>
@@ -236,7 +236,7 @@
                 <!-- Buttons Parameter pro Jahr -->
                 <div class="row col-md-12">
                     <div class="col-md-2" ng-if="vm.jahr">
-                        <dv-loading-button type="button" ng-click="vm.saveParameterByJahr()"
+                        <dv-loading-button type="button" button-click="vm.saveParameterByJahr()"
                                            button-class="btn btn-primary">
                             <span data-translate="SAVE"></span>
                         </dv-loading-button>

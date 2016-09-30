@@ -30,7 +30,7 @@
                             <td ng-bind="row.name"></td>
 
                             <td ng-click="$event.stopPropagation()">
-                                <dv-loading-button type="button" ng-click="vm.removeInstitution(row)"
+                                <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
                                                    button-class="btn btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
@@ -137,7 +137,7 @@
 
                                             <td ng-click="$event.stopPropagation()">
                                                 <dv-loading-button type="button"
-                                                                   ng-click="vm.removeInstitutionStammdaten(row)"
+                                                                   button-click="vm.removeInstitutionStammdaten(row)"
                                                                    button-class="btn btn-sm">
                                                     <i class="fa fa-minus">
                                                     </i>
