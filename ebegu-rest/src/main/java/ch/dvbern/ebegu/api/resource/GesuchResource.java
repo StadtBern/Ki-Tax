@@ -261,7 +261,7 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
-		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchGesuche(antragSearch);
+		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
 		List<Gesuch> foundAntraege = searchResultPair.getRight();
 		//todo hier darf fuer jeden Fall nur der Antrag mit dem neusten datum drin sein, spaeter im query machen
 		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();

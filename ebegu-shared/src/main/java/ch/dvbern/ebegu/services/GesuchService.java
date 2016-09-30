@@ -77,13 +77,6 @@ public interface GesuchService {
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
 
-    /**
-     * 
-     * @param antragSearch
-     * @return
-     */
-	Pair<Long, List<Gesuch>> searchGesuche(AntragTableFilterDTO antragSearch);
-
 	@Nonnull
 	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
 }
