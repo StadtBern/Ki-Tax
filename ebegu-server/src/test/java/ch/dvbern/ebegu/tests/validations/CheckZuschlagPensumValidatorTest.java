@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests.validations;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class CheckZuschlagPensumValidatorTest {
 	}
 
 	@Test
-	public void testCheckZuschlagPensumValidator() {
+	public void testCheckZuschlagPensumUndGrundValidator() {
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
 		erwerbspensumData.setZuschlagsprozent(null);
 		assertViolated(CheckZuschlagErwerbspensumZuschlagUndGrund.class, erwerbspensumData, customFactory, "");
@@ -41,5 +42,16 @@ public class CheckZuschlagPensumValidatorTest {
 
 		erwerbspensumData.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
 		assertNotViolated(CheckZuschlagErwerbspensumZuschlagUndGrund.class, erwerbspensumData, customFactory, "");
+	}
+
+	@Test
+	public void testCheckZuschlagMaxPensumValidator() {
+		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
+
+		erwerbspensumData.setZuschlagsprozent(20);
+		assertNotViolated(CheckZuschlagErwerbspensumMaxZuschlag.class, erwerbspensumData, customFactory, "");
+
+		erwerbspensumData.setZuschlagsprozent(21);
+		assertViolated(CheckZuschlagErwerbspensumMaxZuschlag.class, erwerbspensumData, customFactory, "");
 	}
 }
