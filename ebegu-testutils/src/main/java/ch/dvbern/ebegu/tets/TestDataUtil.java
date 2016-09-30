@@ -182,21 +182,6 @@ public final class TestDataUtil {
 		return instStammdaten;
 	}
 
-	public static InstitutionStammdaten createInstitutionStammdaten(String idInstitution,BetreuungsangebotTyp betreuungsangebotTyp) {
-		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(idInstitution);
-		instStammdaten.setIban(new IBAN(iban));
-		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
-		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
-		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
-		instStammdaten.setBetreuungsangebotTyp(betreuungsangebotTyp);
-		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(idInstitution);
-		instStammdaten.getInstitution().setName("Kita Aaregg");
-		instStammdaten.setAdresse(createDefaultAdresse());
-		return instStammdaten;
-	}
-
 	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
 		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);

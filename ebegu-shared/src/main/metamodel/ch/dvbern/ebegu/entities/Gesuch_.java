@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Gesuch.class)
 public abstract class Gesuch_ extends ch.dvbern.ebegu.entities.AbstractAntragEntity_ {
 
+	public static volatile SetAttribute<Gesuch, AntragStatusHistory> antragStatusHistories;
 	public static volatile SingularAttribute<Gesuch, String> bemerkungen;
 	public static volatile SetAttribute<Gesuch, KindContainer> kindContainers;
 	public static volatile SingularAttribute<Gesuch, Familiensituation> familiensituation;

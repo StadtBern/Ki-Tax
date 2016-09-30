@@ -104,8 +104,9 @@ public final class RestUtil {
 			final JaxBetreuung betreuung = betreuungIterator.next();
 			if (!RestUtil.isInstitutionInList(userInstitutionen, betreuung.getInstitutionStammdaten().getInstitution())
 				|| !(Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())
-				|| Betreuungsstatus.BESTAETIGT.equals(betreuung.getBetreuungsstatus())
-				|| Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus()))) {
+					|| Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())
+					|| Betreuungsstatus.BESTAETIGT.equals(betreuung.getBetreuungsstatus())
+					|| Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus()))) {
 				betreuungIterator.remove();
 			}
 		}

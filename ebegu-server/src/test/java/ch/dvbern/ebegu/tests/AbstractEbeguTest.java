@@ -22,6 +22,11 @@ import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import ch.dvbern.ebegu.entities.AbstractEntity;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;

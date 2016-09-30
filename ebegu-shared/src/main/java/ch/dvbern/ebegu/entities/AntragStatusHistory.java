@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.AntragStatus;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Audited
 @Entity
-public class AntragStatusHistory extends AbstractEntity {
+public class AntragStatusHistory extends AbstractEntity implements Comparable<AntragStatusHistory>{
 
 	private static final long serialVersionUID = -9032257320864372570L;
 
@@ -67,5 +68,13 @@ public class AntragStatusHistory extends AbstractEntity {
 
 	public void setStatus(AntragStatus status) {
 		this.status = status;
+	}
+
+	@Override
+	public int compareTo(AntragStatusHistory o) {
+		CompareToBuilder cb = new CompareToBuilder();
+		cb.append(this.getDatum(), o.getDatum())
+			.append(this.getId(), o.getId());
+		return cb.toComparison();
 	}
 }
