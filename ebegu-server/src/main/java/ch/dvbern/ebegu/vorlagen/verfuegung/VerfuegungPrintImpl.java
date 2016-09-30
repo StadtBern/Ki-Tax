@@ -165,14 +165,16 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 	/**
 	 * Zerlegt die Bemerkungen (Delimiter \n) und bereitet die in einer Liste.
+	 *
 	 * @param bemerkungen
 	 * @return List mit Bemerkungen
 	 */
 	private List<BemerkungPrint> splitBemerkungen(String bemerkungen) {
 
 		List<BemerkungPrint> list = new ArrayList<>();
-		String[] splitBemerkungen = bemerkungen.split("\n");
-		for (String bemerkung : splitBemerkungen) {
+		// Leere Zeile werden mit diese Annotation [\\r\\n]+ entfernt
+		String[] splitBemerkungenNewLine = bemerkungen.split("[" + System.getProperty("line.separator") + "]+");
+		for (String bemerkung : splitBemerkungenNewLine) {
 			list.add(new BemerkungPrintImpl(bemerkung));
 		}
 		return list;

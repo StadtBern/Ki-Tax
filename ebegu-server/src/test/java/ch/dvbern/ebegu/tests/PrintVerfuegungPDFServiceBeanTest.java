@@ -63,8 +63,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
-				.setManuelleBemerkungen("Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
@@ -90,7 +89,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
-				.setManuelleBemerkungen("Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
+				.setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3\n");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
@@ -142,7 +141,7 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
-				.setManuelleBemerkungen("\"Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
+				.setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3\n\n\nXYZ");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
