@@ -39,7 +39,7 @@ import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
 
 /**
@@ -145,7 +145,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguTest {
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertTrue(allParameter.isEmpty());
 
-		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON);
+		EbeguParameter parameter = TestDataUtil.createDefaultEbeguParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA);
 		parameter.setGueltigkeit(new DateRange(2015));
 		parameterService.saveEbeguParameter(parameter);
 

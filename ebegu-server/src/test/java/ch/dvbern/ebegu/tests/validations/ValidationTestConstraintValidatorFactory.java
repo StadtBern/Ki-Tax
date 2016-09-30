@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests.validations;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.tests.services.EbeguDummyParameterServiceBean;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumValidator;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlagValidator;
 
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintValidator;
@@ -28,6 +29,11 @@ public class ValidationTestConstraintValidatorFactory implements ConstraintValid
 			//Mock Service for Parameters
 			EbeguParameterService dummyParamService = new EbeguDummyParameterServiceBean();
 			return (T) new CheckBetreuungspensumValidator(dummyParamService, entityManagerFactory);
+		}
+		if (key == CheckZuschlagErwerbspensumMaxZuschlagValidator.class) {
+			//Mock Service for Parameters
+			EbeguParameterService dummyParamService = new EbeguDummyParameterServiceBean();
+			return (T) new CheckZuschlagErwerbspensumMaxZuschlagValidator(dummyParamService, entityManagerFactory);
 		}
 		ConstraintValidatorFactory delegate = Validation.byDefaultProvider().configure().getDefaultConstraintValidatorFactory();
 		return delegate.getInstance(key);
