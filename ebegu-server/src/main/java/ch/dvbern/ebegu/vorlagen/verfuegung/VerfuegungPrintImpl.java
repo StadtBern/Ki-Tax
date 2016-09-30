@@ -11,17 +11,19 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import org.apache.commons.lang.StringUtils;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Kind;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Transferobjekt
@@ -48,8 +50,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public String getAngebot() {
 
-		// TODO ZEAB Implementieren
-		return "Kita";
+		return ServerMessageUtil.translateEnumValue(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 	}
 
 	@Override
@@ -72,7 +73,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 */
 	@Override
 	public String getVerfuegungsdatum() {
-
+        // TODO (Team) Dies ist das Verfuegungsdatum des *Erstgesuchs* bei Mutationen, also das der früheren Verfugung
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			Verfuegung verfuegung1 = verfuegung.get();
@@ -154,9 +155,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			if (verfuegung.get().getManuelleBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getManuelleBemerkungen())) {
+			if (StringUtils.isNotEmpty(verfuegung.get().getManuelleBemerkungen())) {
 				bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
-			} else if (verfuegung.get().getGeneratedBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getGeneratedBemerkungen())) {
+			} else if (StringUtils.isNotEmpty(verfuegung.get().getGeneratedBemerkungen())) {
 				bemerkungen.addAll(splitBemerkungen((verfuegung.get().getGeneratedBemerkungen())));
 			}
 		}
@@ -205,9 +206,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return true falls es sich um eine Mutation handelt
 	 */
 	public boolean isMutation() {
-
-		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
-		return true;
+		return AntragTyp.MUTATION.equals(betreuung.extractGesuch().getTyp());
 	}
 
 	@Override
