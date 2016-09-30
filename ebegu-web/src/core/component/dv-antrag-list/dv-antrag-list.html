@@ -97,7 +97,7 @@
                         ng-bind="row.verantwortlicher"></td>
 
                     <td class="ellipsis" ng-if="vm.isActionsVisible()">
-                        <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
+                        <dv-loading-button type="button" button-click="vm.removeClicked(row); $event.stopPropagation()"
                                            button-class="btn btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>
@@ -124,7 +124,7 @@
     <div class="row">
 
         <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isAddButtonVisible()">
-            <dv-loading-button type="button" ng-click="vm.addClicked()" button-class="btn btn-sm btn-success">
+            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="btn btn-sm btn-success">
                 <i class="glyphicon glyphicon-plus">
                 </i> {{vm.addButtonText}}
             </dv-loading-button>
