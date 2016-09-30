@@ -5,8 +5,8 @@ package ch.dvbern.ebegu.enums;
  */
 public enum EbeguParameterKey {
 
-	// Fixbeitrag der Stadt pro Tag, nur für Kitas relevant
-	PARAM_FIXBETRAG_STADT_PRO_TAG_KITA,
+	// Fixbeitrag der Stadt pro Tag, nur für Kitas relevant (Achtung: Kann auf den 1.1. aendern! Im Gegensatz zu den anderen Parametern)
+	PARAM_FIXBETRAG_STADT_PRO_TAG_KITA (Boolean.FALSE),
 
 	// Anzahl Tage Kita Max
 	PARAM_ANZAL_TAGE_MAX_KITA,
@@ -71,8 +71,11 @@ public enum EbeguParameterKey {
 	// Baby-Faktor bis N – Monate
 	PARAM_BABY_ALTER_IN_MONATEN,
 
-	// Abgeltung des Kantons pro Tag (Achtung: Kann auf den 1.1. aendern! Im Gegensatz zu den anderen Parametern)
-	PARAM_ABGELTUNG_PRO_TAG_KANTON(Boolean.FALSE);
+	// Abgeltung des Kantons pro Tag
+	PARAM_ABGELTUNG_PRO_TAG_KANTON,
+
+	// Maximaler Zuschlag zum Erwerbspensum
+	PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM;
 
 	private boolean proGesuchsperiode;
 
