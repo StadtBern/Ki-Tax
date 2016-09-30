@@ -162,7 +162,7 @@
                                  dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                                  dv-show-expression="($index > 0) || (vm.getBetreuungspensen().length > 1)">
                                 <div class="col-md-12">
-                                    <dv-loading-button type="button" ng-click="vm.removeBetreuungspensum(betpen)"
+                                    <dv-loading-button type="button" button-click="vm.removeBetreuungspensum(betpen)"
                                                        button-class="btn btn-sm btn-warning">
                                         <i class="glyphicon glyphicon-minus"></i>
                                         <span data-translate="BETREUUNGSPENSUM_ENTFERNEN"></span>
@@ -178,7 +178,7 @@
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                          dv-show-expression="vm.isBetreuungsstatusWarten() && !vm.isSavingData">
                         <div class="col-md-12">
-                            <dv-loading-button type="button" ng-click="vm.createBetreuungspensum()"
+                            <dv-loading-button type="button" button-click="vm.createBetreuungspensum()"
                                                button-class="btn btn-sm btn-success" dv-enable-element
                                                dv-enable-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                                                dv-enable-expression="vm.isEnabled()">
