@@ -47,6 +47,7 @@ public class EbeguDummyParameterServiceBean extends AbstractBaseService implemen
 		dummyObjects.put(PARAM_PENSUM_KITA_MIN, new EbeguParameter(PARAM_PENSUM_KITA_MIN, "10"));
 		dummyObjects.put(PARAM_PENSUM_TAGESELTERN_MIN, new EbeguParameter(PARAM_PENSUM_TAGESELTERN_MIN, "20"));
 		dummyObjects.put(PARAM_PENSUM_TAGESSCHULE_MIN, new EbeguParameter(PARAM_PENSUM_TAGESSCHULE_MIN, "0"));
+		dummyObjects.put(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, new EbeguParameter(PARAM_MAXIMALER_ZUSCHLAG_ERWERBSPENSUM, "20"));
 	}
 
 	@Override

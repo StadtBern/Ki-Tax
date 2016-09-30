@@ -18,9 +18,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = CheckZuschlagPensumValidator.class)
+@Constraint(validatedBy = CheckZuschlagErwerbspensumZuschlagUndGrundValidator.class)
 @Documented
-public @interface CheckZuschlagPensum {
+public @interface CheckZuschlagErwerbspensumZuschlagUndGrund {
 
 	String message() default "{invalid_zuschlag_zu_erwerbspensum}";
 

@@ -3,7 +3,8 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -11,7 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -21,7 +21,8 @@ import java.util.Objects;
  */
 @Entity
 @Audited
-@CheckZuschlagPensum
+@CheckZuschlagErwerbspensumZuschlagUndGrund
+@CheckZuschlagErwerbspensumMaxZuschlag
 public class Erwerbspensum extends AbstractPensumEntity {
 
 	private static final long serialVersionUID = 4649639217797690323L;
@@ -40,7 +41,6 @@ public class Erwerbspensum extends AbstractPensumEntity {
 	private Zuschlagsgrund zuschlagsgrund;
 
 	@Min(0)
-	@Max(20) //Maximal 20%
 	@Column(nullable = true)
 	private Integer zuschlagsprozent;
 

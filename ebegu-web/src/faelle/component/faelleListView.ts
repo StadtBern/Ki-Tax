@@ -1,20 +1,18 @@
 import {IComponentOptions, IFilterService} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import {InstitutionRS} from '../../core/service/institutionRS.rest';
-import {InstitutionStammdatenRS} from '../../core/service/institutionStammdatenRS.rest';
 import GesuchRS from '../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../gesuch/service/gesuchModelManager';
 import BerechnungsManager from '../../gesuch/service/berechnungsManager';
-import EbeguUtil from '../../utils/EbeguUtil';
-import GesuchsperiodeRS from '../../core/service/gesuchsperiodeRS.rest';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';
+import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
+import {TSRole} from '../../models/enums/TSRole';
 let template = require('./faelleListView.html');
 require('./faelleListView.less');
 
@@ -31,13 +29,12 @@ export class FaelleListViewController {
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['EbeguUtil', '$filter', 'InstitutionRS', 'InstitutionStammdatenRS', 'GesuchsperiodeRS',
-        'GesuchRS', 'GesuchModelManager', 'BerechnungsManager', '$state', '$log', 'CONSTANTS'];
+    static $inject: string[] = ['$filter', 'GesuchRS', 'GesuchModelManager',
+        'BerechnungsManager', '$state', '$log', 'CONSTANTS', 'AuthServiceRS'];
 
-    constructor(private ebeguUtil: EbeguUtil, private $filter: IFilterService,
-                private institutionRS: InstitutionRS, private institutionStammdatenRS: InstitutionStammdatenRS, private gesuchsperiodeRS: GesuchsperiodeRS,
-                private gesuchRS: GesuchRS, private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
-                private $state: IStateService, private $log: ILogService, private CONSTANTS: any) {
+    constructor(private $filter: IFilterService, private gesuchRS: GesuchRS,
+                private gesuchModelManager: GesuchModelManager, private berechnungsManager: BerechnungsManager,
+                private $state: IStateService, private $log: ILogService, private CONSTANTS: any, private authServiceRS: AuthServiceRS) {
         this.initViewModel();
     }
 
@@ -70,7 +67,7 @@ export class FaelleListViewController {
         if (antrag) {
             //todo xaver fragen muessen wir hier was anders machen fuer inst und ja?
             if (antrag && antrag.antragTyp === TSAntragTyp.GESUCH) {
-                this.gesuchRS.findGesuch(antrag.antragId).then((response) => {
+                this.gesuchRS.findGesuchForInstitution(antrag.antragId).then((response) => {
                     if (response) {
                         this.openGesuch(response);
                     }
@@ -84,19 +81,12 @@ export class FaelleListViewController {
         if (gesuch) {
             this.berechnungsManager.clear();
             this.gesuchModelManager.setGesuch(gesuch);
-            this.$state.go('gesuch.fallcreation');
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+                this.$state.go('gesuch.verfuegen');
+            } else {
+                this.$state.go('gesuch.fallcreation');
+            }
         }
     }
 
-//
-//     private openBetreuung(pendenz: TSPendenzInstitution): void {
-//         if (this.gesuchModelManager.getGesuch() && pendenz) {
-//             this.gesuchModelManager.findKindById(pendenz.kindId);
-//             let betreuungNumber: number = this.gesuchModelManager.findBetreuungById(pendenz.betreuungsId);
-//             if (betreuungNumber > 0) {
-//                 this.berechnungsManager.clear(); // nur um sicher zu gehen, dass alle alte Werte geloescht sind
-//                 this.$state.go('gesuch.betreuung');
-//             }
-//         }
-//     }
 }

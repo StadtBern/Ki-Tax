@@ -120,7 +120,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep: wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
-				if (oldEntity.getEinkommensverschlechterung() && !newEntity.getEinkommensverschlechterung()) {
+				if (!newEntity.getEinkommensverschlechterung()) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 				}
 				else if (!oldEntity.getEinkommensverschlechterung() && newEntity.getEinkommensverschlechterung()) {
