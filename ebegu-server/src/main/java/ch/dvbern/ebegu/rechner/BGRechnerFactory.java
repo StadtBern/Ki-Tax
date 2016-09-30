@@ -10,7 +10,7 @@ public class BGRechnerFactory {
 
 
 	public static AbstractBGRechner getRechner(Betreuung betreuung) {
-		BetreuungsangebotTyp betreuungsangebotTyp = betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp();
+		BetreuungsangebotTyp betreuungsangebotTyp = betreuung.getBetreuungsangebotTyp();
 		if (BetreuungsangebotTyp.KITA.equals(betreuungsangebotTyp)) {
 			return new KitaRechner();
 		} else if (BetreuungsangebotTyp.TAGI.equals(betreuungsangebotTyp)){

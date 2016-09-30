@@ -1,19 +1,19 @@
 import {EbeguWebPendenzen} from '../pendenzen.module';
-import TSPendenzJA from '../../models/TSPendenzJA';
+import TSAntragDTO from '../../models/TSAntragDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import {TSBetreuungsangebotTyp} from '../../models/enums/TSBetreuungsangebotTyp';
 import {TSDateRange} from '../../models/types/TSDateRange';
 import * as moment from 'moment';
-import TSUser from '../../models/TSUser';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 describe('pendenzFilter', function () {
 
     let pendenzFilter: any;
-    let pendenzArray: Array<TSPendenzJA>;
-    let pendenz1: TSPendenzJA;
-    let pendenz2: TSPendenzJA;
-    let pendenz3: TSPendenzJA;
+    let pendenzArray: Array<TSAntragDTO>;
+    let pendenz1: TSAntragDTO;
+    let pendenz2: TSAntragDTO;
+    let pendenz3: TSAntragDTO;
     let gesuchsperiode: TSGesuchsperiode;
 
     beforeEach(angular.mock.module(EbeguWebPendenzen.name));
@@ -26,16 +26,20 @@ describe('pendenzFilter', function () {
         gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(ab, bis));
 
         pendenzArray = [];
-        pendenz1 = new TSPendenzJA('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado');
+        pendenz1 = new TSAntragDTO('id1', 1, 'Hernandez', TSAntragTyp.GESUCH, ab, ab,
+            [TSBetreuungsangebotTyp.KITA], ['Instit1'], 'Juan Arbolado', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz1);
 
-        pendenz2 = new TSPendenzJA('id2', 2, 'Perez', TSAntragTyp.GESUCH, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez');
+        pendenz2 = new TSAntragDTO('id2', 2, 'Perez', TSAntragTyp.GESUCH, ab, ab,
+            [TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit2'], 'Antonio Jimenez', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz2);
 
-        pendenz3 = new TSPendenzJA('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, gesuchsperiode, ab,
-            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'], 'Eustaquio Romualdo');
+        pendenz3 = new TSAntragDTO('id3', 3, 'Dominguez', TSAntragTyp.MUTATION, ab, ab,
+            [TSBetreuungsangebotTyp.KITA, TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND], ['Instit1', 'Instit2'],
+            'Eustaquio Romualdo', TSAntragStatus.IN_BEARBEITUNG_JA,
+            gesuchsperiode.gueltigkeit.gueltigAb, gesuchsperiode.gueltigkeit.gueltigBis);
         pendenzArray.push(pendenz3);
 
     }));
@@ -59,10 +63,10 @@ describe('pendenzFilter', function () {
             expect(pendenzFilter(pendenzArray, {antragTyp: ''})).toEqual([pendenz1, pendenz2, pendenz3]); // empty string returns all elements
             expect(pendenzFilter(pendenzArray, {antragTyp: 'error'})).toEqual([]);
         });
-        it('should return an array with only the elements of the given gesuchsperiode', function () {
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: '2016/2017'})).toEqual([pendenz1, pendenz2, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
-            expect(pendenzFilter(pendenzArray, {gesuchsperiode: '2020/2021'})).toEqual([]);
+        it('should return an array with only the elements of the given gesuchsperiodeGueltigAb', function () {
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: '31.08.2016'})).toEqual([pendenz1, pendenz2, pendenz3]);
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
+            expect(pendenzFilter(pendenzArray, {gesuchsperiodeGueltigAb: '2020/2021'})).toEqual([]);
         });
         it('should return an array with only the elements of the given eingangsdatum', function () {
             expect(pendenzFilter(pendenzArray, {eingangsdatum: '31.08.2016'})).toEqual([pendenz1, pendenz2, pendenz3]);
@@ -81,7 +85,10 @@ describe('pendenzFilter', function () {
             expect(pendenzFilter(pendenzArray, {institutionen: ''})).toEqual([pendenz1, pendenz2, pendenz3]);
         });
         it('should return the elements containing all given params, for a multiple filtering', function () {
-            expect(pendenzFilter(pendenzArray, {familienName: 'Hernandez', institutionen: 'Instit1'})).toEqual([pendenz1]);
+            expect(pendenzFilter(pendenzArray, {
+                familienName: 'Hernandez',
+                institutionen: 'Instit1'
+            })).toEqual([pendenz1]);
         });
     });
 

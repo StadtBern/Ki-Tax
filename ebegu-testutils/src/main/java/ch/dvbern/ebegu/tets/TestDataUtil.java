@@ -1,14 +1,18 @@
 package ch.dvbern.ebegu.tets;
 
+import ch.dvbern.ebegu.dto.suchfilter.AntragSearchDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragSortDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
-import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -17,16 +21,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
+
 /**
  * comments homa
  */
 public final class TestDataUtil {
 
 	private static final String iban = "CH39 0900 0000 3066 3817 2";
-	private static BigDecimal abzugFamiliengroesse3 = MathUtil.DEFAULT.from(3760);
-	private static BigDecimal abzugFamiliengroesse4 = MathUtil.DEFAULT.from(5900);
-	private static BigDecimal abzugFamiliengroesse5 = MathUtil.DEFAULT.from(6970);
-	private static BigDecimal abzugFamiliengroesse6 = MathUtil.DEFAULT.from(7500);
 
 	public static final LocalDate STICHTAG_EKV_1 = LocalDate.of(2016, Month.SEPTEMBER, 1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(2017, Month.APRIL, 1);
@@ -113,6 +115,7 @@ public final class TestDataUtil {
 		gesuch.setFall(createDefaultFall());
 		gesuch.setEingangsdatum(LocalDate.now());
 		gesuch.setFamiliensituation(createDefaultFamiliensituation());
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
 		return gesuch;
 	}
 
@@ -234,6 +237,7 @@ public final class TestDataUtil {
 		kind.setPensumFachstelle(createDefaultPensumFachstelle());
 		kind.setFamilienErgaenzendeBetreuung(true);
 		kind.setMutterspracheDeutsch(true);
+		kind.setEinschulung(true);
 		return kind;
 	}
 
@@ -333,12 +337,46 @@ public final class TestDataUtil {
 	}
 
 
-	public static EbeguParameter createDefaultEbeguParameter() {
+	public static EbeguParameter createDefaultEbeguParameter(EbeguParameterKey key) {
 		EbeguParameter instStammdaten = new EbeguParameter();
-		instStammdaten.setName(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
-		instStammdaten.setValue("Wert");
+		instStammdaten.setName(key);
+		instStammdaten.setValue("1");
 		instStammdaten.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return instStammdaten;
+	}
+
+	public static List<EbeguParameter> createAllEbeguParameters() {
+		final List<EbeguParameter> list = new ArrayList<>();
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAHL_TAGE_KANTON));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_BABY_ALTER_IN_MONATEN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_BABY_FAKTOR));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_GRENZWERT_EINKOMMENSVERSCHLECHTERUNG));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MAX_TAGE_ABWESENHEIT));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_MASSGEBENDES_EINKOMMEN_MAX));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_MAX_KITA));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGI_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGESSCHULE_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_TAGESELTERN_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PENSUM_KITA_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MIN));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX));
+		list.add(createDefaultEbeguParameter(EbeguParameterKey.PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN));
+		return list;
+	}
+
+	public static List<EbeguParameter> createAndPersistAllEbeguParameters(EbeguParameterService parameterService) {
+		final List<EbeguParameter> allEbeguParameters = createAllEbeguParameters();
+		allEbeguParameters.forEach(parameterService::saveEbeguParameter);
+		return allEbeguParameters;
 	}
 
 	public static EinkommensverschlechterungInfo createDefaultEinkommensverschlechterungsInfo(Gesuch gesuch) {
@@ -406,7 +444,7 @@ public final class TestDataUtil {
 		if (gesuch.getGesuchsperiode() == null) {
 			gesuch.setGesuchsperiode(createGesuchsperiode1617());
 		}
-		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner(abzugFamiliengroesse3, abzugFamiliengroesse4, abzugFamiliengroesse5, abzugFamiliengroesse6);
+		FinanzielleSituationRechner finanzielleSituationRechner = new FinanzielleSituationRechner();
 		finanzielleSituationRechner.calculateFinanzDaten(gesuch);
 	}
 
@@ -456,12 +494,12 @@ public final class TestDataUtil {
 		dokumentGrund.setTag("tag");
 		dokumentGrund.setFullName("Hugo");
 		dokumentGrund.setDokumentTyp(DokumentTyp.JAHRESLOHNAUSWEISE);
-		dokumentGrund.setDokumente(new HashSet<Dokument>());
+		dokumentGrund.setDokumente(new HashSet<>());
 		final Dokument dokument = new Dokument();
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentName("testdokument");
-		dokument.setDokumentPfad("testpfad/");
-		dokument.setDokumentSize("123456");
+		dokument.setFilename("testdokument");
+		dokument.setFilepfad("testpfad/");
+		dokument.setFilesize("123456");
 		dokumentGrund.getDokumente().add(dokument);
 		return dokumentGrund;
 	}
@@ -508,11 +546,11 @@ public final class TestDataUtil {
 		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
 		persistence.persist(gesuch.getGesuchsperiode());
 
-		Set<KindContainer> kindContainers = new LinkedHashSet<>();
+		Set<KindContainer> kindContainers = new TreeSet<>();
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		KindContainer kind = betreuung.getKind();
 
-		Set<Betreuung> betreuungen = new LinkedHashSet<>();
+		Set<Betreuung> betreuungen = new TreeSet<>();
 		betreuungen.add(betreuung);
 		kind.setBetreuungen(betreuungen);
 
@@ -547,4 +585,91 @@ public final class TestDataUtil {
 		jaxWizardStep.setBemerkungen("");
 		return jaxWizardStep;
 	}
+
+	public static void prepareParameters(DateRange gueltigkeit, Persistence<?> persistence) {
+
+		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
+		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
+		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", gueltigkeit, persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start, year1End), persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)), persistence);
+		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244", gueltigkeit, persistence);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MIN, "0.75", gueltigkeit, persistence);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MAX, "158690", gueltigkeit, persistence);
+		saveParameter(PARAM_MASSGEBENDES_EINKOMMEN_MIN, "42540", gueltigkeit, persistence);
+		saveParameter(PARAM_ANZAHL_TAGE_KANTON, "240", gueltigkeit, persistence);
+		saveParameter(PARAM_STUNDEN_PRO_TAG_TAGI, "7", gueltigkeit, persistence);
+		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX_TAGESELTERN, "9.16", gueltigkeit, persistence);
+		saveParameter(PARAM_BABY_ALTER_IN_MONATEN, "12", gueltigkeit, persistence);  //waere eigentlich int
+		saveParameter(PARAM_BABY_FAKTOR, "1.5", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, "3760", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, "5900", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, "6970", gueltigkeit, persistence);
+		saveParameter(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, "7500", gueltigkeit, persistence);
+
+	}
+
+	public static void saveParameter(EbeguParameterKey key, String value, DateRange gueltigkeit, Persistence<?> persistence) {
+		EbeguParameter ebeguParameter = new EbeguParameter(key, value, gueltigkeit);
+		persistence.persist(ebeguParameter);
+
+	}
+
+	public static Benutzer createBenutzer(UserRole role, Traegerschaft traegerschaft, Institution institution, Mandant mandant) {
+		final Benutzer benutzer = new Benutzer();
+		benutzer.setUsername("anonymous");
+		benutzer.setNachname("anonymous");
+		benutzer.setVorname("anonymous");
+		benutzer.setEmail("e@e");
+		benutzer.setTraegerschaft(traegerschaft);
+		benutzer.setInstitution(institution);
+		benutzer.setRole(role);
+		benutzer.setMandant(mandant);
+		return benutzer;
+	}
+
+	public static Benutzer createAndPersistBenutzer(Persistence<?> persistence) {
+		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+		persistence.persist(traegerschaft);
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+	public static GeneratedDokument createGeneratedDokument(final Gesuch gesuch) {
+		final GeneratedDokument dokument = new GeneratedDokument();
+		dokument.setGesuch(gesuch);
+		dokument.setTyp(GeneratedDokumentTyp.VERFUEGUNG);
+		dokument.setFilepfad("pfad/to/document/doc.pdf");
+		dokument.setFilename("name.pdf");
+		dokument.setFilesize("32");
+		return dokument;
+	}
+
+	public static Benutzer createDummyAdminAnonymous(Persistence<?> persistence) {
+		//machmal brauchen wir einen dummy admin in der DB
+		final Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
+		persistence.persist(traegerschaft);
+		final Mandant mandant = TestDataUtil.createDefaultMandant();
+		persistence.persist(mandant);
+		final Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, mandant);
+		persistence.persist(benutzer);
+		return benutzer;
+	}
+
+
+	public static AntragTableFilterDTO createAntragTableFilterDTO() {
+		AntragTableFilterDTO filterDTO = new AntragTableFilterDTO();
+		filterDTO.setSort(new AntragSortDTO());
+		filterDTO.setSearch(new AntragSearchDTO());
+		filterDTO.setPagination(new PaginationDTO());
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(10);
+		return filterDTO;
+	}
+
 }

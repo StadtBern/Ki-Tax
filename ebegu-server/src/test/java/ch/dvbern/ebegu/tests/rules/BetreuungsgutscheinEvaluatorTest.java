@@ -67,7 +67,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 	public void doTestEvaluationGeneratedBemerkungen(){
 		Gesuch testgesuch = createGesuch();
 		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
-		testgesuch.getFinanzDatenDTO().setMassgebendesEinkommenBasisjahr(new BigDecimal("500000")); //zu hoch -> Comment wird erzeugt
+		testgesuch.getFinanzDatenDTO().setMassgebendesEinkBjVorAbzFamGr(new BigDecimal("500000")); //zu hoch -> Comment wird erzeugt
 
 		evaluator.evaluate(testgesuch, getParameter());
 
@@ -82,6 +82,9 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 
 	private Gesuch createGesuch() {
 		Gesuch gesuch = new Gesuch();
+		final Fall fall = TestDataUtil.createDefaultFall();
+		fall.setFallNummer(2);
+		gesuch.setFall(fall);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setFamiliensituation(new Familiensituation());

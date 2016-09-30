@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.validators.CheckBenutzerRolesValidator;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,81 +25,72 @@ public class CheckBenutzerRolesValidatorTest {
 
 	@Test
 	public void testCheckBenutzerRoleInstitutionWithoutInstitution() {
-		Benutzer benutzer = createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, null, null, null);
 		Assert.assertFalse(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleInstitutionWithInstitution() {
 		final Institution institution = new Institution();
-		Benutzer benutzer = createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, null, institution);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_INSTITUTION, null, institution, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleTraegerschaftWithoutTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, null, null, null);
 		Assert.assertFalse(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleTraegerschaftWithTraegerschaft() {
 		final Traegerschaft traegerschaft = new Traegerschaft();
-		Benutzer benutzer = createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleAdminNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.ADMIN, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.ADMIN, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleGesuchstellerNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.GESUCHSTELLER, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.GESUCHSTELLER, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleJuristNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.JURIST, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.JURIST, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleSchulamtNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.SCHULAMT, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SCHULAMT, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleRevisorNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.REVISOR, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.REVISOR, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleJANoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.SACHBEARBEITER_JA, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_JA, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	@Test
 	public void testCheckBenutzerRoleSteueramtNoInstitutionTraegerschaft() {
-		Benutzer benutzer = createBenutzer(UserRole.STEUERAMT, null, null);
+		Benutzer benutzer = TestDataUtil.createBenutzer(UserRole.STEUERAMT, null, null, null);
 		Assert.assertTrue(validator.isValid(benutzer, null));
 	}
 
 	// HELP METHODS
-
-	private Benutzer createBenutzer(UserRole role, Traegerschaft traegerschaft, Institution institution) {
-		final Benutzer benutzer = new Benutzer();
-		benutzer.setTraegerschaft(traegerschaft);
-		benutzer.setInstitution(institution);
-		benutzer.setRole(role);
-		return benutzer;
-	}
-
 
 }

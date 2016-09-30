@@ -37,7 +37,9 @@ public class FachstelleRuleTest {
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(40, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(40, result.get(0).getBgPensum());
-		Assert.assertEquals(0, result.get(0).getAnspruchspensumRest());
+		Assert.assertEquals(-1, result.get(0).getAnspruchspensumRest());
+		List<VerfuegungZeitabschnitt> nextZeitabschn = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
+		Assert.assertEquals(0, nextZeitabschn.get(0).getAnspruchspensumRest());
 	}
 
 	@Test
@@ -54,6 +56,8 @@ public class FachstelleRuleTest {
 		Assert.assertEquals(40, result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(20, result.get(0).getAnspruchspensumRest());
+		Assert.assertEquals(-1, result.get(0).getAnspruchspensumRest());
+		List<VerfuegungZeitabschnitt> nextZeitabschn = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
+		Assert.assertEquals(20, nextZeitabschn.get(0).getAnspruchspensumRest());
 	}
 }

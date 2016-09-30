@@ -17,6 +17,7 @@ describe('dvNavigation', function () {
     let $rootScope: IScope;
     let gesuchModelManager: GesuchModelManager;
     let authServiceRS: AuthServiceRS;
+    let isStatusVerfuegen: boolean;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -33,13 +34,22 @@ describe('dvNavigation', function () {
         navController.dvSave = () => {
             return $q.when({});
         };
+        isStatusVerfuegen = true;
+        spyOn(gesuchModelManager, 'isGesuchStatusVerfuegenVerfuegt').and.callFake(() => {
+            return isStatusVerfuegen;
+        });
     }));
 
     describe('getNextButtonName', function () {
         it('returns WEITER_UPPER if dvSave exists', () => {
+            isStatusVerfuegen = false;
             expect(navController.getNextButtonName()).toEqual('SPEICHERN UND WEITER');
         });
+        it('returns WEITER_ONLY_UPPER if status is VERFUEGEN', () => {
+            expect(navController.getNextButtonName()).toEqual('WEITER');
+        });
         it('returns WEITER_ONLY_UPPER if dvSave does not exist', () => {
+            isStatusVerfuegen = false;
             navController.dvSave = undefined;
             expect(navController.getNextButtonName()).toEqual('WEITER');
         });
@@ -47,9 +57,14 @@ describe('dvNavigation', function () {
 
     describe('getNextButtonName', function () {
         it('returns ZURUECK_UPPER if dvSave exists', () => {
+            isStatusVerfuegen = false;
             expect(navController.getPreviousButtonName()).toEqual('SPEICHERN UND ZURÜCK');
         });
+        it('returns ZURUECK_ONLY_UPPER if status is VERFUEGEN', () => {
+            expect(navController.getPreviousButtonName()).toEqual('ZURÜCK');
+        });
         it('returns ZURUECK_ONLY_UPPER if dvSave does not exist', () => {
+            isStatusVerfuegen = false;
             navController.dvSave = undefined;
             expect(navController.getPreviousButtonName()).toEqual('ZURÜCK');
         });
@@ -116,13 +131,25 @@ describe('dvNavigation', function () {
         });
         it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS required', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
             navController.dvSubStep = 1;
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationStart');
         });
+        it('moves to gesuch.dokumente when coming from ERWERBSPENSUM substep 1 and disabled', () => {
+            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(false);
+            navController.dvSubStep = 1;
+            callNextStep();
+            expect($state.go).toHaveBeenCalledWith('gesuch.dokumente');
+        });
         it('moves to gesuch.finanzielleSituationStart when coming from ERWERBSPENSUM substep 1 and 2GS not required', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.ERWERBSPENSUM);
+            spyOn(wizardStepManager, 'isNextStepBesucht').and.returnValue(true);
+            spyOn(wizardStepManager, 'isNextStepEnabled').and.returnValue(true);
             navController.dvSubStep = 1;
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
             callNextStep();
@@ -189,7 +216,10 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
             navController.dvSubStep = 3;
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+            expect($state.go).toHaveBeenCalledWith('gesuch.einkommensverschlechterung', {
+                gesuchstellerNumber: '1',
+                basisjahrPlus: '1'
+            });
         });
         it('moves to gesuch.verfuegen when coming from DOKUMENTE', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.DOKUMENTE);

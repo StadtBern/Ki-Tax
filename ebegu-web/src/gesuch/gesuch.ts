@@ -5,15 +5,20 @@ import DateUtil from '../utils/DateUtil';
 import WizardStepManager from './service/wizardStepManager';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
+import EbeguUtil from '../utils/EbeguUtil';
+import {TSAntragStatus} from '../models/enums/TSAntragStatus';
+import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
-
-    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', '$scope', 'WizardStepManager'];
+    static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
+                                'AntragStatusHistoryRS', 'AuthServiceRS'];
     /* @ngInject */
-    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, $scope: any,
-                wizardStepManager: WizardStepManager) {
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil, private antragStatusHistoryRS: AntragStatusHistoryRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch());
     }
 
     showFinanzsituationStart(): boolean {
@@ -66,4 +71,22 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     public isElementActive(stepName: TSWizardStepName): boolean {
         return this.wizardStepManager.getCurrentStepName() === stepName;
     }
+
+    /**
+     * Uebersetzt den Status des Gesuchs und gibt ihn zurueck. Sollte das Gesuch noch keinen Status haben IN_BEARBEITUNG_JA
+     * wird zurueckgegeben
+     * @returns {string}
+     */
+    public getGesuchStatusTranslation(): string {
+        let toTranslate: TSAntragStatus = TSAntragStatus.IN_BEARBEITUNG_JA;
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().status) {
+            toTranslate = this.gesuchModelManager.calculateNewStatus(this.gesuchModelManager.getGesuch().status);
+        }
+        return this.ebeguUtil.translateString(TSAntragStatus[toTranslate]);
+    }
+
+    public getUserFullname(): string {
+        return this.antragStatusHistoryRS.getUserFullname();
+    }
+
 }

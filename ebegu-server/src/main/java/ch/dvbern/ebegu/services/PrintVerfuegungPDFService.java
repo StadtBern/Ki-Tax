@@ -1,9 +1,12 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.List;
 
 /*
@@ -20,12 +23,23 @@ import java.util.List;
 public interface PrintVerfuegungPDFService {
 
 	/**
-	 * Bereitet die Verfuegungsdokumente auf
+	 * Bereitet die Verfuegungsdokumente auf. Ein Dokument fuer alle Betreuungen des Gesuchs wird erstellt
 	 *
 	 * @param gesuch das Gesuch
 	 * @return Liste der generierten Verfuegungsdokumente  pro Betreuung
 	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
 	 */
 	@Nonnull
-	List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException;
+	List<byte[]> printVerfuegungen(@Nonnull Gesuch gesuch) throws MergeDocException;
+
+	/**
+	 * Erstellt das Verfuegungsdokument für die eingegebene Betreuung
+	 * @param betreuung
+	 * @return
+	 * @throws MergeDocException
+	 * @throws DocTemplateException
+	 * @throws IOException
+	 */
+	@Nonnull
+	byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException;
 }

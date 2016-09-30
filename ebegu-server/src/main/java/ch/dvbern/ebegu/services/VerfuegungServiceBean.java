@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON;
+import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
 /**
  * Service fuer FinanzielleSituation
@@ -46,6 +47,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private MandantService mandantService;
+
+	@Inject
+	private ApplicationPropertyService applicationPropertyService;
 
 
 	@Nonnull
@@ -100,7 +104,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Set<EbeguParameterKey> keysToLoad = ruleConfigurator.getRequiredParametersForMandant(mandant);
 		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = loadRuleParameters(mandant, gesuchsperiode, keysToLoad);
 		List<Rule> rules = ruleConfigurator.configureRulesForMandant(mandant, ebeguParameter);
-		return new BetreuungsgutscheinEvaluator(rules);
+		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
+		return new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 	}
 
 	/**
@@ -136,10 +141,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
 		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
 		Validate.isTrue(endjahr == startjahr +1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr"+ endjahr +" sein ");
-		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, startjahr);
-		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, endjahr);
-		parameterDTO.setBeitragKantonProTagJahr1((abgeltungJahr1));
-		parameterDTO.setBeitragKantonProTagJahr2((abgeltungJahr2));
+		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
+		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
+		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
+		parameterDTO.setBeitragStadtProTagJahr2((abgeltungJahr2));
 		return parameterDTO;
 	}
 

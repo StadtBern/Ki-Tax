@@ -3,6 +3,9 @@ import {IHttpPromise, IHttpService, IPromise, ILogService} from 'angular';
 import TSGesuch from '../../models/TSGesuch';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
+import TSAntragDTO from '../../models/TSAntragDTO';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -65,6 +68,17 @@ export default class GesuchRS implements IEntityRS {
             });
     }
 
+    public searchAntraege(antragSearch: any): IPromise<TSAntragSearchresultDTO> {
+        return this.http.post(this.serviceURL + '/search/', antragSearch, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING antraege REST array object', response.data);
+            return new TSAntragSearchresultDTO(this.ebeguRestUtil.parseAntragDTOs(response.data.antragDTOs), response.data.paginationDTO.totalItemCount);
+        });
+    }
+
     public updateBemerkung(gesuchID: string, bemerkung: string): IHttpPromise<any> {
         return this.http.put(this.serviceURL + '/bemerkung/' + encodeURIComponent(gesuchID), bemerkung, {
             headers: {
@@ -73,4 +87,13 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    public updateGesuchStatus(gesuchID: string, status: TSAntragStatus): IHttpPromise<any> {
+        return this.http.put(this.serviceURL + '/status/' + encodeURIComponent(gesuchID) + '/' + status, null);
+    }
+
+    public getAllAntragDTOForFall(fallId: string): IPromise<TSAntragDTO[]> {
+        return this.http.get(this.serviceURL + '/fall/' + encodeURIComponent(fallId)).then((response: any) => {
+            return this.ebeguRestUtil.parseAntragDTOs(response.data);
+        });
+    }
 }

@@ -3,19 +3,13 @@ package ch.dvbern.ebegu.util;
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.enums.Kinderabzug;
-import ch.dvbern.ebegu.services.EbeguParameterService;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Ein Rechner mit den ganzen Operationen fuer Finanziellesituation
@@ -24,11 +18,6 @@ import java.util.Optional;
 @Dependent
 public class FinanzielleSituationRechner {
 
-	private BigDecimal abzugFamiliengroesse3;
-	private BigDecimal abzugFamiliengroesse4;
-	private BigDecimal abzugFamiliengroesse5;
-	private BigDecimal abzugFamiliengroesse6;
-
 	/**
 	 * Konstruktor, welcher einen Rechner erstellt, der die Paramter aus der DB liest
 	 */
@@ -36,108 +25,10 @@ public class FinanzielleSituationRechner {
 
 	}
 
-	/**
-	 * Konstruktor, welcher die Parameter miterhält. Dieser kann in JUnit Tests verwendet werden
-	 */
-	public FinanzielleSituationRechner(BigDecimal abzugFamiliengroesse3, BigDecimal abzugFamiliengroesse4, BigDecimal abzugFamiliengroesse5, BigDecimal abzugFamiliengroesse6) {
-		this.abzugFamiliengroesse3 = abzugFamiliengroesse3;
-		this.abzugFamiliengroesse4 = abzugFamiliengroesse4;
-		this.abzugFamiliengroesse5 = abzugFamiliengroesse5;
-		this.abzugFamiliengroesse6 = abzugFamiliengroesse6;
-	}
-
-	@Inject //wenn die Parameter nicht direkt gesetzt wurden werden sie per service geladen
-	private EbeguParameterService ebeguParameterService;
-
-	/**
-	 * Die Familiengroesse wird folgendermassen kalkuliert:
-	 * Familiengrösse = Gesuchsteller1 + Gesuchsteller2 (falls vorhanden) + Faktor Steuerabzug pro Kind (0, 0.5, oder 1)
-	 * <p>
-	 * Der Faktor wird gemaess Wert des Felds kinderabzug von Kind berechnet:
-	 * KEIN_ABZUG = 0
-	 * HALBER_ABZUG = 0.5
-	 * GANZER_ABZUG = 1
-	 * KEINE_STEUERERKLAERUNG = 1
-	 * <p>
-	 * Nur die Kinder die nach dem uebergebenen Datum geboren sind werden mitberechnet
-	 * <p>
-	 * 8tung: Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhältnisse berücksichtigt
-	 * (nicht Stand 31.12. des Vorjahres)!
-	 *
-	 * @param gesuch das Gesuch aus welchem die Daten geholt werden
-	 * @param date   das Datum fuer das die familiengroesse kalkuliert werden muss oder null für Einkommensverschlechterung
-	 * @return die familiengroesse als double
-	 */
-	public double calculateFamiliengroesse(Gesuch gesuch, @Nullable LocalDate date) {
-		double familiengroesse = 0;
-		if (gesuch != null) {
-			if (gesuch.getGesuchsteller1() != null) {
-				familiengroesse++;
-			}
-			if (gesuch.getGesuchsteller2() != null) {
-				familiengroesse++;
-			}
-			for (KindContainer kindContainer : gesuch.getKindContainers()) {
-				if (kindContainer.getKindJA() != null && (date == null || kindContainer.getKindJA().getGeburtsdatum().isBefore(date))) {
-					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {
-						familiengroesse += 0.5;
-					}
-					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.GANZER_ABZUG || kindContainer.getKindJA().getKinderabzug() == Kinderabzug.KEINE_STEUERERKLAERUNG) {
-						familiengroesse++;
-					}
-				}
-			}
-		}
-		return familiengroesse;
-	}
-
-	public BigDecimal calculateAbzugAufgrundFamiliengroesse(LocalDate stichtag, double familiengroesse) {
-		BigDecimal abzugProPerson = BigDecimal.ZERO;
-		Optional<EbeguParameter> abzugFromServer = Optional.empty();
-		if (familiengroesse < 3) {
-			// Unter 3 Personen gibt es keinen Abzug!
-			abzugFromServer = Optional.empty();
-		} else if (familiengroesse < 4) {
-			if (abzugFamiliengroesse3 != null) {
-				abzugProPerson = abzugFamiliengroesse3;
-			} else {
-				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_3, stichtag);
-			}
-		} else if (familiengroesse < 5) {
-			if (abzugFamiliengroesse4 != null) {
-				abzugProPerson = abzugFamiliengroesse4;
-			} else {
-				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_4, stichtag);
-			}
-		} else if (familiengroesse < 6) {
-			if (abzugFamiliengroesse5 != null) {
-				abzugProPerson = abzugFamiliengroesse5;
-			} else {
-				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5, stichtag);
-			}
-		} else if (familiengroesse >= 6) {
-			if (abzugFamiliengroesse6 != null) {
-				abzugProPerson = abzugFamiliengroesse6;
-			} else {
-				abzugFromServer = ebeguParameterService.getEbeguParameterByKeyAndDate(EbeguParameterKey.PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6, stichtag);
-			}
-		}
-		if (abzugFromServer.isPresent()) {
-			abzugProPerson = abzugFromServer.get().getValueAsBigDecimal();
-		}
-		// Ein Bigdecimal darf nicht aus einem double erzeugt werden, da das Ergebnis nicht genau die gegebene Nummer waere
-		// deswegen muss man hier familiengroesse als String uebergeben. Sonst bekommen wir PMD rule AvoidDecimalLiteralsInBigDecimalConstructor
-		return new BigDecimal(String.valueOf(familiengroesse)).multiply(abzugProPerson);
-	}
-
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultateFinanzielleSituation(@Nonnull Gesuch gesuch) {
 
-		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().calculateEndOfPreviousYear());
-		BigDecimal abzugAufgrundFamiliengroesse = gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO :
-			calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
-
-		final FinanzielleSituationResultateDTO finSitResultDTO = new FinanzielleSituationResultateDTO(familiengroesse, abzugAufgrundFamiliengroesse);
+		final FinanzielleSituationResultateDTO finSitResultDTO = new FinanzielleSituationResultateDTO();
 		setFinanzielleSituationParameters(gesuch, finSitResultDTO);
 
 		return finSitResultDTO;
@@ -146,6 +37,7 @@ public class FinanzielleSituationRechner {
 	/**
 	 * Diese Methode wird momentan im Print gebraucht um die Finanzielle Situation zu berechnen. Der Abzug aufgrund Familiengroesse wird
 	 * hier auf 0 gesetzt
+	 *
 	 * @param gesuch
 	 * @param basisJahrPlus
 	 * @return
@@ -154,13 +46,8 @@ public class FinanzielleSituationRechner {
 	@Nonnull
 	public FinanzielleSituationResultateDTO calculateResultateEinkommensverschlechterung(@Nonnull Gesuch gesuch, int basisJahrPlus) {
 		Validate.notNull(gesuch.getEinkommensverschlechterungInfo());
-		//Bei der Berechnung der Einkommensverschlechterung werden die aktuellen Familienverhaeltnisse beruecksichtigt
-		// (nicht Stand 31.12. des Vorjahres)!
-		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : calculateFamiliengroesse(gesuch, null);
-		BigDecimal abzugAufgrundFamiliengroesse = gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO :
-			calculateAbzugAufgrundFamiliengroesse(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb(), familiengroesse);
 
-		final FinanzielleSituationResultateDTO einkVerResultDTO = new FinanzielleSituationResultateDTO(familiengroesse, abzugAufgrundFamiliengroesse);
+		final FinanzielleSituationResultateDTO einkVerResultDTO = new FinanzielleSituationResultateDTO();
 		setEinkommensverschlechterungParameters(gesuch, basisJahrPlus, einkVerResultDTO);
 
 		return einkVerResultDTO;
@@ -218,6 +105,7 @@ public class FinanzielleSituationRechner {
 
 	/**
 	 * Berechnet das FinazDaten DTO fuer die Finanzielle Situation
+	 *
 	 * @param gesuch das Gesuch dessen finazDatenDTO gesetzt werden soll
 	 */
 	public void calculateFinanzDaten(@Nonnull Gesuch gesuch) {
@@ -225,7 +113,7 @@ public class FinanzielleSituationRechner {
 
 		// Finanzielle Situation berechnen
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = calculateResultateFinanzielleSituation(gesuch);
-		finanzDatenDTO.setMassgebendesEinkommenBasisjahr(finanzielleSituationResultateDTO.getMassgebendesEinkommen());
+		finanzDatenDTO.setMassgebendesEinkBjVorAbzFamGr(finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr());
 		finanzDatenDTO.setDatumVonBasisjahr(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		//Berechnung wird nur ausgefuehrt wenn Daten vorhanden, wenn es keine gibt machen wir nichts
 		if (gesuch.getEinkommensverschlechterungInfo() != null && gesuch.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
@@ -233,20 +121,20 @@ public class FinanzielleSituationRechner {
 			FinanzielleSituationResultateDTO resultateEKV1 = calculateResultateEinkommensverschlechterung(gesuch, 1);
 			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus1()) {
 				// In der EKV 1 vergleichen wir immer mit dem Basisjahr
-				BigDecimal massgebendesEinkommenVorjahr = finanzielleSituationResultateDTO.getMassgebendesEinkommen();
-				BigDecimal massgebendesEinkommenJahr = resultateEKV1.getMassgebendesEinkommen();
+				BigDecimal massgebendesEinkommenVorjahr = finanzielleSituationResultateDTO.getMassgebendesEinkVorAbzFamGr();
+				BigDecimal massgebendesEinkommenJahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
 				if (acceptEKV(massgebendesEinkommenVorjahr, massgebendesEinkommenJahr)) {
-					finanzDatenDTO.setMassgebendesEinkommenBasisjahrPlus1(resultateEKV1.getMassgebendesEinkommen());
+					finanzDatenDTO.setMassgebendesEinkBjP1VorAbzFamGr(resultateEKV1.getMassgebendesEinkVorAbzFamGr());
 					finanzDatenDTO.setDatumVonBasisjahrPlus1(einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus1());
 				}
 			}
 			if (gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2() != null && gesuch.getEinkommensverschlechterungInfo().getEkvFuerBasisJahrPlus2()) {
 				FinanzielleSituationResultateDTO resultateEKV2 = calculateResultateEinkommensverschlechterung(gesuch, 2);
 				// In der EKV 2 vergleichen wir immer mit dem EKV 1, egal ob diese akzeptiert war
-				BigDecimal massgebendesEinkommenVorjahr = resultateEKV1.getMassgebendesEinkommen();
-				BigDecimal massgebendesEinkommenJahr = resultateEKV2.getMassgebendesEinkommen();
+				BigDecimal massgebendesEinkommenVorjahr = resultateEKV1.getMassgebendesEinkVorAbzFamGr();
+				BigDecimal massgebendesEinkommenJahr = resultateEKV2.getMassgebendesEinkVorAbzFamGr();
 				if (acceptEKV(massgebendesEinkommenVorjahr, massgebendesEinkommenJahr)) {
-					finanzDatenDTO.setMassgebendesEinkommenBasisjahrPlus2(resultateEKV2.getMassgebendesEinkommen());
+					finanzDatenDTO.setMassgebendesEinkBjP2VorAbzFamGr(resultateEKV2.getMassgebendesEinkVorAbzFamGr());
 					finanzDatenDTO.setDatumVonBasisjahrPlus2(einkommensverschlechterungInfo.getStichtagFuerBasisJahrPlus2());
 				}
 			}
@@ -254,6 +142,9 @@ public class FinanzielleSituationRechner {
 		gesuch.setFinanzDatenDTO(finanzDatenDTO);
 	}
 
+	/**
+	 * @return Berechnet ob die Einkommensverschlechterung mehr als 20 % gegenueber dem vorjahr betraegt, gibt true zurueckk wen ja; false sonst
+	 */
 	private boolean acceptEKV(BigDecimal massgebendesEinkommenVorjahr, BigDecimal massgebendesEinkommenJahr) {
 		BigDecimal minimumEKV = MathUtil.EINE_NACHKOMMASTELLE.from(0.8);
 		// EKV gewährt
@@ -273,10 +164,9 @@ public class FinanzielleSituationRechner {
 		finSitResultDTO.setAbzuegeBeiderGesuchsteller(calcAbzuege(finanzielleSituationGS1, finanzielleSituationGS2));
 
 		finSitResultDTO.setAnrechenbaresEinkommen(add(finSitResultDTO.getEinkommenBeiderGesuchsteller(), finSitResultDTO.getNettovermoegenFuenfProzent()));
-		finSitResultDTO.setTotalAbzuege(add(finSitResultDTO.getAbzuegeBeiderGesuchsteller(), finSitResultDTO.getAbzugAufgrundFamiliengroesse()));
-		finSitResultDTO.setMassgebendesEinkommen(
+		finSitResultDTO.setMassgebendesEinkVorAbzFamGr(
 			MathUtil.positiveNonNullAndRound(
-				subtract(finSitResultDTO.getAnrechenbaresEinkommen(), finSitResultDTO.getTotalAbzuege())));
+				subtract(finSitResultDTO.getAnrechenbaresEinkommen(), finSitResultDTO.getAbzuegeBeiderGesuchsteller())));
 	}
 
 	/**
@@ -322,8 +212,8 @@ public class FinanzielleSituationRechner {
 	 */
 	@Nullable
 	private static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable final BigDecimal geschaeftsgewinnBasisjahr,
-														@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1,
-														@Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
+															   @Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus1,
+															   @Nullable final BigDecimal geschaeftsgewinnBasisjahrMinus2) {
 
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal anzahlJahre = BigDecimal.ZERO;
@@ -353,7 +243,7 @@ public class FinanzielleSituationRechner {
 	 * Berechnet 5 prozent des Nettovermoegens von GS1 und GS2. Der Gesamtwert kann dabei nicht kleiner als 0 sein auch
 	 * wenn ein einzelner Gesuchsteller ein negatives Nettovermoegen hat.
 	 */
-	public static  BigDecimal calcVermoegen5Prozent(@Nullable AbstractFinanzielleSituation abstractFinanzielleSituation1, @Nullable AbstractFinanzielleSituation abstractFinanzielleSituation2) {
+	public static BigDecimal calcVermoegen5Prozent(@Nullable AbstractFinanzielleSituation abstractFinanzielleSituation1, @Nullable AbstractFinanzielleSituation abstractFinanzielleSituation2) {
 		final BigDecimal totalBruttovermoegen = add(abstractFinanzielleSituation1 != null ? abstractFinanzielleSituation1.getBruttovermoegen() : BigDecimal.ZERO,
 			abstractFinanzielleSituation2 != null ? abstractFinanzielleSituation2.getBruttovermoegen() : BigDecimal.ZERO);
 
@@ -365,7 +255,7 @@ public class FinanzielleSituationRechner {
 			total = BigDecimal.ZERO;
 		} //total vermoegen + schulden muss gruesser null sein, individuell pro gs kann es aber negativ sein
 		total = percent(total, 5);
-		return total;
+		return MathUtil.GANZZAHL.from(total);
 	}
 
 	protected static BigDecimal add(BigDecimal value1, BigDecimal value2) {

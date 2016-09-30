@@ -2,12 +2,9 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxPendenzInstitution;
-import ch.dvbern.ebegu.api.dtos.JaxPendenzJA;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import io.swagger.annotations.Api;
@@ -20,7 +17,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * REST Resource fuer Pendenzen
@@ -39,36 +38,23 @@ public class PendenzResource {
 	@Inject
 	private BetreuungService betreuungService;
 
+
 	/**
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck. Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
-     */
+	 */
 	@Nonnull
 	@GET
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<JaxPendenzJA> getAllPendenzenJA() {
-		//todo team Wenn das Feld Status in AbstractAntragEntity implementiert wird, muessen wir hier nur die Antraege zurueckgeben, die noch nicht bearbeitet wurden
-		Collection<Gesuch> gesucheList = gesuchService.getAllGesuche();
+	public List<JaxAntragDTO> getAllPendenzenJA() {
+		Collection<Gesuch> gesucheList = gesuchService.getAllActiveGesuche();
 
-		List<JaxPendenzJA> pendenzenList = new ArrayList<>();
-		for (Gesuch gesuch : gesucheList) {
-			if (gesuch.getFall() != null) {
-				JaxPendenzJA pendenz = new JaxPendenzJA();
-				pendenz.setAntragId(gesuch.getId());
-				pendenz.setFallNummer(gesuch.getFall().getFallNummer());
-				pendenz.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
-				pendenz.setEingangsdatum(gesuch.getEingangsdatum());
-				pendenz.setAngebote(createAngeboteList(gesuch.getKindContainers()));
-				pendenz.setAntragTyp(AntragTyp.GESUCH); // todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
-				pendenz.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
-				pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(gesuch.getGesuchsperiode()));
-				if (gesuch.getFall().getVerantwortlicher() != null) {
-					pendenz.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
-				}
-
-				pendenzenList.add(pendenz);
-			}
-		}
+		List<JaxAntragDTO> pendenzenList = new ArrayList<>();
+		// todo team fuer Mutationen musst dieser wert AntragTyp.MUTATION sein
+		gesucheList.stream().filter(gesuch -> gesuch.getFall() != null).forEach(gesuch -> {
+			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+			pendenzenList.add(antragDTO);
+		});
 		return pendenzenList;
 	}
 
@@ -91,7 +77,7 @@ public class PendenzResource {
 			pendenz.setGeburtsdatum(betreuung.getKind().getKindJA().getGeburtsdatum());
 			pendenz.setEingangsdatum(betreuung.extractGesuch().getEingangsdatum());
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
-			pendenz.setBetreuungsangebotTyp(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
+			pendenz.setBetreuungsangebotTyp(betreuung.getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
 			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
 			pendenzenList.add(pendenz);
@@ -99,33 +85,5 @@ public class PendenzResource {
 		return pendenzenList;
 	}
 
-	/**
-	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
-	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-     */
-	private Set<String> createInstitutionenList(Set<KindContainer> kindContainers) {
-		Set<String> resultSet = new HashSet<>();
-		kindContainers.forEach(kindContainer -> {
-			kindContainer.getBetreuungen().forEach(betreuung -> {
-				if (betreuung.getInstitutionStammdaten() != null && betreuung.getInstitutionStammdaten().getInstitution() != null) {
-					resultSet.add(betreuung.getInstitutionStammdaten().getInstitution().getName());
-				}
-			});
-		});
-		return resultSet;
-	}
 
-	/**
-	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
-	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
-     */
-	private Set<BetreuungsangebotTyp> createAngeboteList(Set<KindContainer> kindContainers) {
-		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
-		kindContainers.forEach(kindContainer -> {
-			kindContainer.getBetreuungen().forEach(betreuung -> {
-				resultSet.add(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
-			});
-		});
-		return resultSet;
-	}
 }

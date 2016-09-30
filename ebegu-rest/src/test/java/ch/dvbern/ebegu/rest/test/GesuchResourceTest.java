@@ -2,9 +2,11 @@ package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.resource.GesuchResource;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -13,17 +15,16 @@ import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.util.Iterator;
 
 /**
@@ -34,10 +35,7 @@ import java.util.Iterator;
 @Transactional(TransactionMode.DISABLED)
 public class GesuchResourceTest extends AbstractEbeguRestTest {
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
+
 
 	@Inject
 	private GesuchResource gesuchResource;
@@ -132,6 +130,20 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(0, gesuchForInstitution.getKindContainers().size());
 	}
 
+	@Test
+	public void testUpdateStatus() throws EbeguException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		persistUser(UserRole.GESUCHSTELLER, null,
+			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
+			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
+
+		Response response = gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.ERSTE_MAHNUNG);
+		final JaxGesuch persistedGesuch = gesuchResource.findGesuch(new JaxId(gesuch.getId()));
+
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals(AntragStatusDTO.ERSTE_MAHNUNG, persistedGesuch.getStatus());
+	}
+
 
 	// HELP METHODS
 
@@ -146,9 +158,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 	}
 
 	private void changeStatusToWarten(KindContainer kindContainer) {
-		final Iterator<Betreuung> iterator = kindContainer.getBetreuungen().iterator();
-		while (iterator.hasNext()) {
-			Betreuung betreuung = iterator.next();
+		for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 			betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
 			persistence.merge(betreuung);
 		}

@@ -11,6 +11,7 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import DateUtil from '../../../utils/DateUtil';
+import WizardStepManager from '../../service/wizardStepManager';
 import IFormController = angular.IFormController;
 
 describe('betreuungView', function () {
@@ -24,6 +25,7 @@ describe('betreuungView', function () {
     let $rootScope:  any;
     let $httpBackend: IHttpBackendService;
     let authServiceRS: AuthServiceRS;
+    let wizardStepManager: WizardStepManager;
 
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
@@ -40,8 +42,9 @@ describe('betreuungView', function () {
         $rootScope = $injector.get('$rootScope');
         authServiceRS = $injector.get('AuthServiceRS');
         spyOn(authServiceRS, 'isRole').and.returnValue(true);
+        wizardStepManager = $injector.get('WizardStepManager');
         betreuungView = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, $injector.get('CONSTANTS'),
-            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, null);
+            $rootScope, $injector.get('BerechnungsManager'), $injector.get('ErrorService'), authServiceRS, wizardStepManager);
     }));
 
     describe('Public API', function () {
@@ -54,7 +57,7 @@ describe('betreuungView', function () {
         describe('Object creation', () => {
             it('create an empty list of Betreuungspensen for a role different than Institution', () => {
                 let myBetreuungView: BetreuungViewController = new BetreuungViewController($state, gesuchModelManager, ebeguUtil, null,
-                    $rootScope, null, null, authServiceRS, null);
+                    $rootScope, null, null, authServiceRS, wizardStepManager);
                 expect(myBetreuungView.getBetreuungspensen()).toBeDefined();
                 expect(myBetreuungView.getBetreuungspensen().length).toEqual(1);
             });

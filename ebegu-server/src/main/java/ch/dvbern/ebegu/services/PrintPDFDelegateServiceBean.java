@@ -47,7 +47,7 @@ public class PrintPDFDelegateServiceBean extends AbstractBaseService implements 
 	@Override
 	public List<byte[]> printVerfuegung(@Nonnull Gesuch gesuch) throws MergeDocException {
 
-		return verfuegungsGenerierungPDFService.printVerfuegung(gesuch);
+		return verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 	}
 
 	@Nonnull

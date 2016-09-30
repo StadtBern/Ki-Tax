@@ -53,6 +53,21 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 
+		// Finanzielle Situation
+		FinanzielleSituationContainer finanzielleSituationGS1 = createFinanzielleSituationContainer();
+		finanzielleSituationGS1.setGesuchsteller(gesuchsteller1);
+		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationGS1);
+
 		return gesuch;
+	}
+
+	@Override
+	public String getNachname() {
+		return FAMILIENNAME;
+	}
+
+	@Override
+	public String getVorname() {
+		return "Nora";
 	}
 }

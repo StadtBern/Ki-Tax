@@ -15,6 +15,12 @@ import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import WizardStepManager from './wizardStepManager';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSKind from '../../models/TSKind';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSVerfuegung from '../../models/TSVerfuegung';
+import VerfuegungRS from '../../core/service/verfuegungRS.rest';
+import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 describe('gesuchModelManager', function () {
 
@@ -28,6 +34,8 @@ describe('gesuchModelManager', function () {
     let $q: IQService;
     let authServiceRS: AuthServiceRS;
     let wizardStepManager: WizardStepManager;
+    let verfuegungRS: VerfuegungRS;
+    let antragStatusHistoryRS: AntragStatusHistoryRS;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -42,6 +50,8 @@ describe('gesuchModelManager', function () {
         $q = $injector.get('$q');
         authServiceRS = $injector.get('AuthServiceRS');
         wizardStepManager = $injector.get('WizardStepManager');
+        verfuegungRS = $injector.get('VerfuegungRS');
+        antragStatusHistoryRS = $injector.get('AntragStatusHistoryRS');
     }));
 
     describe('Public API', function () {
@@ -228,6 +238,86 @@ describe('gesuchModelManager', function () {
                 kind.kindJA.familienErgaenzendeBetreuung = true;
                 spyOn(gesuchModelManager, 'getKinderList').and.returnValue([kind]);
                 expect(gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()).toBe(true);
+            });
+        });
+        describe('saveGesuchStatus', function () {
+            it('should update the status of the Gesuch im Server und Client', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
+                spyOn(antragStatusHistoryRS, 'findLastStatusChange').and.returnValue($q.when({}));
+
+                gesuchModelManager.saveGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
+
+                scope.$apply();
+                expect(gesuchModelManager.getGesuch().status).toEqual(TSAntragStatus.ERSTE_MAHNUNG);
+            });
+        });
+        describe('saveVerfuegung', function () {
+            it('should save the current Verfuegung und set the status of the Betreuung to VERFUEGT', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                gesuchModelManager.initGesuch(false);
+                createKindContainer();
+                gesuchModelManager.createBetreuung();
+                gesuchModelManager.getBetreuungToWorkWith().id = '2afc9d9a-957e-4550-9a22-97624a000feb';
+                let verfuegung: TSVerfuegung = new TSVerfuegung();
+                spyOn(verfuegungRS, 'saveVerfuegung').and.returnValue($q.when(verfuegung));
+
+                gesuchModelManager.saveVerfuegung();
+                scope.$apply();
+
+                expect(gesuchModelManager.getVerfuegenToWorkWith()).toBe(verfuegung);
+                expect(gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus).toEqual(TSBetreuungsstatus.VERFUEGT);
+            });
+        });
+        describe('calculateNewStatus', function () {
+            it('should be GEPRUEFT if there is no betreuung', function() {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+                    return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
+                });
+                spyOn(gesuchModelManager, 'isThereAnyBetreuung').and.returnValue(false);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.GEPRUEFT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.GEPRUEFT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.GEPRUEFT);
+            });
+            it('should be PLATZBESTAETIGUNG_ABGEWIESEN if there are betreuungen and status of Betreuung is NOK', function() {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+                    return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.NOK;
+                });
+                spyOn(gesuchModelManager, 'isThereAnyBetreuung').and.returnValue(true);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN);
+            });
+            it('should be PLATZBESTAETIGUNG_WARTEN if the status of Betreuung is PLATZBESTAETIGUNG', function() {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+                    return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.PLATZBESTAETIGUNG;
+                });
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN);
+            });
+            it('should be GEPRUEFT if the status of Betreuung is PLATZBESTAETIGUNG', function() {
+                spyOn(wizardStepManager, 'hasStepGivenStatus').and.callFake(function(stepName: TSWizardStepName, status: TSWizardStepStatus) {
+                    return stepName === TSWizardStepName.BETREUUNG && status === TSWizardStepStatus.OK;
+                });
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.GEPRUEFT)).toEqual(TSAntragStatus.GEPRUEFT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_WARTEN)).toEqual(TSAntragStatus.GEPRUEFT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN)).toEqual(TSAntragStatus.GEPRUEFT);
+            });
+            it('returns the same TSAntragStatus for all others', function() {
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ERSTE_MAHNUNG)).toEqual(TSAntragStatus.ERSTE_MAHNUNG);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.FREIGEGEBEN)).toEqual(TSAntragStatus.FREIGEGEBEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.IN_BEARBEITUNG_GS)).toEqual(TSAntragStatus.IN_BEARBEITUNG_GS);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.IN_BEARBEITUNG_JA)).toEqual(TSAntragStatus.IN_BEARBEITUNG_JA);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.FREIGABEQUITTUNG)).toEqual(TSAntragStatus.FREIGABEQUITTUNG);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.NUR_SCHULAMT)).toEqual(TSAntragStatus.NUR_SCHULAMT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGEN)).toEqual(TSAntragStatus.VERFUEGEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.VERFUEGT)).toEqual(TSAntragStatus.VERFUEGT);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZURUECKGEWIESEN)).toEqual(TSAntragStatus.ZURUECKGEWIESEN);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);
+                expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
             });
         });
     });

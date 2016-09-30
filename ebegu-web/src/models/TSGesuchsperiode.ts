@@ -18,4 +18,12 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
     set active(value: boolean) {
         this._active = value;
     }
+
+    get gesuchsperiodeString() {
+        if (this.gueltigkeit && this.gueltigkeit.gueltigAb && this.gueltigkeit.gueltigBis) {
+            return this.gueltigkeit.gueltigAb.year() + '/'
+                + this.gueltigkeit.gueltigBis.year();
+        }
+        return undefined;
+    }
 }

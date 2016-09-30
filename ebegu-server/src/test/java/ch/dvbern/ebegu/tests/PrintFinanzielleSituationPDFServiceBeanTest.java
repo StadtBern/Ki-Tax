@@ -9,21 +9,16 @@ import ch.dvbern.ebegu.services.PrintFinanzielleSituationPDFService;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +40,8 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 	@Inject
 	private GesuchService gesuchService;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
 
-		return createTestArchive();
-	}
+
 
 	@Before
 	public void setUpCalcuator() {
@@ -75,8 +67,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		File file = writeToTempDir(bytes, "finanzielleSituation1G.pdf");
-//		 openPDF(file);
+		writeToTempDir(bytes, "finanzielleSituation1G.pdf");
 	}
 
 	/**
@@ -100,16 +91,6 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		File file = writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
-//		openPDF(file);
-	}
-
-	private void openPDF(File file) {
-
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException ex) {
-			// no application registered for PDFs
-		}
+		writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
 	}
 }

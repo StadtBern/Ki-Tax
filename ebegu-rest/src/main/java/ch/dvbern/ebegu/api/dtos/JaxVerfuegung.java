@@ -28,12 +28,10 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 	@Nullable
 	private String manuelleBemerkungen;
 
-//	@NotNull
-//	private Betreuung betreuung;
-
-
 	@Nonnull
 	private List<JaxVerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
+
+
 
 	@Nullable
 	public String getGeneratedBemerkungen() {

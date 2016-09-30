@@ -2,7 +2,10 @@ package ch.dvbern.ebegu.api.converter;
 
 import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
@@ -70,6 +73,8 @@ public class JaxBConverter {
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
+	@Inject
+	private AntragStatusConverter antragStatusConverter;
 
 	@Inject
 	private VerfuegungService verfuegungService;
@@ -205,6 +210,10 @@ public class JaxBConverter {
 		}
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
+		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
+		if (antragJAXP.getTyp() != null) {
+			antrag.setTyp(antragJAXP.getTyp());
+		}
 	}
 
 	private void convertAbstractAntragFieldsToJAX(final AbstractAntragEntity antrag, final JaxAbstractAntragDTO antragJAXP) {
@@ -214,13 +223,15 @@ public class JaxBConverter {
 			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
 		}
 		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
+		antragJAXP.setStatus(antragStatusConverter.convertStatusToDTO(antrag, antrag.getStatus()));
+		antragJAXP.setTyp(antrag.getTyp());
 	}
 
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		final JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
 		convertAbstractFieldsToJAX(applicationProperty, jaxProperty);
-		jaxProperty.setName(applicationProperty.getName());
+		jaxProperty.setName(applicationProperty.getName().toString());
 		jaxProperty.setValue(applicationProperty.getValue());
 		return jaxProperty;
 	}
@@ -230,7 +241,7 @@ public class JaxBConverter {
 		Validate.notNull(applicationProperty);
 		Validate.notNull(jaxAP);
 		convertAbstractFieldsToEntity(jaxAP, applicationProperty);
-		applicationProperty.setName(jaxAP.getName());
+		applicationProperty.setName(Enum.valueOf(ApplicationPropertyKey.class, jaxAP.getName()));
 		applicationProperty.setValue(jaxAP.getValue());
 
 		return applicationProperty;
@@ -756,6 +767,7 @@ public class JaxBConverter {
 		jaxKind.setKinderabzug(persistedKind.getKinderabzug());
 		jaxKind.setFamilienErgaenzendeBetreuung(persistedKind.getFamilienErgaenzendeBetreuung());
 		jaxKind.setMutterspracheDeutsch(persistedKind.getMutterspracheDeutsch());
+		jaxKind.setEinschulung(persistedKind.getEinschulung());
 		jaxKind.setPensumFachstelle(pensumFachstelleToJax(persistedKind.getPensumFachstelle()));
 		return jaxKind;
 	}
@@ -823,6 +835,7 @@ public class JaxBConverter {
 		kind.setKinderabzug(kindJAXP.getKinderabzug());
 		kind.setFamilienErgaenzendeBetreuung(kindJAXP.getFamilienErgaenzendeBetreuung());
 		kind.setMutterspracheDeutsch(kindJAXP.getMutterspracheDeutsch());
+		kind.setEinschulung(kindJAXP.getEinschulung());
 
 		PensumFachstelle updtPensumFachstelle = null;
 		if (kindJAXP.getPensumFachstelle() != null) {
@@ -1268,7 +1281,7 @@ public class JaxBConverter {
 	}
 
 	private Set<JaxBetreuung> betreuungListToJax(final Set<Betreuung> betreuungen) {
-		final Set<JaxBetreuung> jaxBetreuungen = new HashSet<>();
+		final Set<JaxBetreuung> jaxBetreuungen = new TreeSet<>();
 		if (betreuungen != null) {
 			jaxBetreuungen.addAll(betreuungen.stream().map(this::betreuungToJAX).collect(Collectors.toList()));
 		}
@@ -1300,7 +1313,7 @@ public class JaxBConverter {
 	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
-	private JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
+	public JaxVerfuegung verfuegungToJax(Verfuegung verfuegung) {
 		if (verfuegung != null) {
 			final JaxVerfuegung jaxVerfuegung = new JaxVerfuegung();
 			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
@@ -1326,7 +1339,7 @@ public class JaxBConverter {
 	 * @param verfuegung
 	 * @return dto with the values of the verfuegung
 	 */
-	private Verfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
+	public Verfuegung verfuegungToEntity(final JaxVerfuegung jaxVerfuegung, final Verfuegung verfuegung) {
 		Validate.notNull(jaxVerfuegung);
 		Validate.notNull(verfuegung);
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
@@ -1378,9 +1391,8 @@ public class JaxBConverter {
 			jaxZeitabschn.setVollkosten(zeitabschnitt.getVollkosten());
 			jaxZeitabschn.setElternbeitrag(zeitabschnitt.getElternbeitrag());
 			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
-			jaxZeitabschn.setMassgebendesEinkommen(zeitabschnitt.getMassgebendesEinkommen());
+			jaxZeitabschn.setMassgebendesEinkommenVorAbzugFamgr(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
-			jaxZeitabschn.setStatus(zeitabschnitt.getStatus());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1390,22 +1402,20 @@ public class JaxBConverter {
 																	final VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Validate.notNull(jaxVerfuegungZeitabschnitt);
 		Validate.notNull(verfuegungZeitabschnitt);
-		//Mal auskommentiert da wahrscheinlich von client gar nie etwas gesetzt werden soll
-//		convertAbstractDateRangedFieldsToEntity(jaxZeitabschn, verfuegungZeitabschnitt);
-//		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
-//		verfuegungZeitabschnitt.setErwerbspensumGS1(jaxVerfuegungZeitabschnitt.getErwerbspensumGS1());
-//		verfuegungZeitabschnitt.setErwerbspensumGS2(jaxVerfuegungZeitabschnitt.getErwerbspensumGS2());
-//		verfuegungZeitabschnitt.setBetreuungspensum(jaxVerfuegungZeitabschnitt.getBetreuungspensum());
-//		verfuegungZeitabschnitt.setFachstellenpensum(jaxVerfuegungZeitabschnitt.getFachstellenpensum());
-//		verfuegungZeitabschnitt.setAnspruchspensumRest(jaxVerfuegungZeitabschnitt.getAnspruchspensumRest());
+		convertAbstractDateRangedFieldsToEntity(jaxVerfuegungZeitabschnitt, verfuegungZeitabschnitt);
+		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
+		verfuegungZeitabschnitt.setErwerbspensumGS1(jaxVerfuegungZeitabschnitt.getErwerbspensumGS1());
+		verfuegungZeitabschnitt.setErwerbspensumGS2(jaxVerfuegungZeitabschnitt.getErwerbspensumGS2());
+		verfuegungZeitabschnitt.setBetreuungspensum(jaxVerfuegungZeitabschnitt.getBetreuungspensum());
+		verfuegungZeitabschnitt.setFachstellenpensum(jaxVerfuegungZeitabschnitt.getFachstellenpensum());
+		verfuegungZeitabschnitt.setAnspruchspensumRest(jaxVerfuegungZeitabschnitt.getAnspruchspensumRest());
 //		verfuegungZeitabschnitt.setBgPensum(jaxVerfuegungZeitabschnitt.getBgPensum());
-//		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(jaxVerfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
-//		verfuegungZeitabschnitt.setBetreuungsstunden(jaxVerfuegungZeitabschnitt.getBetreuungsstunden());
-//		verfuegungZeitabschnitt.setVollkosten(jaxVerfuegungZeitabschnitt.getVollkosten());
-//		verfuegungZeitabschnitt.setElternbeitrag(jaxVerfuegungZeitabschnitt.getElternbeitrag());
-//		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
-//		verfuegungZeitabschnitt.setMassgebendesEinkommen(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommen());
-//		verfuegungZeitabschnitt.setStatus(jaxVerfuegungZeitabschnitt.getStatus());
+		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(jaxVerfuegungZeitabschnitt.getAnspruchberechtigtesPensum());
+		verfuegungZeitabschnitt.setBetreuungsstunden(jaxVerfuegungZeitabschnitt.getBetreuungsstunden());
+		verfuegungZeitabschnitt.setVollkosten(jaxVerfuegungZeitabschnitt.getVollkosten());
+		verfuegungZeitabschnitt.setElternbeitrag(jaxVerfuegungZeitabschnitt.getElternbeitrag());
+		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
+		verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzugFamgr());
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
 		return verfuegungZeitabschnitt;
 	}
@@ -1531,9 +1541,7 @@ public class JaxBConverter {
 
 	private JaxDokument dokumentToJax(Dokument dokument) {
 		JaxDokument jaxDokument = convertAbstractFieldsToJAX(dokument, new JaxDokument());
-		jaxDokument.setDokumentName(dokument.getDokumentName());
-		jaxDokument.setDokumentPfad(dokument.getDokumentPfad());
-		jaxDokument.setDokumentSize(dokument.getDokumentSize());
+		convertFileToJax(dokument, jaxDokument);
 		return jaxDokument;
 	}
 
@@ -1590,17 +1598,16 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxDokument, dokument);
 
 		dokument.setDokumentGrund(dokumentGrund);
-		dokument.setDokumentName(jaxDokument.getDokumentName());
-		dokument.setDokumentPfad(jaxDokument.getDokumentPfad());
-		dokument.setDokumentSize(jaxDokument.getDokumentSize());
+		convertFileToEnity(jaxDokument, dokument);
 		return dokument;
 	}
 
 
-	public JaxTempDokument tempDokumentToJAX(TempDokument tempDokument) {
-		JaxTempDokument jaxTempDokument = convertAbstractFieldsToJAX(tempDokument, new JaxTempDokument());
-		jaxTempDokument.setAccessToken(tempDokument.getAccessToken());
-		return jaxTempDokument;
+	public JaxDownloadFile downloadFileToJAX(DownloadFile downloadFile) {
+		JaxDownloadFile jaxDownloadFile = new JaxDownloadFile();
+		convertFileToJax(downloadFile, jaxDownloadFile);
+		jaxDownloadFile.setAccessToken(downloadFile.getAccessToken());
+		return jaxDownloadFile;
 	}
 
 	public JaxWizardStep wizardStepToJAX(WizardStep wizardStep) {
@@ -1620,5 +1627,126 @@ public class JaxBConverter {
 		wizardStep.setWizardStepStatus(jaxWizardStep.getWizardStepStatus());
 		wizardStep.setBemerkungen(jaxWizardStep.getBemerkungen());
 		return wizardStep;
+	}
+
+	public JaxEbeguVorlage ebeguVorlageToJax(EbeguVorlage ebeguVorlage) {
+		JaxEbeguVorlage jaxEbeguVorlage = new JaxEbeguVorlage();
+		convertAbstractDateRangedFieldsToJAX(ebeguVorlage, jaxEbeguVorlage);
+
+		jaxEbeguVorlage.setName(ebeguVorlage.getName());
+		if (ebeguVorlage.getVorlage() != null) {
+			jaxEbeguVorlage.setVorlage(vorlageToJax(ebeguVorlage.getVorlage()));
+		}
+
+		return jaxEbeguVorlage;
+	}
+
+	private JaxVorlage vorlageToJax(Vorlage vorlage) {
+		JaxVorlage jaxVorlage = convertAbstractFieldsToJAX(vorlage, new JaxVorlage());
+		convertFileToJax(vorlage, jaxVorlage);
+		return jaxVorlage;
+	}
+
+	private JaxFile convertFileToJax(File file, JaxFile jaxFile) {
+		jaxFile.setFilename(file.getFilename());
+		jaxFile.setFilepfad(file.getFilepfad());
+		jaxFile.setFilesize(file.getFilesize());
+		return jaxFile;
+	}
+
+
+	public EbeguVorlage ebeguVorlageToEntity(@Nonnull final JaxEbeguVorlage ebeguVorlageJAXP, @Nonnull final EbeguVorlage ebeguVorlage) {
+		Validate.notNull(ebeguVorlage);
+		Validate.notNull(ebeguVorlageJAXP);
+		convertAbstractDateRangedFieldsToEntity(ebeguVorlageJAXP, ebeguVorlage);
+
+		ebeguVorlage.setName(ebeguVorlageJAXP.getName());
+		if (ebeguVorlageJAXP.getVorlage() != null) {
+			if (ebeguVorlage.getVorlage() == null) {
+				ebeguVorlage.setVorlage(new Vorlage());
+			}
+			vorlageToEntity(ebeguVorlageJAXP.getVorlage(), ebeguVorlage.getVorlage());
+		}
+
+		return ebeguVorlage;
+	}
+
+	private Vorlage vorlageToEntity(JaxVorlage jaxVorlage, Vorlage vorlage) {
+		Validate.notNull(vorlage);
+		Validate.notNull(jaxVorlage);
+		convertAbstractFieldsToEntity(jaxVorlage, vorlage);
+		convertFileToEnity(jaxVorlage, vorlage);
+		return vorlage;
+	}
+
+	private File convertFileToEnity(JaxFile jaxFile, File file) {
+		Validate.notNull(file);
+		Validate.notNull(jaxFile);
+		file.setFilename(jaxFile.getFilename());
+		file.setFilepfad(jaxFile.getFilepfad());
+		file.setFilesize(jaxFile.getFilesize());
+		return file;
+	}
+
+
+	public JaxAntragStatusHistory antragStatusHistoryToJAX(AntragStatusHistory antragStatusHistory) {
+		final JaxAntragStatusHistory jaxAntragStatusHistory = convertAbstractFieldsToJAX(antragStatusHistory, new JaxAntragStatusHistory());
+		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
+		jaxAntragStatusHistory.setStatus(antragStatusConverter.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
+		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
+		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
+		return jaxAntragStatusHistory;
+
+	}
+
+	public JaxAntragDTO gesuchToAntragDTO(Gesuch gesuch) {
+		JaxAntragDTO antrag = new JaxAntragDTO();
+		antrag.setAntragId(gesuch.getId());
+		antrag.setFallNummer(gesuch.getFall().getFallNummer());
+		antrag.setFamilienName(gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().getNachname() : "");
+		antrag.setEingangsdatum(gesuch.getEingangsdatum());
+		//todo team, hier das datum des letzten statusuebergangs verwenden?
+		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
+		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
+		antrag.setAntragTyp(gesuch.getTyp());
+		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
+		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
+		antrag.setGesuchsperiodeGueltigAb(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
+		if (gesuch.getFall().getVerantwortlicher() != null) {
+			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
+		}
+
+		return antrag;
+	}
+
+	/**
+	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
+	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
+	 */
+	private Set<BetreuungsangebotTyp> createAngeboteList(Set<KindContainer> kindContainers) {
+		Set<BetreuungsangebotTyp> resultSet = new HashSet<>();
+		kindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				resultSet.add(betreuung.getBetreuungsangebotTyp());
+			});
+		});
+		return resultSet;
+	}
+
+	/**
+	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den Namen aller Institutionen zurueck.
+	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
+	 */
+	private Set<String> createInstitutionenList(Set<KindContainer> kindContainers) {
+		Set<String> resultSet = new HashSet<>();
+		kindContainers.forEach(kindContainer -> {
+			kindContainer.getBetreuungen().forEach(betreuung -> {
+				if (betreuung.getInstitutionStammdaten() != null && betreuung.getInstitutionStammdaten().getInstitution() != null) {
+					resultSet.add(betreuung.getInstitutionStammdaten().getInstitution().getName());
+				}
+			});
+		});
+		return resultSet;
 	}
 }

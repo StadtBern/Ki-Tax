@@ -3,29 +3,55 @@ package ch.dvbern.ebegu.tests.validations;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.validators.CheckZuschlagPensum;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
+import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
+import org.junit.Before;
 import org.junit.Test;
 
-import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertNotViolated;
-import static ch.dvbern.lib.beanvalidation.util.ValidationTestHelper.assertViolated;
+import javax.validation.Configuration;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
+import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertNotViolated;
+import static ch.dvbern.ebegu.tests.util.ValidationTestHelper.assertViolated;
 
 /**
  * Testklasse für Erwerbspensum Validator
  */
 public class CheckZuschlagPensumValidatorTest {
 
+	private ValidatorFactory customFactory;
+
+	@Before
+	public void setUp() throws Exception {
+		// see https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bootstrapping.html#_constraintvalidatorfactory
+		Configuration<?> config = Validation.byDefaultProvider().configure();
+		config.constraintValidatorFactory(new ValidationTestConstraintValidatorFactory(null));
+		this.customFactory = config.buildValidatorFactory();
+	}
+
 	@Test
-	public void testCheckZuschlagPensumValidator() {
+	public void testCheckZuschlagPensumUndGrundValidator() {
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
 		erwerbspensumData.setZuschlagsprozent(null);
-		assertViolated(CheckZuschlagPensum.class, erwerbspensumData, "");
+		assertViolated(CheckZuschlagErwerbspensumZuschlagUndGrund.class, erwerbspensumData, customFactory, "");
 
 		erwerbspensumData.setZuschlagsprozent(10);
 		erwerbspensumData.setZuschlagsgrund(null);
-		assertViolated(CheckZuschlagPensum.class, erwerbspensumData, "");
+		assertViolated(CheckZuschlagErwerbspensumZuschlagUndGrund.class, erwerbspensumData, customFactory, "");
 
 		erwerbspensumData.setZuschlagsgrund(Zuschlagsgrund.LANGER_ARBWEITSWEG);
-		assertNotViolated(CheckZuschlagPensum.class, erwerbspensumData, "");
+		assertNotViolated(CheckZuschlagErwerbspensumZuschlagUndGrund.class, erwerbspensumData, customFactory, "");
+	}
 
+	@Test
+	public void testCheckZuschlagMaxPensumValidator() {
+		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
+
+		erwerbspensumData.setZuschlagsprozent(20);
+		assertNotViolated(CheckZuschlagErwerbspensumMaxZuschlag.class, erwerbspensumData, customFactory, "");
+
+		erwerbspensumData.setZuschlagsprozent(21);
+		assertViolated(CheckZuschlagErwerbspensumMaxZuschlag.class, erwerbspensumData, customFactory, "");
 	}
 }

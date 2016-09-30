@@ -45,21 +45,18 @@ public class DokumentGrund extends AbstractEntity {
 		this(dokumentGrundTyp);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
 
 	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String fullName, String tag, DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, fullName, tag);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
-		this.dokumente.add(new Dokument(this));
 	}
 
 	@NotNull
@@ -163,22 +160,7 @@ public class DokumentGrund extends AbstractEntity {
 			'}';
 	}
 
-	//todo ask Pascal
-	/**
-	 * Checkt ob die Liste von Dokumenten leer ist.
-	 * @return false wenn mindestens ein Dokumente existiert. Sonst true
-	 */
 	public boolean isEmpty() {
-		if (getDokumente() == null || getDokumente().size() <= 0) {
-			return true;
-		}
-		else {
-			for (Dokument dok : getDokumente()) {
-				if (dok.getDokumentName() == null || dok.getDokumentPfad() == null) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return getDokumente() == null || getDokumente().size() <= 0;
 	}
 }

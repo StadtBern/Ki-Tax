@@ -7,7 +7,7 @@ import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import TSDokument from '../../../models/TSDokument';
-import TSTempDokument from '../../../models/TSTempDokument';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {UploadRS} from '../../../core/service/uploadRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
@@ -15,6 +15,8 @@ import TSWizardStep from '../../../models/TSWizardStep';
 import IFormController = angular.IFormController;
 import IPromise = angular.IPromise;
 import IQService = angular.IQService;
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 let template = require('./kommentarView.html');
 require('./kommentarView.less');
 
@@ -77,7 +79,7 @@ export class KommentarViewController {
     hasPapiergesuch(): boolean {
         if (this.dokumentePapiergesuch) {
             if (this.dokumentePapiergesuch.dokumente && this.dokumentePapiergesuch.dokumente.length !== 0) {
-                if (this.dokumentePapiergesuch.dokumente[0].dokumentName) {
+                if (this.dokumentePapiergesuch.dokumente[0].filename) {
                     return true;
                 }
             }
@@ -91,9 +93,9 @@ export class KommentarViewController {
                 this.$log.error('Kein Papiergesuch für Download vorhanden!');
             } else {
                 let newest: TSDokument = this.getNewest(this.dokumentePapiergesuch.dokumente);
-                this.downloadRS.getAccessToken(newest.id).then((response) => {
-                    let tempDokument: TSTempDokument = angular.copy(response);
-                    this.downloadRS.startDownload(tempDokument.accessToken, newest.dokumentName, false);
+                this.downloadRS.getAccessTokenDokument(newest.id).then((response) => {
+                    let tempDokument: TSDownloadFile = angular.copy(response);
+                    this.downloadRS.startDownload(tempDokument.accessToken, newest.filename, false);
                 });
             }
         });
@@ -134,6 +136,22 @@ export class KommentarViewController {
 
     public getCurrentWizardStep(): TSWizardStep {
         return this.wizardStepManager.getCurrentStep();
+    }
+
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
+        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    }
+
+    /**
+     * StepsComment sind fuer alle Steps disabled wenn das Gesuch VERFUEGEN oder VERFUEGT ist. Fuer den Step VERFUEGEN ist es nur im
+     * Status VERFUEGT DISABLED
+     * @returns {boolean}
+     */
+    public isStepCommentDisabled(): boolean {
+        return (this.wizardStepManager.getCurrentStepName() !== TSWizardStepName.VERFUEGEN
+                && this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt())
+            || (this.wizardStepManager.getCurrentStepName() === TSWizardStepName.VERFUEGEN
+                && this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGT));
     }
 
 }

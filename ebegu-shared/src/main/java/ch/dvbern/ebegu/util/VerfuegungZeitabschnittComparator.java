@@ -14,10 +14,6 @@ public class VerfuegungZeitabschnittComparator implements Comparator<VerfuegungZ
 
 	@Override
 	public int compare(VerfuegungZeitabschnitt o1, VerfuegungZeitabschnitt o2) {
-		int result = o1.getGueltigkeit().getGueltigAb().compareTo(o2.getGueltigkeit().getGueltigAb());
-		if (result == 0) {
-			result = o1.getGueltigkeit().getGueltigBis().compareTo(o2.getGueltigkeit().getGueltigBis());
-		}
-		return result;
+		return o1.getGueltigkeit().compareTo(o2.getGueltigkeit());
 	}
 }

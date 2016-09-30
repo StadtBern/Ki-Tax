@@ -21,4 +21,8 @@ export default class AbstractGesuchViewController {
         this.TSRoleUtil = TSRoleUtil;
     }
 
+    public isGesuchStatusVerfuegenVerfuegt(): boolean {
+        return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    }
+
 }

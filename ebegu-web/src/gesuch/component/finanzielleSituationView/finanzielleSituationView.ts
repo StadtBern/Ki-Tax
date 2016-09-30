@@ -9,6 +9,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import {TSRole} from '../../../models/enums/TSRole';
 import IPromise = angular.IPromise;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
@@ -24,6 +25,8 @@ export class FinanzielleSituationViewComponentConfig implements IComponentOption
 export class FinanzielleSituationViewController extends AbstractGesuchViewController {
 
     public showSelbstaendig: boolean;
+    allowedRoles: Array<TSRole>;
+
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
@@ -32,6 +35,7 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
+        this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.initViewModel();
         this.calculate();
     }

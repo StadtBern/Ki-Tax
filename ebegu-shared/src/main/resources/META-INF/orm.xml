@@ -20,6 +20,7 @@
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituationContainer"/>
 	<entity class="ch.dvbern.ebegu.entities.FinanzielleSituation"/>
 	<entity class="ch.dvbern.ebegu.entities.Mandant"/>
+	<entity class="ch.dvbern.ebegu.entities.Sequence"/>
 	<entity class="ch.dvbern.ebegu.entities.Traegerschaft"/>
 	<entity class="ch.dvbern.ebegu.entities.Institution"/>
 	<entity class="ch.dvbern.ebegu.entities.InstitutionStammdaten"/>
@@ -36,7 +37,11 @@
 	<entity class="ch.dvbern.ebegu.entities.DokumentGrund"/>
 	<entity class="ch.dvbern.ebegu.entities.Verfuegung"/>
 	<entity class="ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt"/>
-	<entity class="ch.dvbern.ebegu.entities.TempDokument"/>
+	<entity class="ch.dvbern.ebegu.entities.DownloadFile"/>
 	<entity class="ch.dvbern.ebegu.entities.WizardStep"/>
+	<entity class="ch.dvbern.ebegu.entities.AntragStatusHistory"/>
+	<entity class="ch.dvbern.ebegu.entities.EbeguVorlage"/>
+	<entity class="ch.dvbern.ebegu.entities.Vorlage"/>
+	<entity class="ch.dvbern.ebegu.entities.GeneratedDokument"/>
 
 </entity-mappings>

@@ -1,6 +1,7 @@
 import {IHttpService, ILogService, IPromise} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import TSTempDokument from '../../models/TSTempDokument';
+import TSDownloadFile from '../../models/TSDownloadFile';
+import {TSGeneratedDokumentTyp} from '../../models/enums/TSGeneratedDokumentTyp';
 
 
 export class DownloadRS {
@@ -18,13 +19,41 @@ export class DownloadRS {
         this.log = $log;
     }
 
-
-    public getAccessToken(dokumentID: string): IPromise<TSTempDokument> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/download')
+    public getAccessTokenDokument(dokumentID: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(dokumentID) + '/dokument')
             .then((response: any) => {
-                this.log.debug('PARSING tempDokument REST object ', response.data);
-                return this.ebeguRestUtil.parseTempDokument(new TSTempDokument(), response.data);
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
             });
+    }
+
+    public getAccessTokenVorlage(vorlageID: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(vorlageID) + '/vorlage')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getAccessTokenGeneratedDokument(gesuchId: string, generatedDokumentTyp: TSGeneratedDokumentTyp, forceCreation: boolean): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(TSGeneratedDokumentTyp[generatedDokumentTyp]) + '/' + forceCreation + '/generated')
+            .then((response: any) => {
+                this.log.debug('PARSING DownloadFile REST object ', response.data);
+                return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+            });
+    }
+
+    public getAccessTokenVerfuegungGeneratedDokument(gesuchId: string, betreuungId: string, forceCreation: boolean, manuelleBemerkungen: string): IPromise<TSDownloadFile> {
+        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/'
+            + encodeURIComponent(betreuungId) + '/' + forceCreation + '/generatedVerfuegung', manuelleBemerkungen, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        }).then((response: any) => {
+            this.log.debug('PARSING DownloadFile REST object ', response.data);
+            return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
+        });
     }
 
 
@@ -32,21 +61,36 @@ export class DownloadRS {
         return 'DownloadRS';
     }
 
-    public startDownload(accessToken: string, dokumentName: string, attachment: boolean) {
+    public startDownload(accessToken: string, dokumentName: string, attachment: boolean): boolean {
         let name: string = accessToken + '/' + dokumentName;
         let href: string = this.serviceURL + '/blobdata/' + name;
+
+        let warn: string = 'Popup-Blocker scheint eingeschaltet zu sein. Bitte erlauben Sie der Seite Pop-Ups öffnen zu dürfen, um das Dokument herunterladen zu können.';
+
 
         if (attachment) {
             // add MatrixParam for to download file instead of inline
             href = href + ';attachment=true;';
-            this.$window.open(href, '_blank');
+            let win = this.$window.open(href, '_blank');
+            if (!win) {
+                this.log.error(warn);
+                this.$window.alert(warn);
+                return false;
+            }
         } else {
             let win = this.$window.open(href, '_blank');
-            win.focus();
+            if (!win) {
+                this.log.error(warn);
+                this.$window.alert(warn);
+                return false;
+            } else {
+                win.focus();
+            }
         }
 
         //This would be the way to open file in new window (for now it's better to open in new tab)
         //this.$window.open(href, name, 'toolbar=0,location=0,menubar=0');
+        return true;
 
     }
 }

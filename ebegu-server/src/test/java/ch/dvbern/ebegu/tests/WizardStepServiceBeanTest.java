@@ -6,12 +6,10 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,14 +24,10 @@ import java.util.List;
  * Test fuer WizardStep Service
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Inject
 	private WizardStepService wizardStepService;
@@ -51,6 +45,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	private WizardStep finanSitStep;
 	private WizardStep einkVerStep;
 	private WizardStep dokStep;
+	private WizardStep verfStep;
 
 
 	@Before
@@ -66,7 +61,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		finanSitStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT));
 		einkVerStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT));
 		dokStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT));
-		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT));
+		verfStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT));
 	}
 
 	@Test
@@ -143,7 +138,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(10, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.KINDER).getWizardStepStatus());
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
 
 	@Test
@@ -241,7 +236,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.BETREUUNG);
 		Assert.assertEquals(10, wizardSteps.size());
 
-		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
+		Assert.assertEquals(WizardStepStatus.PLATZBESTAETIGUNG, findStepByName(wizardSteps, WizardStepName.BETREUUNG).getWizardStepStatus());
 	}
 
 	@Test
@@ -299,10 +294,19 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateWizardStepEinkommensverschlechterung() {
+	public void updateWizardStepEinkommensverschlechterungTrueToFalse() {
+		updateWizardStepEinkommensverschlechterung(true);
+	}
+
+	@Test
+	public void updateWizardStepEinkommensverschlechterungFalseToFalse() {
+		updateWizardStepEinkommensverschlechterung(false);
+	}
+
+	private void updateWizardStepEinkommensverschlechterung(final boolean oldValue) {
 		updateStatus(einkVerStep, WizardStepStatus.IN_BEARBEITUNG);
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
-		oldData.setEinkommensverschlechterung(true);
+		oldData.setEinkommensverschlechterung(oldValue);
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(false);
 
@@ -356,6 +360,26 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(WizardStepStatus.IN_BEARBEITUNG, findStepByName(wizardSteps, WizardStepName.DOKUMENTE).getWizardStepStatus());
 	}
 
+	@Test
+	public void updateWizardStepVerfuegenWARTEN() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
+		updateStatus(verfStep, WizardStepStatus.WARTEN);
+		Iterator<Betreuung> iterator = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator();
+		Betreuung betreuung1 = iterator.next();
+		betreuung1.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+		persistence.merge(betreuung1);
+		Betreuung betreuung2 = iterator.next();
+		betreuung2.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+		persistence.merge(betreuung2);
+
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.VERFUEGEN).getWizardStepStatus());
+		final Gesuch persistedGesuch = persistence.find(Gesuch.class, gesuch.getId());
+		Assert.assertEquals(AntragStatus.VERFUEGT, persistedGesuch.getStatus());
+	}
+
 
 	// HELP METHODS
 
@@ -368,9 +392,9 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		dokGrund.setFullName("name");
 		persistence.persist(dokGrund);
 		Dokument dok1 = new Dokument();
-		dok1.setDokumentName("name");
-		dok1.setDokumentPfad("pfad");
-		dok1.setDokumentSize("23");
+		dok1.setFilename("name");
+		dok1.setFilepfad("pfad");
+		dok1.setFilesize("23");
 		dok1.setDokumentGrund(dokGrund);
 		persistence.persist(dok1);
 	}

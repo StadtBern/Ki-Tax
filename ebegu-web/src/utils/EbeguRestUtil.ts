@@ -30,7 +30,7 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSEbeguParameter from '../models/TSEbeguParameter';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSAbstractAntragEntity from '../models/TSAbstractAntragEntity';
-import TSPendenzJA from '../models/TSPendenzJA';
+import TSAntragDTO from '../models/TSAntragDTO';
 import EbeguUtil from './EbeguUtil';
 import TSKindContainer from '../models/TSKindContainer';
 import TSUser from '../models/TSUser';
@@ -43,9 +43,13 @@ import TSDokumentGrund from '../models/TSDokumentGrund';
 import TSDokument from '../models/TSDokument';
 import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
-import TSTempDokument from '../models/TSTempDokument';
+import TSDownloadFile from '../models/TSDownloadFile';
 import TSPendenzInstitution from '../models/TSPendenzInstitution';
 import TSWizardStep from '../models/TSWizardStep';
+import TSEbeguVorlage from '../models/TSEbeguVorlage';
+import TSVorlage from '../models/TSVorlage';
+import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
+import TSFile from '../models/TSFile';
 
 
 export default class EbeguRestUtil {
@@ -118,6 +122,71 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public parseEbeguVorlages(data: any): TSEbeguVorlage[] {
+        var ebeguVorlages: TSEbeguVorlage[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                ebeguVorlages[i] = this.parseEbeguVorlage(new TSEbeguVorlage(), data[i]);
+            }
+        } else {
+            ebeguVorlages[0] = this.parseEbeguVorlage(new TSEbeguVorlage(), data);
+        }
+        return ebeguVorlages;
+    }
+
+    public parseEbeguVorlage(ebeguVorlageTS: TSEbeguVorlage, receivedEbeguVorlage: any): TSEbeguVorlage {
+        if (receivedEbeguVorlage) {
+            this.parseDateRangeEntity(ebeguVorlageTS, receivedEbeguVorlage);
+            ebeguVorlageTS.name = receivedEbeguVorlage.name;
+            ebeguVorlageTS.vorlage = this.parseVorlage(new TSVorlage, receivedEbeguVorlage.vorlage);
+            ebeguVorlageTS.proGesuchsperiode = receivedEbeguVorlage.proGesuchsperiode;
+            return ebeguVorlageTS;
+        }
+        return undefined;
+    }
+
+    public parseVorlage(vorlageTS: TSVorlage, receivedVorlage: any): TSVorlage {
+        if (receivedVorlage) {
+            this.parseAbstractFileEntity(vorlageTS, receivedVorlage);
+            return vorlageTS;
+        }
+        return undefined;
+    }
+
+    public ebeguVorlageToRestObject(restEbeguVorlage: any, ebeguVorlage: TSEbeguVorlage): TSEbeguVorlage {
+        if (ebeguVorlage) {
+            this.abstractDateRangeEntityToRestObject(restEbeguVorlage, ebeguVorlage);
+            restEbeguVorlage.name = ebeguVorlage.name;
+            restEbeguVorlage.value = this.vorlageToRestObject({}, ebeguVorlage.vorlage);
+            return restEbeguVorlage;
+        }
+        return undefined;
+    }
+
+    public vorlageToRestObject(restVorlage: any, vorlage: TSVorlage): TSVorlage {
+        if (vorlage) {
+            this.abstractFileEntityToRestObject(restVorlage, vorlage);
+            return restVorlage;
+        }
+        return undefined;
+    }
+
+    private parseAbstractFileEntity(fileTS: TSFile, fileFromServer: any) {
+        this.parseAbstractEntity(fileTS, fileFromServer);
+        fileTS.filename = fileFromServer.filename;
+        fileTS.filepfad = fileFromServer.filepfad;
+        fileTS.filesize = fileFromServer.filesize;
+        return fileTS;
+    }
+
+    private abstractFileEntityToRestObject(restObject: any, typescriptObject: TSFile) {
+        this.abstractEntityToRestObject(restObject, typescriptObject);
+        restObject.filename = typescriptObject.filename;
+        restObject.filepfad = typescriptObject.filepfad;
+        restObject.filesize = typescriptObject.filesize;
+        return restObject;
+    }
+
     private parseAbstractEntity(parsedAbstractEntity: TSAbstractEntity, receivedAbstractEntity: any): void {
         parsedAbstractEntity.id = receivedAbstractEntity.id;
         parsedAbstractEntity.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAbstractEntity.timestampErstellt);
@@ -178,6 +247,8 @@ export default class EbeguRestUtil {
         restObj.fall = this.fallToRestObject({}, antragEntity.fall);
         restObj.gesuchsperiode = this.gesuchsperiodeToRestObject({}, antragEntity.gesuchsperiode);
         restObj.eingangsdatum = DateUtil.momentToLocalDate(antragEntity.eingangsdatum);
+        restObj.status = antragEntity.status;
+        restObj.typ = antragEntity.typ;
     }
 
     private parseAbstractAntragEntity(antragTS: TSAbstractAntragEntity, antragFromServer: any) {
@@ -185,6 +256,8 @@ export default class EbeguRestUtil {
         antragTS.fall = this.parseFall(new TSFall(), antragFromServer.fall);
         antragTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), antragFromServer.gesuchsperiode);
         antragTS.eingangsdatum = DateUtil.localDateToMoment(antragFromServer.eingangsdatum);
+        antragTS.status = antragFromServer.status;
+        antragTS.typ = antragFromServer.typ;
     }
 
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
@@ -693,10 +766,7 @@ export default class EbeguRestUtil {
         restFinanzielleSituationResultate.nettovermoegenFuenfProzent = finanzielleSituationResultateDTO.nettovermoegenFuenfProzent;
         restFinanzielleSituationResultate.anrechenbaresEinkommen = finanzielleSituationResultateDTO.anrechenbaresEinkommen;
         restFinanzielleSituationResultate.abzuegeBeiderGesuchsteller = finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller;
-        restFinanzielleSituationResultate.abzugAufgrundFamiliengroesse = finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse;
-        restFinanzielleSituationResultate.totalAbzuege = finanzielleSituationResultateDTO.totalAbzuege;
-        restFinanzielleSituationResultate.massgebendesEinkommen = finanzielleSituationResultateDTO.massgebendesEinkommen;
-        restFinanzielleSituationResultate.familiengroesse = finanzielleSituationResultateDTO.familiengroesse;
+        restFinanzielleSituationResultate.massgebendesEinkVorAbzFamGr = finanzielleSituationResultateDTO.massgebendesEinkVorAbzFamGr;
         return restFinanzielleSituationResultate;
     }
 
@@ -708,10 +778,7 @@ export default class EbeguRestUtil {
             finanzielleSituationResultateDTO.nettovermoegenFuenfProzent = finanzielleSituationResultateFromServer.nettovermoegenFuenfProzent;
             finanzielleSituationResultateDTO.anrechenbaresEinkommen = finanzielleSituationResultateFromServer.anrechenbaresEinkommen;
             finanzielleSituationResultateDTO.abzuegeBeiderGesuchsteller = finanzielleSituationResultateFromServer.abzuegeBeiderGesuchsteller;
-            finanzielleSituationResultateDTO.abzugAufgrundFamiliengroesse = finanzielleSituationResultateFromServer.abzugAufgrundFamiliengroesse;
-            finanzielleSituationResultateDTO.totalAbzuege = finanzielleSituationResultateFromServer.totalAbzuege;
-            finanzielleSituationResultateDTO.massgebendesEinkommen = finanzielleSituationResultateFromServer.massgebendesEinkommen;
-            finanzielleSituationResultateDTO.familiengroesse = finanzielleSituationResultateFromServer.familiengroesse;
+            finanzielleSituationResultateDTO.massgebendesEinkVorAbzFamGr = finanzielleSituationResultateFromServer.massgebendesEinkVorAbzFamGr;
             return finanzielleSituationResultateDTO;
         }
         return undefined;
@@ -815,6 +882,7 @@ export default class EbeguRestUtil {
         restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
         restKind.kinderabzug = kind.kinderabzug;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
+        restKind.einschulung = kind.einschulung;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
         if (kind.pensumFachstelle) {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
@@ -853,6 +921,7 @@ export default class EbeguRestUtil {
             kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
             kindTS.kinderabzug = kindFromServer.kinderabzug;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
+            kindTS.einschulung = kindFromServer.einschulung;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
             if (kindFromServer.pensumFachstelle) {
                 kindTS.pensumFachstelle = this.parsePensumFachstelle(new TSPensumFachstelle(), kindFromServer.pensumFachstelle);
@@ -1039,40 +1108,46 @@ export default class EbeguRestUtil {
         return gesuchsperioden;
     }
 
-    public pendenzToRestObject(restPendenz: any, pendenz: TSPendenzJA): any {
+    public antragDTOToRestObject(restPendenz: any, pendenz: TSAntragDTO): any {
         restPendenz.antragId = pendenz.antragId;
         restPendenz.fallNummer = pendenz.fallNummer;
         restPendenz.familienName = pendenz.familienName;
         restPendenz.angebote = pendenz.angebote;
         restPendenz.antragTyp = pendenz.antragTyp;
         restPendenz.eingangsdatum = DateUtil.momentToLocalDate(pendenz.eingangsdatum);
-        restPendenz.gesuchsperiode = this.gesuchsperiodeToRestObject({}, pendenz.gesuchsperiode);
+        restPendenz.aenderungsdatum = DateUtil.momentToLocalDateTime(pendenz.aenderungsdatum);
+        restPendenz.gesuchsperiodeGueltigAb = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigAb);
+        restPendenz.gesuchsperiodeGueltigBis = DateUtil.momentToLocalDate(pendenz.gesuchsperiodeGueltigBis);
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
+        restPendenz.status = pendenz.status;
         return restPendenz;
     }
 
-    public parsePendenz(pendenzTS: TSPendenzJA, pendenzFromServer: any): TSPendenzJA {
+    public parseAntragDTO(pendenzTS: TSAntragDTO, pendenzFromServer: any): TSAntragDTO {
         pendenzTS.antragId = pendenzFromServer.antragId;
         pendenzTS.fallNummer = pendenzFromServer.fallNummer;
         pendenzTS.familienName = pendenzFromServer.familienName;
         pendenzTS.angebote = pendenzFromServer.angebote;
         pendenzTS.antragTyp = pendenzFromServer.antragTyp;
         pendenzTS.eingangsdatum = DateUtil.localDateToMoment(pendenzFromServer.eingangsdatum);
-        pendenzTS.gesuchsperiode = this.parseGesuchsperiode(new TSGesuchsperiode(), pendenzFromServer.gesuchsperiode);
+        pendenzTS.aenderungsdatum = DateUtil.localDateTimeToMoment(pendenzFromServer.aenderungsdatum);
+        pendenzTS.gesuchsperiodeGueltigAb = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigAb);
+        pendenzTS.gesuchsperiodeGueltigBis = DateUtil.localDateToMoment(pendenzFromServer.gesuchsperiodeGueltigBis);
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
+        pendenzTS.status = pendenzFromServer.status;
         return pendenzTS;
     }
 
-    public parsePendenzen(data: any): TSPendenzJA[] {
-        var pendenzen: TSPendenzJA[] = [];
+    public parseAntragDTOs(data: any): TSAntragDTO[] {
+        var pendenzen: TSAntragDTO[] = [];
         if (data && Array.isArray(data)) {
             for (var i = 0; i < data.length; i++) {
-                pendenzen[i] = this.parsePendenz(new TSPendenzJA(), data[i]);
+                pendenzen[i] = this.parseAntragDTO(new TSAntragDTO(), data[i]);
             }
         } else {
-            pendenzen[0] = this.parsePendenz(new TSPendenzJA(), data);
+            pendenzen[0] = this.parseAntragDTO(new TSAntragDTO(), data);
         }
         return pendenzen;
     }
@@ -1214,9 +1289,9 @@ export default class EbeguRestUtil {
     private parseDokument(dokument: TSDokument, dokumentFromServer: any): TSDokument {
         if (dokumentFromServer) {
             this.parseAbstractEntity(dokument, dokumentFromServer);
-            dokument.dokumentName = dokumentFromServer.dokumentName;
-            dokument.dokumentPfad = dokumentFromServer.dokumentPfad;
-            dokument.dokumentSize = dokumentFromServer.dokumentSize;
+            dokument.filename = dokumentFromServer.filename;
+            dokument.filepfad = dokumentFromServer.filepfad;
+            dokument.filesize = dokumentFromServer.filesize;
             return dokument;
         }
         return undefined;
@@ -1250,9 +1325,9 @@ export default class EbeguRestUtil {
     private dokumentToRestObject(dokument: any, dokumentTS: TSDokument): any {
         if (dokumentTS) {
             this.abstractEntityToRestObject(dokument, dokumentTS);
-            dokument.dokumentName = dokumentTS.dokumentName;
-            dokument.dokumentPfad = dokumentTS.dokumentPfad;
-            dokument.dokumentSize = dokumentTS.dokumentSize;
+            dokument.filename = dokumentTS.filename;
+            dokument.filepfad = dokumentTS.filepfad;
+            dokument.filesize = dokumentTS.filesize;
             return dokument;
         }
         return undefined;
@@ -1269,6 +1344,27 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public verfuegungToRestObject(verfuegung: any, verfuegungTS: TSVerfuegung): any {
+        if (verfuegungTS) {
+            this.abstractEntityToRestObject(verfuegung, verfuegungTS);
+            verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
+            verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
+            verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
+            return verfuegung;
+        }
+        return undefined;
+    }
+
+    private zeitabschnittListToRestObject(zeitabschnitte: Array<TSVerfuegungZeitabschnitt>): Array<any> {
+        let list: any[] = [];
+        if (zeitabschnitte) {
+            for (var i = 0; i < zeitabschnitte.length; i++) {
+                list[i] = this.zeitabschnittToRestObject({}, zeitabschnitte[i]);
+            }
+        }
+        return list;
+    }
+
     private parseVerfuegungZeitabschnitte(zeitabschnitte: Array<any>): TSVerfuegungZeitabschnitt[] {
         let resultList: TSVerfuegungZeitabschnitt[] = [];
         if (zeitabschnitte && Array.isArray(zeitabschnitte)) {
@@ -1279,6 +1375,28 @@ export default class EbeguRestUtil {
             resultList[0] = this.parseVerfuegungZeitabschnitt(new TSVerfuegungZeitabschnitt(), zeitabschnitte);
         }
         return resultList;
+    }
+
+    public zeitabschnittToRestObject(zeitabschnitt: any, zeitabschnittTS: TSVerfuegungZeitabschnitt): any {
+        if (zeitabschnittTS) {
+            this.abstractDateRangeEntityToRestObject(zeitabschnitt, zeitabschnittTS);
+            zeitabschnitt.abzugFamGroesse = zeitabschnittTS.abzugFamGroesse;
+            zeitabschnitt.anspruchberechtigtesPensum = zeitabschnittTS.anspruchberechtigtesPensum;
+            zeitabschnitt.bgPensum = zeitabschnittTS.bgPensum;
+            zeitabschnitt.anspruchspensumRest = zeitabschnittTS.anspruchspensumRest;
+            zeitabschnitt.bemerkungen = zeitabschnittTS.bemerkungen;
+            zeitabschnitt.betreuungspensum = zeitabschnittTS.betreuungspensum;
+            zeitabschnitt.betreuungsstunden = zeitabschnittTS.betreuungsstunden;
+            zeitabschnitt.elternbeitrag = zeitabschnittTS.elternbeitrag;
+            zeitabschnitt.erwerbspensumGS1 = zeitabschnittTS.erwerbspensumGS1;
+            zeitabschnitt.erwerbspensumGS2 = zeitabschnittTS.erwerbspensumGS2;
+            zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
+            zeitabschnitt.massgebendesEinkommenVorAbzugFamgr = zeitabschnittTS.massgebendesEinkommenVorAbzugFamgr;
+            zeitabschnitt.status = zeitabschnittTS.status;
+            zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
+            return zeitabschnitt;
+        }
+        return undefined;
     }
 
     public parseVerfuegungZeitabschnitt(verfuegungZeitabschnittTS: TSVerfuegungZeitabschnitt, zeitabschnittFromServer: any): TSVerfuegungZeitabschnitt {
@@ -1295,7 +1413,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.erwerbspensumGS1 = zeitabschnittFromServer.erwerbspensumGS1;
             verfuegungZeitabschnittTS.erwerbspensumGS2 = zeitabschnittFromServer.erwerbspensumGS2;
             verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
-            verfuegungZeitabschnittTS.massgebendesEinkommen = zeitabschnittFromServer.massgebendesEinkommen;
+            verfuegungZeitabschnittTS.massgebendesEinkommenVorAbzugFamgr = zeitabschnittFromServer.massgebendesEinkommenVorAbzugFamgr;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             return verfuegungZeitabschnittTS;
@@ -1303,11 +1421,11 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    parseTempDokument(tsTempDokument: TSTempDokument, tempDokumentFromServer: any) {
-        if (tempDokumentFromServer) {
-            this.parseAbstractEntity(tsTempDokument, tempDokumentFromServer);
-            tsTempDokument.accessToken = tempDokumentFromServer.accessToken;
-            return tsTempDokument;
+    public parseDownloadFile(tsDownloadFile: TSDownloadFile, downloadFileFromServer: any) {
+        if (downloadFileFromServer) {
+            this.parseAbstractFileEntity(tsDownloadFile, downloadFileFromServer);
+            tsDownloadFile.accessToken = downloadFileFromServer.accessToken;
+            return tsDownloadFile;
         }
         return undefined;
     }
@@ -1342,5 +1460,23 @@ export default class EbeguRestUtil {
             wizardSteps[0] = this.parseWizardStep(new TSWizardStep(), data);
         }
         return wizardSteps;
+    }
+
+    public parseAntragStatusHistory(antragStatusHistoryTS: TSAntragStatusHistory, antragStatusHistoryFromServer: any): TSAntragStatusHistory {
+        this.parseAbstractEntity(antragStatusHistoryTS, antragStatusHistoryFromServer);
+        antragStatusHistoryTS.gesuchId = antragStatusHistoryFromServer.gesuchId;
+        antragStatusHistoryTS.benutzer = this.parseUser(new TSUser(), antragStatusHistoryFromServer.benutzer);
+        antragStatusHistoryTS.datum = DateUtil.localDateTimeToMoment(antragStatusHistoryFromServer.datum);
+        antragStatusHistoryTS.status = antragStatusHistoryFromServer.status;
+        return antragStatusHistoryTS;
+    }
+
+    public antragStatusHistoryToRestObject(restAntragStatusHistory: any, antragStatusHistory: TSAntragStatusHistory): any {
+        this.abstractEntityToRestObject(restAntragStatusHistory, antragStatusHistory);
+        restAntragStatusHistory.gesuchId = antragStatusHistory.gesuchId;
+        restAntragStatusHistory.benutzer = this.userToRestObject({}, antragStatusHistory.benutzer);
+        restAntragStatusHistory.datum = DateUtil.momentToLocalDateTime(antragStatusHistory.datum);
+        restAntragStatusHistory.status = antragStatusHistory.status;
+        return restAntragStatusHistory;
     }
 }

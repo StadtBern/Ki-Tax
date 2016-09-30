@@ -1,4 +1,4 @@
-import {IComponentOptions} from 'angular';
+import {IFormController, IComponentOptions, IPromise, ILogService} from 'angular';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -8,12 +8,15 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import DateUtil from '../../../utils/DateUtil';
 import TSVerfuegung from '../../../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../../../models/TSVerfuegungZeitabschnitt';
-import IFormController = angular.IFormController;
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSRole} from '../../../models/enums/TSRole';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import TSDownloadFile from '../../../models/TSDownloadFile';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
+let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 
 export class VerfuegenViewComponentConfig implements IComponentOptions {
@@ -25,16 +28,19 @@ export class VerfuegenViewComponentConfig implements IComponentOptions {
 
 export class VerfuegenViewController extends AbstractGesuchViewController {
 
+    public bemerkungen: string;
+
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'AuthServiceRS'];
+        'DvDialog', 'DownloadRS', '$log'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
-                private authServiceRS: AuthServiceRS) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
+        this.setBemerkungen();
 
         $scope.$on('$stateChangeStart', (navEvent: any, toState: any, toParams: any, fromState: any, fromParams: any) => {
             console.log('resetting state due to navigation change, ');
@@ -56,14 +62,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     save(form: IFormController) {
         if (form.$valid) {
-            //TODO (team) Hier muessen dann noch die Bemerkungen gespeichert werden!
-            //this.errorService.clearAll();
-            //TODO (team) achtung, beim Speichern (bzw. nach dem Speichern) muss  this.backupCurrentGesuch(); aufgerufen werden auf dem gesuchModelManager
-            // this.gesuchModelManager.updateKind().then((kindResponse: any) => {
-            //TODO (team) das muss in der Direktive dv-navigation gemacht werden. Erst nach der Implementierung von saveVerfuegung.
-            // Beim Speichern der Vefuegung gibt es einen Fehler, der mit der Implementierung dieser Methode nicht mehr erscheinen sollte.
-                this.$state.go('gesuch.verfuegen');
-            // });
+            this.saveVerfuegung().then(() => {
+                this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+                    this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
+                    this.$state.go('gesuch.verfuegen');
+                });
+            });
         }
     }
 
@@ -131,27 +135,6 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public getFamiliengroesseFS(): number {
-        if (this.berechnungsManager && this.berechnungsManager.finanzielleSituationResultate) {
-            return this.berechnungsManager.finanzielleSituationResultate.familiengroesse;
-        }
-        return undefined;
-    }
-
-    public getFamiliengroesseEV1(): number {
-        if (this.berechnungsManager && this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
-            return this.berechnungsManager.einkommensverschlechterungResultateBjP1.familiengroesse;
-        }
-        return undefined;
-    }
-
-    public getFamiliengroesseEV2(): number {
-        if (this.berechnungsManager && this.berechnungsManager.einkommensverschlechterungResultateBjP1) {
-            return this.berechnungsManager.einkommensverschlechterungResultateBjP2.familiengroesse;
-        }
-        return undefined;
-    }
-
     public getAnfangsVerschlechterung1(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo) {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.stichtagFuerBasisJahrPlus1, 'DD.MM.YYYY');
@@ -166,9 +149,55 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    public showNextButton(): boolean {
-        return !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
-        && !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT);
+    /**
+     * Nur wenn das Gesuch im Status VERFUEGEN und die Betreuung im Status BESTAETIGT sind, kann der Benutzer
+     * das Angebot verfuegen. Sonst ist dieses nicht erlaubt.
+     * @returns {boolean}
+     */
+    public showVerfuegen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGEN)
+            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus());
     }
 
+    public saveVerfuegung(): IPromise<TSVerfuegung> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_SAVE_VERFUEGUNG',
+            deleteText: 'BESCHREIBUNG_SAVE_VERFUEGUNG'
+        })
+            .then(() => {
+                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+                return this.gesuchModelManager.saveVerfuegung();
+            });
+    }
+
+    /**
+     * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
+     */
+    private setBemerkungen(): void {
+        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
+            this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
+        } else {
+            this.bemerkungen = '';
+            if (this.getVerfuegenToWorkWith().generatedBemerkungen && this.getVerfuegenToWorkWith().generatedBemerkungen.length > 0) {
+                this.bemerkungen = this.getVerfuegenToWorkWith().generatedBemerkungen + '\n';
+            }
+            if (this.gesuchModelManager.getGesuch().bemerkungen) {
+                this.bemerkungen = this.bemerkungen + this.gesuchModelManager.getGesuch().bemerkungen;
+            }
+        }
+    }
+
+    public isBemerkungenDisabled(): boolean {
+        return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+    }
+
+    public openVerfuegungPDF(): void {
+        this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+            this.gesuchModelManager.getBetreuungToWorkWith().id, false, this.bemerkungen)
+            .then((downloadFile: TSDownloadFile) => {
+                this.$log.debug('accessToken: ' + downloadFile.accessToken);
+                this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
+            });
+    }
 }

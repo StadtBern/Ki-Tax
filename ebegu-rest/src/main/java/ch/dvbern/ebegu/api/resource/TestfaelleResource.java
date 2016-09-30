@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
 import ch.dvbern.ebegu.testfaelle.*;
@@ -18,7 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * REST Resource zur Erstellung von (vordefinierten) Testfaellen
+ * REST Resource zur Erstellung von (vordefinierten) Testfaellen.
+ * Alle Testfaelle erstellen:
+ * http://localhost:8080/ebegu/api/v1/testfaelle/testfall/all
  */
 @Path("testfaelle")
 @Stateless
@@ -33,6 +36,9 @@ public class TestfaelleResource {
 
 	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
+
+	@Inject
+	private GesuchService gesuchService;
 
 
 	@GET
@@ -87,11 +93,19 @@ public class TestfaelleResource {
 	}
 
 	private void createAndSaveGesuch(AbstractTestfall fromTestfall) {
+		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
+		if (gesuchByGSName.isPresent()) {
+			final List<Gesuch> gesuches = gesuchByGSName.get();
+			if (!gesuches.isEmpty()) {
+				fromTestfall.setFall(gesuches.iterator().next().getFall());
+			}
+		}
+
 		Gesuch gesuch = fromTestfall.createGesuch();
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch);
 		final List<WizardStep> wizardSteps = fromTestfall.createWizardSteps(gesuch);
-		for (final WizardStep wizardStep: wizardSteps) {
+		for (final WizardStep wizardStep : wizardSteps) {
 			persistence.persist(wizardStep);
 		}
 	}

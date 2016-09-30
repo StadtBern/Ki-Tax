@@ -21,14 +21,18 @@ export class AuthenticationListViewController {
     public usersList: Array<TSUser>;
     private mandant: TSMandant;
     private institution: TSInstitution;
-    private traegerschaft: TSTraegerschaft;
+    private traegerschaftStadtBern: TSTraegerschaft;
+    private traegerschaftLeoLea: TSTraegerschaft;
+    private traegerschaftSGF: TSTraegerschaft;
 
     static $inject: string[] = ['$state', 'AuthServiceRS'];
 
     constructor(private $state: IStateService, private authServiceRS: AuthServiceRS) {
         this.usersList = [];
         this.mandant = this.getMandant();
-        this.traegerschaft = this.getTraegerschaft();
+        this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
+        this.traegerschaftLeoLea = this.getTraegerschaftLeoLea();
+        this.traegerschaftSGF = this.getTraegerschaftSGF();
         this.institution = this.getInsitution();
 
         this.usersList.push(new TSUser('Jörg', 'Becker', 'jobe', 'password1', 'joerg.becker@bern.ch', this.mandant, TSRole.SACHBEARBEITER_JA));
@@ -36,9 +40,15 @@ export class AuthenticationListViewController {
         this.usersList.push(new TSUser('Sophie', 'Bergmann', 'beso', 'password3', 'sophie.bergmann@gugus.ch',
             this.mandant, TSRole.SACHBEARBEITER_INSTITUTION, undefined, this.institution));
         this.usersList.push(new TSUser('Agnes', 'Krause', 'krad', 'password4', 'agnes.krause@gugus.ch',
-            this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaft));
+            this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftStadtBern));
+        this.usersList.push(new TSUser('Lea', 'Lehmann', 'lele', 'password7', 'lea.lehmann@gugus.ch',
+            this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftLeoLea));
+        this.usersList.push(new TSUser('Simon', 'Gfeller', 'gfsi', 'password8', 'simon.gfeller@gugus.ch',
+            this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftSGF));
         this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@bern.ch', this.mandant, TSRole.ADMIN));
         this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
+
+        this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
     }
 
 
@@ -60,7 +70,7 @@ export class AuthenticationListViewController {
         let institution = new TSInstitution();
         institution.name = 'Kita Brünnen';
         institution.id = '11111111-1111-1111-1111-111111111107';
-        institution.traegerschaft = this.traegerschaft;
+        institution.traegerschaft = this.traegerschaftStadtBern;
         institution.mandant = this.mandant;
         return institution;
     }
@@ -68,10 +78,30 @@ export class AuthenticationListViewController {
     /**
      * Die Traegerschaft wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen
      */
-    private getTraegerschaft(): TSTraegerschaft {
+    private getTraegerschaftStadtBern(): TSTraegerschaft {
         let traegerschaft = new TSTraegerschaft();
         traegerschaft.name = 'Stadt Bern';
         traegerschaft.id = '11111111-1111-1111-1111-111111111113';
+        return traegerschaft;
+    }
+
+    /**
+     * Die Traegerschaft wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen
+     */
+    private getTraegerschaftLeoLea(): TSTraegerschaft {
+        let traegerschaft = new TSTraegerschaft();
+        traegerschaft.name = 'LeoLea';
+        traegerschaft.id = '11111111-1111-1111-1111-111111111114';
+        return traegerschaft;
+    }
+
+    /**
+     * Die Traegerschaft wird direkt gegeben. Diese Daten und die Daten der DB muessen uebereinstimmen
+     */
+    private getTraegerschaftSGF(): TSTraegerschaft {
+        let traegerschaft = new TSTraegerschaft();
+        traegerschaft.name = 'Verein SGF';
+        traegerschaft.id = '11111111-1111-1111-1111-111111111117';
         return traegerschaft;
     }
 
@@ -81,6 +111,8 @@ export class AuthenticationListViewController {
                 this.$state.go('pendenzen');
             } else  if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
                 this.$state.go('pendenzenInstitution');
+            } else if (user.getRoleKey() === 'TSRole_SCHULAMT') {
+                this.$state.go('faelle');
             }
         });
     }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -23,11 +24,24 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
-			if (verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1() && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2()) {
+		if (betreuung.getBetreuungsangebotTyp().isJugendamt()) {
+			if (singleGesuchstellerIsNotBern(betreuung, verfuegungZeitabschnitt)
+				|| coupleAndBothNotBern(betreuung, verfuegungZeitabschnitt)) {
 				verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ.name() + ": Kein Wohnsitz in Bern");
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.WOHNSITZ, MsgKey.WOHNSITZ_MSG);
 			}
+
 		}
+	}
+
+	private boolean coupleAndBothNotBern(Betreuung betreuung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		return betreuung.extractGesuch().getGesuchsteller2() != null
+			&& verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1()
+			&& verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS2();
+
+	}
+
+	private boolean singleGesuchstellerIsNotBern(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		return betreuung.extractGesuch().getGesuchsteller2() == null && verfuegungZeitabschnitt.isWohnsitzNichtInGemeindeGS1();
 	}
 }

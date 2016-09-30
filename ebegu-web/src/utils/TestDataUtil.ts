@@ -7,10 +7,11 @@ import {TSDateRange} from '../models/types/TSDateRange';
 import {TSZuschlagsgrund} from '../models/enums/TSZuschlagsgrund';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import {TSAbstractDateRangedEntity} from '../models/TSAbstractDateRangedEntity';
-import Moment = moment.Moment;
 import TSWizardStep from '../models/TSWizardStep';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
+import TSVerfuegung from '../models/TSVerfuegung';
+import Moment = moment.Moment;
 
 export default class TestDataUtil {
 
@@ -73,5 +74,13 @@ export default class TestDataUtil {
         wizardStep.wizardStepStatus = TSWizardStepStatus.IN_BEARBEITUNG;
         wizardStep.wizardStepName = TSWizardStepName.BETREUUNG;
         return wizardStep;
+    }
+
+    public static createVerfuegung(): TSVerfuegung {
+        let verfuegung: TSVerfuegung = new TSVerfuegung();
+        TestDataUtil.setAbstractFieldsUndefined(verfuegung);
+        verfuegung.id = '123321';
+        verfuegung.zeitabschnitte = [];
+        return verfuegung;
     }
 }

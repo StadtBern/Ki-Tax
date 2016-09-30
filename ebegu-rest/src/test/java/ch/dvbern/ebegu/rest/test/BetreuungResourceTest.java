@@ -6,18 +6,16 @@ import ch.dvbern.ebegu.api.resource.*;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
-import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.BenutzerService;
+import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.PensumFachstelleService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,11 +34,6 @@ import java.util.Set;
 public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	private static final UriInfo RESTEASY_URI_INFO = new ResteasyUriInfo("test", "test", "test");
-
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Inject
 	private BetreuungService betreuungService;
@@ -68,6 +61,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void createBetreuung() throws EbeguException {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());
@@ -163,6 +157,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 	}
 
 	private Betreuung storeInitialBetreung() throws EbeguException {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		KindContainer returnedKind = persistKindAndDependingObjects(RESTEASY_URI_INFO);
 		Betreuung testBetreuung = TestDataUtil.createDefaultBetreuung();
 		persistStammdaten(testBetreuung.getInstitutionStammdaten());

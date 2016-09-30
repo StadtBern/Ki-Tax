@@ -10,8 +10,6 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,9 +29,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
-	// damit fallNummer sicher schon gesetzt wird machen
-	// das in einer eigenen Transaktion
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Nonnull
 	@Override
 	public Fall saveFall(@Nonnull Fall fall) {

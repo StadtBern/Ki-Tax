@@ -11,15 +11,17 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"  st-delay="20"
+                <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getPendenzenList()"
+                       st-delay="20"
                        class="table table-striped fixedtable">
                     <thead>
                     <tr>
                         <th st-sort="fallNummer" class="sortable" data-translate="FALL_UPPER"></th>
                         <th st-sort="familienName" class="sortable" data-translate="FAMILIE_UPPER"></th>
                         <th st-sort="antragTyp" class="sortable" data-translate="TYP_UPPER"></th>
-                        <th st-sort="gesuchsperiode" class="sortable" data-translate="PERIODE_UPPER"></th>
-                        <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable" data-translate="EINGANG_UPPER"></th>
+                        <th st-sort="gesuchsperiodeString" class="sortable" data-translate="PERIODE_UPPER"></th>
+                        <th st-sort="eingangsdatum" st-sort-default="reverse" class="sortable"
+                            data-translate="EINGANG_UPPER"></th>
                         <th st-sort="status" class="sortable" data-translate="STATUS_UPPER"></th>
                         <th st-sort="angebote" class="sortable" data-translate="ANGEBOT_UPPER"></th>
                         <th st-sort="institutionen" class="sortable" data-translate="INSTITUTION_UPPER"></th>
@@ -27,32 +29,43 @@
                     </tr>
                     <tr>
                         <th><input st-search="fallNummer" class="form-control" type="text"/></th>
-                        <th><input st-search="familienName" class="form-control"  type="text"/></th>
+                        <th><input st-search="familienName" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp" class="form-control"
+                            <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
+                                    class="form-control"
                                     ng-options="typ | translate for typ in vm.getAntragTypen() track by typ"
                                     ng-model="vm.selectedAntragTyp">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
                         </th>
                         <th>
-                            <select st-input-event="change" name="gesuchsperiode" id="gesuchsperiode" st-search="gesuchsperiode" class="form-control"
-                                    ng-options="periode for periode in vm.activeGesuchsperiodenList track by periode"
+                            <select st-input-event="change" name="gesuchsperiodeString" id="gesuchsperiodeString"
+                                    st-search="gesuchsperiodeString" class="form-control"
+                                    ng-options="periode for periode in vm.gesuchsperiodenList track by periode"
                                     ng-model="vm.selectedGesuchsperiode">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
                         </th>
                         <th><input st-search="eingangsdatum" class="form-control" type="text"/></th>
-                        <th><input st-search="status" class="form-control" type="text"/></th>
                         <th>
-                            <select st-input-event="change" name="angebote" id="angebote" st-search="angebote" class="form-control"
+                            <select st-input-event="change" name="antragStatus" id="antragStatus" st-search="status"
+                                    class="form-control"
+                                    ng-options="status | translate for status in vm.getAntragStatus() track by status"
+                                    ng-model="vm.selectedAntragStatus">
+                                <option value="">{{"ALLE" | translate}}</option>
+                            </select>
+                        </th>
+                        <th>
+                            <select st-input-event="change" name="angebote" id="angebote" st-search="angebote"
+                                    class="form-control"
                                     ng-options="typ | translate for typ in vm.getBetreuungsangebotTypen() track by typ"
                                     ng-model="vm.selectedBetreuungsangebotTyp">
                                 <option value="">{{"ALLE" | translate}}</option>
                             </select>
                         </th>
                         <th>
-                            <select st-input-event="change" name="institutionen" id="institutionen" st-search="institutionen" class="form-control"
+                            <select st-input-event="change" name="institutionen" id="institutionen"
+                                    st-search="institutionen" class="form-control"
                                     ng-options="institution.name for institution in vm.institutionenList track by institution.name"
                                     ng-model="vm.selectedInstitution">
                                 <option value="">{{"ALLE" | translate}}</option>
@@ -69,17 +82,21 @@
                         <td class="ellipsis" ellipsis-tooltip="{{vm.addZerosToFallnummer(row.fallNummer)}}"
                             ng-bind="vm.addZerosToFallnummer(row.fallNummer)"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.familienName}}" ng-bind="row.familienName"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}" ng-bind="row.antragTyp | translate"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{vm.getGesuchsperiodeAsString(row.gesuchsperiode)}}"
-                            ng-bind="vm.getGesuchsperiodeAsString(row.gesuchsperiode)"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                            ng-bind="row.antragTyp | translate"></td>
+                        <td class="ellipsis"
+                            ellipsis-tooltip="{{row.gesuchsperiodeString}}"
+                            ng-bind="row.gesuchsperiodeString"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                             ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.status}}" ng-bind="row.status"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
+                            ng-bind="row.status | translate"></td>
                         <td class="ellipsis" ellipsis-tooltip="{{vm.translateBetreuungsangebotTypList(row.angebote)}}"
                             ng-bind="vm.translateBetreuungsangebotTypList(row.angebote)">
                         </td>
                         <td class="ellipsis" ellipsis-tooltip="{{row.institutionen}}" ng-bind="row.institutionen"></td>
-                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}" ng-bind="row.verantwortlicher"></td>
+                        <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
+                            ng-bind="row.verantwortlicher"></td>
                     </tr>
                     </tbody>
                     <tfoot>

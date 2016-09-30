@@ -40,6 +40,10 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import TSVerfuegung from '../../models/TSVerfuegung';
 import WizardStepManager from './wizardStepManager';
 import EinkommensverschlechterungInfoRS from './einkommensverschlechterungInfoRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
+import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -52,23 +56,18 @@ export default class GesuchModelManager {
     private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
 
-    //diese Variable enthaelt alle Kinder die die Methode verfuegungRS.calculateVerfuegung zurueckgibt. Normalerweise sollten die Kinder im
-    // gesuch aktualisiert werden. Das Problem ist, dass die Verfuegungen nicht gespeichert werden duerfen, bis der Benutzer auf den Knopf
-    // Verfuegen klickt
-    // todo dies koennte verbessert werden. Das Problem hier ist, dass wir beim Berechnen der Verfuegung nciht das ganze Gesuch hin und her schicken wollen
-    private kinderWithBetreuungList: Array<TSKindContainer> = [];
-
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
                 private instStamRS: InstitutionStammdatenRS, private betreuungRS: BetreuungRS, private gesuchsperiodeRS: GesuchsperiodeRS,
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
-                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS) {
+                private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
+                private antragStatusHistoryRS: AntragStatusHistoryRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -460,9 +459,11 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
             this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
         }
+        this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
     }
 
@@ -470,7 +471,7 @@ export default class GesuchModelManager {
      * erstellt eine kopie der aktuellen gesuchsdaten die spaeter bei bedarf wieder hergestellt werden kann
      */
     private backupCurrentGesuch() {
-        this.gesuchSnapshot =  angular.copy(this.gesuch);
+        this.gesuchSnapshot = angular.copy(this.gesuch);
     }
 
     public restoreBackupOfPreviousGesuch() {
@@ -560,7 +561,6 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-
     private initAdresse(): TSAdresse {
         let wohnAdr = new TSAdresse();
         wohnAdr.showDatumVon = false;
@@ -618,8 +618,10 @@ export default class GesuchModelManager {
     }
 
     public createKind(): void {
-        this.gesuch.kindContainers.push(new TSKindContainer(undefined, new TSKind()));
+        var tsKindContainer = new TSKindContainer(undefined, new TSKind());
+        this.gesuch.kindContainers.push(tsKindContainer);
         this.kindNumber = this.gesuch.kindContainers.length;
+        tsKindContainer.kindNummer = this.kindNumber;
     }
 
     /**
@@ -633,12 +635,13 @@ export default class GesuchModelManager {
             tsBetreuung.betreuungsstatus = TSBetreuungsstatus.AUSSTEHEND;
             this.getKindToWorkWith().betreuungen.push(tsBetreuung);
             this.betreuungNumber = this.getKindToWorkWith().betreuungen.length;
+            tsBetreuung.betreuungNummer = this.betreuungNumber;
         }
     }
 
     public updateBetreuung(): IPromise<TSBetreuung> {
-       return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
-           .then((betreuungResponse: any) => {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+            .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
                 return this.setBetreuungToWorkWith(betreuungResponse);
@@ -892,26 +895,48 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    public calculateVerfuegungen(): void {
-        this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
+    public calculateVerfuegungen(): IPromise<void> {
+        return this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
-                this.kinderWithBetreuungList = response;
+                return this.updateKinderListWithCalculatedVerfuegungen(response);
             });
     }
 
-    public getVerfuegenToWorkWith(): TSVerfuegung {
-        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
-            for (let i = 0; i < this.kinderWithBetreuungList.length; i++) {
-                if (this.kinderWithBetreuungList[i].id === this.getKindToWorkWith().id) {
-                    for (let j = 0; j < this.kinderWithBetreuungList[i].betreuungen.length; j++) {
-                        if (this.kinderWithBetreuungList[i].betreuungen[j].id === this.getBetreuungToWorkWith().id) {
-                            return this.kinderWithBetreuungList[i].betreuungen[j].verfuegung;
-                        }
+    private updateKinderListWithCalculatedVerfuegungen(kinderWithVerfuegungen: TSKindContainer[]) {
+        for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
+            for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
+                if (this.gesuch.kindContainers[i].id === kinderWithVerfuegungen[j].id) {
+                    for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
+                        this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
                     }
                 }
             }
         }
+    }
+
+    public saveVerfuegung(): IPromise<TSVerfuegung> {
+        return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.setVerfuegenToWorkWith(response);
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
+            if (!this.isThereAnyOpenBetreuung()) {
+                this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
+            }
+            this.backupCurrentGesuch();
+            return this.getVerfuegenToWorkWith();
+        });
+    }
+
+    public getVerfuegenToWorkWith(): TSVerfuegung {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            return this.getBetreuungToWorkWith().verfuegung;
+        }
         return undefined;
+    }
+
+    public setVerfuegenToWorkWith(verfuegung: TSVerfuegung): void {
+        if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
+            this.getBetreuungToWorkWith().verfuegung = verfuegung;
+        }
     }
 
     public isThereAnyKindWithBetreuungsbedarf(): boolean {
@@ -937,5 +962,78 @@ export default class GesuchModelManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders al VERFUEGT oder SCHULAMT ist
+     * @returns {boolean}
+     */
+    public isThereAnyOpenBetreuung(): boolean {
+        let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
+        for (let kind of kinderWithBetreuungList) {
+            for (let betreuung of kind.betreuungen) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Setzt den Status des Gesuchs und speichert es in der Datenbank. Anstatt das ganze Gesuch zu schicken, rufen wir den Service auf
+     * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
+     * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist
+     * @param status
+     * @returns {undefined}
+     */
+    public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (!this.isGesuchStatus(status)) {
+            return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
+                return this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch()).then(() => {
+                    return this.gesuch.status = this.calculateNewStatus(status);
+                });
+            });
+        }
+        return undefined;
+    }
+
+    /**
+     * Returns true if the Gesuch has the given status
+     * @param status
+     * @returns {boolean}
+     */
+    public isGesuchStatus(status: TSAntragStatus): boolean {
+        return this.gesuch.status === status;
+    }
+
+    /**
+     * Returns true when the status of the Gesuch is VERFUEGEN or VERFUEGT
+     * @returns {boolean}
+     */
+    public isGesuchStatusVerfuegenVerfuegt() {
+        return this.isGesuchStatus(TSAntragStatus.VERFUEGEN) || this.isGesuchStatus(TSAntragStatus.VERFUEGT);
+    }
+
+    /**
+     * Einige Status wie GEPRUEFT haben "substatus" auf dem Client die berechnet werden muessen. Aus diesem Grund rufen wir
+     * diese Methode auf, bevor wir den Wert setzen.
+     * @param status
+     */
+    public calculateNewStatus(status: TSAntragStatus): TSAntragStatus {
+        if (TSAntragStatus.GEPRUEFT === status || TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN === status || TSAntragStatus.PLATZBESTAETIGUNG_WARTEN === status) {
+            if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)) {
+                if (this.isThereAnyBetreuung()) {
+                    return TSAntragStatus.PLATZBESTAETIGUNG_ABGEWIESEN;
+                } else {
+                    return TSAntragStatus.GEPRUEFT;
+                }
+            } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.PLATZBESTAETIGUNG)) {
+                return TSAntragStatus.PLATZBESTAETIGUNG_WARTEN;
+            } else if (this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK)) {
+                return TSAntragStatus.GEPRUEFT;
+            }
+        }
+        return status;
     }
 }

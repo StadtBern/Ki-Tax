@@ -59,8 +59,8 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	 * @return BGPensum
 	 */
 	public int getBGPensum() {
-
-		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();//// TODO (hefr) spaeter das
+		//hier wird das Minimum von (Rest)anspruch und von Betreuung zurueckgegeben. Dies enspricht der Definition des BG-Pensum
+		return Math.min(getBetreuung(), getAnspruch());
 	}
 
 	/**

@@ -3,15 +3,18 @@ import {IFilterService} from 'angular';
 import TSAbstractEntity from '../models/TSAbstractEntity';
 import TSFall from '../models/TSFall';
 import DateUtil from './DateUtil';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import ITranslateService = angular.translate.ITranslateService;
+import Moment = moment.Moment;
 
 /**
  * Klasse die allgemeine utils Methoden implementiert
  */
 export default class EbeguUtil {
 
-    static $inject = ['$filter', 'CONSTANTS'];
+    static $inject = ['$filter', 'CONSTANTS', '$translate'];
     /* @ngInject */
-    constructor(private $filter: IFilterService, private CONSTANTS: any) {
+    constructor(private $filter: IFilterService, private CONSTANTS: any, private $translate: ITranslateService) {
     }
 
     /**
@@ -26,16 +29,15 @@ export default class EbeguUtil {
         return '';
     }
 
-    /**
-     * Takes the given Gesuchsperiode and returns a string with the format "gueltigAb.year/gueltigBis.year"
-     * @returns {any}
-     */
-    public getGesuchsperiodeAsString(gesuchsperiode: TSGesuchsperiode): string {
-        if (gesuchsperiode && gesuchsperiode.gueltigkeit) {
-            return gesuchsperiode.gueltigkeit.gueltigAb.year() + '/'
-                + gesuchsperiode.gueltigkeit.gueltigBis.year();
+    public getAntragTextDateAsString(tsAntragTyp: TSAntragTyp, eingangsdatum: Moment): string {
+        if (tsAntragTyp && eingangsdatum) {
+            if (tsAntragTyp !== TSAntragTyp.GESUCH) {
+                return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp]) + ' ' + eingangsdatum.format('DD.MM.YYYY');
+            }
+            return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp]);
+
         }
-        return undefined;
+        return '';
     }
 
     /**
@@ -109,5 +111,12 @@ export default class EbeguUtil {
                 + '.' + betreuungNumber;
         }
         return betreuungsId;
+    }
+
+    public handleSmarttablesUpdateBug(aList: any[]) {
+        // Ugly Fix:
+        // Because of a bug in smarttables, the table will only be refreshed if the reverence or the first element
+        // changes in table. To resolve this bug, we overwrite the first element by a copy of itself.
+        aList[0] = angular.copy(aList[0]);
     }
 }

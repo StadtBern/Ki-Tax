@@ -45,12 +45,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return die Bemerkung
 	 */
-	String getManuelleBemerkungen();
-
-	/**
-	 * @return die Generierte Bemerkungen
-	 */
-	String getGeneratedBemerkungen();
+	List<BemerkungPrint> getManuelleBemerkungen();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist
@@ -70,16 +65,6 @@ public interface VerfuegungPrint {
 	/**
 	 * @return true ob die Bermerkungen ausgedruckt werden muessen
 	 */
-	boolean isPrintbemerkung();
-
-	/**
-	 * @return true ob die Bermerkungen ausgedruckt werden muessen
-	 */
 	boolean isPrintManuellebemerkung();
-
-	/**
-	 * @return true ob die Bermerkungen ausgedruckt werden muessen
-	 */
-	boolean isPrintGeneratedBemerkung();
 
 }

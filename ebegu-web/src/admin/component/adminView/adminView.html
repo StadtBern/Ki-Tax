@@ -31,7 +31,7 @@
                         <td ng-bind="row.value"></td>
                         <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td>
-                            <dv-loading-button type="button" ng-click="vm.removeRow(row)" button-class="btn btn-sm btn-danger">
+                            <dv-loading-button type="button" button-click="vm.removeRow(row)" button-class="btn btn-sm btn-danger">
                                 <i class="fa fa-trash-o">
                                 </i>
                             </dv-loading-button>
@@ -41,13 +41,6 @@
                 </table>
 
             </div>
-            <div class="col-md-12" style="margin-bottom: 20px">
-                <dv-loading-button type="button" ng-click="vm.createItem()" button-class="btn btn-sm btn-success">
-                    <i class="glyphicon glyphicon-plus">
-                    </i> add item
-                </dv-loading-button>
-            </div>
-
         </div>
 
         <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty"
@@ -58,7 +51,7 @@
                         <label data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
                         </label>
                         <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-10 input-element" required
+                               dv-max-length class="col-md-10 input-element smallfont" required
                                ng-disabled="vm.applicationProperty.timestampErstellt">
                         <dv-error-messages for="form.propertyName.$error"
                                            class="error col-md-offset-2 col-md-10"></dv-error-messages>
@@ -69,7 +62,7 @@
                         <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
                         </label>
                         <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               dv-max-length class="col-md-10">
+                               dv-max-length class="col-md-10 smallfont">
 
                         <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
 
@@ -78,17 +71,17 @@
 
             </div>
             <div class="row" style="margin-top:25px">
-                <div class="col-md-1">
-                    <dv-loading-button class="btn btn-primary" type="submit" >
+                <div class="col-md-2">
+                    <dv-loading-button button-class="btn btn-primary" type="submit">
                         <span data-translate="SAVE"></span>
                     </dv-loading-button>
                 </div>
                 <div class="col-md-4 ">
-                                  <a href="javascript:;"  id="cancelLink" unsaved-warning-clear
-                                     ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
-                                      <span data-translate="CANCEL"></span>
-                                  </a>
-                              </div>
+                    <a href="javascript:;" id="cancelLink" unsaved-warning-clear
+                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                        <span data-translate="CANCEL"></span>
+                    </a>
+                </div>
             </div>
         </form>
     </div>

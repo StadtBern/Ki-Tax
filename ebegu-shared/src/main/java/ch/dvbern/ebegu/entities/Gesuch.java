@@ -9,7 +9,9 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,7 +40,12 @@ public class Gesuch extends AbstractAntragEntity {
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "gesuch")
+	@OrderBy("kindNummer")
 	private Set<KindContainer> kindContainers = new LinkedHashSet<>();
+
+	@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "gesuch", fetch = FetchType.LAZY)
+	@OrderBy("datum")
+	private Set<AntragStatusHistory> antragStatusHistories = new LinkedHashSet<>();
 
 	@Valid
 	@Nullable
@@ -96,6 +103,14 @@ public class Gesuch extends AbstractAntragEntity {
 		this.familiensituation = familiensituation;
 	}
 
+	public Set<AntragStatusHistory> getAntragStatusHistories() {
+		return antragStatusHistories;
+	}
+
+	public void setAntragStatusHistories(Set<AntragStatusHistory> antragStatusHistories) {
+		this.antragStatusHistories = antragStatusHistories;
+	}
+
 	@Nullable
 	public EinkommensverschlechterungInfo getEinkommensverschlechterungInfo() {
 		return einkommensverschlechterungInfo;
@@ -128,5 +143,25 @@ public class Gesuch extends AbstractAntragEntity {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Transient
+	public List<Betreuung> extractAllBetreuungen() {
+		final List<Betreuung> list = new ArrayList<>();
+		for (final KindContainer kind: getKindContainers()) {
+			list.addAll(kind.getBetreuungen());
+		}
+		return list;
+	}
+
+	/**
+	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
+	 */
+	@Transient
+	public String extractFamiliennamenString(){
+		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
+		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
+		return bothFamiliennamen;
+
 	}
 }

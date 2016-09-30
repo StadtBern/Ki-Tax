@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import java.time.LocalDate;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
@@ -12,6 +14,8 @@ public abstract class AbstractAntragEntity_ extends ch.dvbern.ebegu.entities.Abs
 	public static volatile SingularAttribute<AbstractAntragEntity, Gesuchsperiode> gesuchsperiode;
 	public static volatile SingularAttribute<AbstractAntragEntity, Fall> fall;
 	public static volatile SingularAttribute<AbstractAntragEntity, LocalDate> eingangsdatum;
+	public static volatile SingularAttribute<AbstractAntragEntity, AntragTyp> typ;
+	public static volatile SingularAttribute<AbstractAntragEntity, AntragStatus> status;
 
 }
 

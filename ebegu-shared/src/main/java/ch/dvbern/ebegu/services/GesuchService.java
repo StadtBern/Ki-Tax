@@ -1,9 +1,13 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -13,6 +17,7 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt ein neues Gesuch in der DB, falls der key noch nicht existiert
+	 *
 	 * @param gesuch der Gesuch als DTO
 	 * @return das gespeicherte Gesuch
 	 */
@@ -21,6 +26,7 @@ public interface GesuchService {
 
 	/**
 	 * Aktualisiert das Gesuch in der DB
+	 *
 	 * @param gesuch das Gesuch als DTO
 	 * @return Das aktualisierte Gesuch
 	 */
@@ -28,7 +34,6 @@ public interface GesuchService {
 	Gesuch updateGesuch(@Nonnull Gesuch gesuch);
 
 	/**
-	 *
 	 * @param key PK (id) des Gesuches
 	 * @return Gesuch mit dem gegebenen key oder null falls nicht vorhanden
 	 */
@@ -37,16 +42,39 @@ public interface GesuchService {
 
 	/**
 	 * Gibt alle existierenden Gesuche zurueck.
+	 *
 	 * @return Liste aller Gesuche aus der DB
 	 */
 	@Nonnull
 	Collection<Gesuch> getAllGesuche();
 
 	/**
+	 * Gibt alle existierenden Gesuche zurueck, deren Status nicht VERFUEGT ist
+	 *
+	 * @return Liste aller Gesuche aus der DB
+	 */
+	@Nonnull
+	Collection<Gesuch> getAllActiveGesuche();
+
+	/**
 	 * entfernt ein Gesuch aus der Database
+	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
 	@Nonnull
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
+	@Nonnull
+	Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname);
+
+	/**
+	 * Methode welche jeweils eine bestimmte Menge an Suchresultate fuer die Paginatete Suchtabelle zuruckgibt,
+	 *
+	 * @param antragSearch
+	 * @return Resultatpaar, der erste Wert im Paar ist die Anzahl Resultate, der zweite Wert ist die Resultatliste
+	 */
+	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
+
+	@Nonnull
+	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
 }

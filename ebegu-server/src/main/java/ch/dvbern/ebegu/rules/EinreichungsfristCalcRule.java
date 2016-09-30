@@ -6,6 +6,9 @@ import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
 
+import static ch.dvbern.ebegu.enums.MsgKey.EINREICHUNGSFRIST_MSG;
+import static ch.dvbern.ebegu.enums.MsgKey.EINREICHUNGSFRIST_VOLLKOSTEN_MSG;
+
 /**
  * Regel bezüglich der Einreichungsfrist des Gesuchs:
  * - Wird ein Gesuch zu spät eingereicht, entfällt der Anspruch auf den Monaten vor dem Einreichen des Gesuchs.
@@ -26,14 +29,14 @@ public class EinreichungsfristCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isJugendamt()) {
+		if (betreuung.getBetreuungsangebotTyp().isJugendamt()) {
 			if (verfuegungZeitabschnitt.isZuSpaetEingereicht()) {
-				if (betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
 					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
-					verfuegungZeitabschnitt.setBemerkungen(RuleKey.EINREICHUNGSFRIST.name() + ". Gesuch wurde zu spaet eingereicht");
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINREICHUNGSFRIST, EINREICHUNGSFRIST_MSG);
 				} else {
 					verfuegungZeitabschnitt.setBezahltVollkosten(true);
-					verfuegungZeitabschnitt.setBemerkungen(RuleKey.EINREICHUNGSFRIST.name() + ". Gesuch wurde zu spaet eingereicht. Es muss der Volltarif bezahlt werden");
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINREICHUNGSFRIST, EINREICHUNGSFRIST_VOLLKOSTEN_MSG );
 				}
 			}
 		}

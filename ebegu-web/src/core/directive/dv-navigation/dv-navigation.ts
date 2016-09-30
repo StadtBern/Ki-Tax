@@ -7,7 +7,6 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../../models/enums/TSRole';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 
@@ -59,7 +58,7 @@ export class NavigatorController {
     static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', 'AuthServiceRS', '$translate', 'ErrorService'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
-        private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
+                private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
     }
 
     public doesCancelExist(): boolean {
@@ -71,7 +70,9 @@ export class NavigatorController {
      * @returns {string}
      */
     public getPreviousButtonName(): string {
-        if (this.dvSave) {
+        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+            return this.$translate.instant('ZURUECK_ONLY_UPPER');
+        } else if (this.dvSave) {
             return this.$translate.instant('ZURUECK_UPPER');
         } else {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
@@ -83,7 +84,9 @@ export class NavigatorController {
      * @returns {string}
      */
     public getNextButtonName(): string {
-        if (this.dvSave) {
+        if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
+            return this.$translate.instant('WEITER_ONLY_UPPER');
+        } else if (this.dvSave) {
             return this.$translate.instant('WEITER_UPPER');
         } else {
             return this.$translate.instant('WEITER_ONLY_UPPER');
@@ -96,7 +99,7 @@ export class NavigatorController {
      * wird dann direkt zum naechsten Step geleitet.
      */
     public nextStep(): void {
-        if (this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
             this.dvSave().then(() => {
                 this.navigateToNextStep();
             });
@@ -111,7 +114,7 @@ export class NavigatorController {
      * wird dann direkt zum vorherigen Step geleitet.
      */
     public previousStep(): void {
-        if (this.dvSave) {
+        if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
             this.dvSave().then(() => {
                 this.navigateToPreviousStep();
             });
@@ -171,7 +174,10 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.errorService.clearAll();
-            if (this.gesuchModelManager.isGesuchsteller2Required()) {
+            if (this.wizardStepManager.isNextStepBesucht() && !this.wizardStepManager.isNextStepEnabled()) {
+                // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
+                this.state.go('gesuch.dokumente');
+            } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.finanzielleSituationStart');
             } else {
                 this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
@@ -240,7 +246,7 @@ export class NavigatorController {
             this.state.go('gesuch.kinder');
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION )
+            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.moveBackToGesuchsteller();
             } else {
@@ -309,13 +315,13 @@ export class NavigatorController {
      */
     public isNextDisabled(): boolean {
         if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepAvailable();
+            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepBesucht();
         }
         if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepAvailable();
+            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepBesucht();
         }
         if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepAvailable();
+            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht();
         }
         return false;
     }

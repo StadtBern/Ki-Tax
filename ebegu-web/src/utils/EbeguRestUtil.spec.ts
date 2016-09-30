@@ -24,14 +24,14 @@ import TSBetreuungspensum from '../models/TSBetreuungspensum';
 import TSGesuch from '../models/TSGesuch';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import TSFall from '../models/TSFall';
-import TSPendenzJA from '../models/TSPendenzJA';
+import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import {EbeguWebPendenzen} from '../pendenzen/pendenzen.module';
 import TSFamiliensituation from '../models/TSFamiliensituation';
 import TSVerfuegung from '../models/TSVerfuegung';
+import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
-import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 
 describe('EbeguRestUtil', function () {
 
@@ -175,13 +175,24 @@ describe('EbeguRestUtil', function () {
                 myGesuch.kindContainers = [undefined];
                 myGesuch.einkommensverschlechterungInfo = undefined;  //todo createEinkommensverschlechterungInfo
                 myGesuch.bemerkungen = undefined;
+                myGesuch.typ = undefined;
 
                 let restGesuch = ebeguRestUtil.gesuchToRestObject({}, myGesuch);
                 expect(restGesuch).toBeDefined();
 
                 let transformedGesuch = ebeguRestUtil.parseGesuch(new TSGesuch(), restGesuch);
                 expect(transformedGesuch).toBeDefined();
-                expect(transformedGesuch).toEqual(myGesuch);
+
+                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.fall).toEqual(myGesuch.fall);
+                expect(transformedGesuch.gesuchsteller1).toEqual(myGesuch.gesuchsteller1);
+                expect(transformedGesuch.gesuchsteller2).toEqual(myGesuch.gesuchsteller2);
+                expect(transformedGesuch.gesuchsperiode).toEqual(myGesuch.gesuchsperiode);
+                expect(transformedGesuch.familiensituation).toEqual(myGesuch.familiensituation);
+                expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
+                expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
+                expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
+                expect(transformedGesuch.typ).toEqual(myGesuch.typ);
             });
         });
         describe('parseMandant()', () => {
@@ -339,20 +350,21 @@ describe('EbeguRestUtil', function () {
 
             });
         });
-        describe('parsePendenz()', () => {
-            it('should transform TSPendenzJA to REST Obj and back', () => {
+        describe('parseAntragDTO()', () => {
+            it('should transform TSAntragDTO to REST Obj and back', () => {
                 let tsGesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(undefined, undefined));
                 TestDataUtil.setAbstractFieldsUndefined(tsGesuchsperiode);
-                let myPendenz = new TSPendenzJA('id1', 123, 'name', TSAntragTyp.GESUCH, tsGesuchsperiode,
-                    DateUtil.today(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
+                let myPendenz = new TSAntragDTO('id1', 123, 'name', TSAntragTyp.GESUCH, DateUtil.today(), DateUtil.now(), [TSBetreuungsangebotTyp.KITA], ['Inst1, Inst2'], 'Juan Arbolado');
 
-                let restPendenz = ebeguRestUtil.pendenzToRestObject({}, myPendenz);
+                let restPendenz = ebeguRestUtil.antragDTOToRestObject({}, myPendenz);
                 expect(restPendenz).toBeDefined();
 
-                let transformedPendenz = ebeguRestUtil.parsePendenz(new TSPendenzJA(), restPendenz);
+                let transformedPendenz = ebeguRestUtil.parseAntragDTO(new TSAntragDTO(), restPendenz);
                 expect(transformedPendenz).toBeDefined();
                 expect(transformedPendenz.eingangsdatum.isSame(myPendenz.eingangsdatum)).toBe(true);
                 transformedPendenz.eingangsdatum = myPendenz.eingangsdatum;
+                expect(transformedPendenz.aenderungsdatum.isSame(myPendenz.aenderungsdatum)).toBe(true);
+                transformedPendenz.aenderungsdatum = myPendenz.aenderungsdatum;
                 expect(transformedPendenz).toEqual(myPendenz);
             });
         });
@@ -383,7 +395,7 @@ describe('EbeguRestUtil', function () {
                 restVerfuegungZeitabschnitt.erwerbspensumGS1 = 8;
                 restVerfuegungZeitabschnitt.erwerbspensumGS2 = 9;
                 restVerfuegungZeitabschnitt.fachstellenpensum = 10;
-                restVerfuegungZeitabschnitt.massgebendesEinkommen = 11;
+                restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr = 11;
                 restVerfuegungZeitabschnitt.vollkosten = 12;
                 restVerfuegungZeitabschnitt.bemerkungen = 'bemerkung1';
                 restVerfuegungZeitabschnitt.status = 'status1';
@@ -400,7 +412,7 @@ describe('EbeguRestUtil', function () {
                 expect(verfuegungTS.erwerbspensumGS1).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS1);
                 expect(verfuegungTS.erwerbspensumGS2).toEqual(restVerfuegungZeitabschnitt.erwerbspensumGS2);
                 expect(verfuegungTS.fachstellenpensum).toEqual(restVerfuegungZeitabschnitt.fachstellenpensum);
-                expect(verfuegungTS.massgebendesEinkommen).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommen);
+                expect(verfuegungTS.massgebendesEinkommenVorAbzugFamgr).toEqual(restVerfuegungZeitabschnitt.massgebendesEinkommenVorAbzugFamgr);
                 expect(verfuegungTS.vollkosten).toEqual(restVerfuegungZeitabschnitt.vollkosten);
                 expect(verfuegungTS.bemerkungen).toEqual(restVerfuegungZeitabschnitt.bemerkungen);
                 expect(verfuegungTS.status).toEqual(restVerfuegungZeitabschnitt.status);

@@ -5,10 +5,10 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {EinkommensverschlechterungResultateViewController} from './einkommensverschlechterungResultateView';
 import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
+import WizardStepManager from '../../service/wizardStepManager';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IStateService = angular.ui.IStateService;
-import WizardStepManager from '../../service/wizardStepManager';
 
 describe('einkommensverschlechterungResultateView', function () {
 
@@ -101,10 +101,10 @@ describe('einkommensverschlechterungResultateView', function () {
 
         function setValues( massgebendesEinkommen_vj: number, massgebendesEinkommen_bj: number) {
             let finsint: TSFinanzielleSituationResultateDTO = new TSFinanzielleSituationResultateDTO();
-            finsint.massgebendesEinkommen = massgebendesEinkommen_bj;
+            finsint.massgebendesEinkVorAbzFamGr = massgebendesEinkommen_bj;
 
             let finsintvj: TSFinanzielleSituationResultateDTO = new TSFinanzielleSituationResultateDTO();
-            finsintvj.massgebendesEinkommen = massgebendesEinkommen_vj;
+            finsintvj.massgebendesEinkVorAbzFamGr = massgebendesEinkommen_vj;
 
             spyOn(ekvrvc, 'getResultate').and.returnValue(finsint);
             ekvrvc.resultatVorjahr = finsintvj;
