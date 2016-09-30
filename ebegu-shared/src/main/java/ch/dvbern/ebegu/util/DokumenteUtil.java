@@ -68,10 +68,10 @@ public class DokumenteUtil {
 	@Nonnull
 	public static String getFileNameForGeneratedDokumentTyp(final GeneratedDokumentTyp typ, final String identificationNumber) {
 		switch (typ) {
-			case BEGLEITSCHREIBEN: return "Begleitbrief_" + identificationNumber + ".pdf";
-			case FINANZIELLE_SITUATION: return "Finanzielle_Situation_" + identificationNumber + ".pdf";
-			case VERFUEGUNG: return "Verfuegung_" + identificationNumber + ".pdf";
-			default: return "datei.pdf";
+			case BEGLEITSCHREIBEN: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.BEGLEITSCHREIBEN, identificationNumber);
+			case FINANZIELLE_SITUATION: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.FINANZIELLE_SITUATION, identificationNumber);
+			case VERFUEGUNG: return ServerMessageUtil.translateEnumValue(GeneratedDokumentTyp.VERFUEGUNG, identificationNumber);
+			default: return "file.pdf";
 		}
 	}
 }
