@@ -71,14 +71,14 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getWizardSteps()[0]).toBe(step);
         });
     });
-    describe('isNextStepAvailable', function() {
+    describe('isNextStepBesucht', function() {
         it('next step is available because status != UNBESUCHT', function() {
             createTwoSteps(TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.OK);
             wizardStepManager.findStepsFromGesuch('123');
             scope.$apply();
 
             wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
-            expect(wizardStepManager.isNextStepAvailable()).toBe(true);
+            expect(wizardStepManager.isNextStepBesucht()).toBe(true);
         });
     });
     describe('areAllStepsOK', function() {

@@ -28,6 +28,7 @@ import java.util.List;
 @Transactional(TransactionMode.DISABLED)
 public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
+
 	@Inject
 	private WizardStepService wizardStepService;
 	@Inject
@@ -293,10 +294,19 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void updateWizardStepEinkommensverschlechterung() {
+	public void updateWizardStepEinkommensverschlechterungTrueToFalse() {
+		updateWizardStepEinkommensverschlechterung(true);
+	}
+
+	@Test
+	public void updateWizardStepEinkommensverschlechterungFalseToFalse() {
+		updateWizardStepEinkommensverschlechterung(false);
+	}
+
+	private void updateWizardStepEinkommensverschlechterung(final boolean oldValue) {
 		updateStatus(einkVerStep, WizardStepStatus.IN_BEARBEITUNG);
 		EinkommensverschlechterungInfo oldData = new EinkommensverschlechterungInfo();
-		oldData.setEinkommensverschlechterung(true);
+		oldData.setEinkommensverschlechterung(oldValue);
 		EinkommensverschlechterungInfo newData = new EinkommensverschlechterungInfo();
 		newData.setEinkommensverschlechterung(false);
 
