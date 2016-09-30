@@ -92,7 +92,7 @@ public class BegleitschreibenPrintImpl extends DocumentMergeAbstract implements 
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
 	@Override
-	public String getFallnummer() {
+	public String getFallNummer() {
 
 		return ermittleFallNummer(gesuch);
 	}
