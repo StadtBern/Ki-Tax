@@ -111,7 +111,7 @@ public class TestJaxDataUtil {
 		return jaxFall;
 	}
 
-	private static JaxAuthLoginElement createTestJaxBenutzer() {
+	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
 		jaxBenutzer.setRole(UserRole.ADMIN);
 		jaxBenutzer.setUsername("TestUser");
@@ -157,7 +157,7 @@ public class TestJaxDataUtil {
 		return jaxKind;
 	}
 
-	private static JaxPensumFachstelle createTestJaxPensumFachstelle() {
+	public static JaxPensumFachstelle createTestJaxPensumFachstelle() {
 		JaxPensumFachstelle jaxPensumFachstelle = new JaxPensumFachstelle();
 		jaxPensumFachstelle.setGueltigBis(LocalDate.now().plusMonths(1));
 		jaxPensumFachstelle.setGueltigAb(LocalDate.now());
@@ -202,7 +202,7 @@ public class TestJaxDataUtil {
 		return betreuung;
 	}
 
-	private static JaxInstitutionStammdaten createTestJaxInstitutionsStammdaten() {
+	public static JaxInstitutionStammdaten createTestJaxInstitutionsStammdaten() {
 		JaxInstitutionStammdaten institutionStammdaten = new JaxInstitutionStammdaten();
 		institutionStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		institutionStammdaten.setOeffnungsstunden(new BigDecimal(1000));
@@ -267,5 +267,20 @@ public class TestJaxDataUtil {
 		JaxMandant mandant = new JaxMandant();
 		mandant.setName("TestMandant");
 		return mandant;
+	}
+
+	public static JaxInstitution createTestJaxInstitution() {
+		JaxInstitution institution = new JaxInstitution();
+		institution.setMandant(createTestMandant());
+		institution.setName("Inst1");
+		institution.setTraegerschaft(createJaxTestTraegerschaft());
+		return  institution;
+	}
+
+	public static JaxTraegerschaft createJaxTestTraegerschaft() {
+		JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
+		jaxTraegerschaft.setName("Test_Traegerschaft");
+		jaxTraegerschaft.setActive(true);
+		return null;
 	}
 }
