@@ -28,6 +28,7 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
@@ -233,8 +234,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
     @Override
     public Pair<Long, List<Gesuch>> searchGesuche(AntragTableFilterDTO antragTableFilterDto) {
-
-        Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+        Benutzer user = benutzerService.getCurrentBenutzer().get();
+        UserRole role = user.getRole();
+        
+        Set<AntragStatus> allowedAntragStatus = AntragStatus.allowedforRole(role);
+        if (allowedAntragStatus.isEmpty()) {
+            return new ImmutablePair<>(0L, Collections.EMPTY_LIST);
+        }
         
         PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
         CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -251,7 +257,42 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
         Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.INNER);
         Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution);
 
+        CriteriaQuery<Long> rowCountQuery = cb.createQuery(Long.class);
+        Root<Gesuch> rowCountRoot = rowCountQuery.from(Gesuch.class);
+        rowCountQuery.select(cb.countDistinct(rowCountRoot));
+
         Collection<Predicate> predicates = new ArrayList<>();
+        
+        // General role based predicates
+        CriteriaBuilder.In<AntragStatus> inClauseStatus = cb.in(root.get(Gesuch_.status));
+        allowedAntragStatus.stream().forEach((status) -> {
+            inClauseStatus.value(status);
+        });
+        predicates.add(inClauseStatus);
+
+        // Special role based predicates
+        switch(role) {
+            case ADMIN:
+            case REVISOR:
+                break;
+            case SACHBEARBEITER_JA:
+            case JURIST:
+                predicates.add(cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+                break;
+            case SACHBEARBEITER_TRAEGERSCHAFT:
+                predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
+                break;
+            case SACHBEARBEITER_INSTITUTION:
+                predicates.add(cb.equal(benutzer.get(Benutzer_.institution), institution));
+                break;
+            case SCHULAMT:
+                predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+                break;
+            default:
+                break;
+        }
+
+        // Predicates derived from PredicateDTO
         if (predicateObjectDto != null) {
             if (predicateObjectDto.getFallNummer() != null) {
                 predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.getFallNummer())));
@@ -295,14 +336,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
                         ));
             }            
         }
-        // where-clause
-        if (!predicates.isEmpty()) {
-            query.where(cb.and(predicates.toArray(new Predicate[0])));
-        }
+        // Construct the where-clause
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
+        
+        // TODO: Hack to get the total row count
+        //Long totalCount = (long) persistence.getCriteriaResults(query).size();
+        Long totalCount = countRows();
 
-        Long totalCount = (long) persistence.getCriteriaResults(query).size();
-
-        // order-by clause
+        // Construct the order-by clause
 		if (antragTableFilterDto.getSort() != null && antragTableFilterDto.getSort().getPredicate() != null) {
             Expression expression;
             switch (antragTableFilterDto.getSort().getPredicate()) {
@@ -353,4 +394,61 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return new ImmutablePair<>(totalCount, gesuche);
     }
 
+    private Long countRows() {
+        Benutzer user = benutzerService.getCurrentBenutzer().get();
+        UserRole role = user.getRole();
+
+        Set<AntragStatus> allowedAntragStatus = AntragStatus.allowedforRole(role);
+        if (allowedAntragStatus.isEmpty()) {
+            return 0L;
+        }
+
+        CriteriaBuilder cb = persistence.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Gesuch> root = query.from(Gesuch.class);
+        query.select(cb.countDistinct(root));
+
+        Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
+        Join<Fall, Benutzer> benutzer = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
+        Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
+        Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
+        Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
+        SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.INNER);
+        SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.INNER);
+        Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.INNER);
+        Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution);
+
+        Collection<Predicate> predicates = new ArrayList<>();
+
+        // General role based predicates
+        CriteriaBuilder.In<AntragStatus> inClauseStatus = cb.in(root.get(Gesuch_.status));
+        allowedAntragStatus.stream().forEach((status) -> {
+            inClauseStatus.value(status);
+        });
+        predicates.add(inClauseStatus);
+
+        // Special role based predicates
+        switch(role) {
+            case ADMIN:
+            case REVISOR:
+                break;
+            case SACHBEARBEITER_JA:
+            case JURIST:
+                predicates.add(cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+                break;
+            case SACHBEARBEITER_TRAEGERSCHAFT:
+                predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
+                break;
+            case SACHBEARBEITER_INSTITUTION:
+                predicates.add(cb.equal(benutzer.get(Benutzer_.institution), institution));
+                break;
+            case SCHULAMT:
+                predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+                break;
+            default:
+                break;
+        }
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
+        return persistence.getCriteriaSingleResult(query);
+    }
 }
