@@ -154,8 +154,16 @@ export default class WizardStepManager {
      * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
      * @returns {boolean}
      */
-    public isNextStepAvailable(): boolean {
+    public isNextStepBesucht(): boolean {
         return this.getNextStep().wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    }
+
+    /**
+     * Gibt true zurueck wenn der naechste Step enabled (verfuegbar) ist
+     * @returns {boolean}
+     */
+    public isNextStepEnabled(): boolean {
+        return this.getNextStep().verfuegbar;
     }
 
     private getNextStep(): TSWizardStep {

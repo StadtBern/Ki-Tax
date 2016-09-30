@@ -882,6 +882,7 @@ export default class EbeguRestUtil {
         restKind.wohnhaftImGleichenHaushalt = kind.wohnhaftImGleichenHaushalt;
         restKind.kinderabzug = kind.kinderabzug;
         restKind.mutterspracheDeutsch = kind.mutterspracheDeutsch;
+        restKind.einschulung = kind.einschulung;
         restKind.familienErgaenzendeBetreuung = kind.familienErgaenzendeBetreuung;
         if (kind.pensumFachstelle) {
             restKind.pensumFachstelle = this.pensumFachstelleToRestObject({}, kind.pensumFachstelle);
@@ -920,6 +921,7 @@ export default class EbeguRestUtil {
             kindTS.wohnhaftImGleichenHaushalt = kindFromServer.wohnhaftImGleichenHaushalt;
             kindTS.kinderabzug = kindFromServer.kinderabzug;
             kindTS.mutterspracheDeutsch = kindFromServer.mutterspracheDeutsch;
+            kindTS.einschulung = kindFromServer.einschulung;
             kindTS.familienErgaenzendeBetreuung = kindFromServer.familienErgaenzendeBetreuung;
             if (kindFromServer.pensumFachstelle) {
                 kindTS.pensumFachstelle = this.parsePensumFachstelle(new TSPensumFachstelle(), kindFromServer.pensumFachstelle);

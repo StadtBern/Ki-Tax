@@ -151,6 +151,7 @@ public class TestJaxDataUtil {
 		jaxKind.setGeschlecht(Geschlecht.WEIBLICH);
 		jaxKind.setPensumFachstelle(createTestJaxPensumFachstelle());
 		jaxKind.setMutterspracheDeutsch(false);
+		jaxKind.setEinschulung(false);
 		jaxKind.setFamilienErgaenzendeBetreuung(true);
 		jaxKind.setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		return jaxKind;

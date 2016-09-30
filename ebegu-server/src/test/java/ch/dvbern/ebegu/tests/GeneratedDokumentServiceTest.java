@@ -35,10 +35,6 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguTest {
 	@Inject
 	private Persistence<Gesuch> persistence;
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return createTestArchive();
-	}
 
 	@Test
 	public void findGeneratedDokumentTest() {

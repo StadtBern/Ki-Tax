@@ -44,11 +44,6 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 	private FinanzielleSituationRechner finSitRechner;
 
 
-	@Deployment
-	public static Archive<?> createDeploymentEnvironment() {
-		return AbstractEbeguTest.createTestArchive();
-	}
-
 
 
 	@Test
