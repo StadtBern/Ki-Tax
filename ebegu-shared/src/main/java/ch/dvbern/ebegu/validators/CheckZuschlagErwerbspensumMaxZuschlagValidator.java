@@ -50,11 +50,14 @@ public class CheckZuschlagErwerbspensumMaxZuschlagValidator implements Constrain
 
 	@Override
 	public boolean isValid(Erwerbspensum erwerbspensum, ConstraintValidatorContext constraintValidatorContext) {
+		if (erwerbspensum.getZuschlagsprozent() == null) {
+			return true;
+		}
 		final EntityManager em = createEntityManager();
 		LocalDate stichtagParameter = erwerbspensum.getGueltigkeit().getGueltigAb();
 		int maxValue = getMaxValue(stichtagParameter, em);
         closeEntityManager(em);
-        return erwerbspensum.getZuschlagsprozent() == null || erwerbspensum.getZuschlagsprozent() <= maxValue;
+        return erwerbspensum.getZuschlagsprozent() <= maxValue;
 	}
 
 	private EntityManager createEntityManager() {
@@ -85,6 +88,6 @@ public class CheckZuschlagErwerbspensumMaxZuschlagValidator implements Constrain
 		} else{
 			LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key + ". Using 100");
 		}
-		return 100;
+		return 100; // if no parameter value is stored in database then use 100
 	}
 }
