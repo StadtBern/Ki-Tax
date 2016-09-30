@@ -22,10 +22,10 @@ public final class BGRechnerParameterDTO {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private BigDecimal beitragKantonProTagJahr1; 		// PARAM_ABGELTUNG_PRO_TAG_KANTON
-	private BigDecimal beitragKantonProTagJahr2; 		// PARAM_ABGELTUNG_PRO_TAG_KANTON
+	private BigDecimal beitragKantonProTag; 		// PARAM_ABGELTUNG_PRO_TAG_KANTON
 
-	private BigDecimal beitragStadtProTag; 			// PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
+	private BigDecimal beitragStadtProTagJahr1; 			// PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
+	private BigDecimal beitragStadtProTagJahr2; 			// PARAM_FIXBETRAG_STADT_PRO_TAG_KITA
 
 	private BigDecimal anzahlTageTagi; 				// PARAM_ANZAHL_TAGE_KANTON
 	private BigDecimal anzahlTageMaximal; 			// PARAM_ANZAL_TAGE_MAX_KITA
@@ -45,7 +45,7 @@ public final class BGRechnerParameterDTO {
 
 	public BGRechnerParameterDTO(Map<EbeguParameterKey, EbeguParameter> paramMap, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 
-		this.setBeitragStadtProTag                  (asBigDecimal(paramMap, PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, gesuchsperiode, mandant));
+		this.setBeitragKantonProTag                 (asBigDecimal(paramMap, PARAM_ABGELTUNG_PRO_TAG_KANTON, gesuchsperiode, mandant));
 		this.setAnzahlTageMaximal                   (asBigDecimal(paramMap, PARAM_ANZAL_TAGE_MAX_KITA, gesuchsperiode, mandant));
 		this.setAnzahlStundenProTagMaximal          (asBigDecimal(paramMap, PARAM_STUNDEN_PRO_TAG_MAX_KITA, gesuchsperiode, mandant));
 		this.setKostenProStundeMaximalKitaTagi      (asBigDecimal(paramMap, PARAM_KOSTEN_PRO_STUNDE_MAX, gesuchsperiode, mandant));
@@ -84,28 +84,28 @@ public final class BGRechnerParameterDTO {
 	}
 
 
-	public BigDecimal getBeitragKantonProTagJahr1() {
-		return beitragKantonProTagJahr1;
+	public BigDecimal getBeitragKantonProTag() {
+		return beitragKantonProTag;
 	}
 
-	public void setBeitragKantonProTagJahr1(BigDecimal beitragKantonProTagJahr1) {
-		this.beitragKantonProTagJahr1 = beitragKantonProTagJahr1;
+	public void setBeitragKantonProTag(BigDecimal beitragKantonProTag) {
+		this.beitragKantonProTag = beitragKantonProTag;
 	}
 
-	public BigDecimal getBeitragKantonProTagJahr2() {
-		return beitragKantonProTagJahr2;
+	public BigDecimal getBeitragStadtProTagJahr1() {
+		return beitragStadtProTagJahr1;
 	}
 
-	public void setBeitragKantonProTagJahr2(BigDecimal beitragKantonProTagJahr2) {
-		this.beitragKantonProTagJahr2 = beitragKantonProTagJahr2;
+	public void setBeitragStadtProTagJahr1(BigDecimal beitragStadtProTagJahr1) {
+		this.beitragStadtProTagJahr1 = beitragStadtProTagJahr1;
 	}
 
-	public BigDecimal getBeitragStadtProTag() {
-		return beitragStadtProTag;
+	public BigDecimal getBeitragStadtProTagJahr2() {
+		return beitragStadtProTagJahr2;
 	}
 
-	public void setBeitragStadtProTag(BigDecimal beitragStadtProTag) {
-		this.beitragStadtProTag = beitragStadtProTag;
+	public void setBeitragStadtProTagJahr2(BigDecimal beitragStadtProTagJahr2) {
+		this.beitragStadtProTagJahr2 = beitragStadtProTagJahr2;
 	}
 
 	public BigDecimal getAnzahlTageMaximal() {

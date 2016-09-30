@@ -5,10 +5,10 @@ import ch.dvbern.ebegu.entities.Erwerbspensum;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class CheckZuschlagPensumValidator implements ConstraintValidator<CheckZuschlagPensum, Erwerbspensum> {
+public class CheckZuschlagErwerbspensumZuschlagUndGrundValidator implements ConstraintValidator<CheckZuschlagErwerbspensumZuschlagUndGrund, Erwerbspensum> {
 
 	@Override
-	public void initialize(CheckZuschlagPensum constraintAnnotation) {
+	public void initialize(CheckZuschlagErwerbspensumZuschlagUndGrund constraintAnnotation) {
 		// nop
 	}
 
@@ -25,7 +25,6 @@ public class CheckZuschlagPensumValidator implements ConstraintValidator<CheckZu
 					return false;
 				}
 			}
-
 		}
 		return true;
 	}
