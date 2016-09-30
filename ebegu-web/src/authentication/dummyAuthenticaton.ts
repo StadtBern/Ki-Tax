@@ -47,6 +47,8 @@ export class AuthenticationListViewController {
             this.mandant, TSRole.SACHBEARBEITER_TRAEGERSCHAFT, this.traegerschaftSGF));
         this.usersList.push(new TSUser('Kurt', 'Blaser', 'blku', 'password5', 'kurt.blaser@bern.ch', this.mandant, TSRole.ADMIN));
         this.usersList.push(new TSUser('Emma', 'Gerber', 'geem', 'password6', 'emma.gerber@myemail.ch', this.mandant, TSRole.GESUCHSTELLER));
+
+        this.usersList.push(new TSUser('Julien', 'Schuler', 'scju', 'password9', 'julien.schuler@myemail.ch', this.mandant, TSRole.SCHULAMT));
     }
 
 
@@ -109,6 +111,8 @@ export class AuthenticationListViewController {
                 this.$state.go('pendenzen');
             } else  if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
                 this.$state.go('pendenzenInstitution');
+            } else if (user.getRoleKey() === 'TSRole_SCHULAMT') {
+                this.$state.go('faelle');
             }
         });
     }
