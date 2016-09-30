@@ -150,18 +150,32 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return
 	 */
 	public List<BemerkungPrint> getManuelleBemerkungen() {
-		//TODO ZEAB Handling mehrere Bemerkungen
-		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 
+		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			if (verfuegung.get().getManuelleBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getManuelleBemerkungen())) {
-				bemerkungen.add(new BemerkungPrintImpl(verfuegung.get().getManuelleBemerkungen()));
+				bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
 			} else if (verfuegung.get().getGeneratedBemerkungen() != null && !"".equalsIgnoreCase(verfuegung.get().getGeneratedBemerkungen())) {
-				bemerkungen.add(new BemerkungPrintImpl(verfuegung.get().getGeneratedBemerkungen()));
+				bemerkungen.addAll(splitBemerkungen((verfuegung.get().getGeneratedBemerkungen())));
 			}
 		}
 		return bemerkungen;
+	}
+
+	/**
+	 * Zerlegt die Bemerkungen (Delimiter \n) und bereitet die in einer Liste.
+	 * @param bemerkungen
+	 * @return List mit Bemerkungen
+	 */
+	private List<BemerkungPrint> splitBemerkungen(String bemerkungen) {
+
+		List<BemerkungPrint> list = new ArrayList<>();
+		String[] splitBemerkungen = bemerkungen.split("\n");
+		for (String bemerkung : splitBemerkungen) {
+			list.add(new BemerkungPrintImpl(bemerkung));
+		}
+		return list;
 	}
 
 	/**

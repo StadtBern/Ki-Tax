@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.tests;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -57,14 +56,15 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	public void testGeneriereVerfuegungKita() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg,BetreuungsangebotTyp.KITA ));
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen,BetreuungsangebotTyp.KITA));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg, BetreuungsangebotTyp.KITA));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen, BetreuungsangebotTyp.KITA));
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch(BetreuungsangebotTyp.KITA);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
+				.setManuelleBemerkungen("Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
@@ -82,14 +82,15 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg,BetreuungsangebotTyp.TAGESELTERN_KLEINKIND ));
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen,BetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen, BetreuungsangebotTyp.TAGESELTERN_KLEINKIND));
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
+				.setManuelleBemerkungen("Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
@@ -107,14 +108,14 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg,BetreuungsangebotTyp.TAGESELTERN_SCHULKIND ));
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen,BetreuungsangebotTyp.TAGESELTERN_SCHULKIND));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen, BetreuungsangebotTyp.TAGESELTERN_SCHULKIND));
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
@@ -133,14 +134,15 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg,BetreuungsangebotTyp.TAGI ));
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen,BetreuungsangebotTyp.TAGI));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg, BetreuungsangebotTyp.TAGI));
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen, BetreuungsangebotTyp.TAGI));
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch(BetreuungsangebotTyp.TAGI);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
+				.setManuelleBemerkungen("\"Test Bemerkung1\\nTest Bemerkung2\\nTest Bemerkung3\"");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
