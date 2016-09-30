@@ -19,9 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +67,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		File file = writeToTempDir(bytes, "finanzielleSituation1G.pdf");
-//		 openPDF(file);
+		writeToTempDir(bytes, "finanzielleSituation1G.pdf");
 	}
 
 	/**
@@ -95,16 +91,6 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
-		File file = writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
-//		openPDF(file);
-	}
-
-	private void openPDF(File file) {
-
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException ex) {
-			// no application registered for PDFs
-		}
+		writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
 	}
 }

@@ -18,9 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +62,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
 		writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
-		// openPDF(file);
-
 	}
 
 	@Test
@@ -85,17 +80,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		File file = writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
-		// openPDF(file);
-
-	}
-
-	private void openPDF(File file) {
-
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException ex) {
-			// no application registered for PDFs
-		}
+		writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
 	}
 }
