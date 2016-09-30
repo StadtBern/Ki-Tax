@@ -67,7 +67,7 @@ export class FaelleListViewController {
         if (antrag) {
             //todo xaver fragen muessen wir hier was anders machen fuer inst und ja?
             if (antrag && antrag.antragTyp === TSAntragTyp.GESUCH) {
-                this.gesuchRS.findGesuch(antrag.antragId).then((response) => {
+                this.gesuchRS.findGesuchForInstitution(antrag.antragId).then((response) => {
                     if (response) {
                         this.openGesuch(response);
                     }
