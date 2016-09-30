@@ -1,8 +1,12 @@
 package ch.dvbern.ebegu.tests;
 
-import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.lib.cdipersistence.ISessionContextService;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.annotation.Nullable;
+
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -18,10 +22,9 @@ import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.lib.cdipersistence.ISessionContextService;
+import ch.dvbern.lib.cdipersistence.Persistence;
 
 /**
  * Diese Klasse implementiert die Methode "Deployment" fuer die Arquillian Tests und muss von allen Testklassen
@@ -42,7 +45,6 @@ public abstract class AbstractEbeguTest {
 		return createTestArchive(null);
 	}
 
-
 	public static Archive<?> createTestArchive(@Nullable Class[] classesToAdd) {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
@@ -52,24 +54,27 @@ public abstract class AbstractEbeguTest {
 		// wir fuegen die packages einzeln hinzu weil sonst klassen die im shared sind und das gleiche package haben
 		// doppelt eingefuegt werden
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war").addPackages(true, "ch/dvbern/ebegu/persistence").addPackages(true, "ch/dvbern/ebegu/rechner")
-			.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
-			.addPackages(true, "ch/dvbern/ebegu/vorlagen")
-			// .addPackages(true, "ch/dvbern/ebegu/vorlagen/finanziellesituation")
-			// .addPackages(true, "ch/dvbern/ebegu/errors")
-			// .addPackages(true, "ch/dvbern/ebegu/entities")
-			.addPackages(true, "ch/dvbern/ebegu/tests")
-			// .addPackages(true, "ch/dvbern/ebegu/enums")
-			.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
+				.addPackages(true, "ch/dvbern/ebegu/rules").addPackages(true, "ch/dvbern/ebegu/services").addPackages(true, "ch/dvbern/ebegu/validation")
+				.addPackages(true, "ch/dvbern/ebegu/vorlagen")
+				// .addPackages(true, "ch/dvbern/ebegu/vorlagen/finanziellesituation")
+				// .addPackages(true, "ch/dvbern/ebegu/errors")
+				// .addPackages(true, "ch/dvbern/ebegu/entities")
+				.addPackages(true, "ch/dvbern/ebegu/tests")
+				// .addPackages(true, "ch/dvbern/ebegu/enums")
+				.addClasses(AbstractEbeguTest.class, Persistence.class, ISessionContextService.class, AbstractEntity.class)
 
-			.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
+				.addAsLibraries(runtimeDeps).addAsLibraries(testDeps)
 
-			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml").addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
-			.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
-			.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx")
-			.addAsResource("font/sRGB.profile", "font/sRGB.profile").addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
-			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
-			// Deploy our test datasource
-			.addAsWebInfResource("test-ds.xml");
+				.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_kita.docx")
+				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx")
+				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")
+				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx")
+				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
+				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx").addAsResource("font/sRGB.profile", "font/sRGB.profile")
+				.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml").addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+				// Deploy our test datasource
+				.addAsWebInfResource("test-ds.xml");
 		if (classesToAdd != null) {
 			webArchive.addClasses(classesToAdd);
 		}
@@ -77,7 +82,6 @@ public abstract class AbstractEbeguTest {
 		new ZipExporterImpl(webArchive).exportTo(new File(System.getProperty("java.io.tmpdir"), "myWebArchive.war"), true);
 		return webArchive;
 	}
-
 
 	/**
 	 * Erstellt das byte Dokument in einem temp File in einem temp folder
@@ -101,6 +105,8 @@ public abstract class AbstractEbeguTest {
 			fos = new FileOutputStream(tempFile);
 			fos.write(data);
 			fos.close();
+			// File external oeffnen
+			// openPDF(tempFile);
 		} finally {
 			if (fos != null) {
 				fos.close();
@@ -108,5 +114,14 @@ public abstract class AbstractEbeguTest {
 
 		}
 		return tempFile;
+	}
+
+	private void openPDF(File file) {
+
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException ex) {
+			// no application registered for PDFs
+		}
 	}
 }

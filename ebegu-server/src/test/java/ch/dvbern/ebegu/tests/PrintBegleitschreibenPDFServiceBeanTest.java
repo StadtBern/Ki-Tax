@@ -65,8 +65,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
 		writeToTempDir(bytes, "BegleitschreibenWaelti.pdf");
-		// openPDF(file);
-
 	}
 
 	@Test
@@ -85,17 +83,6 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 
 		byte[] bytes = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 
-		File file = writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
-		// openPDF(file);
-
-	}
-
-	private void openPDF(File file) {
-
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException ex) {
-			// no application registered for PDFs
-		}
+		writeToTempDir(bytes, "BegleitschreibenFeutz.pdf");
 	}
 }
