@@ -13,6 +13,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -23,7 +24,6 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	private FinanzielleSituationPrint finanz;
 	private EinkommensverschlechterungPrint ev1;
 	private EinkommensverschlechterungPrint ev2;
-
 	private Gesuch gesuch;
 
 	/**
@@ -34,14 +34,15 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
 
 		this.gesuch = gesuch;
-		//Finanzdaten abfuellen
+		// Finanzdaten abfuellen
 		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
 		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
 
 		// FinanzielleSituation G1 und G2
 		// TODO Pruefen oder Implementieren
 		String finanzielleSituationJahr = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() - 1);
-		String fallNummer = gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + "." + gesuch.getFall().getFallNummer();
+		String fallNummer = PrintUtil.createFallNummerString(gesuch);
+
 		finanz = new FinanzielleSituationPrintImpl(fG1, fG2, finanzielleSituationJahr, fallNummer);
 
 		if (fG1.getEinkommensverschlechterungInfo() != null && fG1.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
