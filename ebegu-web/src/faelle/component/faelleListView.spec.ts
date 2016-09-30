@@ -70,7 +70,7 @@ describe('faelleListeView', function () {
         });
         describe('editPendenzJA', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it for normal user', function () {
-                let tsGesuch = callEditFall();
+                let tsGesuch = callEditFall('findGesuch');
 
                 expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockAntrag.antragId);
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation');
@@ -78,9 +78,9 @@ describe('faelleListeView', function () {
             });
             it('should call findGesuch and open the view gesuch.verfuegen with it for INST/TRAEGER user', function () {
                 spyOn(authServiceRS, 'isRole').and.returnValue(true);
-                let tsGesuch = callEditFall();
+                let tsGesuch = callEditFall('findGesuchForInstitution');
 
-                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockAntrag.antragId);
+                expect(gesuchRS.findGesuchForInstitution).toHaveBeenCalledWith(mockAntrag.antragId);
                 expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen');
                 expect(gesuchModelManager.getGesuch()).toBe(tsGesuch);
             });
@@ -104,7 +104,7 @@ describe('faelleListeView', function () {
         $httpBackend.when('GET', '/ebegu/api/v1/gesuchsperioden/active').respond({});
     }
 
-    function callEditFall(): TSGesuch {
+    function callEditFall(methodName: string): TSGesuch {
         mockRestCalls();
         spyOn($state, 'go');
         spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue(undefined);
@@ -112,7 +112,7 @@ describe('faelleListeView', function () {
             gesuchModelManager, berechnungsManager, $state, $log, CONSTANTS, authServiceRS);
 
         let tsGesuch = new TSGesuch();
-        spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
+        spyOn(gesuchRS, methodName).and.returnValue($q.when(tsGesuch));
 
         faelleListViewController.editFall(mockAntrag);
         $scope.$apply();
