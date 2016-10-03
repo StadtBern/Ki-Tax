@@ -57,7 +57,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(insertedGesuch.getFall().getId(), gesuch.get().getFall().getId());
 
 		gesuch.get().setFall(persistence.persist(TestDataUtil.createDefaultFall()));
-		final Gesuch updated = gesuchService.updateGesuch(gesuch.get());
+		final Gesuch updated = gesuchService.updateGesuch(gesuch.get(), false);
 		Assert.assertEquals(updated.getFall().getId(), gesuch.get().getFall().getId());
 
 	}

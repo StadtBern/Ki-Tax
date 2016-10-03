@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.WizardStepName;
 
@@ -43,4 +44,12 @@ public interface WizardStepService {
 	 * @return die Liste mit allen aktualisierten Status
 	 */
 	List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName);
+
+	/**
+	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch
+	 * @param gesuch
+	 * @return
+	 */
+	@Nonnull
+	List<WizardStep> createWizardStepList(Gesuch gesuch);
 }

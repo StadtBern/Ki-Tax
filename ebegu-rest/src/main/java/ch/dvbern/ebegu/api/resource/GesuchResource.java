@@ -2,10 +2,11 @@ package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.*;
-import ch.dvbern.ebegu.api.resource.wizard.WizardStepResource;
+import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
+import ch.dvbern.ebegu.api.dtos.JaxGesuch;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.dto.*;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
@@ -16,7 +17,6 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.AntragStatusHistoryService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -61,13 +61,7 @@ public class GesuchResource {
 	private BenutzerService benutzerService;
 
 	@Inject
-	private WizardStepResource wizardStepResource;
-
-	@Inject
 	private AntragStatusConverter antragStatusConverter;
-
-	@Inject
-	private AntragStatusHistoryService antragStatusHistoryService;
 
 	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
 
@@ -90,15 +84,11 @@ public class GesuchResource {
 
 		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
-		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
-		wizardStepResource.createWizardStepList(new JaxId(persistedGesuch.getId()));
-		antragStatusHistoryService.saveStatusChange(persistedGesuch);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(GesuchResource.class)
 			.path("/" + persistedGesuch.getId())
 			.build();
-
 
 		JaxGesuch jaxGesuch = converter.gesuchToJAX(persistedGesuch);
 		return Response.created(uri).entity(jaxGesuch).build();
@@ -119,12 +109,8 @@ public class GesuchResource {
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
-		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge);
-
-		if (modifiedGesuch.getStatus() != antragStatusConverter.convertStatusToEntity(gesuchJAXP.getStatus())) {
-			//only if status has changed
-			antragStatusHistoryService.saveStatusChange(gesuchFromDB);
-		}
+		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != antragStatusConverter.convertStatusToEntity(gesuchJAXP.getStatus());
+		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
 
 		return converter.gesuchToJAX(modifiedGesuch);
 	}
@@ -215,7 +201,7 @@ public class GesuchResource {
 		if (gesuchOptional.isPresent()) {
 			gesuchOptional.get().setBemerkungen(bemerkung);
 
-			gesuchService.updateGesuch(gesuchOptional.get());
+			gesuchService.updateGesuch(gesuchOptional.get(), false);
 
 			return Response.ok().build();
 		}
@@ -239,8 +225,7 @@ public class GesuchResource {
 			if (gesuchOptional.get().getStatus() != antragStatusConverter.convertStatusToEntity(statusDTO)) {
 				//only if status has changed
 				gesuchOptional.get().setStatus(antragStatusConverter.convertStatusToEntity(statusDTO));
-				gesuchService.updateGesuch(gesuchOptional.get());
-				antragStatusHistoryService.saveStatusChange(gesuchOptional.get());
+				gesuchService.updateGesuch(gesuchOptional.get(), true);
 			}
 			return Response.ok().build();
 		}

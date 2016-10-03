@@ -43,20 +43,32 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Inject
 	private BenutzerService benutzerService;
+	@Inject
+	private WizardStepService wizardStepService;
+	@Inject
+	private AntragStatusHistoryService antragStatusHistoryService;
 
 
 	@Nonnull
 	@Override
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
-		return persistence.persist(gesuch);
+		final Gesuch persistedGesuch = persistence.persist(gesuch);
+		// Die WizsrdSteps werden direkt erstellt wenn das Gesuch erstellt wird. So vergewissern wir uns dass es kein Gesuch ohne WizardSteps gibt
+		wizardStepService.createWizardStepList(persistedGesuch);
+		antragStatusHistoryService.saveStatusChange(persistedGesuch);
+		return persistedGesuch;
 	}
 
 	@Nonnull
 	@Override
-	public Gesuch updateGesuch(@Nonnull Gesuch gesuch) {
+	public Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory) {
 		Objects.requireNonNull(gesuch);
-		return persistence.merge(gesuch);
+		final Gesuch merged = persistence.merge(gesuch);
+		if (saveInStatusHistory) {
+			antragStatusHistoryService.saveStatusChange(merged);
+		}
+		return merged;
 	}
 
 	@Nonnull

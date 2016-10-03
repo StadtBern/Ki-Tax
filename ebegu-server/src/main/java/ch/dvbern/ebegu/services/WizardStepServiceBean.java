@@ -75,6 +75,22 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		return wizardSteps;
 	}
 
+	@Override
+	public List<WizardStep> createWizardStepList(Gesuch gesuch) {
+		List<WizardStep> wizardStepList = new ArrayList<>();
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
+		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
+		return wizardStepList;
+	}
+
 	/**
 	 * Hier wird es geschaut, was fuer ein Objekttyp aktualisiert wurde. Dann wird die entsprechende Logik durchgefuehrt, um zu wissen welche anderen
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
@@ -320,6 +336,16 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 			}
 		}
+	}
+
+	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus,
+												 boolean verfuegbar) {
+		final WizardStep wizardStep = new WizardStep();
+		wizardStep.setGesuch(gesuch);
+		wizardStep.setVerfuegbar(verfuegbar);
+		wizardStep.setWizardStepName(wizardStepName);
+		wizardStep.setWizardStepStatus(stepStatus);
+		return wizardStep;
 	}
 
 }

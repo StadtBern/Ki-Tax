@@ -81,7 +81,7 @@ public class EinkommensverschlechterungInfoResource {
 			EinkommensverschlechterungInfo convertedEkvi = converter.einkommensverschlechterungInfoToEntity(jaxEinkommensverschlechterungInfo, ekviToMerge);
 			convertedEkvi.setGesuch(gesuch.get());
 			gesuch.get().setEinkommensverschlechterungInfo(convertedEkvi);
-			convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch.get())); // saving gesuch cascades and saves Ekvi too
+			convertedEkvi.setGesuch(gesuchService.updateGesuch(gesuch.get(), false)); // saving gesuch cascades and saves Ekvi too
 
 			//Alle Daten des EV loeschen wenn man kein EV mehr eingeben will
 			removeEinkommensverschlechterungFromGesuchsteller(gesuch.get().getGesuchsteller1(), oldData, convertedEkvi);

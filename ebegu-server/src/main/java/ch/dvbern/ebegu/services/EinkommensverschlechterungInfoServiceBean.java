@@ -41,7 +41,7 @@ public class EinkommensverschlechterungInfoServiceBean extends AbstractBaseServi
 		final Gesuch gesuch = einkommensverschlechterungInfo.getGesuch();
 		Objects.requireNonNull(gesuch);
 
-		return Optional.ofNullable(gesuchService.updateGesuch(gesuch).getEinkommensverschlechterungInfo());
+		return Optional.ofNullable(gesuchService.updateGesuch(gesuch, false).getEinkommensverschlechterungInfo());
 	}
 
 	@Override
