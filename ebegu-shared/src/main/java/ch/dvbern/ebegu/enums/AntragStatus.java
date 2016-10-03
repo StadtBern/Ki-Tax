@@ -32,7 +32,7 @@ public enum AntragStatus {
     private static final Set<AntragStatus> forRevisorRole = forAdminRole;
 
     /**
-     * Implementierung eines Berechtigungskonzepts fuer die Antragssuche (toll nicht?).
+     * Implementierung eines Berechtigungskonzepts fuer die Antragssuche.
      *
      * @param userRole die Rolle
      * @return Liefert die einsehbaren Antragsstatus fuer die Rolle

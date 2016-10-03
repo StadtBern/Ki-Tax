@@ -175,6 +175,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
             case COUNT:
                 query = cb.createQuery(Long.class);
                 break;
+            default:
+                // TODO: Throw appropriate exception here
+                break;
         }
         // Construct from-clause
 		Root<Gesuch> root = query.from(Gesuch.class);
@@ -331,12 +334,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
                 TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
                 typedQuery.setFirstResult(antragTableFilterDto.getPagination().getStart());
                 typedQuery.setMaxResults(antragTableFilterDto.getPagination().getNumber());
-                LOG.info("Executing statement for searchGesuche()");
                 List<Gesuch> gesuche = typedQuery.getResultList();
                 result = new ImmutablePair<>(null, gesuche);
                 break;
             case COUNT:
-                LOG.info("Exceuting statement for countGesuche()");
                 result = new ImmutablePair<>(persistence.getCriteriaSingleResult(query), null);
                 break;
         }
