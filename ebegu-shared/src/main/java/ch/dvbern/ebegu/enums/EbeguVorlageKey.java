@@ -43,7 +43,10 @@ public enum EbeguVorlageKey {
 	VORLAGE_ZURUECKWEISUNG,
 
 	// Ein angebotsübergreifenden neutralen Begleitbrief zu den Verfügungen
-	VORLAGE_BEGLEITSCHREIBEN;
+	VORLAGE_BEGLEITSCHREIBEN,
+
+	// Ein angebotsübergreifenden neutralen Familiensituation
+	VORLAGE_FAMILIENSITUATION;
 
 	private boolean proGesuchsperiode;
 
@@ -56,10 +59,12 @@ public enum EbeguVorlageKey {
 	}
 
 	public boolean isProGesuchsperiode() {
+
 		return proGesuchsperiode;
 	}
 
 	public void setProGesuchsperiode(boolean proGesuchsperiode) {
+
 		this.proGesuchsperiode = proGesuchsperiode;
 	}
 }
