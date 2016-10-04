@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 
+import java.math.BigDecimal;
+
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -22,11 +24,11 @@ public interface BerechnungsblattPrint {
 
 	String getBis();
 
-	int getEinkommenVorAbzug();
+	BigDecimal getEinkommenVorAbzug();
 
 	int getFamiliengroesse();
 
-	int getFamiliengroesseAbzug();
+	BigDecimal getFamiliengroesseAbzug();
 
-	int getEinkommenNachAbzug();
+	BigDecimal getEinkommenNachAbzug();
 }

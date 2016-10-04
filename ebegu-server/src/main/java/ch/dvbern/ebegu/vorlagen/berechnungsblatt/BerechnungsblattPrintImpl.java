@@ -11,37 +11,52 @@ package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 * Ersteller: zeab am: 03.10.2016
 */
 
+import java.math.BigDecimal;
+
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.util.Constants;
+
 public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 
+	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+
+	public BerechnungsblattPrintImpl(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
+	}
 
 	@Override
 	public String getVon() {
 
-		return null;
+		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
 	}
 
 	@Override
 	public String getBis() {
-		return null;
+
+		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis());
 	}
 
 	@Override
-	public int getEinkommenVorAbzug() {
-		return 0;
+	public BigDecimal getEinkommenVorAbzug() {
+
+		return verfuegungZeitabschnitt.getMassgebendesEinkommenNachAbzugFamgr();
 	}
 
 	@Override
 	public int getFamiliengroesse() {
-		return 0;
+
+		return verfuegungZeitabschnitt.getFamiliengroesse();
 	}
 
 	@Override
-	public int getFamiliengroesseAbzug() {
-		return 0;
+	public BigDecimal getFamiliengroesseAbzug() {
+
+		return verfuegungZeitabschnitt.getAbzugFamGroesse();
 	}
 
 	@Override
-	public int getEinkommenNachAbzug() {
-		return 0;
+	public BigDecimal getEinkommenNachAbzug() {
+
+		return verfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzFamgr();
 	}
 }

@@ -13,14 +13,19 @@ package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 
 import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 
@@ -109,6 +114,28 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 	@Override
 	public List<BerechnungsblattPrint> getBerechnungsblatt() {
 
-		return null;
+		List<BerechnungsblattPrint> result = new ArrayList<>();
+		for (KindContainer kindContainer : gesuch.getKindContainers())
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				Optional<Verfuegung> verfuegung = extractVerfuegung(betreuung);
+				if (verfuegung.isPresent()) {
+					List<VerfuegungZeitabschnitt> zeitabschnitten = verfuegung.get().getZeitabschnitte();
+					for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
+						result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
+					}
+				}
+			}
+		return result;
+
+	}
+
+	@Nonnull
+	private Optional<Verfuegung> extractVerfuegung(Betreuung betreuung) {
+
+		Verfuegung verfuegung = betreuung.getVerfuegung();
+		if (verfuegung != null) {
+			return Optional.of(verfuegung);
+		}
+		return Optional.empty();
 	}
 }

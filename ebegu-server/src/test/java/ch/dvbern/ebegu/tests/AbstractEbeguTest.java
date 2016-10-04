@@ -69,6 +69,7 @@ public abstract class AbstractEbeguTest {
 				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx")
 				.addAsResource("vorlagen/Verfuegungsmuster_kita.docx", "vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx")
 				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
+				.addAsResource("vorlagen/Familiensituation.docx", "vorlagen/Familiensituation.docx")
 				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx").addAsResource("font/sRGB.profile", "font/sRGB.profile")
 				.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml").addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
 				// Deploy our test datasource

@@ -20,20 +20,20 @@ import ch.dvbern.lib.doctemplate.common.MergeSource;
 
 public class FamilienSituaionPrintMergeSource implements MergeSource {
 
-	private FamilienSituaionPrint familienSituaionPrint;
+	private FamilienSituaionPrint familienSituaion;
 
 	/**
 	 * @param verfuegung
 	 */
 	public FamilienSituaionPrintMergeSource(FamilienSituaionPrint familienSituaionPrint) {
-		this.familienSituaionPrint = familienSituaionPrint;
+		this.familienSituaion = familienSituaionPrint;
 	}
 
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
 		if (key.startsWith("familienSituaion")) {
-			return new BeanMergeSource(familienSituaionPrint, "familienSituaion.").getData(mergeContext, key);
+			return new BeanMergeSource(familienSituaion, "familienSituaion.").getData(mergeContext, key);
 		}
 		return null;
 	}
@@ -41,12 +41,15 @@ public class FamilienSituaionPrintMergeSource implements MergeSource {
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		return new BeanMergeSource(familienSituaionPrint, "familienSituaion.").ifStatement(mergeContext, key);
+		return new BeanMergeSource(familienSituaion, "familienSituaion.").ifStatement(mergeContext, key);
 	}
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
+		if (key.startsWith("berechnungen")) {
+			return new BeanMergeSource(familienSituaion, "berechnungen.").whileStatement(mergeContext, key);
+		}
 		return null;
 	}
 }

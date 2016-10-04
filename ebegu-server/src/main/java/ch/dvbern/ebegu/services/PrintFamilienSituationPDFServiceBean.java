@@ -33,7 +33,7 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
  * Implementiert VerfuegungsGenerierungPDFService
  */
 @Stateless
-@Local(PrintBegleitschreibenPDFService.class)
+@Local(PrintFamilienStituationPDFService.class)
 public class PrintFamilienSituationPDFServiceBean extends AbstractPrintService implements PrintFamilienStituationPDFService {
 
 	@Nonnull
