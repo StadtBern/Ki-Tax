@@ -10,12 +10,13 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.*;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.VerfuegungService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -55,13 +56,7 @@ public class VerfuegungResource {
 	private BetreuungService betreuungService;
 
 	@Inject
-	private WizardStepService wizardStepService;
-
-	@Inject
 	private InstitutionService institutionService;
-
-	@Inject
-	private FinanzielleSituationService finanzielleSituationService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -88,7 +83,6 @@ public class VerfuegungResource {
 			return null;
 		}
 		Gesuch gesuch = gesuchOptional.get();
-		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
 		JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
@@ -127,15 +121,7 @@ public class VerfuegungResource {
 				}
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-				//setting all depending objects
-				convertedVerfuegung.setBetreuung(betreuung.get());
-				betreuung.get().setVerfuegung(convertedVerfuegung);
-				betreuung.get().setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-				convertedVerfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(convertedVerfuegung));
-
-				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung);
-
-				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.VERFUEGEN);
+				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung, betreuung.get());
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}

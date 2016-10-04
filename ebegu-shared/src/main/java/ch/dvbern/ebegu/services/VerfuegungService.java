@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 
@@ -15,9 +16,10 @@ public interface VerfuegungService {
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
 	 * @param verfuegung Die Verfuegung als DTO
+	 * @param betreuung
 	 */
 	@Nonnull
-	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung);
+	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull Betreuung betreuung);
 
 	/**
 	 * @param id PK (id) der Verfuegung

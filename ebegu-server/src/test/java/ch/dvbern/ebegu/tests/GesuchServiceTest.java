@@ -3,9 +3,12 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,13 +38,19 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Inject
 	private Persistence<Gesuch> persistence;
+	@Inject
+	private BenutzerService benutzerService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Inject
 	private InstitutionService institutionService;
 
+
 	@Test
 	public void createGesuch() {
 		Assert.assertNotNull(gesuchService);
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
 		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
@@ -51,6 +60,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void updateGesuch() {
 		Assert.assertNotNull(gesuchService);
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		final Gesuch insertedGesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(insertedGesuch.getId());
@@ -65,9 +75,12 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void removeGesuchTest() {
 		Assert.assertNotNull(gesuchService);
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		final Gesuch gesuch = persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 		Assert.assertEquals(1, gesuchService.getAllGesuche().size());
 
+		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
+		wizardStepsFromGesuch.forEach(wizardStep -> persistence.remove(WizardStep.class, wizardStep.getId()));
 		gesuchService.removeGesuch(gesuch);
 		Assert.assertEquals(0, gesuchService.getAllGesuche().size());
 	}
@@ -75,6 +88,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void createEinkommensverschlechterungsGesuch() {
 		Assert.assertNotNull(gesuchService);
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistEinkommensverschlechterungEntity();
 		final Collection<Gesuch> allGesuche = gesuchService.getAllGesuche();
 		Assert.assertEquals(1, allGesuche.size());
@@ -88,6 +102,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testGetAllActiveGesucheAllActive() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.IN_BEARBEITUNG_JA);
 
@@ -97,6 +112,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testGetAllActiveGesucheNotAllActive() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 
@@ -109,6 +125,7 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		TestDataUtil.createAndPersistBenutzer(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
+
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
 		filterDTO.getSort().setPredicate("fallNummer");

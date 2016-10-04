@@ -1,12 +1,17 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.GeneratedDokument_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -20,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -34,6 +40,25 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
+
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
+	@Inject
+	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
+
+	@Inject
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+
+	@Inject
+	private VerfuegungService verfuegungService;
+
 
 	@Override
 	@Nonnull
@@ -91,5 +116,74 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			fileSaverService.remove(filePathToRemove);
 		}
 		return this.saveGeneratedDokument(generatedDokument);
+	}
+
+	@Override
+	public GeneratedDokument getDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, final GeneratedDokumentTyp dokumentTyp,
+																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
+		GeneratedDokument persistedDokument = null;
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+			|| persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			finanzielleSituationService.calculateFinanzDaten(gesuch);
+
+			byte[] data;
+			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
+			} else {
+				return null;
+			}
+
+			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public GeneratedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
+																			   Boolean forceCreation) throws MimeTypeParseException, MergeDocException,
+		DocTemplateException, IOException {
+
+		GeneratedDokument persistedDokument = null;
+
+		if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(),
+				DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+					betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+		// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
+		if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
+			finanzielleSituationService.calculateFinanzDaten(gesuch);
+			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch);
+
+			betreuung = gesuchWithVerfuegungen.extractBetreuungById(betreuung.getId());
+			if (betreuung != null) {
+				if (!manuelleBemerkungen.isEmpty()) {
+					betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+				}
+
+				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+
+				final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+					betreuung.getBGNummer());
+
+				persistedDokument = updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+					gesuch, fileNameForGeneratedDokumentTyp);
+			} else {
+				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + betreuung.getId());
+			}
+		}
+		return persistedDokument;
 	}
 }
