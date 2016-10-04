@@ -15,10 +15,7 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +88,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	@Column(nullable = true)
 	private BigDecimal abzugFamGroesse = null;
+
+	@Column(nullable = true)
+	private BigDecimal famGroesse = null;
 
 	@Column(nullable = true)
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
@@ -267,6 +267,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.kindMinestalterUnterschritten = kindMinestalterUnterschritten;
 	}
 
+	public BigDecimal getFamGroesse() {
+		return famGroesse;
+	}
+
+	public void setFamGroesse(BigDecimal famGroesse) {
+		this.famGroesse = famGroesse;
+	}
+
 	/**
 	 * Addiert die Daten von "other" zu diesem VerfuegungsZeitabschnitt
 	 */
@@ -304,6 +312,11 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (other.getAbzugFamGroesse() != null) {
 			Validate.isTrue(this.getAbzugFamGroesse() == null, "Familiengoressenabzug kann nicht gemerged werden" );
 			this.setAbzugFamGroesse(other.getAbzugFamGroesse());
+		}
+		// Die Familiengroesse kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
+		if (other.getFamGroesse() != null) {
+			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden" );
+			this.setFamGroesse(other.getFamGroesse());
 		}
 	}
 
