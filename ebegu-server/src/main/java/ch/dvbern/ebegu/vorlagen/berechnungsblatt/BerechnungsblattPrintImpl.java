@@ -37,9 +37,9 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	}
 
 	@Override
-	public BigDecimal getEinkommenVorAbzug() {
+	public BigDecimal getMassgebendesEinkommenVorAbzFamgr() {
 
-		return verfuegungZeitabschnitt.getMassgebendesEinkommenNachAbzugFamgr();
+		return verfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzFamgr();
 	}
 
 	@Override
@@ -49,14 +49,14 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	}
 
 	@Override
-	public BigDecimal getFamiliengroesseAbzug() {
+	public BigDecimal getAbzugFamGroesse() {
 
 		return verfuegungZeitabschnitt.getAbzugFamGroesse();
 	}
 
 	@Override
-	public BigDecimal getEinkommenNachAbzug() {
+	public BigDecimal getMassgebendesEinkommenNachAbzugFamgr() {
 
-		return verfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzFamgr();
+		return verfuegungZeitabschnitt.getMassgebendesEinkommenNachAbzugFamgr();
 	}
 }

@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,7 @@ public class PrintFamilienSituationPDFServiceBeanTest extends AbstractEbeguTest 
 	@Before
 	public void setUpCalcuator() {
 
+		Locale.setDefault(new Locale("de", "CH"));
 		evaluator = AbstractBGRechnerTest.createEvaluator();
 	}
 

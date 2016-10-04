@@ -30,7 +30,7 @@ import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 
 /**
- * Implementiert VerfuegungsGenerierungPDFService
+ * Implementiert PrintFamilienStituationPDFService
  */
 @Stateless
 @Local(PrintFamilienStituationPDFService.class)

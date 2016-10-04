@@ -472,6 +472,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	public int getFamiliengroesse() {
+
 		return familiengroesse;
 	}
 

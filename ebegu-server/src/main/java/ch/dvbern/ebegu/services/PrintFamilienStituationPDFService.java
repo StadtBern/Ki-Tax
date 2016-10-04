@@ -19,11 +19,11 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 public interface PrintFamilienStituationPDFService {
 
 	/**
-	 * Druckt den den Begleitbrief aus
+	 * Druckt den den Familiensituation Berechnungsblatt aus
 	 *
 	 * @param gesuch das Gesuch
-	 * @return Liste der generierten Verfuegungen Pro Kind
-	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
+	 * @return Das PDF Dokument in Byte Format
+	 * @throws MergeDocException Falls bei der Generierung einen Fehler auftritt
 	 */
 	@Nonnull
 	byte[] printPrintFamilienSituation(@Nonnull Gesuch gesuch) throws MergeDocException;

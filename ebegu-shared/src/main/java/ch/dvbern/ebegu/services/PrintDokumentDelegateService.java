@@ -54,8 +54,8 @@ public interface PrintDokumentDelegateService {
 	 * Bereitet die Familiensituation auf
 	 *
 	 * @param gesuch das Gesuch
-	 * @return Liste der generierten Verfuegungen Pro Kind
-	 * @throws MergeDocException Falls bei der Verfuegungsgenerierung einen Fehler auftritt
+	 * @return Das PDF Dokument in Byte Format
+	 * @throws MergeDocException Falls bei der Generierung einen Fehler auftritt
 	 */
 	@Nonnull
 	byte[] printFamilienSituation(@Nonnull Gesuch gesuch) throws MergeDocException;

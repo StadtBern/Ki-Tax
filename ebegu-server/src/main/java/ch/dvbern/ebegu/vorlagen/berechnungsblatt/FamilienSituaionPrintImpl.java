@@ -11,8 +11,6 @@ package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 * Ersteller: zeab am: 03.10.2016
 */
 
-import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +19,10 @@ import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 
@@ -46,19 +43,7 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 	@Override
 	public String getGesuchstellerName() {
 
-		StringBuilder name = new StringBuilder();
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			name.append(gesuchsteller.get().getFullName());
-		}
-		if (gesuch.getGesuchsteller2() != null) {
-			Optional<Gesuchsteller> gesuchsteller2 = extractGesuchsteller2();
-			if (gesuchsteller.isPresent()) {
-				name.append("\n");
-				name.append(gesuchsteller2.get().getFullName());
-			}
-		}
-		return name.toString();
+		return PrintUtil.getGesuchstellerName(gesuch);
 	}
 
 	/**
@@ -67,13 +52,7 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 	@Override
 	public String getGesuchstellerStrasse() {
 
-		if (extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getStrasse();
-			}
-		}
-		return "";
+		return PrintUtil.getGesuchstellerStrasse(gesuch);
 	}
 
 	/**
@@ -82,33 +61,7 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 	@Override
 	public String getGesuchstellerPLZStadt() {
 
-		if (extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
-			}
-		}
-		return "";
-	}
-
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller1() {
-
-		Gesuchsteller gs1 = gesuch.getGesuchsteller1();
-		if (gs1 != null) {
-			return Optional.of(gs1);
-		}
-		return Optional.empty();
-	}
-
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller2() {
-
-		Gesuchsteller gs2 = gesuch.getGesuchsteller2();
-		if (gs2 != null) {
-			return Optional.of(gs2);
-		}
-		return Optional.empty();
+		return PrintUtil.getGesuchstellerPLZStadt(gesuch);
 	}
 
 	@Override

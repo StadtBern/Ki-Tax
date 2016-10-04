@@ -24,11 +24,11 @@ public interface BerechnungsblattPrint {
 
 	String getBis();
 
-	BigDecimal getEinkommenVorAbzug();
+	BigDecimal getMassgebendesEinkommenVorAbzFamgr();
 
 	int getFamiliengroesse();
 
-	BigDecimal getFamiliengroesseAbzug();
+	BigDecimal getAbzugFamGroesse();
 
-	BigDecimal getEinkommenNachAbzug();
+	BigDecimal getMassgebendesEinkommenNachAbzugFamgr();
 }
