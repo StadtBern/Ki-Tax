@@ -35,7 +35,6 @@ public class Verfuegung extends AbstractEntity{
 	@OneToOne (optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
 
-
 	@Nonnull
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "verfuegung")
@@ -65,6 +64,9 @@ public class Verfuegung extends AbstractEntity{
 
 	public void setZeitabschnitte(List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
+		for (VerfuegungZeitabschnitt zeitabschnitt : this.zeitabschnitte) {
+			zeitabschnitt.setVerfuegung(this);
+		}
 	}
 
 	public Betreuung getBetreuung() {
