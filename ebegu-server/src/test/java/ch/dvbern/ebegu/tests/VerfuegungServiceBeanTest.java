@@ -1,16 +1,13 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.EbeguParameter;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
@@ -21,12 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
-import static ch.dvbern.ebegu.enums.EbeguParameterKey.*;
 import static ch.dvbern.ebegu.rechner.AbstractBGRechnerTest.checkTestfall01WaeltiDagmar;
 
 /**
@@ -64,7 +58,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
-		verfuegungService.saveVerfuegung(verfuegung);
+		verfuegungService.saveVerfuegung(verfuegung, betreuung);
 
 	}
 

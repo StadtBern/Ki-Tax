@@ -6,13 +6,10 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.FamiliensituationService;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchstellerService;
-import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 
 import javax.annotation.Nonnull;
@@ -38,11 +35,7 @@ public class FamiliensituationResource {
 	@Inject
 	private FamiliensituationService familiensituationService;
 	@Inject
-	private WizardStepService wizardStepService;
-	@Inject
 	private GesuchService gesuchService;
-	@Inject
-	private GesuchstellerService gesuchstellerService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -59,40 +52,20 @@ public class FamiliensituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Familiensituation oldData = null;
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchJAXPId.getId());
 		if (gesuch.isPresent()) {
+			Familiensituation oldData = new Familiensituation();
 			Familiensituation familiensituationToMerge = new Familiensituation();
 			if (familiensituationJAXP.getId() != null) {
 				Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
 				familiensituationToMerge = loadedFamiliensituation.orElse(new Familiensituation());
-				oldData = new Familiensituation(loadedFamiliensituation.get());
 			}
 			Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, familiensituationToMerge);
-			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(convertedFamiliensituation);
-			gesuch.get().setFamiliensituation(persistedFamiliensituation);
-
-			//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
-			if (isNeededToRemoveGesuchsteller2(gesuch.get(), oldData, persistedFamiliensituation)) {
-				gesuchstellerService.removeGesuchsteller(gesuch.get().getGesuchsteller2());
-				gesuch.get().setGesuchsteller2(null);
-			}
-
-			wizardStepService.updateSteps(gesuchJAXPId.getId(), oldData,
-				persistedFamiliensituation, WizardStepName.FAMILIENSITUATION);
+			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), oldData, convertedFamiliensituation);
 
 			return converter.familiensituationToJAX(persistedFamiliensituation);
 		}
 		throw new EbeguEntityNotFoundException("updateFamiliensituation", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXPId.getId());
-	}
-
-	/**
-	 * Wenn die Familiensituation von 2GS auf 1GS wechselt und der zweite GS schon existiert, wird dieser
-	 * und seine Daten endgueltig geloescht
-	 * @return
-	 */
-	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
-		return gesuch.getGesuchsteller2() != null && oldFamiliensituation.hasSecondGesuchsteller() && !newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 }

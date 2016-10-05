@@ -10,14 +10,12 @@ import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,8 +57,6 @@ public class DokumenteResource {
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
-	@Inject
-	private WizardStepService wizardStepService;
 
 	@Inject
 	private FileSaverService fileSaverService;
@@ -143,7 +139,6 @@ public class DokumenteResource {
 			return null;
 		}
 
-		wizardStepService.updateSteps(modifiedDokumentGrund.getGesuch().getId(), null, null, WizardStepName.DOKUMENTE);
 		return converter.dokumentGrundToJax(modifiedDokumentGrund);
 
 	}
@@ -152,7 +147,7 @@ public class DokumenteResource {
 	 * Gibt Liste von Dokumenten zurück, welche auf der DB vorhanden sind auf dem jaxB Objekt jedoch nicht mehr.
 	 */
 	private Set<Dokument> findDokumentToRemove(JaxDokumentGrund dokumentGrundJAXP, DokumentGrund dokumentGrundFromDB) {
-		Set<Dokument> dokumentsToRemove = new HashSet<Dokument>();
+		Set<Dokument> dokumentsToRemove = new HashSet<>();
 		Validate.notNull(dokumentGrundFromDB.getDokumente());
 		Validate.notNull(dokumentGrundJAXP.getDokumente());
 

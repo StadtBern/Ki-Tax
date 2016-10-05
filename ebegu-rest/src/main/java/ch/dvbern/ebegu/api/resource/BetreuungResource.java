@@ -6,12 +6,10 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.KindService;
-import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -43,8 +41,6 @@ public class BetreuungResource {
 	private KindService kindService;
 	@Inject
 	private JaxBConverter converter;
-	@Inject
-	private WizardStepService wizardStepService;
 
 
 	@Nonnull
@@ -63,8 +59,6 @@ public class BetreuungResource {
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
 			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
-            //jetzt noch wizard step updaten
-			wizardStepService.updateSteps(kind.get().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
@@ -82,9 +76,7 @@ public class BetreuungResource {
 		Validate.notNull(betreuungJAXPId.getId());
 		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungJAXPId.getId());
 		if (betreuung.isPresent()) {
-			final String gesuchId = betreuung.get().getKind().getGesuch().getId();
 			betreuungService.removeBetreuung(converter.toEntityId(betreuungJAXPId));
-			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 			return Response.ok().build();
 		}
 		throw new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungJAXPId.getId());
