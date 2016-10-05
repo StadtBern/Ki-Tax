@@ -15,7 +15,6 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -228,7 +227,7 @@ public class DownloadResource {
 		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Nonnull @NotNull @Valid String manuelleBemerkungen,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException,
-		DocTemplateException, IOException, MimeTypeParseException {
+		IOException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
 		Validate.notNull(jaxBetreuungId.getId());
@@ -237,42 +236,45 @@ public class DownloadResource {
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
 			GeneratedDokument persistedDokument = null;
-
 			Betreuung betreuung = getBetreuungFromGesuch(gesuch.get(), jaxBetreuungId.getId());
-			if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
-				persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
-					DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
-						betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
-			}
-			// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
-			// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
-			if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
-				finanzielleSituationService.calculateFinanzDaten(gesuch.get());
-				final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
 
-				betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
-				if (betreuung != null) {
-					if (!manuelleBemerkungen.isEmpty()) {
-						betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
-					}
-
-					final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
-
-					final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
-						betreuung.getBGNummer());
-
-					persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
-						gesuch.get(), fileNameForGeneratedDokumentTyp);
-				} else {
-					throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
-						ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+			try {
+				if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+					persistedDokument = generatedDokumentService.findGeneratedDokument(gesuch.get().getId(),
+						DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+							betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.get().getId());
 				}
-			}
+				// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+				// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
+				if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
+					finanzielleSituationService.calculateFinanzDaten(gesuch.get());
+					final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch.get());
 
-			final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
-			persistence.getEntityManager().detach(gesuch.get());
-			persistence.getEntityManager().detach(betreuung);
-			return fileDownloadResponse;
+					betreuung = getBetreuungFromGesuch(gesuchWithVerfuegungen, jaxBetreuungId.getId());
+					if (betreuung != null) {
+						if (!manuelleBemerkungen.isEmpty()) {
+							betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+						}
+
+						final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+
+						final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+							betreuung.getBGNummer());
+
+						persistedDokument = generatedDokumentService.updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+							gesuch.get(), fileNameForGeneratedDokumentTyp);
+					} else {
+						throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+							ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + jaxBetreuungId.getId());
+					}
+				}
+				return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
+			} finally {
+				// Das Detachen muss auch bzw. erst recht im Fehlerfall gemacht werden!
+				persistence.getEntityManager().detach(gesuch.get());
+				persistence.getEntityManager().detach(betreuung);
+			}
 		}
 		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());

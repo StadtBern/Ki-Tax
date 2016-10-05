@@ -6,18 +6,18 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.*;
+import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,6 +70,11 @@ public class VerfuegungResource {
 	@Resource
 	private EJBContext context;    //fuer rollback
 
+	@Inject
+	private Persistence<AbstractEntity> persistence;
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
 
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
 	@Nullable
@@ -83,26 +88,38 @@ public class VerfuegungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchstellerId.getId());
+		Set<JaxKindContainer> kindContainers = null;
 
-		if (!gesuchOptional.isPresent()) {
-			return null;
+		try {
+			if (!gesuchOptional.isPresent()) {
+				return null;
+			}
+			Gesuch gesuch = gesuchOptional.get();
+			this.finanzielleSituationService.calculateFinanzDaten(gesuch);
+			Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+
+			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
+			loadBetreuungspensumContainerAndDetachBetreuung(gesuchWithCalcVerfuegung);
+
+			// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
+			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
+
+			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+
+			kindContainers = gesuchJax.getKindContainers();
+			if (instForCurrBenutzer.size() > 0) {
+				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+			}
+
+		} finally {
+			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
+			// Dies muss insbesondere auch im Fehlerfall geschehen!
+			try {
+				context.setRollbackOnly();
+			} catch (IllegalStateException ise) {
+				LOG.error("Could not rollback Transaction!", ise);
+			}
 		}
-		Gesuch gesuch = gesuchOptional.get();
-		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
-		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
-		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
-		JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
-
-		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
-
-		// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
-		context.setRollbackOnly();
-
-		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-		if (instForCurrBenutzer.size() > 0) {
-			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
-		}
-
 		return Response.ok(kindContainers).build();
 	}
 
@@ -142,6 +159,13 @@ public class VerfuegungResource {
 			throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 		}
 		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
+
+	private void loadBetreuungspensumContainerAndDetachBetreuung(Gesuch gesuch) {
+		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
+			betreuung.getBetreuungspensumContainers().size();
+		}
+		persistence.getEntityManager().detach(gesuch);
 	}
 }
 
