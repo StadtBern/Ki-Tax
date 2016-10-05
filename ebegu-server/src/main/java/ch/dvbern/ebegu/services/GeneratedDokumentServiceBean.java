@@ -164,21 +164,21 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
 		if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
 			finanzielleSituationService.calculateFinanzDaten(gesuch);
-			final Gesuch gesuchWithVerfuegungen = verfuegungService.calculateVerfuegung(gesuch);
+			final Gesuch gesuchWithVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 
-			betreuung = gesuchWithVerfuegungen.extractBetreuungById(betreuung.getId());
-			if (betreuung != null) {
+			Betreuung matchedBetreuung = gesuchWithVerfuegung.extractBetreuungById(betreuung.getId());
+			if (matchedBetreuung != null) {
 				if (!manuelleBemerkungen.isEmpty()) {
-					betreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
 				}
 
-				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(betreuung);
+				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung);
 
-				final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
-					betreuung.getBGNummer());
+				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+					matchedBetreuung.getBGNummer());
 
 				persistedDokument = updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
-					gesuch, fileNameForGeneratedDokumentTyp);
+					gesuch, fileNameForDocTyp);
 			} else {
 				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + betreuung.getId());

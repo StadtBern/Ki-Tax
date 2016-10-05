@@ -58,8 +58,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(verfuegung);
-		final Verfuegung persistedVerfuegung = persistence.persist(verfuegung);
 
+		final Verfuegung persistedVerfuegung = persistence.persist(verfuegung);
 		//setting all depending objects
 		persistedVerfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(persistedVerfuegung);

@@ -4,16 +4,12 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDownloadFile;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.services.*;
-import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import io.swagger.annotations.Api;
@@ -170,7 +166,7 @@ public class DownloadResource {
 			GeneratedDokument generatedDokument = generatedDokumentService.getDokumentAccessTokenGeneratedDokument(gesuch.get(), dokumentTyp, forceCreation);
 
 			if (generatedDokument == null) {
-				Response.noContent().build();
+				return Response.noContent().build();
 			}
 
 			persistence.getEntityManager().detach(gesuch.get());
@@ -215,7 +211,7 @@ public class DownloadResource {
 	}
 
 
-	private Response getFileDownloadResponse(@Context UriInfo uriInfo, String ip, File file) {
+	private Response getFileDownloadResponse(UriInfo uriInfo, String ip, File file) {
 		final DownloadFile downloadFile = downloadFileService.create(file, ip);
 
 		URI uri = uriInfo.getBaseUriBuilder()
