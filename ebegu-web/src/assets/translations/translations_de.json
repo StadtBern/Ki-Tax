@@ -694,5 +694,9 @@
     "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder",
     "TOOLBAR_GESUCH": "Erstgesuch",
     "TOOLBAR_MUTATION": "Mutation vom {{date}}",
-    "TOOLBAR_KONTAKT": "KONTAKT"
+    "TOOLBAR_KONTAKT": "KONTAKT",
+    "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
+    "GSDASHBOARD_MITTEILUNGEN": "Mitteilungen",
+    "GSDASHBOARD_OEFFNEN": "ÖFFNEN",
+    "GSDASHBOARD_ANTRAEGE": "Aktuelle Anträge"
 }

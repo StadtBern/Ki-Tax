@@ -12,11 +12,19 @@ import TSAntragDTO from '../../../models/TSAntragDTO';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./gesuchToolbar.html');
+let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
 
 export class GesuchToolbarComponentConfig implements IComponentOptions {
     transclude = false;
     template = template;
+    controller = GesuchToolbarController;
+    controllerAs = 'vm';
+}
+
+export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOptions {
+    transclude = false;
+    template = templateGS;
     controller = GesuchToolbarController;
     controllerAs = 'vm';
 }
@@ -126,7 +134,7 @@ export class GesuchToolbarController {
             }
             return text;
         } else {
-            return '--';
+            return '000701 Huber';
         }
     }
 
@@ -139,7 +147,7 @@ export class GesuchToolbarController {
         if (gesuch && gesuch.gesuchsperiode) {
             return this.getGesuchsperiodeAsString(gesuch.gesuchsperiode);
         } else {
-            return '--';
+            return '2016/2017';
         }
     }
 
@@ -148,7 +156,7 @@ export class GesuchToolbarController {
         if (gesuch) {
             return this.ebeguUtil.getAntragTextDateAsString(gesuch.typ, gesuch.eingangsdatum);
         } else {
-            return '';
+            return 'Erstgesuch';
         }
     }
 
