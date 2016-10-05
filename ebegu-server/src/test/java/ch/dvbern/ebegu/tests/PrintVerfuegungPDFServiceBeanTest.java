@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -18,9 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -41,8 +39,6 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	@Inject
 	private GesuchService gesuchService;
 
-
-
 	@Before
 	public void setUpCalcuator() {
 
@@ -54,35 +50,105 @@ public class PrintVerfuegungPDFServiceBeanTest extends AbstractEbeguTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testGeneriereVerfuegung() throws Exception {
+	public void testGeneriereVerfuegungKita() throws Exception {
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		Gesuch gesuch = testfall.createGesuch();
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
-		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung");
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
 
 		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
 		int i = 0;
 		for (byte[] verfDoc : verfuegungsPDFs) {
 			Assert.assertNotNull(verfDoc);
-			File file = writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
-//			openPDF(file);
+			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
 			i++;
 		}
-
 	}
 
-	private void openPDF(File file) {
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegungTageselternKleinkinder() throws Exception {
 
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException ex) {
-			// no application registered for PDFs
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Gesuch gesuch = testfall.createGesuch();
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_KLEINKIND);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
+				.setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3\n");
+
+		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
+		int i = 0;
+		for (byte[] verfDoc : verfuegungsPDFs) {
+			Assert.assertNotNull(verfDoc);
+			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			i++;
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TageselternSchulkinder() throws Exception {
+
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Gesuch gesuch = testfall.createGesuch();
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESELTERN_SCHULKIND);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung().setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3");
+
+		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
+		int i = 0;
+		for (byte[] verfDoc : verfuegungsPDFs) {
+			Assert.assertNotNull(verfDoc);
+			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			i++;
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
+	public void testGeneriereVerfuegung_TagesstatetteSchulkinder() throws Exception {
+
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+		Gesuch gesuch = testfall.createGesuch();
+		gesuch.extractAllBetreuungen().get(0).getInstitutionStammdaten().setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
+		TestDataUtil.calculateFinanzDaten(gesuch);
+		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+		gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getVerfuegung()
+				.setManuelleBemerkungen("Test Bemerkung1\nTest Bemerkung2\nTest Bemerkung3\n\n\nXYZ");
+
+		List<byte[]> verfuegungsPDFs = verfuegungsGenerierungPDFService.printVerfuegungen(gesuch);
+		int i = 0;
+		for (byte[] verfDoc : verfuegungsPDFs) {
+			Assert.assertNotNull(verfDoc);
+			writeToTempDir(verfDoc, "TN_Verfuegung" + i + ".pdf");
+			i++;
 		}
 	}
 }

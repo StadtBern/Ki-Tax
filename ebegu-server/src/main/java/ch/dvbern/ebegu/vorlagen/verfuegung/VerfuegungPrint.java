@@ -45,7 +45,7 @@ public interface VerfuegungPrint {
 	/**
 	 * @return die Bemerkung
 	 */
-	String getManuelleBemerkungen();
+	List<BemerkungPrint> getManuelleBemerkungen();
 
 	/**
 	 * @return true falls Pensum groesser 0 ist

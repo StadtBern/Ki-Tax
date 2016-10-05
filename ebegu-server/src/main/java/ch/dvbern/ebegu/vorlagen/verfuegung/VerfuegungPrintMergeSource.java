@@ -46,10 +46,14 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
-		 //comment homa: Ich haette jetzt hier evtl auch "verfuegung" als prefix genommen oder aber "betreuungen" klein geschrieben
-		//ist aber muehsam zu fixen daher lasse ichs mal so
+
+		// comment homa: Ich haette jetzt hier evtl auch "verfuegung" als prefix genommen oder aber "betreuungen" klein
+		// geschrieben
+		// ist aber muehsam zu fixen daher lasse ichs mal so
 		if (key.startsWith("Betreuungen")) {
 			return new BeanMergeSource(verfuegung, "Betreuungen.").whileStatement(mergeContext, key);
+		} else if (key.startsWith("Bemerkungen")) {
+			return new BeanMergeSource(verfuegung, "Bemerkungen.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}

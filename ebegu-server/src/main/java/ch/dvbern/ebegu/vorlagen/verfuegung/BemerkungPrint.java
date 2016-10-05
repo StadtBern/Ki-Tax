@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen.begleitschreiben;
+package ch.dvbern.ebegu.vorlagen.verfuegung;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -9,20 +9,12 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * elektronischer Form. Wird das Dokument einem Kunden im Rahmen der Projektarbeit zur
 * Ansicht uebergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt.
 *
-* Ersteller: zeab am: 12.08.2016
+* Ersteller: zeab am: 28.09.2016
 */
-public interface BegleitschreibenPrint {
-
+public interface BemerkungPrint {
 	// ****************************************************************************************************************
 	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
-
-	String getGesuchstellerName();
-
-	String getGesuchstellerStrasse();
-
-	String getGesuchstellerPLZStadt();
-
-	String getFallNummer();
+	String getText();
 }

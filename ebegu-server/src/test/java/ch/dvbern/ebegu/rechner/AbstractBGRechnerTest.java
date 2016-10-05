@@ -65,9 +65,9 @@ public class AbstractBGRechnerTest {
 	 */
 	public static BGRechnerParameterDTO getParameter() {
 		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO();
-		parameterDTO.setBeitragKantonProTagJahr1(new BigDecimal("107.19"));
-		parameterDTO.setBeitragKantonProTagJahr2(new BigDecimal("107.19"));
-		parameterDTO.setBeitragStadtProTag(new BigDecimal("7"));
+		parameterDTO.setBeitragKantonProTag(new BigDecimal("107.19"));
+		parameterDTO.setBeitragStadtProTagJahr1(new BigDecimal("7"));
+		parameterDTO.setBeitragStadtProTagJahr2(new BigDecimal("7"));
 		parameterDTO.setAnzahlTageMaximal(new BigDecimal("244"));
 		parameterDTO.setAnzahlStundenProTagMaximal(new BigDecimal("11.5"));
 		parameterDTO.setKostenProStundeMaximalKitaTagi(new BigDecimal("11.91"));

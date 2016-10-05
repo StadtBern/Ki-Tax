@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -90,9 +91,9 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	 * @return Gesuchsteller-ReferenzNummer
 	 */
 	@Override
-	public long getFallnummer() {
+	public String getFallNummer() {
 
-		return gesuch.getFall().getFallNummer();
+		return PrintUtil.createFallNummerString(gesuch);
 	}
 
 	@Nonnull

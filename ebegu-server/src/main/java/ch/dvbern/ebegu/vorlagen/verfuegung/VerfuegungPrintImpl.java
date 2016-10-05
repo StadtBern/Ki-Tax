@@ -14,8 +14,10 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -48,8 +50,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public String getAngebot() {
 
-		// TODO ZEAB Implementieren
-		return "Kita";
+		return ServerMessageUtil.translateEnumValue(betreuung.getInstitutionStammdaten().getBetreuungsangebotTyp());
 	}
 
 	@Override
@@ -72,7 +73,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 */
 	@Override
 	public String getVerfuegungsdatum() {
-
+        // TODO (Team) Dies ist das Verfuegungsdatum des *Erstgesuchs* bei Mutationen, also das der früheren Verfugung
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
 			Verfuegung verfuegung1 = verfuegung.get();
@@ -144,22 +145,40 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 	/**
-	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen
-	 * Wenn die Betreuung noch nicht VERFUEGT ist -> generated Bemerkungen
+	 * Wenn die Betreuung VERFUEGT ist -> manuelle Bemerkungen Wenn die Betreuung noch nicht VERFUEGT ist -> generated
+	 * Bemerkungen
 	 *
 	 * @return
 	 */
-	public String getManuelleBemerkungen() {
+	public List<BemerkungPrint> getManuelleBemerkungen() {
 
+		List<BemerkungPrint> bemerkungen = new ArrayList<>();
 		Optional<Verfuegung> verfuegung = extractVerfuegung();
 		if (verfuegung.isPresent()) {
-			if (verfuegung.get().getManuelleBemerkungen() != null) {
-				return verfuegung.get().getManuelleBemerkungen();
-			} else if (verfuegung.get().getGeneratedBemerkungen() != null) {
-				return verfuegung.get().getGeneratedBemerkungen();
+			if (StringUtils.isNotEmpty(verfuegung.get().getManuelleBemerkungen())) {
+				bemerkungen.addAll(splitBemerkungen(verfuegung.get().getManuelleBemerkungen()));
+			} else if (StringUtils.isNotEmpty(verfuegung.get().getGeneratedBemerkungen())) {
+				bemerkungen.addAll(splitBemerkungen((verfuegung.get().getGeneratedBemerkungen())));
 			}
 		}
-		return "";
+		return bemerkungen;
+	}
+
+	/**
+	 * Zerlegt die Bemerkungen (Delimiter \n) und bereitet die in einer Liste.
+	 *
+	 * @param bemerkungen
+	 * @return List mit Bemerkungen
+	 */
+	private List<BemerkungPrint> splitBemerkungen(String bemerkungen) {
+
+		List<BemerkungPrint> list = new ArrayList<>();
+		// Leere Zeile werden mit diese Annotation [\\r\\n]+ entfernt
+		String[] splitBemerkungenNewLine = bemerkungen.split("[" + System.getProperty("line.separator") + "]+");
+		for (String bemerkung : splitBemerkungenNewLine) {
+			list.add(new BemerkungPrintImpl(bemerkung));
+		}
+		return list;
 	}
 
 	/**
@@ -187,15 +206,13 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @return true falls es sich um eine Mutation handelt
 	 */
 	public boolean isMutation() {
-
-		// TODO Team: Muss angepasst werden, sobald wir Mutationen unterstuetzen
-		return true;
+		return AntragTyp.MUTATION.equals(betreuung.extractGesuch().getTyp());
 	}
 
 	@Override
 	public boolean isPrintManuellebemerkung() {
 
-		return !"".equalsIgnoreCase(getManuelleBemerkungen());
+		return getManuelleBemerkungen().size() > 0;
 	}
 
 	@Nonnull

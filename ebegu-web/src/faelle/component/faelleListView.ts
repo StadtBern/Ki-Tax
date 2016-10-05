@@ -9,10 +9,10 @@ import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSRole} from '../../models/enums/TSRole';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
 import ILogService = angular.ILogService;
-import {TSRole} from '../../models/enums/TSRole';
 let template = require('./faelleListView.html');
 require('./faelleListView.less');
 
@@ -62,30 +62,38 @@ export class FaelleListViewController {
         return gesuchsperiode.gesuchsperiodeString;
     }
 
-
+    /**
+     * Fuer Benutzer mit der Rolle SACHBEARBEITER_INSTITUTION oder SACHBEARBEITER_TRAEGERSCHAFT oeffnet es das Gesuch mit beschraenkten Daten
+     * Fuer anderen Benutzer wird das Gesuch mit allen Daten geoeffnet
+     * @param antrag
+     */
     public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
             //todo xaver fragen muessen wir hier was anders machen fuer inst und ja?
             if (antrag && antrag.antragTyp === TSAntragTyp.GESUCH) {
-                this.gesuchRS.findGesuchForInstitution(antrag.antragId).then((response) => {
-                    if (response) {
-                        this.openGesuch(response);
-                    }
-                });
+                if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
+                    this.gesuchRS.findGesuchForInstitution(antrag.antragId).then((response) => {
+                        this.openGesuch(response, 'gesuch.verfuegen');
+                    });
+                } else {
+                    this.gesuchRS.findGesuch(antrag.antragId).then((response) => {
+                        this.openGesuch(response, 'gesuch.fallcreation');
+                    });
+                }
             }
         }
     }
 
-
-    private openGesuch(gesuch: TSGesuch): void {
+    /**
+     * Oeffnet das Gesuch und geht zur gegebenen Seite (route)
+     * @param gesuch
+     * @param urlToGoTo
+     */
+    private openGesuch(gesuch: TSGesuch, urlToGoTo: string): void {
         if (gesuch) {
             this.berechnungsManager.clear();
             this.gesuchModelManager.setGesuch(gesuch);
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.$state.go('gesuch.verfuegen');
-            } else {
-                this.$state.go('gesuch.fallcreation');
-            }
+            this.$state.go(urlToGoTo);
         }
     }
 

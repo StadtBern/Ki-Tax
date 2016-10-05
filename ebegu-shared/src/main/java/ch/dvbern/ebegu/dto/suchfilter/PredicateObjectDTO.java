@@ -21,6 +21,7 @@ public class PredicateObjectDTO implements Serializable {
 	private String antragTyp;      //Gesuch.antragtyp
 	private String gesuchsperiodeString; //Gesuch.gesuchperiode.gueltigAb nach jahr
 	private String eingangsdatum;  //Gesuch.eingangsdatum
+	private String aenderungsdatum;  //Gesuch.antragStatusHistory
 	private String status;  	   //Gesuch.status
 	private String angebote;		//Gesuch.kindContainers.betreuungen.institutionStammdaten.betreuungsangebotTyp
 	private String institutionen;   //Gesuch.kindContainers.betreuungen.institutionStammdaten.institution.name
@@ -65,6 +66,14 @@ public class PredicateObjectDTO implements Serializable {
 	public void setEingangsdatum(String eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
 	}
+
+	public String getAenderungsdatum() {
+			return aenderungsdatum;
+		}
+
+		public void setAenderungsdatum(String aenderungsdatum) {
+			this.aenderungsdatum = aenderungsdatum;
+		}
 
 	public String getStatus() {
 		return status;

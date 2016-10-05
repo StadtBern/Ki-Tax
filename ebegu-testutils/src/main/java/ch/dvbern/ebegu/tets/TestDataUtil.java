@@ -590,9 +590,9 @@ public final class TestDataUtil {
 
 		LocalDate year1Start = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.JANUARY, 1);
 		LocalDate year1End = LocalDate.of(gueltigkeit.getGueltigAb().getYear(), Month.DECEMBER, 31);
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start, year1End), persistence);
-		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)), persistence);
-		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", gueltigkeit, persistence);
+		saveParameter(PARAM_ABGELTUNG_PRO_TAG_KANTON, "107.19", gueltigkeit, persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start, year1End), persistence);
+		saveParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, "7", new DateRange(year1Start.plusYears(1), year1End.plusYears(1)), persistence);
 		saveParameter(PARAM_ANZAL_TAGE_MAX_KITA, "244", gueltigkeit, persistence);
 		saveParameter(PARAM_STUNDEN_PRO_TAG_MAX_KITA, "11.5", gueltigkeit, persistence);
 		saveParameter(PARAM_KOSTEN_PRO_STUNDE_MAX, "11.91", gueltigkeit, persistence);

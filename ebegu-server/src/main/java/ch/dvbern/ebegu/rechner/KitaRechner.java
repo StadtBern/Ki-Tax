@@ -42,8 +42,8 @@ public class KitaRechner extends AbstractBGRechner {
 
 		// Abgeltung pro Tag: Abgeltung des Kantons plus Beitrag der Stadt
 		//todo homa hier muss allenfalls auch der parameter fuer das jahr2 beruecksichtigt werden
-		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Abgeltung Kanton");
-		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTagJahr1(), parameterDTO.getBeitragStadtProTag());
+		LOG.warn("Aktuell wird immer nur der parameter fuer jahr 1 genommen bei Fixbeitrag Stadt");
+		BigDecimal abgeltungProTag = MathUtil.EXACT.add(parameterDTO.getBeitragKantonProTag(), parameterDTO.getBeitragStadtProTagJahr1());
 		// Massgebendes Einkommen: Minimum und Maximum berücksichtigen
 		BigDecimal massgebendesEinkommenBerechnet = (massgebendesEinkommen.max(parameterDTO.getMassgebendesEinkommenMinimal())).min(parameterDTO.getMassgebendesEinkommenMaximal());
 		// Öffnungstage und Öffnungsstunden; Maximum berücksichtigen
