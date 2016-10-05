@@ -35,6 +35,10 @@
             <version>${version.hibernate}</version>
         </dependency>
         <dependency>
+            <groupId>ch.dvbern.lib.dvbern-lib-doctemplate</groupId>
+            <artifactId>docx-engine</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <scope>provided</scope>

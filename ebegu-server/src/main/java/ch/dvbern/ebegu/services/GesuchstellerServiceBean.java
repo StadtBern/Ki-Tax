@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -25,16 +27,25 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Inject
 	private Persistence<Gesuchsteller> persistence;
-
+	@Inject
+	private WizardStepService wizardStepService;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 
 	@Nonnull
 	@Override
-	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller) {
+	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber) {
 		Objects.requireNonNull(gesuchsteller);
-		return persistence.merge(gesuchsteller);
+
+		final Gesuchsteller mergedGesuchsteller = persistence.merge(gesuchsteller);
+
+		if ((gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
+			|| (!gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
+			wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+		}
+
+		return mergedGesuchsteller;
 	}
 
 	@Nonnull

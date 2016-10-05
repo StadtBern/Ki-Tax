@@ -30,10 +30,11 @@ public interface GesuchService {
 	 * Aktualisiert das Gesuch in der DB
 	 *
 	 * @param gesuch das Gesuch als DTO
+	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
 	 * @return Das aktualisierte Gesuch
 	 */
 	@Nonnull
-	Gesuch updateGesuch(@Nonnull Gesuch gesuch);
+	Gesuch updateGesuch(@Nonnull Gesuch gesuch, boolean saveInStatusHistory);
 
 	/**
 	 * @param key PK (id) des Gesuches

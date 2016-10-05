@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.ErwerbspensumContainer_;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -32,12 +33,16 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	private CriteriaQueryHelper criteriaQueryHelper;
 	@Inject
 	private GesuchService gesuchService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Nonnull
 	@Override
-	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer) {
+	public ErwerbspensumContainer saveErwerbspensum(@Valid @Nonnull ErwerbspensumContainer erwerbspensumContainer, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainer);
-		return persistence.merge(erwerbspensumContainer);
+		final ErwerbspensumContainer mergedErwerbspensum = persistence.merge(erwerbspensumContainer);
+		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
+		return mergedErwerbspensum;
 	}
 
 	@Nonnull
@@ -77,15 +82,15 @@ public class ErwerbspensumServiceBean extends AbstractBaseService implements Erw
 	}
 
 	@Override
-	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID) {
+	public void removeErwerbspensum(@Nonnull String erwerbspensumContainerID, Gesuch gesuch) {
 		Objects.requireNonNull(erwerbspensumContainerID);
 		Optional<ErwerbspensumContainer> ewpCont = this.findErwerbspensum(erwerbspensumContainerID);
-
 		persistence.remove(ewpCont
 			.orElseThrow(
 				() -> new EbeguEntityNotFoundException("removeErwerbspensum", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, erwerbspensumContainerID)
 			)
 		);
+		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.ERWERBSPENSUM);
 
 	}
 }
