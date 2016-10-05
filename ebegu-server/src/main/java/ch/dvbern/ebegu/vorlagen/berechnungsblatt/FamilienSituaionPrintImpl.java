@@ -77,6 +77,8 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 						result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
 					}
 				}
+				// Von jedem Kind nur eine Betreuung nehmmen
+				break;
 			}
 		return result;
 
