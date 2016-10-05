@@ -56,16 +56,18 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull Betreuung betreuung) {
+	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
 		Objects.requireNonNull(verfuegung);
+		Objects.requireNonNull(betreuungId);
+
+		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+        // setting all depending objects
+		verfuegung.setBetreuung(betreuung);
+		betreuung.setVerfuegung(verfuegung);
+		verfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(verfuegung));
 
 		final Verfuegung persistedVerfuegung = persistence.persist(verfuegung);
-		//setting all depending objects
-		persistedVerfuegung.setBetreuung(betreuung);
-		betreuung.setVerfuegung(persistedVerfuegung);
-		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-		persistedVerfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(persistedVerfuegung));
-
 		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedVerfuegung;
 	}

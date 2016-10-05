@@ -7,11 +7,6 @@ import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
-import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
@@ -19,7 +14,6 @@ import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.VerfuegungService;
-import ch.dvbern.ebegu.services.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,7 +68,7 @@ public class VerfuegungResource {
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
-	private static final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungResource.class.getSimpleName());
 
 
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
@@ -91,27 +85,24 @@ public class VerfuegungResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchstellerId.getId());
 
 		try {
-		if (!gesuchOptional.isPresent()) {
-			return null;
-		}
-		Gesuch gesuch = gesuchOptional.get();
-		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
-
+			if (!gesuchOptional.isPresent()) {
+				return null;
+			}
+			Gesuch gesuch = gesuchOptional.get();
+			Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
 
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
-			loadBetreuungspensumContainerAndDetachBetreuung(gesuchWithCalcVerfuegung);
-
+			loadRelationsAndDetach(gesuchWithCalcVerfuegung);
 
 			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
-		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 
-		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-		if (instForCurrBenutzer.size() > 0) {
-			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
-		}
-
-		return Response.ok(kindContainers).build();
+			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
+			if (instForCurrBenutzer.size() > 0) {
+				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+			}
+			return Response.ok(kindContainers).build();
 
 		} finally {
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
@@ -145,7 +136,7 @@ public class VerfuegungResource {
 				}
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung, betreuung.get());
+				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung, betreuung.get().getId());
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}
@@ -154,7 +145,11 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
-	private void loadBetreuungspensumContainerAndDetachBetreuung(Gesuch gesuch) {
+	/**
+	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
+	 * BetreuungspensumContainers geladen werden, da danach keine Session mehr zur Verfuegung steht!
+     */
+	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();
 		}

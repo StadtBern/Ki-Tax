@@ -59,8 +59,10 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
-		verfuegungService.saveVerfuegung(verfuegung, betreuung);
-
+		Verfuegung persistedVerfuegung = verfuegungService.saveVerfuegung(verfuegung, betreuung.getId());
+		Betreuung persistedBetreuung = persistence.find(Betreuung.class, betreuung.getId());
+		Assert.assertEquals(persistedVerfuegung.getBetreuung(), persistedBetreuung);
+		Assert.assertEquals(persistedBetreuung.getVerfuegung(), persistedVerfuegung);
 	}
 
 	@Test

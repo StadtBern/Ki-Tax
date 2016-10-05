@@ -58,7 +58,7 @@ public class DownloadResource {
 	private GeneratedDokumentService generatedDokumentService;
 
 	@Inject
-	private Persistence<Gesuch> persistence;
+	private Persistence<AbstractEntity> persistence;
 
 
 	@GET
@@ -163,13 +163,9 @@ public class DownloadResource {
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
 			GeneratedDokument generatedDokument = generatedDokumentService.getDokumentAccessTokenGeneratedDokument(gesuch.get(), dokumentTyp, forceCreation);
-
 			if (generatedDokument == null) {
 				return Response.noContent().build();
 			}
-			//TODO (team) ist das am richtigen ort? evt. finally? Exceptions?
-			persistence.getEntityManager().detach(gesuch.get());
-
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getDokumentAccessTokenGeneratedDokument",
@@ -193,21 +189,17 @@ public class DownloadResource {
 		Validate.notNull(jaxBetreuungId.getId());
 		String ip = getIP(request);
 
-		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
-		if (gesuch.isPresent()) {
-			Betreuung betreuung = gesuch.get().extractBetreuungById(jaxBetreuungId.getId());
+		final Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
+		if (gesuchOptional.isPresent()) {
+			Betreuung betreuung = gesuchOptional.get().extractBetreuungById(jaxBetreuungId.getId());
 
-			try {
-				GeneratedDokument persistedDokument = generatedDokumentService
-					.getVerfuegungDokumentAccessTokenGeneratedDokument(gesuch.get(), betreuung, manuelleBemerkungen, forceCreation);
+			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
+			loadRelationsAndDetach(gesuchOptional.get());
 
-				final Response fileDownloadResponse = getFileDownloadResponse(uriInfo, ip, persistedDokument);
-				return fileDownloadResponse;
-			} finally {
-				// Das Detachen muss auch bzw. erst recht im Fehlerfall gemacht werden!
-				persistence.getEntityManager().detach(gesuch.get());
-				persistence.getEntityManager().detach(betreuung);
-			}
+			GeneratedDokument persistedDokument = generatedDokumentService
+				.getVerfuegungDokumentAccessTokenGeneratedDokument(gesuchOptional.get(), betreuung, manuelleBemerkungen, forceCreation);
+			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
+
 		}
 		throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
 			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId not found: " + jaxGesuchId.getId());
@@ -235,5 +227,24 @@ public class DownloadResource {
 		return ipAddress;
 	}
 
-
+	/**
+	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
+	 * BetreuungspensumContainers geladen werden, da danach keine Session mehr zur Verfuegung steht!
+	 */
+	private void loadRelationsAndDetach(Gesuch gesuch) {
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				betreuung.getBetreuungspensumContainers().size();
+			}
+		}
+		if (gesuch.getGesuchsteller1() != null) {
+			gesuch.getGesuchsteller1().getErwerbspensenContainers().size();
+			gesuch.getGesuchsteller1().getAdressen().size();
+		}
+		if (gesuch.getGesuchsteller2() != null) {
+			gesuch.getGesuchsteller2().getErwerbspensenContainers().size();
+			gesuch.getGesuchsteller2().getAdressen().size();
+		}
+		persistence.getEntityManager().detach(gesuch);
+	}
 }
