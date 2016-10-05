@@ -43,9 +43,15 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	}
 
 	@Override
-	public int getFamiliengroesse() {
+	public String getFamiliengroesse() {
 
-		return verfuegungZeitabschnitt.getFamiliengroesse();
+		BigDecimal value = verfuegungZeitabschnitt.getFamiliengroesse() != null ? verfuegungZeitabschnitt.getFamiliengroesse() : BigDecimal.ZERO;
+		if (value.compareTo(BigDecimal.valueOf(value.intValue())) > 0) {
+			value = value.setScale(2, BigDecimal.ROUND_DOWN);
+			return value.toString();
+		} else {
+			return Integer.toString(value.intValue());
+		}
 	}
 
 	@Override

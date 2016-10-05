@@ -26,7 +26,7 @@ public interface BerechnungsblattPrint {
 
 	BigDecimal getMassgebendesEinkommenVorAbzFamgr();
 
-	int getFamiliengroesse();
+	String getFamiliengroesse();
 
 	BigDecimal getAbzugFamGroesse();
 

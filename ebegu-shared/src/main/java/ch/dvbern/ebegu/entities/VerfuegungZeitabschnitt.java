@@ -107,7 +107,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	// TODO Feld definieren
 	@Transient
-	private int familiengroesse;
+	private BigDecimal familiengroesse;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -471,12 +471,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.massgebendesEinkommenNachAbzugFamgr = massgebendesEinkommenNachAbzugFamgr;
 	}
 
-	public int getFamiliengroesse() {
+	public BigDecimal getFamiliengroesse() {
 
 		return familiengroesse;
 	}
 
-	public void setFamiliengroesse(int familiengroesse) {
+	public void setFamiliengroesse(BigDecimal familiengroesse) {
 
 		this.familiengroesse = familiengroesse;
 	}
