@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 /**
  * Testet VerfuegungResource
@@ -46,5 +47,17 @@ public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 
 		Assert.assertEquals(verfuegungJax.getGeneratedBemerkungen(), persistedVerfuegung.getGeneratedBemerkungen());
 		Assert.assertEquals(verfuegungJax.getManuelleBemerkungen(), persistedVerfuegung.getManuelleBemerkungen());
+	}
+
+	@Test
+	public void testCalculateVerfuegung() throws EbeguException {
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
+
+		Response response = verfuegungResource.calculateVerfuegung(new JaxId(gesuch.getId()), null, null);
+
+		Assert.assertNotNull(response);
+		Object entity = response.getEntity();
+		System.out.println("halo");
 	}
 }
