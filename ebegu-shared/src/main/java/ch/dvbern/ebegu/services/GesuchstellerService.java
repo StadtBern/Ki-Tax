@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 
 import javax.annotation.Nonnull;
@@ -14,9 +15,10 @@ public interface GesuchstellerService {
 	/**
 	 * Aktualisiert die Gesuchsteller in der DB.
 	 * @param gesuchsteller Die Gesuchsteller als DTO
+	 * @param gsNumber
 	 */
 	@Nonnull
-	Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller);
+	Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber);
 
 	/**
 

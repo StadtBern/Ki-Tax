@@ -8,10 +8,17 @@ import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.BetreuungService;
+import ch.dvbern.ebegu.services.GesuchService;
+import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.services.VerfuegungService;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
@@ -55,13 +62,7 @@ public class VerfuegungResource {
 	private BetreuungService betreuungService;
 
 	@Inject
-	private WizardStepService wizardStepService;
-
-	@Inject
 	private InstitutionService institutionService;
-
-	@Inject
-	private FinanzielleSituationService finanzielleSituationService;
 
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
@@ -73,7 +74,7 @@ public class VerfuegungResource {
 	@Inject
 	private Persistence<AbstractEntity> persistence;
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
 	@ApiOperation(value = "Calculates the Verfuegung of the Gesuch with the given id, does nothing if the Gesuch does not exists. Note: Nothing is stored in the Databse")
@@ -88,28 +89,29 @@ public class VerfuegungResource {
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchstellerId.getId());
-		Set<JaxKindContainer> kindContainers = null;
 
 		try {
-			if (!gesuchOptional.isPresent()) {
-				return null;
-			}
-			Gesuch gesuch = gesuchOptional.get();
-			this.finanzielleSituationService.calculateFinanzDaten(gesuch);
-			Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+		if (!gesuchOptional.isPresent()) {
+			return null;
+		}
+		Gesuch gesuch = gesuchOptional.get();
+		Gesuch gesuchWithCalcVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+
 
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum das Gesuch detachen
 			loadBetreuungspensumContainerAndDetachBetreuung(gesuchWithCalcVerfuegung);
 
-			// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden solange die Verfuegung nicht definitiv ist
+
 			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
-			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
+		Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 
-			kindContainers = gesuchJax.getKindContainers();
-			if (instForCurrBenutzer.size() > 0) {
-				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
-			}
+		Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
+		if (instForCurrBenutzer.size() > 0) {
+			RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
+		}
+
+		return Response.ok(kindContainers).build();
 
 		} finally {
 			// Wir verwenden das Gesuch nur zur Berechnung und wollen nicht speichern, darum Transaktion rollbacken
@@ -120,7 +122,6 @@ public class VerfuegungResource {
 				LOG.error("Could not rollback Transaction!", ise);
 			}
 		}
-		return Response.ok(kindContainers).build();
 	}
 
 	@Nullable
@@ -144,15 +145,7 @@ public class VerfuegungResource {
 				}
 				Verfuegung convertedVerfuegung = converter.verfuegungToEntity(verfuegungJAXP, verfuegungToMerge);
 
-				//setting all depending objects
-				convertedVerfuegung.setBetreuung(betreuung.get());
-				betreuung.get().setVerfuegung(convertedVerfuegung);
-				betreuung.get().setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-				convertedVerfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(convertedVerfuegung));
-
-				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung);
-
-				wizardStepService.updateSteps(gesuchId.getId(), null, null, WizardStepName.VERFUEGEN);
+				Verfuegung persistedVerfuegung = this.verfuegungService.saveVerfuegung(convertedVerfuegung, betreuung.get());
 
 				return converter.verfuegungToJax(persistedVerfuegung);
 			}

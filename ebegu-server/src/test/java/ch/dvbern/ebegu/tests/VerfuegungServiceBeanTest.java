@@ -59,7 +59,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
-		verfuegungService.saveVerfuegung(verfuegung);
+		verfuegungService.saveVerfuegung(verfuegung, betreuung);
 
 	}
 
