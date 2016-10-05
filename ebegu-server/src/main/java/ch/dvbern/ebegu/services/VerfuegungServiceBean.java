@@ -78,9 +78,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	public void removeVerfuegung(@Nonnull Verfuegung verfuegung) {
 		Validate.notNull(verfuegung);
-		Optional<Verfuegung> entityToRempoe = this.findVerfuegung(verfuegung.getId());
-		entityToRempoe.orElseThrow(() -> new EbeguEntityNotFoundException("removeVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung));
-		persistence.remove(entityToRempoe.get());
+		Optional<Verfuegung> entityToRemove = this.findVerfuegung(verfuegung.getId());
+		entityToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung));
+		persistence.remove(entityToRemove.get());
 	}
 
 
