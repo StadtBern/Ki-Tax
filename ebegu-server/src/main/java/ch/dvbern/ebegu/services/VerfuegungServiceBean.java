@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
@@ -44,6 +42,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Inject
 	private MandantService mandantService;
@@ -54,9 +56,18 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung) {
+	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(verfuegung);
-		return persistence.persist(verfuegung);
+
+		final Verfuegung persistedVerfuegung = persistence.persist(verfuegung);
+		//setting all depending objects
+		persistedVerfuegung.setBetreuung(betreuung);
+		betreuung.setVerfuegung(persistedVerfuegung);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+		persistedVerfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(persistedVerfuegung));
+
+		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+		return persistedVerfuegung;
 	}
 
 	@Nonnull
@@ -87,6 +98,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Nonnull
 	@Override
 	public Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch) {
+		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
 		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());

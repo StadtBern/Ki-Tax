@@ -231,6 +231,18 @@ public class Gesuch extends AbstractEntity {
 		return list;
 	}
 
+	@Transient
+	public Betreuung extractBetreuungById(String betreuungId) {
+		for (KindContainer kind : getKindContainers()) {
+			for (Betreuung betreuung : kind.getBetreuungen()) {
+				if (betreuung.getId().equals(betreuungId)) {
+					return betreuung;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
 	 */

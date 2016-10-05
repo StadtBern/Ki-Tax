@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -24,7 +25,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -126,10 +126,7 @@ public class InstitutionStammdatenResource {
 	public List<JaxInstitutionStammdaten> getAllInstitutionStammdatenByDate(
 		@Nullable @QueryParam("date") String stringDate) {
 
-		LocalDate date = LocalDate.now();
-		if (stringDate != null && !stringDate.isEmpty()) {
-			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		}
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		return institutionStammdatenService.getAllInstitutionStammdatenByDate(date).stream()
 			.map(institutionStammdaten -> converter.institutionStammdatenToJAX(institutionStammdaten))
 			.collect(Collectors.toList());

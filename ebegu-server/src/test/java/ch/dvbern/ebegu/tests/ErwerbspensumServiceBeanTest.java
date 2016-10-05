@@ -53,7 +53,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
 		ewpCont.setGesuchsteller(gesuchsteller);
 
-		erwerbspensumService.saveErwerbspensum(ewpCont);
+		erwerbspensumService.saveErwerbspensum(ewpCont, TestDataUtil.createDefaultGesuch());
 		Collection<ErwerbspensumContainer> allErwerbspensenenContainer = erwerbspensumService.getAllErwerbspensenenContainer();
 		Assert.assertEquals(1, allErwerbspensenenContainer.size());
 		Optional<ErwerbspensumContainer> storedContainer = erwerbspensumService.findErwerbspensum(ewpCont.getId());
@@ -73,7 +73,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		changedData.setGueltigkeit(new DateRange(LocalDate.now(), LocalDate.now().plusDays(80)));
 		erwPenCont.setErwerbspensumGS(changedData);
 
-		ErwerbspensumContainer updatedCont = erwerbspensumService.saveErwerbspensum(erwPenCont);
+		ErwerbspensumContainer updatedCont = erwerbspensumService.saveErwerbspensum(erwPenCont, TestDataUtil.createDefaultGesuch());
 		Assert.assertEquals(LocalDate.now(), updatedCont.getErwerbspensumGS().getGueltigkeit().getGueltigAb());
 	}
 
@@ -88,7 +88,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
 		ewpCont.setGesuchsteller(gesuchsteller1);
-		erwerbspensumService.saveErwerbspensum(ewpCont);
+		erwerbspensumService.saveErwerbspensum(ewpCont, TestDataUtil.createDefaultGesuch());
 
 		Collection<ErwerbspensumContainer> erwerbspensenFromGesuch = erwerbspensumService.findErwerbspensenFromGesuch(gesuch.getId());
 
@@ -105,7 +105,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ErwerbspensumContainer insertedEwpCont = insertNewEntity();
 		Assert.assertEquals(1, erwerbspensumService.getAllErwerbspensenenContainer().size());
 
-		erwerbspensumService.removeErwerbspensum(insertedEwpCont.getId());
+		erwerbspensumService.removeErwerbspensum(insertedEwpCont.getId(), TestDataUtil.createDefaultGesuch());
 		Assert.assertEquals(0, erwerbspensumService.getAllErwerbspensenenContainer().size());
 	}
 
