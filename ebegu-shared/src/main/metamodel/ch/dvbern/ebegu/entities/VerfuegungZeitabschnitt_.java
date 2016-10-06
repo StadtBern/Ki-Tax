@@ -18,6 +18,7 @@ public abstract class VerfuegungZeitabschnitt_ extends ch.dvbern.ebegu.entities.
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, Verfuegung> verfuegung;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> vollkosten;
 	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> abzugFamGroesse;
+	public static volatile SingularAttribute<VerfuegungZeitabschnitt, BigDecimal> famGroesse;
 
 }
 
