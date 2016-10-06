@@ -17,7 +17,8 @@ require('./gesuchToolbar.less');
 export class GesuchToolbarComponentConfig implements IComponentOptions {
     transclude = false;
     bindings: any = {
-        gesuchid: '@'
+        gesuchid: '@',
+        onVerantwortlicherChange: '&',
     };
 
     template = template;
@@ -32,6 +33,7 @@ export class GesuchToolbarController {
     gesuchid: string;
     gesuch: TSGesuch;
 
+    onVerantwortlicherChange: (attr: any) => void;
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
     antragTypList: { [key: string]: TSAntragDTO } = {};
@@ -42,21 +44,30 @@ export class GesuchToolbarController {
     constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope) {
+        this.updateUserList();
+        this.refreshGesuch();
+
         $scope.$watch(() => {
             return this.gesuchid;
         }, (newValue, oldValue) => {
             if (newValue !== oldValue) {
                 if (this.gesuchid) {
-                    gesuchRS.findGesuch(this.gesuchid).then((gesuchResponse: any) => {
-                        this.gesuch = gesuchResponse;
-                        this.updateAntragDTOList();
-                        console.log('watch on gesuchId');
-                    });
+                    this.refreshGesuch();
                 } else {
                     this.gesuch = null;
                 }
             }
         });
+    }
+
+    private refreshGesuch() {
+        if (this.gesuchid) {
+            this.gesuchRS.findGesuch(this.gesuchid).then((gesuchResponse: any) => {
+                this.gesuch = gesuchResponse;
+                this.updateAntragDTOList();
+                console.log('watch on gesuchId');
+            });
+        }
     }
 
 
@@ -121,11 +132,18 @@ export class GesuchToolbarController {
      * @param verantwortlicher
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
-        // if (verantwortlicher) {
-        //     this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-        //     this.gesuchModelManager.updateFall();
-        // }
-        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        this.onVerantwortlicherChange({user: verantwortlicher});
+        this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
+    }
+
+    /**
+     * Change local gesuch to change the current view
+     * @param user
+     */
+    public setUserAsFallVerantwortlicherLocal(user: TSUser) {
+        if (user && this.gesuch && this.gesuch.fall) {
+            this.gesuch.fall.verantwortlicher = user;
+        }
     }
 
     /**

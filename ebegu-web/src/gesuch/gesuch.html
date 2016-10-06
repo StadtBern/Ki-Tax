@@ -1,6 +1,6 @@
 <div class="row">
 
-    <gesuch-toolbar gesuchid="{{vm.getGesuchId()}}" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+    <gesuch-toolbar gesuchid="{{vm.getGesuchId()}}" on-verantwortlicher-change="vm.setVerantwortlicher(user)" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
     </gesuch-toolbar>
 
     <div class="col-md-3 sidenav">

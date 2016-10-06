@@ -10,6 +10,7 @@ import {TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
 import TSGesuch from '../models/TSGesuch';
+import TSUser from '../models/TSUser';
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
@@ -102,6 +103,17 @@ export class GesuchRouteController extends AbstractGesuchViewController {
             return this.gesuchModelManager.getGesuch();
         }
         return null;
+    }
+
+    /**
+     * Sets the given user as the verantworlicher fuer den aktuellen Fall
+     * @param verantwortlicher
+     */
+    public setVerantwortlicher(verantwortlicher: TSUser): void {
+        if (verantwortlicher) {
+            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+            this.gesuchModelManager.updateFall();
+        }
     }
 
 }

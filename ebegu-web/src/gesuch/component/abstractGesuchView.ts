@@ -32,7 +32,7 @@ export default class AbstractGesuchViewController {
 
     private setGesuchId(gesuchId: string) {
         if (gesuchId) {
-            if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().id !== gesuchId) {
+            if (!this.gesuchModelManager.getGesuch() || this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().id !== gesuchId) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId überreinstimmt wird das gesuch neu geladen
                 this.berechnungsManager.clear();
                 this.gesuchModelManager.openGesuch(gesuchId);
