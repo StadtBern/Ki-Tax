@@ -13,7 +13,6 @@ export default class AbstractGesuchViewController {
     wizardStepManager: WizardStepManager;
     TSRole: any;
     TSRoleUtil: any;
-    stateParams: IGesuchStateParams;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager) {

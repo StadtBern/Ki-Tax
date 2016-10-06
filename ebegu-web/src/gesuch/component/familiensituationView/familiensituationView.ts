@@ -39,7 +39,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     initialFamiliensituation: TSFamiliensituation;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate', '$stateParams'];
+        'DvDialog', '$translate'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,

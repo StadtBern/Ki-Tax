@@ -34,7 +34,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
+        'DvDialog', 'DownloadRS', '$log'];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,

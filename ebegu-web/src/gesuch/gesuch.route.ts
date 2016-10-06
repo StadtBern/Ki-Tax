@@ -410,8 +410,7 @@ export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
 }
 
-export class INewFallStateParams implements IGesuchStateParams {
-    gesuchId: string;
+export class INewFallStateParams implements IStateParamsService {
     createNew: string;
 }
 
@@ -433,18 +432,18 @@ export class IEinkommensverschlechterungResultateStateParams implements IStatePa
 getGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q'];
 /* @ngInject */
 export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                      wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
+                                      wizardStepManager: WizardStepManager, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchIdParams = $stateParams.gesuchId;
         if (gesuchIdParams) {
             if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParams) {
                 // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId überreinstimmt wird das gesuch neu geladen
+                console.log('Navigiert auf view mit AntragId: ' + gesuchIdParams);
                 berechnungsManager.clear();
                 wizardStepManager.findStepsFromGesuch(gesuchIdParams);
                 return gesuchModelManager.openGesuch(gesuchIdParams);
             }
         }
-        console.log('Navigiert auf view mit AntragId: ' + gesuchIdParams);
     }
     return $q.defer(gesuchModelManager.getGesuch());
 }

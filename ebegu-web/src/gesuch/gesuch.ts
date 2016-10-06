@@ -15,7 +15,7 @@ import ITranslateService = angular.translate.ITranslateService;
 export class GesuchRouteController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', 'AuthServiceRS', '$stateParams'];
+        'AntragStatusHistoryRS', 'AuthServiceRS' ];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
