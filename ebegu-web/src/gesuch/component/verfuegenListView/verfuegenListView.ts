@@ -16,7 +16,6 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import {IGesuchStateParams} from '../../gesuch.route';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -40,8 +39,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IGesuchStateParams) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $stateParams);
+                private downloadRS: DownloadRS, private $log: ILogService) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
 
@@ -99,7 +98,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
                 let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
                 if (betreuungNumber > 0) {
                     this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                    this.$state.go('gesuch.verfuegenView');
+                    this.$state.go('gesuch.verfuegenView', {
+                        gesuchId: this.getGesuchId()
+                    });
                 }
             }
         }

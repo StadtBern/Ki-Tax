@@ -63,7 +63,7 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     private openKindView(kindNumber: number): void {
-        this.$state.go('gesuch.kind', {kindNumber: kindNumber});
+        this.$state.go('gesuch.kind', {kindNumber: kindNumber, gesuchId: this.getGesuchId()});
     }
 
     removeKind(kind: any): void {

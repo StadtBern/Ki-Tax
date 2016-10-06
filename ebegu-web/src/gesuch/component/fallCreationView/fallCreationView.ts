@@ -27,7 +27,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager, $stateParams);
+        super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.getCreateNewParam();
         this.initViewModel();
     }

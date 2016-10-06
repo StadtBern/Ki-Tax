@@ -117,7 +117,8 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     private openErwerbspensumView(gesuchstellerNumber: number, erwerbspensumNum: number): void {
         this.$state.go('gesuch.erwerbsPensum', {
             gesuchstellerNumber: gesuchstellerNumber,
-            erwerbspensumNum: erwerbspensumNum
+            erwerbspensumNum: erwerbspensumNum,
+            gesuchId: this.getGesuchId()
         });
     }
 

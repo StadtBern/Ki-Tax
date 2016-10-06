@@ -137,36 +137,57 @@ export class NavigatorController {
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der naechste Step ist und wechselt zu diesem.
      */
     private navigateToNextStep() {
+        let gesuchId = this.getGesuchId();
+
         this.errorService.clearAll();
         if (TSWizardStepName.GESUCH_ERSTELLEN === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.familiensituation');
+            this.state.go('gesuch.familiensituation', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.stammdaten');
+            this.state.go('gesuch.stammdaten', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '2'});
+                this.state.go('gesuch.stammdaten', {
+                    gesuchstellerNumber: '2',
+                    gesuchId: gesuchId
+                });
             } else {
                 if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                     || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                    this.state.go('gesuch.betreuungen');
+                    this.state.go('gesuch.betreuungen', {
+                        gesuchId: gesuchId
+                    });
                 } else {
-                    this.state.go('gesuch.kinder');
+                    this.state.go('gesuch.kinder', {
+                        gesuchId: gesuchId
+                    });
                 }
             }
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.betreuungen');
+            this.state.go('gesuch.betreuungen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.kinder');
+            this.state.go('gesuch.kinder', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.state.go('gesuch.verfuegen');
+                this.state.go('gesuch.verfuegen', {
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.erwerbsPensen');
+                this.state.go('gesuch.erwerbsPensen', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
@@ -176,51 +197,82 @@ export class NavigatorController {
             this.errorService.clearAll();
             if (this.wizardStepManager.isNextStepBesucht() && !this.wizardStepManager.isNextStepEnabled()) {
                 // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
-                this.state.go('gesuch.dokumente');
+                this.state.go('gesuch.dokumente', {
+                    gesuchId: gesuchId
+                });
             } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart');
+                this.state.go('gesuch.finanzielleSituationStart', {
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                this.state.go('gesuch.finanzielleSituation', {
+                    gesuchstellerNumber: 1,
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen');
+            this.state.go('gesuch.erwerbsPensen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '2'});
+                this.state.go('gesuch.finanzielleSituation', {
+                    gesuchstellerNumber: '2',
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.finanzielleSituationResultate');
+                this.state.go('gesuch.finanzielleSituationResultate', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+            this.state.go('gesuch.finanzielleSituation', {
+                gesuchstellerNumber: '1',
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
+            this.state.go('gesuch.einkommensverschlechterungInfo', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern');
+                    this.state.go('gesuch.einkommensverschlechterungSteuern', {
+                        gesuchId: gesuchId
+                    });
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1'});
+                    this.state.go('gesuch.einkommensverschlechterung', {
+                        gesuchstellerNumber: '1',
+                        gesuchId: gesuchId
+                    });
                 }
             } else {
-                this.state.go('gesuch.dokumente');
+                this.state.go('gesuch.dokumente', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateNextEVSubStep2();
+            this.navigateNextEVSubStep2(gesuchId);
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterung', {gesuchstellerNumber: '1', basisjahrPlus: '1'});
+            this.state.go('gesuch.einkommensverschlechterung', {
+                gesuchstellerNumber: '1', basisjahrPlus: '1',
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 4) {
-            this.navigateNextEVSubStep4();
+            this.navigateNextEVSubStep4(gesuchId);
 
         } else if (TSWizardStepName.DOKUMENTE === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.verfuegen');
+            this.state.go('gesuch.verfuegen', {
+                gesuchId: gesuchId
+            });
         }
     }
 
@@ -228,88 +280,138 @@ export class NavigatorController {
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der previous Step ist und wechselt zu diesem.
      */
     private navigateToPreviousStep() {
+        let gesuchId = this.getGesuchId();
+
         this.errorService.clearAll();
         if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
             this.state.go('gesuch.fallcreation', {
                 createNew: 'false',
-                gesuchId: this.gesuchModelManager.getGesuch().id
+                gesuchId: gesuchId
             });
 
         } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.stammdaten', {gesuchstellerNumber: '1'});
+                this.state.go('gesuch.stammdaten', {
+                    gesuchstellerNumber: '1',
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.familiensituation');
+                this.state.go('gesuch.familiensituation', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.moveBackToGesuchsteller();
+            this.moveBackToGesuchsteller(gesuchId);
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.kinder');
+            this.state.go('gesuch.kinder', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.moveBackToGesuchsteller();
+                this.moveBackToGesuchsteller(gesuchId);
             } else {
-                this.state.go('gesuch.kinder');
+                this.state.go('gesuch.kinder', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.betreuungen');
+            this.state.go('gesuch.betreuungen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.betreuungen');
+            this.state.go('gesuch.betreuungen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen');
+            this.state.go('gesuch.erwerbsPensen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                this.state.go('gesuch.finanzielleSituation', {
+                    gesuchstellerNumber: 1,
+                    gesuchId: gesuchId
+                });
             } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart');
+                this.state.go('gesuch.finanzielleSituationStart', {
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.kinder');
+                this.state.go('gesuch.kinder', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen');
+            this.state.go('gesuch.erwerbsPensen', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 2});
+                this.state.go('gesuch.finanzielleSituation', {
+                    gesuchstellerNumber: 2,
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: 1});
+                this.state.go('gesuch.finanzielleSituation', {
+                    gesuchstellerNumber: 1,
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.finanzielleSituation', {gesuchstellerNumber: '1'});
+            this.state.go('gesuch.finanzielleSituation', {
+                gesuchstellerNumber: '1',
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigatePreviousEVSubStep2();
+            this.navigatePreviousEVSubStep2(gesuchId);
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
+            this.state.go('gesuch.einkommensverschlechterungInfo', {
+                gesuchId: gesuchId
+            });
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 4) {
-            this.navigatePreviousEVSubStep4();
+            this.navigatePreviousEVSubStep4(gesuchId);
 
         } else if (TSWizardStepName.DOKUMENTE === this.wizardStepManager.getCurrentStepName()) {
-            this.navigatePreviousDokumente();
+            this.navigatePreviousDokumente(gesuchId);
 
         } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.state.go('gesuch.betreuungen');
+                this.state.go('gesuch.betreuungen', {
+                    gesuchId: gesuchId
+                });
             } else {
-                this.state.go('gesuch.dokumente');
+                this.state.go('gesuch.dokumente', {
+                    gesuchId: gesuchId
+                });
             }
 
         } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.verfuegen');
+            this.state.go('gesuch.verfuegen', {
+                gesuchId: gesuchId
+            });
         }
+    }
+
+    private getGesuchId(): string {
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().id;
+        }
+        return '';
     }
 
     /**
@@ -344,22 +446,27 @@ export class NavigatorController {
         return undefined;
     }
 
-    private navigateNextEVSubStep2(): void {
+    private navigateNextEVSubStep2(gesuchId: string): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 1
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '1',
-                        basisjahrPlus: '2'
+                        basisjahrPlus: '2',
+                        gesuchId: gesuchId
                     });
                 } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '2',
-                        basisjahrPlus: '1'
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
                     });
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                    this.state.go('gesuch.einkommensverschlechterungResultate', {
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
+                    });
                 }
 
             } else { //gesuchsteller ===2
@@ -367,10 +474,14 @@ export class NavigatorController {
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '2',
-                        basisjahrPlus: '2'
+                        basisjahrPlus: '2',
+                        gesuchId: gesuchId
                     });
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                    this.state.go('gesuch.einkommensverschlechterungResultate', {
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
+                    });
                 }
 
             }
@@ -381,39 +492,52 @@ export class NavigatorController {
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '2',
-                        basisjahrPlus: '1'
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
                     });
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                    this.state.go('gesuch.einkommensverschlechterungResultate', {
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
+                    });
                 }
 
             } else { //gesuchsteller ===2
                 // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+                this.state.go('gesuch.einkommensverschlechterungResultate', {
+                    basisjahrPlus: '1',
+                    gesuchId: gesuchId
+                });
             }
         }
     };
 
-    private navigatePreviousEVSubStep2(): void {
+    private navigatePreviousEVSubStep2(gesuchId: string): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 1
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern');
+                    this.state.go('gesuch.einkommensverschlechterungSteuern', {
+                        gesuchId: gesuchId
+                    });
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungInfo');
+                    this.state.go('gesuch.einkommensverschlechterungInfo', {
+                        gesuchId: gesuchId
+                    });
                 }
             } else { //gesuchsteller ===2
                 // 2 , 1
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '1',
-                        basisjahrPlus: '2'
+                        basisjahrPlus: '2',
+                        gesuchId: gesuchId
                     });
                 } else {
                     this.state.go('gesuch.einkommensverschlechterung', {
                         gesuchstellerNumber: '1',
-                        basisjahrPlus: '1'
+                        basisjahrPlus: '1',
+                        gesuchId: gesuchId
                     });
                 }
             }
@@ -422,21 +546,26 @@ export class NavigatorController {
                 // 1 , 2
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '1',
-                    basisjahrPlus: '1'
+                    basisjahrPlus: '1',
+                    gesuchId: gesuchId
                 });
             } else { //gesuchsteller ===2
                 // 2 , 2
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '2',
-                    basisjahrPlus: '1'
+                    basisjahrPlus: '1',
+                    gesuchId: gesuchId
                 });
             }
         }
     };
 
-    private navigatePreviousEVSubStep4(): void {
+    private navigatePreviousEVSubStep4(gesuchId: string): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+            this.state.go('gesuch.einkommensverschlechterungResultate', {
+                basisjahrPlus: '1',
+                gesuchId: gesuchId
+            });
         } else {
             // baisjahrPlus1
 
@@ -446,38 +575,45 @@ export class NavigatorController {
             if (gesuchsteller2Required && basisJahr2Required) {
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '2',
-                    basisjahrPlus: '2'
+                    basisjahrPlus: '2',
+                    gesuchId: gesuchId
                 });
             } else if (gesuchsteller2Required) {
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '2',
-                    basisjahrPlus: '1'
+                    basisjahrPlus: '1',
+                    gesuchId: gesuchId
                 });
             } else if (basisJahr2Required) {
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '1',
-                    basisjahrPlus: '2'
+                    basisjahrPlus: '2',
+                    gesuchId: gesuchId
                 });
             } else {
                 this.state.go('gesuch.einkommensverschlechterung', {
                     gesuchstellerNumber: '1',
-                    basisjahrPlus: '1'
+                    basisjahrPlus: '1',
+                    gesuchId: gesuchId
                 });
             }
         }
     };
 
     //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNextEVSubStep4(): void {
+    private navigateNextEVSubStep4(gesuchId: string): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
-            this.goToDokumenteView();
+            this.goToDokumenteView(gesuchId);
         } else {
             let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
                 && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
             if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+                this.state.go('gesuch.einkommensverschlechterungResultate', {
+                    basisjahrPlus: '2',
+                    gesuchId: gesuchId
+                });
             } else {
-                this.goToDokumenteView();
+                this.goToDokumenteView(gesuchId);
             }
         }
     };
@@ -485,31 +621,47 @@ export class NavigatorController {
     /**
      * Goes to the view of documents and updates before the status of the WizardStep Einkommensverschlechterung to OK
      */
-    private goToDokumenteView() {
+    private goToDokumenteView(gesuchId: string) {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
-            this.state.go('gesuch.dokumente');
+            this.state.go('gesuch.dokumente', {
+                gesuchId: gesuchId
+            });
         });
     }
 
-    private navigatePreviousDokumente(): void {
+    private navigatePreviousDokumente(gesuchId: string): void {
         let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
             && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
         let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
             && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
         if (ekvFuerBasisJahrPlus2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '2'});
+            this.state.go('gesuch.einkommensverschlechterungResultate', {
+                basisjahrPlus: '2',
+                gesuchId: gesuchId
+            });
         } else if (ekvFuerBasisJahrPlus1) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {basisjahrPlus: '1'});
+            this.state.go('gesuch.einkommensverschlechterungResultate', {
+                basisjahrPlus: '1',
+                gesuchId: gesuchId
+            });
         } else {
-            this.state.go('gesuch.einkommensverschlechterungInfo');
+            this.state.go('gesuch.einkommensverschlechterungInfo', {
+                gesuchId: gesuchId
+            });
         }
     }
 
-    private moveBackToGesuchsteller() {
+    private moveBackToGesuchsteller(gesuchId: string) {
         if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 2});
+            this.state.go('gesuch.stammdaten', {
+                gesuchstellerNumber: 2,
+                gesuchId: gesuchId
+            });
         } else {
-            this.state.go('gesuch.stammdaten', {gesuchstellerNumber: 1});
+            this.state.go('gesuch.stammdaten', {
+                gesuchstellerNumber: 1,
+                gesuchId: gesuchId
+            });
         }
     }
 

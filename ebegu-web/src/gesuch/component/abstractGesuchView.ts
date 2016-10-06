@@ -4,6 +4,7 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
 import {IGesuchStateParams} from '../gesuch.route';
+import IPromise = angular.IPromise;
 
 export default class AbstractGesuchViewController {
 
@@ -15,38 +16,24 @@ export default class AbstractGesuchViewController {
     stateParams: IGesuchStateParams;
 
     constructor($gesuchModelManager: GesuchModelManager, $berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, $stateParams?: IGesuchStateParams) {
+                wizardStepManager: WizardStepManager) {
         this.gesuchModelManager = $gesuchModelManager;
         this.berechnungsManager = $berechnungsManager;
         this.wizardStepManager = wizardStepManager;
         this.TSRole = TSRole;
         this.TSRoleUtil = TSRoleUtil;
-        this.stateParams = $stateParams;
-        this.loadGesuchFromStateParams();
-
     }
 
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
     }
 
-    private setGesuchId(gesuchId: string) {
-        if (gesuchId) {
-            if (!this.gesuchModelManager.getGesuch() || this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().id !== gesuchId) {
-                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId überreinstimmt wird das gesuch neu geladen
-                this.berechnungsManager.clear();
-                this.gesuchModelManager.openGesuch(gesuchId);
-            }
+    public getGesuchId(): string {
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().id;
+        } else {
+            return '';
         }
     }
-
-    private loadGesuchFromStateParams() {
-        if (this.stateParams) {
-            let gesuchIdParams = this.stateParams.gesuchId;
-            this.setGesuchId(gesuchIdParams);
-            console.log('Navigiert auf view mit AntragId: ' + gesuchIdParams);
-        }
-    }
-
 
 }

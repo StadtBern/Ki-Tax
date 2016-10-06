@@ -1,6 +1,11 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState, IStateParamsService} from 'angular-ui-router';
 import {GesuchRouteController} from './gesuch';
+import GesuchModelManager from './service/gesuchModelManager';
+import TSGesuch from '../models/TSGesuch';
+import BerechnungsManager from './service/berechnungsManager';
+import WizardStepManager from './service/wizardStepManager';
+import IPromise = angular.IPromise;
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -8,6 +13,7 @@ gesuchRun.$inject = ['RouterHelper'];
 export function gesuchRun(routerHelper: RouterHelper) {
     routerHelper.configureStates(getStates(), '/auth/login');
 }
+
 
 //array mit allen States
 function getStates(): IState[] {
@@ -59,12 +65,16 @@ export class EbeguNewFallState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 
 export class EbeguFamiliensituationState implements IState {
     name = 'gesuch.familiensituation';
-    url = '/familiensituation';
+    url = '/familiensituation/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -74,11 +84,15 @@ export class EbeguFamiliensituationState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguStammdatenState implements IState {
     name = 'gesuch.stammdaten';
-    url = '/stammdaten/:gesuchstellerNumber';
+    url = '/stammdaten/:gesuchstellerNumber/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -88,11 +102,15 @@ export class EbeguStammdatenState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguKinderListState implements IState {
     name = 'gesuch.kinder';
-    url = '/kinder';
+    url = '/kinder/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -102,11 +120,15 @@ export class EbeguKinderListState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguKindState implements IState {
     name = 'gesuch.kind';
-    url = '/kinder/kind/:kindNumber';
+    url = '/kinder/kind/:kindNumber/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -116,11 +138,15 @@ export class EbeguKindState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguBetreuungListState implements IState {
     name = 'gesuch.betreuungen';
-    url = '/betreuungen';
+    url = '/betreuungen/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -130,11 +156,15 @@ export class EbeguBetreuungListState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguBetreuungState implements IState {
     name = 'gesuch.betreuung';
-    url = '/betreuungen/betreuung';
+    url = '/betreuungen/betreuung/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -144,11 +174,15 @@ export class EbeguBetreuungState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguErwerbspensenListState implements IState {
     name = 'gesuch.erwerbsPensen';
-    url = '/erwerbspensen';
+    url = '/erwerbspensen/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -158,11 +192,15 @@ export class EbeguErwerbspensenListState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguErwerbspensumState implements IState {
     name = 'gesuch.erwerbsPensum';
-    url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum';
+    url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -172,11 +210,15 @@ export class EbeguErwerbspensumState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
-    url = '/finanzielleSituation/:gesuchstellerNumber';
+    url = '/finanzielleSituation/:gesuchstellerNumber/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -186,11 +228,15 @@ export class EbeguFinanzielleSituationState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguFinanzielleSituationStartState implements IState {
     name = 'gesuch.finanzielleSituationStart';
-    url = '/finanzielleSituationStart';
+    url = '/finanzielleSituationStart/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -200,11 +246,15 @@ export class EbeguFinanzielleSituationStartState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguFinanzielleSituationResultateState implements IState {
     name = 'gesuch.finanzielleSituationResultate';
-    url = '/finanzielleSituationResultate';
+    url = '/finanzielleSituationResultate/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -214,11 +264,15 @@ export class EbeguFinanzielleSituationResultateState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguVerfuegenListState implements IState {
     name = 'gesuch.verfuegen';
-    url = '/verfuegen/:gesuchId?';
+    url = '/verfuegen/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -228,11 +282,15 @@ export class EbeguVerfuegenListState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguVerfuegenState implements IState {
     name = 'gesuch.verfuegenView';
-    url = '/verfuegenView';
+    url = '/verfuegenView/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -242,11 +300,15 @@ export class EbeguVerfuegenState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguEinkommensverschlechterungInfoState implements IState {
     name = 'gesuch.einkommensverschlechterungInfo';
-    url = '/einkommensverschlechterungInfo';
+    url = '/einkommensverschlechterungInfo/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -256,11 +318,15 @@ export class EbeguEinkommensverschlechterungInfoState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguEinkommensverschlechterungSteuernState implements IState {
     name = 'gesuch.einkommensverschlechterungSteuern';
-    url = '/einkommensverschlechterungSteuern';
+    url = '/einkommensverschlechterungSteuern/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -270,11 +336,15 @@ export class EbeguEinkommensverschlechterungSteuernState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguEinkommensverschlechterungState implements IState {
     name = 'gesuch.einkommensverschlechterung';
-    url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus';
+    url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -284,11 +354,15 @@ export class EbeguEinkommensverschlechterungState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguEinkommensverschlechterungResultateState implements IState {
     name = 'gesuch.einkommensverschlechterungResultate';
-    url = '/einkommensverschlechterungResultate/:basisjahrPlus';
+    url = '/einkommensverschlechterungResultate/:basisjahrPlus/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -298,11 +372,15 @@ export class EbeguEinkommensverschlechterungResultateState implements IState {
             template: '<kommentar-view>'
         }
     };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
 }
 
 export class EbeguDokumenteState implements IState {
     name = 'gesuch.dokumente';
-    url = '/dokumente/:gesuchstellerNumber';
+    url = '/dokumente/:gesuchstellerNumber/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -311,6 +389,10 @@ export class EbeguDokumenteState implements IState {
         'kommentarViewPort': {
             template: '<kommentar-view>'
         }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
     };
 }
 
@@ -346,3 +428,24 @@ export class IEinkommensverschlechterungStateParams implements IStateParamsServi
 export class IEinkommensverschlechterungResultateStateParams implements IStateParamsService {
     basisjahrPlus: string;
 }
+
+
+getGesuchModelManager.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', '$stateParams', '$q'];
+/* @ngInject */
+export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                                      wizardStepManager: WizardStepManager, $stateParams: INewFallStateParams, $q: any): IPromise<TSGesuch> {
+    if ($stateParams) {
+        let gesuchIdParams = $stateParams.gesuchId;
+        if (gesuchIdParams) {
+            if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParams) {
+                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId überreinstimmt wird das gesuch neu geladen
+                berechnungsManager.clear();
+                wizardStepManager.findStepsFromGesuch(gesuchIdParams);
+                return gesuchModelManager.openGesuch(gesuchIdParams);
+            }
+        }
+        console.log('Navigiert auf view mit AntragId: ' + gesuchIdParams);
+    }
+    return $q.defer(gesuchModelManager.getGesuch());
+}
+

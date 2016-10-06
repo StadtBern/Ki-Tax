@@ -8,17 +8,18 @@ import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import EbeguUtil from '../utils/EbeguUtil';
 import {TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
-import ITranslateService = angular.translate.ITranslateService;
 import TSGesuch from '../models/TSGesuch';
 import TSUser from '../models/TSUser';
+import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', 'AuthServiceRS'];
+        'AntragStatusHistoryRS', 'AuthServiceRS', '$stateParams'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil, private antragStatusHistoryRS: AntragStatusHistoryRS) {
+                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
+                private antragStatusHistoryRS: AntragStatusHistoryRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch());
     }

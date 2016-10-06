@@ -96,9 +96,7 @@ describe('pendenzenListView', function () {
                 $scope.$apply();
 
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
-                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockPendenz.antragId);
-                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation');
-                expect(gesuchModelManager.getGesuch()).toBe(tsGesuch);
+                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
             });
         });
     });

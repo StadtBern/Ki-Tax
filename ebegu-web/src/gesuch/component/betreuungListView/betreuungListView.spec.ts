@@ -47,7 +47,7 @@ describe('betreuungListViewTest', function () {
                 expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
                 expect(gesuchModelManager.getKindNumber()).toBe(1);
                 expect(gesuchModelManager.createBetreuung).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung');
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuung', { gesuchId: ''});
             });
         });
     });

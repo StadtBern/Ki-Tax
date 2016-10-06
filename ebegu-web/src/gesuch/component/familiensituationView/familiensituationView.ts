@@ -16,6 +16,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import {IGesuchStateParams} from '../../gesuch.route';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
@@ -38,7 +39,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     initialFamiliensituation: TSFamiliensituation;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-                      'DvDialog', '$translate'];
+        'DvDialog', '$translate', '$stateParams'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
@@ -97,7 +98,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
      */
     private isConfirmationRequired(): boolean {
         return (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-                && this.initialFamiliensituation.hasSecondGesuchsteller()
-                && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+        && this.initialFamiliensituation.hasSecondGesuchsteller()
+        && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
     }
 }

@@ -47,17 +47,20 @@ export class GesuchToolbarController {
         this.updateUserList();
         this.refreshGesuch();
 
-        $scope.$watch(() => {
-            return this.gesuchid;
-        }, (newValue, oldValue) => {
-            if (newValue !== oldValue) {
-                if (this.gesuchid) {
-                    this.refreshGesuch();
-                } else {
-                    this.gesuch = null;
+        // needed because of test is not able to inject $scope!
+        if ($scope) {
+            $scope.$watch(() => {
+                return this.gesuchid;
+            }, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    if (this.gesuchid) {
+                        this.refreshGesuch();
+                    } else {
+                        this.gesuch = null;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private refreshGesuch() {
