@@ -403,6 +403,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			anspruchspensumRest == that.anspruchspensumRest &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
+			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			wohnsitzNichtInGemeindeGS1 == that.wohnsitzNichtInGemeindeGS1 &&
