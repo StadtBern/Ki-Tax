@@ -1,10 +1,19 @@
 package ch.dvbern.ebegu.services;
 
-import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import ch.dvbern.ebegu.dto.JaxAntragDTO;
+import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -12,26 +21,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
-import ch.dvbern.ebegu.dto.suchfilter.PredicateObjectDTO;
-import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.AntragTyp;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
-import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
-import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.lib.cdipersistence.Persistence;
+import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.status;
 
 /**
  * Service fuer Gesuch
@@ -169,6 +163,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
         return result;
     }
 
+	@SuppressWarnings("PMD.NcssMethodCount")
     private Pair<Long, List<Gesuch>> searchAntraege(@Nonnull AntragTableFilterDTO antragTableFilterDto, @Nonnull Mode mode) {
         Benutzer user = benutzerService.getCurrentBenutzer().get();
         UserRole role = user.getRole();
@@ -193,7 +188,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
         }
         // Construct from-clause
 		Root<Gesuch> root = query.from(Gesuch.class);
-        
+
         // Join the relevant relations
         Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
         Join<Fall, Benutzer> benutzer = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
@@ -350,7 +345,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
                 result = new ImmutablePair<>(null, gesuche);
                 break;
             case COUNT:
-                result = new ImmutablePair<>(persistence.getCriteriaSingleResult(query), null);
+				Long count = (Long) persistence.getCriteriaSingleResult(query);
+				result = new ImmutablePair<>(count, null);
                 break;
         }
         return result;

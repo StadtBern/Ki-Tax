@@ -17,6 +17,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -121,8 +122,9 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	@Ignore("Wird wieder aktiviert sobald wir das mit dem startindex programmatisch machen")
 	public void testSearchAntraegeOrder() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 

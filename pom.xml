@@ -489,6 +489,14 @@
 
 
         <profile>
+            <activation>
+                <property>
+                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
+                    arquillian mit embedded container-->
+                    <name>!disable-managed-wildfly</name>
+                </property>
+            </activation>
+
             <id>test-wildfly-managed</id>
             <properties>
                 <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
