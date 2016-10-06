@@ -91,8 +91,7 @@ public class AbstractEntityListener {
 		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
 
 		if (entity instanceof Verfuegung) {
-			// Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert
-			throw new IllegalStateException("Verfuegung darf nicht gespeichert werden, wenn die Betreuung nicht verfuegt ist");
+			throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
 		}
 	}
 

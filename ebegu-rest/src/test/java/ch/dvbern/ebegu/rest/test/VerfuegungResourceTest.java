@@ -62,7 +62,5 @@ public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 		Response response = verfuegungResource.calculateVerfuegung(new JaxId(gesuch.getId()), null, null);
 
 		Assert.assertNotNull(response);
-		Object entity = response.getEntity();
-		System.out.println("halo");
 	}
 }

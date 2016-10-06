@@ -88,7 +88,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	 */
 	@Nonnull
 	@Override
-//	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) // TODO (Imanol) Brauchts das?
 	public GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
 		final UploadFileInfo savedDokument = fileSaverService.save(data,
 			fileName, gesuch.getId());
@@ -145,7 +144,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	}
 
 	@Override
-//	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) // TODO (Imanol) Brauchts das?
 	public GeneratedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
 																			   Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException {
 
