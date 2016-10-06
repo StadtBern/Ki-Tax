@@ -1,1 +1,85 @@
+@buttonWidth: 230px;
+@buttonHeight: 140px;
 
+.gesuchstellerDashboardView {
+    color: #fff;
+    height: 95vh;
+    background: url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed; /* fallback */
+    background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
+    url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    .greyBorder {
+        border-color: #626262;
+    }
+
+    .dashboardHeader {
+        margin-top: 200px;
+        z-index: 1;
+    }
+    .dashboardButton {
+        width: @buttonWidth;
+        height: @buttonHeight;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        position: relative;
+        &:focus {
+            border: none;
+            border-radius: 0;
+            outline: none;
+        }
+        div {
+            position: absolute;
+        }
+        h2 {
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 22px;
+            letter-spacing: 1.5px;
+            color: #FFFEFE;
+            margin: 0;
+        }
+        .labelBig {
+            top: 0;
+            left: 0;
+            background-color: #CCC;
+            width: @buttonWidth;
+            height: 100px;
+
+            & h2 {
+                line-height: 100px;
+                font-weight: 600;
+            }
+        }
+        .labelSmall {
+            bottom: 0;
+            left: 0;
+            background-color: #D50025;
+            width: @buttonWidth;
+            height: 40px;
+            & h2 {
+                line-height: 40px;
+                font-size: 14px;
+            }
+        }
+        .labelNotification {
+            top: 5px;
+            right: 5px;
+            border-radius: 40px;
+            background-color: #fff;
+            width: 24px;
+            height: 24px;
+            vertical-align: center;
+            line-height: 24px;
+            color: #d50025;
+            font-weight: bold;
+        }
+    }
+    .dvb-loading-button {
+        width: @buttonWidth;
+        height: @buttonHeight;
+    }
+}

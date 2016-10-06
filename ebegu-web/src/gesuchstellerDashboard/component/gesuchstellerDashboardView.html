@@ -1,23 +1,26 @@
-<div class="pendenzenInstitutionListView row">
+<div class="gesuchstellerDashboardView row">
 
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-12 dashboardHeader">
 
         <div class="row">
             <div class="col-md-6">
-                <dv-loading-button type="button" ui-sref="gesuch.fallcreation"
-                                   button-class="btn">
-                    <div data-translate="GESUCH"></div>
-                    <div data-translate="GSDASHBOARD_BEANTRAGEN" style="background-color: red"></div>
-                </dv-loading-button>
+                <div class="pull-right">
+                    <dv-loading-button type="button" ui-sref="gesuch.fallcreation"
+                                       button-class="btn dashboardButton pull-right">
+                        <div class="labelBig"><h2 data-translate="GESUCH"></h2></div>
+                        <div class="labelSmall"><h2 data-translate="GSDASHBOARD_BEANTRAGEN"></h2></div>
+                    </dv-loading-button>
+                </div>
             </div>
             <div class="col-md-6">
-                <dv-loading-button type="button" button-click="vm.goToMitteilungenOeffen()"
-                                   button-class="btn">
-                    <div data-translate="GSDASHBOARD_MITTEILUNGEN"></div>
-                    <div ng-bind="vm.getNumberMitteilungen()"
-                         style="background-color: white; position: relative; right: -70px; top: -32px; width: 16px"></div>
-                    <div data-translate="GSDASHBOARD_OEFFNEN" style="background-color: red"></div>
-                </dv-loading-button>
+                <div class="pull-left">
+                    <dv-loading-button type="button" button-click="vm.goToMitteilungenOeffen()"
+                                       button-class="btn dashboardButton">
+                        <div class="labelBig"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
+                        <div class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
+                        <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
+                    </dv-loading-button>
+                </div>
             </div>
         </div>
     </div>
@@ -28,7 +31,7 @@
 
         <table st-table="displayedCollection" st-set-filter="pendenzFilter" st-safe-src="vm.getAntragList()"
                st-delay="20"
-               class="table table-striped fixedtable">
+               class="table fixedtable">
             <thead>
             <tr>
 
@@ -43,16 +46,16 @@
             <tbody>
             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                 ng-click="vm.editPendenzJA(row)">
-                <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.antragTyp | translate}}"
                     ng-bind="row.antragTyp | translate"></td>
-                <td class="ellipsis"
+                <td class="ellipsis greyBorder"
                     ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                     ng-bind="row.gesuchsperiodeString"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
+                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.status | translate}}"
                     ng-bind="row.status | translate"></td>
-                <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
+                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.verantwortlicher}}"
                     ng-bind="row.verantwortlicher"></td>
             </tr>
             </tbody>
