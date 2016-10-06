@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.tests;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.FinanzielleSituationService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -58,8 +59,10 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
-		verfuegungService.saveVerfuegung(verfuegung, betreuung);
-
+		Verfuegung persistedVerfuegung = verfuegungService.saveVerfuegung(verfuegung, betreuung.getId());
+		Betreuung persistedBetreuung = persistence.find(Betreuung.class, betreuung.getId());
+		Assert.assertEquals(persistedVerfuegung.getBetreuung(), persistedBetreuung);
+		Assert.assertEquals(persistedBetreuung.getVerfuegung(), persistedVerfuegung);
 	}
 
 	@Test
@@ -105,13 +108,16 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 
 	private Betreuung insertBetreuung() {
-		return TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence)
+		Betreuung betreuung = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence)
 			.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+		return persistence.merge(betreuung);
 	}
 
 	private Verfuegung insertVerfuegung() {
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
 		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
+		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 		Assert.assertNull(betreuung.getVerfuegung());
 		Verfuegung verfuegung = new Verfuegung();
 		verfuegung.setBetreuung(betreuung);
