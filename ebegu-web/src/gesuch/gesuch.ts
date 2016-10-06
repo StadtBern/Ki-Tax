@@ -9,11 +9,12 @@ import EbeguUtil from '../utils/EbeguUtil';
 import {TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
 import ITranslateService = angular.translate.ITranslateService;
+import TSGesuch from '../models/TSGesuch';
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-                                'AntragStatusHistoryRS', 'AuthServiceRS'];
+        'AntragStatusHistoryRS', 'AuthServiceRS'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil, private antragStatusHistoryRS: AntragStatusHistoryRS) {
@@ -87,6 +88,20 @@ export class GesuchRouteController extends AbstractGesuchViewController {
 
     public getUserFullname(): string {
         return this.antragStatusHistoryRS.getUserFullname();
+    }
+
+    public getGesuchId(): string {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().id;
+        }
+        return null;
+    }
+
+    public getGesuch(): TSGesuch {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch();
+        }
+        return null;
     }
 
 }

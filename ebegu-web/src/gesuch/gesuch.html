@@ -1,6 +1,6 @@
 <div class="row">
 
-    <gesuch-toolbar dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
+    <gesuch-toolbar gesuchid="{{vm.getGesuchId()}}" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
     </gesuch-toolbar>
 
     <div class="col-md-3 sidenav">
@@ -15,7 +15,7 @@
             <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
 
-                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.fallcreation"
+                <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.fallcreation({createNew: false, gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')">
                     <span ng-if="vm.gesuchModelManager.isGesuchSaved()" data-translate="MENU_ERSTGESUCH_VOM"
                           data-translate-value-date="{{vm.getDateErstgesuch()}}"></span>

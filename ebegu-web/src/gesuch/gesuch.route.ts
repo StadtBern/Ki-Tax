@@ -49,7 +49,7 @@ export class EbeguGesuchState implements IState {
 
 export class EbeguNewFallState implements IState {
     name = 'gesuch.fallcreation';
-    url = '/fall/:createNew';
+    url = '/fall/:createNew/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -218,7 +218,7 @@ export class EbeguFinanzielleSituationResultateState implements IState {
 
 export class EbeguVerfuegenListState implements IState {
     name = 'gesuch.verfuegen';
-    url = '/verfuegen';
+    url = '/verfuegen/:gesuchId?';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -315,6 +315,11 @@ export class EbeguDokumenteState implements IState {
 }
 
 //PARAMS
+
+export class IGesuchStateParams implements IStateParamsService {
+    gesuchId: string;
+}
+
 export class IStammdatenStateParams implements IStateParamsService {
     gesuchstellerNumber: string;
 }
@@ -323,8 +328,9 @@ export class IKindStateParams implements IStateParamsService {
     kindNumber: string;
 }
 
-export class INewFallStateParams implements IStateParamsService {
-    createNew: boolean;
+export class INewFallStateParams implements IGesuchStateParams {
+    gesuchId: string;
+    createNew: string;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {

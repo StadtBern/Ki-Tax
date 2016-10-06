@@ -230,7 +230,10 @@ export class NavigatorController {
     private navigateToPreviousStep() {
         this.errorService.clearAll();
         if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.fallcreation');
+            this.state.go('gesuch.fallcreation', {
+                createNew: 'false',
+                gesuchId: this.gesuchModelManager.getGesuch().id
+            });
 
         } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {

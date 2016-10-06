@@ -16,6 +16,7 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import {IGesuchStateParams} from '../../gesuch.route';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -34,13 +35,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log'];
+        'DvDialog', 'DownloadRS', '$log', '$stateParams'];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private $log: ILogService) {
-        super(gesuchModelManager, berechnungsManager, wizardStepManager);
+                private downloadRS: DownloadRS, private $log: ILogService, $stateParams: IGesuchStateParams) {
+        super(gesuchModelManager, berechnungsManager, wizardStepManager, $stateParams);
         this.initViewModel();
     }
 

@@ -8,7 +8,6 @@ import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragT
 import TSInstitution from '../../../models/TSInstitution';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
 import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../../gesuch/service/gesuchRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import {IStateService} from 'angular-ui-router';
@@ -125,19 +124,7 @@ export class PendenzenListViewController {
 
     public editPendenzJA(pendenz: TSAntragDTO): void {
         if (pendenz) {
-            this.gesuchRS.findGesuch(pendenz.antragId).then((response) => {
-                if (response) {
-                    this.openGesuch(response);
-                }
-            });
-        }
-    }
-
-    private openGesuch(gesuch: TSGesuch): void {
-        if (gesuch) {
-            this.berechnungsManager.clear();
-            this.gesuchModelManager.setGesuch(gesuch);
-            this.$state.go('gesuch.fallcreation');
+            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: pendenz.antragId});
         }
     }
 }

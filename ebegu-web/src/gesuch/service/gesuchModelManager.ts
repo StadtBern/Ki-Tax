@@ -77,6 +77,17 @@ export default class GesuchModelManager {
         this.updateActiveGesuchsperiodenList();
     }
 
+
+
+    public openGesuch(gesuchId: string): void {
+        this.gesuchRS.findGesuch(gesuchId)
+            .then((response) => {
+                if (response) {
+                    this.setGesuch(response);
+                }
+            });
+    }
+
     /**
      * In dieser Methode wird das Gesuch ersetzt. Das Gesuch ist jetzt private und darf nur ueber diese Methode geaendert werden.
      *
