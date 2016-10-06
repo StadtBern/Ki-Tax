@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
+import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -120,10 +120,7 @@ public class EbeguParameterResource {
 	public List<JaxEbeguParameter> getAllEbeguParameterByDate(
 		@Nullable @QueryParam("date") String stringDate) {
 
-		LocalDate date = LocalDate.now();
-		if (stringDate != null && !stringDate.isEmpty()) {
-			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		}
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		return ebeguParameterService.getAllEbeguParameterByDate(date).stream()
 			.map(ebeguParameter -> converter.ebeguParameterToJAX(ebeguParameter))
 			.collect(Collectors.toList());
@@ -173,10 +170,7 @@ public class EbeguParameterResource {
 		@Nonnull @PathParam("name") String name,
 		@Nullable @QueryParam("date") String stringDate) {
 
-		LocalDate date = LocalDate.now();
-		if (stringDate != null && !stringDate.isEmpty()) {
-			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		}
+		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stringDate);
 		EbeguParameterKey ebeguParameterKey = EbeguParameterKey.valueOf(name);
 		Optional<EbeguParameter> optional  = ebeguParameterService.getEbeguParameterByKeyAndDate(ebeguParameterKey, date);
 		if (optional.isPresent()) {
