@@ -1,28 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import java.net.URI;
-import java.security.Principal;
-import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ArrayListMultimap;
-
 import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
@@ -43,8 +20,29 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.util.MonitoringUtil;
+import com.google.common.collect.ArrayListMultimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Resource fuer Gesuch
@@ -247,33 +245,36 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
-		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-		List<Gesuch> foundAntraege = searchResultPair.getRight();
-		//todo hier darf fuer jeden Fall nur der Antrag mit dem neusten datum drin sein, spaeter im query machen
-		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
-		for (Gesuch gesuch : foundAntraege) {
-			fallToAntragMultimap.put(gesuch.getFall(), gesuch);
-		}
-		Set<Gesuch> gesuchSet = new LinkedHashSet<>();
-		for (Gesuch gesuch : foundAntraege) {
-			List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
-			Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
-			gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
-		}
+		Response resp = MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
+			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
+			//todo hier darf fuer jeden Fall nur der Antrag mit dem neusten datum drin sein, spaeter im query machen
+			ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
+			for (Gesuch gesuch : foundAntraege) {
+				fallToAntragMultimap.put(gesuch.getFall(), gesuch);
+			}
+			Set<Gesuch> gesuchSet = new LinkedHashSet<>();
+			for (Gesuch gesuch : foundAntraege) {
+				List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
+				Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
+				gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
+			}
 
-		List<JaxAntragDTO> antragDTOList = new ArrayList<>(gesuchSet.size());
-		gesuchSet.stream().forEach(gesuch -> {
-			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
-			antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-			antragDTOList.add(antragDTO);
+			List<JaxAntragDTO> antragDTOList = new ArrayList<>(gesuchSet.size());
+			gesuchSet.stream().forEach(gesuch -> {
+				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+				antragDTOList.add(antragDTO);
+			});
+			//Es wird immer nur der neuste Antrag zurueckgegeben, das muss spaeter im query gemacht werden sonst stimmt die pagegroesse dann nicht mehr
+			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+			resultDTO.setAntragDTOs(antragDTOList);
+			PaginationDTO pagination = antragSearch.getPagination();
+			pagination.setTotalItemCount(searchResultPair.getLeft());
+			resultDTO.setPaginationDTO(pagination);
+			return Response.ok(resultDTO).build();
 		});
-		//Es wird immer nur der neuste Antrag zurueckgegeben, das muss spaeter im query gemacht werden sonst stimmt die pagegroesse dann nicht mehr
-		JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-		resultDTO.setAntragDTOs(antragDTOList);
-		PaginationDTO pagination = antragSearch.getPagination();
-		pagination.setTotalItemCount(searchResultPair.getLeft());
-		resultDTO.setPaginationDTO(pagination);
-		return Response.ok(resultDTO).build();
+		return resp;
 	}
 
 
