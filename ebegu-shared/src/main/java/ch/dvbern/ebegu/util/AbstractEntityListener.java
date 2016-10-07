@@ -76,6 +76,13 @@ public class AbstractEntityListener {
 			fall.setFallNummer(nextFallNr);
 			fall.setMandant(mandant);
 		}
+		else if (entity instanceof Verfuegung) {
+			// Verfuegung darf erst erstellt werden, wenn die Betreuung verfuegt ist
+			Verfuegung verfuegung = (Verfuegung) entity;
+			if (!verfuegung.getBetreuung().getBetreuungsstatus().isVerfuegt()) {
+				throw new IllegalStateException("Verfuegung darf nicht gespeichert werden, wenn die Betreuung nicht verfuegt ist");
+			}
+		}
 	}
 
 	@PreUpdate
@@ -83,6 +90,9 @@ public class AbstractEntityListener {
 		entity.setTimestampMutiert(LocalDateTime.now());
 		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
 
+		if (entity instanceof Verfuegung) {
+			throw new IllegalStateException("Verfuegung darf eigentlich nur einmal erstellt werden, wenn die Betreuung verfuegt ist, und nie mehr veraendert");
+		}
 	}
 
 	private FallService getFallService() {
