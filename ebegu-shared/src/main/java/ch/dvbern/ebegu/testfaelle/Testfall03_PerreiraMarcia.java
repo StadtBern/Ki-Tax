@@ -43,7 +43,7 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionAaregg);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
 		betreuungKitaAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(50, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
