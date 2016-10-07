@@ -46,11 +46,20 @@ public class TestfaelleResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.WILDCARD)
 	public Response getTestFall(@PathParam("fallid") String fallid) {
+		return this.getTestFall(fallid, 1);
+	}
+
+	@GET
+	@Path("/testfall/{fallid}/{iterationCount}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public Response getTestFall(@PathParam("fallid") String fallid, @PathParam("iterationCount") Integer iterationCount) {
+		iterationCount = iterationCount == null || iterationCount == 0 ? 1 : iterationCount;
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
 		Gesuchsperiode gesuchsperiode = allActiveGesuchsperioden.iterator().next();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
-		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.idInstitutionAaregg);
-		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.idInstitutionBruennen);
+		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("c10405d6-a905-4879-bb38-fca4cbb3f06f");
 		if (optionalAaregg.isPresent()) {
 			institutionStammdatenList.add(optionalAaregg.get());
@@ -61,36 +70,44 @@ public class TestfaelleResource {
 		if (optionalTagiAaregg.isPresent()) {
 			institutionStammdatenList.add(optionalTagiAaregg.get());
 		}
-		if ("1".equals(fallid)) {
-			createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Dagmar Waelti erstellt").build();
-		} else if ("2".equals(fallid)) {
-			createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Yvonne Feutz erstellt").build();
-		} else if ("3".equals(fallid)) {
-			createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Marcia Perreira erstellt").build();
-		} else if ("4".equals(fallid)) {
-			createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Laura Walther erstellt").build();
-		} else if ("5".equals(fallid)) {
-			createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Meret Luethi erstellt").build();
-		} else if ("6".equals(fallid)) {
-			createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Fall Nora Becker erstellt").build();
-		} else if ("all".equals(fallid)) {
-			createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList));
-			createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList));
-			createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList));
-			createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList));
-			createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList));
-			createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList));
-			return Response.ok("Testfaelle 1-6 erstellt").build();
-		} else {
-			return Response.ok("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-6. '/all' erstellt alle Testfaelle").build();
+
+		StringBuilder responseString = new StringBuilder("");
+		for (int i = 0; i < iterationCount; i++) {
+
+			if ("1".equals(fallid)) {
+				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Dagmar Waelti erstellt");
+			} else if ("2".equals(fallid)) {
+				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Yvonne Feutz erstellt");
+			} else if ("3".equals(fallid)) {
+				createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Marcia Perreira erstellt");
+			} else if ("4".equals(fallid)) {
+				createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Laura Walther erstellt");
+			} else if ("5".equals(fallid)) {
+				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Meret Luethi erstellt");
+			} else if ("6".equals(fallid)) {
+				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Fall Nora Becker erstellt");
+			} else if ("all".equals(fallid)) {
+				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList));
+				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList));
+				createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList));
+				createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList));
+				createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList));
+				createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList));
+				responseString.append("Testfaelle 1-6 erstellt");
+			} else {
+				responseString.append("Usage: /Nummer des Testfalls an die URL anhaengen. Bisher umgesetzt: 1-6. '/all' erstellt alle Testfaelle");
+			}
+
 		}
+		return Response.ok(responseString.toString()).build();
 	}
+
 
 	private void createAndSaveGesuch(AbstractTestfall fromTestfall) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());

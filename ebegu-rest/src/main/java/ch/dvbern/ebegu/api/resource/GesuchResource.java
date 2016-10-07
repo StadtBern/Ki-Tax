@@ -246,35 +246,44 @@ public class GesuchResource {
 		@Context HttpServletResponse response) {
 
 		Response resp = MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
-			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-			List<Gesuch> foundAntraege = searchResultPair.getRight();
-			//todo hier darf fuer jeden Fall nur der Antrag mit dem neusten datum drin sein, spaeter im query machen
-			ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
-			for (Gesuch gesuch : foundAntraege) {
-				fallToAntragMultimap.put(gesuch.getFall(), gesuch);
-			}
-			Set<Gesuch> gesuchSet = new LinkedHashSet<>();
-			for (Gesuch gesuch : foundAntraege) {
-				List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
-				Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
-				gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
-			}
+		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
+		List<Gesuch> foundAntraege = searchResultPair.getRight();
 
-			List<JaxAntragDTO> antragDTOList = new ArrayList<>(gesuchSet.size());
-			gesuchSet.stream().forEach(gesuch -> {
-				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
-				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-				antragDTOList.add(antragDTO);
-			});
-			//Es wird immer nur der neuste Antrag zurueckgegeben, das muss spaeter im query gemacht werden sonst stimmt die pagegroesse dann nicht mehr
-			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-			resultDTO.setAntragDTOs(antragDTOList);
-			PaginationDTO pagination = antragSearch.getPagination();
-			pagination.setTotalItemCount(searchResultPair.getLeft());
-			resultDTO.setPaginationDTO(pagination);
-			return Response.ok(resultDTO).build();
+		List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
+		foundAntraege.stream().forEach(gesuch -> {
+			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+			antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+			antragDTOList.add(antragDTO);
+		});
+		JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+		resultDTO.setAntragDTOs(antragDTOList);
+		PaginationDTO pagination = antragSearch.getPagination();
+		pagination.setTotalItemCount(searchResultPair.getLeft());
+		resultDTO.setPaginationDTO(pagination);
+		return Response.ok(resultDTO).build();
 		});
 		return resp;
+	}
+
+	/**
+	 * iteriert durch eine Liste von Antragen und gibt jeweils pro Fall nur den Antrag mit dem neusten Eingangsdatum zurueck
+	 * @param foundAntraege  Liste mit Antraegen, kann mehrere pro Fall enthalten
+	 * @return Set mit Antraegen, jeweils nur der neuste zu einem bestimmten Fall
+	 */
+	@Nonnull
+	@SuppressWarnings("unused")
+	private Set<Gesuch> reduceToNewestAntrag(List<Gesuch> foundAntraege) {
+		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
+		for (Gesuch gesuch : foundAntraege) {
+			fallToAntragMultimap.put(gesuch.getFall(), gesuch);
+		}
+		Set<Gesuch> gesuchSet = new LinkedHashSet<>();
+		for (Gesuch gesuch : foundAntraege) {
+			List<Gesuch> antraege = fallToAntragMultimap.get(gesuch.getFall());
+			Collections.sort(antraege, (Comparator<Gesuch>) (o1, o2) -> o1.getEingangsdatum().compareTo(o2.getEingangsdatum()));
+			gesuchSet.add(antraege.get(0)); //nur neusten zurueckgeben
+		}
+		return gesuchSet;
 	}
 
 
@@ -285,9 +294,7 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<JaxAntragDTO> getAllAntragDTOForFall(
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
-
 		Validate.notNull(fallJAXPId.getId());
-
 		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
 	}
 
