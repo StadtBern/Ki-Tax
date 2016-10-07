@@ -225,6 +225,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getGesuchsperiodeString() != null) {
 				String[] years = predicateObjectDto.getGesuchsperiodeString().split("/");
+				if(years.length != 2){
+					throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + predicateObjectDto.getGesuchsperiodeString());
+				}
 				predicates.add(
 					cb.and(
 						cb.equal(cb.function("year", Integer.class, gesuchsperiode.get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb)), years[0]),
