@@ -16,10 +16,10 @@ public interface WizardStepService {
 
 	/**
 	 * Speichert den WizardStep neu in der DB falls der Key noch nicht existiert. Sonst wird der existierende WizardStep aktualisiert
-	 * @param kind Der WizardStep als DTO
+	 * @param wizardStep Der WizardStep als DTO
 	 */
 	@Nonnull
-	WizardStep saveWizardStep(@Nonnull WizardStep kind);
+	WizardStep saveWizardStep(@Nonnull WizardStep wizardStep);
 
 	/**
 	 * @param key PK (id) des WizardSteps

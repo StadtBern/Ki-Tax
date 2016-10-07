@@ -22,16 +22,16 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch persistedGesuch = createAlleinerziehend(); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createAlleinerziehend(); // Wir wissen das Eingangsdatum nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
-		persistedGesuch.setGesuchsteller1(gesuchsteller1);
+		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
 		// Kinder
 		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
-		kind.setGesuch(persistedGesuch);
-		persistedGesuch.getKindContainers().add(kind);
+		kind.setGesuch(gesuch);
+		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
 		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
@@ -54,7 +54,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		finanzielleSituationContainer.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(12147));
 		finanzielleSituationContainer.setGesuchsteller(gesuchsteller1);
 		gesuchsteller1.setFinanzielleSituationContainer(finanzielleSituationContainer);
-		return persistedGesuch;
+		return gesuch;
 	}
 
 	@Override

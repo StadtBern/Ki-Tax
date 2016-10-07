@@ -23,11 +23,11 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch persistedGesuch = createVerheiratet(); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createVerheiratet(); // Wir wissen das Eingangsdatum nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
-		persistedGesuch.setGesuchsteller1(gesuchsteller1);
+		gesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller("Cortes", "Ignazi");
-		persistedGesuch.setGesuchsteller2(gesuchsteller2);
+		gesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(50, 0);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensumGS1);
@@ -35,11 +35,11 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 		gesuchsteller2.addErwerbspensumContainer(erwerbspensumGS2);
 		// Kinder
 		KindContainer kind1 = createKind(Geschlecht.MAENNLICH, "Cortes", "Jose", LocalDate.of(2015, Month.MAY, 22), Kinderabzug.GANZER_ABZUG, true);
-		kind1.setGesuch(persistedGesuch);
-		persistedGesuch.getKindContainers().add(kind1);
+		kind1.setGesuch(gesuch);
+		gesuch.getKindContainers().add(kind1);
 		KindContainer kind2 = createKind(Geschlecht.WEIBLICH, "Cortes", "Maria", LocalDate.of(1999, Month.SEPTEMBER, 13), Kinderabzug.GANZER_ABZUG, false);
-		kind2.setGesuch(persistedGesuch);
-		persistedGesuch.getKindContainers().add(kind2);
+		kind2.setGesuch(gesuch);
+		gesuch.getKindContainers().add(kind2);
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
@@ -62,7 +62,7 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 		finanzielleSituationGS1.getFinanzielleSituationJA().setSchulden(MathUtil.DEFAULT.from(58402));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
-		return persistedGesuch;
+		return gesuch;
 	}
 
 	@Override
