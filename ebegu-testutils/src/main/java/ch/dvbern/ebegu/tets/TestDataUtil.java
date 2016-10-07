@@ -201,15 +201,15 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+		instStammdaten.setId("11111111-1111-1111-1111-111111111174");
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId("9253e9b1-9cae-4278-b578-f1ce93306d29");
-		instStammdaten.getInstitution().setName("Tagi Aaregg");
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.getInstitution().setName("Tagi & Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}

@@ -80,7 +80,7 @@ public class TestfaelleResource {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_AAREGG);
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
-		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("11111111-1111-1111-1111-111111111174");
 
 		if (optionalAaregg.isPresent()) {
 			institutionStammdatenList.add(optionalAaregg.get());
@@ -146,7 +146,6 @@ public class TestfaelleResource {
 	 * Aus diesem Grund, bleibt das Gesuch mit Status IN_BEARBEITUNG_JA
 	 *
 	 * @param fromTestfall testfall
-	 * @param eingangsdatum datum fuers Gesuch
 	 */
 	private void createAndSaveGesuch(AbstractTestfall fromTestfall) {
 		final Optional<List<Gesuch>> gesuchByGSName = gesuchService.findGesuchByGSName(fromTestfall.getNachname(), fromTestfall.getVorname());
@@ -163,7 +162,7 @@ public class TestfaelleResource {
 			final Fall persistedFall = fallService.saveFall(fall);
 			fromTestfall.setFall(persistedFall); // dies wird gebraucht, weil fallService.saveFall ein merge macht.
 
-			fromTestfall.createGesuch(, LocalDate.of(2016, Month.FEBRUARY, 15));
+			fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
 			gesuchService.createGesuch(fromTestfall.getGesuch());
 			Gesuch gesuch = fromTestfall.fillInGesuch();
 
