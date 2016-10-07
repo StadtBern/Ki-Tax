@@ -8,6 +8,7 @@ import ch.dvbern.ebegu.testfaelle.*;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 
+import javax.annotation.Nonnull;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -71,6 +72,12 @@ public class TestfaelleResource {
 			institutionStammdatenList.add(optionalTagiAaregg.get());
 		}
 
+		StringBuilder responseString = createAndSaveTestfaelle(fallid, iterationCount, gesuchsperiode, institutionStammdatenList);
+		return Response.ok(responseString.toString()).build();
+	}
+
+	@Nonnull
+	private StringBuilder createAndSaveTestfaelle(String fallid, Integer iterationCount, Gesuchsperiode gesuchsperiode, List<InstitutionStammdaten> institutionStammdatenList) {
 		StringBuilder responseString = new StringBuilder("");
 		for (int i = 0; i < iterationCount; i++) {
 
@@ -105,7 +112,7 @@ public class TestfaelleResource {
 			}
 
 		}
-		return Response.ok(responseString.toString()).build();
+		return responseString;
 	}
 
 

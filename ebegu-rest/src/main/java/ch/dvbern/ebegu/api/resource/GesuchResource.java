@@ -22,6 +22,7 @@ import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.util.MonitoringUtil;
 import com.google.common.collect.ArrayListMultimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -271,7 +272,8 @@ public class GesuchResource {
 	 * @return Set mit Antraegen, jeweils nur der neuste zu einem bestimmten Fall
 	 */
 	@Nonnull
-	@SuppressWarnings("unused")
+	@SuppressWarnings(value = {"unused"})
+	@SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
 	private Set<Gesuch> reduceToNewestAntrag(List<Gesuch> foundAntraege) {
 		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
 		for (Gesuch gesuch : foundAntraege) {
