@@ -8,10 +8,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Superklasse für Testfaelle des JA
+ *
+ * Um alles mit den Services durchfuehren zu koennen, muss man zuerst den Fall erstellen, dann
+ * das Gesuch erstellen und dann das Gesuch ausfuellen und updaten. Nur so werden alle WizardSteps
+ * erstellt und es gibt kein Problem mit den Verknuepfungen zwischen Entities
+ * Der richtige Prozess findet man in TestfaelleResource#createAndSaveGesuch()
  */
 public abstract class AbstractTestfall {
 
@@ -24,29 +28,39 @@ public abstract class AbstractTestfall {
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;
 
 	protected Fall fall = null;
+	protected Gesuch gesuch = null;
 
 	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
 	}
 
-	public abstract Gesuch createGesuch();
+	public abstract Gesuch fillInGesuch();
 
 	public abstract String getNachname();
 
 	public abstract String getVorname();
 
-	protected Gesuch createAlleinerziehend(LocalDate eingangsdatum) {
+	public Fall createFall(Benutzer verantwortlicher) {
+		fall = new Fall();
+		fall.setVerantwortlicher(verantwortlicher);
+		return fall;
+	}
+
+	public void createGesuch(LocalDate eingangsdatum) {
 		// Fall
 		if (fall == null) {
-			fall = new Fall();
+			fall = createFall(null);
 		}
 		// Gesuch
-		Gesuch gesuch = new Gesuch();
+		gesuch = new Gesuch();
 		gesuch.setGesuchsperiode(gesuchsperiode);
 		gesuch.setFall(fall);
 		gesuch.setEingangsdatum(eingangsdatum);
 		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+	}
+
+	protected Gesuch createAlleinerziehend() {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
@@ -55,15 +69,7 @@ public abstract class AbstractTestfall {
 		return gesuch;
 	}
 
-	protected Gesuch createVerheiratet(LocalDate eingangsdatum) {
-		// Fall
-		Fall fall = new Fall();
-		// Gesuch
-		Gesuch gesuch = new Gesuch();
-		gesuch.setGesuchsperiode(gesuchsperiode);
-		gesuch.setFall(fall);
-		gesuch.setEingangsdatum(eingangsdatum);
-		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+	protected Gesuch createVerheiratet() {
 		// Familiensituation
 		Familiensituation familiensituation = new Familiensituation();
 		familiensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
@@ -76,8 +82,8 @@ public abstract class AbstractTestfall {
 	protected Gesuchsteller createGesuchsteller(String name, String vorname) {
 		Gesuchsteller gesuchsteller = new Gesuchsteller();
 		gesuchsteller.setGeschlecht(Geschlecht.WEIBLICH);
-		gesuchsteller.setNachname(getNachname());
-		gesuchsteller.setVorname(getVorname());
+		gesuchsteller.setNachname(name);
+		gesuchsteller.setVorname(vorname);
 		gesuchsteller.setGeburtsdatum(LocalDate.of(1980, Month.MARCH, 25));
 		gesuchsteller.setAdressen(new ArrayList<>());
 		gesuchsteller.getAdressen().add(createWohnadresse(gesuchsteller));
@@ -181,46 +187,15 @@ public abstract class AbstractTestfall {
 		return finanzielleSituationContainer;
 	}
 
-
-	/**
-	 * Diese Methode erstellt alle WizardSteps fuer das uebergebene Gesuch. Alle Steps bekommen den Status OK by default (nur Dokumente
-	 * hat IN_BEARBEITUNG und Verfuegen WARTEN). Sollte man andere Status haben wollen, muss man diese Methode ueberschreiben.
-	 * Die WizardSteps werden erstellt aber nicht persisted
-	 *
-	 * @param gesuch
-	 * @return
-	 */
-	public List<WizardStep> createWizardSteps(final Gesuch gesuch) {
-		List<WizardStep> wizardSteps = new ArrayList<>();
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.WARTEN, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.OK, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.IN_BEARBEITUNG, "", true));
-		wizardSteps.add(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.WARTEN, "", true));
-		return wizardSteps;
-	}
-
-	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus, String bemerkungen,
-											  boolean verfuegbar) {
-		final WizardStep wizardStep = new WizardStep();
-		wizardStep.setGesuch(gesuch);
-		wizardStep.setVerfuegbar(verfuegbar);
-		wizardStep.setWizardStepName(wizardStepName);
-		wizardStep.setWizardStepStatus(stepStatus);
-		wizardStep.setBemerkungen(bemerkungen);
-		return wizardStep;
-	}
-
 	public Fall getFall() {
 		return fall;
 	}
 
 	public void setFall(Fall fall) {
 		this.fall = fall;
+	}
+
+	public Gesuch getGesuch() {
+		return gesuch;
 	}
 }

@@ -22,13 +22,13 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createVerheiratet(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch persistedGesuch = createVerheiratet(); // Wir wissen das Eingangsdatum nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
-		gesuch.setGesuchsteller1(gesuchsteller1);
+		persistedGesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Tizian");
-		gesuch.setGesuchsteller2(gesuchsteller2);
+		persistedGesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(40, 0);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensumGS1);
@@ -36,11 +36,11 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		gesuchsteller2.addErwerbspensumContainer(erwerbspensumGS2);
 		// Kinder
 		KindContainer kind1 = createKind(Geschlecht.WEIBLICH, FAMILIENNAME, "Tamara", LocalDate.of(2009, Month.JULY, 11), Kinderabzug.GANZER_ABZUG, true);
-		kind1.setGesuch(gesuch);
-		gesuch.getKindContainers().add(kind1);
+		kind1.setGesuch(persistedGesuch);
+		persistedGesuch.getKindContainers().add(kind1);
 		KindContainer kind2 = createKind(Geschlecht.MAENNLICH, FAMILIENNAME, "Leonard", LocalDate.of(2012, Month.NOVEMBER, 19), Kinderabzug.GANZER_ABZUG, true);
-		kind2.setGesuch(gesuch);
-		gesuch.getKindContainers().add(kind2);
+		kind2.setGesuch(persistedGesuch);
+		persistedGesuch.getKindContainers().add(kind2);
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
@@ -69,7 +69,7 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		finanzielleSituationGS2.getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(98521));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
-		return gesuch;
+		return persistedGesuch;
 	}
 
 	@Override

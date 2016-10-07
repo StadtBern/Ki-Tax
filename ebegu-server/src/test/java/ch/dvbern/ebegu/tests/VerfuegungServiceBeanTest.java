@@ -19,6 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -76,7 +78,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void calculateVerfuegung() {
 
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 		Assert.assertEquals(18, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
@@ -108,14 +110,14 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 
 	private Betreuung insertBetreuung() {
-		Betreuung betreuung = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence)
+		Betreuung betreuung = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25))
 			.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 		return persistence.merge(betreuung);
 	}
 
 	private Verfuegung insertVerfuegung() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 		Assert.assertNull(betreuung.getVerfuegung());

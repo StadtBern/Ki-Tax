@@ -7,18 +7,18 @@ import ch.dvbern.ebegu.services.GeneratedDokumentService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.activation.MimeTypeParseException;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  * Testet GeneratedDokumentService
@@ -38,7 +38,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void findGeneratedDokumentTest() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		final GeneratedDokument dokument = TestDataUtil.createGeneratedDokument(gesuch);
 		persistence.persist(dokument);
 
@@ -52,7 +52,7 @@ public class GeneratedDokumentServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void updateGeneratedDokumentTest() throws MimeTypeParseException {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		final GeneratedDokument dokument = TestDataUtil.createGeneratedDokument(gesuch);
 		persistence.persist(dokument);
 

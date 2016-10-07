@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  * Testet FallResource
@@ -50,7 +52,7 @@ public class FallResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testFindGesuchForInstitution() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		TestDataUtil.createDummyAdminAnonymous(persistence);
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));
@@ -65,7 +67,7 @@ public class FallResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testUpdateVerantwortlicherUserForFall() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		Benutzer admin = TestDataUtil.createDummyAdminAnonymous(persistence);
 		final JaxFall foundFall = fallResource.findFall(converter.toJaxId(gesuch.getFall()));

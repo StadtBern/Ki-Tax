@@ -22,13 +22,13 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createVerheiratet(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch persistedGesuch = createVerheiratet(); // Wir wissen das Eingangsdatum nicht!
 		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Meret");
-		gesuch.setGesuchsteller1(gesuchsteller1);
+		persistedGesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller("Beieler", "Jan");
-		gesuch.setGesuchsteller2(gesuchsteller2);
+		persistedGesuch.setGesuchsteller2(gesuchsteller2);
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensumGS1 = createErwerbspensum(70, 0);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensumGS1);
@@ -36,8 +36,8 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		gesuchsteller2.addErwerbspensumContainer(erwerbspensumGS2);
 		// Kinder
 		KindContainer kind1 = createKind(Geschlecht.WEIBLICH, FAMILIENNAME, "Tanja", LocalDate.of(2013, Month.JANUARY, 29), Kinderabzug.GANZER_ABZUG, true);
-		kind1.setGesuch(gesuch);
-		gesuch.getKindContainers().add(kind1);
+		kind1.setGesuch(persistedGesuch);
+		persistedGesuch.getKindContainers().add(kind1);
 
 		// Betreuungen
 		// Kind 1: Kita Aaregg
@@ -65,7 +65,7 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		finanzielleSituationGS2.getFinanzielleSituationJA().setBruttovermoegen(MathUtil.DEFAULT.from(25496));
 		finanzielleSituationGS2.setGesuchsteller(gesuchsteller2);
 		gesuchsteller2.setFinanzielleSituationContainer(finanzielleSituationGS2);
-		return gesuch;
+		return persistedGesuch;
 	}
 
 	@Override

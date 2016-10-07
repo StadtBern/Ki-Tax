@@ -454,7 +454,9 @@ public final class TestDataUtil {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		return gesuch;
@@ -509,18 +511,17 @@ public final class TestDataUtil {
 	/**
 	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
 	 */
-	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(eingangsdatum);
+		Gesuch gesuch = testfall.fillInGesuch();
 		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
 		return gesuch;
 	}
 
@@ -543,33 +544,31 @@ public final class TestDataUtil {
 	}
 
 
-	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(eingangsdatum);
+		Gesuch gesuch = testfall.fillInGesuch();
 		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
 		return gesuch;
 	}
 
-	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(eingangsdatum);
+		Gesuch gesuch = testfall.fillInGesuch();
 		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
 		return gesuch;
 	}
 

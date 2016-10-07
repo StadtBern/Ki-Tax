@@ -1,11 +1,8 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.GesuchsperiodeService;
-import ch.dvbern.ebegu.services.InstitutionStammdatenService;
+import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.testfaelle.*;
-import ch.dvbern.lib.cdipersistence.Persistence;
 import io.swagger.annotations.Api;
 
 import javax.annotation.Nonnull;
@@ -14,6 +11,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,19 +32,22 @@ public class TestfaelleResource {
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
-	private Persistence<AbstractEntity> persistence;
-
-	@Inject
 	private InstitutionStammdatenService institutionStammdatenService;
 
 	@Inject
 	private GesuchService gesuchService;
 
+	@Inject
+	private FallService fallService;
+
+	@Inject
+	private BenutzerService benutzerService;
+
 
 	@GET
 	@Path("/testfall/{fallid}")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTestFall(@PathParam("fallid") String fallid) {
 		return this.getTestFall(fallid, 1);
 	}
@@ -53,7 +55,7 @@ public class TestfaelleResource {
 	@GET
 	@Path("/testfall/{fallid}/{iterationCount}")
 	@Consumes(MediaType.WILDCARD)
-	@Produces(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getTestFall(@PathParam("fallid") String fallid, @PathParam("iterationCount") Integer iterationCount) {
 		iterationCount = iterationCount == null || iterationCount == 0 ? 1 : iterationCount;
 		Collection<Gesuchsperiode> allActiveGesuchsperioden = gesuchsperiodeService.getAllActiveGesuchsperioden();
@@ -62,6 +64,7 @@ public class TestfaelleResource {
 		Optional<InstitutionStammdaten> optionalAaregg = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_AAREGG);
 		Optional<InstitutionStammdaten> optionalBruennen = institutionStammdatenService.findInstitutionStammdaten(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		Optional<InstitutionStammdaten> optionalTagiAaregg = institutionStammdatenService.findInstitutionStammdaten("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+
 		if (optionalAaregg.isPresent()) {
 			institutionStammdatenList.add(optionalAaregg.get());
 		}
@@ -125,12 +128,16 @@ public class TestfaelleResource {
 			}
 		}
 
-		Gesuch gesuch = fromTestfall.createGesuch();
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch);
-		final List<WizardStep> wizardSteps = fromTestfall.createWizardSteps(gesuch);
-		for (final WizardStep wizardStep : wizardSteps) {
-			persistence.persist(wizardStep);
+		final Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+		if (currentBenutzer.isPresent()) {
+			final Fall fall = fromTestfall.createFall(currentBenutzer.get());
+			final Fall persistedFall = fallService.saveFall(fall);
+			fromTestfall.setFall(persistedFall); // dies wird gebraucht, weil fallService.saveFall ein merge macht.
+
+			fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
+			gesuchService.createGesuch(fromTestfall.getGesuch());
+			Gesuch gesuch = fromTestfall.fillInGesuch();
+			gesuchService.updateGesuch(gesuch, false);
 		}
 	}
 }

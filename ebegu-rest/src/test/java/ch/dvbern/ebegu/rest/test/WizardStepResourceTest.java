@@ -19,6 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 /**
@@ -40,7 +42,7 @@ public class WizardStepResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testCreateWizardStepList() throws EbeguException {
-		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		final List<JaxWizardStep> wizardStepList = wizardStepResource.createWizardStepList(new JaxId(gesuch.getId()));
 

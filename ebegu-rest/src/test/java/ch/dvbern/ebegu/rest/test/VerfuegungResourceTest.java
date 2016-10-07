@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.time.Month;
 
 /**
  * Testet VerfuegungResource
@@ -38,7 +40,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void saveVerfuegungTest() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		Betreuung betreuung = gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next();
 		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
 		persistence.merge(betreuung);
@@ -56,7 +58,7 @@ public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testCalculateVerfuegung() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 
 		Response response = verfuegungResource.calculateVerfuegung(new JaxId(gesuch.getId()), null, null);
