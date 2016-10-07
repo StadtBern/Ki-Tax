@@ -147,6 +147,7 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
             this.state.go('gesuch.stammdaten', {
+                gesuchstellerNumber: '1',
                 gesuchId: gesuchId
             });
 

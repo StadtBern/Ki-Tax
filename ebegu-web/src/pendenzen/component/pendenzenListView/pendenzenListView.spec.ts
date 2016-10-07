@@ -92,11 +92,12 @@ describe('pendenzenListView', function () {
                 let tsGesuch = new TSGesuch();
                 spyOn(gesuchRS, 'findGesuch').and.returnValue($q.when(tsGesuch));
 
-                pendenzListViewController.editPendenzJA(mockPendenz);
+                pendenzListViewController.editPendenzJA(mockPendenz); //pendenz wird eidtiert
                 $scope.$apply();
 
                 expect(pendenzRS.getPendenzenList).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
+                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', {createNew: false, gesuchId: '66345345'});
+
             });
         });
     });

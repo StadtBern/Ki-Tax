@@ -78,7 +78,7 @@ describe('dvNavigation', function () {
         it('moves to gesuch.stammdaten when coming from FAMILIENSITUATION', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FAMILIENSITUATION);
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.stammdaten', { gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.stammdaten', {gesuchstellerNumber: '1', gesuchId: '' });
         });
         it('moves to gesuch.stammdaten 2 when coming from GESUCHSTELLER 1', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.GESUCHSTELLER);

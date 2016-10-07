@@ -93,17 +93,17 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     }
 
     public getGesuchId(): string {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().id;
+        if (this.getGesuch()) {
+            return this.getGesuch().id;
         }
-        return null;
+        return undefined;
     }
 
     public getGesuch(): TSGesuch {
         if (this.gesuchModelManager.getGesuch()) {
             return this.gesuchModelManager.getGesuch();
         }
-        return null;
+        return undefined;
     }
 
     /**

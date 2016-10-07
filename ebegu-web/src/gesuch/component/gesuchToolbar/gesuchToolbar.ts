@@ -47,7 +47,12 @@ export class GesuchToolbarController {
         this.updateUserList();
         this.refreshGesuch();
 
+        //add watchers
         // needed because of test is not able to inject $scope!
+        this.addWatchers($scope);
+    }
+
+    private addWatchers($scope: angular.IScope) {
         if ($scope) {
             $scope.$watch(() => {
                 return this.gesuchid;
@@ -56,7 +61,7 @@ export class GesuchToolbarController {
                     if (this.gesuchid) {
                         this.refreshGesuch();
                     } else {
-                        this.gesuch = null;
+                        this.gesuch = undefined;
                     }
                 }
             });
@@ -68,7 +73,6 @@ export class GesuchToolbarController {
             this.gesuchRS.findGesuch(this.gesuchid).then((gesuchResponse: any) => {
                 this.gesuch = gesuchResponse;
                 this.updateAntragDTOList();
-                console.log('watch on gesuchId');
             });
         }
     }

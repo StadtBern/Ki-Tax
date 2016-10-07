@@ -43,4 +43,34 @@ describe('betreuungView', function () {
             $state, $stateParams, $scope);
     }));
 
+   // todo homa gapa fragen warum die nicht mehr klappen
+   /* describe('getVerantwortlicherFullName', () => {
+        it('returns empty string for empty verantwortlicher', () => {
+            expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('');
+        });
+        it('returns the fullname of the verantwortlicher', () => {
+            let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
+            spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
+            gesuchModelManager.initGesuch(true);
+            expect(gesuchToolbarController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
+        });
+    });
+    describe('setVerantwortlicher()', () => {
+        it('does nothing if the passed user is empty', () => {
+            spyOn(gesuchModelManager, 'setUserAsFallVerantwortlicher');
+            spyOn(gesuchModelManager, 'updateFall');
+            gesuchToolbarController.setVerantwortlicher(undefined);
+            expect(gesuchModelManager.setUserAsFallVerantwortlicher).not.toHaveBeenCalled();
+            expect(gesuchModelManager.updateFall).not.toHaveBeenCalled();
+        });
+        it('sets the user as the verantwortlicher of the current fall', () => {
+            spyOn(gesuchModelManager, 'setUserAsFallVerantwortlicher');
+            spyOn(gesuchModelManager, 'updateFall');
+            let user: TSUser = new TSUser('Emiliano', 'Camacho');
+            gesuchToolbarController.setVerantwortlicher(user);
+            expect(gesuchModelManager.setUserAsFallVerantwortlicher).toHaveBeenCalledWith(user);
+            expect(gesuchModelManager.updateFall).toHaveBeenCalled();
+        });
+    });*/
+
 });

@@ -6,7 +6,6 @@ import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import ITimeoutService = angular.ITimeoutService;

@@ -92,7 +92,7 @@ export class EbeguFamiliensituationState implements IState {
 
 export class EbeguStammdatenState implements IState {
     name = 'gesuch.stammdaten';
-    url = '/stammdaten/:gesuchstellerNumber/:gesuchId';
+    url = '/stammdaten/:gesuchId/:gesuchstellerNumber';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -128,7 +128,7 @@ export class EbeguKinderListState implements IState {
 
 export class EbeguKindState implements IState {
     name = 'gesuch.kind';
-    url = '/kinder/kind/:kindNumber/:gesuchId';
+    url = '/kinder/kind/:gesuchId/:kindNumber';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -200,7 +200,7 @@ export class EbeguErwerbspensenListState implements IState {
 
 export class EbeguErwerbspensumState implements IState {
     name = 'gesuch.erwerbsPensum';
-    url = '/erwerbspensen/erwerbspensum/:gesuchstellerNumber/:erwerbspensumNum/:gesuchId';
+    url = '/erwerbspensen/erwerbspensum/:gesuchId/:gesuchstellerNumber/:erwerbspensumNum';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -218,7 +218,7 @@ export class EbeguErwerbspensumState implements IState {
 
 export class EbeguFinanzielleSituationState implements IState {
     name = 'gesuch.finanzielleSituation';
-    url = '/finanzielleSituation/:gesuchstellerNumber/:gesuchId';
+    url = '/finanzielleSituation/:gesuchId/:gesuchstellerNumber';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -344,7 +344,7 @@ export class EbeguEinkommensverschlechterungSteuernState implements IState {
 
 export class EbeguEinkommensverschlechterungState implements IState {
     name = 'gesuch.einkommensverschlechterung';
-    url = '/einkommensverschlechterung/:gesuchstellerNumber/:basisjahrPlus/:gesuchId';
+    url = '/einkommensverschlechterung/:gesuchId/:gesuchstellerNumber/:basisjahrPlus';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -362,7 +362,7 @@ export class EbeguEinkommensverschlechterungState implements IState {
 
 export class EbeguEinkommensverschlechterungResultateState implements IState {
     name = 'gesuch.einkommensverschlechterungResultate';
-    url = '/einkommensverschlechterungResultate/:basisjahrPlus/:gesuchId';
+    url = '/einkommensverschlechterungResultate/:gesuchId/:basisjahrPlus';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -380,7 +380,7 @@ export class EbeguEinkommensverschlechterungResultateState implements IState {
 
 export class EbeguDokumenteState implements IState {
     name = 'gesuch.dokumente';
-    url = '/dokumente/:gesuchstellerNumber/:gesuchId';
+    url = '/dokumente/:gesuchId/:gesuchstellerNumber';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -437,8 +437,7 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
         let gesuchIdParams = $stateParams.gesuchId;
         if (gesuchIdParams) {
             if (!gesuchModelManager.getGesuch() || gesuchModelManager.getGesuch() && gesuchModelManager.getGesuch().id !== gesuchIdParams) {
-                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId überreinstimmt wird das gesuch neu geladen
-                console.log('Navigiert auf view mit AntragId: ' + gesuchIdParams);
+                // Wenn die antrags id im GescuchModelManager nicht mit der GesuchId ueberreinstimmt wird das gesuch neu geladen
                 berechnungsManager.clear();
                 wizardStepManager.findStepsFromGesuch(gesuchIdParams);
                 return gesuchModelManager.openGesuch(gesuchIdParams);

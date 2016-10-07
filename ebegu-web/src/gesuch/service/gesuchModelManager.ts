@@ -78,7 +78,6 @@ export default class GesuchModelManager {
     }
 
 
-
     public openGesuch(gesuchId: string): IPromise<TSGesuch> {
         return this.gesuchRS.findGesuch(gesuchId)
             .then((response) => {

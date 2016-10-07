@@ -28,11 +28,11 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
                 private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.getCreateNewParam();
+        this.readCreateNewParam();
         this.initViewModel();
     }
 
-    private getCreateNewParam() {
+    private readCreateNewParam() {
         if (this.$stateParams.createNew === 'true') {
             this.createNewParam = true;
         }

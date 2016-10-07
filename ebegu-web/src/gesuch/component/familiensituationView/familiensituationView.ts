@@ -16,7 +16,6 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {IGesuchStateParams} from '../../gesuch.route';
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
