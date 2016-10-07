@@ -10,6 +10,8 @@ import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
+import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
+import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
@@ -184,14 +186,14 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenKitaAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionAaregg);
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
 		instStammdaten.getInstitution().setName("Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
@@ -214,14 +216,14 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenKitaBruennen() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(11.50));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(240));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.KITA);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId(AbstractTestfall.idInstitutionBruennen);
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_BRUENNEN);
 		instStammdaten.getInstitution().setName("Kita Brünnen");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
@@ -515,6 +517,14 @@ public final class TestDataUtil {
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
 		Gesuch gesuch = testfall.createGesuch();
+		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
+		gesuch = persistence.persist(gesuch);
+		return gesuch;
+	}
+
+	private static void ensureFachstelleAndInstitutionsExist(Persistence<Gesuch> persistence, Gesuch gesuch) {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				persistence.merge(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
@@ -530,6 +540,33 @@ public final class TestDataUtil {
 				}
 			}
 		}
+	}
+
+
+	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = testfall.createGesuch();
+		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
+		persistence.persist(gesuch.getFall());
+		persistence.persist(gesuch.getGesuchsperiode());
+		gesuch = persistence.persist(gesuch);
+		return gesuch;
+	}
+
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
+		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
+
+		Gesuch gesuch = testfall.createGesuch();
+		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
 		persistence.persist(gesuch.getFall());
 		persistence.persist(gesuch.getGesuchsperiode());
 		gesuch = persistence.persist(gesuch);

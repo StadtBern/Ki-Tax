@@ -74,10 +74,10 @@ public class HistorizationResource {
 		List<Object[]> entityList = historizationService.getAllRevisionsById(entityName, entityId);
 		List<JaxEnversRevision> resultList = new ArrayList<>();
 		if (entityList != null) {
-// the result will be a list of three element arrays. The first element will be the changed entity
-// instance. The second will be an entity containing revision data
-// (if no custom entity is used, this will be an instance of DefaultRevisionEntity).
-// The third will be the type of the revision (one of the values of the RevisionType enumeration: ADD, MOD, DEL).
+			// the result will be a list of three element arrays. The first element will be the changed entity
+			// instance. The second will be an entity containing revision data
+			// (if no custom entity is used, this will be an instance of DefaultRevisionEntity).
+			// The third will be the type of the revision (one of the values of the RevisionType enumeration: ADD, MOD, DEL).
 			resultList = entityList.stream().map(entity -> converter.enversRevisionToJAX((DefaultRevisionEntity) entity[1],
 				(AbstractEntity) entity[0], (RevisionType) entity[2])).collect(Collectors.toList());
 		}

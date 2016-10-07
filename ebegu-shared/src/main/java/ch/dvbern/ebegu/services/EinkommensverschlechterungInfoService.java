@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -28,6 +29,10 @@ public interface EinkommensverschlechterungInfoService {
 	 */
 	@Nonnull
 	EinkommensverschlechterungInfo updateEinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo einkommensverschlechterungInfo);
+
+	@Nonnull
+	EinkommensverschlechterungInfo updateEinkommensVerschlechterungInfoAndGesuch(Gesuch gesuch, EinkommensverschlechterungInfo oldEVData,
+																				 EinkommensverschlechterungInfo convertedEkvi);
 
 	/**
 	 * @param key PK (id) der EinkommensverschlechterungInfo

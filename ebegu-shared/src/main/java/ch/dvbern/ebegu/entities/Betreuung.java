@@ -68,7 +68,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	private Integer betreuungNummer = 1;
 
 	@Valid
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 

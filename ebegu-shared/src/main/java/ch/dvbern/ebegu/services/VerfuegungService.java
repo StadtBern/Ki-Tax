@@ -15,9 +15,10 @@ public interface VerfuegungService {
 	/**
 	 * Speichert die Verfuegung neu in der DB falls der Key noch nicht existiert.
 	 * @param verfuegung Die Verfuegung als DTO
+	 * @param betreuungId Id der Betreuung auf die die verfuegung gespeichet werden soll
 	 */
 	@Nonnull
-	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung);
+	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
 
 	/**
 	 * @param id PK (id) der Verfuegung

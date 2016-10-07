@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.envers.Audited;
 
@@ -42,5 +43,11 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 			.append("gueltigkeit", getGueltigkeit().toString())
 			.append("active", active)
 			.toString();
+	}
+
+	public String getGesuchsperiodeString() {
+		DateRange gueltigkeit = this.getGueltigkeit();
+		return gueltigkeit.getGueltigAb().getYear() + "/"
+			+ gueltigkeit.getGueltigBis().getYear();
 	}
 }

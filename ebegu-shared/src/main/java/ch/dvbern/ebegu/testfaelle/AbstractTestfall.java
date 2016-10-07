@@ -15,8 +15,10 @@ import java.util.List;
  */
 public abstract class AbstractTestfall {
 
-	public static final String idInstitutionAaregg = "11111111-1111-1111-1111-111111111101";
-	public static final String idInstitutionBruennen = "11111111-1111-1111-1111-111111111107";
+	public static final String ID_INSTITUTION_AAREGG = "11111111-1111-1111-1111-111111111101";
+	public static final String ID_INSTITUTION_BRUENNEN = "11111111-1111-1111-1111-111111111107";
+	public static final String ID_TAGI_AAREGG = "9253e9b1-9cae-4278-b578-f1ce93306d29";
+
 
 	protected Gesuchsperiode gesuchsperiode;
 	protected Collection<InstitutionStammdaten> institutionStammdatenList;

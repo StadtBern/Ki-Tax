@@ -103,6 +103,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
             title: 'ERWERBSPENSUM_LOESCHEN'
         })
             .then(() => {   //User confirmed removal
+                this.gesuchModelManager.setGesuchstellerNumber(gesuchstellerNumber);
                 this.gesuchModelManager.removeErwerbspensum(pensum);
 
             });
