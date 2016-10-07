@@ -76,17 +76,18 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	@Transient
-	public boolean hasSecondGesuchsteller(){
-		switch (this.familienstatus){
-			case ALLEINERZIEHEND:
-			case WENIGER_FUENF_JAHRE:
-				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
-			case VERHEIRATET:
-			case KONKUBINAT:
-			case LAENGER_FUENF_JAHRE:
-				return true;
+	public boolean hasSecondGesuchsteller() {
+		if (this.familienstatus != null) {
+			switch (this.familienstatus){
+				case ALLEINERZIEHEND:
+				case WENIGER_FUENF_JAHRE:
+					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
+				case VERHEIRATET:
+				case KONKUBINAT:
+				case LAENGER_FUENF_JAHRE:
+					return true;
+			}
 		}
-		//wir sollten hier nie hinkommen
 		return false;
 	}
 }
