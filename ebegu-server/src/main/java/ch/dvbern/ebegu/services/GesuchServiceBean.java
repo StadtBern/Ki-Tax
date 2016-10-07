@@ -211,13 +211,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		PredicateObjectDTO predicateObjectDto = antragTableFilterDto.getSearch().getPredicateObject();
 		if (predicateObjectDto != null) {
 			if (predicateObjectDto.getFallNummer() != null) {
-				predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.getFallNummer())));
+				predicates.add(cb.equal(fall.get(Fall_.fallNummer), Integer.valueOf(predicateObjectDto.readFallNummerAsNumber())));
 			}
 			if (predicateObjectDto.getFamilienName() != null) {
 				predicates.add(
 					cb.or(
-						cb.equal(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName()),
-						cb.equal(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienName())
+						cb.like(gesuchsteller1.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike()),
+						cb.like(gesuchsteller2.get(Gesuchsteller_.nachname), predicateObjectDto.getFamilienNameForLike())
 					));
 			}
 			if (predicateObjectDto.getAntragTyp() != null) {
