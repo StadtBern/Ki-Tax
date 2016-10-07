@@ -4,12 +4,14 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
@@ -73,8 +75,6 @@ public class JaxBConverter {
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
-	@Inject
-	private AntragStatusConverter antragStatusConverter;
 
 	@Inject
 	private VerfuegungService verfuegungService;
@@ -210,7 +210,7 @@ public class JaxBConverter {
 		}
 
 		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
-		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
+		antrag.setStatus(AntragStatusConverterUtil.convertStatusToEntity(antragJAXP.getStatus()));
 		if (antragJAXP.getTyp() != null) {
 			antrag.setTyp(antragJAXP.getTyp());
 		}
@@ -223,7 +223,7 @@ public class JaxBConverter {
 			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
 		}
 		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
-		antragJAXP.setStatus(antragStatusConverter.convertStatusToDTO(antrag, antrag.getStatus()));
+		antragJAXP.setStatus(AntragStatusConverterUtil.convertStatusToDTO(antrag, antrag.getStatus()));
 		antragJAXP.setTyp(antrag.getTyp());
 	}
 
@@ -1693,7 +1693,7 @@ public class JaxBConverter {
 	public JaxAntragStatusHistory antragStatusHistoryToJAX(AntragStatusHistory antragStatusHistory) {
 		final JaxAntragStatusHistory jaxAntragStatusHistory = convertAbstractFieldsToJAX(antragStatusHistory, new JaxAntragStatusHistory());
 		jaxAntragStatusHistory.setGesuchId(antragStatusHistory.getGesuch().getId());
-		jaxAntragStatusHistory.setStatus(antragStatusConverter.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
+		jaxAntragStatusHistory.setStatus(AntragStatusConverterUtil.convertStatusToDTO(antragStatusHistory.getGesuch(), antragStatusHistory.getStatus()));
 		jaxAntragStatusHistory.setBenutzer(benutzerToAuthLoginElement(antragStatusHistory.getBenutzer()));
 		jaxAntragStatusHistory.setDatum(antragStatusHistory.getDatum());
 		return jaxAntragStatusHistory;
@@ -1710,14 +1710,14 @@ public class JaxBConverter {
 		antrag.setAenderungsdatum(gesuch.getTimestampMutiert());
 		antrag.setAngebote(createAngeboteList(gesuch.getKindContainers()));
 		antrag.setAntragTyp(gesuch.getTyp());
-		antrag.setStatus(antragStatusConverter.convertStatusToDTO(gesuch, gesuch.getStatus()));
+		antrag.setStatus(AntragStatusConverterUtil.convertStatusToDTO(gesuch, gesuch.getStatus()));
 		antrag.setInstitutionen(createInstitutionenList(gesuch.getKindContainers()));
 		antrag.setGesuchsperiodeGueltigAb(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 		antrag.setGesuchsperiodeGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 		if (gesuch.getFall().getVerantwortlicher() != null) {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 		}
-
+		antrag.setVerfuegt(AntragStatus.VERFUEGT.equals(gesuch.getStatus()));
 		return antrag;
 	}
 

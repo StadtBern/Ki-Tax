@@ -1,6 +1,8 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -9,10 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
@@ -67,6 +66,22 @@ public class Gesuch extends AbstractAntragEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+
+	public Gesuch() {
+	}
+
+	public Gesuch(Gesuch gesuchToCopy) {
+		this();
+		this.setFall(gesuchToCopy.getFall());
+		this.setGesuchsperiode(gesuchToCopy.getGesuchsperiode());
+		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		this.setTyp(AntragTyp.MUTATION);
+		this.setBemerkungen("Mutation des Gesuchs vom " + gesuchToCopy.getEingangsdatum());
+//		this.setFamiliensituation(new Familiensituation(gesuchToCopy.getFamiliensituation()));
+//		this.setGesuchsteller1(new Gesuchsteller(gesuchToCopy.getGesuchsteller1()));
+//		this.setGesuchsteller2(new Gesuchsteller(gesuchToCopy.getGesuchsteller2()));
+		//TODO (hefr) etc.
+	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {

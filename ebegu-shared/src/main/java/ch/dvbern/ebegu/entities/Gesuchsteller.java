@@ -72,6 +72,28 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@NotNull
 	private boolean diplomatenstatus;
 
+
+	public Gesuchsteller() {
+	}
+
+
+	public Gesuchsteller(Gesuchsteller that) {
+		super(that);
+		if (that != null) {
+			this.mail = that.mail;
+			this.mobile = that.mobile;
+			this.telefon = that.telefon;
+			this.telefonAusland = that.telefonAusland;
+			this.zpvNumber = that.zpvNumber;
+			//TODO
+//		this.finanzielleSituationContainer = finanzielleSituationContainer; //
+//		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
+//		this.erwerbspensenContainers = erwerbspensenContainers;
+//		this.adressen = adressen;
+			this.diplomatenstatus = that.diplomatenstatus;
+		}
+	}
+
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		gesuchstellerAdresse.setGesuchsteller(this);
 		return !adressen.contains(gesuchstellerAdresse) && adressen.add(gesuchstellerAdresse);

@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.rest.test;
 
-import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.resource.PendenzResource;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
@@ -36,8 +36,6 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
-	@Inject
-	private AntragStatusConverter antragStatusConverter;
 
 
 	@Test
@@ -75,6 +73,6 @@ public class PendenzResourceTest extends AbstractEbeguRestTest {
 		Assert.assertEquals(gesuch1.getFall().getFallNummer(), pendenzenList.getFallNummer());
 		Assert.assertEquals(gesuch1.getGesuchsteller1().getNachname(), pendenzenList.getFamilienName());
 		Assert.assertEquals(gesuch1.getEingangsdatum(), pendenzenList.getEingangsdatum());
-		Assert.assertEquals(gesuch1.getStatus(), antragStatusConverter.convertStatusToEntity(pendenzenList.getStatus()));
+		Assert.assertEquals(gesuch1.getStatus(), AntragStatusConverterUtil.convertStatusToEntity(pendenzenList.getStatus()));
 	}
 }

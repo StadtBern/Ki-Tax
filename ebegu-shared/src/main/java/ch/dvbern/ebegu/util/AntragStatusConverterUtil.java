@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.api.converter;
+package ch.dvbern.ebegu.util;
 
 import ch.dvbern.ebegu.entities.AbstractAntragEntity;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -8,14 +8,16 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 
 import javax.annotation.Nonnull;
-import javax.ejb.Stateless;
 import java.util.List;
 
 /**
  * Diese Klasse enthaelt Methoden, um den AntragStatus von DB in DTO umzuwandeln.
  */
-@Stateless
-public class AntragStatusConverter {
+public class AntragStatusConverterUtil {
+
+	private AntragStatusConverterUtil() {
+		// Util-Methode soll nicht instanziert werden
+	}
 
 	/**
 	 * In dieser Methode wird der Status umgewandelt. Alle relevanten Daten werden geprueft und dadurch den entsprechenden
@@ -25,7 +27,7 @@ public class AntragStatusConverter {
 	 * @param status Der AntragStatus vom Entity
 	 * @return Der AntragStatusDTO, der zum Client geschickt wird
 	 */
-	public AntragStatusDTO convertStatusToDTO(AbstractAntragEntity antrag, AntragStatus status) {
+	public static AntragStatusDTO convertStatusToDTO(AbstractAntragEntity antrag, AntragStatus status) {
 		switch (status) {
 			case IN_BEARBEITUNG_GS: return AntragStatusDTO.IN_BEARBEITUNG_GS;
 			case FREIGABEQUITTUNG: return AntragStatusDTO.FREIGABEQUITTUNG;
@@ -54,7 +56,7 @@ public class AntragStatusConverter {
 	 * @return
 	 */
 	@Nonnull
-	private AntragStatusDTO convertGeprueftStatusToDTO(AbstractAntragEntity antrag) {
+	private static AntragStatusDTO convertGeprueftStatusToDTO(AbstractAntragEntity antrag) {
 		if (antrag instanceof Gesuch) { //todo team hier aufpassen wenn es auch Mutationen gibt
             final Gesuch gesuch = (Gesuch) antrag;
             final List<Betreuung> allBetreuungenFromGesuch = gesuch.extractAllBetreuungen();
@@ -78,7 +80,7 @@ public class AntragStatusConverter {
 	 * @param statusDTO Der AntragStatusDTO vom Client
 	 * @return Der AntragStatus fuer das Entity
 	 */
-	public AntragStatus convertStatusToEntity(AntragStatusDTO statusDTO) {
+	public static AntragStatus convertStatusToEntity(AntragStatusDTO statusDTO) {
 		switch (statusDTO) {
 			case IN_BEARBEITUNG_GS: return AntragStatus.IN_BEARBEITUNG_GS;
 			case FREIGABEQUITTUNG: return AntragStatus.FREIGABEQUITTUNG;

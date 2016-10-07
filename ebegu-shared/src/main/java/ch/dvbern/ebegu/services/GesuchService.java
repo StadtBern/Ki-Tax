@@ -78,4 +78,11 @@ public interface GesuchService {
 
 	@Nonnull
 	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
+
+	/**
+	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
+	 * verfuegte Antrag kopiert fuer die Mutation.
+     */
+	@Nonnull
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId);
 }

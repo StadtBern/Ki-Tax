@@ -693,6 +693,9 @@
     "VORLAGE_VERFUEGUNG_KITA": "Vorlage Verfügung Kita",
     "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder",
     "TOOLBAR_GESUCH": "Erstgesuch",
+    "TOOLBAR_GESUCH_NO_DATE": "Erstgesuch",
     "TOOLBAR_MUTATION": "Mutation vom {{date}}",
-    "TOOLBAR_KONTAKT": "KONTAKT"
+    "TOOLBAR_MUTATION_NO_DATE": "Mutation",
+    "TOOLBAR_KONTAKT": "KONTAKT",
+    "TOOLBAR_MUTIEREN": "MUTIEREN"
 }

@@ -16,10 +16,11 @@ export default class TSAntragDTO {
     private _status: TSAntragStatus;
     private _gesuchsperiodeGueltigAb: moment.Moment;
     private _gesuchsperiodeGueltigBis: moment.Moment;
+    private _verfuegt: boolean;
 
     constructor(antragId?: string, fallNummer?: number, familienName?: string, antragTyp?: TSAntragTyp,
                 eingangsdatum?: moment.Moment, aenderungsdatum?: moment.Moment, angebote?: Array<TSBetreuungsangebotTyp>, institutionen?: Array<string>,
-                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment) {
+                verantwortlicher?: string, status?: TSAntragStatus, gesuchsperiodeGueltigAb?: moment.Moment, gesuchsperiodeGueltigBis?: moment.Moment, verfuegt?: boolean) {
 
         this._antragId = antragId;
         this._fallNummer = fallNummer;
@@ -33,6 +34,7 @@ export default class TSAntragDTO {
         this._status = status;
         this._gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
         this._gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
+        this._verfuegt = verfuegt;
     }
 
 
@@ -130,6 +132,14 @@ export default class TSAntragDTO {
 
     set gesuchsperiodeGueltigBis(value: moment.Moment) {
         this._gesuchsperiodeGueltigBis = value;
+    }
+
+    get verfuegt(): boolean {
+        return this._verfuegt;
+    }
+
+    set verfuegt(value: boolean) {
+        this._verfuegt = value;
     }
 
     get gesuchsperiodeString() {

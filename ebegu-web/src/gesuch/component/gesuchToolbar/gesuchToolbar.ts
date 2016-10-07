@@ -9,6 +9,7 @@ import GesuchRS from '../../service/gesuchRS.rest';
 import BerechnungsManager from '../../service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./gesuchToolbar.html');
@@ -28,6 +29,7 @@ export class GesuchToolbarController {
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
     antragTypList: { [key: string]: TSAntragDTO } = {};
+    mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         'BerechnungsManager', '$state'];
@@ -37,6 +39,7 @@ export class GesuchToolbarController {
                 private berechnungsManager: BerechnungsManager, private $state: IStateService) {
         this.updateUserList();
         this.updateAntragDTOList();
+        this.antragMutierenPossible();
     }
 
     public getVerantwortlicherFullName(): string {
@@ -59,6 +62,7 @@ export class GesuchToolbarController {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
                 this.updateAntragTypList();
+                this.antragMutierenPossible();
             });
         }
     }
@@ -78,7 +82,7 @@ export class GesuchToolbarController {
     private updateAntragTypList() {
         let gesuch = this.gesuchModelManager.getGesuch();
         for (var i = 0; i < this.antragList.length; i++) {
-            let antrag = this.antragList[i];
+            let antrag : TSAntragDTO = this.antragList[i];
             if (gesuch.gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
                 let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum);
 
@@ -194,6 +198,7 @@ export class GesuchToolbarController {
             // TODO: Diesbezueglich gibt es Probleme in der Reihenfolge mit stateChange im KindView.ts und dem setzen des Gesuches. Siehe Task https://support.dvbern.ch/browse/EBEGU-506
             this.gesuchModelManager.setGesuch(gesuch);
             this.$state.go('gesuch.fallcreation');
+            this.antragMutierenPossible();
         }
     }
 
@@ -208,4 +213,34 @@ export class GesuchToolbarController {
             });
     }
 
+    public antragMutierenPossible(): void {
+        if (this.antragList) {
+            let gesuchInBearbeitungVorhanden = false;
+            for (var i = 0; i < this.antragList.length; i++) {
+                let antragItem: TSAntragDTO = this.antragList[i];
+                // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
+                if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
+                    // Falls das Gesuch nicht verfuegt ist, darf nicht mutiert werden
+                    if (antragItem.verfuegt === false) {
+                        gesuchInBearbeitungVorhanden = true;
+                    }
+                }
+            }
+            this.mutierenPossibleForCurrentAntrag = !gesuchInBearbeitungVorhanden;
+        } else {
+            this.mutierenPossibleForCurrentAntrag = false;
+        }
+    }
+
+    public antragMutieren(): void {
+        this.gesuchRS.antragMutieren(this.gesuchModelManager.getGesuch().id).then((response) => {
+            this.openGesuch(response);
+            this.mutierenPossibleForCurrentAntrag = false;
+            // this.antragTypList[this.antragList.length] = response.typ;
+            let antragDTO = new TSAntragDTO();
+            antragDTO.antragTyp = TSAntragTyp.MUTATION;
+            let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, response.eingangsdatum);
+            this.antragTypList[txt] = antragDTO;
+        });
+    }
 }

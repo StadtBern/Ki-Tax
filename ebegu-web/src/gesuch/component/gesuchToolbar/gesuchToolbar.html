@@ -7,8 +7,9 @@
             <!--Fall und Name des Gesuchs-->
             <span ng-bind="vm.getGesuchName()" class=" toolbar-gesuchname"></span>
 
-            <!--Gesuchsperioden-->
             <md-menu-bar>
+
+                <!--Gesuchsperioden-->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vm.getCurrentGesuchsperiode()"></span>
@@ -26,10 +27,8 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <!--Gesuchstyp-->
-            <md-menu-bar>
+                <!--Gesuchstyp-->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getAntragTyp()}}">
                         <span ng-bind="vm.getAntragTyp()"></span>
@@ -46,13 +45,16 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <span flex=""></span>
+                <span flex=""></span>
 
-            <!--Kontakt-->
-            <md-menu-bar>
-                <md-menu>
+                <!-- Mutieren -->
+                <md-button ng-click="vm.antragMutieren()" ng-show="vm.mutierenPossibleForCurrentAntrag">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </md-button>
+
+                <!--Kontakt-->
+                <md-menu md-position-mode="target-right target">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getCurrentGesuchsperiode()}}">
                         <i class="ellipsis-icon fa fa-envelope"></i>
                         <span data-translate="TOOLBAR_KONTAKT"></span>
@@ -68,13 +70,10 @@
                               ng-bind="vm.getGesuch().gesuchsteller2.mail"></span>
                         <span ng-if="vm.getGesuch().gesuchsteller2" class="toolbar-adress"
                               ng-bind="vm.getGesuch().gesuchsteller2.getPhone()"></span>
-
-
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <md-menu-bar>
+                <!-- Gesuch uebergeben (verantw. Person) -->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
                         <i class="fa fa-user" aria-hidden="true" style="margin-right: 2px"></i>
@@ -98,6 +97,7 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
+
             </md-menu-bar>
 
         </div>

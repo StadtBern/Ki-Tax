@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.EinkommensverschlechterungInfo;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -143,6 +144,19 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	}
 
+	@Test
+	public void testAntragMutieren() {
+		TestDataUtil.createAndPersistBenutzer(persistence);
+		// Voraussetzung: Ich habe einen verfuegten Antrag
+		Gesuch gesuchVerfuegt = persistNewEntity(AntragStatus.VERFUEGT);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId());
+
+		Assert.assertTrue(gesuchOptional.isPresent());
+		Assert.assertEquals(AntragTyp.MUTATION, gesuchOptional.get().getTyp());
+		Assert.assertEquals(AntragStatus.IN_BEARBEITUNG_JA, gesuchOptional.get().getStatus());
+		Assert.assertEquals(gesuchVerfuegt.getFall(), gesuchOptional.get().getFall());
+		Assert.assertTrue(gesuchOptional.get().isNew());
+	}
 
 	// HELP METHOD
 

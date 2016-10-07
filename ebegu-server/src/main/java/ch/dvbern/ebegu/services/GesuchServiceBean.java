@@ -224,7 +224,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigAb),
 			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
 			root.get(Gesuch_.eingangsdatum),
-			root.get(Gesuch_.typ)).distinct(true);
+			root.get(Gesuch_.typ),
+			root.get(Gesuch_.status)).distinct(true);
 
 		ParameterExpression<String> dateParam = cb.parameter(String.class, "fallId");
 		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), dateParam);
@@ -234,5 +235,37 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		q.setParameter(dateParam, fallId);
 		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
 		return q.getResultList();
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Gesuch> antragMutieren(@Nonnull String antragId) {
+		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
+
+		Optional<Gesuch> gesuch = findGesuch(antragId);
+		if (gesuch.isPresent()) {
+
+			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+			Root<Gesuch> root = query.from(Gesuch.class);
+			Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+			Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+			Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.get().getGesuchsperiode());
+			Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
+			Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.get().getFall());
+
+			query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+			query.select(root);
+			query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
+			List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+			if (criteriaResults.isEmpty()) {
+				return Optional.empty();
+			}
+			Gesuch gesuchForMutation = criteriaResults.get(0);
+			return Optional.of(new Gesuch(gesuchForMutation));
+		}
+		return Optional.empty();
 	}
 }

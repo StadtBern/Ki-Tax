@@ -96,4 +96,10 @@ export default class GesuchRS implements IEntityRS {
             return this.ebeguRestUtil.parseAntragDTOs(response.data);
         });
     }
+
+    public antragMutieren(antragId: string): IPromise<TSGesuch> {
+        return this.http.post(this.serviceURL + '/mutieren/' + encodeURIComponent(antragId) + '/', null).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
+        });
+    }
 }

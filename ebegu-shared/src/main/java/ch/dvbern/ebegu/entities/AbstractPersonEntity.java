@@ -42,6 +42,18 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	private LocalDate geburtsdatum;
 
 
+	public AbstractPersonEntity() {
+	}
+
+	public AbstractPersonEntity(AbstractPersonEntity that) {
+		if (that != null) {
+			this.geschlecht = that.geschlecht;
+			this.vorname = that.vorname;
+			this.nachname = that.nachname;
+			this.geburtsdatum = that.geburtsdatum;
+		}
+	}
+
 	public String getVorname() {
 		return vorname;
 	}
