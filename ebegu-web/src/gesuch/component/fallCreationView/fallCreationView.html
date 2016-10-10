@@ -2,11 +2,7 @@
     <div class="row">
         <div class="col-md-12">
             <h4 class="mainTitle">
-                <span ng-if="!vm.gesuchModelManager.isGesuchSaved()"
-                      span data-translate="MENU_ERSTGESUCH"></span>
-                <span ng-if="vm.gesuchModelManager.isGesuchSaved()"
-                      span data-translate="MENU_ERSTGESUCH_PERIODE"
-                      data-translate-value-periode="{{vm.getCurrentGesuchsperiodeAsString()}}"></span>
+                <span ng-bind="vm.getTitle()"></span>
             </h4>
         </div>
     </div>
@@ -30,27 +26,188 @@
                 </div>
             </div>
 
-            <!--Gesuchsperioden-->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <div class="dv-radio-container">
-                            <md-radio-group name="gesuchsperioden" class="input-element radio"
-                                            ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
-                                            ng-required="true">
-                                <md-radio-button
-                                    ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
-                                    ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
-                                    ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
-                                    <span>{{current.gesuchsperiodeString}}</span>
-                                </md-radio-button>
-                            </md-radio-group>
-                            <dv-error-messages for="form.gesuchsperioden.$error"
-                                               class="error"></dv-error-messages>
+            <!--Gesuchsperioden. Nur fuer Erstgesuch-->
+
+            <div ng-if="vm.gesuchModelManager.isErstgesuch()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="dv-radio-container">
+                                <md-radio-group name="gesuchsperioden" class="input-element radio"
+                                                ng-model="vm.gesuchsperiodeId" ng-change="vm.setSelectedGesuchsperiode()"
+                                                ng-required="true">
+                                    <md-radio-button
+                                        ng-repeat="current in vm.getAllActiveGesuchsperioden() | orderBy: 'gueltigkeit.gueltigAb'"
+                                        ng-value="current.id" aria-label="{{current.gesuchsperiodeString}}"
+                                        ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+                                        <span>{{current.gesuchsperiodeString}}</span>
+                                    </md-radio-button>
+                                </md-radio-group>
+                                <dv-error-messages for="form.gesuchsperioden.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
+            <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
 
+                <p class="inlineHint" data-translate="MUTATION_AUSWAHL_TEXT"></p>
+
+                <!--Familiensituation checkbox-->
+                <div class="row marginTop20">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.familiensituationSelected" name="familiensituationSelected"
+                                             aria-label="familiensituationSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_FAMSITUATION"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.familiensituationSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Stammdaten Gesuchsteller checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.stammdatenGSSelected" name="stammdatenGSSelected"
+                                             aria-label="stammdatenGSSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_GESUCHSTELLER"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.stammdatenGSSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Umzug checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.umzugSelected" name="umzugSelected"
+                                             aria-label="umzugSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_UMZUG"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.umzugSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Kind checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.kindSelected" name="kindSelected"
+                                             aria-label="kindSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_KIND"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.kindSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Betreuungen checkbox-->
+                <div class="row marginTop20">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.betreuungSelected" name="betreuungSelected"
+                                             aria-label="betreuungSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_BETREUUNGEN"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.betreuungSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Abwesenheit checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.abwesenheitSelected" name="abwesenheitSelected"
+                                             aria-label="abwesenheitSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_ABWESENHEIT"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.abwesenheitSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Erwerbspensum checkbox-->
+                <div class="row marginTop20">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.erwerbspensumSelected" name="erwerbspensumSelected"
+                                             aria-label="erwerbspensumSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_ERWERBSPENSUM"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.erwerbspensumSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Finanz Situation checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.finanzielleSituationSelected" name="finanzielleSituationSelected"
+                                             aria-label="finanzielleSituationSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_FINANZIELLESITUATION"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.finanzielleSituationSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Einkommensverschlechterung checkbox-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.einkommensverschlechterungSelected" name="einkommensverschlechterungSelected"
+                                             aria-label="einkommensverschlechterungSelected" dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="MUTATION_AUSWAHL_EINKOMMENSVERSCHLECHTERUNG"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.einkommensverschlechterungSelected.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </fieldset>
 
