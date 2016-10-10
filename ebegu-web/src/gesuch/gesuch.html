@@ -13,7 +13,7 @@
         <ul class="sidenav marginTop20">
 
             <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
 
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.fallcreation({createNew: false, gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')">
@@ -42,7 +42,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.kinder({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('KINDER')">
                     <span data-translate="MENU_KINDER"></span>
@@ -59,7 +59,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.erwerbsPensen({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('ERWERBSPENSUM')">
                     <span data-translate="MENU_ERWERBSPENSUM"></span>
@@ -68,7 +68,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]"
                 dv-show-expression="vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituationStart({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
@@ -78,7 +78,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]"
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]"
                 dv-show-expression="!vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.finanzielleSituation({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
@@ -88,7 +88,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.einkommensverschlechterungInfo({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('EINKOMMENSVERSCHLECHTERUNG')">
                     <span data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></span>
@@ -97,7 +97,7 @@
             </li>
 
             <li ng-class="{'active-element': vm.isElementActive('DOKUMENTE')}" ui-sref-active="active"
-                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+                dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link" ui-sref="gesuch.dokumente({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('DOKUMENTE')">
                     <span data-translate="MENU_DOKUMENTE"></span>
@@ -105,7 +105,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true" ></span>
             </li>
 
-            <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA]">
+            <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ng-disabled="true">
                     <span data-translate="MENU_FREIGABEQUITTUNG"></span>

@@ -201,15 +201,15 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId("c10405d6-a905-4879-bb38-fca4cbb3f06f");
+		instStammdaten.setId("11111111-1111-1111-1111-111111111174");
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));
 		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGI);
 		instStammdaten.setInstitution(createDefaultInstitution());
-		instStammdaten.getInstitution().setId("9253e9b1-9cae-4278-b578-f1ce93306d29");
-		instStammdaten.getInstitution().setName("Tagi Aaregg");
+		instStammdaten.getInstitution().setId(AbstractTestfall.ID_INSTITUTION_AAREGG);
+		instStammdaten.getInstitution().setName("Tagi & Kita Aaregg");
 		instStammdaten.setAdresse(createDefaultAdresse());
 		return instStammdaten;
 	}
@@ -454,7 +454,9 @@ public final class TestDataUtil {
 		List<InstitutionStammdaten> insttStammdaten = new ArrayList<>();
 		insttStammdaten.add(TestDataUtil.createDefaultInstitutionStammdaten());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), insttStammdaten);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		return gesuch;
@@ -509,19 +511,14 @@ public final class TestDataUtil {
 	/**
 	 * Hilfsmethode die den Testfall Waelti Dagmar erstellt und speichert
 	 */
-	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistWaeltiDagmarGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
-		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 	private static void ensureFachstelleAndInstitutionsExist(Persistence<Gesuch> persistence, Gesuch gesuch) {
@@ -543,33 +540,37 @@ public final class TestDataUtil {
 	}
 
 
-	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
-		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
 		return gesuch;
 	}
 
-	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence) {
+	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence<Gesuch> persistence, LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		Gesuch gesuch = testfall.createGesuch();
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
+		return gesuch;
+	}
+
+	private static Gesuch persistAllEntities(Persistence<Gesuch> persistence, LocalDate eingangsdatum, AbstractTestfall testfall) {
+		testfall.createFall(null);
+		testfall.createGesuch(eingangsdatum);
+		persistence.persist(testfall.getGesuch().getFall());
+		persistence.persist(testfall.getGesuch().getGesuchsperiode());
+		persistence.persist(testfall.getGesuch());
+		Gesuch gesuch = testfall.fillInGesuch();
 		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		persistence.persist(gesuch.getFall());
-		persistence.persist(gesuch.getGesuchsperiode());
-		gesuch = persistence.persist(gesuch);
+		gesuch = persistence.merge(gesuch);
 		return gesuch;
 	}
 

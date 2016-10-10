@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -142,5 +143,14 @@ public class JaxBetreuung extends JaxAbstractDTO {
 
 	public void setDatumBestaetigung(@Nullable LocalDate datumBestaetigung) {
 		this.datumBestaetigung = datumBestaetigung;
+	}
+
+	@Override
+	public int compareTo(@Nonnull JaxAbstractDTO o) {
+		if (o instanceof JaxBetreuung) {
+			final JaxBetreuung other = (JaxBetreuung) o;
+			return getBetreuungNummer().compareTo(other.getBetreuungNummer());
+		}
+		return super.compareTo(o);
 	}
 }

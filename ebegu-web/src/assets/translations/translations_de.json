@@ -694,5 +694,7 @@
     "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder",
     "TOOLBAR_GESUCH": "Erstgesuch",
     "TOOLBAR_MUTATION": "Mutation vom {{date}}",
-    "TOOLBAR_KONTAKT": "KONTAKT"
+    "TOOLBAR_KONTAKT": "KONTAKT",
+    "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
+    "TESTFAELLE_EINFUEGEN": "Testfälle einfügen"
 }

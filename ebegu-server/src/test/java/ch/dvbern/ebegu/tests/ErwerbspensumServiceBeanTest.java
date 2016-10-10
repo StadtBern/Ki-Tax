@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ import java.util.Optional;
  * Test fuer Erwerbspensum Service
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 
@@ -79,7 +80,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 
 	@Test
 	public void findErwerbspensenFromGesuch() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		//Creates another Erwerbspensum that won't be loaded since it doesn't belong to the gesuch
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
