@@ -53,5 +53,11 @@ export class GesuchstellerDashboardListViewController {
         return 12;
     }
 
+    public editAntrag(antrag: TSAntragDTO): void {
+        if (antrag) {
+            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: antrag.antragId});
+        }
+    }
+
 
 }

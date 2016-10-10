@@ -11,7 +11,7 @@ import {IGesuchStateParams} from '../../gesuch.route';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
-let template = require('./gesuchToolbar.html');
+let templateX = require('./gesuchToolbar.html');
 let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
 
@@ -22,16 +22,20 @@ export class GesuchToolbarComponentConfig implements IComponentOptions {
         onVerantwortlicherChange: '&',
     };
 
-    template = template;
+    template = templateX;
     controller = GesuchToolbarController;
-    controllerAs = 'vm';
+    controllerAs = 'vmx';
 }
 
 export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOptions {
     transclude = false;
+    bindings: any = {
+        gesuchid: '@'
+    };
     template = templateGS;
     controller = GesuchToolbarController;
-    controllerAs = 'vm';
+    // Darf, wie es scheint nicht 'vm' heissen, sonst werden im gesuchToolBarGesuchsteller.html keine Funktionen gefunden. Bug?!
+    controllerAs = 'vmgs';
 }
 
 export class GesuchToolbarController {
@@ -56,11 +60,11 @@ export class GesuchToolbarController {
         this.refreshGesuch();
 
         //add watchers
-        // needed because of test is not able to inject $scope!
         this.addWatchers($scope);
     }
 
     private addWatchers($scope: angular.IScope) {
+        // needed because of test is not able to inject $scope!
         if ($scope) {
             $scope.$watch(() => {
                 return this.gesuchid;
@@ -177,6 +181,7 @@ export class GesuchToolbarController {
         return undefined;
     }
 
+    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
         if (this.gesuch) {
             var text = this.ebeguUtil.addZerosToNumber(this.gesuch.fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
@@ -185,7 +190,7 @@ export class GesuchToolbarController {
             }
             return text;
         } else {
-            return '000701 Huber';
+            return '';
         }
     }
 
@@ -198,7 +203,7 @@ export class GesuchToolbarController {
         if (this.gesuch && this.gesuch.gesuchsperiode) {
             return this.getGesuchsperiodeAsString(this.gesuch.gesuchsperiode);
         } else {
-            return '2016/2017';
+            return '';
         }
     }
 
@@ -206,7 +211,7 @@ export class GesuchToolbarController {
         if (this.gesuch) {
             return this.ebeguUtil.getAntragTextDateAsString(this.gesuch.typ, this.gesuch.eingangsdatum);
         } else {
-            return 'Erstgesuch';
+            return '';
         }
     }
 
