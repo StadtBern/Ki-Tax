@@ -251,7 +251,6 @@ export class GesuchToolbarController {
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
             this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
-            this.antragMutierenPossible();
         }
     }
 
