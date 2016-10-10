@@ -476,7 +476,8 @@ export function getMutation(gesuchModelManager: GesuchModelManager, berechnungsM
             gesuchRS.antragMutieren(gesuchIdParams).then((response : TSGesuch) => {
                 berechnungsManager.clear();
                 wizardStepManager.findStepsFromGesuch(response.id);
-                return gesuchModelManager.setGesuch(response);
+                gesuchModelManager.setGesuch(response);
+                return response;
             });
         }
     }

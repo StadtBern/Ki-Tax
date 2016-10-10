@@ -196,7 +196,7 @@ public class Gesuch extends AbstractEntity {
 		return fall;
 	}
 
-	public void setFall(Fall fall) {
+	public final void setFall(Fall fall) {
 		this.fall = fall;
 	}
 
@@ -204,7 +204,7 @@ public class Gesuch extends AbstractEntity {
 		return gesuchsperiode;
 	}
 
-	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+	public final void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
@@ -212,7 +212,7 @@ public class Gesuch extends AbstractEntity {
 		return eingangsdatum;
 	}
 
-	public void setEingangsdatum(LocalDate eingangsdatum) {
+	public final void setEingangsdatum(LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
 	}
 
@@ -220,7 +220,7 @@ public class Gesuch extends AbstractEntity {
 		return status;
 	}
 
-	public void setStatus(AntragStatus status) {
+	public final void setStatus(AntragStatus status) {
 		this.status = status;
 	}
 
@@ -228,7 +228,7 @@ public class Gesuch extends AbstractEntity {
 		return typ;
 	}
 
-	public void setTyp(AntragTyp typ) {
+	public final void setTyp(AntragTyp typ) {
 		this.typ = typ;
 	}
 

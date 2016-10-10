@@ -7,7 +7,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
-import {IGesuchStateParams} from '../../gesuch.route';
+import {IGesuchStateParams, EbeguMutationState} from '../../gesuch.route';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
@@ -281,15 +281,16 @@ export class GesuchToolbarController {
     }
 
     public antragMutieren(): void {
+        this.mutierenPossibleForCurrentAntrag = false;
         this.$state.go('gesuch.mutation', {gesuchId: this.gesuchid});
-        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation
-        //     // this.goToOpenGesuch(response.id);
-        //     // this.mutierenPossibleForCurrentAntrag = false;
-        //     // // this.antragTypList[this.antragList.length] = response.typ;
-        //     // let antragDTO = new TSAntragDTO();
-        //     // antragDTO.antragTyp = TSAntragTyp.MUTATION;
-        //     // let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, response.eingangsdatum);
-        //     // this.antragTypList[txt] = antragDTO;
-        // });
+        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation!
+    }
+
+    //TODO (team) den (noch ungespeicherten) Mutationsantrag zur Liste im blauen Balken hinzufuegen
+    private addAntragToList(antrag : TSGesuch) : void {
+        let antragDTO = new TSAntragDTO();
+        antragDTO.antragTyp = TSAntragTyp.MUTATION;
+        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum);
+        this.antragTypList[txt] = antragDTO;
     }
 }
