@@ -4,11 +4,13 @@ import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
@@ -22,9 +24,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
 
 /**
  * Arquillian Tests fuer die Klasse GesuchService
@@ -124,26 +133,110 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 
 	@Test
 	public void testSearchAntraegeOrder() {
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		TestDataUtil.createDummyAdminAnonymous(persistence);
 		persistNewEntity(AntragStatus.ERSTE_MAHNUNG);
 		persistNewEntity(AntragStatus.VERFUEGT);
 
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		final Gesuch gesuch2 = createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		final Gesuch gesuch3 = createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
 		filterDTO.getSort().setPredicate("fallNummer");
+		filterDTO.getSort().setReverse(true);     //aufsteigend
 		//nach fallnummer geordnete liste
 		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(3), resultpair.getLeft());
 		List<Gesuch> foundGesuche = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch.getId(), foundGesuche.get(0).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(2).getId());
 		//genau anders rum ordnen
-		filterDTO.getSort().setReverse(true);
+		filterDTO.getSort().setReverse(false); //absteigend
 		resultpair = gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(3), resultpair.getLeft());
 		List<Gesuch> foundGesucheReversed = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(0).getId());
+		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(2).getId());
 
 	}
+
+	@Test
+	public void testPaginationEdgeCases() {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
+		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(10);
+		//max 10 resultate davon 3 gefunden
+		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(3, resultpair.getRight().size());
+
+		//max 0 resultate -> leere liste
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(0);
+		Pair<Long, List<Gesuch>> noresult = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(3), noresult.getLeft()); //wir erwarten 0 Resultate aber count 3
+		Assert.assertEquals(0, noresult.getRight().size());
+
+		filterDTO.getPagination().setStart(0);
+		filterDTO.getPagination().setNumber(2);
+		Pair<Long, List<Gesuch>> twopages = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(3), twopages.getLeft());
+		Assert.assertEquals(2, twopages.getRight().size());
+
+	}
+
+	@Test
+	public void testSearchByGesuchsperiode() {
+		TestDataUtil.createDummyAdminAnonymous(persistence);
+
+		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		createAndPersistFeutzYvonneGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuchsperiode periode = TestDataUtil.createGesuchsperiode1617();
+
+		Gesuchsperiode nextPeriode  = TestDataUtil.createGesuchsperiode1617();
+		nextPeriode.setGueltigkeit(new DateRange(periode.getGueltigkeit().getGueltigAb().plusYears(1), periode.getGueltigkeit().getGueltigBis().plusYears(1)));
+		nextPeriode = persistence.merge(nextPeriode);
+		gesuch.setGesuchsperiode(nextPeriode);
+		gesuch = persistence.merge(gesuch);
+		Assert.assertEquals("gesuch fuer naechste Periode muss vorhanden sein" ,gesuch.getGesuchsperiode(), nextPeriode);
+		gesuchService.findGesuch(gesuch.getId());
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		Assert.assertEquals("2016/2017", periode.getGesuchsperiodeString());
+		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(periode.getGesuchsperiodeString());
+
+		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), firstResult.getLeft());
+
+		Assert.assertEquals("2017/2018", nextPeriode.getGesuchsperiodeString());
+		filterDTO.getSearch().getPredicateObject().setGesuchsperiodeString(nextPeriode.getGesuchsperiodeString());
+
+		Pair<Long, List<Gesuch>> result = gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(1), result.getLeft());
+		Assert.assertEquals(gesuch.getId(), result.getRight().get(0).getId());
+
+	}
+
+	@Test
+	public void testSearchWithRoleGesuchsteller() {
+		Benutzer user = TestDataUtil.createDummyAdminAnonymous(persistence);
+		TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), firstResult.getLeft());
+
+		user.setRole(UserRole.GESUCHSTELLER); //Gesuchsteller darf nichts suchen
+		persistence.merge(user);
+		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(0), secondResult.getLeft());
+		Assert.assertEquals(0, secondResult.getRight().size());
+	}
+
 
 	@Test
 	public void testAntragMutieren() throws Exception {

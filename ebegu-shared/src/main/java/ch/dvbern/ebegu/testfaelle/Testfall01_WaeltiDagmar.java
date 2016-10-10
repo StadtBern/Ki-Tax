@@ -20,9 +20,9 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createAlleinerziehend();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
@@ -34,14 +34,14 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionAaregg);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 		// Kita Brünnen
-		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionBruennen);
+		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_BRUENNEN);
 		betreuungKitaBruennen.setBetreuungNummer(2);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);

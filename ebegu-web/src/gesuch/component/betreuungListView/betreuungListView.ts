@@ -86,7 +86,7 @@ export class BetreuungListViewController extends AbstractGesuchViewController {
     }
 
     private openBetreuungView(): void {
-        this.$state.go('gesuch.betreuung');
+        this.$state.go('gesuch.betreuung', {gesuchId: this.getGesuchId()});
     }
 
     /**

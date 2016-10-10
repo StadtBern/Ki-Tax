@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
 	@Before
 	public void setUp() {
-		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK));
 		familienStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT));

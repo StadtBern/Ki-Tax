@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +62,9 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
@@ -80,7 +84,9 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 		// Hack damit Dokument mit zwei Gesuchsteller dargestellt wird
 
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);

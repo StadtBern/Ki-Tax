@@ -59,6 +59,7 @@ public class FamiliensituationResource {
 			if (familiensituationJAXP.getId() != null) {
 				Optional<Familiensituation> loadedFamiliensituation = this.familiensituationService.findFamiliensituation(familiensituationJAXP.getId());
 				familiensituationToMerge = loadedFamiliensituation.orElse(new Familiensituation());
+				oldData = new Familiensituation(familiensituationToMerge);
 			}
 			Familiensituation convertedFamiliensituation = converter.familiensituationToEntity(familiensituationJAXP, familiensituationToMerge);
 			Familiensituation persistedFamiliensituation = this.familiensituationService.saveFamiliensituation(gesuch.get(), oldData, convertedFamiliensituation);

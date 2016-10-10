@@ -697,5 +697,8 @@
     "TOOLBAR_MUTATION": "Mutation vom {{date}}",
     "TOOLBAR_MUTATION_NO_DATE": "Mutation",
     "TOOLBAR_KONTAKT": "KONTAKT",
-    "TOOLBAR_MUTIEREN": "MUTIEREN"
+    "TOOLBAR_MUTIEREN": "MUTIEREN",
+    "TOOLBAR_KONTAKT": "KONTAKT",
+    "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
+    "TESTFAELLE_EINFUEGEN": "Testfälle einfügen"
 }

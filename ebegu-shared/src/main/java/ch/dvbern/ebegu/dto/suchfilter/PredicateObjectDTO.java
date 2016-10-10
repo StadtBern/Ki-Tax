@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.dto.suchfilter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -121,5 +122,17 @@ public class PredicateObjectDTO implements Serializable {
 			.append("institutionen", institutionen)
 			.append("verantwortlicher", verantwortlicher)
 			.toString();
+	}
+
+	public int readFallNummerAsNumber() {
+		if(StringUtils.isNumeric(fallNummer)){
+			return Integer.valueOf(fallNummer);
+		}
+		return -1;
+
+	}
+
+	public String getFamilienNameForLike() {
+		return StringUtils.isEmpty(familienName) ? null : familienName + '%';
 	}
 }

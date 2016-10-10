@@ -76,6 +76,9 @@ public interface GesuchService {
 	 */
 	Pair<Long, List<Gesuch>> searchAntraege(AntragTableFilterDTO antragSearch);
 
+	/**
+	 * Gibt ein DTO mit saemtlichen Antragen eins bestimmten Falls zurueck
+	 */
 	@Nonnull
 	List<JaxAntragDTO> getAllAntragDTOForFall(String fallId);
 

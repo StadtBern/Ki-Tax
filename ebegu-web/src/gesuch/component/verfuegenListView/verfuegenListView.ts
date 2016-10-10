@@ -98,7 +98,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
                 let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
                 if (betreuungNumber > 0) {
                     this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                    this.$state.go('gesuch.verfuegenView');
+                    this.$state.go('gesuch.verfuegenView', {
+                        gesuchId: this.getGesuchId()
+                    });
                 }
             }
         }
