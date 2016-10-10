@@ -11,12 +11,12 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
-
-import java.util.List;
 
 public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements MergeSource {
 
@@ -47,8 +47,13 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		if (key.startsWith("berechnung")) {
+		String[] array = key.split("[.]+");
+	    String subkey = array[0];
+		if (subkey.equalsIgnoreCase("berechnung")) {
 			return new BeanMergeSource(berechnung, "berechnung.").whileStatement(mergeContext, key);
+		}
+		if (subkey.toString().equalsIgnoreCase("berechnungsblaetter")) {
+			return new BeanMergeSource(berechnung, "berechnungsblaetter.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}

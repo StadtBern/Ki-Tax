@@ -49,15 +49,4 @@ public interface PrintDokumentDelegateService {
 	 */
 	@Nonnull
 	byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException;
-
-	/**
-	 * Bereitet die Familiensituation auf
-	 *
-	 * @param gesuch das Gesuch
-	 * @return Das PDF Dokument in Byte Format
-	 * @throws MergeDocException Falls bei der Generierung einen Fehler auftritt
-	 */
-	@Nonnull
-	byte[] printFamilienSituation(@Nonnull Gesuch gesuch) throws MergeDocException;
-
 }

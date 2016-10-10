@@ -11,9 +11,21 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
+import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrintImpl;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -108,5 +120,41 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public EinkommensverschlechterungPrint getEv2() {
 
 		return ev2;
+	}
+
+	@Override
+	public List<BerechnungsblattPrint> getBerechnungsblatt() {
+
+		List<BerechnungsblattPrint> result = new ArrayList<>();
+		for (KindContainer kindContainer : gesuch.getKindContainers())
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				Optional<Verfuegung> verfuegung = extractVerfuegung(betreuung);
+				if (verfuegung.isPresent()) {
+					List<VerfuegungZeitabschnitt> zeitabschnitten = verfuegung.get().getZeitabschnitte();
+					for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
+						result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
+					}
+				}
+				// Von jedem Kind nur eine Betreuung nehmmen
+				break;
+			}
+		return result;
+
+	}
+
+	@Nonnull
+	private Optional<Verfuegung> extractVerfuegung(Betreuung betreuung) {
+
+		Verfuegung verfuegung = betreuung.getVerfuegung();
+		if (verfuegung != null) {
+			return Optional.of(verfuegung);
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public boolean isPrintBerechnungsBlaetter() {
+
+		return !getBerechnungsblatt().isEmpty();
 	}
 }

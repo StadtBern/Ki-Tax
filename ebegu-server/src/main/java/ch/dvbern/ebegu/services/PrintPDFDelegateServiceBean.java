@@ -37,9 +37,6 @@ public class PrintPDFDelegateServiceBean extends AbstractBaseService implements 
 	@Inject
 	private PrintFinanzielleSituationPDFService printFinanzielleSituationService;
 
-	@Inject
-	private PrintFamilienStituationPDFService printFamilienStituationPDFService;
-
 	@Nonnull
 	@Override
 	public byte[] printBegleitschreiben(@Nonnull Gesuch gesuch) throws MergeDocException {
@@ -59,12 +56,5 @@ public class PrintPDFDelegateServiceBean extends AbstractBaseService implements 
 	public byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
 
 		return printFinanzielleSituationService.printFinanzielleSituation(gesuch);
-	}
-
-	@Nonnull
-	@Override
-	public byte[] printFamilienSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
-
-		return printFamilienStituationPDFService.printPrintFamilienSituation(gesuch);
 	}
 }

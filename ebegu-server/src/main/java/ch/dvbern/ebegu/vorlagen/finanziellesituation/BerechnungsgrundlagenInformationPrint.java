@@ -11,6 +11,10 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import java.util.List;
+
+import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
+
 public interface BerechnungsgrundlagenInformationPrint {
 	// ****************************************************************************************************************
 	// Achtung, die Methodennamen in dieser Klassen duerfen nicht veraendert werden. Sie muessen identisch sein
@@ -57,4 +61,15 @@ public interface BerechnungsgrundlagenInformationPrint {
 	 */
 	EinkommensverschlechterungPrint getEv2();
 
+	/**
+	 *
+	 * @return die Berechnungsblaetter
+	 */
+	List<BerechnungsblattPrint> getBerechnungsblatt();
+
+	/**
+	 *
+	 * @return true falls Berechnungsblatt ausgedruchkt werden muss
+	 */
+	boolean isPrintBerechnungsBlaetter();
 }
