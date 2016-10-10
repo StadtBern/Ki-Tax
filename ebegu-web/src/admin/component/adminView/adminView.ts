@@ -1,7 +1,8 @@
 import TSApplicationProperty from '../../../models/TSApplicationProperty';
 import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
-import {IHttpPromiseCallbackArg, IComponentOptions} from 'angular';
+import {IHttpPromiseCallbackArg, IComponentOptions, IPromise} from 'angular';
+import {TestFaelleRS} from '../../service/testFaelleRS.rest';
 require('./adminView.less');
 let template = require('./adminView.html');
 
@@ -16,21 +17,23 @@ export class AdminViewComponentConfig implements IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH' , 'EbeguRestUtil'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH' , 'EbeguRestUtil', 'TestFaelleRS'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
     applicationPropertyRS: ApplicationPropertyRS;
     applicationProperties: TSApplicationProperty[];
     ebeguRestUtil: EbeguRestUtil;
+    testFaelleRS: TestFaelleRS;
 
     /* @ngInject */
-    constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil) {
+    constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
+                testFaelleRS: TestFaelleRS) {
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
-        // this.applicationProperties = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
         this.ebeguRestUtil = ebeguRestUtil;
+        this.testFaelleRS = testFaelleRS;
         //this.fetchList();
     }
 
@@ -96,5 +99,11 @@ export class AdminViewController {
         }
         return -1;
 
+    }
+
+    public createTestFall(testFall: string): IPromise<void> {
+        return this.testFaelleRS.createTestFall(testFall).then(() => {
+            return null;
+        });
     }
 }
