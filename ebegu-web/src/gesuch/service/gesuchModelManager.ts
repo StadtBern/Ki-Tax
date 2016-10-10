@@ -44,6 +44,7 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -1053,5 +1054,16 @@ export default class GesuchModelManager {
             }
         }
         return status;
+    }
+
+    /**
+     * Gibt true zurueck, wenn der Antrag ein Erstgesuchist. False bekommt man wenn der Antrag eine Mutation ist
+     * By default (beim Fehler oder leerem Gesuch) wird auch true zurueckgegeben
+     */
+    public isErstgesuch(): boolean {
+        if (this.gesuch) {
+            return this.gesuch.typ === TSAntragTyp.GESUCH;
+        }
+        return true;
     }
 }
