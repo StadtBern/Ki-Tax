@@ -26,7 +26,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static ch.dvbern.ebegu.entities.AbstractAntragEntity_.*;
+import static ch.dvbern.ebegu.entities.Gesuch_.*;
+
 
 /**
  * Service fuer Gesuch
@@ -93,7 +94,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Predicate predicateGesuch = cb.notEqual(root.get(status), AntragStatus.VERFUEGT);
+		Predicate predicateGesuch = cb.notEqual(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
 		query.where(predicateGesuch);
 		return persistence.getCriteriaResults(query);
 	}
