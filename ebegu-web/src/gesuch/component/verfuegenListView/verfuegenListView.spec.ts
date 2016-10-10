@@ -83,7 +83,7 @@ describe('verfuegenListViewTest', function () {
 
                 expect(gesuchModelManager.findKind).toHaveBeenCalledWith(tsKindContainer);
                 expect(gesuchModelManager.setKindNumber).not.toHaveBeenCalled();
-                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView');
+                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', { gesuchId: ''});
             });
             it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
@@ -100,7 +100,7 @@ describe('verfuegenListViewTest', function () {
                 expect(gesuchModelManager.setKindNumber).toHaveBeenCalledWith(1);
                 expect(gesuchModelManager.findBetreuung).toHaveBeenCalledWith(betreuung);
                 expect(gesuchModelManager.setBetreuungNumber).not.toHaveBeenCalled();
-                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView');
+                expect($state.go).not.toHaveBeenCalledWith('gesuch.verfuegenView', { gesuchId: ''});
             });
             it('does find the Kind but does not find the Betreuung, so it stops loading and does not move to the next page', function () {
                 spyOn(gesuchModelManager, 'findKind').and.returnValue(1);
@@ -117,7 +117,7 @@ describe('verfuegenListViewTest', function () {
                 expect(gesuchModelManager.setKindNumber).toHaveBeenCalledWith(1);
                 expect(gesuchModelManager.findBetreuung).toHaveBeenCalledWith(betreuung);
                 expect(gesuchModelManager.setBetreuungNumber).toHaveBeenCalledWith(2);
-                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView');
+                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegenView', { gesuchId: ''});
             });
         });
     });

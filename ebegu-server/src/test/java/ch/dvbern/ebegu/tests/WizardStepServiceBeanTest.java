@@ -83,6 +83,19 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	public void updateWizardStepFamiliensituationWhenItDoesntExistYet() {
+		updateStatus(familienStep, WizardStepStatus.IN_BEARBEITUNG);
+		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
+
+		//oldData ist eine leere Familiensituation
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
+			new Familiensituation(), TestDataUtil.createDefaultFamiliensituation(), WizardStepName.FAMILIENSITUATION);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
+	}
+
+	@Test
 	public void updateWizardStepFamiliensituationFromOneToTwoGS() {
 		updateStatus(familienStep, WizardStepStatus.IN_BEARBEITUNG);
 		updateStatus(gesuchstellerStep, WizardStepStatus.OK);

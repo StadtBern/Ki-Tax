@@ -6,8 +6,6 @@ import BerechnungsManager from '../../gesuch/service/berechnungsManager';
 import TSGesuchsperiode from '../../models/TSGesuchsperiode';
 import TSAntragDTO from '../../models/TSAntragDTO';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
-import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import TSGesuch from '../../models/TSGesuch';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import {TSRole} from '../../models/enums/TSRole';
 import ITimeoutService = angular.ITimeoutService;
@@ -70,15 +68,11 @@ export class FaelleListViewController {
     public editFall(antrag: TSAntragDTO): void {
         if (antrag) {
             //todo xaver fragen muessen wir hier was anders machen fuer inst und ja?
-            if (antrag && antrag.antragTyp === TSAntragTyp.GESUCH) {
+            if (antrag) {
                 if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION) || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                    this.gesuchRS.findGesuchForInstitution(antrag.antragId).then((response) => {
-                        this.openGesuch(response, 'gesuch.verfuegen');
-                    });
+                    this.openGesuch(antrag.antragId, 'gesuch.verfuegen');
                 } else {
-                    this.gesuchRS.findGesuch(antrag.antragId).then((response) => {
-                        this.openGesuch(response, 'gesuch.fallcreation');
-                    });
+                    this.openGesuch(antrag.antragId, 'gesuch.fallcreation');
                 }
             }
         }
@@ -86,14 +80,12 @@ export class FaelleListViewController {
 
     /**
      * Oeffnet das Gesuch und geht zur gegebenen Seite (route)
-     * @param gesuch
+     * @param antragId
      * @param urlToGoTo
      */
-    private openGesuch(gesuch: TSGesuch, urlToGoTo: string): void {
-        if (gesuch) {
-            this.berechnungsManager.clear();
-            this.gesuchModelManager.setGesuch(gesuch);
-            this.$state.go(urlToGoTo);
+    private openGesuch(antragId: string, urlToGoTo: string): void {
+        if (antragId) {
+            this.$state.go(urlToGoTo, {createNew: false, gesuchId: antragId});
         }
     }
 

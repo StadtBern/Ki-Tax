@@ -486,7 +486,6 @@ public class JaxBConverter {
 	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag) {
 		Validate.notNull(antrag);
 		Validate.notNull(antragJAXP);
-//		convertAbstractAntragFieldsToEntity(antragJAXP, gesuch);
 
 		convertAbstractFieldsToEntity(antragJAXP, antrag);
 		final String exceptionString = "gesuchToEntity";
@@ -553,7 +552,6 @@ public class JaxBConverter {
 
 		return antrag;
 	}
-
 
 	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
@@ -1387,6 +1385,7 @@ public class JaxBConverter {
 			jaxZeitabschn.setAbzugFamGroesse(zeitabschnitt.getAbzugFamGroesse());
 			jaxZeitabschn.setMassgebendesEinkommenVorAbzugFamgr(zeitabschnitt.getMassgebendesEinkommenVorAbzFamgr());
 			jaxZeitabschn.setBemerkungen(zeitabschnitt.getBemerkungen());
+			jaxZeitabschn.setFamGroesse(zeitabschnitt.getFamGroesse());
 			return jaxZeitabschn;
 		}
 		return null;
@@ -1397,7 +1396,6 @@ public class JaxBConverter {
 		Validate.notNull(jaxVerfuegungZeitabschnitt);
 		Validate.notNull(verfuegungZeitabschnitt);
 		convertAbstractDateRangedFieldsToEntity(jaxVerfuegungZeitabschnitt, verfuegungZeitabschnitt);
-		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
 		verfuegungZeitabschnitt.setErwerbspensumGS1(jaxVerfuegungZeitabschnitt.getErwerbspensumGS1());
 		verfuegungZeitabschnitt.setErwerbspensumGS2(jaxVerfuegungZeitabschnitt.getErwerbspensumGS2());
 		verfuegungZeitabschnitt.setBetreuungspensum(jaxVerfuegungZeitabschnitt.getBetreuungspensum());
@@ -1411,6 +1409,7 @@ public class JaxBConverter {
 		verfuegungZeitabschnitt.setAbzugFamGroesse(jaxVerfuegungZeitabschnitt.getAbzugFamGroesse());
 		verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(jaxVerfuegungZeitabschnitt.getMassgebendesEinkommenVorAbzugFamgr());
 		verfuegungZeitabschnitt.setBemerkungen(jaxVerfuegungZeitabschnitt.getBemerkungen());
+		verfuegungZeitabschnitt.setFamGroesse(jaxVerfuegungZeitabschnitt.getFamGroesse());
 		return verfuegungZeitabschnitt;
 	}
 

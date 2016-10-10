@@ -39,14 +39,14 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, "9253e9b1-9cae-4278-b578-f1ce93306d29");
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_TAGI_AAREGG);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		BetreuungspensumContainer betreuungspensumTagiAaregg= createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 		betreuungspensumTagiAaregg.setBetreuung(betreuungTagiAaregg);
 		betreuungTagiAaregg.getBetreuungspensumContainers().add(betreuungspensumTagiAaregg);
 		// Kind 2: Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, idInstitutionAaregg);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
 		betreuungKitaAaregg.setKind(kind2);
 		kind2.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(100, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));

@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +73,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 			verfuegungZeitabschnitt.getGueltigkeit().setGueltigAb(entry.getKey());
 			verfuegungZeitabschnitt.getGueltigkeit().setGueltigBis(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
 			verfuegungZeitabschnitt.setAbzugFamGroesse(calculateAbzugAufgrundFamiliengroesse(entry.getValue()));
+			verfuegungZeitabschnitt.setFamGroesse(new BigDecimal(String.valueOf(entry.getValue())));
 
 			familienAbzugZeitabschnitt.add(verfuegungZeitabschnitt);
 		}
@@ -83,15 +85,16 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		List<VerfuegungZeitabschnitt> initialFamAbzugList = new ArrayList<>();
 		VerfuegungZeitabschnitt initialFamAbzug = new VerfuegungZeitabschnitt(gesuch.getGesuchsperiode().getGueltigkeit());
 		//initial gilt die Familiengroesse die am letzten Tag vor dem Start der neuen Gesuchsperiode vorhanden war
-		BigDecimal abzugAufgrundFamiliengroesse = getAbzugFamGroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : calculateFamiliengroesse(gesuch, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		BigDecimal abzugAufgrundFamiliengroesse = getAbzugFamGroesse(gesuch, familiengroesse);
 		initialFamAbzug.setAbzugFamGroesse(abzugAufgrundFamiliengroesse);
+		initialFamAbzug.setFamGroesse(new BigDecimal(String.valueOf(familiengroesse)));
 
 		initialFamAbzugList.add(initialFamAbzug);
 		return initialFamAbzugList;
 	}
 
-	private BigDecimal getAbzugFamGroesse(Gesuch gesuch, LocalDate stichtag) {
-		double familiengroesse = gesuch.getGesuchsperiode() == null ? 0 : calculateFamiliengroesse(gesuch, stichtag);
+	private BigDecimal getAbzugFamGroesse(Gesuch gesuch, double familiengroesse) {
 		return gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO :
 			calculateAbzugAufgrundFamiliengroesse(familiengroesse);
 	}
