@@ -1,7 +1,6 @@
 import {IComponentOptions} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../models/TSAntragDTO';
-import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
 import PendenzRS from '../../pendenzen/service/PendenzRS.rest';
 import ITimeoutService = angular.ITimeoutService;
 import IPromise = angular.IPromise;
@@ -22,16 +21,15 @@ export class GesuchstellerDashboardListViewController {
     totalResultCount: string = '-';
 
 
-    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'AuthServiceRS', 'PendenzRS'];
+    static $inject: string[] = ['$state', '$log', 'CONSTANTS', 'PendenzRS'];
 
-    constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any, private authServiceRS: AuthServiceRS,
+    constructor(private $state: IStateService, private $log: ILogService, private CONSTANTS: any,
                 private pendenzRS: PendenzRS) {
         this.initViewModel();
     }
 
     private initViewModel() {
         this.updateAntragList();
-
     }
 
     private updateAntragList() {
