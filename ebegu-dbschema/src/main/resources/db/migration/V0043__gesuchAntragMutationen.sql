@@ -1,0 +1,1 @@
+alter table gesuch MODIFY eingangsdatum date;

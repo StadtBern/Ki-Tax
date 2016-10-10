@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.converter;
 
-import ch.dvbern.ebegu.entities.AbstractAntragEntity;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.AntragStatus;
@@ -25,7 +24,7 @@ public class AntragStatusConverter {
 	 * @param status Der AntragStatus vom Entity
 	 * @return Der AntragStatusDTO, der zum Client geschickt wird
 	 */
-	public AntragStatusDTO convertStatusToDTO(AbstractAntragEntity antrag, AntragStatus status) {
+	public AntragStatusDTO convertStatusToDTO(Gesuch antrag, AntragStatus status) {
 		switch (status) {
 			case IN_BEARBEITUNG_GS: return AntragStatusDTO.IN_BEARBEITUNG_GS;
 			case FREIGABEQUITTUNG: return AntragStatusDTO.FREIGABEQUITTUNG;
@@ -50,27 +49,21 @@ public class AntragStatusConverter {
 	 * Wenn alle Betreuungen bestaetigt sind, der Status ist GEPRUEFT, wenn eine Betreuung am Warten ist, ist der Status PLATZBESTAETIGUNG_WARTEN
 	 * und wenn eine Betreuung abgewiesen wurde (Prioritaet A) ist der Status PLATZBESTAETIGUNG_ABGEWIESEN.
 	 * Beim Fehler oder Zweifelnfall ist der Status einfach GEPRUEFT
-	 * @param antrag
-	 * @return
 	 */
 	@Nonnull
-	private AntragStatusDTO convertGeprueftStatusToDTO(AbstractAntragEntity antrag) {
-		if (antrag instanceof Gesuch) { //todo team hier aufpassen wenn es auch Mutationen gibt
-            final Gesuch gesuch = (Gesuch) antrag;
-            final List<Betreuung> allBetreuungenFromGesuch = gesuch.extractAllBetreuungen();
-            AntragStatusDTO newAntragStatus = AntragStatusDTO.GEPRUEFT; // by default alle plaetze sind bestaetigt
-            for (final Betreuung betreuung : allBetreuungenFromGesuch) {
-                if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
-                    return AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN;
-                }
-                else if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
-                    newAntragStatus = AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
-                    break;
-                }
-            }
-            return newAntragStatus;
-        }
-		return AntragStatusDTO.GEPRUEFT; // In Zweifelnfall geben wir geprueft zurueck
+	private AntragStatusDTO convertGeprueftStatusToDTO(Gesuch antrag) {
+		final List<Betreuung> allBetreuungenFromGesuch = antrag.extractAllBetreuungen();
+		AntragStatusDTO newAntragStatus = AntragStatusDTO.GEPRUEFT; // by default alle plaetze sind bestaetigt
+		for (final Betreuung betreuung : allBetreuungenFromGesuch) {
+			if (Betreuungsstatus.WARTEN.equals(betreuung.getBetreuungsstatus())) {
+				return AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN;
+			}
+			else if (Betreuungsstatus.ABGEWIESEN.equals(betreuung.getBetreuungsstatus())) {
+				newAntragStatus = AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN;
+				break;
+			}
+		}
+		return newAntragStatus;
 	}
 
 	/**
