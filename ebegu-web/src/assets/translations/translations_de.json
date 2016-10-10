@@ -695,6 +695,8 @@
     "TOOLBAR_GESUCH": "Erstgesuch",
     "TOOLBAR_MUTATION": "Mutation vom {{date}}",
     "TOOLBAR_KONTAKT": "KONTAKT",
+    "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
+    "TESTFAELLE_EINFUEGEN": "Testfälle einfügen",
     "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
     "GSDASHBOARD_MITTEILUNGEN": "Mitteilungen",
     "GSDASHBOARD_OEFFNEN": "ÖFFNEN",

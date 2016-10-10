@@ -21,7 +21,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
@@ -34,7 +37,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
@@ -46,7 +52,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall03_PerreiraMarcia testfall = new Testfall03_PerreiraMarcia(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
@@ -58,7 +67,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall04_WaltherLaura testfall = new Testfall04_WaltherLaura(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
@@ -70,7 +82,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall05_LuethiMeret testfall = new Testfall05_LuethiMeret(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());
@@ -83,7 +98,10 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+
+		testfall.createFall(null);
+		testfall.createGesuch(null);
+		Gesuch gesuch = testfall.fillInGesuch();
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		evaluator.evaluate(gesuch, getParameter());

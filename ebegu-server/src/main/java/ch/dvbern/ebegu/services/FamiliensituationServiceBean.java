@@ -43,7 +43,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		gesuch.setFamiliensituation(mergedFamiliensituation);
 
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
-		if (isNeededToRemoveGesuchsteller2(gesuch, oldData, mergedFamiliensituation)) {
+		if (isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation)) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
 		}
@@ -78,12 +78,12 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	}
 
 	/**
-	 * Wenn die Familiensituation von 2GS auf 1GS wechselt und der zweite GS schon existiert, wird dieser
+	 * Wenn die neue Familiensituation nur 1GS hat und der zweite GS schon existiert, wird dieser
 	 * und seine Daten endgueltig geloescht
 	 * @return
 	 */
-	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
-		return gesuch.getGesuchsteller2() != null && oldFamiliensituation.hasSecondGesuchsteller() && !newFamiliensituation.hasSecondGesuchsteller();
+	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation) {
+		return gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 }

@@ -22,9 +22,9 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createVerheiratet(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createVerheiratet();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller(FAMILIENNAME, "Tizian");
@@ -44,7 +44,7 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_TAGI_AAREGG);
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_INSTITUTION_AAREGG);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		BetreuungspensumContainer betreuungspensumTagiAaregg = createBetreuungspensum(60, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));

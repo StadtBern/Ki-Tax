@@ -22,9 +22,9 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createVerheiratet(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createVerheiratet();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Meret");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller("Beieler", "Jan");

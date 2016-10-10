@@ -20,9 +20,9 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList);
 	}
 
-	public Gesuch createGesuch() {
+	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(LocalDate.of(2016, Month.FEBRUARY, 15)); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createAlleinerziehend();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum
