@@ -22,7 +22,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createAlleinerziehend(); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createAlleinerziehend();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller();
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		// Erwerbspensum

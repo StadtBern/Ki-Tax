@@ -24,7 +24,7 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
-		Gesuch gesuch = createVerheiratet(); // Wir wissen das Eingangsdatum nicht!
+		Gesuch gesuch = createVerheiratet();
 		Gesuchsteller gesuchsteller1 = createGesuchsteller(FAMILIENNAME, "Meret");
 		gesuch.setGesuchsteller1(gesuchsteller1);
 		Gesuchsteller gesuchsteller2 = createGesuchsteller("Beieler", "Jan");
