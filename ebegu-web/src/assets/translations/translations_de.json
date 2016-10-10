@@ -699,5 +699,9 @@
     "TOOLBAR_MUTIEREN": "MUTIEREN",
     "TOOLBAR_KONTAKT": "KONTAKT",
     "TESTFALL_ERSTELLEN": "Testfall {{gsname}} einfügen",
-    "TESTFAELLE_EINFUEGEN": "Testfälle einfügen"
+    "TESTFAELLE_EINFUEGEN": "Testfälle einfügen",
+    "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
+    "GSDASHBOARD_MITTEILUNGEN": "Mitteilungen",
+    "GSDASHBOARD_OEFFNEN": "ÖFFNEN",
+    "GSDASHBOARD_ANTRAEGE": "Aktuelle Anträge"
 }

@@ -190,42 +190,7 @@ public class JaxBConverter {
 		jaxPensum.setPensum(pensum.getPensum());
 	}
 
-	private void convertAbstractAntragFieldsToEntity(final JaxAbstractAntragDTO antragJAXP, final AbstractAntragEntity antrag) {
-		convertAbstractFieldsToEntity(antragJAXP, antrag);
-		final String exceptionString = "gesuchToEntity";
-		final Optional<Fall> fallFromDB = fallService.findFall(antragJAXP.getFall().getId());
-		if (fallFromDB.isPresent()) {
-			antrag.setFall(this.fallToEntity(antragJAXP.getFall(), fallFromDB.get()));
-		} else {
-			throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFall());
-		}
 
-		if (antragJAXP.getGesuchsperiode() != null && antragJAXP.getGesuchsperiode().getId() != null) {
-			final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(antragJAXP.getGesuchsperiode().getId());
-			if (gesuchsperiode.isPresent()) {
-				antrag.setGesuchsperiode(gesuchsperiodeToEntity(antragJAXP.getGesuchsperiode(), gesuchsperiode.get()));
-			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsperiode().getId());
-			}
-		}
-
-		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
-		antrag.setStatus(AntragStatusConverterUtil.convertStatusToEntity(antragJAXP.getStatus()));
-		if (antragJAXP.getTyp() != null) {
-			antrag.setTyp(antragJAXP.getTyp());
-		}
-	}
-
-	private void convertAbstractAntragFieldsToJAX(final AbstractAntragEntity antrag, final JaxAbstractAntragDTO antragJAXP) {
-		convertAbstractFieldsToJAX(antrag, antragJAXP);
-		antragJAXP.setFall(this.fallToJAX(antrag.getFall()));
-		if (antrag.getGesuchsperiode() != null) {
-			antragJAXP.setGesuchsperiode(gesuchsperiodeToJAX(antrag.getGesuchsperiode()));
-		}
-		antragJAXP.setEingangsdatum(antrag.getEingangsdatum());
-		antragJAXP.setStatus(AntragStatusConverterUtil.convertStatusToDTO(antrag, antrag.getStatus()));
-		antragJAXP.setTyp(antrag.getTyp());
-	}
 
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
@@ -518,59 +483,86 @@ public class JaxBConverter {
 		return jaxFall;
 	}
 
-	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch gesuchJAXP, @Nonnull final Gesuch gesuch) {
-		Validate.notNull(gesuch);
-		Validate.notNull(gesuchJAXP);
-		convertAbstractAntragFieldsToEntity(gesuchJAXP, gesuch);
+	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag) {
+		Validate.notNull(antrag);
+		Validate.notNull(antragJAXP);
 
+		convertAbstractFieldsToEntity(antragJAXP, antrag);
 		final String exceptionString = "gesuchToEntity";
+		final Optional<Fall> fallFromDB = fallService.findFall(antragJAXP.getFall().getId());
+		if (fallFromDB.isPresent()) {
+			antrag.setFall(this.fallToEntity(antragJAXP.getFall(), fallFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFall());
+		}
 
-		if (gesuchJAXP.getGesuchsteller1() != null && gesuchJAXP.getGesuchsteller1().getId() != null) {
-			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller1().getId());
+		if (antragJAXP.getGesuchsperiode() != null && antragJAXP.getGesuchsperiode().getId() != null) {
+			final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(antragJAXP.getGesuchsperiode().getId());
+			if (gesuchsperiode.isPresent()) {
+				antrag.setGesuchsperiode(gesuchsperiodeToEntity(antragJAXP.getGesuchsperiode(), gesuchsperiode.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsperiode().getId());
+			}
+		}
+
+		antrag.setEingangsdatum(antragJAXP.getEingangsdatum());
+		antrag.setStatus(antragStatusConverter.convertStatusToEntity(antragJAXP.getStatus()));
+		if (antragJAXP.getTyp() != null) {
+			antrag.setTyp(antragJAXP.getTyp());
+		}
+
+		if (antragJAXP.getGesuchsteller1() != null && antragJAXP.getGesuchsteller1().getId() != null) {
+			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
-				gesuch.setGesuchsteller1(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller1(), gesuchsteller1.get()));
+				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller1());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1());
 			}
 		}
-		if (gesuchJAXP.getGesuchsteller2() != null && gesuchJAXP.getGesuchsteller2().getId() != null) {
-			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(gesuchJAXP.getGesuchsteller2().getId());
+		if (antragJAXP.getGesuchsteller2() != null && antragJAXP.getGesuchsteller2().getId() != null) {
+			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()) {
-				gesuch.setGesuchsteller2(gesuchstellerToEntity(gesuchJAXP.getGesuchsteller2(), gesuchsteller2.get()));
+				antrag.setGesuchsteller2(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getGesuchsteller2().getId());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
 			}
 		}
-		if (gesuchJAXP.getFamiliensituation() != null && gesuchJAXP.getFamiliensituation().getId() != null) {
-			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(gesuchJAXP.getFamiliensituation().getId());
+		if (antragJAXP.getFamiliensituation() != null && antragJAXP.getFamiliensituation().getId() != null) {
+			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
 			if (famSituation.isPresent()) {
-				gesuch.setFamiliensituation(familiensituationToEntity(gesuchJAXP.getFamiliensituation(), famSituation.get()));
+				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
 			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getFamiliensituation().getId());
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
-		if (gesuchJAXP.getEinkommensverschlechterungInfo() != null) {
-			if (gesuchJAXP.getEinkommensverschlechterungInfo().getId() != null) {
-				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+		if (antragJAXP.getEinkommensverschlechterungInfo() != null) {
+			if (antragJAXP.getEinkommensverschlechterungInfo().getId() != null) {
+				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
 				if (evkiSituation.isPresent()) {
-					gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
+					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
 				} else {
-					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getEinkommensverschlechterungInfo().getId());
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
 				}
 			} else {
-				gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(gesuchJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
+				antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
 			}
 		}
 
-		gesuch.setBemerkungen(gesuchJAXP.getBemerkungen());
+		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 
-		return gesuch;
+		return antrag;
 	}
 
 	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
 		final JaxGesuch jaxGesuch = new JaxGesuch();
-		convertAbstractAntragFieldsToJAX(persistedGesuch, jaxGesuch);
-
+		convertAbstractFieldsToJAX(persistedGesuch, jaxGesuch);
+		jaxGesuch.setFall(this.fallToJAX(persistedGesuch.getFall()));
+		if (persistedGesuch.getGesuchsperiode() != null) {
+			jaxGesuch.setGesuchsperiode(gesuchsperiodeToJAX(persistedGesuch.getGesuchsperiode()));
+		}
+		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
+		jaxGesuch.setStatus(antragStatusConverter.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
+		jaxGesuch.setTyp(persistedGesuch.getTyp());
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
