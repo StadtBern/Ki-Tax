@@ -264,7 +264,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				return Optional.empty();
 			}
 			Gesuch gesuchForMutation = criteriaResults.get(0);
-			return Optional.of(new Gesuch(gesuchForMutation));
+			Gesuch mutation = new Gesuch(gesuchForMutation);
+			return Optional.of(mutation);
 		}
 		return Optional.empty();
 	}

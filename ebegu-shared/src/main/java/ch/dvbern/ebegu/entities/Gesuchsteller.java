@@ -76,22 +76,26 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	public Gesuchsteller() {
 	}
 
-
-	public Gesuchsteller(Gesuchsteller that) {
-		super(that);
-		if (that != null) {
-			this.mail = that.mail;
-			this.mobile = that.mobile;
-			this.telefon = that.telefon;
-			this.telefonAusland = that.telefonAusland;
-			this.zpvNumber = that.zpvNumber;
-			//TODO
-//		this.finanzielleSituationContainer = finanzielleSituationContainer; //
-//		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
-//		this.erwerbspensenContainers = erwerbspensenContainers;
-//		this.adressen = adressen;
-			this.diplomatenstatus = that.diplomatenstatus;
+	public Gesuchsteller(@Nonnull Gesuchsteller toCopy) {
+		super(toCopy);
+		this.mail = toCopy.mail;
+		this.mobile = toCopy.mobile;
+		this.telefon = toCopy.telefon;
+		this.telefonAusland = toCopy.telefonAusland;
+		this.zpvNumber = toCopy.zpvNumber;
+		if (toCopy.finanzielleSituationContainer != null) {
+			this.finanzielleSituationContainer = new FinanzielleSituationContainer(toCopy.finanzielleSituationContainer, this);
 		}
+		if (toCopy.einkommensverschlechterungContainer != null) {
+			this.einkommensverschlechterungContainer = new EinkommensverschlechterungContainer(toCopy.einkommensverschlechterungContainer, this);
+		}
+		for (ErwerbspensumContainer erwerbspensumContainer : toCopy.erwerbspensenContainers) {
+			this.addErwerbspensumContainer(new ErwerbspensumContainer(erwerbspensumContainer, this));
+		}
+		for (GesuchstellerAdresse gesuchstellerAdresse : toCopy.adressen) {
+			this.addAdresse(new GesuchstellerAdresse(gesuchstellerAdresse, this));
+		}
+		this.diplomatenstatus = toCopy.diplomatenstatus;
 	}
 
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {

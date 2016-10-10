@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.MathUtil;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
@@ -57,6 +58,26 @@ public class Einkommensverschlechterung extends AbstractFinanzielleSituation {
 
 	@Column(nullable = true)
 	private BigDecimal nettolohnZus;
+
+	public Einkommensverschlechterung() {
+	}
+
+	public Einkommensverschlechterung(@Nonnull Einkommensverschlechterung toCopy) {
+		super(toCopy);
+		this.nettolohnJan = toCopy.nettolohnJan;
+		this.nettolohnFeb = toCopy.nettolohnFeb;
+		this.nettolohnMrz = toCopy.nettolohnMrz;
+		this.nettolohnApr = toCopy.nettolohnApr;
+		this.nettolohnMai = toCopy.nettolohnMai;
+		this.nettolohnJun = toCopy.nettolohnJun;
+		this.nettolohnJul = toCopy.nettolohnJul;
+		this.nettolohnAug = toCopy.nettolohnAug;
+		this.nettolohnSep = toCopy.nettolohnSep;
+		this.nettolohnOkt = toCopy.nettolohnOkt;
+		this.nettolohnNov = toCopy.nettolohnNov;
+		this.nettolohnDez = toCopy.nettolohnDez;
+		this.nettolohnZus = toCopy.nettolohnZus;
+	}
 
 	public BigDecimal getNettolohnJan() {
 		return nettolohnJan;

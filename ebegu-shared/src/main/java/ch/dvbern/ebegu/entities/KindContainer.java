@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -60,6 +61,22 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "kind")
 	private Set<Betreuung> betreuungen = new TreeSet<>();
 
+
+	public KindContainer() {
+	}
+
+	public KindContainer(@Nonnull KindContainer toCopy, @Nonnull Gesuch gesuch) {
+		this.gesuch = gesuch;
+		this.kindGS = null;
+		this.kindJA = new Kind(toCopy.kindJA);
+		this.kindNummer = toCopy.kindNummer;
+		if (toCopy.betreuungen != null) {
+			this.betreuungen = new TreeSet<>();
+			for (Betreuung betreuung : toCopy.betreuungen) {
+				this.betreuungen.add(new Betreuung(betreuung, this));
+			}
+		}
+	}
 
 	public Gesuch getGesuch() {
 		return gesuch;

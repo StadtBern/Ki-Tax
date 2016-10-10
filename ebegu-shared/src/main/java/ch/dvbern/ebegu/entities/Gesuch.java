@@ -6,11 +6,13 @@ import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -70,17 +72,28 @@ public class Gesuch extends AbstractAntragEntity {
 	public Gesuch() {
 	}
 
-	public Gesuch(Gesuch gesuchToCopy) {
-		this();
-		this.setFall(gesuchToCopy.getFall());
-		this.setGesuchsperiode(gesuchToCopy.getGesuchsperiode());
-		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+	public Gesuch(@Nonnull Gesuch toCopy) {
+		this.setFall(toCopy.getFall());
+		this.setGesuchsperiode(toCopy.getGesuchsperiode());
+		this.setEingangsdatum(LocalDate.now()); //TODO (team) dies sollte dann nicht mehr zwingend sein!
+		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
 		this.setTyp(AntragTyp.MUTATION);
-		this.setBemerkungen("Mutation des Gesuchs vom " + gesuchToCopy.getEingangsdatum());
-//		this.setFamiliensituation(new Familiensituation(gesuchToCopy.getFamiliensituation()));
-//		this.setGesuchsteller1(new Gesuchsteller(gesuchToCopy.getGesuchsteller1()));
-//		this.setGesuchsteller2(new Gesuchsteller(gesuchToCopy.getGesuchsteller2()));
-		//TODO (hefr) etc.
+
+		if (toCopy.getGesuchsteller1() != null) {
+			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
+		}
+		if (toCopy.getGesuchsteller2() != null) {
+			this.setGesuchsteller2(new Gesuchsteller(toCopy.getGesuchsteller2()));
+		}
+		for (KindContainer kindContainer : toCopy.getKindContainers()) {
+			this.addKindContainer(new KindContainer(kindContainer, this));
+		}
+		this.setAntragStatusHistories(new LinkedHashSet<>());
+		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
+		if (toCopy.getEinkommensverschlechterungInfo() != null) {
+			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
+		}
+		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
 	}
 
 	@Nullable

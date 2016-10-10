@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumMaxZuschlag;
 import ch.dvbern.ebegu.validators.CheckZuschlagErwerbspensumZuschlagUndGrund;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,6 +52,18 @@ public class Erwerbspensum extends AbstractPensumEntity {
 
 	//todo homa Prozent kann wohl aus Pensum geerbt werden
 
+
+	public Erwerbspensum() {
+	}
+
+	public Erwerbspensum(@Nonnull Erwerbspensum toCopy) {
+		super(toCopy);
+		this.taetigkeit = toCopy.taetigkeit;
+		this.zuschlagZuErwerbspensum = toCopy.zuschlagZuErwerbspensum;
+		this.zuschlagsgrund = toCopy.zuschlagsgrund;
+		this.zuschlagsprozent = toCopy.zuschlagsprozent;
+		this.bezeichnung = toCopy.bezeichnung;
+	}
 
 	public Taetigkeit getTaetigkeit() {
 		return taetigkeit;
