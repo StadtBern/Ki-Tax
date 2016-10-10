@@ -58,6 +58,7 @@ import EinkommensverschlechterungInfoRS from '../gesuch/service/einkommensversch
 import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
+import {DvUserNameComponentConfig} from './component/dv-user-name/dv-user-name';
 
 let dynamicDependencies = function (): string[] {
 
@@ -159,6 +160,7 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvRadioContainer', new DvRadioContainerComponentConfig())
     .component('dvTooltip', new DvTooltipComponentConfig())
     .component('dvPulldownUserMenu', new DvPulldownUserMenuComponentConfig())
+    .component('dvUserName', new DvUserNameComponentConfig())
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig());
