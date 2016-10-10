@@ -68,6 +68,18 @@ public class Adresse extends AbstractDateRangedEntity {
 	public Adresse() {
 	}
 
+	public Adresse(@Nonnull Adresse toCopy) {
+		super(toCopy);
+		this.strasse = toCopy.strasse;
+		this.hausnummer = toCopy.hausnummer;
+		this.zusatzzeile = toCopy.zusatzzeile;
+		this.plz = toCopy.plz;
+		this.ort = toCopy.ort;
+		this.land = toCopy.land;
+		this.gemeinde = toCopy.gemeinde;
+		this.organisation = toCopy.organisation;
+	}
+
 	@Nonnull
 	public String getStrasse() {
 		return strasse;

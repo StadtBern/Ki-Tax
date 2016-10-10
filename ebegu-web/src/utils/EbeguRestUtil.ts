@@ -1121,6 +1121,7 @@ export default class EbeguRestUtil {
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
+        restPendenz.verfuegt = pendenz.verfuegt;
         return restPendenz;
     }
 
@@ -1137,6 +1138,7 @@ export default class EbeguRestUtil {
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;
+        pendenzTS.verfuegt = pendenzFromServer.verfuegt;
         return pendenzTS;
     }
 

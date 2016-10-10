@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.rest.test;
 
-import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
@@ -17,14 +17,13 @@ import java.util.Iterator;
 /**
  * Tests der die Konvertierung vom AntragStatus
  */
-public class AntragStatusConverterTest {
+public class AntragStatusConverterUtilTest {
 
-	private AntragStatusConverter converter = new AntragStatusConverter();
 
 	@Test
 	public void convertStatusToDTOGEPRUEFTTest() {
 		Gesuch gesuch = TestDataUtil.createTestgesuchDagmar(); // WARTEN
-		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
+		AntragStatusDTO antragStatusDTO = AntragStatusConverterUtil.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN, antragStatusDTO);
 	}
 
@@ -32,7 +31,7 @@ public class AntragStatusConverterTest {
 	public void convertStatusToDTOAlleBestaetigtTest() {
 		final Gesuch gesuch = prepareGesuchAndBetreuungsstatus(Betreuungsstatus.BESTAETIGT, Betreuungsstatus.BESTAETIGT);
 
-		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
+		AntragStatusDTO antragStatusDTO = AntragStatusConverterUtil.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.GEPRUEFT, antragStatusDTO);
 	}
 
@@ -40,7 +39,7 @@ public class AntragStatusConverterTest {
 	public void convertStatusToDTOEinsAbgewiesenTest() {
 		final Gesuch gesuch = prepareGesuchAndBetreuungsstatus(Betreuungsstatus.ABGEWIESEN, Betreuungsstatus.BESTAETIGT);
 
-		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
+		AntragStatusDTO antragStatusDTO = AntragStatusConverterUtil.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN, antragStatusDTO);
 	}
 
@@ -48,7 +47,7 @@ public class AntragStatusConverterTest {
 	public void convertStatusToDTOEinsAbgewiesenEinsWartenTest() {
 		final Gesuch gesuch = prepareGesuchAndBetreuungsstatus(Betreuungsstatus.ABGEWIESEN, Betreuungsstatus.WARTEN);
 
-		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
+		AntragStatusDTO antragStatusDTO = AntragStatusConverterUtil.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN, antragStatusDTO);
 	}
 
@@ -56,15 +55,15 @@ public class AntragStatusConverterTest {
 	public void convertStatusToDTOEinsWartenTest() {
 		final Gesuch gesuch = prepareGesuchAndBetreuungsstatus(Betreuungsstatus.BESTAETIGT, Betreuungsstatus.WARTEN);
 
-		AntragStatusDTO antragStatusDTO = converter.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
+		AntragStatusDTO antragStatusDTO = AntragStatusConverterUtil.convertStatusToDTO(gesuch, AntragStatus.GEPRUEFT);
 		Assert.assertEquals(AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN, antragStatusDTO);
 	}
 
 	@Test
 	public void convertStatusToEntityGEPRUEFTTest() {
-		Assert.assertEquals(AntragStatus.GEPRUEFT, converter.convertStatusToEntity(AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN));
-		Assert.assertEquals(AntragStatus.GEPRUEFT, converter.convertStatusToEntity(AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN));
-		Assert.assertEquals(AntragStatus.GEPRUEFT, converter.convertStatusToEntity(AntragStatusDTO.GEPRUEFT));
+		Assert.assertEquals(AntragStatus.GEPRUEFT, AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.PLATZBESTAETIGUNG_WARTEN));
+		Assert.assertEquals(AntragStatus.GEPRUEFT, AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.PLATZBESTAETIGUNG_ABGEWIESEN));
+		Assert.assertEquals(AntragStatus.GEPRUEFT, AntragStatusConverterUtil.convertStatusToEntity(AntragStatusDTO.GEPRUEFT));
 	}
 
 

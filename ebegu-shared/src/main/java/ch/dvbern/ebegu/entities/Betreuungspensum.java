@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.types.DateRange;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 
 /**
@@ -23,6 +24,10 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 
 	public Betreuungspensum(DateRange gueltigkeit) {
 		this.setGueltigkeit(gueltigkeit);
+	}
+
+	public Betreuungspensum(@Nonnull Betreuungspensum toCopy) {
+		super(toCopy);
 	}
 
 	@Override

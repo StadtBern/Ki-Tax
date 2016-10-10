@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 
@@ -29,6 +30,16 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_erwerbspensum_container_erwerbspensumja_id"))
 	private Erwerbspensum erwerbspensumJA;
+
+
+	public ErwerbspensumContainer() {
+	}
+
+	public ErwerbspensumContainer(@Nonnull ErwerbspensumContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.gesuchsteller = gesuchsteller;
+		this.erwerbspensumGS = null;
+		this.erwerbspensumJA = new Erwerbspensum(toCopy.erwerbspensumJA);
+	}
 
 	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;

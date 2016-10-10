@@ -157,12 +157,19 @@ export default class GesuchModelManager {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create
-            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
-                this.gesuch.fall = angular.copy(fallResponse);
+            if (this.gesuch.fall && this.gesuch.fall.timestampErstellt) {
+                // Fall ist schon vorhanden
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     return this.gesuch = gesuchResponse;
                 });
-            });
+            } else {
+                return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
+                    this.gesuch.fall = angular.copy(fallResponse);
+                    return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
+                        return this.gesuch = gesuchResponse;
+                    });
+                });
+            }
         }
     }
 

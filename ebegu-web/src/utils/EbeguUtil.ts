@@ -30,12 +30,11 @@ export default class EbeguUtil {
     }
 
     public getAntragTextDateAsString(tsAntragTyp: TSAntragTyp, eingangsdatum: Moment): string {
-        if (tsAntragTyp && eingangsdatum) {
-            if (tsAntragTyp !== TSAntragTyp.GESUCH) {
+        if (tsAntragTyp) {
+            if (tsAntragTyp !== TSAntragTyp.GESUCH && eingangsdatum) {
                 return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp]) + ' ' + eingangsdatum.format('DD.MM.YYYY');
             }
-            return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp]);
-
+            return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp] + '_NO_DATE');
         }
         return '';
     }

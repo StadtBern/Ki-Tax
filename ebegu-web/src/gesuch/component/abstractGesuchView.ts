@@ -3,7 +3,6 @@ import BerechnungsManager from '../service/berechnungsManager';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
-import {IGesuchStateParams} from '../gesuch.route';
 import IPromise = angular.IPromise;
 
 export default class AbstractGesuchViewController {
@@ -34,5 +33,4 @@ export default class AbstractGesuchViewController {
             return '';
         }
     }
-
 }

@@ -7,7 +7,8 @@ import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
-import {IGesuchStateParams} from '../../gesuch.route';
+import {IGesuchStateParams, EbeguMutationState} from '../../gesuch.route';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 import IScope = angular.IScope;
@@ -49,6 +50,7 @@ export class GesuchToolbarController {
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
     antragTypList: { [key: string]: TSAntragDTO } = {};
+    mutierenPossibleForCurrentAntrag: boolean = false;
 
     static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
         '$state', '$stateParams', '$scope'];
@@ -57,6 +59,8 @@ export class GesuchToolbarController {
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope) {
         this.updateUserList();
+        this.updateAntragDTOList();
+        this.antragMutierenPossible();
         this.refreshGesuch();
 
         //add watchers
@@ -89,7 +93,6 @@ export class GesuchToolbarController {
         }
     }
 
-
     public getVerantwortlicherFullName(): string {
         if (this.gesuch && this.gesuch.fall && this.gesuch.fall.verantwortlicher) {
             return this.gesuch.fall.verantwortlicher.getFullName();
@@ -109,6 +112,7 @@ export class GesuchToolbarController {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
                 this.updateAntragTypList();
+                this.antragMutierenPossible();
             });
         }
     }
@@ -127,7 +131,7 @@ export class GesuchToolbarController {
 
     private updateAntragTypList() {
         for (var i = 0; i < this.antragList.length; i++) {
-            let antrag = this.antragList[i];
+            let antrag : TSAntragDTO = this.antragList[i];
             if (this.gesuch.gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
                 let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum);
 
@@ -256,4 +260,36 @@ export class GesuchToolbarController {
         this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
+    public antragMutierenPossible(): void {
+        if (this.antragList) {
+            let gesuchInBearbeitungVorhanden = false;
+            for (var i = 0; i < this.antragList.length; i++) {
+                let antragItem: TSAntragDTO = this.antragList[i];
+                // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
+                if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
+                    // Falls das Gesuch nicht verfuegt ist, darf nicht mutiert werden
+                    if (antragItem.verfuegt === false) {
+                        gesuchInBearbeitungVorhanden = true;
+                    }
+                }
+            }
+            this.mutierenPossibleForCurrentAntrag = !gesuchInBearbeitungVorhanden;
+        } else {
+            this.mutierenPossibleForCurrentAntrag = false;
+        }
+    }
+
+    public antragMutieren(): void {
+        this.mutierenPossibleForCurrentAntrag = false;
+        this.$state.go('gesuch.mutation', {gesuchId: this.gesuchid});
+        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation!
+    }
+
+    //TODO (team) den (noch ungespeicherten) Mutationsantrag zur Liste im blauen Balken hinzufuegen
+    private addAntragToList(antrag : TSGesuch) : void {
+        let antragDTO = new TSAntragDTO();
+        antragDTO.antragTyp = TSAntragTyp.MUTATION;
+        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum);
+        this.antragTypList[txt] = antragDTO;
+    }
 }

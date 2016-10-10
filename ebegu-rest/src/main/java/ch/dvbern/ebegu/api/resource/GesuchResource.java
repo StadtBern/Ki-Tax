@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
@@ -20,6 +19,7 @@ import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
+import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
 import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -61,9 +61,6 @@ public class GesuchResource {
 
 	@Inject
 	private BenutzerService benutzerService;
-
-	@Inject
-	private AntragStatusConverter antragStatusConverter;
 
 	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
 
@@ -112,7 +109,7 @@ public class GesuchResource {
 
 		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		//only if status has changed
-		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != antragStatusConverter.convertStatusToEntity(gesuchJAXP.getStatus());
+		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
 
 		return converter.gesuchToJAX(modifiedGesuch);
@@ -225,9 +222,9 @@ public class GesuchResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
 
 		if (gesuchOptional.isPresent()) {
-			if (gesuchOptional.get().getStatus() != antragStatusConverter.convertStatusToEntity(statusDTO)) {
+			if (gesuchOptional.get().getStatus() != AntragStatusConverterUtil.convertStatusToEntity(statusDTO)) {
 				//only if status has changed
-				gesuchOptional.get().setStatus(antragStatusConverter.convertStatusToEntity(statusDTO));
+				gesuchOptional.get().setStatus(AntragStatusConverterUtil.convertStatusToEntity(statusDTO));
 				gesuchService.updateGesuch(gesuchOptional.get(), true);
 			}
 			return Response.ok().build();
@@ -247,21 +244,21 @@ public class GesuchResource {
 		@Context HttpServletResponse response) {
 
 		Response resp = MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
-		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-		List<Gesuch> foundAntraege = searchResultPair.getRight();
+			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
 
-		List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
-		foundAntraege.stream().forEach(gesuch -> {
-			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
-			antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-			antragDTOList.add(antragDTO);
-		});
-		JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-		resultDTO.setAntragDTOs(antragDTOList);
-		PaginationDTO pagination = antragSearch.getPagination();
-		pagination.setTotalItemCount(searchResultPair.getLeft());
-		resultDTO.setPaginationDTO(pagination);
-		return Response.ok(resultDTO).build();
+			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
+			foundAntraege.stream().forEach(gesuch -> {
+				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+				antragDTOList.add(antragDTO);
+			});
+			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+			resultDTO.setAntragDTOs(antragDTOList);
+			PaginationDTO pagination = antragSearch.getPagination();
+			pagination.setTotalItemCount(searchResultPair.getLeft());
+			resultDTO.setPaginationDTO(pagination);
+			return Response.ok(resultDTO).build();
 		});
 		return resp;
 	}
@@ -300,4 +297,24 @@ public class GesuchResource {
 		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
 	}
 
+	@ApiOperation(value = "Creates a new Antrag of type Mutation in the database")
+	@Nullable
+	@POST
+	@Path("/mutieren/{antragId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response antragMutieren(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		Validate.notNull(antragJaxId.getId());
+		String antragId = converter.toEntityId(antragJaxId);
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId);
+		if (!gesuchOptional.isPresent()) {
+			return Response.noContent().build();
+		}
+		Gesuch gesuchToReturn = gesuchOptional.get();
+		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
+	}
 }

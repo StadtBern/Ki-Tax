@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -86,6 +87,33 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+
+	public Gesuch() {
+	}
+
+	public Gesuch(@Nonnull Gesuch toCopy) {
+		this.setFall(toCopy.getFall());
+		this.setGesuchsperiode(toCopy.getGesuchsperiode());
+		this.setEingangsdatum(LocalDate.now()); //TODO (team) dies sollte dann nicht mehr zwingend sein!
+		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
+		this.setTyp(AntragTyp.MUTATION);
+
+		if (toCopy.getGesuchsteller1() != null) {
+			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
+		}
+		if (toCopy.getGesuchsteller2() != null) {
+			this.setGesuchsteller2(new Gesuchsteller(toCopy.getGesuchsteller2()));
+		}
+		for (KindContainer kindContainer : toCopy.getKindContainers()) {
+			this.addKindContainer(new KindContainer(kindContainer, this));
+		}
+		this.setAntragStatusHistories(new LinkedHashSet<>());
+		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
+		if (toCopy.getEinkommensverschlechterungInfo() != null) {
+			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
+		}
+		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
+	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
@@ -168,7 +196,7 @@ public class Gesuch extends AbstractEntity {
 		return fall;
 	}
 
-	public void setFall(Fall fall) {
+	public final void setFall(Fall fall) {
 		this.fall = fall;
 	}
 
@@ -176,7 +204,7 @@ public class Gesuch extends AbstractEntity {
 		return gesuchsperiode;
 	}
 
-	public void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+	public final void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
 		this.gesuchsperiode = gesuchsperiode;
 	}
 
@@ -184,7 +212,7 @@ public class Gesuch extends AbstractEntity {
 		return eingangsdatum;
 	}
 
-	public void setEingangsdatum(LocalDate eingangsdatum) {
+	public final void setEingangsdatum(LocalDate eingangsdatum) {
 		this.eingangsdatum = eingangsdatum;
 	}
 
@@ -192,7 +220,7 @@ public class Gesuch extends AbstractEntity {
 		return status;
 	}
 
-	public void setStatus(AntragStatus status) {
+	public final void setStatus(AntragStatus status) {
 		this.status = status;
 	}
 
@@ -200,7 +228,7 @@ public class Gesuch extends AbstractEntity {
 		return typ;
 	}
 
-	public void setTyp(AntragTyp typ) {
+	public final void setTyp(AntragTyp typ) {
 		this.typ = typ;
 	}
 

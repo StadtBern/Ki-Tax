@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -49,6 +50,17 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_einkommensverschlechterungcontainer_ekvJABasisJahrPlus2_id"), nullable = true)
 	private Einkommensverschlechterung ekvJABasisJahrPlus2;
+
+	public EinkommensverschlechterungContainer() {
+	}
+
+	public EinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.gesuchsteller = gesuchsteller;
+		this.ekvGSBasisJahrPlus1 = null;
+		this.ekvGSBasisJahrPlus2 = null;
+		this.ekvJABasisJahrPlus1 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus1);
+		this.ekvJABasisJahrPlus2 = new Einkommensverschlechterung(toCopy.ekvJABasisJahrPlus2);
+	}
 
 	public Einkommensverschlechterung getEkvJABasisJahrPlus2() {
 		return ekvJABasisJahrPlus2;

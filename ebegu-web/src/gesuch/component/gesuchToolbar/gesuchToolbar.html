@@ -7,8 +7,9 @@
             <!--Fall und Name des Gesuchs-->
             <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
 
-            <!--Gesuchsperioden-->
             <md-menu-bar>
+
+                <!--Gesuchsperioden-->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vmx.getCurrentGesuchsperiode()"></span>
@@ -26,10 +27,8 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <!--Gesuchstyp-->
-            <md-menu-bar>
+                <!--Gesuchstyp-->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getAntragTyp()}}">
                         <span ng-bind="vmx.getAntragTyp()"></span>
@@ -46,12 +45,15 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <span flex=""></span>
+                <span flex=""></span>
 
-            <!--Kontakt-->
-            <md-menu-bar>
+                <!-- Mutieren -->
+                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </md-button>
+
+                 <!--Kontakt-->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <i class="ellipsis-icon fa fa-envelope"></i>
@@ -72,9 +74,8 @@
 
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <md-menu-bar>
+                <!-- Verantwortlichen zuteilen -->
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherFullName()}}">
                         <i class="fa fa-user" aria-hidden="true" style="margin-right: 2px"></i>

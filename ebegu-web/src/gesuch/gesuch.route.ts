@@ -6,6 +6,7 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import IPromise = angular.IPromise;
+import GesuchRS from './service/gesuchRS.rest';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -31,6 +32,7 @@ function getStates(): IState[] {
         new EbeguBetreuungListState(),
         new EbeguBetreuungState(),
         new EbeguNewFallState(),
+        new EbeguMutationState(),
         new EbeguVerfuegenListState(),
         new EbeguVerfuegenState(),
         new EbeguEinkommensverschlechterungInfoState(),
@@ -71,6 +73,24 @@ export class EbeguNewFallState implements IState {
     };
 }
 
+export class EbeguMutationState implements IState {
+    //TODO (team) Hier muss dann auf die (noch nicht vorhandene) Mutations-Einstiegsseite navigiert werden
+    name = 'gesuch.mutation';
+    url = '/mutation/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<fall-creation-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getMutation
+    };
+}
 
 export class EbeguFamiliensituationState implements IState {
     name = 'gesuch.familiensituation';
@@ -447,3 +467,20 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     return $q.defer(gesuchModelManager.getGesuch());
 }
 
+getMutation.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'GesuchRS', '$stateParams', '$q'];
+/* @ngInject */
+export function getMutation(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                                      wizardStepManager: WizardStepManager, gesuchRS: GesuchRS, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+    if ($stateParams) {
+        let gesuchIdParams = $stateParams.gesuchId;
+        if (gesuchIdParams) {
+            gesuchRS.antragMutieren(gesuchIdParams).then((response : TSGesuch) => {
+                berechnungsManager.clear();
+                wizardStepManager.findStepsFromGesuch(response.id);
+                gesuchModelManager.setGesuch(response);
+                return response;
+            });
+        }
+    }
+    return $q.defer(gesuchModelManager.getGesuch());
+}
