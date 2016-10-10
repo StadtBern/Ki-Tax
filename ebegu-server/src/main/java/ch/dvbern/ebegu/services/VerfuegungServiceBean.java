@@ -1,9 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.EbeguParameterKey;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
@@ -44,6 +42,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Inject
 	private EbeguParameterService ebeguParameterService;
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Inject
 	private MandantService mandantService;
@@ -54,9 +56,20 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Nonnull
 	@Override
-	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung) {
+	public Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId) {
 		Objects.requireNonNull(verfuegung);
-		return persistence.persist(verfuegung);
+		Objects.requireNonNull(betreuungId);
+
+		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
+		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
+        // setting all depending objects
+		verfuegung.setBetreuung(betreuung);
+		betreuung.setVerfuegung(verfuegung);
+		verfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(verfuegung));
+
+		final Verfuegung persistedVerfuegung = persistence.persist(verfuegung);
+		wizardStepService.updateSteps(persistedVerfuegung.getBetreuung().extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+		return persistedVerfuegung;
 	}
 
 	@Nonnull
@@ -78,15 +91,16 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Override
 	public void removeVerfuegung(@Nonnull Verfuegung verfuegung) {
 		Validate.notNull(verfuegung);
-		Optional<Verfuegung> entityToRempoe = this.findVerfuegung(verfuegung.getId());
-		entityToRempoe.orElseThrow(() -> new EbeguEntityNotFoundException("removeVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung));
-		persistence.remove(entityToRempoe.get());
+		Optional<Verfuegung> entityToRemove = this.findVerfuegung(verfuegung.getId());
+		entityToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, verfuegung));
+		persistence.remove(entityToRemove.get());
 	}
 
 
 	@Nonnull
 	@Override
 	public Gesuch calculateVerfuegung(@Nonnull Gesuch gesuch) {
+		this.finanzielleSituationService.calculateFinanzDaten(gesuch);
 		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
 		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());

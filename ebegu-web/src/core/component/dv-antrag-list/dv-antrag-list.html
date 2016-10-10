@@ -24,7 +24,7 @@
                 </tr>
                 <!--Filterspalten-->
                 <tr>
-                    <th><input st-search="fallNummer" class="form-control" type="text"/></th>
+                    <th><input st-search="fallNummer" class="form-control" type="text" max="999999"/></th>
                     <th><input st-search="familienName" class="form-control" type="text"/></th>
                     <th>
                         <select st-input-event="change" name="antragTyp" id="antragTyp" st-search="antragTyp"
@@ -112,7 +112,7 @@
                 <tfoot>
                 <tr>
                     <td colspan="9" class="text-center">
-                        <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
+                        <div st-pagination="" st-items-by-page="20" st-displayed-pages="10"></div>
                     </td>
                 </tr>
                 </tfoot>

@@ -14,6 +14,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
     private _vollkosten: number;
     private _elternbeitrag: number;
     private _abzugFamGroesse: number;
+    private _famGroesse: number;
     private _massgebendesEinkommenVorAbzugFamgr: number;
     private _bemerkungen: string;
     private _status: string;
@@ -21,7 +22,8 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     constructor(erwerbspensumGS1?: number, erwerbspensumGS2?: number, betreuungspensum?: number, fachstellenpensum?: number,
                 anspruchspensumRest?: number, anspruchberechtigtesPensum?: number, bgPensum?: number, betreuungsstunden?: number, vollkosten?: number,
-                elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string, status?: string, gueltigkeit?: TSDateRange) {
+                elternbeitrag?: number, abzugFamGroesse?: number, massgebendesEinkommen?: number, bemerkungen?: string,
+                status?: string, gueltigkeit?: TSDateRange, famGroesse?: number) {
         super(gueltigkeit);
         this._erwerbspensumGS1 = erwerbspensumGS1;
         this._erwerbspensumGS2 = erwerbspensumGS2;
@@ -37,6 +39,7 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
         this._massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommen;
         this._bemerkungen = bemerkungen;
         this._status = status;
+        this._famGroesse = famGroesse;
     }
 
     get erwerbspensumGS1(): number {
@@ -149,5 +152,13 @@ export default class TSVerfuegungZeitabschnitt extends TSAbstractDateRangedEntit
 
     set status(value: string) {
         this._status = value;
+    }
+
+    get famGroesse(): number {
+        return this._famGroesse;
+    }
+
+    set famGroesse(value: number) {
+        this._famGroesse = value;
     }
 }

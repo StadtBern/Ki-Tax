@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.util.Constants;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -69,6 +70,8 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	private BigDecimal elternbeitrag = BigDecimal.ZERO;
 
 	private BigDecimal abzugFamGroesse = BigDecimal.ZERO;
+
+	private BigDecimal famGroesse;
 
 	private BigDecimal massgebendesEinkommenVorAbzugFamgr = BigDecimal.ZERO;
 
@@ -186,5 +189,13 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public BigDecimal getFamGroesse() {
+		return famGroesse;
+	}
+
+	public void setFamGroesse(BigDecimal famGroesse) {
+		this.famGroesse = famGroesse;
 	}
 }

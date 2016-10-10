@@ -6,12 +6,10 @@ import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.WizardStepService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -60,8 +58,6 @@ public class UploadResource {
 	private GesuchService gesuchService;
 	@Inject
 	private DokumentGrundService dokumentGrundService;
-	@Inject
-	private WizardStepService wizardStepService;
 
 	@Inject
 	private JaxBConverter converter;
@@ -147,8 +143,6 @@ public class UploadResource {
 		DokumentGrund persistedDokumentGrund = dokumentGrundService.saveDokumentGrund(convertedDokumentGrund);
 
 		final JaxDokumentGrund jaxDokumentGrundToReturn = converter.dokumentGrundToJax(persistedDokumentGrund);
-
-		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.DOKUMENTE);
 
 		URI uri = uriInfo.getBaseUriBuilder()
 			.path(EinkommensverschlechterungInfoResource.class)
