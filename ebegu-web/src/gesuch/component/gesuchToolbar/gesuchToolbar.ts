@@ -268,14 +268,15 @@ export class GesuchToolbarController {
     }
 
     public antragMutieren(): void {
-        this.gesuchRS.antragMutieren(this.gesuchid).then((response) => {
-            this.goToOpenGesuch(response.id);
-            this.mutierenPossibleForCurrentAntrag = false;
-            // this.antragTypList[this.antragList.length] = response.typ;
-            let antragDTO = new TSAntragDTO();
-            antragDTO.antragTyp = TSAntragTyp.MUTATION;
-            let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, response.eingangsdatum);
-            this.antragTypList[txt] = antragDTO;
-        });
+        this.$state.go('gesuch.mutation', {gesuchId: this.gesuchid});
+        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation
+        //     // this.goToOpenGesuch(response.id);
+        //     // this.mutierenPossibleForCurrentAntrag = false;
+        //     // // this.antragTypList[this.antragList.length] = response.typ;
+        //     // let antragDTO = new TSAntragDTO();
+        //     // antragDTO.antragTyp = TSAntragTyp.MUTATION;
+        //     // let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, response.eingangsdatum);
+        //     // this.antragTypList[txt] = antragDTO;
+        // });
     }
 }

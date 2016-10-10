@@ -408,16 +408,16 @@ public class JaxBConverter {
 		jaxGesuchsteller.setTelefonAusland(persistedGesuchsteller.getTelefonAusland());
 		jaxGesuchsteller.setZpvNumber(persistedGesuchsteller.getZpvNumber());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
-		//relationen laden
-		final Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
-		altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
-		final GesuchstellerAdresse currentWohnadr = gesuchstellerAdresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
-		jaxGesuchsteller.setWohnAdresse(gesuchstellerAdresseToJAX(currentWohnadr));
+			//relationen laden
+			final Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+			altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
+			final GesuchstellerAdresse currentWohnadr = gesuchstellerAdresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
+			jaxGesuchsteller.setWohnAdresse(gesuchstellerAdresseToJAX(currentWohnadr));
 
-		//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-		final Optional<GesuchstellerAdresse> maybeUmzugadresse = gesuchstellerAdresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
-		maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
-			.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(gesuchstellerAdresseToJAX(umzugAdr)));
+			//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
+			final Optional<GesuchstellerAdresse> maybeUmzugadresse = gesuchstellerAdresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
+			maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
+				.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(gesuchstellerAdresseToJAX(umzugAdr)));
 		// Finanzielle Situation
 		if (persistedGesuchsteller.getFinanzielleSituationContainer() != null) {
 			final JaxFinanzielleSituationContainer jaxFinanzielleSituationContainer = finanzielleSituationContainerToJAX(persistedGesuchsteller.getFinanzielleSituationContainer());
