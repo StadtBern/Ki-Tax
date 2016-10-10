@@ -80,7 +80,7 @@ export class GesuchToolbarController {
             });
         }
     }
-    
+
     public getVerantwortlicherFullName(): string {
         if (this.gesuch && this.gesuch.fall && this.gesuch.fall.verantwortlicher) {
             return this.gesuch.fall.verantwortlicher.getFullName();
@@ -235,17 +235,6 @@ export class GesuchToolbarController {
         return newest;
     }
 
-    private openGesuch(gesuch: TSGesuch): void {
-        if (gesuch) {
-            this.berechnungsManager.clear();
-
-            // TODO: Diesbezueglich gibt es Probleme in der Reihenfolge mit stateChange im KindView.ts und dem setzen des Gesuches. Siehe Task https://support.dvbern.ch/browse/EBEGU-506
-            this.gesuchModelManager.setGesuch(gesuch);
-            this.$state.go('gesuch.fallcreation');
-            this.antragMutierenPossible();
-        }
-    }
-
     private goToOpenGesuch(gesuchId: string): void {
         if (gesuchId) {
             this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
@@ -279,8 +268,8 @@ export class GesuchToolbarController {
     }
 
     public antragMutieren(): void {
-        this.gesuchRS.antragMutieren(this.gesuchModelManager.getGesuch().id).then((response) => {
-            this.openGesuch(response);
+        this.gesuchRS.antragMutieren(this.gesuchid).then((response) => {
+            this.goToOpenGesuch(response.id);
             this.mutierenPossibleForCurrentAntrag = false;
             // this.antragTypList[this.antragList.length] = response.typ;
             let antragDTO = new TSAntragDTO();

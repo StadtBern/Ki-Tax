@@ -241,9 +241,10 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 	@Test
 	public void testAntragMutieren() throws Exception {
 
-		TestDataUtil.createAndPersistBenutzer(persistence);
+		TestDataUtil.createDummyAdminAnonymous(persistence);
+
 		// Voraussetzung: Ich habe einen verfuegten Antrag
-		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
 		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId());

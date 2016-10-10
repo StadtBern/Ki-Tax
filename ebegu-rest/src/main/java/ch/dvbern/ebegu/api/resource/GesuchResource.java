@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.api.resource;
 
-import ch.dvbern.ebegu.api.converter.AntragStatusConverter;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
@@ -245,21 +244,21 @@ public class GesuchResource {
 		@Context HttpServletResponse response) {
 
 		Response resp = MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
-		Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
-		List<Gesuch> foundAntraege = searchResultPair.getRight();
+			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
+			List<Gesuch> foundAntraege = searchResultPair.getRight();
 
-		List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
-		foundAntraege.stream().forEach(gesuch -> {
-			JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
-			antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
-			antragDTOList.add(antragDTO);
-		});
-		JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
-		resultDTO.setAntragDTOs(antragDTOList);
-		PaginationDTO pagination = antragSearch.getPagination();
-		pagination.setTotalItemCount(searchResultPair.getLeft());
-		resultDTO.setPaginationDTO(pagination);
-		return Response.ok(resultDTO).build();
+			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
+			foundAntraege.stream().forEach(gesuch -> {
+				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
+				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
+				antragDTOList.add(antragDTO);
+			});
+			JaxAntragSearchresultDTO resultDTO = new JaxAntragSearchresultDTO();
+			resultDTO.setAntragDTOs(antragDTOList);
+			PaginationDTO pagination = antragSearch.getPagination();
+			pagination.setTotalItemCount(searchResultPair.getLeft());
+			resultDTO.setPaginationDTO(pagination);
+			return Response.ok(resultDTO).build();
 		});
 		return resp;
 	}
