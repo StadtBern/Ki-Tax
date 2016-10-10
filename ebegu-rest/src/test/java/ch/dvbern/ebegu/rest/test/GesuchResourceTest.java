@@ -33,7 +33,7 @@ import java.util.Iterator;
  * Testet GesuchResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class GesuchResourceTest extends AbstractEbeguRestTest {
 

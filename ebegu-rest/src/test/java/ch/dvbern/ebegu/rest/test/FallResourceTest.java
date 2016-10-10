@@ -31,7 +31,7 @@ import java.time.Month;
  * Testet FallResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class FallResourceTest extends AbstractEbeguRestTest {
 

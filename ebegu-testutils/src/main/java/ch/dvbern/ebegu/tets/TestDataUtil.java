@@ -518,11 +518,7 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		testfall.createFall(null);
-		testfall.createGesuch(eingangsdatum);
-		Gesuch gesuch = testfall.fillInGesuch();
-		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
-		return gesuch;
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 	private static void ensureFachstelleAndInstitutionsExist(Persistence<Gesuch> persistence, Gesuch gesuch) {
@@ -551,10 +547,7 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
-		testfall.createFall(null);
-		testfall.createGesuch(eingangsdatum);
-		Gesuch gesuch = testfall.fillInGesuch();
-		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
 		return gesuch;
 	}
 
@@ -565,10 +558,19 @@ public final class TestDataUtil {
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		Testfall06_BeckerNora testfall = new Testfall06_BeckerNora(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 
+		Gesuch gesuch = persistAllEntities(persistence, eingangsdatum, testfall);
+		return gesuch;
+	}
+
+	private static Gesuch persistAllEntities(Persistence<Gesuch> persistence, LocalDate eingangsdatum, AbstractTestfall testfall) {
 		testfall.createFall(null);
 		testfall.createGesuch(eingangsdatum);
+		persistence.persist(testfall.getGesuch().getFall());
+		persistence.persist(testfall.getGesuch().getGesuchsperiode());
+		persistence.persist(testfall.getGesuch());
 		Gesuch gesuch = testfall.fillInGesuch();
 		ensureFachstelleAndInstitutionsExist(persistence, gesuch);
+		gesuch = persistence.merge(gesuch);
 		return gesuch;
 	}
 

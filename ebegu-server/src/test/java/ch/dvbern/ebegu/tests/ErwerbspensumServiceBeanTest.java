@@ -27,7 +27,7 @@ import java.util.Optional;
  * Test fuer Erwerbspensum Service
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 

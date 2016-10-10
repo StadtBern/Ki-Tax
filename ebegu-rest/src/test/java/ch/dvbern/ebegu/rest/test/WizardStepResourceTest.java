@@ -27,7 +27,7 @@ import java.util.List;
  * Tests fuer WizardStepResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class WizardStepResourceTest extends AbstractEbeguRestTest {
 

@@ -27,7 +27,7 @@ import java.time.Month;
  * Testet VerfuegungResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class VerfuegungResourceTest extends AbstractEbeguRestTest {
 

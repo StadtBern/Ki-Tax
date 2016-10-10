@@ -39,7 +39,7 @@ import static org.easymock.EasyMock.*;
  * Testet BetreuungResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class DownloadResourceTest extends AbstractEbeguRestTest {
 
