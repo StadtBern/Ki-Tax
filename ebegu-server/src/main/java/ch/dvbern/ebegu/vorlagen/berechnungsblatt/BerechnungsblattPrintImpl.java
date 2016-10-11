@@ -11,10 +11,10 @@ package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 * Ersteller: zeab am: 03.10.2016
 */
 
-import java.math.BigDecimal;
-
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
+
+import java.math.BigDecimal;
 
 public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 
@@ -45,7 +45,7 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	@Override
 	public String getFamiliengroesse() {
 
-		BigDecimal value = verfuegungZeitabschnitt.getFamiliengroesse() != null ? verfuegungZeitabschnitt.getFamiliengroesse() : BigDecimal.ZERO;
+		BigDecimal value = verfuegungZeitabschnitt.getFamGroesse() != null ? verfuegungZeitabschnitt.getFamGroesse() : BigDecimal.ZERO;
 		if (value.compareTo(BigDecimal.valueOf(value.intValue())) > 0) {
 			value = value.setScale(1, BigDecimal.ROUND_DOWN);
 			return value.toString();
@@ -63,6 +63,6 @@ public class BerechnungsblattPrintImpl implements BerechnungsblattPrint {
 	@Override
 	public BigDecimal getMassgebendesEinkommenNachAbzugFamgr() {
 
-		return verfuegungZeitabschnitt.getMassgebendesEinkommenNachAbzugFamgr();
+		return verfuegungZeitabschnitt.getMassgebendesEinkommen();
 	}
 }

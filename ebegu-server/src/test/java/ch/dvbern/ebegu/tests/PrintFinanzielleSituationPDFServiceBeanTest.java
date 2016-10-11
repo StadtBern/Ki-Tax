@@ -1,21 +1,5 @@
 package ch.dvbern.ebegu.tests;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.persistence.UsingDataSet;
-import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
@@ -82,6 +66,8 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
 		writeToTempDir(bytes, "finanzielleSituation1G.pdf");
@@ -95,7 +81,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
-		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiAaregg());
 		Testfall02_FeutzYvonne testfall = new Testfall02_FeutzYvonne(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
 		testfall.createFall(null);
 		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
@@ -107,6 +93,8 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller2(), new BigDecimal("30000"), false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
+
+		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 		Assert.assertNotNull(bytes);
@@ -123,14 +111,15 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaBruennen());
 		Testfall01_WaeltiDagmar testfall = new Testfall01_WaeltiDagmar(TestDataUtil.createGesuchsperiode1617(), institutionStammdatenList);
-		Gesuch gesuch = testfall.createGesuch();
+		testfall.createFall(null);
+		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
+		Gesuch gesuch = testfall.fillInGesuch();
 
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("50000"), false);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 
 		TestDataUtil.calculateFinanzDaten(gesuch);
-
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 
 		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
