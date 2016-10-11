@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ import java.util.Optional;
  * Test fuer Erwerbspensum Service
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 
@@ -53,7 +54,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
 		ewpCont.setGesuchsteller(gesuchsteller);
 
-		erwerbspensumService.saveErwerbspensum(ewpCont);
+		erwerbspensumService.saveErwerbspensum(ewpCont, TestDataUtil.createDefaultGesuch());
 		Collection<ErwerbspensumContainer> allErwerbspensenenContainer = erwerbspensumService.getAllErwerbspensenenContainer();
 		Assert.assertEquals(1, allErwerbspensenenContainer.size());
 		Optional<ErwerbspensumContainer> storedContainer = erwerbspensumService.findErwerbspensum(ewpCont.getId());
@@ -73,13 +74,13 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		changedData.setGueltigkeit(new DateRange(LocalDate.now(), LocalDate.now().plusDays(80)));
 		erwPenCont.setErwerbspensumGS(changedData);
 
-		ErwerbspensumContainer updatedCont = erwerbspensumService.saveErwerbspensum(erwPenCont);
+		ErwerbspensumContainer updatedCont = erwerbspensumService.saveErwerbspensum(erwPenCont, TestDataUtil.createDefaultGesuch());
 		Assert.assertEquals(LocalDate.now(), updatedCont.getErwerbspensumGS().getGueltigkeit().getGueltigAb());
 	}
 
 	@Test
 	public void findErwerbspensenFromGesuch() {
-		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		//Creates another Erwerbspensum that won't be loaded since it doesn't belong to the gesuch
 		Erwerbspensum erwerbspensumData = TestDataUtil.createErwerbspensumData();
@@ -88,7 +89,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ErwerbspensumContainer ewpCont = TestDataUtil.createErwerbspensumContainer();
 		ewpCont.setErwerbspensumGS(erwerbspensumData);
 		ewpCont.setGesuchsteller(gesuchsteller1);
-		erwerbspensumService.saveErwerbspensum(ewpCont);
+		erwerbspensumService.saveErwerbspensum(ewpCont, TestDataUtil.createDefaultGesuch());
 
 		Collection<ErwerbspensumContainer> erwerbspensenFromGesuch = erwerbspensumService.findErwerbspensenFromGesuch(gesuch.getId());
 
@@ -105,7 +106,7 @@ public class ErwerbspensumServiceBeanTest extends AbstractEbeguTest {
 		ErwerbspensumContainer insertedEwpCont = insertNewEntity();
 		Assert.assertEquals(1, erwerbspensumService.getAllErwerbspensenenContainer().size());
 
-		erwerbspensumService.removeErwerbspensum(insertedEwpCont.getId());
+		erwerbspensumService.removeErwerbspensum(insertedEwpCont.getId(), TestDataUtil.createDefaultGesuch());
 		Assert.assertEquals(0, erwerbspensumService.getAllErwerbspensenenContainer().size());
 	}
 

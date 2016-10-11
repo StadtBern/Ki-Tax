@@ -3,6 +3,7 @@ import BerechnungsManager from '../service/berechnungsManager';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
+import IPromise = angular.IPromise;
 
 export default class AbstractGesuchViewController {
 
@@ -25,4 +26,11 @@ export default class AbstractGesuchViewController {
         return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
     }
 
+    public getGesuchId(): string {
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().id;
+        } else {
+            return '';
+        }
+    }
 }

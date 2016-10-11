@@ -2,14 +2,12 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
 import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
-import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -41,12 +39,12 @@ public class Familiensituation extends AbstractEntity {
 		this.familienstatus = that.getFamilienstatus();
 		this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
 		this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
-		this.setId(that.getId());
-		this.setTimestampErstellt(that.getTimestampErstellt());
-		this.setTimestampMutiert(that.getTimestampMutiert());
-		this.setUserErstellt(that.getUserErstellt());
-		this.setUserMutiert(that.getUserMutiert());
-		this.setVersion(that.getVersion());
+//		this.setId(that.getId());
+//		this.setTimestampErstellt(that.getTimestampErstellt());
+//		this.setTimestampMutiert(that.getTimestampMutiert());
+//		this.setUserErstellt(that.getUserErstellt());
+//		this.setUserMutiert(that.getUserMutiert());
+//		this.setVersion(that.getVersion());
 	}
 
 	@Nonnull
@@ -76,17 +74,18 @@ public class Familiensituation extends AbstractEntity {
 	}
 
 	@Transient
-	public boolean hasSecondGesuchsteller(){
-		switch (this.familienstatus){
-			case ALLEINERZIEHEND:
-			case WENIGER_FUENF_JAHRE:
-				return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
-			case VERHEIRATET:
-			case KONKUBINAT:
-			case LAENGER_FUENF_JAHRE:
-				return true;
+	public boolean hasSecondGesuchsteller() {
+		if (this.familienstatus != null) {
+			switch (this.familienstatus){
+				case ALLEINERZIEHEND:
+				case WENIGER_FUENF_JAHRE:
+					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
+				case VERHEIRATET:
+				case KONKUBINAT:
+				case LAENGER_FUENF_JAHRE:
+					return true;
+			}
 		}
-		//wir sollten hier nie hinkommen
 		return false;
 	}
 }

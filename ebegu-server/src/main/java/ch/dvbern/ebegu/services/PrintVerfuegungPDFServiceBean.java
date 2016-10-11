@@ -48,38 +48,37 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
 		List<byte[]> result = new ArrayList<>();
-
-		try {
-
-			for (KindContainer kindContainer : gesuch.getKindContainers()) {
-				for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-					// Pro Betreuung ein Dokument
-					result.add(printVerfuegungForBetreuung(betreuung));
-				}
-			}
-		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("printVerfuegungen()",
-				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
-		}
+        for (KindContainer kindContainer : gesuch.getKindContainers()) {
+            for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+                // Pro Betreuung ein Dokument
+                result.add(printVerfuegungForBetreuung(betreuung));
+            }
+        }
 		return result;
 	}
 
 	@Nonnull
 	@Override
-	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException {
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException {
 		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
+		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
+		String defaultVorlagePathFromBetreuungsangebottyp = getDefaultVorlagePathFromBetreuungsangebottyp(betreuung);
 		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-			gueltigkeit.getGueltigBis(), getVorlageFromBetreuungsangebottyp(betreuung), getDefaultVorlagePathFromBetreuungsangebottyp(betreuung));
+			gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp, defaultVorlagePathFromBetreuungsangebottyp);
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 
-		final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME
-			.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung))));
-
-		is.close();
-
-		return bytes;
+		try {
+			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung));
+			byte[] document = docxME.getDocument(is, mergeSource);
+			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
+			is.close();
+			return bytes;
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("printVerfuegungen()",
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
+		}
 	}
 
 	/**

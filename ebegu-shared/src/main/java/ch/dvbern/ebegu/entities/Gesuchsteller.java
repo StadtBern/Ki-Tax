@@ -72,6 +72,32 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@NotNull
 	private boolean diplomatenstatus;
 
+
+	public Gesuchsteller() {
+	}
+
+	public Gesuchsteller(@Nonnull Gesuchsteller toCopy) {
+		super(toCopy);
+		this.mail = toCopy.mail;
+		this.mobile = toCopy.mobile;
+		this.telefon = toCopy.telefon;
+		this.telefonAusland = toCopy.telefonAusland;
+		this.zpvNumber = toCopy.zpvNumber;
+		if (toCopy.finanzielleSituationContainer != null) {
+			this.finanzielleSituationContainer = new FinanzielleSituationContainer(toCopy.finanzielleSituationContainer, this);
+		}
+		if (toCopy.einkommensverschlechterungContainer != null) {
+			this.einkommensverschlechterungContainer = new EinkommensverschlechterungContainer(toCopy.einkommensverschlechterungContainer, this);
+		}
+		for (ErwerbspensumContainer erwerbspensumContainer : toCopy.erwerbspensenContainers) {
+			this.addErwerbspensumContainer(new ErwerbspensumContainer(erwerbspensumContainer, this));
+		}
+		for (GesuchstellerAdresse gesuchstellerAdresse : toCopy.adressen) {
+			this.addAdresse(new GesuchstellerAdresse(gesuchstellerAdresse, this));
+		}
+		this.diplomatenstatus = toCopy.diplomatenstatus;
+	}
+
 	public boolean addAdresse(@Nonnull final GesuchstellerAdresse gesuchstellerAdresse) {
 		gesuchstellerAdresse.setGesuchsteller(this);
 		return !adressen.contains(gesuchstellerAdresse) && adressen.add(gesuchstellerAdresse);

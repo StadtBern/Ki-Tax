@@ -1,7 +1,9 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -27,12 +29,29 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	private Persistence<Familiensituation> persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+	@Inject
+	private GesuchstellerService gesuchstellerService;
+	@Inject
+	private WizardStepService wizardStepService;
 
 	@Nonnull
 	@Override
-	public Familiensituation saveFamiliensituation(@Nonnull Familiensituation familiensituation) {
+	public Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldData, @Nonnull Familiensituation familiensituation) {
 		Objects.requireNonNull(familiensituation);
-		return persistence.merge(familiensituation);
+		final Familiensituation mergedFamiliensituation = persistence.merge(familiensituation);
+
+		gesuch.setFamiliensituation(mergedFamiliensituation);
+
+		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
+		if (isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation)) {
+			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
+			gesuch.setGesuchsteller2(null);
+		}
+
+		wizardStepService.updateSteps(gesuch.getId(), oldData,
+			mergedFamiliensituation, WizardStepName.FAMILIENSITUATION);
+
+		return mergedFamiliensituation;
 	}
 
 	@Nonnull
@@ -56,6 +75,15 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 		Optional<Familiensituation> familiensituationToRemove = findFamiliensituation(familiensituation.getId());
 		familiensituationToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, familiensituation));
 		persistence.remove(familiensituationToRemove.get());
+	}
+
+	/**
+	 * Wenn die neue Familiensituation nur 1GS hat und der zweite GS schon existiert, wird dieser
+	 * und seine Daten endgueltig geloescht
+	 * @return
+	 */
+	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation) {
+		return gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 }

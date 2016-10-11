@@ -25,13 +25,15 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Iterator;
 
 /**
  * Testet GesuchResource
  */
 @RunWith(Arquillian.class)
-@UsingDataSet("datasets/empty.xml")
+@UsingDataSet("datasets/mandant-dataset.xml")
 @Transactional(TransactionMode.DISABLED)
 public class GesuchResourceTest extends AbstractEbeguRestTest {
 
@@ -53,7 +55,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testFindGesuchForInstitution() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_INSTITUTION,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution(),
@@ -81,7 +83,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testFindGesuchForTraegerschaft() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, null,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
@@ -110,7 +112,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testFindGesuchForOtherRole() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		persistUser(UserRole.GESUCHSTELLER, null,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());
@@ -132,7 +134,7 @@ public class GesuchResourceTest extends AbstractEbeguRestTest {
 
 	@Test
 	public void testUpdateStatus() throws EbeguException {
-		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence);
+		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		persistUser(UserRole.GESUCHSTELLER, null,
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getTraegerschaft(),
 			gesuch.getKindContainers().iterator().next().getBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution().getMandant());

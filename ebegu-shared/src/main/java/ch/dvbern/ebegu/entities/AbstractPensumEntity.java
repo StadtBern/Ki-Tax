@@ -25,6 +25,14 @@ public class AbstractPensumEntity extends AbstractDateRangedEntity {
 	@Column(nullable = false)
 	private Integer pensum;
 
+	public AbstractPensumEntity() {
+	}
+
+	public AbstractPensumEntity(@Nonnull AbstractPensumEntity toCopy) {
+		super(toCopy);
+		this.pensum = toCopy.pensum;
+	}
+
 	@Nonnull
 	public Integer getPensum() {
 		return pensum;

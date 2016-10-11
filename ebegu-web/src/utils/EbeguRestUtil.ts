@@ -1121,6 +1121,7 @@ export default class EbeguRestUtil {
         restPendenz.institutionen = pendenz.institutionen;
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
+        restPendenz.verfuegt = pendenz.verfuegt;
         return restPendenz;
     }
 
@@ -1137,6 +1138,7 @@ export default class EbeguRestUtil {
         pendenzTS.institutionen = pendenzFromServer.institutionen;
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;
+        pendenzTS.verfuegt = pendenzFromServer.verfuegt;
         return pendenzTS;
     }
 
@@ -1392,6 +1394,7 @@ export default class EbeguRestUtil {
             zeitabschnitt.erwerbspensumGS2 = zeitabschnittTS.erwerbspensumGS2;
             zeitabschnitt.fachstellenpensum = zeitabschnittTS.fachstellenpensum;
             zeitabschnitt.massgebendesEinkommenVorAbzugFamgr = zeitabschnittTS.massgebendesEinkommenVorAbzugFamgr;
+            zeitabschnitt.famGroesse = zeitabschnittTS.famGroesse;
             zeitabschnitt.status = zeitabschnittTS.status;
             zeitabschnitt.vollkosten = zeitabschnittTS.vollkosten;
             return zeitabschnitt;
@@ -1414,6 +1417,7 @@ export default class EbeguRestUtil {
             verfuegungZeitabschnittTS.erwerbspensumGS2 = zeitabschnittFromServer.erwerbspensumGS2;
             verfuegungZeitabschnittTS.fachstellenpensum = zeitabschnittFromServer.fachstellenpensum;
             verfuegungZeitabschnittTS.massgebendesEinkommenVorAbzugFamgr = zeitabschnittFromServer.massgebendesEinkommenVorAbzugFamgr;
+            verfuegungZeitabschnittTS.famGroesse = zeitabschnittFromServer.famGroesse;
             verfuegungZeitabschnittTS.status = zeitabschnittFromServer.status;
             verfuegungZeitabschnittTS.vollkosten = zeitabschnittFromServer.vollkosten;
             return verfuegungZeitabschnittTS;

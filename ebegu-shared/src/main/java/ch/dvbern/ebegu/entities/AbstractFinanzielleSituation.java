@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Column;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -50,6 +51,21 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 
 	@Column(nullable = true)
 	private BigDecimal geleisteteAlimente;
+
+	public AbstractFinanzielleSituation() {
+	}
+
+	public AbstractFinanzielleSituation(@Nonnull AbstractFinanzielleSituation toCopy) {
+		this.steuerveranlagungErhalten = toCopy.steuerveranlagungErhalten;
+		this.steuererklaerungAusgefuellt = toCopy.steuererklaerungAusgefuellt;
+		this.familienzulage = toCopy.familienzulage;
+		this.ersatzeinkommen = toCopy.ersatzeinkommen;
+		this.erhalteneAlimente = toCopy.erhalteneAlimente;
+		this.bruttovermoegen = toCopy.bruttovermoegen;
+		this.schulden = toCopy.schulden;
+		this.geschaeftsgewinnBasisjahr = toCopy.geschaeftsgewinnBasisjahr;
+		this.geleisteteAlimente = toCopy.geleisteteAlimente;
+	}
 
 	public abstract BigDecimal getNettolohn();
 

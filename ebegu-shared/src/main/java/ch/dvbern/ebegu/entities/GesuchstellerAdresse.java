@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -32,6 +33,12 @@ public class GesuchstellerAdresse extends Adresse {
 	public GesuchstellerAdresse() {
 	}
 
+	public GesuchstellerAdresse(@Nonnull GesuchstellerAdresse toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		super(toCopy);
+		this.adresseTyp = toCopy.adresseTyp;
+		this.gesuchsteller = gesuchsteller;
+		this.nichtInGemeinde = toCopy.nichtInGemeinde;
+	}
 
 	public AdresseTyp getAdresseTyp() {
 		return adresseTyp;

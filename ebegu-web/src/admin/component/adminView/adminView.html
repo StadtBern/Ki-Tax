@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties"  st-delay="20"
+                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" st-delay="20"
                        class="table table-striped">
                     <thead>
                     <tr>
@@ -31,7 +31,8 @@
                         <td ng-bind="row.value"></td>
                         <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td>
-                            <dv-loading-button type="button" button-click="vm.removeRow(row)" button-class="btn btn-sm btn-danger">
+                            <dv-loading-button type="button" button-click="vm.removeRow(row)"
+                                               button-class="btn btn-sm btn-danger">
                                 <i class="fa fa-trash-o">
                                 </i>
                             </dv-loading-button>
@@ -43,8 +44,9 @@
             </div>
         </div>
 
-        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate ng-if="vm.applicationProperty"
-        unsaved-warning-form>
+        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
+              ng-if="vm.applicationProperty"
+              unsaved-warning-form>
             <div class="row" style="margin-top: 20px">
                 <div class="col-md-6">
                     <div class="form-group top5">
@@ -84,6 +86,44 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <div class="col-md-10 col-md-offset-2">
+        <h3>
+            <span data-translate="TESTFAELLE_EINFUEGEN"></span>
+        </h3>
+        <ul>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('1')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Dagmar Wälti"></span>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('2')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Yvonne Feutz"></span>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('3')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Marcia Perreira"></span>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('4')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Laura Walther"></span>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('5')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Mereth Lueti"></span>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-link btn-testfall" ng-click="vm.createTestFall('6')">
+                    <span data-translate="TESTFALL_ERSTELLEN" data-translate-value-gsname="Nora Becker"></span>
+                </button>
+            </li>
+        </ul>
     </div>
 
 </div>

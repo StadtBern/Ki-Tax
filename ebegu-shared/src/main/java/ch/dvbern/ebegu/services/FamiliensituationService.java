@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -13,11 +14,13 @@ public interface FamiliensituationService {
 
 	/**
 	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
-	 * @param familiensituation die Familiensituation als DTO
-	 * @return Die aktualisierte Familiensituation
+	 *
+	 * @param gesuch
+	 * @param oldData
+	 *@param familiensituation die Familiensituation als DTO  @return Die aktualisierte Familiensituation
 	 */
 	@Nonnull
-	Familiensituation saveFamiliensituation(@Nonnull Familiensituation familiensituation);
+	Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldData, @Nonnull Familiensituation familiensituation);
 
 	/**
 	 *

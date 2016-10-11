@@ -5,19 +5,20 @@
         <div class="md-toolbar-tools">
 
             <!--Fall und Name des Gesuchs-->
-            <span ng-bind="vm.getGesuchName()" class=" toolbar-gesuchname"></span>
+            <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
 
-            <!--Gesuchsperioden-->
             <md-menu-bar>
+
+                <!--Gesuchsperioden-->
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getCurrentGesuchsperiode()}}">
-                        <span ng-bind="vm.getCurrentGesuchsperiode()"></span>
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
+                        <span ng-bind="vmx.getCurrentGesuchsperiode()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
                     </md-button>
                     <md-menu-content class="toolbar-submenu">
-                        <md-menu-item ng-repeat="gesuchsperiodeString in vm.getKeys(vm.gesuchsperiodeList)"
+                        <md-menu-item ng-repeat="gesuchsperiodeString in vmx.getKeys(vmx.gesuchsperiodeList)"
                                       ng-value="gesuchsperiodeString">
-                            <md-button ng-click="vm.setGesuchsperiode(gesuchsperiodeString)"
+                            <md-button ng-click="vmx.setGesuchsperiode(gesuchsperiodeString)"
                                        aria-label="{{gesuchsperiodeString}}">
                                 <span>
                                     <a class="toolbar-submenu-a" href="javascript:void(0)">{{gesuchsperiodeString}}</a>
@@ -26,19 +27,17 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <!--Gesuchstyp-->
-            <md-menu-bar>
+                <!--Gesuchstyp-->
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getAntragTyp()}}">
-                        <span ng-bind="vm.getAntragTyp()"></span>
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getAntragTyp()}}">
+                        <span ng-bind="vmx.getAntragTyp()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
                     </md-button>
                     <md-menu-content class="toolbar-submenu">
-                        <md-menu-item ng-repeat="antragTypDatum in vm.getKeys(vm.antragTypList)"
+                        <md-menu-item ng-repeat="antragTypDatum in vmx.getKeys(vmx.antragTypList)"
                                       ng-value="antragTypDatum">
-                            <md-button ng-click="vm.setAntragTypDatum(antragTypDatum)" aria-label="{{antragTypDatum}}">
+                            <md-button ng-click="vmx.setAntragTypDatum(antragTypDatum)" aria-label="{{antragTypDatum}}">
                                 <span>
                                     <a class="toolbar-submenu-a" href="javascript:void(0)">{{antragTypDatum}}</a>
                                 </span>
@@ -46,51 +45,53 @@
                         </md-menu-item>
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <span flex=""></span>
+                <span flex=""></span>
 
-            <!--Kontakt-->
-            <md-menu-bar>
+                <!-- Mutieren -->
+                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </md-button>
+
+                 <!--Kontakt-->
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getCurrentGesuchsperiode()}}">
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <i class="ellipsis-icon fa fa-envelope"></i>
                         <span data-translate="TOOLBAR_KONTAKT"></span>
                     </md-button>
                     <md-menu-content class="toolbar-submenu">
-                        <span class="toolbar-adress" ng-bind="vm.getGesuch().gesuchsteller1.getFullName()"></span>
-                        <span class="toolbar-adress" ng-bind="vm.getGesuch().gesuchsteller1.mail"></span>
-                        <span class="toolbar-adress" ng-bind="vm.getGesuch().gesuchsteller1.getPhone()"></span>
+                        <span class="toolbar-adress" ng-bind="vmx.getGesuch().gesuchsteller1.getFullName()"></span>
+                        <span class="toolbar-adress" ng-bind="vmx.getGesuch().gesuchsteller1.mail"></span>
+                        <span class="toolbar-adress" ng-bind="vmx.getGesuch().gesuchsteller1.getPhone()"></span>
 
-                        <span ng-if="vm.getGesuch().gesuchsteller2" class="toolbar-adress marginTop20"
-                              ng-bind="vm.getGesuch().gesuchsteller2.getFullName()"></span>
-                        <span ng-if="vm.getGesuch().gesuchsteller2" class="toolbar-adress"
-                              ng-bind="vm.getGesuch().gesuchsteller2.mail"></span>
-                        <span ng-if="vm.getGesuch().gesuchsteller2" class="toolbar-adress"
-                              ng-bind="vm.getGesuch().gesuchsteller2.getPhone()"></span>
+                        <span ng-if="vmx.getGesuch().gesuchsteller2" class="toolbar-adress marginTop20"
+                              ng-bind="vmx.getGesuch().gesuchsteller2.getFullName()"></span>
+                        <span ng-if="vmx.getGesuch().gesuchsteller2" class="toolbar-adress"
+                              ng-bind="vmx.getGesuch().gesuchsteller2.mail"></span>
+                        <span ng-if="vmx.getGesuch().gesuchsteller2" class="toolbar-adress"
+                              ng-bind="vmx.getGesuch().gesuchsteller2.getPhone()"></span>
 
 
                     </md-menu-content>
                 </md-menu>
-            </md-menu-bar>
 
-            <md-menu-bar>
+                <!-- Verantwortlichen zuteilen -->
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getVerantwortlicherFullName()}}">
+                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getVerantwortlicherFullName()}}">
                         <i class="fa fa-user" aria-hidden="true" style="margin-right: 2px"></i>
-                        <span ng-bind="vm.getVerantwortlicherFullName()"></span>
+                        <span ng-bind="vmx.getVerantwortlicherFullName()"></span>
                         <i class="ellipsis-icon fa fa-ellipsis-v"></i>
                     </md-button>
                     <md-menu-content class="toolbar-submenu">
                         <md-menu-item class="toolbar-submenu-item">
                             <span data-translate="VERANTWORTLICH_UPPER"></span>
                         </md-menu-item>
-                        <md-menu-item ng-repeat="user in vm.userList | orderBy: 'getFullName()'"
+                        <md-menu-item ng-repeat="user in vmx.userList | orderBy: 'getFullName()'"
                                       ng-value="user.username">
-                            <md-button ng-click="vm.setVerantwortlicher(user)" aria-label="{{user.username}}">
+                            <md-button ng-click="vmx.setVerantwortlicher(user)" aria-label="{{user.username}}">
                                 <span>
                                     <a class="toolbar-submenu-a" href="javascript:void(0)">{{user.getFullName()}}</a>
-                                    <i ng-if="vm.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"
+                                    <i ng-if="vmx.isCurrentVerantwortlicher(user)" class="fa fa-user" aria-hidden="true"
                                        style="float:right; margin-top:5px"></i>
 
                                 </span>

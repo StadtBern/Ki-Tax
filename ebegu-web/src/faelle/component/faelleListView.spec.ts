@@ -72,17 +72,13 @@ describe('faelleListeView', function () {
             it('should call findGesuch and open the view gesuch.fallcreation with it for normal user', function () {
                 let tsGesuch = callEditFall('findGesuch');
 
-                expect(gesuchRS.findGesuch).toHaveBeenCalledWith(mockAntrag.antragId);
-                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation');
-                expect(gesuchModelManager.getGesuch()).toBe(tsGesuch);
+                expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
+
             });
             it('should call findGesuch and open the view gesuch.verfuegen with it for INST/TRAEGER user', function () {
                 spyOn(authServiceRS, 'isRole').and.returnValue(true);
                 let tsGesuch = callEditFall('findGesuchForInstitution');
-
-                expect(gesuchRS.findGesuchForInstitution).toHaveBeenCalledWith(mockAntrag.antragId);
-                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen');
-                expect(gesuchModelManager.getGesuch()).toBe(tsGesuch);
+                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
             });
         });
     });

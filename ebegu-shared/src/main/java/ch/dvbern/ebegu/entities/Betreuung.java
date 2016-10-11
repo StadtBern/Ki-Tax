@@ -9,6 +9,7 @@ import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -68,7 +69,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	private Integer betreuungNummer = 1;
 
 	@Valid
-	@OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(optional = true, cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_verfuegung_id"), nullable = true, unique = true)
 	private Verfuegung verfuegung;
 
@@ -88,6 +89,26 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	@Column(nullable = true)
 	private LocalDate datumBestaetigung;
 
+
+	public Betreuung() {
+	}
+
+
+	public Betreuung(@Nonnull Betreuung toCopy, @Nonnull KindContainer kindContainer) {
+		this.kind = kindContainer;
+		this.institutionStammdaten = toCopy.institutionStammdaten;
+		this.betreuungsstatus = toCopy.betreuungsstatus;
+		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
+			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
+		}
+		this.grundAblehnung = toCopy.grundAblehnung;
+		this.betreuungNummer = toCopy.betreuungNummer;
+		this.verfuegung = null; //TODO (team) Wir verfuegen ja die Mutation neu, oder?
+		this.vertrag = toCopy.vertrag;
+		this.erweiterteBeduerfnisse = toCopy.erweiterteBeduerfnisse;
+		this.datumAblehnung = toCopy.datumAblehnung;
+		this.datumBestaetigung = toCopy.datumBestaetigung;
+	}
 
 	public KindContainer getKind() {
 		return kind;

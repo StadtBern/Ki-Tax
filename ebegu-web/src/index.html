@@ -13,12 +13,17 @@
 
 <div id="Intro" class="logo-bern">
 
-    <dv-pulldown-user-menu></dv-pulldown-user-menu>
+    <dv-pulldown-user-menu dv-show-element
+                           dv-show-allowed-roles="['SCHULAMT', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT',
+                           'SACHBEARBEITER_JA', 'ADMIN' ]"></dv-pulldown-user-menu>
+    <dv-user-name dv-show-element
+                  dv-show-allowed-roles="['GESUCHSTELLER']"></dv-user-name>
 
     <p class="logo-text">E-BEGU</p>
 </div>
 
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top" dv-show-element
+     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -33,25 +38,28 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active"><a href="#">Home</a></li>
-                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER']">
+                <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER']">
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
                 </li>
-                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
+                <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
                     <a ui-sref="pendenzenInstitution" data-translate="MENU_PENDENZEN_INSTITUTION"></a>
                 </li>
-                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER']">
-                    <a ui-sref="gesuch.fallcreation({createNew: true})" data-translate="MENU_FALL_EROEFFNEN"></a>
+                <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER']">
+                    <a ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null})"
+                       data-translate="MENU_FALL_EROEFFNEN"></a>
                 </li>
-                <li ui-sref-active="active" dv-show-element dv-show-allowed-roles="[ 'ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
-                      <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
-                  </li>
+                <li ui-sref-active="active" dv-show-element
+                    dv-show-allowed-roles="[ 'ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
+                    <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
+                </li>
                 <li ui-sref-active="active"><a href="#contact">Kontakt</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
-    <md-progress-linear md-mode="indeterminate" dv-loading></md-progress-linear>
 </nav>
-
 
 
 <div class="container-fluid">
@@ -61,8 +69,9 @@
             <dvb-error-messages-panel></dvb-error-messages-panel>
         </div>
     </div>
-    <div id="content" class="row" >
+    <div id="content" class="row">
 
+        <md-progress-linear class="dv-progressbar" dv-loading md-mode="indeterminate"></md-progress-linear>
         <div ui-view class="col-md-12"></div>
     </div>
 </div>
