@@ -94,6 +94,11 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		return initialFamAbzugList;
 	}
 
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return true;
+	}
+
 	private BigDecimal getAbzugFamGroesse(Gesuch gesuch, double familiengroesse) {
 		return gesuch.getGesuchsperiode() == null ? BigDecimal.ZERO :
 			calculateAbzugAufgrundFamiliengroesse(familiengroesse);
@@ -158,6 +163,6 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 
 		// Ein Bigdecimal darf nicht aus einem double erzeugt werden, da das Ergebnis nicht genau die gegebene Nummer waere
 		// deswegen muss man hier familiengroesse als String uebergeben. Sonst bekommen wir PMD rule AvoidDecimalLiteralsInBigDecimalConstructor
-		return new BigDecimal(String.valueOf(familiengroesse)).multiply(abzugFromServer);
+		return MathUtil.GANZZAHL.from(new BigDecimal(String.valueOf(familiengroesse)).multiply(abzugFromServer));
 	}
 }
