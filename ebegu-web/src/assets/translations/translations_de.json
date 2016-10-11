@@ -28,6 +28,7 @@
     "ERROR_EMAIL": "Keine gültige Email ",
     "ERROR_FORMAT": "Falsches Format",
     "ERROR_DATE": "Falsches Datums Format",
+    "ERROR_MINDESTENS_EIN_WERT": "Es muss mindestens ein Mutationsbereich gewählt werden",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",

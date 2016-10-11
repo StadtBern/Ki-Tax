@@ -98,4 +98,16 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
+    public isMutationFeldRequired(): boolean {
+        return !(this.getMutationsdaten().mutationFamiliensituation
+                || this.getMutationsdaten().mutationGesuchsteller
+                || this.getMutationsdaten().mutationUmzug
+                || this.getMutationsdaten().mutationKind
+                || this.getMutationsdaten().mutationBetreuung
+                || this.getMutationsdaten().mutationAbwesenheit
+                || this.getMutationsdaten().mutationErwerbspensum
+                || this.getMutationsdaten().mutationFinanzielleSituation
+                || this.getMutationsdaten().mutationEinkommensverschlechterung);
+    }
+
 }

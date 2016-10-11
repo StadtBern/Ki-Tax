@@ -55,19 +55,26 @@
 
                 <p class="inlineHint" data-translate="MUTATION_AUSWAHL_TEXT"></p>
 
+                <!--<dv-error-messages ng-if="form.mutationEinkommensverschlechterung.$error"-->
+                                   <!--class="error"></dv-error-messages>-->
+                <div class="dv-error-messages">
+                    <div ng-messages="form.mutationEinkommensverschlechterung.$error" role="alert">
+                        <div ng-message="required" data-translate="ERROR_MINDESTENS_EIN_WERT"></div>
+                    </div>
+                </div>
+
                 <!--Familiensituation checkbox-->
                 <div class="row marginTop20">
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationFamiliensituation" name="mutationFamiliensituation"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationFamiliensituation" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_FAMSITUATION"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationFamiliensituation.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -78,13 +85,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationGesuchsteller" name="mutationGesuchsteller"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationGesuchsteller" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_GESUCHSTELLER"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationGesuchsteller.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -95,13 +101,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationUmzug" name="mutationUmzug"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationUmzug" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_UMZUG"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationUmzug.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -112,13 +117,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationKind" name="mutationKind"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationKind" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_KIND"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationKind.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -129,13 +133,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationBetreuung" name="mutationBetreuung"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationBetreuung" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_BETREUUNGEN"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationBetreuung.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -146,13 +149,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationAbwesenheit" name="mutationAbwesenheit"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationAbwesenheit" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_ABWESENHEIT"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationAbwesenheit.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -163,13 +165,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationErwerbspensum" name="mutationErwerbspensum"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationErwerbspensum" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_ERWERBSPENSUM"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationErwerbspensum.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -180,13 +181,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationFinanzielleSituation" name="mutationFinanzielleSituation"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationFinanzielleSituation" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_FINANZIELLESITUATION"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationFinanzielleSituation.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
@@ -197,13 +197,12 @@
                         <div class="form-group">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.getMutationsdaten().mutationEinkommensverschlechterung" name="mutationEinkommensverschlechterung"
+                                             ng-required="vm.isMutationFeldRequired()"
                                              aria-label="mutationEinkommensverschlechterung" dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                     <span data-translate="MUTATION_AUSWAHL_EINKOMMENSVERSCHLECHTERUNG"></span>
                                 </md-checkbox>
-                                <dv-error-messages for="form.mutationEinkommensverschlechterung.$error"
-                                                   class="error"></dv-error-messages>
                             </div>
                         </div>
                     </div>
