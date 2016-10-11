@@ -81,7 +81,7 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
+		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch(), true);
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -107,7 +107,7 @@ public class GesuchResource {
 
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
-		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB, false);
 		//only if status has changed
 		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
@@ -243,12 +243,12 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) {
 
-		Response resp = MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
+		return MonitoringUtil.monitor(GesuchResource.class, "searchAntraege", () -> {
 			Pair<Long, List<Gesuch>> searchResultPair = gesuchService.searchAntraege(antragSearch);
 			List<Gesuch> foundAntraege = searchResultPair.getRight();
 
 			List<JaxAntragDTO> antragDTOList = new ArrayList<>(foundAntraege.size());
-			foundAntraege.stream().forEach(gesuch -> {
+			foundAntraege.forEach(gesuch -> {
 				JaxAntragDTO antragDTO = converter.gesuchToAntragDTO(gesuch);
 				antragDTO.setFamilienName(gesuch.extractFamiliennamenString());
 				antragDTOList.add(antragDTO);
@@ -260,7 +260,6 @@ public class GesuchResource {
 			resultDTO.setPaginationDTO(pagination);
 			return Response.ok(resultDTO).build();
 		});
-		return resp;
 	}
 
 	/**

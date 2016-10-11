@@ -7,6 +7,7 @@ import ErrorService from '../../../core/errors/service/ErrorService';
 import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSMutationsdaten from '../../../models/TSMutationsdaten';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./fallCreationView.html');
@@ -88,6 +89,13 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         } else {
             return this.$translate.instant('ART_DER_MUTATION');
         }
+    }
+
+    public getMutationsdaten(): TSMutationsdaten {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().mutationsdaten;
+        }
+        return undefined;
     }
 
 }

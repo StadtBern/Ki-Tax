@@ -49,7 +49,8 @@
                 <span flex=""></span>
 
                 <!-- Mutieren -->
-                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag">
+                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
+                           aria-label="{{TOOLBAR_MUTIEREN | translate}}">
                     <span data-translate="TOOLBAR_MUTIEREN"></span>
                 </md-button>
 
