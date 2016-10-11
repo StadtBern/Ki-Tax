@@ -478,6 +478,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.gesuch.typ = TSAntragTyp.GESUCH; // by default ist es ein Erstgesuch
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
             this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();

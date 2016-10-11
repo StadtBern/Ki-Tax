@@ -390,9 +390,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			Gesuch gesuchForMutation = criteriaResults.get(0);
 			Gesuch mutation = new Gesuch(gesuchForMutation);
+			setAllFieldsForMutation(mutation);
 			return Optional.of(mutation);
 		}
 		return Optional.empty();
+	}
+
+	/**
+	 * Diese Methode setzt alle benoetigten Werte fuer eine Mutation.
+	 * @param mutation
+	 */
+	private void setAllFieldsForMutation(Gesuch mutation) {
+		mutation.setEingangsdatum(null); // das Eingangsdatum muss null sein, sonst wird das alte kopiert
+		mutation.setMutationsdaten(new Mutationsdaten()); // neue leere Mutationsdaten
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {

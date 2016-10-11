@@ -43,5 +43,6 @@
 	<entity class="ch.dvbern.ebegu.entities.EbeguVorlage"/>
 	<entity class="ch.dvbern.ebegu.entities.Vorlage"/>
 	<entity class="ch.dvbern.ebegu.entities.GeneratedDokument"/>
+	<entity class="ch.dvbern.ebegu.entities.Mutationsdaten"/>
 
 </entity-mappings>

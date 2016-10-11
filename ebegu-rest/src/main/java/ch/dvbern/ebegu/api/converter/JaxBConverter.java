@@ -568,6 +568,9 @@ public class JaxBConverter {
 		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
 		jaxGesuch.setStatus(AntragStatusConverterUtil.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
 		jaxGesuch.setTyp(persistedGesuch.getTyp());
+		if (persistedGesuch.getMutationsdaten() != null) {
+			jaxGesuch.setMutationsdaten(mutationsdatenToJAX(persistedGesuch.getMutationsdaten()));
+		}
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
@@ -586,6 +589,20 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 
 		return jaxGesuch;
+	}
+
+	private JaxMutationsdaten mutationsdatenToJAX(Mutationsdaten persistedMutationsdaten) {
+		final JaxMutationsdaten mutationsdaten = new JaxMutationsdaten();
+		mutationsdaten.setMutationFamiliensituation(persistedMutationsdaten.getMutationFamiliensituation());
+		mutationsdaten.setMutationGesuchsteller(persistedMutationsdaten.getMutationGesuchsteller());
+		mutationsdaten.setMutationUmzug(persistedMutationsdaten.getMutationUmzug());
+		mutationsdaten.setMutationKind(persistedMutationsdaten.getMutationKind());
+		mutationsdaten.setMutationBetreuung(persistedMutationsdaten.getMutationBetreuung());
+		mutationsdaten.setMutationAbwesenheit(persistedMutationsdaten.getMutationAbwesenheit());
+		mutationsdaten.setMutationErwerbspensum(persistedMutationsdaten.getMutationErwerbspensum());
+		mutationsdaten.setMutationFinanzielleSituation(persistedMutationsdaten.getMutationFinanzielleSituation());
+		mutationsdaten.setMutationEinkommensverschlechterung(persistedMutationsdaten.getMutationEinkommensverschlechterung());
+		return mutationsdaten;
 	}
 
 	public JaxMandant mandantToJAX(@Nonnull final Mandant persistedMandant) {

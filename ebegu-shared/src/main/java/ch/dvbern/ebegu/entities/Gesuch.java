@@ -87,6 +87,11 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
+	private Mutationsdaten mutationsdaten;
+
 
 	public Gesuch() {
 	}
@@ -98,6 +103,9 @@ public class Gesuch extends AbstractEntity {
 		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
 		this.setTyp(AntragTyp.MUTATION);
 
+		if (toCopy.getMutationsdaten() != null) {
+			this.setMutationsdaten(new Mutationsdaten(this.getMutationsdaten(), this));
+		}
 		if (toCopy.getGesuchsteller1() != null) {
 			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
 		}
@@ -230,6 +238,15 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setTyp(AntragTyp typ) {
 		this.typ = typ;
+	}
+
+	@Nullable
+	public Mutationsdaten getMutationsdaten() {
+		return mutationsdaten;
+	}
+
+	public void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
+		this.mutationsdaten = mutationsdaten;
 	}
 
 	@SuppressWarnings("ObjectEquality")

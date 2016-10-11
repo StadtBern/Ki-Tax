@@ -22,15 +22,6 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
-    familiensituationSelected: boolean;
-    stammdatenGSSelected: boolean;
-    umzugSelected: boolean;
-    kindSelected: boolean;
-    betreuungSelected: boolean;
-    abwesenheitSelected: boolean;
-    erwerbspensumSelected: boolean;
-    finanzielleSituationSelected: boolean;
-    einkommensverschlechterungSelected: boolean;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
         'WizardStepManager', '$translate'];
