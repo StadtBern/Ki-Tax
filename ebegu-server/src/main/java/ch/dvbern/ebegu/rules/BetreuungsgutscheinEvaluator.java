@@ -39,6 +39,44 @@ public class BetreuungsgutscheinEvaluator {
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
+	/**
+	 *  Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
+	 */
+	public Verfuegung evaluateFamiliensituation(Gesuch gesuch) {
+
+		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
+		if (gesuch.getFinanzDatenDTO() == null) {
+			throw new IllegalStateException("Bitte zuerst die Finanzberechnung ausführen! -> FinanzielleSituationRechner.calculateFinanzDaten()");
+		}
+		List<Rule> rulesToRun = findRulesToRunForPeriode(gesuch.getGesuchsperiode());
+
+		// Fuer die Familiensituation ist die Betreuung nicht relevant. Wir brauchen aber eine, da die Signatur der Rules
+		// mit Betreuungen funktioniert. Wir nehmen einfach die erste von irgendeinem Kind, das heisst ohne betreuung koennen wir nicht berechnen
+		Betreuung firstBetreuungOfGesuch = getFirstBetreuungOfGesuch(gesuch);
+
+
+		// Die Initialen Zeitabschnitte erstellen (1 pro Gesuchsperiode)
+		List<VerfuegungZeitabschnitt> zeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
+
+		if (firstBetreuungOfGesuch != null) {
+			for (Rule rule : rulesToRun) {
+				// Nur ausgewaehlte Rules verwenden
+				if (rule.isRelevantForFamiliensituation()) {
+					zeitabschnitte = rule.calculate(firstBetreuungOfGesuch, zeitabschnitte);
+				}
+			}
+			// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
+			zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte);
+		} else{
+			LOG.warn("Keine Betreuung vorhanden kann Familiengroesse und Abzuege nicht berechnen");
+		}
+
+		// Eine neue (nirgends angehaengte) Verfügung erstellen
+		Verfuegung verfuegung = new Verfuegung();
+		verfuegung.setZeitabschnitte(zeitabschnitte);
+		return verfuegung;
+	}
+
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
@@ -129,5 +167,14 @@ public class BetreuungsgutscheinEvaluator {
 		initialerRestanspruch.setAnspruchspensumRest(-1); // Damit wir erkennen, ob schon einmal ein "Rest" durch eine Rule gesetzt wurde
 		restanspruchZeitabschnitte.add(initialerRestanspruch);
 		return restanspruchZeitabschnitte;
+	}
+
+	private Betreuung getFirstBetreuungOfGesuch(Gesuch gesuch) {
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				return betreuung;
+			}
+		}
+		return null;
 	}
 }
