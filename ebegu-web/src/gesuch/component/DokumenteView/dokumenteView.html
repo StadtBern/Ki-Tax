@@ -1,72 +1,73 @@
-<div class="dokumente row">
-    <div class="col-md-12">
+<div class="dokumente gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <span data-translate="DOK_HINT_DOKUMENTE"> </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
 
 
-        <br/>
-        <span data-translate="DOK_HINT_DOKUMENTE"> </span>
-        <br/>
-        <br/>
+                <dv-dokumente-list dokumente="vm.dokumenteFamSit" class="row" table-id="dokumenteFamSit"
+                                   table-title="DOK_FAMILIENSITUATION" title-value=""
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFamSit)">
+                </dv-dokumente-list>
 
-        <form role="form" name="form" class="" unsaved-warning-form="" novalidate>
+                <dv-dokumente-list dokumente="vm.dokumenteKinder" table-id="dokumenteKinder"
+                                   table-title="DOK_KINDER"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteKinder)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteKinder)">
+                </dv-dokumente-list>
 
+                <dv-dokumente-list dokumente="vm.dokumenteFinSit" table-id="dokumenteFinSit"
+                                   table-title="DOK_FINANZIELLE_SITUATION"
+                                   title-value="vm.gesuchModelManager.getBasisjahr()"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFinSit)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFinSit)">
+                </dv-dokumente-list>
 
-            <dv-dokumente-list dokumente="vm.dokumenteFamSit" table-id="dokumenteFamSit"
-                               table-title="DOK_FAMILIENSITUATION" title-value=""
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFamSit)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFamSit)">
-            </dv-dokumente-list>
+                <dv-dokumente-list dokumente="vm.dokumenteErwp" table-id="dokumenteErwp"
+                                   table-title="DOK_ERWERBSPENSUM"
+                                   tag="DOK_TAETIGKEIT"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteErwp)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteErwp)">
+                </dv-dokumente-list>
 
-            <dv-dokumente-list dokumente="vm.dokumenteKinder" table-id="dokumenteKinder"
-                               table-title="DOK_KINDER"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteKinder)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteKinder)">
-            </dv-dokumente-list>
-
-            <dv-dokumente-list dokumente="vm.dokumenteFinSit" table-id="dokumenteFinSit"
-                               table-title="DOK_FINANZIELLE_SITUATION"
-                               title-value="vm.gesuchModelManager.getBasisjahr()"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFinSit)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteFinSit)">
-            </dv-dokumente-list>
-
-            <dv-dokumente-list dokumente="vm.dokumenteErwp" table-id="dokumenteErwp"
-                               table-title="DOK_ERWERBSPENSUM"
-                               tag="DOK_TAETIGKEIT"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteErwp)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteErwp)">
-            </dv-dokumente-list>
-
-            <dv-dokumente-list dokumente="vm.dokumenteEkv" table-id="dokumenteEkv"
-                               table-title="EKVI_EINKOMMENSVERSCHLECHTERUNG"
-                               tag="DOK_JAHR"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteEkv)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
-            </dv-dokumente-list>
+                <dv-dokumente-list dokumente="vm.dokumenteEkv" table-id="dokumenteEkv"
+                                   table-title="EKVI_EINKOMMENSVERSCHLECHTERUNG"
+                                   tag="DOK_JAHR"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteEkv)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument, vm.dokumenteEkv)">
+                </dv-dokumente-list>
 
 
-            <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
-                               table-title="DOK_SONSTIGES"
-                               on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
-                               on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)"
-                               sonstige="true">
-            </dv-dokumente-list>
-
-
-            <div dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
-                <dv-dokumente-list dokumente="vm.dokumentePapiergesuch" table-id="dokumentePapiergesuch"
-                                   table-title="DOK_PAPIERGESUCH"
-                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumentePapiergesuch)"
-                                   on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumentePapiergesuch)"
+                <dv-dokumente-list dokumente="vm.dokumenteSonst" table-id="dokumenteSonst"
+                                   table-title="DOK_SONSTIGES"
+                                   on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteSonst)"
+                                   on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumenteSonst)"
                                    sonstige="true">
                 </dv-dokumente-list>
-            </div>
 
-            <!-- -------------------------------------------Navigation--------------------------------------------  -->
-            <dv-navigation dv-previous="true" dv-next="true">
-            </dv-navigation>
 
-        </form>
+                <div dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
+                    <dv-dokumente-list dokumente="vm.dokumentePapiergesuch" table-id="dokumentePapiergesuch"
+                                       table-title="DOK_PAPIERGESUCH"
+                                       on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumentePapiergesuch)"
+                                       on-remove="vm.removeDokument(dokumentGrund, dokument,  vm.dokumentePapiergesuch)"
+                                       sonstige="true">
+                    </dv-dokumente-list>
+                </div>
 
+                <!-- -------------------------------------------Navigation--------------------------------------------  -->
+                <dv-navigation dv-previous="true" dv-next="true">
+                </dv-navigation>
+
+            </form>
+
+        </div>
     </div>
 
 </div>

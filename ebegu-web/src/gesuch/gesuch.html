@@ -1,15 +1,16 @@
 <div class="row">
-
-    <gesuch-toolbar gesuchid="{{vm.getGesuchId()}}" on-verantwortlicher-change="vm.setVerantwortlicher(user)"
+    <gesuch-toolbar class="fixedToolbar" gesuchid="{{vm.getGesuchId()}}"
+                    on-verantwortlicher-change="vm.setVerantwortlicher(user)"
                     dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()">
     </gesuch-toolbar>
 
     <gesuch-toolbar-gesuchsteller class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
                                   dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']">
     </gesuch-toolbar-gesuchsteller>
-
-    <div class="col-md-3 sidenav">
-        <div class="row sidenav gesuch-status marginTop20" ng-cloak>
+</div>
+<div class="row">
+    <div id="sidenavContainer">
+        <div class="sidenav gesuch-status marginTop20" ng-cloak>
             <span class="status" ng-bind="vm.getGesuchStatusTranslation()"></span>
             <br>
             <span class="zuletzt" data-translate="ZULETZT_BEARBEITER"
@@ -18,7 +19,8 @@
 
         <ul class="sidenav marginTop20">
 
-            <li ui-sref-active="active" ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
+            <li ui-sref-active="active" class="row"
+                ng-class="{'active-element': vm.isElementActive('GESUCH_ERSTELLEN')}"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
 
                 <button type="button" class="col-md-10 btn btn-link"
@@ -31,7 +33,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('FAMILIENSITUATION')}"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('FAMILIENSITUATION')}"
                 ui-sref-active="active" ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.familiensituation({gesuchId: vm.getGesuchId()})"
@@ -41,7 +43,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('GESUCHSTELLER')}" ui-sref-active="active">
+            <li class="row" ng-class="{'active-element': vm.isElementActive('GESUCHSTELLER')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.stammdaten({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('GESUCHSTELLER')">
@@ -50,7 +52,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.kinder({gesuchId: vm.getGesuchId()})"
@@ -60,7 +62,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('KINDER')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('BETREUUNG')}" ui-sref-active="active">
+            <li class="row" ng-class="{'active-element': vm.isElementActive('BETREUUNG')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.betreuungen({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('BETREUUNG')">
@@ -69,7 +71,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.erwerbsPensen({gesuchId: vm.getGesuchId()})"
@@ -79,7 +81,8 @@
                 <span class="col-md-2 ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}"
+                ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]"
                 dv-show-expression="vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link"
@@ -90,7 +93,8 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}"
+                ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]"
                 dv-show-expression="!vm.showFinanzsituationStart()">
                 <button type="button" class="col-md-10 btn btn-link"
@@ -101,7 +105,8 @@
                 <span class="col-md-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}"
+                ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.einkommensverschlechterungInfo({gesuchId: vm.getGesuchId()})"
@@ -111,7 +116,7 @@
                 <span class="col-md-2 ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('DOKUMENTE')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('DOKUMENTE')}" ui-sref-active="active"
                 dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.dokumente({gesuchId: vm.getGesuchId()})"
@@ -121,14 +126,15 @@
                 <span class="col-md-2 ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true"></span>
             </li>
 
-            <li dv-show-element dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
+            <li class="row" dv-show-element
+                dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-md-10 btn btn-link"
                         ng-disabled="true">
                     <span data-translate="MENU_FREIGABEQUITTUNG"></span>
                 </button>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('VERFUEGEN')}" ui-sref-active="active">
+            <li class="row" ng-class="{'active-element': vm.isElementActive('VERFUEGEN')}" ui-sref-active="active">
                 <button type="button" class="col-md-10 btn btn-link"
                         ui-sref="gesuch.verfuegen({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('VERFUEGEN')">
@@ -138,22 +144,17 @@
             </li>
 
         </ul>
-    </div>
 
-    <div class="col-md-9">
-        <div class="row gesuchbody">
+    </div>
+    <div id="gesuchContainer">
             <!--linke Seite zum ausfüllen des Formulars-->
-            <div ui-view="gesuchViewPort" class=" col-md-7"></div>
-
-            <!--rechte Seite für Kommentare und Papiergesuch öffnen-->
-            <div class="col-md-4 col-md-offset-1 right-side"
-                 dv-show-element
-                 dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.STEUERAMT ,vm.TSRole.SCHULAMT]">
-                <div ui-view="kommentarViewPort"></div>
+        <div ui-view="gesuchViewPort">
             </div>
-
-        </div>
     </div>
-
-
+    <!--rechte Seite für Kommentare und Papiergesuch öffnen-->
+    <div id="kommentarContainer"
+         dv-show-element
+         dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.STEUERAMT ,vm.TSRole.SCHULAMT]">
+        <div ui-view="kommentarViewPort"></div>
+    </div>
 </div>
