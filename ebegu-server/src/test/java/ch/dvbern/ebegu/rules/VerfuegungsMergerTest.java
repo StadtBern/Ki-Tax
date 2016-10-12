@@ -245,9 +245,9 @@ public class VerfuegungsMergerTest {
 		Betreuung mutierteBetreuung = prepareData(MathUtil.DEFAULT.from(50000), BetreuungsangebotTyp.KITA, 100);
 		List<VerfuegungZeitabschnitt> zabetrMutiert = EbeguRuleTestsHelper.calculate(mutierteBetreuung);
 		mutierteBetreuung.extractGesuch().setEingangsdatum(eingangsdatumMuation);
-		final List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
+		List<VerfuegungZeitabschnitt> verfuegungsZeitabschnitteMutiert = monatsRule.createVerfuegungsZeitabschnitte(mutierteBetreuung, zabetrMutiert);
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, START_PERIODE, 80);
-		splitUpAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 100);
+		verfuegungsZeitabschnitteMutiert = splitUpAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum, 100);
 		setzeAnsprechberechtigtesPensumAbDatum(verfuegungsZeitabschnitteMutiert, aenderungsDatumPensum.withDayOfMonth(aenderungsDatumPensum.lengthOfMonth()).plusDays(1), 100);
 
 		// Erstgesuch Gesuch vorbereiten
@@ -263,16 +263,15 @@ public class VerfuegungsMergerTest {
 		// mergen
 		List<VerfuegungZeitabschnitt> zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(mutierteBetreuung, verfuegungsZeitabschnitteMutiert, erstgesuch);
 
-
 		//ueberprüfen
 		Assert.assertNotNull(zeitabschnitte);
-		Assert.assertEquals(12, zeitabschnitte.size());
+		Assert.assertEquals(13, zeitabschnitte.size());
 		checkAllBefore(zeitabschnitte, aenderungsDatumPensum, 80);
 		checkAllAfter(zeitabschnitte, aenderungsDatumPensum, 100);
 
 	}
 
-	private List<VerfuegungZeitabschnitt> splitUpAnsprechberechtigtesPensumAbDatum(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate aenderungsDatumPensum, int i) {
+	private List<VerfuegungZeitabschnitt> splitUpAnsprechberechtigtesPensumAbDatum(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate aenderungsDatumPensum, int ansprechberechtigtesPensum) {
 
 		List<VerfuegungZeitabschnitt> zeitabschnitteSplitted = new ArrayList<VerfuegungZeitabschnitt>();
 		zeitabschnitte.stream().
@@ -281,8 +280,14 @@ public class VerfuegungsMergerTest {
 
 		VerfuegungZeitabschnitt zeitabschnitToSplit = zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().contains(aenderungsDatumPensum)).findFirst().get();
-		VerfuegungZeitabschnitt zeitabschnitSplit1 = new VerfuegungZeitabschnitt();
+		VerfuegungZeitabschnitt zeitabschnitSplit1 = new VerfuegungZeitabschnitt(zeitabschnitToSplit);
+		zeitabschnitSplit1.getGueltigkeit().setGueltigBis(aenderungsDatumPensum.minusDays(1));
+		zeitabschnitteSplitted.add(zeitabschnitSplit1);
 
+		VerfuegungZeitabschnitt zeitabschnitSplit2 = new VerfuegungZeitabschnitt(zeitabschnitToSplit);
+		zeitabschnitSplit2.getGueltigkeit().setGueltigAb(aenderungsDatumPensum);
+		zeitabschnitSplit2.setAnspruchberechtigtesPensum(ansprechberechtigtesPensum);
+		zeitabschnitteSplitted.add(zeitabschnitSplit2);
 
 		zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().startsAfter(aenderungsDatumPensum)).
