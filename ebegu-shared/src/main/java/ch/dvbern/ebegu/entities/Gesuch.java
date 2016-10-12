@@ -247,6 +247,9 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
 		this.mutationsdaten = mutationsdaten;
+//		if (this.mutationsdaten != null) {
+//			this.mutationsdaten.setGesuch(this);
+//		}
 	}
 
 	@SuppressWarnings("ObjectEquality")

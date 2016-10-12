@@ -17,8 +17,8 @@ public class Mutationsdaten extends AbstractEntity {
 	private static final long serialVersionUID = -8403487439819600618L;
 
 
-	@OneToOne(optional = true, mappedBy = "mutationsdaten")
-	private Gesuch gesuch;
+//	@OneToOne(optional = false, mappedBy = "mutationsdaten")
+//	private Gesuch gesuch;
 
 	@Column(nullable = true)
 	private Boolean mutationFamiliensituation;
@@ -51,7 +51,7 @@ public class Mutationsdaten extends AbstractEntity {
 	public Mutationsdaten() {}
 
 	public Mutationsdaten(@NotNull Mutationsdaten toCopy, final Gesuch gesuch) {
-		this.setGesuch(gesuch);
+//		this.setGesuch(gesuch);
 		this.setMutationFamiliensituation(toCopy.getMutationFamiliensituation());
 		this.setMutationGesuchsteller(toCopy.getMutationGesuchsteller());
 		this.setMutationUmzug(toCopy.getMutationUmzug());
@@ -63,13 +63,13 @@ public class Mutationsdaten extends AbstractEntity {
 		this.setMutationEinkommensverschlechterung(toCopy.getMutationEinkommensverschlechterung());
 	}
 
-	public Gesuch getGesuch() {
-		return gesuch;
-	}
-
-	public final void setGesuch(Gesuch gesuch) {
-		this.gesuch = gesuch;
-	}
+//	public Gesuch getGesuch() {
+//		return gesuch;
+//	}
+//
+//	public final void setGesuch(Gesuch gesuch) {
+//		this.gesuch = gesuch;
+//	}
 
 	public Boolean getMutationFamiliensituation() {
 		return mutationFamiliensituation;
