@@ -145,16 +145,16 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		filterDTO.getSort().setReverse(true);     //aufsteigend
 		//nach fallnummer geordnete liste
 		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesuche = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesuche.get(0).getId());
-		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(4).getId());
 		//genau anders rum ordnen
 		filterDTO.getSort().setReverse(false); //absteigend
 		resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesucheReversed = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesucheReversed.get(0).getId());
 
 	}
 

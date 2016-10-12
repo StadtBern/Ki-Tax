@@ -97,7 +97,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return persistence.getCriteriaResults(query);
 	}
 
-	@Nonnull
 	@Override
 	public void removeGesuch(@Nonnull Gesuch gesuch) {
 		Validate.notNull(gesuch);
@@ -106,6 +105,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.remove(gesuchToRemove.get());
 	}
 
+	@Nonnull
 	@Override
 	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -169,10 +169,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
 		Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
 		Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
-		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.INNER);
-		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.INNER);
-		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.INNER);
-		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution);
+		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
+		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
+		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 
 		//prepare predicates
 		List<Expression<Boolean>> predicates = new ArrayList<>();
@@ -188,7 +188,15 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				break;
 			case SACHBEARBEITER_JA:
 			case JURIST:
-				predicates.add(cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
+				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+				Predicate predicateKeineKinder = kindContainers.isNull();
+				Predicate predicateKeineBetreuungen = betreuungen.isNull();
+				Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
+				Predicate predicateKeineInstitution = institution.isNull();
+				Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+				Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
+				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 				break;
 			case SACHBEARBEITER_TRAEGERSCHAFT:
 				predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
@@ -408,8 +416,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 			Root<Gesuch> root = query.from(Gesuch.class);
 			Predicate predicate = root.get(Gesuch_.id).in(gesuchIds);
-			Fetch<Gesuch, KindContainer> kindContainers = root.fetch(Gesuch_.kindContainers, JoinType.INNER);
-			kindContainers.fetch(KindContainer_.betreuungen, JoinType.INNER);
+			Fetch<Gesuch, KindContainer> kindContainers = root.fetch(Gesuch_.kindContainers, JoinType.LEFT);
+			kindContainers.fetch(KindContainer_.betreuungen, JoinType.LEFT);
 			query.where(predicate);
 			//reduce to unique gesuche
 			List<Gesuch> listWithDuplicates = persistence.getCriteriaResults(query);
