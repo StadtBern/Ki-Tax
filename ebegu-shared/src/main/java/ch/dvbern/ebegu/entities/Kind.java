@@ -115,4 +115,5 @@ public class Kind extends AbstractPersonEntity {
 	public void setEinschulung(@Nullable Boolean einschulung) {
 		this.einschulung = einschulung;
 	}
+
 }

@@ -223,7 +223,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getGesuchsperiodeString() != null) {
 				String[] years = predicateObjectDto.getGesuchsperiodeString().split("/");
-				if(years.length != 2){
+				if (years.length != 2) {
 					throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + predicateObjectDto.getGesuchsperiodeString());
 				}
 				predicates.add(
@@ -276,8 +276,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					int firstIndex = antragTableFilterDto.getPagination().getStart();
 					Integer maxresults = antragTableFilterDto.getPagination().getNumber();
 					List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
-					pagedResult  = findGesuche(orderedIdsToLoad);
-				} else{
+					pagedResult = findGesuche(orderedIdsToLoad);
+				} else {
 					pagedResult = findGesuche(gesuchIds);
 				}
 				result = new ImmutablePair<>(null, pagedResult);
@@ -370,34 +370,44 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 
-			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
 
-			Root<Gesuch> root = query.from(Gesuch.class);
-			Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
-			Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-			Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.get().getGesuchsperiode());
-			Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
-			Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.get().getFall());
-
-			query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
-			query.select(root);
-			query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
-			List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
-			if (criteriaResults.isEmpty()) {
-				return Optional.empty();
+			if (gesuchForMutation.isPresent()) {
+				Gesuch mutation = new Gesuch(gesuchForMutation.get());
+				return Optional.of(mutation);
 			}
-			Gesuch gesuchForMutation = criteriaResults.get(0);
-			Gesuch mutation = new Gesuch(gesuchForMutation);
-			return Optional.of(mutation);
 		}
 		return Optional.empty();
 	}
 
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.getGesuchsperiode());
+		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.getFall());
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+		query.select(root);
+		query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.of(criteriaResults.get(0));
+	}
+
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
 		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
-		int lastindex =  Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
+		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
 		return uniqueGesuchIds.subList(startindex, lastindex);
 	}
 

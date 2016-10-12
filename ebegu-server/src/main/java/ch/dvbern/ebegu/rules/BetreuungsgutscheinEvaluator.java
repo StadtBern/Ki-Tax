@@ -26,20 +26,26 @@ public class BetreuungsgutscheinEvaluator {
 
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
+	private VerfuegungsMerger verfuegungsMerger = new VerfuegungsMerger();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;
 	}
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules, boolean enableDebugOutput) {
-			this.rules = rules;
-			this.isDebug = enableDebugOutput;
-		}
+		this.rules = rules;
+		this.isDebug = enableDebugOutput;
+	}
 
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO) {
+		evaluate(gesuch, bgRechnerParameterDTO, null);
+	}
+
+
+	public void evaluate(Gesuch gesuch, BGRechnerParameterDTO bgRechnerParameterDTO, Gesuch gesuchForMutaion) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
 		if (gesuch.getFinanzDatenDTO() == null) {
@@ -67,12 +73,12 @@ public class BetreuungsgutscheinEvaluator {
 				}
 
 				// Die Initialen Zeitabschnitte sind die "Restansprüche" aus der letzten Betreuung
-                List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
+				List<VerfuegungZeitabschnitt> zeitabschnitte = restanspruchZeitabschnitte;
 				if (isDebug) {
 					LOG.info("BG-Nummer: " + betreuung.getBGNummer());
 				}
-                for (Rule rule : rulesToRun) {
-                    zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
+				for (Rule rule : rulesToRun) {
+					zeitabschnitte = rule.calculate(betreuung, zeitabschnitte);
 					if (isDebug) {
 						LOG.info(rule.getClass().getSimpleName() + " (" + rule.getRuleKey().name() + ": " + rule.getRuleType().name() + ")");
 						for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : zeitabschnitte) {
@@ -80,11 +86,14 @@ public class BetreuungsgutscheinEvaluator {
 						}
 					}
 				}
-                // Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
+				// Nach der Abhandlung dieser Betreuung die Restansprüche für die nächste Betreuung extrahieren
 				restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
 				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
+
+				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
+				zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutaion);
 
 				// Die Verfügung erstellen
 				if (betreuung.getVerfuegung() == null) {
@@ -115,7 +124,7 @@ public class BetreuungsgutscheinEvaluator {
 		for (Rule rule : rules) {
 			if (rule.isValid(gesuchsperiode.getGueltigkeit().getGueltigAb())) {
 				rulesForGesuchsperiode.add(rule);
-			} else{
+			} else {
 				LOG.debug("Rule did not aply to Gesuchsperiode " + rule);
 
 			}
