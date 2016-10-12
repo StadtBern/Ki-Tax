@@ -23,6 +23,9 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
+    // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
+    // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
+    showError: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
         'WizardStepManager', '$translate'];
@@ -41,6 +44,10 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         }
     }
 
+    public setShowError(showError: boolean): void {
+        this.showError = showError;
+    }
+
     private initViewModel(): void {
         this.gesuchModelManager.initGesuch(this.createNewParam);
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
@@ -53,6 +60,7 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     }
 
     save(form: angular.IFormController): IPromise<any> {
+        this.showError = true;
         if (form.$valid) {
             this.errorService.clearAll();
             return this.gesuchModelManager.saveGesuchAndFall();

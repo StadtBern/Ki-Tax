@@ -107,7 +107,7 @@ form {
 
     }
     // style der den Hintergrund der inputs on-blur Rot markiert wenn nicht valid
-    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid {
+    .form-control.ng-invalid, .input-element.ng-invalid, md-radio-group.ng-invalid, :not(md-checkbox.input-element.ng-invalid) {
         &.ng-touched {
             .ErrorInput
         }
