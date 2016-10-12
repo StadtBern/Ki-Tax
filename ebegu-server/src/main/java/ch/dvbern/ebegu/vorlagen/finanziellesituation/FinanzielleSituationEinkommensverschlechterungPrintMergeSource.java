@@ -11,19 +11,19 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import java.util.List;
-
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
+
+import java.util.List;
 
 public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements MergeSource {
 
 	private BerechnungsgrundlagenInformationPrint berechnung;
 
 	/**
-	 * @param berechnungsgrundlagenFinanziellenSituationPrint
+	 * @param berechnung
 	 */
 	public FinanzielleSituationEinkommensverschlechterungPrintMergeSource(BerechnungsgrundlagenInformationPrint berechnung) {
 		this.berechnung = berechnung;
@@ -52,7 +52,7 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 		if (subkey.equalsIgnoreCase("berechnung")) {
 			return new BeanMergeSource(berechnung, "berechnung.").whileStatement(mergeContext, key);
 		}
-		if (subkey.toString().equalsIgnoreCase("berechnungsblaetter")) {
+		if (subkey.equalsIgnoreCase("berechnungsblaetter")) {
 			return new BeanMergeSource(berechnung, "berechnungsblaetter.").whileStatement(mergeContext, key);
 		}
 		return null;

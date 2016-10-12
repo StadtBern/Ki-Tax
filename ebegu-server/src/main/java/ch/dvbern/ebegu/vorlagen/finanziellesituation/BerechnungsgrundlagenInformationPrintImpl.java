@@ -11,21 +11,16 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
 import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrintImpl;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -126,7 +121,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public List<BerechnungsblattPrint> getBerechnungsblatt() {
 
 		List<BerechnungsblattPrint> result = new ArrayList<>();
-		for (KindContainer kindContainer : gesuch.getKindContainers())
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				Optional<Verfuegung> verfuegung = extractVerfuegung(betreuung);
 				if (verfuegung.isPresent()) {
@@ -138,6 +133,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 				// Von jedem Kind nur eine Betreuung nehmmen
 				break;
 			}
+		}
 		return result;
 
 	}
