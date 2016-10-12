@@ -3,10 +3,12 @@ package ch.dvbern.ebegu.tests.rules;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.RuleKey;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.MathUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -79,6 +81,21 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		}
 	}
 
+	@Test
+	public void doTestEvaluationForFamiliensituation() {
+		Gesuch testgesuch = createGesuch();
+		testgesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
+		Verfuegung verfuegung = evaluator.evaluateFamiliensituation(testgesuch);
+
+		Assert.assertNotNull(verfuegung);
+		Assert.assertEquals(12, verfuegung.getZeitabschnitte().size());
+
+		Assert.assertEquals(MathUtil.EINE_NACHKOMMASTELLE.from(3d), verfuegung.getZeitabschnitte().get(0).getFamGroesse());
+		Assert.assertEquals(new BigDecimal("20000"), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommenVorAbzFamgr());
+		Assert.assertEquals(new BigDecimal("11280"), verfuegung.getZeitabschnitte().get(0).getAbzugFamGroesse());
+		Assert.assertEquals(new BigDecimal("8720"), verfuegung.getZeitabschnitte().get(0).getMassgebendesEinkommen());
+	}
+
 
 	private Gesuch createGesuch() {
 		Gesuch gesuch = new Gesuch();
@@ -93,6 +110,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.setGesuchsteller1(new Gesuchsteller());
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
+		gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getFinanzielleSituationJA().setNettolohn(MathUtil.DEFAULT.from(20000));
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(erwerbspensumGS1_1.getGueltigAb(), erwerbspensumGS1_1.getGueltigBis(), 50, 0));
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(erwerbspensumGS1_2.getGueltigAb(), erwerbspensumGS1_2.getGueltigBis(), 30, 0));
 		// GS 2
@@ -105,6 +123,7 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		betreuungKind1.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 		betreuungKind1.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(fachstelleGueltigkeit);
 		betreuungKind1.getKind().getKindJA().getPensumFachstelle().setPensum(80);
+		TestDataUtil.calculateFinanzDaten(gesuch);
 		return gesuch;
 	}
 
@@ -117,6 +136,8 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		betreuung.getKind().setKindJA(new Kind());
 		betreuung.getKind().setGesuch(gesuch);
 		betreuung.getKind().getKindJA().setGeburtsdatum(LocalDate.now().minusYears(4));
+		betreuung.getKind().getKindJA().setWohnhaftImGleichenHaushalt(100);
+		betreuung.getKind().getKindJA().setKinderabzug(Kinderabzug.GANZER_ABZUG);
 		gesuch.getKindContainers().add(betreuung.getKind());
 		betreuung.setInstitutionStammdaten(createDefaultInstitutionStammdaten());
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
