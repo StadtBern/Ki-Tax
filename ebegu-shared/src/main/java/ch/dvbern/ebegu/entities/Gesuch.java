@@ -241,11 +241,11 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
-	public Mutationsdaten getMutationsdaten() {
+	public final Mutationsdaten getMutationsdaten() {
 		return mutationsdaten;
 	}
 
-	public void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
+	public final void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
 		this.mutationsdaten = mutationsdaten;
 	}
 

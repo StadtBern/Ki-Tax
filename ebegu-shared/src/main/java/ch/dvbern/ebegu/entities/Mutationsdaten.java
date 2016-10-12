@@ -67,7 +67,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return gesuch;
 	}
 
-	public void setGesuch(Gesuch gesuch) {
+	public final void setGesuch(Gesuch gesuch) {
 		this.gesuch = gesuch;
 	}
 
@@ -75,7 +75,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationFamiliensituation;
 	}
 
-	public void setMutationFamiliensituation(Boolean mutationFamiliensituation) {
+	public final void setMutationFamiliensituation(Boolean mutationFamiliensituation) {
 		this.mutationFamiliensituation = mutationFamiliensituation;
 	}
 
@@ -83,7 +83,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationGesuchsteller;
 	}
 
-	public void setMutationGesuchsteller(Boolean mutationGesuchsteller) {
+	public final void setMutationGesuchsteller(Boolean mutationGesuchsteller) {
 		this.mutationGesuchsteller = mutationGesuchsteller;
 	}
 
@@ -91,7 +91,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationUmzug;
 	}
 
-	public void setMutationUmzug(Boolean mutationUmzug) {
+	public final void setMutationUmzug(Boolean mutationUmzug) {
 		this.mutationUmzug = mutationUmzug;
 	}
 
@@ -99,7 +99,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationKind;
 	}
 
-	public void setMutationKind(Boolean mutationKind) {
+	public final void setMutationKind(Boolean mutationKind) {
 		this.mutationKind = mutationKind;
 	}
 
@@ -107,7 +107,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationBetreuung;
 	}
 
-	public void setMutationBetreuung(Boolean mutationBetreuung) {
+	public final void setMutationBetreuung(Boolean mutationBetreuung) {
 		this.mutationBetreuung = mutationBetreuung;
 	}
 
@@ -115,7 +115,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationAbwesenheit;
 	}
 
-	public void setMutationAbwesenheit(Boolean mutationAbwesenheit) {
+	public final void setMutationAbwesenheit(Boolean mutationAbwesenheit) {
 		this.mutationAbwesenheit = mutationAbwesenheit;
 	}
 
@@ -123,7 +123,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationErwerbspensum;
 	}
 
-	public void setMutationErwerbspensum(Boolean mutationErwerbspensum) {
+	public final void setMutationErwerbspensum(Boolean mutationErwerbspensum) {
 		this.mutationErwerbspensum = mutationErwerbspensum;
 	}
 
@@ -131,7 +131,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationFinanzielleSituation;
 	}
 
-	public void setMutationFinanzielleSituation(Boolean mutationFinanzielleSituation) {
+	public final void setMutationFinanzielleSituation(Boolean mutationFinanzielleSituation) {
 		this.mutationFinanzielleSituation = mutationFinanzielleSituation;
 	}
 
@@ -139,7 +139,7 @@ public class Mutationsdaten extends AbstractEntity {
 		return mutationEinkommensverschlechterung;
 	}
 
-	public void setMutationEinkommensverschlechterung(Boolean mutationEinkommensverschlechterung) {
+	public final void setMutationEinkommensverschlechterung(Boolean mutationEinkommensverschlechterung) {
 		this.mutationEinkommensverschlechterung = mutationEinkommensverschlechterung;
 	}
 }
