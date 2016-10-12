@@ -39,6 +39,9 @@ public class BetreuungsgutscheinEvaluator {
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
+	/**
+	 *  Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
+	 */
 	public Verfuegung evaluateFamiliensituation(Gesuch gesuch) {
 
 		// Wenn diese Methode aufgerufen wird, muss die Berechnung der Finanzdaten bereits erfolgt sein:
@@ -48,7 +51,7 @@ public class BetreuungsgutscheinEvaluator {
 		List<Rule> rulesToRun = findRulesToRunForPeriode(gesuch.getGesuchsperiode());
 
 		// Fuer die Familiensituation ist die Betreuung nicht relevant. Wir brauchen aber eine, da die Signatur der Rules
-		// mit Betreuungen funktioniert. Wir nehmen einfach die erste von irgendeinem Kind
+		// mit Betreuungen funktioniert. Wir nehmen einfach die erste von irgendeinem Kind, das heisst ohne betreuung koennen wir nicht berechnen
 		Betreuung firstBetreuungOfGesuch = getFirstBetreuungOfGesuch(gesuch);
 
 
@@ -64,6 +67,8 @@ public class BetreuungsgutscheinEvaluator {
 			}
 			// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 			zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte);
+		} else{
+			LOG.warn("Keine Betreuung vorhanden kann Familiengroesse und Abzuege nicht berechnen");
 		}
 
 		// Eine neue (nirgends angehaengte) Verfügung erstellen

@@ -62,10 +62,6 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 		return einkommensAbschnitte;
 	}
 
-	@Override
-	public boolean isRelevantForFamiliensituation() {
-		return true;
-	}
 
 	private void createBemerkungEVK1(VerfuegungZeitabschnitt lastAbschnitt, FinanzDatenDTO finanzDatenDTO, Betreuung betreuung) {
 		if (finanzDatenDTO.isEKV1Accepted()) {
@@ -94,5 +90,9 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 	}
 
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return true;
+	}
 
 }

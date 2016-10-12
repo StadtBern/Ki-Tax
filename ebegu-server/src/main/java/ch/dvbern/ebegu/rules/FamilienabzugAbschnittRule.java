@@ -163,6 +163,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 
 		// Ein Bigdecimal darf nicht aus einem double erzeugt werden, da das Ergebnis nicht genau die gegebene Nummer waere
 		// deswegen muss man hier familiengroesse als String uebergeben. Sonst bekommen wir PMD rule AvoidDecimalLiteralsInBigDecimalConstructor
+		// Wir runden die Zahl ausserdem zu einer Ganzzahl weil wir fuer das Massgebende einkommen mit Ganzzahlen rechnen
 		return MathUtil.GANZZAHL.from(new BigDecimal(String.valueOf(familiengroesse)).multiply(abzugFromServer));
 	}
 }
