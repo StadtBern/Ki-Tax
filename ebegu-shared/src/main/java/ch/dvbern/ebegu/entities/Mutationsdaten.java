@@ -50,7 +50,7 @@ public class Mutationsdaten extends AbstractEntity {
 
 	public Mutationsdaten() {}
 
-	public Mutationsdaten(@NotNull Mutationsdaten toCopy, final Gesuch gesuch) {
+	public Mutationsdaten(@NotNull Mutationsdaten toCopy) {
 //		this.setGesuch(gesuch);
 		this.setMutationFamiliensituation(toCopy.getMutationFamiliensituation());
 		this.setMutationGesuchsteller(toCopy.getMutationGesuchsteller());
