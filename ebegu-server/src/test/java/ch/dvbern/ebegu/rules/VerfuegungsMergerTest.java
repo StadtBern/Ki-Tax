@@ -15,7 +15,7 @@ import java.util.*;
 
 
 /**
- * Tests fuer EinkommenAbschnittRule
+ * Tests fuer Verfügungsmuster
  */
 public class VerfuegungsMergerTest {
 

@@ -89,13 +89,4 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
-	public boolean isSame(AbstractPersonEntity that) {
-		if (this == that) {
-			return true;
-		}
-		return nachname.equals(that.nachname) &&
-			vorname.equals(that.vorname) &&
-			geschlecht.equals(that.geschlecht) &&
-			geburtsdatum.equals(that.geburtsdatum);
-	}
 }

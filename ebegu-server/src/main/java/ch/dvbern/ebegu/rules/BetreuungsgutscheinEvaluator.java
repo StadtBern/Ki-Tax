@@ -130,7 +130,7 @@ public class BetreuungsgutscheinEvaluator {
 				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 				zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte);
 
-				// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
+				// Ganz am Ende der Berechnung mergen wir das aktuelle Ergebnis mit der Verfügung des letzten Gesuches
 				zeitabschnitte = verfuegungsMerger.createVerfuegungsZeitabschnitte(betreuung, zeitabschnitte, gesuchForMutaion);
 
 				// Die Verfügung erstellen
