@@ -29,6 +29,7 @@ public class AbstractDateRangedEntity extends AbstractEntity implements Gueltigk
 	}
 
 	public AbstractDateRangedEntity(@Nonnull AbstractDateRangedEntity toCopy) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gueltigkeit = new DateRange(toCopy.gueltigkeit);
 	}
 

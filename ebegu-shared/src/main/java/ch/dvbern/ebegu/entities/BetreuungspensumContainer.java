@@ -40,6 +40,7 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	}
 
 	public BetreuungspensumContainer(@Nonnull BetreuungspensumContainer toCopy, @Nonnull Betreuung betreuung) {
+		this.setVorgaengerId(toCopy.getId());
 		this.betreuung = betreuung;
 		this.betreuungspensumGS = null;
 		this.betreuungspensumJA = new Betreuungspensum(toCopy.betreuungspensumJA);
