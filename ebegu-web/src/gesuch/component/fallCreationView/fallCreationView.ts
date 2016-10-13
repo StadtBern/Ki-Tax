@@ -8,6 +8,7 @@ import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSMutationsdaten from '../../../models/TSMutationsdaten';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
 let template = require('./fallCreationView.html');
@@ -63,7 +64,12 @@ export class FallCreationViewController extends AbstractGesuchViewController {
         this.showError = true;
         if (form.$valid) {
             this.errorService.clearAll();
-            return this.gesuchModelManager.saveGesuchAndFall();
+            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.MUTATION && this.gesuchModelManager.getGesuch().isNew()) {
+                this.berechnungsManager.clear();
+                return this.gesuchModelManager.saveMutation();
+            } else {
+                return this.gesuchModelManager.saveGesuchAndFall();
+            }
         }
         return undefined;
     }

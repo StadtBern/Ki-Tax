@@ -1816,4 +1816,18 @@ public class JaxBConverter {
 		});
 		return resultSet;
 	}
+
+	public Mutationsdaten mutationsDatenToEntity(JaxMutationsdaten jaxMutationsdaten, Mutationsdaten mutationsdaten) {
+		convertAbstractFieldsToEntity(jaxMutationsdaten, mutationsdaten);
+		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
+		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
+		mutationsdaten.setMutationUmzug(jaxMutationsdaten.getMutationUmzug());
+		mutationsdaten.setMutationKind(jaxMutationsdaten.getMutationKind());
+		mutationsdaten.setMutationBetreuung(jaxMutationsdaten.getMutationBetreuung());
+		mutationsdaten.setMutationAbwesenheit(jaxMutationsdaten.getMutationAbwesenheit());
+		mutationsdaten.setMutationErwerbspensum(jaxMutationsdaten.getMutationErwerbspensum());
+		mutationsdaten.setMutationFinanzielleSituation(jaxMutationsdaten.getMutationFinanzielleSituation());
+		mutationsdaten.setMutationEinkommensverschlechterung(jaxMutationsdaten.getMutationEinkommensverschlechterung());
+		return mutationsdaten;
+	}
 }

@@ -6,7 +6,6 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import IPromise = angular.IPromise;
-import GesuchRS from './service/gesuchRS.rest';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -88,7 +87,7 @@ export class EbeguMutationState implements IState {
     };
 
     resolve = {
-        gesuch: getMutation
+        gesuch: createEmptyMutation
     };
 }
 
@@ -467,19 +466,12 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     return $q.defer(gesuchModelManager.getGesuch());
 }
 
-getMutation.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'GesuchRS', '$stateParams', '$q'];
-/* @ngInject */
-export function getMutation(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                            wizardStepManager: WizardStepManager, gesuchRS: GesuchRS, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
-        let gesuchIdParams = $stateParams.gesuchId;
-        if (gesuchIdParams) {
-            gesuchRS.antragMutieren(gesuchIdParams).then((response : TSGesuch) => {
-                berechnungsManager.clear();
-                gesuchModelManager.setGesuch(response);
-                wizardStepManager.initWizardSteps(); // die Steps muessen zuerst hier (Client) initialisiert werden
-                return response;
-            });
+        let gesuchId = $stateParams.gesuchId;
+        if (gesuchId) {
+            gesuchModelManager.initMutation(gesuchId);
         }
     }
     return $q.defer(gesuchModelManager.getGesuch());

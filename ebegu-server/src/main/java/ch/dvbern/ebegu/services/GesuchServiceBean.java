@@ -364,7 +364,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Optional<Gesuch> antragMutieren(@Nonnull String antragId) {
+	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten,
+										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 
 		Optional<Gesuch> gesuch = findGesuch(antragId);
@@ -374,7 +375,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			if (gesuchForMutation.isPresent()) {
 				Gesuch mutation = new Gesuch(gesuchForMutation.get());
-				setAllFieldsForMutation(mutation);
+				mutation.setEingangsdatum(eingangsdatum);
+				mutation.setMutationsdaten(mutationsdaten);
+				mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
 				return Optional.of(mutation);
 			}
 		}
@@ -403,16 +406,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (criteriaResults.isEmpty()) {
 			return Optional.empty();
 		}
-		return Optional.of(criteriaResults.get(0));
-	}
 
-	/**
-	 * Diese Methode setzt alle benoetigten Werte fuer eine Mutation.
-	 * @param mutation
-	 */
-	private void setAllFieldsForMutation(Gesuch mutation) {
-		mutation.setEingangsdatum(null); // das Eingangsdatum muss null sein, sonst wird das alte kopiert
-		mutation.setMutationsdaten(new Mutationsdaten()); // neue leere Mutationsdaten
+		return Optional.of(criteriaResults.get(0));
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {

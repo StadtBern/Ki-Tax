@@ -1504,7 +1504,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
+    public mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
         if (mutationsdaten) {
             this.abstractEntityToRestObject(restMutationsdaten, mutationsdaten);
             restMutationsdaten.mutationFamiliensituation = mutationsdaten.mutationFamiliensituation;

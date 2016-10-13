@@ -247,7 +247,8 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId());
+		Mutationsdaten mutationsdaten = new Mutationsdaten();
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), mutationsdaten, LocalDate.of(1980, Month.MARCH, 25));
 
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Assert.assertEquals(AntragTyp.MUTATION, gesuchOptional.get().getTyp());
