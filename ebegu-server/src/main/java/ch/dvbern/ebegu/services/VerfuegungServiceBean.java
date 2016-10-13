@@ -53,6 +53,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
+	@Inject
+	private GesuchService gesuchService;
+
 
 	@Nonnull
 	@Override
@@ -104,7 +107,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
 		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
-		bgEvaluator.evaluate(gesuch, calculatorParameters);
+		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch);
+		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
 		return gesuch;
 	}
 
