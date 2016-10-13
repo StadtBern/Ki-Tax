@@ -1,10 +1,10 @@
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import {TSDateRange} from '../models/types/TSDateRange';
-import DateUtil from '../utils/DateUtil';
 import {EbeguWebCore} from '../core/core.module';
 import EbeguUtil from './EbeguUtil';
 import * as moment from 'moment';
 import TSFall from '../models/TSFall';
+import TestDataUtil from './TestDataUtil';
 
 describe('EbeguUtil', function () {
 
@@ -70,7 +70,7 @@ describe('EbeguUtil', function () {
         });
         it ('it returns the right ID: YY(gesuchsperiodeBegin).fallNummer.Kind.Betreuung', () => {
             let fall: TSFall = new TSFall(254);
-            let gesuchsperiode = new TSGesuchsperiode(true, new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY')));
+            let gesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
             expect(ebeguUtil.calculateBetreuungsId(gesuchsperiode, fall, 1, 1)).toBe('16.000254.1.1');
         });
     });

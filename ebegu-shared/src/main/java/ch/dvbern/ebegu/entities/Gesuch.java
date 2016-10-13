@@ -87,17 +87,26 @@ public class Gesuch extends AbstractEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
+	private Mutationsdaten mutationsdaten;
+
 
 	public Gesuch() {
 	}
 
 	public Gesuch(@Nonnull Gesuch toCopy) {
+		this.setVorgaengerId(toCopy.getId());
 		this.setFall(toCopy.getFall());
 		this.setGesuchsperiode(toCopy.getGesuchsperiode());
-		this.setEingangsdatum(LocalDate.now()); //TODO (team) dies sollte dann nicht mehr zwingend sein!
+		this.setEingangsdatum(null);
 		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
 		this.setTyp(AntragTyp.MUTATION);
 
+		if (toCopy.getMutationsdaten() != null) {
+			this.setMutationsdaten(new Mutationsdaten(this.getMutationsdaten()));
+		}
 		if (toCopy.getGesuchsteller1() != null) {
 			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
 		}
@@ -230,6 +239,18 @@ public class Gesuch extends AbstractEntity {
 
 	public final void setTyp(AntragTyp typ) {
 		this.typ = typ;
+	}
+
+	@Nullable
+	public final Mutationsdaten getMutationsdaten() {
+		return mutationsdaten;
+	}
+
+	public final void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
+		this.mutationsdaten = mutationsdaten;
+//		if (this.mutationsdaten != null) {
+//			this.mutationsdaten.setGesuch(this);
+//		}
 	}
 
 	@SuppressWarnings("ObjectEquality")

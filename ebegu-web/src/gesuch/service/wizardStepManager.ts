@@ -67,9 +67,19 @@ export default class WizardStepManager {
         this.allowedSteps = getTSWizardStepNameValues();
     }
 
+    /**
+     * Sollten keine WizardSteps gefunden werden, wird die Methode initWizardSteps aufgerufen, um die
+     * minimale Steps herzustellen.
+     * @param gesuchId
+     * @returns {IPromise<TResult>}
+     */
     public findStepsFromGesuch(gesuchId: string): IPromise<void> {
-        return this.wizardStepRS.findWizardStepsFromGesuch(gesuchId).then((response) => {
-            this.wizardSteps = response;
+        return this.wizardStepRS.findWizardStepsFromGesuch(gesuchId).then((response: Array<any>) => {
+            if (response != null && response.length > 0) {
+                this.wizardSteps = response;
+            } else {
+                this.initWizardSteps();
+            }
         });
     }
 

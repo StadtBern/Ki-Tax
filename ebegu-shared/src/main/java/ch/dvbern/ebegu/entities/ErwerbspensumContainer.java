@@ -36,6 +36,7 @@ public class ErwerbspensumContainer extends AbstractEntity {
 	}
 
 	public ErwerbspensumContainer(@Nonnull ErwerbspensumContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gesuchsteller = gesuchsteller;
 		this.erwerbspensumGS = null;
 		this.erwerbspensumJA = new Erwerbspensum(toCopy.erwerbspensumJA);

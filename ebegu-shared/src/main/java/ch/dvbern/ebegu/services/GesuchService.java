@@ -3,9 +3,11 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Mutationsdaten;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public interface GesuchService {
 	/**
 	 * Aktualisiert das Gesuch in der DB
 	 *
-	 * @param gesuch das Gesuch als DTO
+	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
 	 * @return Das aktualisierte Gesuch
 	 */
@@ -84,8 +86,14 @@ public interface GesuchService {
 
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
-	 * verfuegte Antrag kopiert fuer die Mutation.
+	 * verfuegte Antrag kopiert fuer die Mutation. Die Uebergebenen Mutationsdaten werden angehaengt
      */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
+
+	/**
+	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück
+	 */
+	@Nonnull
+	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
 }

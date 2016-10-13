@@ -133,6 +133,32 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	/**
+	 * copy Konstruktor
+	 */
+	public VerfuegungZeitabschnitt(VerfuegungZeitabschnitt other) {
+		super(other);
+		this.erwerbspensumGS1 = other.erwerbspensumGS1;
+		this.erwerbspensumGS2 = other.erwerbspensumGS2;
+		this.fachstellenpensum = other.fachstellenpensum;
+		this.zuSpaetEingereicht = other.zuSpaetEingereicht;
+		this.wohnsitzNichtInGemeindeGS1 = other.wohnsitzNichtInGemeindeGS1;
+		this.wohnsitzNichtInGemeindeGS2 = other.wohnsitzNichtInGemeindeGS2;
+		this.kindMinestalterUnterschritten = other.kindMinestalterUnterschritten;
+		this.bezahltVollkosten = other.bezahltVollkosten;
+		this.anspruchspensumRest = other.anspruchspensumRest;
+		this.betreuungspensum = other.betreuungspensum;
+		this.anspruchberechtigtesPensum = other.anspruchberechtigtesPensum;
+		this.betreuungsstunden = other.betreuungsstunden;
+		this.vollkosten = other.vollkosten;
+		this.elternbeitrag = other.elternbeitrag;
+		this.abzugFamGroesse = other.abzugFamGroesse;
+		this.famGroesse = other.famGroesse;
+		this.massgebendesEinkommenVorAbzugFamgr = other.massgebendesEinkommenVorAbzugFamgr;
+		this.bemerkungen = other.bemerkungen;
+		this.verfuegung = null;
+	}
+
+	/**
 	 * Erstellt einen Zeitabschnitt mit der gegebenen gueltigkeitsdauer
 	 */
 	public VerfuegungZeitabschnitt(DateRange gueltigkeit) {

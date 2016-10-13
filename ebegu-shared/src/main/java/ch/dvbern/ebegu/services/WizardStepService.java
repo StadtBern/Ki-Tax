@@ -46,7 +46,8 @@ public interface WizardStepService {
 	List<WizardStep> updateSteps(String gesuchId, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName);
 
 	/**
-	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch
+	 * Erstellt eine Liste mit allen notwendigen WizardSteps fuer das gegebene Gesuch. Fuer Mutationen bekommen alle Steps
+	 * den Status OK und werden verfuegbar nur wenn die entsprechenden Mutationsdaten ausgewaehlt wurden
 	 * @param gesuch
 	 * @return
 	 */

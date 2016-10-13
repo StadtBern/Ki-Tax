@@ -11,7 +11,8 @@ import TSWizardStep from '../models/TSWizardStep';
 import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import TSVerfuegung from '../models/TSVerfuegung';
-import Moment = moment.Moment;
+import * as moment from 'moment';
+import TSGesuchsperiode from '../models/TSGesuchsperiode';
 
 export default class TestDataUtil {
 
@@ -20,6 +21,7 @@ export default class TestDataUtil {
         abstractEntity.id = undefined;
         abstractEntity.timestampErstellt = undefined;
         abstractEntity.timestampMutiert = undefined;
+        abstractEntity.vorgaengerId = undefined;
     }
 
     /**
@@ -82,5 +84,10 @@ export default class TestDataUtil {
         verfuegung.id = '123321';
         verfuegung.zeitabschnitte = [];
         return verfuegung;
+    }
+
+    public static createGesuchsperiode20162017(): TSGesuchsperiode {
+        let gueltigkeit: TSDateRange = new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY'));
+        return new TSGesuchsperiode(true, gueltigkeit);
     }
 }

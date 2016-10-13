@@ -30,6 +30,9 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime timestampMutiert;
 
+	@Nullable
+	private String vorgaengerId;
+
 
 	protected JaxAbstractDTO() {
 		// nop
@@ -66,6 +69,14 @@ public abstract class JaxAbstractDTO implements Serializable, Comparable<JaxAbst
 		this.timestampMutiert = timestampMutiert;
 	}
 
+	@Nullable
+	public String getVorgaengerId() {
+		return vorgaengerId;
+	}
+
+	public void setVorgaengerId(@Nullable String vorgaengerId) {
+		this.vorgaengerId = vorgaengerId;
+	}
 
 	@Override
 	public boolean equals(Object o) {

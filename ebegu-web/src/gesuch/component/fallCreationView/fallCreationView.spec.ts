@@ -4,6 +4,7 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import {IQService, IScope} from 'angular';
 import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 
 describe('fallCreationView', function () {
 
@@ -25,7 +26,7 @@ describe('fallCreationView', function () {
         form = {};
         form.$valid = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('EbeguUtil'), $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'));
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'));
     }));
 
     describe('nextStep', () => {
@@ -49,6 +50,24 @@ describe('fallCreationView', function () {
             form.$valid = false;
             fallCreationview.save(form);
             expect(gesuchModelManager.saveGesuchAndFall).not.toHaveBeenCalled();
+        });
+    });
+    describe('getTitle', () => {
+        it('should return Art der Mutation', () => {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(false);
+            expect(fallCreationview.getTitle()).toBe('Art der Mutation');
+        });
+        it('should return Erstgesuch der Periode', () => {
+            let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(true);
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch der Periode 2016/2017');
+        });
+        it('should return Erstgesuch', () => {
+            spyOn(gesuchModelManager, 'isErstgesuch').and.returnValue(true);
+            spyOn(gesuchModelManager, 'isGesuchSaved').and.returnValue(false);
+            expect(fallCreationview.getTitle()).toBe('Erstgesuch');
         });
     });
 });
