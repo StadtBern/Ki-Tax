@@ -384,6 +384,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		// TODO (team): Diese methode macht, was sie sagt, evt. waere es aber sicherer, das *vorgänger*gesuch zu suchen? Könnte über die neue vorgängerId gemacht werden
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 
