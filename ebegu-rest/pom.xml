@@ -19,6 +19,15 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <version>1.1.0.Alpha7</version>
             </plugin>
+
+            <plugin>
+                       <artifactId>maven-war-plugin</artifactId>
+                       <configuration>
+                           <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                           <packagingIncludes>WEB-INF/fedletlib/*</packagingIncludes>
+                       </configuration>
+                   </plugin>
+
         </plugins>
     </build>
 
