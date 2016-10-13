@@ -4,11 +4,12 @@ import GesuchModelManager from '../../service/gesuchModelManager';
 import BerechnungsManager from '../../service/berechnungsManager';
 import TSGesuch from '../../../models/TSGesuch';
 import ErrorService from '../../../core/errors/service/ErrorService';
-import EbeguUtil from '../../../utils/EbeguUtil';
 import {INewFallStateParams} from '../../gesuch.route';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import TSMutationsdaten from '../../../models/TSMutationsdaten';
 import Moment = moment.Moment;
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./fallCreationView.html');
 require('./fallCreationView.less');
 
@@ -23,10 +24,12 @@ export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
 
-    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'ErrorService', '$stateParams', 'WizardStepManager'];
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', '$stateParams',
+        'WizardStepManager', '$translate'];
     /* @ngInject */
-    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager, private ebeguUtil: EbeguUtil,
-                private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager) {
+    constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
+                private errorService: ErrorService, private $stateParams: INewFallStateParams, wizardStepManager: WizardStepManager,
+                private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.readCreateNewParam();
         this.initViewModel();
@@ -72,6 +75,39 @@ export class FallCreationViewController extends AbstractGesuchViewController {
                 this.getGesuchModel().gesuchsperiode = gesuchsperiodeList[i];
             }
         }
+    }
+
+    public getTitle(): string {
+        if (this.gesuchModelManager.isErstgesuch()) {
+            if (this.gesuchModelManager.isGesuchSaved()) {
+                return this.$translate.instant('MENU_ERSTGESUCH_PERIODE', {
+                    periode: this.gesuchModelManager.getGesuchsperiode().gesuchsperiodeString
+                });
+            } else {
+                return this.$translate.instant('MENU_ERSTGESUCH');
+            }
+        } else {
+            return this.$translate.instant('ART_DER_MUTATION');
+        }
+    }
+
+    public getMutationsdaten(): TSMutationsdaten {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().mutationsdaten;
+        }
+        return undefined;
+    }
+
+    public isMutationFeldRequired(): boolean {
+        return !(this.getMutationsdaten().mutationFamiliensituation
+                || this.getMutationsdaten().mutationGesuchsteller
+                || this.getMutationsdaten().mutationUmzug
+                || this.getMutationsdaten().mutationKind
+                || this.getMutationsdaten().mutationBetreuung
+                || this.getMutationsdaten().mutationAbwesenheit
+                || this.getMutationsdaten().mutationErwerbspensum
+                || this.getMutationsdaten().mutationFinanzielleSituation
+                || this.getMutationsdaten().mutationEinkommensverschlechterung);
     }
 
 }

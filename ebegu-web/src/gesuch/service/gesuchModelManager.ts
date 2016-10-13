@@ -44,6 +44,7 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -477,6 +478,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.gesuch = new TSGesuch();
             this.gesuch.fall = new TSFall();
+            this.gesuch.typ = TSAntragTyp.GESUCH; // by default ist es ein Erstgesuch
             this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
             this.wizardStepManager.initWizardSteps();
             this.setCurrentUserAsFallVerantwortlicher();
@@ -1053,5 +1055,16 @@ export default class GesuchModelManager {
             }
         }
         return status;
+    }
+
+    /**
+     * Gibt true zurueck, wenn der Antrag ein Erstgesuchist. False bekommt man wenn der Antrag eine Mutation ist
+     * By default (beim Fehler oder leerem Gesuch) wird auch true zurueckgegeben
+     */
+    public isErstgesuch(): boolean {
+        if (this.gesuch) {
+            return this.gesuch.typ === TSAntragTyp.GESUCH;
+        }
+        return true;
     }
 }

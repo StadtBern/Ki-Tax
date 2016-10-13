@@ -4,10 +4,7 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
-import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -75,7 +72,8 @@ public class JaxBConverter {
 	private InstitutionStammdatenService institutionStammdatenService;
 	@Inject
 	private BetreuungService betreuungService;
-
+	@Inject
+	private MutationsdatenService mutationsdatenService;
 	@Inject
 	private VerfuegungService verfuegungService;
 
@@ -488,7 +486,17 @@ public class JaxBConverter {
 		return jaxFall;
 	}
 
-	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag) {
+	/**
+	 * Konvertiert JaxGesuch in Gesuch.
+	 * @param antragJAXP JaxGesuch
+	 * @param antrag Gesuch/Mutation
+	 * @param createNotExistingDependencies Dieses Flag wird nur beim Antraege des Types Mutation beruecksichtigt
+	 *                                      wenn true werden alle Objekte (Dependencies), die in der DB noch nicht existierend, erstellt.
+	 *                                      wenn false wird EbeguEntityNotFoundException geworfen immer wenn ein Objekte nicht gefunden wurde
+	 * @return das konvertierte Gesuch
+	 */
+	@SuppressWarnings("PMD.NcssMethodCount")
+	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag, final boolean createNotExistingDependencies) {
 		Validate.notNull(antrag);
 		Validate.notNull(antragJAXP);
 
@@ -520,23 +528,35 @@ public class JaxBConverter {
 			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
 				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), gesuchsteller1.get()));
-			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1());
 			}
+//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), new Gesuchsteller()));
+//			}
+//			else {
+//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
+//			}
 		}
 		if (antragJAXP.getGesuchsteller2() != null && antragJAXP.getGesuchsteller2().getId() != null) {
 			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()) {
 				antrag.setGesuchsteller2(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), gesuchsteller2.get()));
-			} else {
-				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
 			}
+//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), new Gesuchsteller()));
+//			}
+//			else {
+//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
+//			}
 		}
 		if (antragJAXP.getFamiliensituation() != null && antragJAXP.getFamiliensituation().getId() != null) {
 			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
 			if (famSituation.isPresent()) {
 				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
-			} else {
+			}
+			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), new Familiensituation()));
+			}
+			else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
@@ -545,17 +565,48 @@ public class JaxBConverter {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
 				if (evkiSituation.isPresent()) {
 					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
-				} else {
+				}
+				else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
+				}
+				else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
 				}
 			} else {
 				antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
 			}
 		}
-
+		if (antragJAXP.getMutationsdaten() != null) {
+			if (antragJAXP.getMutationsdaten().getId() != null) {
+				final Optional<Mutationsdaten> mutationsdaten = mutationsdatenService.findMutationsdaten(antragJAXP.getMutationsdaten().getId());
+				if (mutationsdaten.isPresent()) {
+					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), mutationsdaten.get()));
+				} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
+				} else {
+					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
+				}
+			}
+			else {
+				antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
+			}
+		}
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
 
 		return antrag;
+	}
+
+	private Mutationsdaten mutationsdatenToEntity(@Nonnull JaxMutationsdaten jaxMutationsdaten, @Nonnull Mutationsdaten mutationsdaten) {
+		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
+		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
+		mutationsdaten.setMutationUmzug(jaxMutationsdaten.getMutationUmzug());
+		mutationsdaten.setMutationKind(jaxMutationsdaten.getMutationKind());
+		mutationsdaten.setMutationBetreuung(jaxMutationsdaten.getMutationBetreuung());
+		mutationsdaten.setMutationAbwesenheit(jaxMutationsdaten.getMutationAbwesenheit());
+		mutationsdaten.setMutationErwerbspensum(jaxMutationsdaten.getMutationErwerbspensum());
+		mutationsdaten.setMutationFinanzielleSituation(jaxMutationsdaten.getMutationFinanzielleSituation());
+		mutationsdaten.setMutationEinkommensverschlechterung(jaxMutationsdaten.getMutationEinkommensverschlechterung());
+		return mutationsdaten;
 	}
 
 	public JaxGesuch gesuchToJAX(@Nonnull final Gesuch persistedGesuch) {
@@ -568,6 +619,9 @@ public class JaxBConverter {
 		jaxGesuch.setEingangsdatum(persistedGesuch.getEingangsdatum());
 		jaxGesuch.setStatus(AntragStatusConverterUtil.convertStatusToDTO(persistedGesuch, persistedGesuch.getStatus()));
 		jaxGesuch.setTyp(persistedGesuch.getTyp());
+		if (persistedGesuch.getMutationsdaten() != null) {
+			jaxGesuch.setMutationsdaten(mutationsdatenToJAX(persistedGesuch.getMutationsdaten()));
+		}
 		if (persistedGesuch.getGesuchsteller1() != null) {
 			jaxGesuch.setGesuchsteller1(this.gesuchstellerToJAX(persistedGesuch.getGesuchsteller1()));
 		}
@@ -586,6 +640,20 @@ public class JaxBConverter {
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
 
 		return jaxGesuch;
+	}
+
+	private JaxMutationsdaten mutationsdatenToJAX(Mutationsdaten persistedMutationsdaten) {
+		final JaxMutationsdaten mutationsdaten = new JaxMutationsdaten();
+		mutationsdaten.setMutationFamiliensituation(persistedMutationsdaten.getMutationFamiliensituation());
+		mutationsdaten.setMutationGesuchsteller(persistedMutationsdaten.getMutationGesuchsteller());
+		mutationsdaten.setMutationUmzug(persistedMutationsdaten.getMutationUmzug());
+		mutationsdaten.setMutationKind(persistedMutationsdaten.getMutationKind());
+		mutationsdaten.setMutationBetreuung(persistedMutationsdaten.getMutationBetreuung());
+		mutationsdaten.setMutationAbwesenheit(persistedMutationsdaten.getMutationAbwesenheit());
+		mutationsdaten.setMutationErwerbspensum(persistedMutationsdaten.getMutationErwerbspensum());
+		mutationsdaten.setMutationFinanzielleSituation(persistedMutationsdaten.getMutationFinanzielleSituation());
+		mutationsdaten.setMutationEinkommensverschlechterung(persistedMutationsdaten.getMutationEinkommensverschlechterung());
+		return mutationsdaten;
 	}
 
 	public JaxMandant mandantToJAX(@Nonnull final Mandant persistedMandant) {
@@ -894,10 +962,11 @@ public class JaxBConverter {
 	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
 	 *
 	 * @param gesuchToFind das Gesuch als JAX
+	 * @param createNotExistingDependecies
 	 * @return das Gesuch als Entity
 	 */
 	@Nonnull
-	public Gesuch gesuchToStoreableEntity(final JaxGesuch gesuchToFind) {
+	public Gesuch gesuchToStoreableEntity(final JaxGesuch gesuchToFind, boolean createNotExistingDependecies) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null) {
@@ -906,7 +975,7 @@ public class JaxBConverter {
 				gesuchToMergeWith = altGesuch.get();
 			}
 		}
-		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
+		return gesuchToEntity(gesuchToFind, gesuchToMergeWith, createNotExistingDependecies);
 	}
 
 	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
@@ -1527,7 +1596,7 @@ public class JaxBConverter {
 		jaxDokumentGrund.setNeeded(dokumentGrund.isNeeded());
 		if (dokumentGrund.getDokumente() != null) {
 			if (jaxDokumentGrund.getDokumente() == null) {
-				jaxDokumentGrund.setDokumente(new HashSet<JaxDokument>());
+				jaxDokumentGrund.setDokumente(new HashSet<>());
 			}
 			for (Dokument dokument : dokumentGrund.getDokumente()) {
 

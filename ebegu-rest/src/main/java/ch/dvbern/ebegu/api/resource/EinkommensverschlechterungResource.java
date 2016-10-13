@@ -128,7 +128,7 @@ public class EinkommensverschlechterungResource {
 		Validate.notNull(basisJahrPlusID.getId());
 		int basisJahrPlus = Integer.parseInt(converter.toEntityId(basisJahrPlusID));
 
-		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
+		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP, false);
 		FinanzielleSituationResultateDTO abstFinSitResultateDTO = einkVerschlService.calculateResultate(gesuch, basisJahrPlus);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();

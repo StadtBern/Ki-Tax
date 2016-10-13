@@ -470,14 +470,14 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
 getMutation.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'GesuchRS', '$stateParams', '$q'];
 /* @ngInject */
 export function getMutation(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                      wizardStepManager: WizardStepManager, gesuchRS: GesuchRS, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+                            wizardStepManager: WizardStepManager, gesuchRS: GesuchRS, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
         let gesuchIdParams = $stateParams.gesuchId;
         if (gesuchIdParams) {
             gesuchRS.antragMutieren(gesuchIdParams).then((response : TSGesuch) => {
                 berechnungsManager.clear();
-                wizardStepManager.findStepsFromGesuch(response.id);
                 gesuchModelManager.setGesuch(response);
+                wizardStepManager.initWizardSteps(); // die Steps muessen zuerst hier (Client) initialisiert werden
                 return response;
             });
         }

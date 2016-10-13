@@ -35,6 +35,9 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private String bemerkungen;
 
+	@Nullable
+	private JaxMutationsdaten mutationsdaten;
+
 
 
 	public static long getSerialVersionUID() {
@@ -92,6 +95,15 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
+	}
+
+	@Nullable
+	public JaxMutationsdaten getMutationsdaten() {
+		return mutationsdaten;
+	}
+
+	public void setMutationsdaten(@Nullable JaxMutationsdaten mutationsdaten) {
+		this.mutationsdaten = mutationsdaten;
 	}
 }
 

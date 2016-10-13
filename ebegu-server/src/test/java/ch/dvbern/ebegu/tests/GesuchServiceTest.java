@@ -271,7 +271,8 @@ public class GesuchServiceTest extends AbstractEbeguTest {
         findAllIdsOfAbstractEntities(mutation, idsMutation);
         int anzahlObjekteMutation = anzahlObjekte;
 
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation);
+		// Die Mutation hat immer ein Objekt mehr als Erstgesuch, und zwar "Mutationsdaten". Deswegen muessen wir 1 subtrahieren
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
         // Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
         // werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.
