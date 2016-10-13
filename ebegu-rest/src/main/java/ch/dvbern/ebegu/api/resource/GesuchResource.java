@@ -81,7 +81,7 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch(), true);
+		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -107,7 +107,7 @@ public class GesuchResource {
 
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
-		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB, false);
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		//only if status has changed
 		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
