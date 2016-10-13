@@ -107,6 +107,7 @@ public class JaxBConverter {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
 		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));
+		jaxDTOToConvertTo.setVorgaengerId(abstEntity.getVorgaengerId());
 		return jaxDTOToConvertTo;
 	}
 
@@ -114,6 +115,7 @@ public class JaxBConverter {
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(final JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		if (jaxToConvert.getId() != null) {
 			abstEntityToConvertTo.setId(jaxToConvert.getId());
+			abstEntityToConvertTo.setVorgaengerId(jaxToConvert.getVorgaengerId());
 			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 

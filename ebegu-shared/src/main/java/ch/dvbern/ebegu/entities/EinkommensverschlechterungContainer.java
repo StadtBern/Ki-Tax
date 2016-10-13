@@ -55,6 +55,7 @@ public class EinkommensverschlechterungContainer extends AbstractEntity {
 	}
 
 	public EinkommensverschlechterungContainer(@Nonnull EinkommensverschlechterungContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gesuchsteller = gesuchsteller;
 		this.ekvGSBasisJahrPlus1 = null;
 		this.ekvGSBasisJahrPlus2 = null;

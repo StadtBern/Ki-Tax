@@ -95,15 +95,21 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 
 	public Betreuung(@Nonnull Betreuung toCopy, @Nonnull KindContainer kindContainer) {
+		this.setVorgaengerId(toCopy.getId());
 		this.kind = kindContainer;
 		this.institutionStammdaten = toCopy.institutionStammdaten;
-		this.betreuungsstatus = toCopy.betreuungsstatus;
+		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
+		if (toCopy.betreuungsstatus.isVerfuegt()) {
+			this.betreuungsstatus = Betreuungsstatus.BESTAETIGT;
+		} else {
+			this.betreuungsstatus = toCopy.betreuungsstatus;
+		}
 		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
-		this.verfuegung = null; //TODO (team) Wir verfuegen ja die Mutation neu, oder?
+		this.verfuegung = null;
 		this.vertrag = toCopy.vertrag;
 		this.erweiterteBeduerfnisse = toCopy.erweiterteBeduerfnisse;
 		this.datumAblehnung = toCopy.datumAblehnung;
