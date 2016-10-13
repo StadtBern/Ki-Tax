@@ -529,24 +529,18 @@ public class JaxBConverter {
 			if (gesuchsteller1.isPresent()) {
 				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			}
-//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), new Gesuchsteller()));
-//			}
-//			else {
-//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
-//			}
+			else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
+			}
 		}
 		if (antragJAXP.getGesuchsteller2() != null && antragJAXP.getGesuchsteller2().getId() != null) {
 			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()) {
 				antrag.setGesuchsteller2(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			}
-//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), new Gesuchsteller()));
-//			}
-//			else {
-//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
-//			}
+			else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
+			}
 		}
 		if (antragJAXP.getFamiliensituation() != null && antragJAXP.getFamiliensituation().getId() != null) {
 			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());

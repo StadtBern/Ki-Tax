@@ -1091,8 +1091,9 @@ export default class GesuchModelManager {
         return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
             .then((response : TSGesuch) => {
                 this.setGesuch(response);
-                this.wizardStepManager.initWizardSteps(); // die Steps muessen zuerst hier (Client) initialisiert werden
-                return this.getGesuch();
+                return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    return this.getGesuch();
+                });
             });
     }
 }
