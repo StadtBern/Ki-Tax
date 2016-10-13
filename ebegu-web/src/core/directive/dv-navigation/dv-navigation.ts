@@ -8,6 +8,7 @@ import {TSRole} from '../../../models/enums/TSRole';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 let template = require('./dv-navigation.html');
 
 /**
@@ -141,9 +142,15 @@ export class NavigatorController {
 
         this.errorService.clearAll();
         if (TSWizardStepName.GESUCH_ERSTELLEN === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.familiensituation', {
-                gesuchId: gesuchId
-            });
+            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
+                this.state.go('gesuch.familiensituation', {
+                    gesuchId: gesuchId
+                });
+            } else {
+                this.state.go('gesuch.erwerbsPensen', { // todo (team) hier muessen wir zum naechsten verfuegbare step. Momentan erwerbsPensen weil nur dieser Step bei Mutationen verfuegbar ist
+                    gesuchId: gesuchId
+                });
+            }
 
         } else if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
             this.state.go('gesuch.stammdaten', {

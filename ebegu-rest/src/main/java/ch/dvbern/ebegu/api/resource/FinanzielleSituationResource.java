@@ -103,7 +103,7 @@ public class FinanzielleSituationResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP, false);
+		Gesuch gesuch = converter.gesuchToStoreableEntity(gesuchJAXP);
 		FinanzielleSituationResultateDTO finanzielleSituationResultateDTO = finanzielleSituationService.calculateResultate(gesuch);
 		// Wir wollen nur neu berechnen. Das Gesuch soll auf keinen Fall neu gespeichert werden
 		context.setRollbackOnly();

@@ -45,6 +45,7 @@ import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import TSMutationsdaten from '../../models/TSMutationsdaten';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -476,15 +477,33 @@ export default class GesuchModelManager {
      */
     public initGesuch(forced: boolean) {
         if (forced || (!forced && !this.gesuch)) {
-            this.gesuch = new TSGesuch();
-            this.gesuch.fall = new TSFall();
-            this.gesuch.typ = TSAntragTyp.GESUCH; // by default ist es ein Erstgesuch
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
-            this.wizardStepManager.initWizardSteps();
-            this.setCurrentUserAsFallVerantwortlicher();
+            this.initAntrag(TSAntragTyp.GESUCH);
         }
         this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
+    }
+
+    /**
+     * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
+     * das ID des Gesuchs aus dem sie erstellt wurde. Damit laden wir die erste Seite auf, in der der Benutzer die Mutationsdaten
+     * eingeben darf. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren" mit dem ID des alten Gesuchs
+     * und die neue Mutationsdaten aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
+     * Daten ueberschreiben
+     * @param gesuchID
+     */
+    public initMutation(gesuchID: string): void {
+        this.initAntrag(TSAntragTyp.MUTATION);
+        this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
+        this.gesuch.mutationsdaten = new TSMutationsdaten();
+    }
+
+    private initAntrag(antragTyp: TSAntragTyp): void {
+        this.gesuch = new TSGesuch();
+        this.gesuch.fall = new TSFall();
+        this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
+        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.wizardStepManager.initWizardSteps();
+        this.setCurrentUserAsFallVerantwortlicher();
     }
 
     /**
@@ -1066,5 +1085,15 @@ export default class GesuchModelManager {
             return this.gesuch.typ === TSAntragTyp.GESUCH;
         }
         return true;
+    }
+
+    public saveMutation(): IPromise<TSGesuch> {
+        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
+            .then((response : TSGesuch) => {
+                this.setGesuch(response);
+                return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    return this.getGesuch();
+                });
+            });
     }
 }

@@ -104,9 +104,6 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		} else {
 			this.betreuungsstatus = toCopy.betreuungsstatus;
 		}
-		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
-			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
-		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
 		this.verfuegung = null;
