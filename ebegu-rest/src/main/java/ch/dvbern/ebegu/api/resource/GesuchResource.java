@@ -314,6 +314,9 @@ public class GesuchResource {
 			return Response.noContent().build();
 		}
 		Gesuch gesuchToReturn = gesuchOptional.get();
+		//TODO (team) temporaerer hack, spaeter wieder entfernen!
+		gesuchToReturn = gesuchService.createGesuch(gesuchToReturn);
+
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 }
