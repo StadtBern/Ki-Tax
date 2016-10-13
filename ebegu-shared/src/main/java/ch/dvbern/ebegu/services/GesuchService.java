@@ -27,7 +27,7 @@ public interface GesuchService {
 	/**
 	 * Aktualisiert das Gesuch in der DB
 	 *
-	 * @param gesuch das Gesuch als DTO
+	 * @param gesuch              das Gesuch als DTO
 	 * @param saveInStatusHistory true wenn gewollt, dass die Aenderung in der Status gespeichert wird
 	 * @return Das aktualisierte Gesuch
 	 */
@@ -85,7 +85,13 @@ public interface GesuchService {
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
 	 * verfuegte Antrag kopiert fuer die Mutation.
-     */
+	 */
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull String antragId);
+
+	/**
+	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück
+	 */
+	@Nonnull
+	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
 }
