@@ -73,7 +73,6 @@ export class EbeguNewFallState implements IState {
 }
 
 export class EbeguMutationState implements IState {
-    //TODO (team) Hier muss dann auf die (noch nicht vorhandene) Mutations-Einstiegsseite navigiert werden
     name = 'gesuch.mutation';
     url = '/mutation/:gesuchId';
 
