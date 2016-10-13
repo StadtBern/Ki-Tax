@@ -23,7 +23,7 @@
                         <td ng-bind="row.kindJA.nachname"></td>
                         <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                         <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
-                        <td ng-click="$event.stopPropagation()" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                        <td ng-click="$event.stopPropagation()" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt() && row.kindJA.vorgaengerId === null">
                             <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="btn btn-sm">
                                 <i class="fa fa-minus">
                                 </i>
