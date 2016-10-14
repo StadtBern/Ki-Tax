@@ -24,7 +24,16 @@
                        <artifactId>maven-war-plugin</artifactId>
                        <configuration>
                            <warSourceDirectory>src/main/webapp</warSourceDirectory>
-                           <packagingIncludes>WEB-INF/fedletlib/*</packagingIncludes>
+                           <!--<overlays>-->
+                                      <!--<overlay>-->
+                                        <!--<groupId>org.forgerock.openam</groupId>-->
+                                        <!--&lt;!&ndash;<artifactId>>openam-fedlet-unconfigured-war</artifactId>&ndash;&gt;-->
+                                        <!--<artifactId>openam-federation-library</artifactId>-->
+                                        <!--<excludes>-->
+                                          <!--<exclude>WEB-INF/classes/images/sampleimage-dependency.jpg</exclude>-->
+                                        <!--</excludes>-->
+                                      <!--</overlay>-->
+                           <!--</overlays>-->
                        </configuration>
                    </plugin>
 
@@ -94,6 +103,76 @@
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
         </dependency>
+        <dependency>
+          <groupId>org.owasp.esapi</groupId>
+          <artifactId>esapi</artifactId>
+          <version>2.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.forgerock.openam</groupId>
+          <artifactId>openam-shared</artifactId>
+          <version>13.0.0</version>
+            <scope>provided</scope>
+            <exclusions>
+            <exclusion>
+               <groupId>*</groupId>
+               <artifactId>jss4</artifactId>
+            </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.forgerock.openam</groupId>
+             <artifactId>openam-federation-library</artifactId>
+            <scope>provided</scope>
+            <version>13.0.0</version>
+
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>jss4</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>xml-resolver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>xml-serializer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>esapiport</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>jaxrpc-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>jss4</artifactId>
+                </exclusion>
+
+            </exclusions>
+
+        </dependency>
+
         <!-- itext, option to add PDF export -->
         <dependency>
             <groupId>com.lowagie</groupId>
@@ -159,19 +238,19 @@
             <version>2.6.1</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.omnifaces</groupId>-->
-            <!--<artifactId>omnifaces-security</artifactId>-->
-            <!--<version>0.6-ALPHA</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces-security</artifactId>
+            <version>0.6-ALPHA</version>
+        </dependency>
 
 
-        <!--<dependency>-->
-          <!--<groupId>org.jboss.javaee</groupId>-->
-          <!--<artifactId>jboss-jaspi-api</artifactId>-->
-          <!--<version>1.0.0.GA</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+          <groupId>org.jboss.javaee</groupId>
+          <artifactId>jboss-jaspi-api</artifactId>
+          <version>1.0.0.GA</version>
+            <scope>provided</scope>
+        </dependency>
         <!--SWAGGER-API-->
         <dependency>
           <groupId>io.swagger</groupId>

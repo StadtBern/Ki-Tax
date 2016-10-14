@@ -42,7 +42,7 @@
 	    </servlet>
 	<servlet>
 	        <servlet-name>fedletapplication</servlet-name>
-	        <servlet-class>ch.dvbern.ebegu.api.resource.authentication.saml.FedletSamlServlet</servlet-class>
+	        <servlet-class>com.sun.identity.saml2.FedletSamlServlet</servlet-class>
 	    </servlet>
 	    <servlet>
 	        <servlet-name>fedletlogout</servlet-name>

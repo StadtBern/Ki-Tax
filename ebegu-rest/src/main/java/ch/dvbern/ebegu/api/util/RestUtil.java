@@ -14,6 +14,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -59,6 +60,10 @@ public final class RestUtil {
 
 	public static boolean isFileDownloadRequest(@Nonnull ContainerRequestContext requestContext) {
 		return requestContext.getUriInfo().getPath().startsWith("/blobs/temp");
+	}
+
+	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
+		return request.getRequestURI().startsWith("/blobs/temp");
 	}
 
 	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {

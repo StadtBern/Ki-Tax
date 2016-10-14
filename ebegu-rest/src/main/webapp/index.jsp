@@ -36,7 +36,6 @@
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Map" %>
 
 <%@ include file="header.jspf" %>
 <%--

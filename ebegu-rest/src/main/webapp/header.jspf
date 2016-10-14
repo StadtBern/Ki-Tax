@@ -36,7 +36,8 @@ com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement,
 com.sun.identity.saml2.meta.SAML2MetaManager,
 java.util.HashMap,
 java.util.Iterator,
-java.util.List"
+java.util.List,
+java.util.Map"
 %><%!
     public Map getIDPBaseUrlAndMetaAlias(String idpEntityID, String deployuri)
     {

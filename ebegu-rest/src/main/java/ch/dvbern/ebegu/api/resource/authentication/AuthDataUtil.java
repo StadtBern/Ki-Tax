@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Cookie;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Optional;
@@ -39,27 +39,71 @@ public final class AuthDataUtil {
 	private AuthDataUtil() {
 	}
 
-	@Nonnull
-	public static Optional<JaxAuthAccessElement> getAuthAccessElement(@Nonnull ContainerRequestContext requestContext) {
-		if (!requestContext.getCookies().containsKey(AuthDataUtil.COOKIE_PRINCIPAL)) {
-			return Optional.empty();
-		}
-		String encodedPrincipalJson = StringUtils.trimToNull(requestContext.getCookies().get(AuthDataUtil.COOKIE_PRINCIPAL).getValue());
-		if (StringUtils.isEmpty(encodedPrincipalJson)) {
-			return Optional.empty();
-		}
-		//Decode from Json (Json is Base64 encoded)
+	public static  Optional<JaxAuthAccessElement>  getAuthAccessElement(HttpServletRequest request) {
+		javax.servlet.http.Cookie loginInfoCookie = extractCookie(request.getCookies(), AuthDataUtil.COOKIE_PRINCIPAL);
+		if (loginInfoCookie == null) {
+					return Optional.empty();
+				}
+		String encodedPrincipalJson = StringUtils.trimToNull(loginInfoCookie.getValue());
+			if (StringUtils.isEmpty(encodedPrincipalJson)) {
+				return Optional.empty();
+			}
 		try {
-			Gson gson = new Gson();
-			return Optional.of(gson.fromJson(
-				new String(
-					Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
-				),
-				JaxAuthAccessElement.class));
-		} catch (JsonSyntaxException | IllegalArgumentException e) {
-			LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
-			return Optional.empty();
+				Gson gson = new Gson();
+				return Optional.of(gson.fromJson(
+					new String(
+						Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
+					),
+					JaxAuthAccessElement.class));
+			} catch (JsonSyntaxException | IllegalArgumentException e) {
+				LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
+				return Optional.empty();
+			}
+	}
+
+//	/**
+//	 * @deprecated
+//	 */
+//	@Nonnull
+//	@Deprecated
+//	public static Optional<JaxAuthAccessElement> getAuthAccessElement(@Nonnull ContainerRequestContext requestContext) {
+//		if (!requestContext.getCookies().containsKey(AuthDataUtil.COOKIE_PRINCIPAL)) {
+//			return Optional.empty();
+//		}
+//		String encodedPrincipalJson = StringUtils.trimToNull(requestContext.getCookies().get(AuthDataUtil.COOKIE_PRINCIPAL).getValue());
+//		if (StringUtils.isEmpty(encodedPrincipalJson)) {
+//			return Optional.empty();
+//		}
+//		//Decode from Json (Json is Base64 encoded)
+//		try {
+//			Gson gson = new Gson();
+//			return Optional.of(gson.fromJson(
+//				new String(
+//					Base64.getDecoder().decode(encodedPrincipalJson), Charset.forName("UTF-8")
+//				),
+//				JaxAuthAccessElement.class));
+//		} catch (JsonSyntaxException | IllegalArgumentException e) {
+//			LOG.warn("Failed to get the AuthAccessElement from the principal Cookie", e);
+//			return Optional.empty();
+//		}
+//	}
+
+
+	@Nullable
+	public static javax.servlet.http.Cookie extractCookie(javax.servlet.http.Cookie[] cookies, String searchedName) {
+		if (cookies != null && searchedName != null) {
+			for (javax.servlet.http.Cookie cookie : cookies) {
+				if (searchedName.equals(cookie.getName())) {
+					return cookie;
+				}
+			}
 		}
+		return null;
+	}
+
+	public static String getBasePath(HttpServletRequest request){
+		String url = request.getRequestURL().toString();
+		return url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
 	}
 
 	/**
@@ -67,13 +111,13 @@ public final class AuthDataUtil {
 	 * @return Optional containing the authToken if present
 	 */
 	@Nonnull
-	public static Optional<String> getAuthToken(@Nonnull ContainerRequestContext requestContext) {
-		Cookie cookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_AUTH_TOKEN);
-		String authToken = cookie != null ? cookie.getValue() : null;
-		if (StringUtils.isEmpty(authToken)) {
-			return Optional.empty();
-		}
-		return Optional.of(authToken);
+	public static  Optional<String> getAuthTokenFomCookie(HttpServletRequest request) {
+		javax.servlet.http.Cookie authTokenCookie =  extractCookie(request.getCookies(), AuthDataUtil.COOKIE_AUTH_TOKEN);
+			String authToken = authTokenCookie != null ? authTokenCookie.getValue() : null;
+			if (StringUtils.isEmpty(authToken)) {
+				return Optional.empty();
+			}
+			return Optional.of(authToken);
 	}
 
 	/**
@@ -83,8 +127,7 @@ public final class AuthDataUtil {
 	 * @param requestContext request to get Cookie from
 	 * @return true if the tokens match; false otherweise
 	 */
-	public static boolean isValidXsrfParam(@Nonnull String xsrfTokenParam, @Nonnull ContainerRequestContext requestContext) {
-		Cookie xsrfTokenCookie = requestContext.getCookies().get(AuthDataUtil.COOKIE_XSRF_TOKEN);
-		return !StringUtils.isEmpty(xsrfTokenParam) && xsrfTokenCookie != null && StringUtils.equals(StringUtils.trimToNull(xsrfTokenCookie.getValue()), StringUtils.trimToNull(xsrfTokenParam));
+	public static boolean isValidXsrfParam(String xsrfTokenHeader, javax.servlet.http.Cookie xsrfTokenCookie) {
+		return !StringUtils.isEmpty(xsrfTokenHeader) && xsrfTokenCookie != null && StringUtils.equals(StringUtils.trimToNull(xsrfTokenCookie.getValue()), StringUtils.trimToNull(xsrfTokenHeader));
 	}
 }

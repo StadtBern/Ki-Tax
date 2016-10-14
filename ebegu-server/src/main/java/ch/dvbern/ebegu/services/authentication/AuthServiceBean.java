@@ -94,7 +94,7 @@ public class AuthServiceBean implements AuthService {
 				.setParameter(usernameParam, username)
 				.setParameter(authTokenParam, authToken);
 			String passwordEncrypted = typedQuery.getSingleResult();
-			BenutzerCredentials credentials = new BenutzerCredentials(username, passwordEncrypted, authToken);
+			BenutzerCredentials credentials = new BenutzerCredentials(username,  authToken);
 			return Optional.of(credentials);
 		} catch (NoResultException ignored) {
 			return Optional.empty();
@@ -166,11 +166,8 @@ public class AuthServiceBean implements AuthService {
 	@Override
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
 
-
 		entityManager.persist(authorisierterBenutzer);
-//		return null;
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
-
 		return new AuthAccessElement(
 			authorisierterBenutzer.getAuthId(),
 			authorisierterBenutzer.getAuthToken(),

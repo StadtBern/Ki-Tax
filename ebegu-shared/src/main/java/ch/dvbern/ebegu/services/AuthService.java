@@ -28,6 +28,7 @@ public interface AuthService {
 	 * @return BenutzerCredentials mit der angegebenen Identifikation
 	 */
 	@Nonnull
+	@Deprecated
 	Optional<BenutzerCredentials> loginWithToken(@Nonnull final String username,  @Nonnull final String authToken);
 
 	/**
@@ -39,7 +40,10 @@ public interface AuthService {
 	/**
 	 * @param credentials Token spezifische Credentials
 	 * @return {@link ch.dvbern.ebegu.entities.AuthorisierterBenutzer#getId()} wenn der Login noch gut ist
+	 * @deprecated
+	 *
 	 */
+	@Deprecated
 	Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials);
 
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);

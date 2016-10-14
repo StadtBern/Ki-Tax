@@ -9,26 +9,18 @@
  */
 package ch.dvbern.ebegu.api.resource.authentication;
 
-import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.services.AuthService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 
 /**
@@ -51,7 +43,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
-		MDC.put(LOG_MDC_EBEGUUSER, "unknown");
+	/*	MDC.put(LOG_MDC_EBEGUUSER, "unknown");
 		MDC.put(LOG_MDC_AUTHUSERID, "unknown");
 		try {
 			// nur zur Sicherheit container logout...
@@ -123,7 +115,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);
 			setResponseUnauthorised(requestContext);
-		}
+		}*/
 	}
 
 	private void setResponseUnauthorised(ContainerRequestContext requestContext) {

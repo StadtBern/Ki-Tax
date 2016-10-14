@@ -38,6 +38,7 @@
 
     </properties>
 
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -598,7 +599,7 @@
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
             </plugin>
-            <plugin>
+          <!--  <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <executions>
@@ -615,7 +616,7 @@
                             <failsOnError>true</failsOnError>
                             <failOnViolation>true</failOnViolation>
                             <excludes>**/target/**/*</excludes>
-                            <!--<linkXRef>false</linkXRef>-->
+                            &lt;!&ndash;<linkXRef>false</linkXRef>&ndash;&gt;
                         </configuration>
                         <goals>
                             <goal>check</goal>
@@ -633,9 +634,9 @@
                     <rulesets>
                         <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd
                         </ruleset>
-                        <!--<ruleset>file://${base-path}/checkstyle/rules/pmd/pmd-rules.xml</ruleset>-->
-                        <!--<ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default%20%28veraltet%29&amp;exporterKey=pmd</ruleset>-->
-                        <!--<ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default&amp;exporterKey=pmd</ruleset>-->
+                        &lt;!&ndash;<ruleset>file://${base-path}/checkstyle/rules/pmd/pmd-rules.xml</ruleset>&ndash;&gt;
+                        &lt;!&ndash;<ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default%20%28veraltet%29&amp;exporterKey=pmd</ruleset>&ndash;&gt;
+                        &lt;!&ndash;<ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=DV%20Bern%20Default&amp;exporterKey=pmd</ruleset>&ndash;&gt;
                     </rulesets>
                 </configuration>
                 <executions>
@@ -653,17 +654,17 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <configuration>
-                    <!--
+                    &lt;!&ndash;
                         Enables analysis which takes more memory but finds more bugs.
                         If you run out of memory, changes the value of the effort element
                         to 'Low'.
-                    -->
+                    &ndash;&gt;
                     <effort>Max</effort>
-                    <!-- Reports all bugs (other values are medium and max) -->
+                    &lt;!&ndash; Reports all bugs (other values are medium and max) &ndash;&gt;
                     <threshold>Low</threshold>
-                    <!-- Produces XML report -->
+                    &lt;!&ndash; Produces XML report &ndash;&gt;
                     <xmlOutput>true</xmlOutput>
-                    <!-- Configures the directory in which the XML report is created -->
+                    &lt;!&ndash; Configures the directory in which the XML report is created &ndash;&gt;
                     <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
                     <failOnError>true</failOnError>
                     <includeFilterFile>checkstyle/rules/findbugs/findbugs-includes.xml</includeFilterFile>
@@ -679,7 +680,7 @@
                     </execution>
                 </executions>
 
-            </plugin>
+            </plugin>-->
         </plugins>
 
         <pluginManagement>

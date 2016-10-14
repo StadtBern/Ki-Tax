@@ -29,10 +29,7 @@
 
 
 <%@page
-import="ch.dvbern.ebegu.api.dtos.JaxIamUser,
-ch.dvbern.ebegu.api.util.EBEGUSamlConstants,
-com.google.gson.Gson,
-com.sun.identity.plugin.session.SessionException,
+import="com.sun.identity.plugin.session.SessionException,
 com.sun.identity.saml.common.SAMLUtils,
 com.sun.identity.saml2.assertion.Assertion,
 com.sun.identity.saml2.assertion.NameID,
@@ -43,11 +40,10 @@ com.sun.identity.saml2.profile.SPACSUtils,
 com.sun.identity.saml2.protocol.Response,
 com.sun.identity.shared.encode.URLEncDec,
 java.io.IOException,
-java.io.PrintWriter"
+java.io.PrintWriter,
+java.util.HashSet,
+java.util.Set"
 %>
-<%@ page import="java.util.HashSet" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.Set" %>
 <%@ include file="header.jspf" %>
 <%
     String deployuri = request.getRequestURI();
@@ -108,47 +104,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
         return;
     }
     // END : code is a must for Fedlet (SP) side application
-
-    //mycode
-
-
-    Map userattrs = (Map) map.get(SAML2Constants.ATTRIBUTE_MAP);
-    if (userattrs != null) {
-
-
-        String role = extractAttribute(userattrs, EBEGUSamlConstants.BGOV_EBEGU_ROLE);
-        String loginName = extractAttribute(userattrs, EBEGUSamlConstants.LOGIN_NAME);
-        String cn = extractAttribute(userattrs, EBEGUSamlConstants.COMMON_NAME);
-        String givenName = extractAttribute(userattrs, EBEGUSamlConstants.GIVEN_NAME);
-        String surname = extractAttribute(userattrs, EBEGUSamlConstants.SN);
-        String mail = extractAttribute(userattrs, EBEGUSamlConstants.MAIL);
-        String telephoneNumber = extractAttribute(userattrs, EBEGUSamlConstants.TELEPHONE_NUMBER);
-        String mobile = extractAttribute(userattrs, EBEGUSamlConstants.MOBILE);
-        String preferredLang = extractAttribute(userattrs, EBEGUSamlConstants.PREFERRED_LANGUANGE);
-        String postalAddress = extractAttribute(userattrs, EBEGUSamlConstants.POSTAL_ADDRESS);
-        String street = extractAttribute(userattrs, EBEGUSamlConstants.STREET);
-        String postalCode = extractAttribute(userattrs, EBEGUSamlConstants.POSTAL_CODE);
-        String state = extractAttribute(userattrs, EBEGUSamlConstants.STATE);
-        String countryCode = extractAttribute(userattrs, EBEGUSamlConstants.COUNTRY_CODE);
-        String country = extractAttribute(userattrs, EBEGUSamlConstants.COUNTRY);
-
-        JaxIamUser iamUser = new JaxIamUser();
-        iamUser.setLoginName(loginName);
-        iamUser.setSurname(surname);
-        iamUser.setEmail(mail);
-        iamUser.setCommonName(cn);
-        iamUser.setGivenName(givenName);
-
-        Gson gson = new Gson();
-        String json = gson.toJson(iamUser);
-
-        out.println("<pre>" + json + "</pre>");
-
-
-    }
-
-    // end mycode
-
+    
     String relayUrl = (String) map.get(SAML2Constants.RELAY_STATE);
     if ((relayUrl != null) && (relayUrl.length() != 0)) {
         // something special for validation to send redirect
@@ -251,7 +207,6 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:SOAP&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using SOAP binding</a></b></br>");
     out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP Redirect binding</a></b></br>");
     out.println("<br><b><a href=\"" + fedletBaseUrl + "/fedletSloInit?spEntityID=" + URLEncDec.encode(spEntityID) + "&idpEntityID=" + URLEncDec.encode(entityID) + "&NameIDValue=" + URLEncDec.encode(value) + "&SessionIndex=" + URLEncDec.encode(sessionIndex) + "&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST&RelayState=" + URLEncDec.encode(fedletBaseUrl + "/index.jsp") + "\">Run Fedlet initiated Single Logout using HTTP POST binding</a></b></br>");
-
 %>
 <script>
 function toggleDisp(id)
@@ -265,20 +220,3 @@ function toggleDisp(id)
 </script>
 </body>
 </html>
-<%!
-    private String extractAttribute(Map userattrs, String attrName) {
-
-        String result = null;
-        Set attrVals = (HashSet) userattrs.get(attrName);
-        if ((attrVals != null) && !attrVals.isEmpty()) {
-            Iterator it = attrVals.iterator();
-            while (it.hasNext()) {
-                result = (result != null) ? result + it.next() : (String) it.next();
-            }
-        }
-
-        return result;
-    }
-
-
-%>
