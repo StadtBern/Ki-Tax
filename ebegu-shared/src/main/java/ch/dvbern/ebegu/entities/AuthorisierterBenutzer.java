@@ -42,6 +42,7 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@Size(max = DB_DEFAULT_MAX_LENGTH)
 	private String password = null;
 
+	// todo home maybe make unique
 	@NotNull
 	@Column(updatable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)

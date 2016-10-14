@@ -26,10 +26,12 @@
 
 	<!--servlets for iam-->
 	<!-- Add one servlet entry like this per module -->
-	    <servlet>
-	        <servlet-name>fedletapplication</servlet-name>
-	        <jsp-file>/fedletSampleApp.jsp</jsp-file>
-	    </servlet>
+	    <!--<servlet>-->
+	        <!--<servlet-name>fedletapplication</servlet-name>-->
+	        <!--<jsp-file>/fedletSampleApp.jsp</jsp-file>-->
+	    <!--</servlet>-->
+
+
 	    <servlet>
 	        <servlet-name>fedletSloInit</servlet-name>
 	        <jsp-file>/saml2/jsp/spSingleLogoutInit.jsp</jsp-file>
@@ -37,6 +39,10 @@
 	    <servlet>
 	        <servlet-name>fedletSloSoap</servlet-name>
 	        <servlet-class>com.sun.identity.saml2.servlet.SPSingleLogoutServiceSOAP</servlet-class>
+	    </servlet>
+	<servlet>
+	        <servlet-name>fedletapplication</servlet-name>
+	        <servlet-class>ch.dvbern.ebegu.api.resource.authentication.saml.FedletSamlServlet</servlet-class>
 	    </servlet>
 	    <servlet>
 	        <servlet-name>fedletlogout</servlet-name>

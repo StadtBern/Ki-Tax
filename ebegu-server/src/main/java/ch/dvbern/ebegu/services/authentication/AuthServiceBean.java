@@ -122,7 +122,7 @@ public class AuthServiceBean implements AuthService {
 	}
 
 	@Override
-	public  Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials) {
+	public Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials) {
 		Objects.requireNonNull(credentials);
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -147,7 +147,7 @@ public class AuthServiceBean implements AuthService {
 			LocalDateTime now = LocalDateTime.now();
 			LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
 			if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
-				LOG.debug("Token is no longer valid: " +credentials.getAuthToken());
+				LOG.debug("Token is no longer valid: " + credentials.getAuthToken());
 				return Optional.empty();
 			}
 			authUser.setLastLogin(now);
@@ -158,9 +158,67 @@ public class AuthServiceBean implements AuthService {
 
 		} catch (NoResultException ignored) {
 			LOG.debug("Could not load Authorisierterbenutzer for username '" + credentials.getUsername() + "' and token '" +
-			credentials.getAuthToken() +"'");
+				credentials.getAuthToken() + "'");
 			return Optional.empty();
 		}
 	}
 
+	@Override
+	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
+
+
+		entityManager.persist(authorisierterBenutzer);
+//		return null;
+		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
+
+		return new AuthAccessElement(
+			authorisierterBenutzer.getAuthId(),
+			authorisierterBenutzer.getAuthToken(),
+			UUID.randomUUID().toString(), // XSRF-Token (no need to persist)
+			existingUser.getUsername(),
+			existingUser.getNachname(),
+			existingUser.getVorname(),
+			existingUser.getEmail(),
+			existingUser.getRole());
+
+	}
+
+
+	@Override
+	public Optional<AuthorisierterBenutzer> getUserByLoginToken(String token) {
+
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+			ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
+
+			CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
+			Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
+			Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
+			Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
+			query.where(authTokenPredicate);
+
+			try {
+				TypedQuery<AuthorisierterBenutzer> tq = entityManager.createQuery(query)
+					.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+					.setParameter(authTokenParam, token);
+
+				AuthorisierterBenutzer authUser = tq.getSingleResult();
+
+				LocalDateTime now = LocalDateTime.now();
+				LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
+				if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
+					LOG.debug("Token is no longer valid: " + token);
+					return Optional.empty();
+				}
+				authUser.setLastLogin(now);
+				entityManager.persist(authUser);
+				entityManager.flush();
+				LOG.trace("Valid auth Token was refreshed ");
+				return Optional.of(authUser);
+
+			} catch (NoResultException ignored) {
+				LOG.debug("Could not load Authorisierterbenutzer for token '" +
+					token + "'");
+				return Optional.empty();
+			}
+	}
 }

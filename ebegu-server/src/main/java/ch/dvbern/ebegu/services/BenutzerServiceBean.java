@@ -46,7 +46,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Nonnull
 	@Override
 	public Optional<Benutzer> findBenutzer(@Nonnull String username) {
-		Objects.requireNonNull(username, "id muss gesetzt sein");
+		Objects.requireNonNull(username, "username muss gesetzt sein");
 		return criteriaQueryHelper.getEntityByUniqueAttribute(Benutzer.class, username, Benutzer_.username);
 	}
 
@@ -78,5 +78,15 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			return findBenutzer(username);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
+		Optional<Benutzer> foundUser = this.findBenutzer(benutzer.getUsername());
+		if (foundUser.isPresent()) {
+			benutzer.setId(foundUser.get().getId());
+			benutzer.setVersion(foundUser.get().getVersion()); //hack fuer ol
+		}
+		return this.saveBenutzer(benutzer);
 	}
 }

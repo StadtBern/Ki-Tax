@@ -158,6 +158,20 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.6.1</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.omnifaces</groupId>-->
+            <!--<artifactId>omnifaces-security</artifactId>-->
+            <!--<version>0.6-ALPHA</version>-->
+        <!--</dependency>-->
+
+
+        <!--<dependency>-->
+          <!--<groupId>org.jboss.javaee</groupId>-->
+          <!--<artifactId>jboss-jaspi-api</artifactId>-->
+          <!--<version>1.0.0.GA</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <!--SWAGGER-API-->
         <dependency>
           <groupId>io.swagger</groupId>

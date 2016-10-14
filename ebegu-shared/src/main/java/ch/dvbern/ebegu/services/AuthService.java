@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.authentication.BenutzerCredentials;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -41,4 +42,11 @@ public interface AuthService {
 	 */
 	Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials);
 
+	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);
+
+	/**
+	 * gets the logged in user based on the login token
+	 * @param token
+	 */
+	Optional<AuthorisierterBenutzer> getUserByLoginToken(String token);
 }

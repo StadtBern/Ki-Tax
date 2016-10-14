@@ -63,7 +63,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 		}
 
 		String path = requestContext.getUriInfo().getPath();
-		if (path.startsWith("/auth/login") || path.startsWith("/swagger.json") || "OPTIONS".equals(requestContext.getMethod())) {
+		if (path.startsWith("/auth/login") || path.startsWith("/auth/federationlogin") ||  path.startsWith("/swagger.json") || "OPTIONS".equals(requestContext.getMethod())) {
 			// Beim Login Request gibt es noch nichts abzufangen
 			return;
 		}
@@ -100,6 +100,7 @@ public class AuthSecurityInterceptor implements ContainerRequestFilter {
 			try {
 				// EJB Container Login todo team evtl mit request.authenticate
 				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
+
 			} catch (ServletException e) {
 				// Container Login Failed
 				LOG.debug("Container login failed" + credentials.getUsername());
