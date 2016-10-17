@@ -10,7 +10,8 @@ public enum Betreuungsstatus {
 	SCHULAMT,
 	ABGEWIESEN,
 	BESTAETIGT,
-	VERFUEGT;
+	VERFUEGT,
+	GESCHLOSSEN_OHNE_VERFUEGUNG;
 
 	public boolean isVerfuegt() {
 		return VERFUEGT.equals(this);

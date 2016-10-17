@@ -48,7 +48,7 @@ public class VerfuegungsMerger {
 			return zeitabschnitte;
 		}
 
-		final Betreuung betreuungGSM = findBetreuungOnGesuchForMuation(betreuung, gesuchForMutaion);
+		final Betreuung betreuungGSM = VerfuegungUtil.findBetreuungOnGesuchForMuation(betreuung, gesuchForMutaion);
 		if (betreuungGSM == null) {
 			return zeitabschnitte;
 		}
@@ -108,22 +108,7 @@ public class VerfuegungsMerger {
 
 	private VerfuegungZeitabschnitt copy(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(verfuegungZeitabschnitt);
-		//zeitabschnitt.add(verfuegungZeitabschnitt);
 		return zeitabschnitt;
 	}
 
-	private Betreuung findBetreuungOnGesuchForMuation(Betreuung betreuung, Gesuch gesuchForMutaion) {
-
-		for (KindContainer kindContainer : gesuchForMutaion.getKindContainers()) {
-			if (kindContainer.getKindNummer().equals(betreuung.getKind().getKindNummer())) {
-				for (Betreuung betreuungGSM : kindContainer.getBetreuungen()) {
-					if (betreuungGSM.getBetreuungNummer().equals(betreuung.getBetreuungNummer())) {
-						return betreuungGSM;
-					}
-				}
-			}
-		}
-		LOG.error("Betreuung zum mergen konnte nicht gefunden werden");
-		return null;
-	}
 }

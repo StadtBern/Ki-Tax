@@ -189,7 +189,6 @@ public class JaxBConverter {
 	}
 
 
-
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		final JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
@@ -488,8 +487,9 @@ public class JaxBConverter {
 
 	/**
 	 * Konvertiert JaxGesuch in Gesuch.
-	 * @param antragJAXP JaxGesuch
-	 * @param antrag Gesuch/Mutation
+	 *
+	 * @param antragJAXP                    JaxGesuch
+	 * @param antrag                        Gesuch/Mutation
 	 * @param createNotExistingDependencies Dieses Flag wird nur beim Antraege des Types Mutation beruecksichtigt
 	 *                                      wenn true werden alle Objekte (Dependencies), die in der DB noch nicht existierend, erstellt.
 	 *                                      wenn false wird EbeguEntityNotFoundException geworfen immer wenn ein Objekte nicht gefunden wurde
@@ -552,11 +552,9 @@ public class JaxBConverter {
 			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
 			if (famSituation.isPresent()) {
 				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
-			}
-			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+			} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
 				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), new Familiensituation()));
-			}
-			else {
+			} else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
@@ -565,11 +563,9 @@ public class JaxBConverter {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
 				if (evkiSituation.isPresent()) {
 					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
-				}
-				else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
+				} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
 					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
-				}
-				else {
+				} else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
 				}
 			} else {
@@ -586,8 +582,7 @@ public class JaxBConverter {
 				} else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
 				}
-			}
-			else {
+			} else {
 				antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
 			}
 		}
@@ -961,7 +956,7 @@ public class JaxBConverter {
 	 * Sucht das Gesuch in der DB und fuegt es mit dem als Parameter gegebenen Gesuch zusammen.
 	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
 	 *
-	 * @param gesuchToFind das Gesuch als JAX
+	 * @param gesuchToFind                 das Gesuch als JAX
 	 * @param createNotExistingDependecies
 	 * @return das Gesuch als Entity
 	 */
@@ -1385,6 +1380,7 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
+			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
 
 			if (verfuegung.getZeitabschnitte() != null) {
 				jaxVerfuegung.getZeitabschnitte().addAll(
@@ -1411,6 +1407,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
+		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
 
 		//List of Verfuegungszeitabschnitte converten
 		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());

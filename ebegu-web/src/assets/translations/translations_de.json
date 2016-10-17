@@ -690,7 +690,9 @@
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",
     "CONFIRM_SAVE_VERFUEGUNG": "Möchten Sie das Betreuungsangebot wirklich verfügen?",
+    "CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN": "Möchten Sie das Betreuungsangebot wirklich schliessen ohne neu zu verfügen?",
     "BESCHREIBUNG_SAVE_VERFUEGUNG": "Die aktuellen Daten werden damit gespeichert und dürfen danach nicht mehr geändert werden",
+    "BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN": "Die aktuellen Daten werden nicht gespeichert",
     "PDF_VERFUEGUNG_ANZEIGEN": "Verfügung als PDF anzeigen",
     "PDF_FINSITUATION_ANZEIGEN": "Finanzielle Situation als PDF anzeigen",
     "PDF_BEGLEITSCHREIBEN_ANZEIGEN": "Begleitschreiben als PDF anzeigen",
@@ -719,5 +721,8 @@
     "GSDASHBOARD_BEANTRAGEN": "BEANTRAGEN",
     "GSDASHBOARD_MITTEILUNGEN": "Mitteilungen",
     "GSDASHBOARD_OEFFNEN": "ÖFFNEN",
-    "GSDASHBOARD_ANTRAEGE": "Aktuelle Anträge"
+    "GSDASHBOARD_ANTRAEGE": "Aktuelle Anträge",
+    "IDENTISCHE_BERECHNUNG": "Identische Berechnung",
+    "VERFUEGEN_VERZICHTEN_UPPER": "AUF VERFÜGEN VERZICHTEN",
+    "TROTZDEM_VERFUEGEN_UPPER": "TROTZDEM VERFÜGEN"
 }

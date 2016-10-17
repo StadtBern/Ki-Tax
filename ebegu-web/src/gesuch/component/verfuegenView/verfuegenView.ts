@@ -71,6 +71,19 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         }
     }
 
+    schliessenOhneVerfuegen(form: IFormController) {
+        if (form.$valid) {
+            this.verfuegungSchliessenOhenVerfuegen().then(() => {
+
+                ...hmmm, was machen wir hier?
+                // this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
+                //     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
+                //     this.$state.go('gesuch.verfuegen');
+                // });
+            });
+        }
+    }
+
     public getVerfuegenToWorkWith(): TSVerfuegung {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getVerfuegenToWorkWith();
@@ -170,6 +183,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             });
     }
 
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<TSVerfuegung> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
+        })
+            .then(() => {
+                hier müssen wir die betreuung mit dem neuen Status speichern
+            });
+    }
+
     /**
      * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
      */
@@ -199,5 +222,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
             });
+    }
+
+    public isSameVerfuegungdaten(): boolean {
+        if (this.getVerfuegenToWorkWith()) {
+            return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;
+        }
+        return undefined;
     }
 }
