@@ -21,6 +21,7 @@ export default class TestDataUtil {
         abstractEntity.id = undefined;
         abstractEntity.timestampErstellt = undefined;
         abstractEntity.timestampMutiert = undefined;
+        abstractEntity.vorgaengerId = undefined;
     }
 
     /**

@@ -19,12 +19,6 @@ import java.util.*;
  */
 public class VerfuegungsMergerTest {
 
-	private static final BigDecimal EINKOMMEN_FINANZIELLE_SITUATION = new BigDecimal("100000");
-	private static final BigDecimal EINKOMMEN_EKV_ABGELEHNT = new BigDecimal("80001");
-	private static final BigDecimal EINKOMMEN_EKV_ANGENOMMEN = new BigDecimal("80000");
-	private static final BigDecimal EINKOMMEN_EKV2_ANGENOMMEN = new BigDecimal("50000");
-	private static final BigDecimal EINKOMMEN_EKV2_ABGELEHNT = new BigDecimal("64001");
-
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 

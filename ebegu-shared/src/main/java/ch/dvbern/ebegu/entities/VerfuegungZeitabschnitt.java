@@ -135,7 +135,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.famGroesse = other.famGroesse;
 		this.massgebendesEinkommenVorAbzugFamgr = other.massgebendesEinkommenVorAbzugFamgr;
 		this.bemerkungen = other.bemerkungen;
-		this.verfuegung = other.verfuegung;
+		this.verfuegung = null;
 	}
 
 	/**

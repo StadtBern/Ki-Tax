@@ -67,6 +67,54 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	public void createWizardStepListForGesuchTest() {
+		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
+		Assert.assertNotNull(wizardStepList);
+		Assert.assertEquals(10, wizardStepList.size());
+
+		wizardStepList.forEach(wizardStep -> {
+			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertTrue(wizardStep.getVerfuegbar());
+				Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			}
+			else {
+				Assert.assertFalse(wizardStep.getVerfuegbar());
+				Assert.assertEquals(WizardStepStatus.UNBESUCHT, wizardStep.getWizardStepStatus());
+			}
+		});
+	}
+
+	@Test
+	public void createWizardStepListForMutationTest() {
+		final Gesuch mutation = TestDataUtil.createAndPersistGesuch(persistence);
+		mutation.setTyp(AntragTyp.MUTATION);
+		final Mutationsdaten mutationsdaten = new Mutationsdaten();
+		mutationsdaten.setMutationEinkommensverschlechterung(true);
+		mutationsdaten.setMutationErwerbspensum(true);
+		mutation.setMutationsdaten(mutationsdaten);
+
+		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(mutation);
+
+		Assert.assertNotNull(wizardStepList);
+		Assert.assertEquals(10, wizardStepList.size());
+
+		wizardStepList.forEach(wizardStep -> {
+			Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.DOKUMENTE.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertTrue(wizardStep.getVerfuegbar());
+			}
+			else {
+				Assert.assertFalse(wizardStep.getVerfuegbar());
+			}
+		});
+	}
+
+	@Test
 	public void updateWizardStepGesuchErstellen() {
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCH_ERSTELLEN);
 		Assert.assertEquals(10, wizardSteps.size());

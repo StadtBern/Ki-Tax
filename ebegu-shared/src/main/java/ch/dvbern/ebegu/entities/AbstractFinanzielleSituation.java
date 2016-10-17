@@ -56,6 +56,7 @@ public abstract class AbstractFinanzielleSituation extends AbstractEntity {
 	}
 
 	public AbstractFinanzielleSituation(@Nonnull AbstractFinanzielleSituation toCopy) {
+		this.setVorgaengerId(toCopy.getId());
 		this.steuerveranlagungErhalten = toCopy.steuerveranlagungErhalten;
 		this.steuererklaerungAusgefuellt = toCopy.steuererklaerungAusgefuellt;
 		this.familienzulage = toCopy.familienzulage;

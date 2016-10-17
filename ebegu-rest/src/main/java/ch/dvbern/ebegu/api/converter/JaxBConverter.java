@@ -107,6 +107,7 @@ public class JaxBConverter {
 		jaxDTOToConvertTo.setTimestampErstellt(abstEntity.getTimestampErstellt());
 		jaxDTOToConvertTo.setTimestampMutiert(abstEntity.getTimestampMutiert());
 		jaxDTOToConvertTo.setId(checkNotNull(abstEntity.getId()));
+		jaxDTOToConvertTo.setVorgaengerId(abstEntity.getVorgaengerId());
 		return jaxDTOToConvertTo;
 	}
 
@@ -114,6 +115,7 @@ public class JaxBConverter {
 	private <T extends AbstractEntity> T convertAbstractFieldsToEntity(final JaxAbstractDTO jaxToConvert, @Nonnull final T abstEntityToConvertTo) {
 		if (jaxToConvert.getId() != null) {
 			abstEntityToConvertTo.setId(jaxToConvert.getId());
+			abstEntityToConvertTo.setVorgaengerId(jaxToConvert.getVorgaengerId());
 			//ACHTUNG hier timestamp erstellt und mutiert NICHT  konvertieren da diese immer auf dem server gesetzt werden muessen
 		}
 
@@ -485,18 +487,8 @@ public class JaxBConverter {
 		return jaxFall;
 	}
 
-	/**
-	 * Konvertiert JaxGesuch in Gesuch.
-	 *
-	 * @param antragJAXP                    JaxGesuch
-	 * @param antrag                        Gesuch/Mutation
-	 * @param createNotExistingDependencies Dieses Flag wird nur beim Antraege des Types Mutation beruecksichtigt
-	 *                                      wenn true werden alle Objekte (Dependencies), die in der DB noch nicht existierend, erstellt.
-	 *                                      wenn false wird EbeguEntityNotFoundException geworfen immer wenn ein Objekte nicht gefunden wurde
-	 * @return das konvertierte Gesuch
-	 */
 	@SuppressWarnings("PMD.NcssMethodCount")
-	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag, final boolean createNotExistingDependencies) {
+	public Gesuch gesuchToEntity(@Nonnull final JaxGesuch antragJAXP, @Nonnull final Gesuch antrag) {
 		Validate.notNull(antrag);
 		Validate.notNull(antragJAXP);
 
@@ -529,32 +521,25 @@ public class JaxBConverter {
 			if (gesuchsteller1.isPresent()) {
 				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), gesuchsteller1.get()));
 			}
-//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), new Gesuchsteller()));
-//			}
-//			else {
-//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
-//			}
+			else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
+			}
 		}
 		if (antragJAXP.getGesuchsteller2() != null && antragJAXP.getGesuchsteller2().getId() != null) {
 			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()) {
 				antrag.setGesuchsteller2(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), gesuchsteller2.get()));
 			}
-//			else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-//				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), new Gesuchsteller()));
-//			}
-//			else {
-//				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
-//			}
+			else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
+			}
 		}
 		if (antragJAXP.getFamiliensituation() != null && antragJAXP.getFamiliensituation().getId() != null) {
 			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
 			if (famSituation.isPresent()) {
 				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
-			} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), new Familiensituation()));
-			} else {
+			}
+			else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
@@ -563,9 +548,8 @@ public class JaxBConverter {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
 				if (evkiSituation.isPresent()) {
 					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
-				} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), new EinkommensverschlechterungInfo()));
-				} else {
+				}
+				else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
 				}
 			} else {
@@ -577,9 +561,8 @@ public class JaxBConverter {
 				final Optional<Mutationsdaten> mutationsdaten = mutationsdatenService.findMutationsdaten(antragJAXP.getMutationsdaten().getId());
 				if (mutationsdaten.isPresent()) {
 					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), mutationsdaten.get()));
-				} else if (createNotExistingDependencies && AntragTyp.MUTATION.equals(antragJAXP.getTyp())) {
-					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
-				} else {
+				}
+				else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
 				}
 			} else {
@@ -956,12 +939,11 @@ public class JaxBConverter {
 	 * Sucht das Gesuch in der DB und fuegt es mit dem als Parameter gegebenen Gesuch zusammen.
 	 * Sollte es in der DB nicht existieren, gibt die Methode ein neues Gesuch mit den gegebenen Daten zurueck
 	 *
-	 * @param gesuchToFind                 das Gesuch als JAX
-	 * @param createNotExistingDependecies
+	 * @param gesuchToFind das Gesuch als JAX
 	 * @return das Gesuch als Entity
 	 */
 	@Nonnull
-	public Gesuch gesuchToStoreableEntity(final JaxGesuch gesuchToFind, boolean createNotExistingDependecies) {
+	public Gesuch gesuchToStoreableEntity(final JaxGesuch gesuchToFind) {
 		Validate.notNull(gesuchToFind);
 		Gesuch gesuchToMergeWith = new Gesuch();
 		if (gesuchToFind.getId() != null) {
@@ -970,7 +952,7 @@ public class JaxBConverter {
 				gesuchToMergeWith = altGesuch.get();
 			}
 		}
-		return gesuchToEntity(gesuchToFind, gesuchToMergeWith, createNotExistingDependecies);
+		return gesuchToEntity(gesuchToFind, gesuchToMergeWith);
 	}
 
 	private FinanzielleSituationContainer finanzielleSituationContainerToEntity(@Nonnull final JaxFinanzielleSituationContainer containerJAX,
@@ -1812,5 +1794,19 @@ public class JaxBConverter {
 			});
 		});
 		return resultSet;
+	}
+
+	public Mutationsdaten mutationsDatenToEntity(JaxMutationsdaten jaxMutationsdaten, Mutationsdaten mutationsdaten) {
+		convertAbstractFieldsToEntity(jaxMutationsdaten, mutationsdaten);
+		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
+		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
+		mutationsdaten.setMutationUmzug(jaxMutationsdaten.getMutationUmzug());
+		mutationsdaten.setMutationKind(jaxMutationsdaten.getMutationKind());
+		mutationsdaten.setMutationBetreuung(jaxMutationsdaten.getMutationBetreuung());
+		mutationsdaten.setMutationAbwesenheit(jaxMutationsdaten.getMutationAbwesenheit());
+		mutationsdaten.setMutationErwerbspensum(jaxMutationsdaten.getMutationErwerbspensum());
+		mutationsdaten.setMutationFinanzielleSituation(jaxMutationsdaten.getMutationFinanzielleSituation());
+		mutationsdaten.setMutationEinkommensverschlechterung(jaxMutationsdaten.getMutationEinkommensverschlechterung());
+		return mutationsdaten;
 	}
 }

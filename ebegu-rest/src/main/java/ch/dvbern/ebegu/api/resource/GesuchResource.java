@@ -4,14 +4,12 @@ import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAntragSearchresultDTO;
 import ch.dvbern.ebegu.api.dtos.JaxGesuch;
 import ch.dvbern.ebegu.api.dtos.JaxId;
+import ch.dvbern.ebegu.api.dtos.JaxMutationsdaten;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.PaginationDTO;
-import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Fall;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -20,6 +18,7 @@ import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
+import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.MonitoringUtil;
 import com.google.common.collect.ArrayListMultimap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -43,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -81,7 +81,7 @@ public class GesuchResource {
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
-		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch(), true);
+		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
 
 		URI uri = uriInfo.getBaseUriBuilder()
@@ -107,7 +107,7 @@ public class GesuchResource {
 
 		Gesuch gesuchFromDB = optGesuch.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchJAXP.getId()));
 
-		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB, false);
+		Gesuch gesuchToMerge = converter.gesuchToEntity(gesuchJAXP, gesuchFromDB);
 		//only if status has changed
 		final boolean saveInStatusHistory = gesuchToMerge.getStatus() != AntragStatusConverterUtil.convertStatusToEntity(gesuchJAXP.getStatus());
 		Gesuch modifiedGesuch = this.gesuchService.updateGesuch(gesuchToMerge, saveInStatusHistory);
@@ -304,16 +304,25 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response antragMutieren(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nonnull @NotNull JaxMutationsdaten jaxMutationsdaten,
+		@Nonnull @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
 
 		Validate.notNull(antragJaxId.getId());
-		String antragId = converter.toEntityId(antragJaxId);
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId);
+		Validate.notNull(stringDate);
+
+		final LocalDate eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		final String antragId = converter.toEntityId(antragJaxId);
+		final Mutationsdaten mutationsdaten = converter.mutationsDatenToEntity(jaxMutationsdaten, new Mutationsdaten());
+
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(antragId, mutationsdaten, eingangsdatum);
+
 		if (!gesuchOptional.isPresent()) {
 			return Response.noContent().build();
 		}
-		Gesuch gesuchToReturn = gesuchOptional.get();
-		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
+
+		Gesuch mutationToReturn = gesuchService.createGesuch(gesuchOptional.get());
+		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
 	}
 }
