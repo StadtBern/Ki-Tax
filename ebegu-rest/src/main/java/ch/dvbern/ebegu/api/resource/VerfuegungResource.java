@@ -161,9 +161,9 @@ public class VerfuegungResource {
 				betreuungService.schliessenOhenVerfuegen(betreuung.get());
 				return Response.ok().build();
 			}
-			throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+			throw new EbeguEntityNotFoundException("verfuegungSchliessenOhenVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 		}
-		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhenVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
 
