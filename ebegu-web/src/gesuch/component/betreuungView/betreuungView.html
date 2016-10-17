@@ -27,7 +27,7 @@
                         <!--Geschlecht-->
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label data-translate="GESCHLECHT"></label>
+                                <label class="md-no-float" data-translate="GESCHLECHT"></label>
                                 <input id="geschlecht_ID" type="text" name="geschlecht" ng-disabled="true"
                                        ng-value="vm.getKindModel().kindJA.geschlecht | translate" class="form-control">
                             </div>
@@ -35,7 +35,7 @@
                         <!--Geburtsdatum-->
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label data-translate="GEBURTSDATUM"></label>
+                                <label class="md-no-float" data-translate="GEBURTSDATUM"></label>
                                 <input id="geburtsdatum_ID" type="text" name="geburtsdatum" ng-disabled="true"
                                        ng-value="vm.getKindModel().kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"
                                        class="form-control">
@@ -47,7 +47,8 @@
                     <div class="row marginTop20">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label data-translate="BETREUUNGSANGEBOT_WAEHLEN" for="betreuungsangebot">
+                                <label class="md-no-float" data-translate="BETREUUNGSANGEBOT_WAEHLEN"
+                                       for="betreuungsangebot">
                                 </label>
                                 <dv-tooltip text="'BETREUUNGSANGEBOT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 <select name="betreuungsangebot" id="betreuungsangebot" ng-model="vm.betreuungsangebot"
@@ -65,7 +66,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label data-translate="INSTITUTION" for="institution">
+                                <label class="md-no-float" data-translate="INSTITUTION" for="institution">
                                 </label>
                                 <select name="institution" id="institution" ng-model="vm.instStammId"
                                         class="form-control"
@@ -110,7 +111,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <dv-input-container class="form-group">
-                                            <label data-translate="BETREUUNGSPENSUM"
+                                            <label class="md-no-float" data-translate="BETREUUNGSPENSUM"
                                                    data-translate-value-betreuungspensumnumber="{{$index + 1}}"
                                                    for="betreuungspensum-{{$index}}"></label>
                                             <input id="betreuungspensum-{{$index}}" type="text"
@@ -131,7 +132,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <dv-input-container class="form-group">
-                                            <label data-translate="VON" for="datumAb-{{$index}}">
+                                            <label class="md-no-float" data-translate="VON" for="datumAb-{{$index}}">
                                             </label>
                                             <dv-datepicker input-id="datumAb-{{$index}}" name="datumAb-{{$index}}"
                                                            class="input-element"
@@ -146,7 +147,7 @@
 
                                     <div class="col-md-6">
                                         <dv-input-container class="form-group">
-                                            <label data-translate="BIS" for="datumBis-{{$index}}">
+                                            <label class="md-no-float" data-translate="BIS" for="datumBis-{{$index}}">
                                             </label>
                                             <dv-datepicker input-id="datumBis-{{$index}}" name="datumBis-{{$index}}"
                                                            class="input-element"
@@ -197,7 +198,7 @@
                              dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">
                             <div class="col-md-12">
                                 <dv-input-container class="form-group">
-                                    <label class="inlineHint" for="grundAblehnung"
+                                    <label class="md-no-float" class="inlineHint" for="grundAblehnung"
                                            data-translate="GRUND_ABLEHNUNG"></label>
                                     <textarea md-no-autogrow class="form-control" rows="6" id="grundAblehnung"
                                               ng-model="vm.getBetreuungModel().grundAblehnung"

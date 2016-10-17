@@ -13,7 +13,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-8">
-                            <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                            <label class="md-no-float"
+                                   data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                    for="finSitEinkommen_ID"></label>
                             <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
                                    ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
@@ -30,7 +31,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-8">
-                                <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen1_ID"></label>
                                 <input id="einVersEinkommen1_ID" type="text" name="einVersEinkommen1"
                                        ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP1.massgebendesEinkVorAbzFamGr"
@@ -48,7 +50,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-8">
-                                <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="einVersEinkommen2_ID"></label>
                                 <input id="einVersEinkommen2_ID" type="text" name="einVersEinkommen2"
                                        ng-model="vm.berechnungsManager.einkommensverschlechterungResultateBjP2.massgebendesEinkVorAbzFamGr"
@@ -138,7 +141,8 @@
                 <!--bemerkungen-->
                 <div class="row marginTop20" dv-show-element dv-show-allowed-roles="[vm.TSRole.SACHBEARBEITER_JA]">
                     <div class="col-md-12">
-                        <label class="inlineHint" for="manuelle_notes" data-translate="BEMERKUNGEN"></label>
+                        <label class="md-no-float" class="inlineHint" for="manuelle_notes"
+                               data-translate="BEMERKUNGEN"></label>
                         <textarea md-no-autogrow class="form-control" rows="6" id="manuelle_notes"
                                   ng-model="vm.bemerkungen" ng-disabled="vm.isBemerkungenDisabled()"
                                   ng-attr-placeholder="{{'BEMERKUNGEN_PLACEHOLDER' | translate}}"

@@ -46,8 +46,9 @@
 
                     <!--Auswahl des Stichtages für BasisJahr plus 1-->
                     <div class="row">
-                        <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
-                            <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus1"></label>
+                        <div class="form-group col-md-6 selectGroup" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                            <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
+                                   for="stichtagBasisJahrPlus1"></label>
                             <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
                                     ng-model="vm.selectedStichtagBjP1"
                                     ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
@@ -62,7 +63,7 @@
                     <div class="row">
                         <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                             <dv-input-container class="form-group">
-                                <label data-translate="EKVI_GRUND_DES_EREIGNISSES"
+                                <label class="md-no-float" data-translate="EKVI_GRUND_DES_EREIGNISSES"
                                        for="grundFuerBasisJahrPlus1"></label>
                                 <input id="grundFuerBasisJahrPlus1" type="text" name="grundFuerBasisJahrPlus1"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus1"
@@ -99,7 +100,8 @@
                     <!--Auswahl des Stichtages für BasisJahr plus 2-->
                     <div class="row">
                         <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
-                            <label data-translate="EKVI_MONAT_DES_EREIGNISSES" for="stichtagBasisJahrPlus2"></label>
+                            <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
+                                   for="stichtagBasisJahrPlus2"></label>
                             <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
                                     ng-model="vm.selectedStichtagBjP2"
                                     ng-options="stichtagMonat | translate for stichtagMonat in vm.monthsStichtage"
@@ -114,7 +116,7 @@
                     <div class="row">
                         <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                             <dv-input-container class="form-group">
-                                <label data-translate="EKVI_GRUND_DES_EREIGNISSES"
+                                <label class="md-no-float" data-translate="EKVI_GRUND_DES_EREIGNISSES"
                                        for="grundFuerBasisJahrPlus2"></label>
                                 <input id="grundFuerBasisJahrPlus2" type="text" name="grundFuerBasisJahrPlus2"
                                        ng-model="vm.getEinkommensverschlechterungsInfo().grundFuerBasisJahrPlus2"

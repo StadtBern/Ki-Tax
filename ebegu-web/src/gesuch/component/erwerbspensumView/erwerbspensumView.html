@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="BEZEICHNUNG" for="bezeichnung"></label>
+                                <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
                                 <input id="bezeichnung" type="text" name="bezeichnung"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false">
@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
+                                <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
                                 </label>
                                 <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
                                 <select name="taetigkeit" id="taetigkeit"
@@ -50,7 +50,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="PENSUM" for="taetigkeitPensum"></label>
+                                <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
                                 <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
@@ -67,7 +67,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="AB" for="taetigkeitAbID">
+                                <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
@@ -80,7 +80,7 @@
                         </div>
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="BIS" for="taetigkeitBisID">
+                                <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
@@ -114,7 +114,7 @@
                     <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
+                                <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
 
                                 <select name="zuschlagsgrund" id="zuschlagsgrund"
@@ -133,7 +133,8 @@
                     <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="ZUSCHLAGSPROZENT" for="zuschlagsprozent"></label>
+                                <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT"
+                                       for="zuschlagsprozent"></label>
                                 <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
                                        dv-max-length class="form-control" max="100"

@@ -68,7 +68,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_NETTOLOHN" for="nettolohn"></label>
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_NETTOLOHN"
+                                       for="nettolohn"></label>
                                 <input id="nettolohn" type="text" name="nettolohn" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.nettolohn"
                                        dv-max-length max="999999999999" class="form-control">
@@ -83,7 +84,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_FAMILIENZULAGE"
                                        for="familienzulage"></label>
                                 <input id="familienzulage" type="text" name="familienzulage" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.familienzulage"
@@ -99,7 +100,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERSATZEINKOMMEN"
                                        for="ersatzeinkommen"></label>
                                 <input id="ersatzeinkommen" type="text" name="ersatzeinkommen" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.ersatzeinkommen"
@@ -115,7 +116,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ERHALTENEALIMENTE"
                                        for="erhalteneAlimente"></label>
                                 <input id="erhalteneAlimente" type="text" name="erhalteneAlimente" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.erhalteneAlimente"
@@ -148,7 +149,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <dv-input-container class="form-group">
-                                    <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR"
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHR"
                                            for="geschaeftsgewinnBasisjahr"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()}}}"></label>
                                     <input id="geschaeftsgewinnBasisjahr" type="text" name="geschaeftsgewinnBasisjahr"
@@ -171,7 +173,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <dv-input-container class="form-group">
-                                    <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1"
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS1"
                                            for="geschaeftsgewinnBasisjahrMinus1"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()-1}}}"></label>
                                     <input id="geschaeftsgewinnBasisjahrMinus1" type="text"
@@ -195,7 +198,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <dv-input-container class="form-group">
-                                    <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2"
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_BASISJAHRMINUS2"
                                            for="geschaeftsgewinnBasisjahrMinus2"
                                            translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahr()-2}}}"></label>
                                     <input id="geschaeftsgewinnBasisjahrMinus2" type="text"
@@ -220,7 +224,8 @@
                             <div class="col-md-6">
                                 <dv-input-container class="form-group"
                                                     ng-if="vm.gesuchModelManager.gesuchstellerNumber === 1">
-                                    <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS1"></label>
                                     <input id="geschaeftsgewinnDurchschnittGS1" type="text"
                                            name="geschaeftsgewinnDurchschnittGS1" ui-number-mask="0"
@@ -229,7 +234,8 @@
                                 </dv-input-container>
                                 <dv-input-container class="form-group"
                                                     ng-if="vm.gesuchModelManager.gesuchstellerNumber === 2">
-                                    <label data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
+                                    <label class="md-no-float"
+                                           data-translate="FINANZIELLE_SITUATION_GESCHAEFTSGEWINN_DURCHSCHNITT"
                                            for="geschaeftsgewinnDurchschnittGS2"></label>
                                     <input id="geschaeftsgewinnDurchschnittGS2" type="text"
                                            name="geschaeftsgewinnDurchschnittGS2" ui-number-mask="0"
@@ -246,7 +252,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_GELEISTETEALIMENTE"
                                        for="geleisteteAlimente"></label>
                                 <input id="geleisteteAlimente" type="text" name="geleisteteAlimente" ui-number-mask="0"
                                        ng-model="vm.getModel().finanzielleSituationJA.geleisteteAlimente"

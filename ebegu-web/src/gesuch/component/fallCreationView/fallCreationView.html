@@ -1,13 +1,13 @@
 <div class="fallCreationView gesuchModul">
     <div class="row">
         <div class="col-md-12">
-            <h4 class="mainTitle">
+            <h1 class="mainTitle">
                 <span ng-if="!vm.gesuchModelManager.isGesuchSaved()"
                       span data-translate="MENU_ERSTGESUCH"></span>
                 <span ng-if="vm.gesuchModelManager.isGesuchSaved()"
                       span data-translate="MENU_ERSTGESUCH_PERIODE"
                       data-translate-value-periode="{{vm.getCurrentGesuchsperiodeAsString()}}"></span>
-            </h4>
+            </h1>
             <hr class="header"/>
         </div>
     </div>
@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
+                                <label class="md-no-float" data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
                                 </label>
                                 <dv-datepicker input-id="eingangsdatum_ID" name="eingangsdatum"
                                                ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"

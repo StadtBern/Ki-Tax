@@ -17,10 +17,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_ZWEI_GS"
                                        for="einkommenBeiderGesuchsteller"
                                        ng-if="vm.gesuchModelManager.isGesuchsteller2Required()"></label>
-                                <label data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_EINKOMMEN_EIN_GS"
                                        for="einkommenBeiderGesuchsteller"
                                        ng-if="!vm.gesuchModelManager.isGesuchsteller2Required()"></label>
                                 <input id="einkommenBeiderGesuchsteller" type="text" name="einkommenBeiderGesuchsteller"
@@ -36,9 +36,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM" for="bruttovermoegen1"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM"
+                                       for="bruttovermoegen1"
                                        ng-if="vm.showGemeinsam()"></label>
-                                <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1" for="bruttovermoegen1"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_1"
+                                       for="bruttovermoegen1"
                                        ng-if="vm.showGS1()"></label>
                                 <input id="bruttovermoegen1" type="text" name="bruttovermoegen1" ui-number-mask="0"
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GEMEINSAM|translate}}"
@@ -54,7 +56,7 @@
                     <div class="row">
                         <div class="col-md-6" ng-if="vm.showGS2()">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_VERMOEGEN_GS_2"
                                        for="bruttovermoegen2"></label>
                                 <input id="bruttovermoegen2" type="text" name="bruttovermoegen2" ui-number-mask="0"
                                        aria-label="{{FINANZIELLE_SITUATION_VERMOEGEN_GS_2|translate}}"
@@ -71,9 +73,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM" for="schulden1"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM"
+                                       for="schulden1"
                                        ng-if="vm.showGemeinsam()"></label>
-                                <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1" for="schulden1"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_1"
+                                       for="schulden1"
                                        ng-if="vm.showGS1()"></label>
                                 <input id="schulden1" type="text" name="schulden1" ui-number-mask="0"
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GEMEINSAM|translate}}"
@@ -89,7 +93,8 @@
                     <div class="row">
                         <div class="col-md-6" ng-if="vm.showGS2()">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2" for="schulden2"></label>
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_SCHULDEN_GS_2"
+                                       for="schulden2"></label>
                                 <input id="schulden2" type="text" name="schulden2" ui-number-mask="0"
                                        aria-label="{{FINANZIELLE_SITUATION_SCHULDEN_GS_2|translate}}"
                                        ng-model="vm.getFinanzielleSituationGS2().finanzielleSituationJA.schulden"
@@ -105,7 +110,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_NETTOVERMOEGEN"
                                        for="nettovermoegenFuenfProzent"></label>
                                 <input id="nettovermoegenFuenfProzent" type="text" name="nettovermoegenFuenfProzent"
                                        ui-number-mask="0"
@@ -121,7 +126,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_ANRECHENBARES_EINKOMMEN"
                                        for="anrechenbaresEinkommen"></label>
                                 <input id="anrechenbaresEinkommen" type="text" name="anrechenbaresEinkommen"
                                        ui-number-mask="0"
@@ -136,7 +142,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE"
+                                <label class="md-no-float" data-translate="FINANZIELLE_SITUATION_ABZUEGE_ALIMENTE"
                                        for="abzuegeBeiderGesuchsteller"></label>
                                 <input id="abzuegeBeiderGesuchsteller" type="text" name="abzuegeBeiderGesuchsteller"
                                        ui-number-mask="0"
@@ -153,7 +159,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <dv-input-container class="form-group">
-                                <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                                <label class="md-no-float"
+                                       data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
                                        for="massgebendesEinkVorAbzFamGr"></label>
                                 <input id="massgebendesEinkVorAbzFamGr" type="text" name="massgebendesEinkVorAbzFamGr"
                                        ui-number-mask="0"
