@@ -104,6 +104,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		} else {
 			this.betreuungsstatus = toCopy.betreuungsstatus;
 		}
+		//TODO: Dieser Teil wurde von Fränzi wieder weggemerged? Warum? Fehler oder absicht??
+		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
+			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
+		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
 		this.verfuegung = null;

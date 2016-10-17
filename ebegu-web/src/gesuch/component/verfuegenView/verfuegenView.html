@@ -166,7 +166,7 @@
                 </div>
             </div>
 
-            <div class="row marginTop20" ng-if="!vm.isSameVerfuegungdaten()">
+            <div class="row marginTop20" ng-if="vm.isSameVerfuegungdaten()">
                 <div class="col-md-4">
                     <span data-translate="IDENTISCHE_BERECHNUNG"></span>
                 </div>
@@ -184,9 +184,6 @@
                     </dv-loading-button>
                 </div>
             </div>
-
-            <div ng-if="vm.isSameVerfuegungdaten()">gleiche Verfuegungdaten</div>
-            <div ng-if="!vm.isSameVerfuegungdaten()">nicht gleiche Verfuegungdaten</div>
 
             <!-- Navigation Buttons -->
             <dv-navigation dv-cancel="vm.cancel(form)" dv-next="false" dv-sub-step="2">

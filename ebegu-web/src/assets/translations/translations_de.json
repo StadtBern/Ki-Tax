@@ -686,6 +686,7 @@
     "PLATZBESTAETIGUNG_WARTEN": "Warten auf Platzbestätigung",
     "VERFUEGEN": "Verfügen",
     "VERFUEGT": "Verfügt",
+    "GESCHLOSSEN_OHNE_VERFUEGUNG": "Geschlossen ohne Verfügung",
     "CONFIRM_GESUCH_STATUS_GEPRUEFT": "Möchten Sie das Gesuch wirklich als \"geprüft\" setzen?",
     "CONFIRM_GESUCH_STATUS_VERFUEGEN": "Möchten Sie den Verfügungsprozess wirklich starten?",
     "BESCHREIBUNG_GESUCH_STATUS_WECHSELN": "Diese Änderung können Sie nicht mehr rückgängig machen",

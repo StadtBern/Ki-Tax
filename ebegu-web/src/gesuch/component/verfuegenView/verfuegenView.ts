@@ -65,7 +65,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
-                    this.$state.go('gesuch.verfuegen');
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
                 });
             });
         }
@@ -74,12 +76,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     schliessenOhneVerfuegen(form: IFormController) {
         if (form.$valid) {
             this.verfuegungSchliessenOhenVerfuegen().then(() => {
-
-                ...hmmm, was machen wir hier?
-                // this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-                //     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
-                //     this.$state.go('gesuch.verfuegen');
-                // });
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
+                });
             });
         }
     }
@@ -183,13 +182,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             });
     }
 
-    public verfuegungSchliessenOhenVerfuegen(): IPromise<TSVerfuegung> {
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
         return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
             title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
             deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
         })
             .then(() => {
-                hier müssen wir die betreuung mit dem neuen Status speichern
+                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+                this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
             });
     }
 
@@ -197,7 +197,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
      * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
      */
     private setBemerkungen(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
+        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT ||
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
             this.bemerkungen = '';
@@ -212,7 +213,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
-            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
     }
 
     public openVerfuegungPDF(): void {

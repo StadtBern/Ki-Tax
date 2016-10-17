@@ -131,4 +131,11 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
 		return Collections.emptyList();
 	}
+
+	public Betreuung schliessenOhenVerfuegen(Betreuung betreuung){
+		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
+		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
+		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+		return persistedBetreuung;
+	}
 }

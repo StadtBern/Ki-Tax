@@ -421,6 +421,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
+	//TODO: Ist hier Objects.equals() richtig??
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
 			return true;
@@ -447,12 +448,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
 		return betreuungspensum == that.betreuungspensum &&
 			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
-			Objects.equals(betreuungsstunden, that.betreuungsstunden) &&
-			Objects.equals(vollkosten, that.vollkosten) &&
-			Objects.equals(elternbeitrag, that.elternbeitrag) &&
-			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
-			Objects.equals(famGroesse, that.famGroesse) &&
-			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
+			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&
+			(vollkosten.compareTo(that.vollkosten) == 0) &&
+			(elternbeitrag.compareTo(that.elternbeitrag) == 0) &&
+			(abzugFamGroesse.compareTo(that.abzugFamGroesse) == 0) &&
+			(famGroesse.compareTo(that.famGroesse) == 0) &&
+			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
 			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0;
 	}
 

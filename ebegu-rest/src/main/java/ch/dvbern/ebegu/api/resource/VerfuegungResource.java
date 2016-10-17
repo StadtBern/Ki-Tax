@@ -145,6 +145,29 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
+	@Nullable
+	@POST
+	@Path("/{gesuchId}/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response verfuegungSchliessenOhenVerfuegen(
+		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId) throws EbeguException {
+
+		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
+		if (gesuch.isPresent()) {
+			Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+			if (betreuung.isPresent()) {
+				betreuungService.schliessenOhenVerfuegen(betreuung.get());
+				return Response.ok().build();
+			}
+			throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+		}
+		throw new EbeguEntityNotFoundException("saveVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+	}
+
+
+
 	/**
 	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten
 	 * BetreuungspensumContainers geladen werden, da danach keine Session mehr zur Verfuegung steht!
