@@ -255,6 +255,13 @@
                 <!--<version>1.59.0-jpa21-SNAPSHOT</version>-->
                 <!--<scope>provided</scope>-->
             </dependency>
+
+            <dependency>
+              <groupId>javax.security.jacc</groupId>
+              <artifactId>javax.security.jacc-api</artifactId>
+              <version>1.5</version>
+                <scope>provided</scope>
+            </dependency>
             <!--Arquillian bom dependecies-->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
@@ -463,16 +470,19 @@
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-embedded</artifactId>
                     <version>${version.wildfly-arquillian-containers}</version>
+                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-embedded</artifactId>
                     <version>10.0.0.Alpha6</version>
+                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>org.wildfly.core</groupId>
                     <artifactId>wildfly-embedded</artifactId>
                     <version>2.0.10.Final</version>
+                    <scope>test</scope>
                 </dependency>
 
             </dependencies>

@@ -63,6 +63,7 @@ public final class RestUtil {
 	}
 
 	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
+		//todo heir wohl ebegu prependen
 		return request.getRequestURI().startsWith("/blobs/temp");
 	}
 

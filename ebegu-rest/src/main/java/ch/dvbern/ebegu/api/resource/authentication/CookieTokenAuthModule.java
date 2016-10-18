@@ -61,13 +61,12 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		MDC.put(LOG_MDC_EBEGUUSER, "unknown");
 		MDC.put(LOG_MDC_AUTHUSERID, "unknown");
 //		try {
-//			// nur zur Sicherheit container logout...
-//			requestContext.logout();
+//			request.logout();
 //		} catch (ServletException e) {
 //			LOG.error("Unexpected exception during Logout", e);
-//			setResponseUnauthorised(requestContext);
-//			return;
+//			return setResponseUnauthorised(request, httpMsgContext);
 //		}
+
 
 		//todo maybe can to this in web.xml now
 		//httpMsgContext.isProtected()
@@ -108,7 +107,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 					if (tokenAuthenticator.authenticate(authToken)) {
 						LOG.debug("successfully logged in user: " + tokenAuthenticator.getUserName());
 						MDC.put(LOG_MDC_AUTHUSERID, authToken);
-						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //fixme why is this nececessary
+//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //fixme why is this nececessary
 						return httpMsgContext.notifyContainerAboutLogin(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles());
 					} else{
 						// Token Verification Failed
@@ -201,4 +200,4 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	}
 
 
-}
+	}

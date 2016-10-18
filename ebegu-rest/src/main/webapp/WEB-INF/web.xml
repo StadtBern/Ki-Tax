@@ -6,6 +6,54 @@
 
 	<display-name>ebegu-rest</display-name>
 
+	<security-constraint>
+		<display-name>SecurityConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>ebegu-web-resources</web-resource-name>
+			<url-pattern>/ebegu/api/v1/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-role>
+		<description>pseude token for any role</description>
+		<role-name>*</role-name>
+
+	</security-role>
+	<security-role>
+		<role-name>ADMIN</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_JA</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_INSTITUTION</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SACHBEARBEITER_TRAEGERSCHAFT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>GESUCHSTELLER</role-name>
+	</security-role>
+	<security-role>
+		<role-name>JURIST</role-name>
+	</security-role>
+	<security-role>
+		<role-name>REVISOR</role-name>
+	</security-role>
+	<security-role>
+		<role-name>STEUERAMT</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SCHULAMT</role-name>
+	</security-role>
+
+
 	<filter>
 		<filter-name>javamelody</filter-name>
 		<!-- Der Filter stellt aktuelle Monitoring-Infos unter /monitoring zur Verfuegung -->

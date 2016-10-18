@@ -93,6 +93,11 @@
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
         </dependency>
+
+        <dependency>
+          <groupId>javax.security.jacc</groupId>
+          <artifactId>javax.security.jacc-api</artifactId>
+        </dependency>
     </dependencies>
     <build>
     </build>
