@@ -99,7 +99,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		this.kind = kindContainer;
 		this.institutionStammdaten = toCopy.institutionStammdaten;
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
-		if (toCopy.betreuungsstatus.isVerfuegt()) {
+		if (toCopy.betreuungsstatus.isGeschlossen()) {
 			this.betreuungsstatus = Betreuungsstatus.BESTAETIGT;
 		} else {
 			this.betreuungsstatus = toCopy.betreuungsstatus;

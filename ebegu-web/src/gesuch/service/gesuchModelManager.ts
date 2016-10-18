@@ -972,7 +972,7 @@ export default class GesuchModelManager {
     }
 
     public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
-        return this.verfuegungRS.verfuegungSchliessenOhenVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+        return this.verfuegungRS.verfuegungSchliessenOhneVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
             this.calculateGesuchStatus();
             this.backupCurrentGesuch();
@@ -1026,8 +1026,9 @@ export default class GesuchModelManager {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT &&
-                    (betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT || betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return true;
                 }
             }

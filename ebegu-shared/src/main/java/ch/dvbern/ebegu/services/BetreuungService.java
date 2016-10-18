@@ -53,5 +53,5 @@ public interface BetreuungService {
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 
-	Betreuung schliessenOhenVerfuegen(Betreuung betreuung);
+	Betreuung schliessenOhneVerfuegen(Betreuung betreuung);
 }

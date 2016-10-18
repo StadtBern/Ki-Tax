@@ -147,23 +147,18 @@ public class VerfuegungResource {
 
 	@Nullable
 	@POST
-	@Path("/{gesuchId}/{betreuungId}")
+	@Path("/{betreuungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response verfuegungSchliessenOhenVerfuegen(
-		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchId,
+	public Response verfuegungSchliessenOhneVerfuegen(
 		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId) throws EbeguException {
 
-		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
-		if (gesuch.isPresent()) {
-			Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
-			if (betreuung.isPresent()) {
-				betreuungService.schliessenOhenVerfuegen(betreuung.get());
-				return Response.ok().build();
-			}
-			throw new EbeguEntityNotFoundException("verfuegungSchliessenOhenVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+		if (betreuung.isPresent()) {
+			betreuungService.schliessenOhneVerfuegen(betreuung.get());
+			return Response.ok().build();
 		}
-		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhenVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhneVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
 

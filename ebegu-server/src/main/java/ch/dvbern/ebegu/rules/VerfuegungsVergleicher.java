@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 import java.util.List;
@@ -10,14 +9,14 @@ import java.util.List;
 
 public class VerfuegungsVergleicher {
 
-	public boolean isSameVerfuegungsdaten(Betreuung betreuung, Gesuch gesuchForMutaion) {
+	public boolean isSameVerfuegungsdaten(Betreuung betreuung, Gesuch gesuchForMutation) {
 
 		// Wenn keine Mutation vorhanden ist muss nicht gemerged werden
-		if (gesuchForMutaion == null) {
+		if (gesuchForMutation == null) {
 			return false;
 		}
 
-		final Betreuung betreuungGSM = VerfuegungUtil.findBetreuungOnGesuchForMuation(betreuung, gesuchForMutaion);
+		final Betreuung betreuungGSM = VerfuegungUtil.findBetreuungOnGesuchForMuation(betreuung, gesuchForMutation);
 		if (betreuungGSM == null) {
 			return false;
 		}

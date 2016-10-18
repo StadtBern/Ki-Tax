@@ -155,7 +155,7 @@ public class BetreuungsgutscheinEvaluator {
 					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
 				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitte));
 
-				// Ueberprüfen, ob sich die Verfuegungsdaten veraendert haben
+				// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
 				betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
 			}
 		}

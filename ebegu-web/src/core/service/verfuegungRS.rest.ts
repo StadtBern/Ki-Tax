@@ -46,9 +46,9 @@ export default class VerfuegungRS {
         });
     }
 
-    public verfuegungSchliessenOhenVerfuegen( gesuchId: string, betreuungId: string): IPromise<void> {
+    public verfuegungSchliessenOhneVerfuegen(gesuchId: string, betreuungId: string): IPromise<void> {
 
-        return this.http.post(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/' + encodeURIComponent(betreuungId), {
+        return this.http.post(this.serviceURL + '/' + encodeURIComponent(betreuungId), {
             headers: {
                 'Content-Type': 'application/json'
             }
