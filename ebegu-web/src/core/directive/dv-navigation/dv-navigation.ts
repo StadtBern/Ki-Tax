@@ -141,62 +141,14 @@ export class NavigatorController {
         let gesuchId = this.getGesuchId();
 
         this.errorService.clearAll();
-        if (TSWizardStepName.GESUCH_ERSTELLEN === this.wizardStepManager.getCurrentStepName()) {
-            if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
-                this.state.go('gesuch.familiensituation', {
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.state.go('gesuch.erwerbsPensen', { // todo (team) hier muessen wir zum naechsten verfuegbare step. Momentan erwerbsPensen weil nur dieser Step bei Mutationen verfuegbar ist
-                    gesuchId: gesuchId
-                });
-            }
-
-        } else if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.stammdaten', {
-                gesuchstellerNumber: '1',
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
+        if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.stammdaten', {
-                    gesuchstellerNumber: '2',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '2');
             } else {
-                if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
-                    || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                    this.state.go('gesuch.betreuungen', {
-                        gesuchId: gesuchId
-                    });
-                } else {
-                    this.state.go('gesuch.kinder', {
-                        gesuchId: gesuchId
-                    });
-                }
+                this.navigateToNextAvailableStep();
             }
-        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.betreuungen', {
-                gesuchId: gesuchId
-            });
-
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.kinder', {
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
-                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.state.go('gesuch.verfuegen', {
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.state.go('gesuch.erwerbsPensen', {
-                    gesuchId: gesuchId
-                });
-            }
+            this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
             // Diese Logik ist ziemlich kompliziert. Deswegen bleibt sie noch in betreuungView.ts -> Hier wird dann nichts gemacht
@@ -205,9 +157,7 @@ export class NavigatorController {
             this.errorService.clearAll();
             if (this.wizardStepManager.isNextStepBesucht() && !this.wizardStepManager.isNextStepEnabled()) {
                 // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
-                this.state.go('gesuch.dokumente', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
             } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
                 this.state.go('gesuch.finanzielleSituationStart', {
                     gesuchId: gesuchId
@@ -220,9 +170,7 @@ export class NavigatorController {
             }
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
@@ -260,9 +208,7 @@ export class NavigatorController {
                     });
                 }
             } else {
-                this.state.go('gesuch.dokumente', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
             }
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
@@ -270,17 +216,30 @@ export class NavigatorController {
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
             this.state.go('gesuch.einkommensverschlechterung', {
-                gesuchstellerNumber: '1', basisjahrPlus: '1',
+                gesuchstellerNumber: '1',
+                basisjahrPlus: '1',
                 gesuchId: gesuchId
             });
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 4) {
             this.navigateNextEVSubStep4(gesuchId);
 
-        } else if (TSWizardStepName.DOKUMENTE === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.verfuegen', {
-                gesuchId: gesuchId
-            });
+        } else { //by default navigieren wir zum naechsten erlaubten Step
+            this.navigateToNextAvailableStep();
+        }
+    }
+
+    private navigateToNextAvailableStep() {
+        var allStepNames = this.wizardStepManager.getAllowedSteps();
+        let currentPosition: number = allStepNames.indexOf(this.wizardStepManager.getCurrentStepName()) + 1;
+        for (let i = currentPosition; i < allStepNames.length; i++) {
+            if (this.wizardStepManager.getStepByName(allStepNames[i]).verfuegbar
+                || (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH
+                && this.wizardStepManager.getStepByName(allStepNames[i]).wizardStepStatus === TSWizardStepStatus.UNBESUCHT)) {
+
+                this.navigateToStep(allStepNames[i], this.getGesuchId());
+                break;
+            }
         }
     }
 
@@ -291,56 +250,41 @@ export class NavigatorController {
         let gesuchId = this.getGesuchId();
 
         this.errorService.clearAll();
+        if (TSWizardStepName.GESUCH_ERSTELLEN === this.wizardStepManager.getCurrentStepName()) {
+            this.navigateToStep(TSWizardStepName.GESUCH_ERSTELLEN, gesuchId);
+        }
         if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
-            this.state.go('gesuch.fallcreation', {
-                createNew: 'false',
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.GESUCH_ERSTELLEN, gesuchId);
 
         } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.stammdaten', {
-                    gesuchstellerNumber: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '1');
             } else {
-                this.state.go('gesuch.familiensituation', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.FAMILIENSITUATION, gesuchId);
             }
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             this.moveBackToGesuchsteller(gesuchId);
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.kinder', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
                 this.moveBackToGesuchsteller(gesuchId);
             } else {
-                this.state.go('gesuch.kinder', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
             }
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.betreuungen', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.betreuungen', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
@@ -353,15 +297,11 @@ export class NavigatorController {
                     gesuchId: gesuchId
                 });
             } else {
-                this.state.go('gesuch.kinder', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
             }
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.erwerbsPensen', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
 
         } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
             if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
@@ -399,19 +339,59 @@ export class NavigatorController {
         } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
             if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
                 || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.state.go('gesuch.betreuungen', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
             } else {
-                this.state.go('gesuch.dokumente', {
-                    gesuchId: gesuchId
-                });
+                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
             }
 
         } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
+            this.navigateToStep(TSWizardStepName.VERFUEGEN, gesuchId);
+        }
+    }
+
+    private navigateToStep(stepName: TSWizardStepName, gesuchId: string, gsNumber?: string) {
+        if (stepName === TSWizardStepName.ERWERBSPENSUM) {
+            this.state.go('gesuch.erwerbsPensen', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.KINDER) {
+            this.state.go('gesuch.kinder', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.FAMILIENSITUATION) {
+            this.state.go('gesuch.familiensituation', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.BETREUUNG) {
+            this.state.go('gesuch.betreuungen', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.VERFUEGEN) {
             this.state.go('gesuch.verfuegen', {
                 gesuchId: gesuchId
             });
+
+        } else if (stepName === TSWizardStepName.DOKUMENTE) {
+            this.state.go('gesuch.dokumente', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.GESUCH_ERSTELLEN) {
+            this.state.go('gesuch.fallcreation', {
+                createNew: 'false',
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.GESUCHSTELLER) {
+            this.state.go('gesuch.stammdaten', {
+                gesuchstellerNumber: gsNumber,
+                gesuchId: gesuchId
+            });
+
         }
     }
 
@@ -631,9 +611,7 @@ export class NavigatorController {
      */
     private goToDokumenteView(gesuchId: string) {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
-            this.state.go('gesuch.dokumente', {
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
         });
     }
 
@@ -661,15 +639,9 @@ export class NavigatorController {
 
     private moveBackToGesuchsteller(gesuchId: string) {
         if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.state.go('gesuch.stammdaten', {
-                gesuchstellerNumber: 2,
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '2');
         } else {
-            this.state.go('gesuch.stammdaten', {
-                gesuchstellerNumber: 1,
-                gesuchId: gesuchId
-            });
+            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '1');
         }
     }
 

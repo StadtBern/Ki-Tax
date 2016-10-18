@@ -57,6 +57,7 @@ export default class WizardStepManager {
     }
 
     private setAllowedStepsForInstitutionTraegerschaft(): void {
+        this.allowedSteps = [];
         this.allowedSteps.push(TSWizardStepName.FAMILIENSITUATION);
         this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
@@ -69,7 +70,7 @@ export default class WizardStepManager {
 
     /**
      * Sollten keine WizardSteps gefunden werden, wird die Methode initWizardSteps aufgerufen, um die
-     * minimale Steps herzustellen.
+     * minimale Steps herzustellen. Die erlaubten Steps fuer den aktuellen Benutzer werden auch gesetzt
      * @param gesuchId
      * @returns {IPromise<TResult>}
      */
@@ -80,6 +81,7 @@ export default class WizardStepManager {
             } else {
                 this.initWizardSteps();
             }
+            this.setAllowedStepsForRole(this.authServiceRS.getPrincipalRole());
         });
     }
 
@@ -223,6 +225,7 @@ export default class WizardStepManager {
     /**
      * Gibt true zurueck wenn der Step existiert und sein Status OK ist
      * @param stepName
+     * @param status
      * @returns {boolean}
      */
     public hasStepGivenStatus(stepName: TSWizardStepName, status: TSWizardStepStatus): boolean {
