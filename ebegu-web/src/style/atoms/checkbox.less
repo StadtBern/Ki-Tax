@@ -1,0 +1,39 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+md-checkbox {
+    margin-top: 0;
+    margin-bottom: 20px;
+    .md-label {
+        span {
+            .h3();
+        }
+    }
+    .md-icon {
+        border: 1px solid @contrast-darkest;
+        border-radius: 2px;
+    }
+    &.md-checked {
+        .md-icon {
+            background-color: @contrast-darkest;
+            &:after {
+                font-size: 12px;
+                line-height: 20px;
+                font-family: 'FontAwesome';
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                transform: none;
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 2px;
+                content: "\f00c";
+                text-align: center;
+                color: @contrast-lightest;
+            }
+        }
+    }
+}
+
