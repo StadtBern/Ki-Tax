@@ -100,7 +100,15 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals(10, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
-			Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			// status
+			if (WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertEquals(WizardStepStatus.WARTEN, wizardStep.getWizardStepStatus());
+			}
+			else {
+				Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			}
+
+			//verfuegbarkeit
 			if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())
