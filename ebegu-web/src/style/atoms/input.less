@@ -1,0 +1,28 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+//    error styling
+input[type="text"], input[type="number"], input[type="email"] {
+    padding-bottom: 0;
+    .placeholder();
+    .semi-bold();
+    height: 40px;
+    border: 0;
+    background: @contrast-lightest;
+    border: none;
+    box-shadow: 0 0 0 @secondary-dark;
+    outline: 0;
+    border-radius: 0px;
+    font-size: 20px;
+    color: @contrast-darkest;
+    -moz-appearance: textfield; // spinner in firefox sieht doof aus -> disable
+
+    &:focus {
+        border-color: @secondary-dark;
+        //this simulates the outline that chrome places around focused fields using css
+        outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
+        //border: 1px solid @input-boder-focus;
+        -webkit-box-shadow: 0px 0px 4px 0px @secondary-dark;
+        box-shadow: 0px 0px 4px 0px @secondary-dark;
+    }
+}
