@@ -33,14 +33,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log', '$rootScope'];
+        'DvDialog', 'DownloadRS', '$log'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, private $rootScope: IRootScopeService) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.setBemerkungen();
 
@@ -168,12 +168,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         })
             .then(() => {
                 this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                return this.gesuchModelManager.saveVerfuegung().then((response) => {
-                    if (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT) {
-                        this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.STATUS_VERFUEGT]);
-                    }
-                    return response;
-                });
+                return this.gesuchModelManager.saveVerfuegung();
             });
     }
 
