@@ -52,4 +52,10 @@ public interface Rule {
 	 */
 	@Nonnull
 	List<VerfuegungZeitabschnitt> calculate(Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte);
+
+	/**
+	 * Gibt zurueck, ob die Regel fuer die Berechnung der Familiensituation (Fam-Groesse, Einkommen, Abzug fuer Fam-Groesse)
+	 * relevant ist
+     */
+	boolean isRelevantForFamiliensituation();
 }

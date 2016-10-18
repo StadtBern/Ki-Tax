@@ -250,4 +250,9 @@ public abstract class AbstractEbeguRule implements Rule {
 			.append("validityPeriod", validityPeriod)
 			.toString();
 	}
+
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return false;
+	}
 }

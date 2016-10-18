@@ -41,4 +41,9 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 			}
 		}
 	}
+
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return true;
+	}
 }

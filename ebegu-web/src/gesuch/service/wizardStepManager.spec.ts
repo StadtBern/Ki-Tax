@@ -70,6 +70,21 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getWizardSteps().length).toBe(1);
             expect(wizardStepManager.getWizardSteps()[0]).toBe(step);
         });
+        it('does not find any steps im Server -> minimale steps must be set', function() {
+            let steps: TSWizardStep[] = [];
+            spyOn(wizardStepRS, 'findWizardStepsFromGesuch').and.returnValue($q.when(steps));
+
+            wizardStepManager.findStepsFromGesuch('123');
+            scope.$apply();
+
+            expect(wizardStepRS.findWizardStepsFromGesuch).toHaveBeenCalledWith('123');
+            expect(wizardStepManager.getWizardSteps()).toBeDefined();
+            expect(wizardStepManager.getWizardSteps().length).toBe(1);
+            expect(wizardStepManager.getWizardSteps()[0].wizardStepName).toBe(TSWizardStepName.GESUCH_ERSTELLEN);
+            expect(wizardStepManager.getWizardSteps()[0].wizardStepStatus).toBe(TSWizardStepStatus.IN_BEARBEITUNG);
+            expect(wizardStepManager.getWizardSteps()[0].verfuegbar).toBe(true);
+            expect(wizardStepManager.getCurrentStep()).toBe(wizardStepManager.getWizardSteps()[0]);
+        });
     });
     describe('isNextStepBesucht', function() {
         it('next step is available because status != UNBESUCHT', function() {

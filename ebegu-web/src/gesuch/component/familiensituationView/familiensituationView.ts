@@ -83,8 +83,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     showGesuchstellerKardinalitaet(): boolean {
-        return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
-            || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+        if (this.getFamiliensituation()) {
+            return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
+                || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+        }
+        return false;
     }
 
     public getFamiliensituation(): TSFamiliensituation {

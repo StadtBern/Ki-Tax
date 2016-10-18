@@ -15,11 +15,11 @@ import ITranslateService = angular.translate.ITranslateService;
 export class GesuchRouteController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-        'AntragStatusHistoryRS', 'AuthServiceRS' ];
+        'AntragStatusHistoryRS', '$translate'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
-                private antragStatusHistoryRS: AntragStatusHistoryRS) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch());
     }
@@ -29,7 +29,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     }
 
 
-    public getDateErstgesuch(): string {
+    public getDateFromGesuch(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().eingangsdatum, 'DD.MM.YYYY');
         }
@@ -114,6 +114,26 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         if (verantwortlicher) {
             this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
             this.gesuchModelManager.updateFall();
+        }
+    }
+
+    public getGesuchErstellenStepTitle(): string {
+        if (this.gesuchModelManager.isErstgesuch()) {
+            if (this.gesuchModelManager.isGesuchSaved()) {
+                return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
+                    date: this.getDateFromGesuch()
+                });
+            } else {
+                return this.$translate.instant('MENU_ERSTGESUCH');
+            }
+        } else {
+            if (this.gesuchModelManager.isGesuchSaved()) {
+                return this.$translate.instant('MENU_MUTATION_VOM', {
+                    date: this.getDateFromGesuch()
+                });
+            } else {
+                return this.$translate.instant('MENU_MUTATION');
+            }
         }
     }
 

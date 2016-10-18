@@ -14,6 +14,8 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -31,14 +33,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public bemerkungen: string;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', '$scope', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log'];
+        'DvDialog', 'DownloadRS', '$log', '$rootScope'];
 
     private verfuegungen: TSVerfuegung[] = [];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, private $scope: any, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService) {
+                private DvDialog: DvDialog, private downloadRS: DownloadRS, private $log: ILogService, private $rootScope: IRootScopeService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.setBemerkungen();
 
@@ -56,11 +58,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         form.$setPristine();
     }
 
-    reset() {
+    reset(): void {
         this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): void {
         if (form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
@@ -166,7 +168,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         })
             .then(() => {
                 this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                return this.gesuchModelManager.saveVerfuegung();
+                return this.gesuchModelManager.saveVerfuegung().then((response) => {
+                    if (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT) {
+                        this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.STATUS_VERFUEGT]);
+                    }
+                    return response;
+                });
             });
     }
 

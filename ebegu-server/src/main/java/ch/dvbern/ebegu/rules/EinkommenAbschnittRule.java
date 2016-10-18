@@ -90,5 +90,9 @@ public class EinkommenAbschnittRule extends AbstractAbschnittRule {
 
 	}
 
+	@Override
+	public boolean isRelevantForFamiliensituation() {
+		return true;
+	}
 
 }

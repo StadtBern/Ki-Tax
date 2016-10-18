@@ -51,7 +51,8 @@ public class AbstractEntityListener {
 		entity.setTimestampMutiert(now);
 		entity.setUserErstellt(getPrincipalBean().getPrincipal().getName());
 		entity.setUserMutiert(getPrincipalBean().getPrincipal().getName());
-		if (entity instanceof KindContainer) {
+		if (entity instanceof KindContainer && !entity.hasVorgaenger()) {
+			// Neue Kind-Nummer: nur setzen, wenn es nicht ein "kopiertes" Kind ist
 			KindContainer kind = (KindContainer) entity;
 			Optional<Fall> optFall = getFallService().findFall(kind.getGesuch().getFall().getId());
 			if (optFall.isPresent()) {
@@ -60,7 +61,8 @@ public class AbstractEntityListener {
 				fall.setNextNumberKind(fall.getNextNumberKind() + 1);
 			}
 		}
-		else if (entity instanceof Betreuung) {
+		else if (entity instanceof Betreuung && !entity.hasVorgaenger()) {
+			// Neue Betreuungs-Nummer: nur setzen, wenn es nicht eine "kopierte" Betreuung ist
 			Betreuung betreuung = (Betreuung) entity;
 			Optional<KindContainer> optKind = getKindService().findKind(betreuung.getKind().getId());
 			if (optKind.isPresent()) {

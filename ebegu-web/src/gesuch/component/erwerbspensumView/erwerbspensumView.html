@@ -15,100 +15,100 @@
                     <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
                     <br/>
 
-                    <!--Bezeichnung-->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
-                                <input id="bezeichnung" type="text" name="bezeichnung"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
-                                       dv-max-length class="form-control" ng-required="false">
-                            </dv-input-container>
-                        </div>
+                <!--Bezeichnung-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
+                            <input id="bezeichnung" type="text" name="bezeichnung"
+                                   ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
+                                   dv-max-length class="form-control" ng-required="false" ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                        </dv-input-container>
                     </div>
+                </div>
 
-                    <!--Taetigkeit-->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
-                                </label>
-                                <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
-                                <select name="taetigkeit" id="taetigkeit"
-                                        ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
-                                        class="form-control"
-                                        ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
-                                        ng-required="true" ng-change="vm.taetigkeitChanged()">
-                                </select>
-                                <dv-error-messages for="form.taetigkeit.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
+                <!--Taetigkeit-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
+                            </label>
+                            <dv-tooltip text="'TAETIGKEIT_WAEHLEN_HELP' | translate"></dv-tooltip>
+                            <select name="taetigkeit" id="taetigkeit"
+                                    ng-model="vm.erwerbspensum.erwerbspensumJA.taetigkeit"
+                                    class="form-control"
+                                    ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
+                                    ng-required="true" ng-change="vm.taetigkeitChanged()" ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                            </select>
+                            <dv-error-messages for="form.taetigkeit.$error"
+                                               class="error"></dv-error-messages>
                         </div>
                     </div>
+                </div>
 
-                    <!--Pensum-->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
-                                <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
-                                       ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
-                                       dv-max-length class="form-control" max="100"
-                                       ng-required="true" ng-pattern="vm.patternPercentage">
-                                <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form.taetigkeitPensum.$error"
-                                                   class="error hint"></dv-error-messages>
-                                <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
-                            </dv-input-container>
-                        </div>
+                <!--Pensum-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
+                            <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
+                                   ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
+                                   dv-max-length class="form-control" max="100"
+                                   ng-required="true" ng-pattern="vm.patternPercentage" ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                            <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                            <dv-error-messages for="form.taetigkeitPensum.$error"
+                                               class="error hint"></dv-error-messages>
+                            <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
+                        </dv-input-container>
                     </div>
+                </div>
 
-                    <!--Ab Wann / Bis-->
-                    <div class="row">
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
-                                </label>
-                                <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
-                                               ng-required="true" class="input-element" placeholder="">
-                                </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form.taetigkeitAb.$error"
-                                                   class="error hint"></dv-error-messages>
-                            </dv-input-container>
-                        </div>
-                        <div class="col-md-6">
-                            <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
-                                </label>
-                                <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
-                                               ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
-                                               ng-required="false" class="input-element">
-                                </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
-                                <dv-error-messages for="form.taetigkeitBis.$error"
-                                                   class="error hint"></dv-error-messages>
-                            </dv-input-container>
-                        </div>
+                <!--Ab Wann / Bis-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
+                            </label>
+                            <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
+                                           ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
+                                           ng-required="true" class="input-element" placeholder="" ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                            </dv-datepicker>
+                            <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                            <dv-error-messages for="form.taetigkeitAb.$error"
+                                               class="error hint"></dv-error-messages>
+                        </dv-input-container>
                     </div>
+                    <div class="col-md-6">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
+                            </label>
+                            <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
+                                           ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
+                                           ng-required="false" class="input-element">
+                            </dv-datepicker>
+                            <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+                            <dv-error-messages for="form.taetigkeitBis.$error"
+                                               class="error hint"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
+                </div>
 
-                    <!--Zuschlag zu Erwerbspensum-->
-                    <div class="row" ng-if="vm.viewZuschlag()">
-                        <div class="col-md-12">
-                            <div class="checkbox">
-                                <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
-                                             name="zuschlag"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
-                                             aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
-                                    <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
-                                    <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
-                                </md-checkbox>
-                                <dv-error-messages for="form.zuschlag.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
+                <!--Zuschlag zu Erwerbspensum-->
+                <div class="row" ng-if="vm.viewZuschlag()">
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
+                                         name="zuschlag"
+                                         ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                         aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
+                                <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
+                                <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
+                            </md-checkbox>
+                            <dv-error-messages for="form.zuschlag.$error"
+                                               class="error"></dv-error-messages>
                         </div>
                     </div>
+                </div>
 
                     <!--Zuschlagsgrund-->
                     <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
@@ -161,3 +161,4 @@
         </div>
     </div>
 </div>
+
