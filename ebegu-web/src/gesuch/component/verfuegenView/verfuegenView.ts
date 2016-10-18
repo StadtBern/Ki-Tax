@@ -168,12 +168,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         })
             .then(() => {
                 this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
-                return this.gesuchModelManager.saveVerfuegung().then((response) => {
-                    if (this.gesuchModelManager.getGesuch().status === TSAntragStatus.VERFUEGT) {
-                        this.$rootScope.$broadcast(TSGesuchEvent[TSGesuchEvent.STATUS_VERFUEGT]);
-                    }
-                    return response;
-                });
+                return this.gesuchModelManager.saveVerfuegung();
             });
     }
 
