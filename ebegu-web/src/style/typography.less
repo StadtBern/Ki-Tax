@@ -1,0 +1,47 @@
+@import 'variables.less';
+@import 'mixins.less';
+
+h1, h2, h3, label, label:after, p, a {
+    color: @contrast-darkest;
+    .form-group & {
+        color: @contrast-darkest;
+    }
+}
+
+h1 {
+    .h1();
+}
+
+h2 {
+    .h2();
+}
+
+h3 {
+    .h3();
+}
+
+p {
+    .p();
+}
+
+a {
+    .a();
+}
+
+label {
+    .label();
+    &:after {
+        .label();
+    }
+}
+
+md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container, md-input-container:not(.md-input-invalid).md-input-focused, md-input-container:not(.md-input-focused):not(.md-input-invalid), .form-group {
+    label, label.md-required {
+        .label();
+        color: @contrast-darkest;
+        &:after {
+            .label();
+            color: @contrast-darkest;
+        }
+    }
+}

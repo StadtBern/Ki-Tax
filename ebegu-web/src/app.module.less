@@ -1,22 +1,25 @@
 @nodeModules: ~"../node_modules";
+
 @import '~angular-material/angular-material.css';
 @import '~bootstrap/less/bootstrap';
 @import '~font-awesome/less/font-awesome';
-
-//@import '@{nodeModules}/bootstrap/less/bootstrap.less';
-//@import '@{nodeModules}/bootstrap/less/theme.less';
-//@import '@{nodeModules}/font-awesome/less/font-awesome.less';
-//@fa-font-path: "@{nodeModules}/font-awesome/fonts";
 @fa-font-path: "~font-awesome/fonts/";
-//
-/* Component LESS */
-@import 'core/core.module.less';
-@import 'gesuch/gesuch.module.less';
-@import 'admin/admin.module.less';
 
-@import 'variables.less';
-@import 'navbar.less';
+@import 'style/variables.less';
+@import 'style/mixins.less';
+@import 'style/typography.less';
+@import 'style/atoms/button.less';
+@import 'style/atoms/input.less';
+@import 'style/atoms/checkbox.less';
+@import 'style/atoms/radio.less';
+@import 'style/atoms/select.less';
+@import 'style/organisms/navbar.less';
+@import 'style/molecules/table.less';
 /* Add Component LESS Above */
+
+html {
+    height: 100vh;
+}
 
 /* Required for Angular UI Bootstrap */
 .nav, .pagination, .carousel, .panel-title a {
@@ -26,49 +29,65 @@
 body {
     //navbar paddingtodo remove me just testing
     padding-top: @page-start;
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    .font-family();
     .starter-template {
         padding: 40px 15px;
         text-align: center;
-    };
+    }
     &.ebegu {
-        // Wir setzen die Farbe gleich, wie die Background Farbe von Angular Material Design da sonst der Browser der
-        // Teil des Body ausserhalb des sichtbaren Windows eine andere Farbe hat.
-        background-color: rgb(250,250,250);
+        background-color: @contrast-lightest;
     }
 }
+
 //logobar
 .navbar-fixed-top {
-    top: 30px;
+    top: @navbar-height;
+}
+
+.dv-progressbar {
+    position: fixed;
+    width: 100%;
+    top: 95px;
+    z-index: @z-index-progressbar;
+    .md-container {
+        background: none;
+        .md-bar {
+            background: @contrast;
+        }
+    }
+
 }
 
 #Intro {
     top: 0;
     position: fixed;
     background-color: white;
-    height: 40px;
+    height: @navbar-height;
     width: 100%;
     display: block;
-    z-index: 1040;
+    z-index: @z-index-navbar;
 }
 
 .logo-bern {
     background-image: url('assets/images/logo1-bern.png');
     background-repeat: no-repeat;
-    background-size: Auto 40px;
-    background-position: left 10px center;
+    background-size: Auto @navbar-height;
+    background-position: left 7px center;
 }
 
 .logo-text {
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
-    font-size: 30px;
+    .bold();
+    .capitalize();
+    .vertical(middle);
+    font-size: 16px;
+    color: @contrast-darkest;
+    letter-spacing: 1px;
     text-align: center;
     width: 150px;
     margin: 0 auto;
-    font-weight: bolder;
 }
 
-.userMenu{
+.userMenu {
     background-size: Auto 40px;
     background-position: right 20px center;
     float: right;
@@ -115,6 +134,15 @@ form {
 
 }
 
+.row.is-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.is-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
    causes the modal to fade in rather than slide in. */
