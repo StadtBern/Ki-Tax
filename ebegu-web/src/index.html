@@ -9,7 +9,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,400italic' rel='stylesheet'
           type='text/css'>
 </head>
-<body class="ebegu">
+<body class="ebegu" md-no-ink>
 
 <div id="Intro" class="logo-bern">
 
@@ -33,11 +33,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">E-BEGU</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li ui-sref-active="active"><a href="#">Home</a></li>
                 <li ui-sref-active="active" dv-show-element
                     dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'GESUCHSTELLER']">
                     <a ui-sref="pendenzen" data-translate="MENU_PENDENZEN"></a>
@@ -55,7 +53,7 @@
                     dv-show-allowed-roles="[ 'ADMIN',  'SACHBEARBEITER_JA', 'SACHBEARBEITER_TRAEGERSCHAFT', 'SACHBEARBEITER_INSTITUTION', 'SCHULAMT']">
                     <a ui-sref="faelle" data-translate="MENU_ALL_FAELLE"></a>
                 </li>
-                <li ui-sref-active="active"><a href="#contact">Kontakt</a></li>
+
             </ul>
         </div><!--/.nav-collapse -->
     </div>
