@@ -1,0 +1,26 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+table {
+    tr {
+        td {
+            border-bottom: 1px solid @contrast;
+            position: relative;
+        }
+        .betreuung-status {
+            &:after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 30px;
+                height: 5px;
+                border-bottom: 5px solid;
+
+            }
+            &.green:after {
+                border-color: @primary;
+            }
+        }
+    }
+}
