@@ -1,0 +1,38 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+button, .dv-btn {
+    .normal();
+    .capitalize();
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 2px;
+    border: none;
+    background: @primary;
+    color: @contrast-lightest;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 40px;
+    span {
+        line-height: 40px;
+        text-align: center;
+    }
+    &.active, &:active {
+        background: @primary;
+        color: @contrast-lightest;
+
+    }
+    &:hover {
+        background: @contrast-lightest;
+        color: @contrast-darkest;
+    }
+
+    &:focus, &:active, &:hover {
+        outline: none !important;
+        text-decoration: none !important;
+    }
+    &[disabled] {
+        color: @contrast-lightest;
+        background: @contrast;
+    }
+}
