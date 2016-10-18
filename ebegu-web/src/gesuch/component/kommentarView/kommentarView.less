@@ -1,31 +1,73 @@
-.kommentar-feld textarea.md-input {
-    border-width: 1px 1px 1px 1px;
-    border-color: #4990E2;
-    background-color: white;
-}
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
 
-.kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
-    padding-left: 10px;
-    color: #4990E2;
-}
+.kommentarView {
+    height: 100%;
+    & > form {
+        height: inherit;
+        & > div {
+            padding: 10px;
+        }
+    }
+    md-input-container {
+        label:not(.md-container-ignore) {
+            position: static;
+        }
+        textarea {
+            margin-top: 5px;
+        }
+        margin: 0;
+    }
 
-.kommentar-button.btn {
-    display: block;
-    width: 100%;
-    background-color: #4990E2;
-    color: white;
-    font-weight: bold;
-}
+    .kommentarTop {
+        /*  left:0;
+          right:0;
+          position: absolute;
+          top:0;*/
 
-.kommentar .bottom-align {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 0;
-}
+    }
 
-.kommentar .kommentar-verfuegung-align {
-    position: absolute;
-    bottom: 20px;
-    right: 0;
+    .kommentarBottom {
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        right: 0;
+    }
+
+    .kommentarButton {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .kommentar-feld textarea.md-input {
+        border-width: 1px 1px 1px 1px;
+        border-color: @secondary;
+        background-color: @contrast-lightest;
+    }
+
+    .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
+        padding-left: 10px;
+        color: @secondary;
+    }
+
+    .kommentar-button {
+        background-color: @secondary;
+        cursor: pointer;
+    }
+
+    .bottom-align {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0;
+    }
+
+    .kommentar-verfuegung-align {
+        position: absolute;
+        bottom: 20px;
+        right: 0;
+    }
+
 }

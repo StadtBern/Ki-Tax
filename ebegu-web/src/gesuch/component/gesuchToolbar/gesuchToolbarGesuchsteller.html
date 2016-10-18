@@ -1,16 +1,16 @@
-<md-content class="gesuch-toolbar small-toolbar">
-
-
-    <md-toolbar class="small-toolbar">
+<md-content class="gesuch-toolbar-gesuchsteller">
+    <md-toolbar class="gesuch-toolbar-gesuchsteller">
         <div class="md-toolbar-tools">
 
             <!--Fall und Name des Gesuchs-->
             <span ng-bind="vmgs.getGesuchName()" class=" toolbar-gesuchname"></span>
 
+            <span flex=""></span>
             <!--Gesuchsperioden-->
             <md-menu-bar ng-if="vmgs.getGesuch()">
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
+                    <md-button class="toolbar-gesuchname" ng-click="$mdOpenMenu()"
+                               aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
                     </md-button>
@@ -31,7 +31,7 @@
             <!--Gesuchstyp-->
             <md-menu-bar ng-if="vmgs.getGesuch()">
                 <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
+                    <md-button class="toolbar-gesuchname" ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
                         <span ng-bind="vmgs.getAntragTyp()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
                     </md-button>

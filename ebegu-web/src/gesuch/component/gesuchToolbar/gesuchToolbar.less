@@ -1,6 +1,9 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
 .gesuch-toolbar {
     md-toolbar:not(.md-menu-toolbar) {
-        background-color: rgb(73, 143, 224);
+        background-color: @secondary;
     }
 
 }
@@ -15,7 +18,7 @@ i.ellipsis-icon {
 }
 
 .toolbar-submenu {
-    background-color: rgb(73, 143, 224);
+    background-color: @secondary;
 }
 
 .toolbar-submenu-item {
@@ -40,3 +43,32 @@ i.ellipsis-icon {
     font-size: medium;
 }
 
+.gesuch-toolbar-gesuchsteller, .gesuch-toolbar-gesuchsteller.md-has-open-menu {
+    md-toolbar {
+        background-color: @primary;
+    }
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    height: @navbar-height;
+    min-height: @navbar-height;
+    z-index: @z-index-navbar;
+    .md-toolbar-tools {
+        height: @navbar-height;
+    }
+
+    .toolbar-gesuchname {
+        font-size: 16px;
+        line-height: @navbar-height;
+        height: @navbar-height;
+        padding: 0;
+        box-sizing: border-box;
+        .bold();
+        text-align: center;
+        text-decoration: none;
+        letter-spacing: 1.5px;
+        color: @contrast-lightest;
+        text-transform: none;
+    }
+}

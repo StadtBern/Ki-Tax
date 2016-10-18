@@ -1,9 +1,16 @@
+@import "../../style/variables.less";
+
 @buttonWidth: 230px;
 @buttonHeight: 140px;
 
 .gesuchstellerDashboardView {
+    overflow-y: auto;
     color: #fff;
-    height: 95vh;
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed; /* fallback */
     background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
     url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed;
@@ -18,7 +25,7 @@
 
     .dashboardHeader {
         margin-top: 200px;
-        z-index: 1;
+        z-index: @z-index-dashboard;
     }
     .dashboardButton {
         width: @buttonWidth;
@@ -39,13 +46,13 @@
             font-family: "Open Sans", Arial, Helvetica, sans-serif;
             font-size: 22px;
             letter-spacing: 1.5px;
-            color: #FFFEFE;
+            color: @contrast-light;
             margin: 0;
         }
         .labelBig {
             top: 0;
             left: 0;
-            background-color: #CCC;
+            background-color: @contrast;
             width: @buttonWidth;
             height: 100px;
 
@@ -57,7 +64,7 @@
         .labelSmall {
             bottom: 0;
             left: 0;
-            background-color: #D50025;
+            background-color: @primary;
             width: @buttonWidth;
             height: 40px;
             & h2 {
@@ -69,12 +76,12 @@
             top: 5px;
             right: 5px;
             border-radius: 40px;
-            background-color: #fff;
+            background-color: @contrast-lightest;
             width: 24px;
             height: 24px;
             vertical-align: center;
             line-height: 24px;
-            color: #d50025;
+            color: @primary;
             font-weight: bold;
         }
     }

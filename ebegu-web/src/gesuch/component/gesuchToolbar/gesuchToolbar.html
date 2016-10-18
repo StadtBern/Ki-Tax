@@ -6,7 +6,7 @@
 
             <!--Fall und Name des Gesuchs-->
             <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
-
+            <span flex=""></span>
             <md-menu-bar>
 
                 <!--Gesuchsperioden-->
@@ -46,7 +46,6 @@
                     </md-menu-content>
                 </md-menu>
 
-                <span flex=""></span>
 
                 <!-- Mutieren -->
                 <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag">

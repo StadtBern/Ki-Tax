@@ -1,4 +1,53 @@
-@import '../variables.less';
+@import '../style/variables.less';
+@import '../style/mixins.less';
+@import '../style/organisms/sidenav.less';
+
+.mainTitle {
+    margin-top: 0;
+}
+
+#gesuchContainer {
+    background: @contrast-light;
+    overflow-y: scroll;
+    //margin-top:40px;
+    position: fixed;
+    left: 350px;
+    right: 0;
+    top: 100px;
+    bottom: 0;
+    //padding-left:371px;
+}
+
+#kommentarContainer + #sidenavContainer + #gesuchContainer {
+    right: 320px;
+    top: 140px;
+}
+
+#kommentarContainer + #sidenavContainer {
+    top: 140px;
+}
+
+#kommentarContainer {
+    z-index: @z-index-kommentar;
+    width: 320px;
+    padding: 0;
+    top: 140px;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+}
+
+.fixedToolbar {
+    position: fixed;
+    width: 100%;
+    top: 100px;
+    z-index: @z-index-toolbar;
+}
+
+.gesuchModul {
+
+    padding: 50px 25px 25px 50px;
+}
 
 .betreuung-status {
     font-style: italic;
@@ -18,62 +67,24 @@
 
 .BESTAETIGT {
 }
-.sidenav {
-    li {
-        height: 20px;
-        margin-top: 12px;
-        margin-right: 40px;
-        margin-left: 10px;
-        list-style: none;
-        border-bottom: 1px solid lightgray;
-
-        button {
-            text-align: left;
-            padding: 0 0 0 15px;
-        }
-        button:focus, button:active {
-            outline: none !important;
-        }
-        button[disabled]{
-            color: #777777;
-        }
-
-        span {
-            padding-right: 3px;
-            text-align: right;
-        }
-
-    }
-    li.active-element {
-        border-bottom: 2px solid black;
-        border-left: 4px solid @color-guide;;
-    }
-
-    .fa-check.green {
-        color: #16cc77;
-    }
-    .fa-close.red {
-        color: #d50025;
-    }
-    .fa-hourglass.orange{
-        color: #f5a623;
-    }
-
-}
 
 .right-side {
     background-color: #ECF1F4;
 }
 
 .gesuch-status {
-    color: rgb(73, 143, 224);
-    margin-left: 70px;
+    margin: 50px 25px 25px 25px;
+    color: @contrast-darkest;
 
     .status {
-        font-weight: bold;
+        .bold();
+        font-size: 14px;
+        letter-spacing: 1px;
     }
     .zuletzt {
-        font-style: italic;
+        .italic();
+        font-size: 12px;
+        letter-spacing: 1px;
     }
 }
 
@@ -84,8 +95,11 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 .gesuchbody.row > [class*='col-'] {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
 }
+
 
