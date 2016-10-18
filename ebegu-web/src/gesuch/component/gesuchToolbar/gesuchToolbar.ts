@@ -60,7 +60,7 @@ export class GesuchToolbarController {
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
                 private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
                 private gesuchModelManager: GesuchModelManager) {
-
+        this.updateUserList();
         this.updateAntragDTOList();
 
         //add watchers
