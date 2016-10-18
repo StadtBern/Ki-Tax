@@ -1,0 +1,31 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+md-radio-button {
+    .md-container {
+        height: 17px;
+    }
+    .md-label {
+        span {
+            .h3();
+        }
+    }
+    .md-off {
+        width: 17px;
+        height: 17px;
+        border-color: @contrast-darkest;
+    }
+    &.md-checked .md-off {
+        width: 17px;
+        height: 17px;
+        border-color: @contrast-darkest;
+    }
+
+    .md-on {
+        width: 17px;
+        height: 17px;
+        background-color: @contrast-darkest;
+        border-color: @contrast-darkest;
+    }
+}
+
