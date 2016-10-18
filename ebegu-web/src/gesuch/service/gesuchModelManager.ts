@@ -492,9 +492,11 @@ export default class GesuchModelManager {
      * @param gesuchID
      */
     public initMutation(gesuchID: string): void {
+        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
         this.initAntrag(TSAntragTyp.MUTATION);
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
         this.gesuch.mutationsdaten = new TSMutationsdaten();
+        this.gesuch.gesuchsperiode = gesuchsperiode;
     }
 
     private initAntrag(antragTyp: TSAntragTyp): void {
