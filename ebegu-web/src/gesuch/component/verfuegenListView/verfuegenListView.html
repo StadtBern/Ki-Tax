@@ -27,7 +27,7 @@
                             <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                             <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
                             <td ng-bind="vm.ebeguUtil.calculateBetreuungsId(vm.getGesuchsperiode(), vm.getFall(), kindContainer.kindNummer, betreuung.betreuungNummer)"></td>
-                            <td class="betreuung-status ng-class:betreuung.betreuungsstatus;"
+                            <td class="betreuung-status" ng-class="betreuung.betreuungsstatus"
                                 ng-bind="betreuung.betreuungsstatus | translate"></td>
                         </tr>
                         </tbody>
@@ -67,18 +67,19 @@
 
             <br>
 
-        <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-            <div class="col-md-12 text-center">
-                <md-button ng-if="vm.showGeprueft()"
-                           ng-click="vm.setGesuchStatusGeprueft()"
-                           class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
-                    <span data-translate="GEPRUEFT_UPPER"></span>
-                </md-button>
-                <md-button ng-if="vm.showVerfuegenStarten()"
-                           ng-click="vm.setGesuchStatusVerfuegen()"
-                           class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
-                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
-                </md-button>
+            <div class="row" dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                <div class="col-md-12 text-center">
+                    <md-button ng-if="vm.showGeprueft()"
+                               ng-click="vm.setGesuchStatusGeprueft()"
+                               class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+                        <span data-translate="GEPRUEFT_UPPER"></span>
+                    </md-button>
+                    <md-button ng-if="vm.showVerfuegenStarten()"
+                               ng-click="vm.setGesuchStatusVerfuegen()"
+                               class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                        <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                    </md-button>
 
                     <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"
                                aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
