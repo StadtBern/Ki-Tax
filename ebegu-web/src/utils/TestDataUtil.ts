@@ -13,6 +13,9 @@ import {TSWizardStepName} from '../models/enums/TSWizardStepName';
 import TSVerfuegung from '../models/TSVerfuegung';
 import * as moment from 'moment';
 import TSGesuchsperiode from '../models/TSGesuchsperiode';
+import Moment = moment.Moment;
+import TSAntragDTO from '../models/TSAntragDTO';
+import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 
 export default class TestDataUtil {
 
@@ -89,5 +92,16 @@ export default class TestDataUtil {
     public static createGesuchsperiode20162017(): TSGesuchsperiode {
         let gueltigkeit: TSDateRange = new TSDateRange(moment('01.07.2016', 'DD.MM.YYYY'), moment('31.08.2017', 'DD.MM.YYYY'));
         return new TSGesuchsperiode(true, gueltigkeit);
+    }
+
+    public static createTSAntragDTO(antragTyp: TSAntragTyp, eingangsdatum: Moment): TSAntragDTO {
+        let antrag: TSAntragDTO = new TSAntragDTO();
+        antrag.verfuegt = true;
+        antrag.antragTyp = antragTyp;
+        antrag.eingangsdatum = eingangsdatum;
+        let gesuchsperiode: TSGesuchsperiode = TestDataUtil.createGesuchsperiode20162017();
+        antrag.gesuchsperiodeGueltigAb = gesuchsperiode.gueltigkeit.gueltigAb;
+        antrag.gesuchsperiodeGueltigBis = gesuchsperiode.gueltigkeit.gueltigBis;
+        return antrag;
     }
 }

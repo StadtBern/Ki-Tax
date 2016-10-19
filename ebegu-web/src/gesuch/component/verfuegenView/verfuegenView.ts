@@ -14,6 +14,8 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -56,11 +58,11 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         form.$setPristine();
     }
 
-    reset() {
+    reset(): void {
         this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): void {
         if (form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,

@@ -4,13 +4,12 @@
     <md-toolbar class="small-toolbar">
         <div class="md-toolbar-tools">
 
-            <!--Fall und Name des Gesuchs-->
-            <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
 
-            <md-menu-bar>
-
+            <md-menu-bar layout="row" layout-align="space-between center" class="col-md-12">
+                <!--Fall und Name des Gesuchs-->
+                <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname" style="margin:8px;"></span>
                 <!--Gesuchsperioden-->
-                <md-menu>
+                <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vmx.getCurrentGesuchsperiode()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
@@ -28,8 +27,11 @@
                     </md-menu-content>
                 </md-menu>
 
+                <span ng-if="!vmx.showGesuchPeriodeNavigationMenu()" ng-bind="vmx.getCurrentGesuchsperiode()"
+                      style="font-size: 14px; margin-right: 10px; margin-left: 10px;"></span>
+
                 <!--Gesuchstyp-->
-                <md-menu>
+                <md-menu ng-if="vmx.showAntragTypListNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getAntragTyp()}}">
                         <span ng-bind="vmx.getAntragTyp()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
@@ -46,16 +48,20 @@
                     </md-menu-content>
                 </md-menu>
 
+                <span ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"
+                style="font-size: 14px; margin-right: 10px; margin-left: 10px; text-transform: uppercase;"></span>
+
                 <span flex=""></span>
 
                 <!-- Mutieren -->
-                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
-                           aria-label="{{TOOLBAR_MUTIEREN | translate}}">
-                    <span data-translate="TOOLBAR_MUTIEREN"></span>
-                </md-button>
-
-                 <!--Kontakt-->
                 <md-menu>
+                    <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
+                               aria-label="{{TOOLBAR_MUTIEREN | translate}}">
+                        <span data-translate="TOOLBAR_MUTIEREN"></span>
+                    </md-button>
+                </md-menu>
+                <!--Kontakt-->
+                <md-menu ng-if="vmx.showKontaktMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <i class="ellipsis-icon fa fa-envelope"></i>
                         <span data-translate="TOOLBAR_KONTAKT"></span>

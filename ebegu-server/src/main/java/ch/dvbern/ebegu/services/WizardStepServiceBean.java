@@ -101,7 +101,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE,
 					WizardStepStatus.OK, true)));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN,
-					WizardStepStatus.OK, true)));
+					WizardStepStatus.WARTEN, true))); // Verfuegen muss WARTEN sein, da die Betreuungen nochmal verfuegt werden muessen
 			}
 		}
 		else { // GESUCH
