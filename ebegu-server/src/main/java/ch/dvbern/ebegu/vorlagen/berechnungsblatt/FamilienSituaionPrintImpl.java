@@ -68,7 +68,7 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 	public List<BerechnungsblattPrint> getBerechnungsblatt() {
 
 		List<BerechnungsblattPrint> result = new ArrayList<>();
-		for (KindContainer kindContainer : gesuch.getKindContainers())
+		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				Optional<Verfuegung> verfuegung = extractVerfuegung(betreuung);
 				if (verfuegung.isPresent()) {
@@ -80,6 +80,9 @@ public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 				// Von jedem Kind nur eine Betreuung nehmmen
 				break;
 			}
+			break;
+		}
+
 		return result;
 
 	}

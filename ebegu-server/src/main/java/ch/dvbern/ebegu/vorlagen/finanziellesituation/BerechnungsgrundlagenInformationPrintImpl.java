@@ -133,6 +133,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 				// Von jedem Kind nur eine Betreuung nehmmen
 				break;
 			}
+			break;
 		}
 		return result;
 

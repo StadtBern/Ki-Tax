@@ -130,6 +130,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+				//FIXME: Hier muss noch der BetreuungEvaluator angestossen werden um die Verfügung zu berechnen (evaluator.evaluate(gesuch, ...);)
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
