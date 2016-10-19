@@ -3,12 +3,10 @@ import {IStateService} from 'angular-ui-router';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
 import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import ITranslateService = angular.translate.ITranslateService;
 let template = require('./dv-navigation.html');
 
 /**
@@ -56,10 +54,10 @@ export class NavigatorController {
     dvNextDisabled: () => any;
     dvSubStep: number;
 
-    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', 'AuthServiceRS', '$translate', 'ErrorService'];
+    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
-                private authServiceRS: AuthServiceRS, private $translate: ITranslateService, private errorService: ErrorService) {
+                private $translate: ITranslateService, private errorService: ErrorService) {
     }
 
     public doesCancelExist(): boolean {
@@ -138,108 +136,75 @@ export class NavigatorController {
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der naechste Step ist und wechselt zu diesem.
      */
     private navigateToNextStep() {
-        let gesuchId = this.getGesuchId();
 
         this.errorService.clearAll();
-        if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '2');
-            } else {
-                this.navigateToNextAvailableStep();
-            }
+        if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()
+            && (this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '2');
+
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
+            this.navigateToStep(TSWizardStepName.KINDER);
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
             // Diese Logik ist ziemlich kompliziert. Deswegen bleibt sie noch in betreuungView.ts -> Hier wird dann nichts gemacht
 
-        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.errorService.clearAll();
-            if (this.wizardStepManager.isNextStepBesucht() && !this.wizardStepManager.isNextStepEnabled()) {
-                // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
-                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
-            } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart', {
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.state.go('gesuch.finanzielleSituation', {
-                    gesuchstellerNumber: 1,
-                    gesuchId: gesuchId
-                });
-            }
-
-        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
-
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituation', {
-                    gesuchstellerNumber: '2',
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.state.go('gesuch.finanzielleSituationResultate', {
-                    gesuchId: gesuchId
-                });
-            }
-
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.state.go('gesuch.finanzielleSituation', {
-                gesuchstellerNumber: '1',
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterungInfo', {
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName()) {
+            if (this.dvSubStep === 1) {
+                this.errorService.clearAll();
+                // if (this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ)
+                //     && !this.wizardStepManager.isNextStepEnabled(this.gesuchModelManager.getGesuch().typ)) {
+                //     // wenn finanzielle situation besucht aber nicht enabled ist, dann zu Dokumenten
+                //     this.navigateToStep(TSWizardStepName.DOKUMENTE);
+                // } else
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern', {
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch().typ));
                 }
-            } else {
-                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
+
+            } else if (this.dvSubStep === 2) {
+                this.navigateToStep(TSWizardStepName.ERWERBSPENSUM);
             }
 
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateNextEVSubStep2(gesuchId);
+        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName()) {
+            if (this.dvSubStep === 1) {
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.navigateToStepFinanzielleSituation('2');
+                } else {
+                    this.navigateToFinanziellSituationResultate();
+                }
 
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterung', {
-                gesuchstellerNumber: '1',
-                basisjahrPlus: '1',
-                gesuchId: gesuchId
-            });
+            } else if (this.dvSubStep === 2) {
+                this.navigateToStepFinanzielleSituation('1');
 
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 4) {
-            this.navigateNextEVSubStep4(gesuchId);
+            } else if (this.dvSubStep === 3) {
+                this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+            }
+
+        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
+            if (this.dvSubStep === 1) {
+                if (this.gesuchModelManager.getEinkommensverschlechterungsInfo().einkommensverschlechterung) { // was muss hier sein?
+                    if (this.gesuchModelManager.isGesuchsteller2Required()) {
+                        this.navigateToStepEinkommensverschlechterungSteuern();
+                    } else {
+                        this.navigateToStepEinkommensverschlechterung('1', undefined);
+                    }
+                } else {
+                    this.navigateToStep(TSWizardStepName.DOKUMENTE);
+                }
+
+            } else if (this.dvSubStep === 2) {
+                this.navigateNextEVSubStep2();
+
+            } else if (this.dvSubStep === 3) {
+                this.navigateToStepEinkommensverschlechterung('1', '1');
+
+            } else if (this.dvSubStep === 4) {
+                this.navigateNextEVSubStep4();
+            }
 
         } else { //by default navigieren wir zum naechsten erlaubten Step
-            this.navigateToNextAvailableStep();
-        }
-    }
-
-    private navigateToNextAvailableStep() {
-        var allStepNames = this.wizardStepManager.getAllowedSteps();
-        let currentPosition: number = allStepNames.indexOf(this.wizardStepManager.getCurrentStepName()) + 1;
-        for (let i = currentPosition; i < allStepNames.length; i++) {
-            if (this.wizardStepManager.getStepByName(allStepNames[i]).verfuegbar
-                || (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH
-                && this.wizardStepManager.getStepByName(allStepNames[i]).wizardStepStatus === TSWizardStepStatus.UNBESUCHT)) {
-
-                this.navigateToStep(allStepNames[i], this.getGesuchId());
-                break;
-            }
+            this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch().typ));
         }
     }
 
@@ -247,142 +212,80 @@ export class NavigatorController {
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der previous Step ist und wechselt zu diesem.
      */
     private navigateToPreviousStep() {
-        let gesuchId = this.getGesuchId();
 
         this.errorService.clearAll();
         if (TSWizardStepName.GESUCH_ERSTELLEN === this.wizardStepManager.getCurrentStepName()) {
-            this.navigateToStep(TSWizardStepName.GESUCH_ERSTELLEN, gesuchId);
-        }
-        if (TSWizardStepName.FAMILIENSITUATION === this.wizardStepManager.getCurrentStepName()) {
-            this.navigateToStep(TSWizardStepName.GESUCH_ERSTELLEN, gesuchId);
+            this.navigateToStep(TSWizardStepName.GESUCH_ERSTELLEN);
 
-        } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()) {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '1');
-            } else {
-                this.navigateToStep(TSWizardStepName.FAMILIENSITUATION, gesuchId);
-            }
+        } else if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()
+            && this.gesuchModelManager.getGesuchstellerNumber() === 2) {
+
+            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '1');
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.moveBackToGesuchsteller(gesuchId);
+            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, this.gesuchModelManager.getGesuchstellerNumber().toLocaleString());
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
-
-        } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
-                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.moveBackToGesuchsteller(gesuchId);
-            } else {
-                this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
-            }
+            this.navigateToStep(TSWizardStepName.KINDER);
 
         } else if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
-
-        } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
+            this.navigateToStep(TSWizardStepName.BETREUUNG);
 
         } else if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
+            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM);
 
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {
-                    gesuchstellerNumber: 1,
-                    gesuchId: gesuchId
-                });
-            } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.state.go('gesuch.finanzielleSituationStart', {
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.navigateToStep(TSWizardStepName.KINDER, gesuchId);
+        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName()) {
+            if (this.dvSubStep === 1) {
+                if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
+                    this.navigateToStepFinanzielleSituation('1');
+
+                } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
+                } else {
+                    this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
+                }
+            } else if (this.dvSubStep === 3) {
+                this.navigateToStepFinanzielleSituation(this.gesuchModelManager.getGesuchstellerNumber() === 2 ? '2' : '1');
             }
 
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.ERWERBSPENSUM, gesuchId);
+        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
+            if (this.dvSubStep === 1) {
+                this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
 
-        } else if (TSWizardStepName.FINANZIELLE_SITUATION === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-                this.state.go('gesuch.finanzielleSituation', {
-                    gesuchstellerNumber: 2,
-                    gesuchId: gesuchId
-                });
-            } else {
-                this.state.go('gesuch.finanzielleSituation', {
-                    gesuchstellerNumber: 1,
-                    gesuchId: gesuchId
-                });
-            }
+            } else if (this.dvSubStep === 2) {
+                this.navigatePreviousEVSubStep2();
 
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.state.go('gesuch.finanzielleSituation', {
-                gesuchstellerNumber: '1',
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigatePreviousEVSubStep2(gesuchId);
-
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 3) {
-            this.state.go('gesuch.einkommensverschlechterungInfo', {
-                gesuchId: gesuchId
-            });
-
-        } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 4) {
-            this.navigatePreviousEVSubStep4(gesuchId);
-
-        } else if (TSWizardStepName.DOKUMENTE === this.wizardStepManager.getCurrentStepName()) {
-            this.navigatePreviousDokumente(gesuchId);
-
-        } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            if (this.authServiceRS.isRole(TSRole.SACHBEARBEITER_INSTITUTION)
-                || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
-                this.navigateToStep(TSWizardStepName.BETREUUNG, gesuchId);
-            } else {
-                this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
+            } else if (this.dvSubStep === 3) {
+                this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+            } else if (this.dvSubStep === 4) {
+                this.navigatePreviousEVSubStep4();
             }
 
         } else if (TSWizardStepName.VERFUEGEN === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
-            this.navigateToStep(TSWizardStepName.VERFUEGEN, gesuchId);
+            this.navigateToStep(TSWizardStepName.VERFUEGEN);
+
+        } else {
+            this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
         }
     }
 
-    private navigateToStep(stepName: TSWizardStepName, gesuchId: string, gsNumber?: string) {
-        if (stepName === TSWizardStepName.ERWERBSPENSUM) {
-            this.state.go('gesuch.erwerbsPensen', {
-                gesuchId: gesuchId
-            });
+    /**
+     * Diese Methode navigierte zum ersten substep jedes Steps. Fuer die navigation innerhalb eines Steps muss
+     * man eine extra Methode machen
+     * @param stepName
+     * @param gsNumber
+     */
+    private navigateToStep(stepName: TSWizardStepName, gsNumber?: string) {
+        let gesuchId = this.getGesuchId();
 
-        } else if (stepName === TSWizardStepName.KINDER) {
-            this.state.go('gesuch.kinder', {
+        if (stepName === TSWizardStepName.GESUCH_ERSTELLEN) {
+            this.state.go('gesuch.fallcreation', {
+                createNew: 'false',
                 gesuchId: gesuchId
             });
 
         } else if (stepName === TSWizardStepName.FAMILIENSITUATION) {
             this.state.go('gesuch.familiensituation', {
-                gesuchId: gesuchId
-            });
-
-        } else if (stepName === TSWizardStepName.BETREUUNG) {
-            this.state.go('gesuch.betreuungen', {
-                gesuchId: gesuchId
-            });
-
-        } else if (stepName === TSWizardStepName.VERFUEGEN) {
-            this.state.go('gesuch.verfuegen', {
-                gesuchId: gesuchId
-            });
-
-        } else if (stepName === TSWizardStepName.DOKUMENTE) {
-            this.state.go('gesuch.dokumente', {
-                gesuchId: gesuchId
-            });
-
-        } else if (stepName === TSWizardStepName.GESUCH_ERSTELLEN) {
-            this.state.go('gesuch.fallcreation', {
-                createNew: 'false',
                 gesuchId: gesuchId
             });
 
@@ -392,7 +295,78 @@ export class NavigatorController {
                 gesuchId: gesuchId
             });
 
+        } else if (stepName === TSWizardStepName.KINDER) {
+            this.state.go('gesuch.kinder', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.BETREUUNG) {
+            this.state.go('gesuch.betreuungen', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.ERWERBSPENSUM) {
+            this.state.go('gesuch.erwerbsPensen', {
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.FINANZIELLE_SITUATION) {
+            this.state.go('gesuch.finanzielleSituationStart', {
+                gesuchId: this.getGesuchId()
+            });
+
+        } else if (stepName === TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG) {
+            this.state.go('gesuch.einkommensverschlechterungInfo', {
+                gesuchId: this.getGesuchId()
+            });
+
+        } else if (stepName === TSWizardStepName.DOKUMENTE) {
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
+                this.state.go('gesuch.dokumente', {
+                    gesuchId: gesuchId
+                });
+            });
+
+        } else if (stepName === TSWizardStepName.VERFUEGEN) {
+            this.state.go('gesuch.verfuegen', {
+                gesuchId: gesuchId
+            });
+
         }
+    }
+
+    private navigateToStepEinkommensverschlechterung(gsNumber: string, basisjahrPlus: string) {
+        this.state.go('gesuch.einkommensverschlechterung', {
+            gesuchstellerNumber: gsNumber,
+            basisjahrPlus: basisjahrPlus,
+            gesuchId: this.getGesuchId()
+        });
+    }
+
+    private navigateToFinanziellSituationResultate() {
+        this.state.go('gesuch.finanzielleSituationResultate', {
+            gesuchId: this.getGesuchId()
+        });
+    }
+
+    private navigateToStepEinkommensverschlechterungSteuern() {
+        this.state.go('gesuch.einkommensverschlechterungSteuern', {
+            gesuchId: this.getGesuchId()
+        });
+    }
+
+    private navigateToStepEinkommensverschlechterungResultate(basisjahrPlus: string) {
+        this.state.go('gesuch.einkommensverschlechterungResultate', {
+            basisjahrPlus: basisjahrPlus,
+            gesuchId: this.getGesuchId()
+        });
+    }
+
+    private navigateToStepFinanzielleSituation(gsNumber: string) {
+        this.state.go('gesuch.finanzielleSituation', {
+            gesuchstellerNumber: gsNumber,
+            gesuchId: this.getGesuchId()
+        });
     }
 
     private getGesuchId(): string {
@@ -403,18 +377,22 @@ export class NavigatorController {
     }
 
     /**
-     * Checks whether the button should be disable for the current conditions. By default enabled
+     * Checks whether the button should be disable for the current conditions. By default (auch fuer Mutaionen) enabled
      * @returns {boolean}
      */
     public isNextDisabled(): boolean {
-        if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf() && !this.wizardStepManager.isNextStepBesucht();
-        }
-        if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return !this.gesuchModelManager.isThereAnyBetreuung() && !this.wizardStepManager.isNextStepBesucht();
-        }
-        if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht();
+        if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
+            if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+                return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()
+                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+            }
+            if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+                return !this.gesuchModelManager.isThereAnyBetreuung()
+                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+            }
+            if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
+                return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+            }
         }
         return false;
     }
@@ -434,42 +412,24 @@ export class NavigatorController {
         return undefined;
     }
 
-    private navigateNextEVSubStep2(gesuchId: string): void {
+    private navigateNextEVSubStep2(): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 1
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '2',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('1', '2');
                 } else if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('2', '1');
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterungResultate('1');
                 }
 
             } else { //gesuchsteller ===2
                 // 2 , 1
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '2',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('2', '2');
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterungResultate('1');
                 }
 
             }
@@ -478,82 +438,48 @@ export class NavigatorController {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 2
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '2',
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('2', '1');
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungResultate', {
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterungResultate('1');
                 }
 
             } else { //gesuchsteller ===2
                 // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterungResultate', {
-                    basisjahrPlus: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterungResultate('1');
             }
         }
     };
 
-    private navigatePreviousEVSubStep2(gesuchId: string): void {
+    private navigatePreviousEVSubStep2(): void {
         if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 1)) {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 1
                 if (this.gesuchModelManager.isGesuchsteller2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterungSteuern', {
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterungSteuern();
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterungInfo', {
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStep(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
                 }
             } else { //gesuchsteller ===2
                 // 2 , 1
                 if (this.gesuchModelManager.isBasisJahr2Required()) {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '2',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('1', '2');
                 } else {
-                    this.state.go('gesuch.einkommensverschlechterung', {
-                        gesuchstellerNumber: '1',
-                        basisjahrPlus: '1',
-                        gesuchId: gesuchId
-                    });
+                    this.navigateToStepEinkommensverschlechterung('1', '1');
                 }
             }
         } else if ((this.gesuchModelManager.getBasisJahrPlusNumber() === 2)) {
             if (this.gesuchModelManager.getGesuchstellerNumber() === 1) {
                 // 1 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('1', '1');
             } else { //gesuchsteller ===2
-                // 2 , 2
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('2', '1');
             }
         }
     };
 
-    private navigatePreviousEVSubStep4(gesuchId: string): void {
+    private navigatePreviousEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {
-                basisjahrPlus: '1',
-                gesuchId: gesuchId
-            });
+            this.navigateToStepEinkommensverschlechterungResultate('1');
         } else {
             // baisjahrPlus1
 
@@ -561,88 +487,30 @@ export class NavigatorController {
             let basisJahr2Required: boolean = this.gesuchModelManager.isBasisJahr2Required();
 
             if (gesuchsteller2Required && basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '2',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('2', '2');
             } else if (gesuchsteller2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '2',
-                    basisjahrPlus: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('2', '1');
             } else if (basisJahr2Required) {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '2',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('1', '2');
             } else {
-                this.state.go('gesuch.einkommensverschlechterung', {
-                    gesuchstellerNumber: '1',
-                    basisjahrPlus: '1',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterung('1', '1');
             }
         }
     };
 
     //muss als instance arrow function definiert werden statt als prototyp funktionw eil sonst this undefined ist
-    private navigateNextEVSubStep4(gesuchId: string): void {
+    private navigateNextEVSubStep4(): void {
         if (this.gesuchModelManager.getBasisJahrPlusNumber() === 2) {
-            this.goToDokumenteView(gesuchId);
+            this.navigateToStep(TSWizardStepName.DOKUMENTE);
         } else {
             let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
                 && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
             if (ekvFuerBasisJahrPlus2) {
-                this.state.go('gesuch.einkommensverschlechterungResultate', {
-                    basisjahrPlus: '2',
-                    gesuchId: gesuchId
-                });
+                this.navigateToStepEinkommensverschlechterungResultate('2');
             } else {
-                this.goToDokumenteView(gesuchId);
+                this.navigateToStep(TSWizardStepName.DOKUMENTE);
             }
         }
     };
-
-    /**
-     * Goes to the view of documents and updates before the status of the WizardStep Einkommensverschlechterung to OK
-     */
-    private goToDokumenteView(gesuchId: string) {
-        this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
-            this.navigateToStep(TSWizardStepName.DOKUMENTE, gesuchId);
-        });
-    }
-
-    private navigatePreviousDokumente(gesuchId: string): void {
-        let ekvFuerBasisJahrPlus2 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true;
-        let ekvFuerBasisJahrPlus1 = this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1
-            && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus1 === true;
-        if (ekvFuerBasisJahrPlus2) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {
-                basisjahrPlus: '2',
-                gesuchId: gesuchId
-            });
-        } else if (ekvFuerBasisJahrPlus1) {
-            this.state.go('gesuch.einkommensverschlechterungResultate', {
-                basisjahrPlus: '1',
-                gesuchId: gesuchId
-            });
-        } else {
-            this.state.go('gesuch.einkommensverschlechterungInfo', {
-                gesuchId: gesuchId
-            });
-        }
-    }
-
-    private moveBackToGesuchsteller(gesuchId: string) {
-        if ((this.gesuchModelManager.getGesuchstellerNumber() === 2)) {
-            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '2');
-        } else {
-            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, gesuchId, '1');
-        }
-    }
 
 }

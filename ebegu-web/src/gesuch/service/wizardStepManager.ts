@@ -5,6 +5,7 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import IPromise = angular.IPromise;
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 
 export default class WizardStepManager {
 
@@ -166,33 +167,44 @@ export default class WizardStepManager {
      * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
      * @returns {boolean}
      */
-    public isNextStepBesucht(): boolean {
-        return this.getNextStep().wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    public isNextStepBesucht(gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(this.getNextStep(gesuchTyp)).wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
     }
 
     /**
      * Gibt true zurueck wenn der naechste Step enabled (verfuegbar) ist
      * @returns {boolean}
      */
-    public isNextStepEnabled(): boolean {
-        return this.getNextStep().verfuegbar;
+    public isNextStepEnabled(gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(this.getNextStep(gesuchTyp)).verfuegbar;
     }
 
-    private getNextStep(): TSWizardStep {
-        let nextStepName: TSWizardStepName = TSWizardStepName.GESUCH_ERSTELLEN;
-        switch (this.currentStepName) {
-            case TSWizardStepName.GESUCH_ERSTELLEN: nextStepName = TSWizardStepName.FAMILIENSITUATION; break;
-            case TSWizardStepName.FAMILIENSITUATION: nextStepName = TSWizardStepName.GESUCHSTELLER; break;
-            case TSWizardStepName.GESUCHSTELLER: nextStepName = TSWizardStepName.KINDER; break;
-            case TSWizardStepName.KINDER: nextStepName = TSWizardStepName.BETREUUNG; break;
-            case TSWizardStepName.BETREUUNG: nextStepName = TSWizardStepName.ERWERBSPENSUM; break;
-            case TSWizardStepName.ERWERBSPENSUM: nextStepName = TSWizardStepName.FINANZIELLE_SITUATION; break;
-            case TSWizardStepName.FINANZIELLE_SITUATION: nextStepName = TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG; break;
-            case TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG: nextStepName = TSWizardStepName.DOKUMENTE; break;
-            case TSWizardStepName.DOKUMENTE: nextStepName = TSWizardStepName.VERFUEGEN; break;
-            case TSWizardStepName.VERFUEGEN: nextStepName = TSWizardStepName.VERFUEGEN;
+    public getNextStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+        var allStepNames = this.getAllowedSteps();
+        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
+        for (let i = currentPosition; i < allStepNames.length; i++) {
+            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+                return allStepNames[i];
+            }
         }
-        return this.getStepByName(nextStepName);
+        return undefined;
+    }
+
+    public getPreviousStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+        var allStepNames = this.getAllowedSteps();
+        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;
+        for (let i = currentPosition; i >= 0; i--) {
+            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+                return allStepNames[i];
+            }
+        }
+        return undefined;
+    }
+
+    private isStepAvailable(stepName: TSWizardStepName, gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(stepName).verfuegbar
+            || (gesuchTyp === TSAntragTyp.GESUCH
+            && this.getStepByName(stepName).wizardStepStatus === TSWizardStepStatus.UNBESUCHT);
     }
 
     /**
