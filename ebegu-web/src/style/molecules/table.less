@@ -18,8 +18,14 @@ table {
                 border-bottom: 5px solid;
 
             }
-            &.green:after {
-                border-color: @primary;
+            &.BESTAETIGT:after {
+                border-color: @success;
+            }
+            &.WARTEN:after {
+                border-color: @warning;
+            }
+            &.ABGEWIESEN:after {
+                border-color: @danger;
             }
         }
     }
