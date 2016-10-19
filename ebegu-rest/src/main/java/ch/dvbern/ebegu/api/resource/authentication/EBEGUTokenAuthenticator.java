@@ -97,18 +97,18 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	@Override
     public String getUserName() {
-        return user == null ? null : user.getAuthId();
+        return user == null ? null : user.getUsername();
     }
 
     @Override
     public List<String> getApplicationRoles() {
 		if (user != null) {
 			List<String> result = new ArrayList<String>();
-			result.add(user.getBenutzer().getRole().toString()); //todo match applicaiton roles
+			result.add(user.getRole().toString());
 			return result;
 		}
 		return emptyList();
 	}
 
-    // (Two empty methods omitted)
+
 }

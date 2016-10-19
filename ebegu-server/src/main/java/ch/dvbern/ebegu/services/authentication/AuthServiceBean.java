@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.*;
@@ -26,8 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+//Berechtigungen: PermitAll weggenommen weil wir das ohne user aufrufen muessen, sonst wird anonymous genommen und man hat 2 principals
 @Stateless(name = "AuthService")
-@PermitAll
 public class AuthServiceBean implements AuthService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthServiceBean.class);
@@ -59,10 +58,9 @@ public class AuthServiceBean implements AuthService {
 		authorisierterBenutzer.setAuthToken(UUID.randomUUID().toString());  //auth token generieren
 		entityManager.persist(authorisierterBenutzer);
 		return Optional.of(new AuthAccessElement(
-			authorisierterBenutzer.getAuthId(),
+			authorisierterBenutzer.getUsername(),
 			authorisierterBenutzer.getAuthToken(),
 			UUID.randomUUID().toString(), // XSRF-Token (no need to persist)
-			loginElement.getUsername(),
 			loginElement.getNachname(),
 			loginElement.getVorname(),
 			loginElement.getEmail(),
@@ -169,10 +167,9 @@ public class AuthServiceBean implements AuthService {
 		entityManager.persist(authorisierterBenutzer);
 		Benutzer existingUser = authorisierterBenutzer.getBenutzer();
 		return new AuthAccessElement(
-			authorisierterBenutzer.getAuthId(),
+			authorisierterBenutzer.getUsername(),
 			authorisierterBenutzer.getAuthToken(),
 			UUID.randomUUID().toString(), // XSRF-Token (no need to persist)
-			existingUser.getUsername(),
 			existingUser.getNachname(),
 			existingUser.getVorname(),
 			existingUser.getEmail(),

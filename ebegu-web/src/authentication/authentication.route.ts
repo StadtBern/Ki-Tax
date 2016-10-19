@@ -1,5 +1,6 @@
 import {RouterHelper} from '../dvbModules/router/route-helper-provider';
 import {IState} from 'angular-ui-router';
+import IStateParamsService = angular.ui.IStateParamsService;
 
 
 authenticationRun.$inject = ['RouterHelper'];
@@ -10,7 +11,8 @@ export function authenticationRun(routerHelper: RouterHelper) {
 
 function getStates(): IState[] {
     return [
-        new EbeguLoginState()
+        new EbeguLoginState(),
+        new EbeguLocalLoginState()
     ];
 }
 
@@ -18,6 +20,19 @@ function getStates(): IState[] {
 
 export class EbeguLoginState implements IState {
     name = 'login';
-    template = '<dummy-authentication-view>';
-    url = '/auth/login';
+    template = '<authentication-view>';
+    url = '/auth/login/?type&relayPath';
 }
+
+export class EbeguLocalLoginState implements IState {
+    name = 'login.local';
+    template = '<dummy-authentication-view>';
+    url = '/auth/locallogin';
+}
+
+
+export class IAuthenticationStateParams implements IStateParamsService {
+    relayPath: string;
+    type: string;
+}
+

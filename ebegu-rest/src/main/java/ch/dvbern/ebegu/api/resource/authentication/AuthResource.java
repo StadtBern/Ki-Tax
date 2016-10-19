@@ -38,7 +38,7 @@ import java.util.Optional;
 public class AuthResource {
 
 	public static final String COOKIE_PATH = "/";
-	public static final String COOKIE_DOMAIN = null;
+	public static final String COOKIE_DOMAIN = ".";
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthResource.class);
 

@@ -6,13 +6,15 @@ import {TSAuthEvent} from '../models/enums/TSAuthEvent';
 import AuthServiceRS from '../authentication/service/AuthServiceRS.rest';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
+import ILocationService = angular.ILocationService;
 
-appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys', '$timeout', 'AuthServiceRS', '$state'];
+appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys',
+    '$timeout', 'AuthServiceRS', '$state', '$location'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
-                       authServiceRS: AuthServiceRS, $state: IStateService) {
+                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService) {
 
     routerHelper.configureStates(getStates(), '/pendenzen');
     angularMomentConfig.format = 'DD.MM.YYYY';
@@ -33,7 +35,17 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
         //user is not yet authenticated, show loginpage
-        $state.go('login');
+
+        let currentPath = angular.copy($location.absUrl());
+        console.log("going to login page wiht current path ", currentPath);
+        //wenn wri schon auf der lognseite oder im redirect sind redirecten wir nicht
+        if (currentPath.indexOf('fedletSSOInit') === -1
+            && currentPath.indexOf('auth/login') === -1
+            && currentPath.indexOf('sendRedirectForValidation') === -1) {
+            $state.go('login', {relayPath: currentPath, type: 'login'});
+        } else {
+            console.log("supressing redirect to ", currentPath);
+        }
 
     });
 

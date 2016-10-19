@@ -41,6 +41,7 @@ import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_DOMAIN;
 import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_PATH;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
 
@@ -137,8 +138,6 @@ public class FedletSamlServlet extends HttpServlet {
 			iamUser.setGivenName(givenName);
 
 
-			//todo check if user is stored
-			//todo create user if not
 
 			Benutzer benutzer = new Benutzer();
 			benutzer.setVorname(givenName);
@@ -154,20 +153,18 @@ public class FedletSamlServlet extends HttpServlet {
 
 			AuthorisierterBenutzer authorisierterBenutzer = new AuthorisierterBenutzer();
 			authorisierterBenutzer.setBenutzer(storedBenutzer);
-			authorisierterBenutzer.setAuthToken(RandomStringUtils.randomAlphanumeric(32));  //auth token generieren
+			authorisierterBenutzer.setAuthToken(RandomStringUtils.randomAlphanumeric(36));  //auth token generieren
 			authorisierterBenutzer.setLastLogin(LocalDateTime.now());
+			authorisierterBenutzer.setRole(benutzer.getRole());
+			authorisierterBenutzer.setUsername(benutzer.getUsername());
 			AuthAccessElement userAuth = this.authService.createLoginFromIAM(authorisierterBenutzer);
-
-			//			Cookie userCookie = new Cookie("name", "value");
-			//			userCookie.setMaxAge(60*60*24*365); //Store cookie for 1 year
-			//			response.addCookie(userCookie);
 
 
 			// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
 			Cookie authCookie = new Cookie(AuthDataUtil.COOKIE_AUTH_TOKEN, userAuth.getAuthToken());
 			authCookie.setComment("authentication");
-//			authCookie.setDomain(COOKIE_DOMAIN);
-			authCookie.setPath(COOKIE_PATH);
+			authCookie.setDomain(COOKIE_DOMAIN);
+//			authCookie.setPath(COOKIE_PATH);
 			authCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 //			authCookie.setSecure(request.isSecure());    //todo fuer dev env loesung finden
 			authCookie.setHttpOnly(true);
@@ -194,11 +191,6 @@ public class FedletSamlServlet extends HttpServlet {
 //			principalCookie.setSecure(request.isSecure());
 			principalCookie.setHttpOnly(false);
 			response.addCookie(principalCookie);
-
-
-			String url = request.getRequestURL().toString();
-			String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
-			Object o = map.get(com.sun.identity.saml2.common.SAML2Constants.RELAY_STATE);
 
 
 
