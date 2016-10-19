@@ -75,19 +75,47 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		return wizardSteps;
 	}
 
+	@Nonnull
 	@Override
 	public List<WizardStep> createWizardStepList(Gesuch gesuch) {
 		List<WizardStep> wizardStepList = new ArrayList<>();
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
-		wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
+		if (AntragTyp.MUTATION.equals(gesuch.getTyp())) {
+			final Mutationsdaten mutationsdaten = gesuch.getMutationsdaten();
+			if (mutationsdaten != null) {
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN,
+					WizardStepStatus.OK, true)));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION,
+					WizardStepStatus.OK, mutationsdaten.getMutationFamiliensituation())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER,
+					WizardStepStatus.OK, mutationsdaten.getMutationGesuchsteller())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER,
+					WizardStepStatus.OK, mutationsdaten.getMutationKind())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG,
+					WizardStepStatus.OK, mutationsdaten.getMutationBetreuung())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM,
+					WizardStepStatus.OK, mutationsdaten.getMutationErwerbspensum())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION,
+					WizardStepStatus.OK, mutationsdaten.getMutationFinanzielleSituation())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG,
+					WizardStepStatus.OK, mutationsdaten.getMutationEinkommensverschlechterung())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE,
+					WizardStepStatus.OK, true)));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN,
+					WizardStepStatus.WARTEN, true))); // Verfuegen muss WARTEN sein, da die Betreuungen nochmal verfuegt werden muessen
+			}
+		}
+		else { // GESUCH
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FINANZIELLE_SITUATION, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT, false)));
+		}
 		return wizardStepList;
 	}
 
@@ -339,10 +367,10 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	}
 
 	private WizardStep createWizardStepObject(Gesuch gesuch, WizardStepName wizardStepName, WizardStepStatus stepStatus,
-												 boolean verfuegbar) {
+												 Boolean verfuegbar) {
 		final WizardStep wizardStep = new WizardStep();
 		wizardStep.setGesuch(gesuch);
-		wizardStep.setVerfuegbar(verfuegbar);
+		wizardStep.setVerfuegbar(verfuegbar != null ? verfuegbar : false);
 		wizardStep.setWizardStepName(wizardStepName);
 		wizardStep.setWizardStepStatus(stepStatus);
 		return wizardStep;

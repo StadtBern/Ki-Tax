@@ -78,7 +78,7 @@ public class GesuchstellerAdresseServiceBean extends AbstractBaseService impleme
 	public Optional<GesuchstellerAdresse> getNewestWohnadresse(String gesuchstellerID) {
 		TypedQuery<GesuchstellerAdresse> query = getAdresseQuery(gesuchstellerID, AdresseTyp.WOHNADRESSE, null, Constants.END_OF_TIME);
 		List<GesuchstellerAdresse> results = query.getResultList();
-		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit guelitBis EndOfTime
+		//wir erwarten entweder keine oder genau eine Wohnadr, fuer eine Gesuchsteller mit gueltigBis EndOfTime
 		if (results.isEmpty()) {
 			return Optional.empty();
 		}

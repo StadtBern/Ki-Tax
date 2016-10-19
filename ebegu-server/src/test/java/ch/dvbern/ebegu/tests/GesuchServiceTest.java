@@ -145,16 +145,16 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		filterDTO.getSort().setReverse(true);     //aufsteigend
 		//nach fallnummer geordnete liste
 		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesuche = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesuche.get(0).getId());
-		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(4).getId());
 		//genau anders rum ordnen
 		filterDTO.getSort().setReverse(false); //absteigend
 		resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesucheReversed = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesucheReversed.get(0).getId());
 
 	}
 
@@ -247,7 +247,8 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId());
+		Mutationsdaten mutationsdaten = new Mutationsdaten();
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), mutationsdaten, LocalDate.of(1980, Month.MARCH, 25));
 
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Assert.assertEquals(AntragTyp.MUTATION, gesuchOptional.get().getTyp());

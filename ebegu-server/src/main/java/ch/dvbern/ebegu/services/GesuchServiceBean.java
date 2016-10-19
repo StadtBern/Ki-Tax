@@ -97,7 +97,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return persistence.getCriteriaResults(query);
 	}
 
-	@Nonnull
 	@Override
 	public void removeGesuch(@Nonnull Gesuch gesuch) {
 		Validate.notNull(gesuch);
@@ -106,6 +105,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		persistence.remove(gesuchToRemove.get());
 	}
 
+	@Nonnull
 	@Override
 	public Optional<List<Gesuch>> findGesuchByGSName(String nachname, String vorname) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -169,10 +169,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
 		Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
 		Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
-		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.INNER);
-		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.INNER);
-		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.INNER);
-		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution);
+		SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
+		SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
+		Join<Betreuung, InstitutionStammdaten> institutionstammdaten = betreuungen.join(Betreuung_.institutionStammdaten, JoinType.LEFT);
+		Join<InstitutionStammdaten, Institution> institution = institutionstammdaten.join(InstitutionStammdaten_.institution, JoinType.LEFT);
 
 		//prepare predicates
 		List<Expression<Boolean>> predicates = new ArrayList<>();
@@ -188,7 +188,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				break;
 			case SACHBEARBEITER_JA:
 			case JURIST:
-				predicates.add(cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
+				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
+				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+				// zudem muss auch der status ensprechend sein
+				Predicate predicateKeineKinder = kindContainers.isNull();
+				Predicate predicateKeineBetreuungen = betreuungen.isNull();
+				Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
+				Predicate predicateKeineInstitution = institution.isNull();
+				Predicate predicateAngebotstyp = cb.notEqual(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+				Predicate predicateRichtigerAngebotstypOderNichtAusgefuellt = cb.or(predicateKeineKinder, predicateKeineBetreuungen, predicateKeineInstitutionsstammdaten, predicateKeineInstitution, predicateAngebotstyp);
+				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 				break;
 			case SACHBEARBEITER_TRAEGERSCHAFT:
 				predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
@@ -223,7 +232,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			}
 			if (predicateObjectDto.getGesuchsperiodeString() != null) {
 				String[] years = predicateObjectDto.getGesuchsperiodeString().split("/");
-				if(years.length != 2){
+				if (years.length != 2) {
 					throw new EbeguRuntimeException("searchAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + predicateObjectDto.getGesuchsperiodeString());
 				}
 				predicates.add(
@@ -276,8 +285,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					int firstIndex = antragTableFilterDto.getPagination().getStart();
 					Integer maxresults = antragTableFilterDto.getPagination().getNumber();
 					List<String> orderedIdsToLoad = this.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
-					pagedResult  = findGesuche(orderedIdsToLoad);
-				} else{
+					pagedResult = findGesuche(orderedIdsToLoad);
+				} else {
 					pagedResult = findGesuche(gesuchIds);
 				}
 				result = new ImmutablePair<>(null, pagedResult);
@@ -364,50 +373,55 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Optional<Gesuch> antragMutieren(@Nonnull String antragId) {
+	public Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten,
+										   @Nonnull LocalDate eingangsdatum) {
 		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
 
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
 
-			final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
 
-			Root<Gesuch> root = query.from(Gesuch.class);
-			Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
-
-			Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-			Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.get().getGesuchsperiode());
-			Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
-			Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.get().getFall());
-
-			query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
-			query.select(root);
-			query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
-			List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
-			if (criteriaResults.isEmpty()) {
-				return Optional.empty();
+			if (gesuchForMutation.isPresent()) {
+				Gesuch mutation = new Gesuch(gesuchForMutation.get());
+				mutation.setEingangsdatum(eingangsdatum);
+				mutation.setMutationsdaten(mutationsdaten);
+				mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
+				return Optional.of(mutation);
 			}
-			Gesuch gesuchForMutation = criteriaResults.get(0);
-			Gesuch mutation = new Gesuch(gesuchForMutation);
-			setAllFieldsForMutation(mutation);
-			return Optional.of(mutation);
 		}
 		return Optional.empty();
 	}
 
-	/**
-	 * Diese Methode setzt alle benoetigten Werte fuer eine Mutation.
-	 * @param mutation
-	 */
-	private void setAllFieldsForMutation(Gesuch mutation) {
-		mutation.setEingangsdatum(null); // das Eingangsdatum muss null sein, sonst wird das alte kopiert
-		mutation.setMutationsdaten(new Mutationsdaten()); // neue leere Mutationsdaten
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		// TODO (team): Diese methode macht, was sie sagt, evt. waere es aber sicherer, das *vorgänger*gesuch zu suchen? Könnte über die neue vorgängerId gemacht werden
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
+
+		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.getGesuchsperiode());
+		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.getFall());
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
+		query.select(root);
+		query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
+		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
+		if (criteriaResults.isEmpty()) {
+			return Optional.empty();
+		}
+
+		return Optional.of(criteriaResults.get(0));
 	}
 
 	private List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
 		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
-		int lastindex =  Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
+		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
 		return uniqueGesuchIds.subList(startindex, lastindex);
 	}
 
@@ -418,8 +432,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 			Root<Gesuch> root = query.from(Gesuch.class);
 			Predicate predicate = root.get(Gesuch_.id).in(gesuchIds);
-			Fetch<Gesuch, KindContainer> kindContainers = root.fetch(Gesuch_.kindContainers, JoinType.INNER);
-			kindContainers.fetch(KindContainer_.betreuungen, JoinType.INNER);
+			Fetch<Gesuch, KindContainer> kindContainers = root.fetch(Gesuch_.kindContainers, JoinType.LEFT);
+			kindContainers.fetch(KindContainer_.betreuungen, JoinType.LEFT);
 			query.where(predicate);
 			//reduce to unique gesuche
 			List<Gesuch> listWithDuplicates = persistence.getCriteriaResults(query);

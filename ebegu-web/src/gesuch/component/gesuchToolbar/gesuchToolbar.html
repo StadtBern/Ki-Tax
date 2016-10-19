@@ -10,7 +10,7 @@
             <md-menu-bar>
 
                 <!--Gesuchsperioden-->
-                <md-menu>
+                <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vmx.getCurrentGesuchsperiode()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
@@ -28,8 +28,10 @@
                     </md-menu-content>
                 </md-menu>
 
+                <span ng-if="!vmx.showGesuchPeriodeNavigationMenu()" ng-bind="vmx.getCurrentGesuchsperiode()" style="font-size: 14px;"></span>
+
                 <!--Gesuchstyp-->
-                <md-menu>
+                <md-menu ng-if="vmx.showAntragTypListNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getAntragTyp()}}">
                         <span ng-bind="vmx.getAntragTyp()"></span>
                         <i class="ellipsis-icon fa fa-chevron-down"></i>
@@ -46,6 +48,8 @@
                     </md-menu-content>
                 </md-menu>
 
+                <span ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()" style="font-size: 14px; text-transform: uppercase;"></span>
+
                 <span flex=""></span>
 
                 <!-- Mutieren -->
@@ -55,7 +59,7 @@
                 </md-button>
 
                  <!--Kontakt-->
-                <md-menu>
+                <md-menu ng-if="vmx.showKontaktMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
                         <i class="ellipsis-icon fa fa-envelope"></i>
                         <span data-translate="TOOLBAR_KONTAKT"></span>

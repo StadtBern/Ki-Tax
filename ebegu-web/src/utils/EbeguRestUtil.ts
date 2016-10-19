@@ -192,10 +192,12 @@ export default class EbeguRestUtil {
         parsedAbstractEntity.id = receivedAbstractEntity.id;
         parsedAbstractEntity.timestampErstellt = DateUtil.localDateTimeToMoment(receivedAbstractEntity.timestampErstellt);
         parsedAbstractEntity.timestampMutiert = DateUtil.localDateTimeToMoment(receivedAbstractEntity.timestampMutiert);
+        parsedAbstractEntity.vorgaengerId = receivedAbstractEntity.vorgaengerId;
     }
 
     private abstractEntityToRestObject(restObject: any, typescriptObject: TSAbstractEntity) {
         restObject.id = typescriptObject.id;
+        restObject.vorgaengerId = typescriptObject.vorgaengerId;
         if (typescriptObject.timestampErstellt) {
             restObject.timestampErstellt = DateUtil.momentToLocalDateTime(typescriptObject.timestampErstellt);
         }
@@ -1504,7 +1506,7 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
-    private mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
+    public mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
         if (mutationsdaten) {
             this.abstractEntityToRestObject(restMutationsdaten, mutationsdaten);
             restMutationsdaten.mutationFamiliensituation = mutationsdaten.mutationFamiliensituation;

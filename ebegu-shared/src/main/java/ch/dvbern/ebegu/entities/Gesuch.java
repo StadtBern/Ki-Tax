@@ -97,14 +97,15 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public Gesuch(@Nonnull Gesuch toCopy) {
+		this.setVorgaengerId(toCopy.getId());
 		this.setFall(toCopy.getFall());
 		this.setGesuchsperiode(toCopy.getGesuchsperiode());
-		this.setEingangsdatum(LocalDate.now()); //TODO (team) dies sollte dann nicht mehr zwingend sein!
+		this.setEingangsdatum(null);
 		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
 		this.setTyp(AntragTyp.MUTATION);
 
 		if (toCopy.getMutationsdaten() != null) {
-			this.setMutationsdaten(new Mutationsdaten(this.getMutationsdaten()));
+			this.setMutationsdaten(new Mutationsdaten(toCopy.getMutationsdaten()));
 		}
 		if (toCopy.getGesuchsteller1() != null) {
 			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));

@@ -8,7 +8,7 @@
             <span ng-bind="vmgs.getGesuchName()" class=" toolbar-gesuchname"></span>
 
             <!--Gesuchsperioden-->
-            <md-menu-bar ng-if="vmgs.getGesuch()">
+            <md-menu-bar ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
                         <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
@@ -28,8 +28,10 @@
                 </md-menu>
             </md-menu-bar>
 
+            <span ng-if="!vmgs.showGesuchPeriodeNavigationMenu()" ng-bind="vmgs.getCurrentGesuchsperiode()" style="font-size: 14px;"></span>
+
             <!--Gesuchstyp-->
-            <md-menu-bar ng-if="vmgs.getGesuch()">
+            <md-menu-bar ng-if="vmgs.showAntragTypListNavigationMenu()">
                 <md-menu>
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
                         <span ng-bind="vmgs.getAntragTyp()"></span>
@@ -47,6 +49,8 @@
                     </md-menu-content>
                 </md-menu>
             </md-menu-bar>
+
+            <span ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()" style="font-size: 14px; text-transform: uppercase;"></span>
 
             <span flex=""></span>
 
