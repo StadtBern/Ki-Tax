@@ -33,14 +33,13 @@ export class AuthenticationListViewController {
         this.redirectionHref = this.createRedirectionURL();
         if (this.$stateParams.type !== undefined && this.$stateParams.type === 'logout') {
             this.redirectTolIAMForLogout();
+        } else {
+            this.redirectTolIAMForLogin();
         }
-        // else {
-        //     this.redirectTolIAMForLogin();
-        // }
     }
 
     public redirectTolIAMForLogin(): void {
-        this.$timeout(this.redirect, 3000);
+        this.$timeout(this.redirect, 8000);
 
 
     }

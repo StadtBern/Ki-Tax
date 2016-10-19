@@ -41,7 +41,6 @@ import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_DOMAIN;
 import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_PATH;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
 
@@ -163,8 +162,8 @@ public class FedletSamlServlet extends HttpServlet {
 			// Cookie to store auth_token, HTTP-Only Cookie --> Protection from XSS
 			Cookie authCookie = new Cookie(AuthDataUtil.COOKIE_AUTH_TOKEN, userAuth.getAuthToken());
 			authCookie.setComment("authentication");
-			authCookie.setDomain(COOKIE_DOMAIN);
-//			authCookie.setPath(COOKIE_PATH);
+//			authCookie.setDomain(".");
+			authCookie.setPath(COOKIE_PATH);
 			authCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 //			authCookie.setSecure(request.isSecure());    //todo fuer dev env loesung finden
 			authCookie.setHttpOnly(true);
@@ -173,7 +172,7 @@ public class FedletSamlServlet extends HttpServlet {
 			// Readable Cookie for XSRF Protection (the Cookie can only be read from our Domain)
 			Cookie xsrfCookie = new Cookie(AuthDataUtil.COOKIE_XSRF_TOKEN, userAuth.getXsrfToken());
 			xsrfCookie.setComment("xsfr prevention");
-//			xsrfCookie.setDomain(COOKIE_DOMAIN);
+//			xsrfCookie.setDomain(".");
 			xsrfCookie.setPath(COOKIE_PATH);
 			xsrfCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 //			xsrfCookie.setSecure(request.isSecure());
@@ -185,7 +184,7 @@ public class FedletSamlServlet extends HttpServlet {
 			JaxAuthAccessElement element = converter.authAccessElementToJax(userAuth);
 			Cookie principalCookie = new Cookie(AuthDataUtil.COOKIE_PRINCIPAL, encodeAuthAccessElement(element));
 			principalCookie.setComment("principal");
-//			principalCookie.setDomain(COOKIE_DOMAIN);
+//			principalCookie.setDomain(".");
 			principalCookie.setPath(COOKIE_PATH);
 			principalCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
 //			principalCookie.setSecure(request.isSecure());
