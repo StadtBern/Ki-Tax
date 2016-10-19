@@ -7,7 +7,7 @@
 
             <md-menu-bar layout="row" layout-align="space-between center" class="col-md-12">
                 <!--Fall und Name des Gesuchs-->
-                <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
+                <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname" style="margin:8px;"></span>
                 <!--Gesuchsperioden-->
                 <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
@@ -52,11 +52,12 @@
                 <span flex=""></span>
 
                 <!-- Mutieren -->
+                <md-menu>
                 <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
                            aria-label="{{TOOLBAR_MUTIEREN | translate}}">
                     <span data-translate="TOOLBAR_MUTIEREN"></span>
                 </md-button>
-
+                </md-menu>
                  <!--Kontakt-->
                 <md-menu ng-if="vmx.showKontaktMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
