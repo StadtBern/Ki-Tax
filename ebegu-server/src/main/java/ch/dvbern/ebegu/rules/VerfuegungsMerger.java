@@ -96,10 +96,12 @@ public class VerfuegungsMerger {
 	 * Findet das anspruchberechtigtes Pensum zum Zeitpunkt des neuen Zeitabschnitt-Start
 	 */
 	private int findAnspruchberechtigtesPensumAt(LocalDate zeitabschnittStart, Betreuung betreuungGSM) {
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : betreuungGSM.getVerfuegung().getZeitabschnitte()) {
-			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
-			if (gueltigkeit.contains(zeitabschnittStart) || gueltigkeit.startsSameDay(zeitabschnittStart)) {
-				return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+		if (betreuungGSM.getVerfuegung() != null) {
+			for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : betreuungGSM.getVerfuegung().getZeitabschnitte()) {
+				final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
+				if (gueltigkeit.contains(zeitabschnittStart) || gueltigkeit.startsSameDay(zeitabschnittStart)) {
+					return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
+				}
 			}
 		}
 		LOG.error("Anspruch berechtigtes Pensum beim Gesuch für Mutation konnte nicht gefunden werden");

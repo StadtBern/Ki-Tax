@@ -21,6 +21,10 @@ public class VerfuegungsVergleicher {
 			return false;
 		}
 
+		if (betreuung.getVerfuegung() == null || betreuungGSM.getVerfuegung() == null) {
+			return false;
+		}
+
 		final List<VerfuegungZeitabschnitt> zeitabschnitte = betreuung.getVerfuegung().getZeitabschnitte();
 		final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = betreuungGSM.getVerfuegung().getZeitabschnitte();
 
