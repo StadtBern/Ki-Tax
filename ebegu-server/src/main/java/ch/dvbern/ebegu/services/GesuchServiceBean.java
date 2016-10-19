@@ -190,6 +190,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			case JURIST:
 				// Jugendamt-Mitarbeiter duerfen auch Faelle sehen, die noch gar keine Kinder/Betreuungen haben.
 				// Wenn aber solche erfasst sind, dann duerfen sie nur diejenigen sehen, die nicht nur Schulamt haben
+				// zudem muss auch der status ensprechend sein
 				Predicate predicateKeineKinder = kindContainers.isNull();
 				Predicate predicateKeineBetreuungen = betreuungen.isNull();
 				Predicate predicateKeineInstitutionsstammdaten = institutionstammdaten.isNull();
