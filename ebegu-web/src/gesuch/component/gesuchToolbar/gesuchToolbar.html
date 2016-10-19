@@ -4,11 +4,10 @@
     <md-toolbar class="small-toolbar">
         <div class="md-toolbar-tools">
 
-            <!--Fall und Name des Gesuchs-->
-            <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
 
-            <md-menu-bar>
-
+            <md-menu-bar layout="row" layout-align="space-between center" class="col-md-12">
+                <!--Fall und Name des Gesuchs-->
+                <span ng-bind="vmx.getGesuchName()" class=" toolbar-gesuchname"></span>
                 <!--Gesuchsperioden-->
                 <md-menu ng-if="vmx.showGesuchPeriodeNavigationMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">
