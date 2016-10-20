@@ -56,6 +56,9 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Inject
 	private GesuchService gesuchService;
 
+	@Inject
+	private BetreuungService betreuungService;
+
 
 	@Nonnull
 	@Override
@@ -65,7 +68,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 		Betreuung betreuung = persistence.find(Betreuung.class, betreuungId);
 		betreuung.setBetreuungsstatus(Betreuungsstatus.VERFUEGT);
-        // setting all depending objects
+		// setting all depending objects
 		verfuegung.setBetreuung(betreuung);
 		betreuung.setVerfuegung(verfuegung);
 		verfuegung.getZeitabschnitte().stream().forEach(verfuegungZeitabschnitt -> verfuegungZeitabschnitt.setVerfuegung(verfuegung));
@@ -108,10 +111,40 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
 		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
 		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch);
+
+
+		// Wir überprüfen of in der Vorgängerverfügung eine Verfügung ist, welche geschlossen wurde ohne neu zu verfügen
+		// und somit keine neue Verfügung hat
+		if (neustesVerfuegtesGesuchFuerGesuch.isPresent()) {
+			final Gesuch nvg = neustesVerfuegtesGesuchFuerGesuch.get();
+
+			for (KindContainer kc : nvg.getKindContainers()) {
+				for (Betreuung betreuung : kc.getBetreuungen()) {
+					if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+						// Wenn wir eine solche nicht verfügte Betruung haben, suchen wir die letzte verfügte betreuung
+						// und kopieren deren Verfügung um sie später vergleichen und mergen zu können
+						betreuung.setVerfuegung(findVorgaengerVerfuegung(betreuung));
+					}
+				}
+			}
+		}
+
 		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
 		return gesuch;
 	}
 
+
+	private Verfuegung findVorgaengerVerfuegung(Betreuung betreuung) {
+		final Optional<Betreuung> vorgaengerbetr = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+		if (vorgaengerbetr.isPresent()) {
+			if (!vorgaengerbetr.get().getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+				return vorgaengerbetr.get().getVerfuegung();
+			} else {
+				return findVorgaengerVerfuegung(vorgaengerbetr.get());
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Diese Methode initialisiert den Calculator mit den richtigen Parametern und benotigten Regeln fuer den Mandanten der
@@ -158,7 +191,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		//Es gibt aktuell einen Parameter der sich aendert am Jahreswechsel
 		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
 		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
-		Validate.isTrue(endjahr == startjahr +1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr"+ endjahr +" sein ");
+		Validate.isTrue(endjahr == startjahr + 1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr" + endjahr + " sein ");
 		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
 		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
 		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
@@ -175,7 +208,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		}
 		return result.get().getValueAsBigDecimal();
 	}
-
 
 
 }
