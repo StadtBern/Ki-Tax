@@ -200,10 +200,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 				break;
 			case SACHBEARBEITER_TRAEGERSCHAFT:
-				predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
+				predicates.add(cb.equal( institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
 				break;
 			case SACHBEARBEITER_INSTITUTION:
-				predicates.add(cb.equal(benutzer.get(Benutzer_.institution), institution));
+				// es geht hier nicht um die institutin des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
+				predicates.add(cb.equal(institution, user.getInstitution()));
 				break;
 			case SCHULAMT:
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
