@@ -123,7 +123,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
 						// Wenn wir eine solche nicht verfügte Betruung haben, suchen wir die letzte verfügte betreuung
 						// und kopieren deren Verfügung um sie später vergleichen und mergen zu können
-						betreuung.setVerfuegung(findVorgaengerVerfuegung(betreuung));
+						betreuung.setVorgaengerVerfuegung(findVorgaengerVerfuegung(betreuung));
 					}
 				}
 			}

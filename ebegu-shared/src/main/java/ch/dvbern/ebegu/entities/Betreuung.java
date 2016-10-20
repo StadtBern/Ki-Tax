@@ -39,6 +39,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	private static final long serialVersionUID = -6776987863150835840L;
 
+	@Transient
+	private Verfuegung vorgaengerVerfuegung;
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_kind_id"), nullable = false)
@@ -104,7 +107,6 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		} else {
 			this.betreuungsstatus = toCopy.betreuungsstatus;
 		}
-		//TODO: Dieser Teil wurde von Fränzi wieder weggemerged? Warum? Fehler oder absicht??
 		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
@@ -272,4 +274,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		compareToBuilder.append(this.getId(), other.getId());
 		return compareToBuilder.toComparison();
 	}
+
+
+	public Verfuegung getVorgaengerVerfuegung() {
+		return vorgaengerVerfuegung;
+	}
+
+	public void setVorgaengerVerfuegung(Verfuegung vorgaengerVerfuegung) {
+		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
+	}
+
 }

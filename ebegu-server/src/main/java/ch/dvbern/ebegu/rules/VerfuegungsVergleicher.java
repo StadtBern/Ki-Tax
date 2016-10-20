@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 
 import java.util.List;
@@ -16,17 +17,13 @@ public class VerfuegungsVergleicher {
 			return false;
 		}
 
-		final Betreuung betreuungGSM = VerfuegungUtil.findBetreuungOnGesuchForMuation(betreuung, gesuchForMutation);
-		if (betreuungGSM == null) {
-			return false;
-		}
-
-		if (betreuung.getVerfuegung() == null || betreuungGSM.getVerfuegung() == null) {
+		final Verfuegung verfuegungOnGesuchForMuation = VerfuegungUtil.findVerfuegungOnGesuchForMutation(betreuung, gesuchForMutation);
+		if (verfuegungOnGesuchForMuation == null) {
 			return false;
 		}
 
 		final List<VerfuegungZeitabschnitt> zeitabschnitte = betreuung.getVerfuegung().getZeitabschnitte();
-		final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = betreuungGSM.getVerfuegung().getZeitabschnitte();
+		final List<VerfuegungZeitabschnitt> zeitabschnitteGSM = verfuegungOnGesuchForMuation.getZeitabschnitte();
 
 		// Wenn unterschiedliche Anzahl Zeitabschnitte hat es Aenderungen
 		if (zeitabschnitte.size() != zeitabschnitteGSM.size()) {
