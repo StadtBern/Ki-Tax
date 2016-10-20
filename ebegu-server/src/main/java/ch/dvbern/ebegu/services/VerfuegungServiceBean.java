@@ -51,6 +51,10 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private MandantService mandantService;
 
 	@Inject
+	private BetreuungService betreuungService;
+
+
+	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
 	@Inject
@@ -110,6 +114,25 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		final Optional<Gesuch> neustesVerfuegtesGesuchFuerGesuch = gesuchService.getNeustesVerfuegtesGesuchFuerGesuch(gesuch);
 		bgEvaluator.evaluate(gesuch, calculatorParameters, neustesVerfuegtesGesuchFuerGesuch.orElse(null));
 		return gesuch;
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Verfuegung> findVorherigeVerfuegungBetreuung(@Nonnull  Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		if(betreuung.getVorgaengerId()==null) return Optional.empty();
+
+		Optional<Betreuung> optVorgaengerbetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+		if (optVorgaengerbetreuung.isPresent()) {
+			Betreuung vorgaengerbetreuung = optVorgaengerbetreuung.get();
+			if (vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.VERFUEGT)) {
+				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
+			} else {
+				return findVorherigeVerfuegungBetreuung(vorgaengerbetreuung);
+			}
+		}
+		return Optional.empty();
+
 	}
 
 

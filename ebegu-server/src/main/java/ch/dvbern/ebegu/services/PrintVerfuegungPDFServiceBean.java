@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
@@ -25,13 +26,17 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implementiert VerfuegungsGenerierungPDFService
@@ -39,6 +44,9 @@ import java.util.Objects;
 @Stateless
 @Local(PrintVerfuegungPDFService.class)
 public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implements PrintVerfuegungPDFService {
+
+	@Inject
+	VerfuegungService verfuegungService;
 
 	@Nonnull
 	@Override
@@ -51,7 +59,13 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
         for (KindContainer kindContainer : gesuch.getKindContainers()) {
             for (Betreuung betreuung : kindContainer.getBetreuungen()) {
                 // Pro Betreuung ein Dokument
-                result.add(printVerfuegungForBetreuung(betreuung));
+				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorherigeVerfuegungBetreuung(betreuung);
+				if (optVorherigeVerfuegung.isPresent()) {
+					result.add(printVerfuegungForBetreuung(betreuung, optVorherigeVerfuegung.get().getTimestampErstellt().toLocalDate()));
+				} else {
+					result.add(printVerfuegungForBetreuung(betreuung, null));
+				}
+
             }
         }
 		return result;
@@ -59,7 +73,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 
 	@Nonnull
 	@Override
-	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException {
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
 		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
@@ -70,7 +84,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 
 		try {
-			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung));
+			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
 			byte[] document = docxME.getDocument(is, mergeSource);
 			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
 			is.close();
