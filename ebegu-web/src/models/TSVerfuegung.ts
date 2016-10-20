@@ -6,13 +6,14 @@ export default class TSVerfuegung extends TSAbstractEntity {
     private _generatedBemerkungen: string;
     private _manuelleBemerkungen: string;
     private _zeitabschnitte: Array<TSVerfuegungZeitabschnitt>;
+    private _sameVerfuegungsdaten: boolean;
 
-
-    constructor(generatedBemerkungen?: string, manuelleBemerkungen?: string, zeitabschnitte?: Array<TSVerfuegungZeitabschnitt>) {
+    constructor(generatedBemerkungen?: string, manuelleBemerkungen?: string, zeitabschnitte?: Array<TSVerfuegungZeitabschnitt>, sameVerfuegungsdaten?: boolean) {
         super();
         this._generatedBemerkungen = generatedBemerkungen;
         this._manuelleBemerkungen = manuelleBemerkungen;
         this._zeitabschnitte = zeitabschnitte;
+        this._sameVerfuegungsdaten = sameVerfuegungsdaten;
     }
 
     get generatedBemerkungen(): string {
@@ -37,5 +38,13 @@ export default class TSVerfuegung extends TSAbstractEntity {
 
     set zeitabschnitte(value: Array<TSVerfuegungZeitabschnitt>) {
         this._zeitabschnitte = value;
+    }
+
+    get sameVerfuegungsdaten(): boolean {
+        return this._sameVerfuegungsdaten;
+    }
+
+    set sameVerfuegungsdaten(value: boolean) {
+        this._sameVerfuegungsdaten = value;
     }
 }
