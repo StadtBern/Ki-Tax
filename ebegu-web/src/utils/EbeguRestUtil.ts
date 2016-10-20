@@ -1346,6 +1346,7 @@ export default class EbeguRestUtil {
             verfuegungTS.generatedBemerkungen = verfuegungFromServer.generatedBemerkungen;
             verfuegungTS.manuelleBemerkungen = verfuegungFromServer.manuelleBemerkungen;
             verfuegungTS.zeitabschnitte = this.parseVerfuegungZeitabschnitte(verfuegungFromServer.zeitabschnitte);
+            verfuegungTS.sameVerfuegungsdaten = verfuegungFromServer.sameVerfuegungsdaten;
             return verfuegungTS;
         }
         return undefined;
@@ -1357,6 +1358,7 @@ export default class EbeguRestUtil {
             verfuegung.generatedBemerkungen = verfuegungTS.generatedBemerkungen;
             verfuegung.manuelleBemerkungen = verfuegungTS.manuelleBemerkungen;
             verfuegung.zeitabschnitte = this.zeitabschnittListToRestObject(verfuegungTS.zeitabschnitte);
+            verfuegung.sameVerfuegungsdaten = verfuegungTS.sameVerfuegungsdaten;
             return verfuegung;
         }
         return undefined;

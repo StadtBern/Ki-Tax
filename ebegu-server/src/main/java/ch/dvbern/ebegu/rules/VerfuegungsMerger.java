@@ -2,7 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -48,8 +48,8 @@ public class VerfuegungsMerger {
 			return zeitabschnitte;
 		}
 
-		final Betreuung betreuungGSM = findBetreuungOnGesuchForMuation(betreuung, gesuchForMutaion);
-		if (betreuungGSM == null) {
+		final Verfuegung verfuegungOnGesuchForMuation = VerfuegungUtil.findVerfuegungOnGesuchForMutation(betreuung, gesuchForMutaion);
+		if (verfuegungOnGesuchForMuation == null) {
 			return zeitabschnitte;
 		}
 
@@ -61,7 +61,7 @@ public class VerfuegungsMerger {
 			final LocalDate zeitabschnittStart = verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb();
 			final int anspruchberechtigtesPensum = verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 
-			final int anspruchberechtigtesPensumGSM = findAnspruchberechtigtesPensumAt(zeitabschnittStart, betreuungGSM);
+			final int anspruchberechtigtesPensumGSM = findAnspruchberechtigtesPensumAt(zeitabschnittStart, verfuegungOnGesuchForMuation);
 			VerfuegungZeitabschnitt zeitabschnitt = copy(verfuegungZeitabschnitt);
 
 			if (anspruchberechtigtesPensum > anspruchberechtigtesPensumGSM) {
@@ -95,35 +95,22 @@ public class VerfuegungsMerger {
 	/**
 	 * Findet das anspruchberechtigtes Pensum zum Zeitpunkt des neuen Zeitabschnitt-Start
 	 */
-	private int findAnspruchberechtigtesPensumAt(LocalDate zeitabschnittStart, Betreuung betreuungGSM) {
-		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : betreuungGSM.getVerfuegung().getZeitabschnitte()) {
+	private int findAnspruchberechtigtesPensumAt(LocalDate zeitabschnittStart, Verfuegung verfuegungGSM) {
+
+		for (VerfuegungZeitabschnitt verfuegungZeitabschnitt : verfuegungGSM.getZeitabschnitte()) {
 			final DateRange gueltigkeit = verfuegungZeitabschnitt.getGueltigkeit();
 			if (gueltigkeit.contains(zeitabschnittStart) || gueltigkeit.startsSameDay(zeitabschnittStart)) {
 				return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
 			}
 		}
+
 		LOG.error("Anspruch berechtigtes Pensum beim Gesuch für Mutation konnte nicht gefunden werden");
 		return 0;
 	}
 
 	private VerfuegungZeitabschnitt copy(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(verfuegungZeitabschnitt);
-		//zeitabschnitt.add(verfuegungZeitabschnitt);
 		return zeitabschnitt;
 	}
 
-	private Betreuung findBetreuungOnGesuchForMuation(Betreuung betreuung, Gesuch gesuchForMutaion) {
-
-		for (KindContainer kindContainer : gesuchForMutaion.getKindContainers()) {
-			if (kindContainer.getKindNummer().equals(betreuung.getKind().getKindNummer())) {
-				for (Betreuung betreuungGSM : kindContainer.getBetreuungen()) {
-					if (betreuungGSM.getBetreuungNummer().equals(betreuung.getBetreuungNummer())) {
-						return betreuungGSM;
-					}
-				}
-			}
-		}
-		LOG.error("Betreuung zum mergen konnte nicht gefunden werden");
-		return null;
-	}
 }

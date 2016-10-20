@@ -39,6 +39,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	private static final long serialVersionUID = -6776987863150835840L;
 
+	@Transient
+	private Verfuegung vorgaengerVerfuegung;
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_kind_id"), nullable = false)
@@ -99,7 +102,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		this.kind = kindContainer;
 		this.institutionStammdaten = toCopy.institutionStammdaten;
 		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
-		if (toCopy.betreuungsstatus.isVerfuegt()) {
+		if (toCopy.betreuungsstatus.isGeschlossen()) {
 			this.betreuungsstatus = Betreuungsstatus.BESTAETIGT;
 		} else {
 			this.betreuungsstatus = toCopy.betreuungsstatus;
@@ -271,4 +274,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		compareToBuilder.append(this.getId(), other.getId());
 		return compareToBuilder.toComparison();
 	}
+
+
+	public Verfuegung getVorgaengerVerfuegung() {
+		return vorgaengerVerfuegung;
+	}
+
+	public void setVorgaengerVerfuegung(Verfuegung vorgaengerVerfuegung) {
+		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
+	}
+
 }
