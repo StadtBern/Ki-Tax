@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.rechner.AbstractBGRechnerTest;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.ebegu.services.GesuchService;
@@ -66,9 +67,9 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		TestDataUtil.setEinkommensverschlechterung(gesuch, gesuch.getGesuchsteller1(), new BigDecimal("80000"), true);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 
-		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
+		final Verfuegung evaluateFamiliensituation = evaluator.evaluateFamiliensituation(gesuch);
 
-		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, evaluateFamiliensituation);
 		Assert.assertNotNull(bytes);
 		writeToTempDir(bytes, "finanzielleSituation1G.pdf");
 	}
@@ -96,7 +97,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 
-		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, null);
 		Assert.assertNotNull(bytes);
 		writeToTempDir(bytes, "finanzielleSituation1G2G.pdf");
 	}
@@ -122,7 +123,7 @@ public class PrintFinanzielleSituationPDFServiceBeanTest extends AbstractEbeguTe
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());
 
-		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+		byte[] bytes = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, null);
 
 		writeToTempDir(bytes, "TN_FamilienStituation1.pdf");
 	}

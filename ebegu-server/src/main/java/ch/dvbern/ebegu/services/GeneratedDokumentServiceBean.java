@@ -2,15 +2,18 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinConfigurator;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.Validate;
 
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
@@ -23,7 +26,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Service fuer GeneratedDokument
@@ -55,6 +59,15 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private VerfuegungService verfuegungService;
+
+	@Inject
+	private MandantService mandantService;
+
+	@Inject
+	ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	EbeguParameterService ebeguParameterService;
 
 
 	@Override
@@ -131,7 +144,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
 				//FIXME: Hier muss noch der BetreuungEvaluator angestossen werden um die Verfügung zu berechnen (evaluator.evaluate(gesuch, ...);)
-				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+
+				final BetreuungsgutscheinEvaluator alksdjf = initEvaluator(gesuch);
+				final Verfuegung famGroessenVerfuegung = alksdjf.evaluateFamiliensituation(gesuch);
+				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			} else {
@@ -142,6 +158,69 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				fileNameForGeneratedDokumentTyp);
 		}
 		return persistedDokument;
+	}
+
+	@Nonnull
+	public BetreuungsgutscheinEvaluator initEvaluator(@Nonnull Gesuch gesuch) {
+		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
+		BetreuungsgutscheinEvaluator bgEvaluator = initEvaluator(mandant, gesuch.getGesuchsperiode());
+		BGRechnerParameterDTO calculatorParameters = loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
+		return bgEvaluator;
+	}
+
+
+	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
+		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
+		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO(paramMap, gesuchsperiode, mandant);
+
+		//Es gibt aktuell einen Parameter der sich aendert am Jahreswechsel
+//		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
+//		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
+//		Validate.isTrue(endjahr == startjahr +1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr"+ endjahr +" sein ");
+//		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
+//		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
+//		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
+//		parameterDTO.setBeitragStadtProTagJahr2((abgeltungJahr2));
+		return parameterDTO;
+	}
+
+	/**
+	 * Hinewis, hier muss wohl spaeter der Mandant als Parameter mitgehen
+	 *
+	 * @return
+	 */
+	private Map<EbeguParameterKey, EbeguParameter> loadRuleParameters(Mandant mandant, Gesuchsperiode gesuchsperiode, Set<EbeguParameterKey> keysToLoad) {
+		//Hinweis, Mandant wird noch ignoriert
+		if (mandant != null) {
+//			LOG.warn("Mandant wird noch nicht beruecksichtigt. Codeaenderung noetig");
+		}
+		LocalDate stichtag = gesuchsperiode.getGueltigkeit().getGueltigAb();
+		Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameters = new HashMap<EbeguParameterKey, EbeguParameter>();
+		for (EbeguParameterKey currentParamKey : keysToLoad) {
+			Optional<EbeguParameter> param = ebeguParameterService.getEbeguParameterByKeyAndDate(currentParamKey, stichtag);
+			if (param.isPresent()) {
+				ebeguRuleParameters.put(param.get().getName(), param.get());
+			} else {
+//				LOG.error("Required rule parameter '{}' could not be loaded  for the given Mandant '{}', Gesuchsperiode '{}'", currentParamKey, mandant, gesuchsperiode);
+				throw new EbeguEntityNotFoundException("initEvaluator", ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, currentParamKey, Constants.DATE_FORMATTER.format(stichtag));
+			}
+		}
+
+		return ebeguRuleParameters;
+	}
+
+
+	/**
+	 * Diese Methode initialisiert den Calculator mit den richtigen Parametern und benotigten Regeln fuer den Mandanten der
+	 * gebraucht wird
+	 */
+	private BetreuungsgutscheinEvaluator initEvaluator(@Nullable Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
+		BetreuungsgutscheinConfigurator ruleConfigurator = new BetreuungsgutscheinConfigurator();
+		Set<EbeguParameterKey> keysToLoad = ruleConfigurator.getRequiredParametersForMandant(mandant);
+		Map<EbeguParameterKey, EbeguParameter> ebeguParameter = loadRuleParameters(mandant, gesuchsperiode, keysToLoad);
+		List<Rule> rules = ruleConfigurator.configureRulesForMandant(mandant, ebeguParameter);
+		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
+		return new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 	}
 
 	@Override

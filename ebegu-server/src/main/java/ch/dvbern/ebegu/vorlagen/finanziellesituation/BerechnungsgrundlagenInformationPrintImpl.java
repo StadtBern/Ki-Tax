@@ -11,7 +11,10 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
@@ -32,15 +35,17 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	private EinkommensverschlechterungPrint ev1;
 	private EinkommensverschlechterungPrint ev2;
 	private Gesuch gesuch;
+	private Verfuegung famGroessenVerfuegung;
 
 	/**
 	 * Konstruktor
 	 *
 	 * @param gesuch
 	 */
-	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
+	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch, Verfuegung famGroessenVerfuegung) {
 
 		this.gesuch = gesuch;
+		this.famGroessenVerfuegung = famGroessenVerfuegung;
 		// Finanzdaten abfuellen
 		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
 		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
@@ -68,6 +73,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 			}
 		}
 	}
+
 
 	@Override
 	public String getGesuchsteller1Name() {
@@ -121,20 +127,15 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public List<BerechnungsblattPrint> getBerechnungsblatt() {
 
 		List<BerechnungsblattPrint> result = new ArrayList<>();
-		for (KindContainer kindContainer : gesuch.getKindContainers()) {
-			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				Optional<Verfuegung> verfuegung = extractVerfuegung(betreuung);
-				if (verfuegung.isPresent()) {
-					List<VerfuegungZeitabschnitt> zeitabschnitten = verfuegung.get().getZeitabschnitte();
-					for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
-						result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
-					}
-				}
-				// Von jedem Kind nur eine Betreuung nehmmen
-				break;
+
+		if (famGroessenVerfuegung != null) {
+			List<VerfuegungZeitabschnitt> zeitabschnitten = famGroessenVerfuegung.getZeitabschnitte();
+			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
+				result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
 			}
-			break;
 		}
+
+
 		return result;
 
 	}

@@ -55,6 +55,6 @@ public class PrintPDFDelegateServiceBean extends AbstractBaseService implements 
 	@Override
 	public byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
 
-		return printFinanzielleSituationService.printFinanzielleSituation(gesuch);
+		return printFinanzielleSituationService.printFinanzielleSituation(gesuch, null);
 	}
 }

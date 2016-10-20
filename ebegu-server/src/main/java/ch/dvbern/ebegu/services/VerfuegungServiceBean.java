@@ -159,6 +159,8 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
 	}
 
+
+
 	/**
 	 * Hinewis, hier muss wohl spaeter der Mandant als Parameter mitgehen
 	 *
