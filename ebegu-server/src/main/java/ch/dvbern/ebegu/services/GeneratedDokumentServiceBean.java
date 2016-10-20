@@ -167,7 +167,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
 				}
 
-				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorherigeVerfuegungBetreuung(betreuung);
+				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorgaengerVerfuegung(betreuung);
 				final byte[] verfuegungsPDF;
 				if (optVorherigeVerfuegung.isPresent()) {
 					verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, optVorherigeVerfuegung.get().getTimestampErstellt().toLocalDate());

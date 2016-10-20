@@ -59,7 +59,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
         for (KindContainer kindContainer : gesuch.getKindContainers()) {
             for (Betreuung betreuung : kindContainer.getBetreuungen()) {
                 // Pro Betreuung ein Dokument
-				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorherigeVerfuegungBetreuung(betreuung);
+				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorgaengerVerfuegung(betreuung);
 				if (optVorherigeVerfuegung.isPresent()) {
 					result.add(printVerfuegungForBetreuung(betreuung, optVorherigeVerfuegung.get().getTimestampErstellt().toLocalDate()));
 				} else {

@@ -93,7 +93,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void findVorherigeVerfuegungBetreuung(){
+	public void findVorgaengerVerfuegung(){
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(2016, Month.MARCH, 25));
 		Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		KindContainer kind = kindContainers.iterator().next();
@@ -116,12 +116,13 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 
 		Mutationsdaten mutationsdaten = new Mutationsdaten();
 		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), mutationsdaten, LocalDate.now());
+		Assert.assertTrue(gesuchOptional.isPresent());
 		Gesuch mutation = persistence.persist(gesuchOptional.get());
 
 		List<Betreuung> allBetreuungenFromGesuch = this.betreuungService.findAllBetreuungenFromGesuch(mutation.getId());
 		Optional<Betreuung> optFolgeBetreeung = allBetreuungenFromGesuch.stream().filter(b -> b.getBetreuungNummer().equals(betreuungNummer)).findAny();
 		Assert.assertTrue(optFolgeBetreeung.isPresent());
-		Optional<Verfuegung> optVorherigeVerfuegungBetreuung = this.verfuegungService.findVorherigeVerfuegungBetreuung(optFolgeBetreeung.get());
+		Optional<Verfuegung> optVorherigeVerfuegungBetreuung = this.verfuegungService.findVorgaengerVerfuegung(optFolgeBetreeung.get());
 		Assert.assertTrue(optVorherigeVerfuegungBetreuung.isPresent());
 		Assert.assertEquals(optVorherigeVerfuegungBetreuung.get(), verfuegung1);
 	}

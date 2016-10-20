@@ -55,6 +55,6 @@ public interface VerfuegungService {
 	 * @return Verfuegung oder null falls nicht vorhanden
 	 */
 	@Nonnull
-	Optional<Verfuegung> findVorherigeVerfuegungBetreuung(@Nonnull Betreuung betreuung);
+	Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull Betreuung betreuung);
 
 }

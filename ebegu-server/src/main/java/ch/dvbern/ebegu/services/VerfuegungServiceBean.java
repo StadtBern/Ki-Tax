@@ -51,10 +51,6 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	private MandantService mandantService;
 
 	@Inject
-	private BetreuungService betreuungService;
-
-
-	@Inject
 	private ApplicationPropertyService applicationPropertyService;
 
 	@Inject
@@ -127,7 +123,13 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
 						// Wenn wir eine solche nicht verfügte Betruung haben, suchen wir die letzte verfügte betreuung
 						// und kopieren deren Verfügung um sie später vergleichen und mergen zu können
-						betreuung.setVorgaengerVerfuegung(findVorgaengerVerfuegung(betreuung));
+						Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+						if(vorgaengerVerfuegung.isPresent()){
+							betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.get());
+						}else{
+							//TODO reviewer: ist das richtig so? sollte hier eine andere Exception geworfen werden?
+							throw new EbeguEntityNotFoundException("calculateVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "VorgaengerVerfuegung not found. BetreuungID: " + betreuung.getId());
+						}
 					}
 				}
 			}
@@ -139,35 +141,23 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	@Override
 	@Nonnull
-	public Optional<Verfuegung> findVorherigeVerfuegungBetreuung(@Nonnull  Betreuung betreuung) {
+	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
 		if(betreuung.getVorgaengerId()==null) return Optional.empty();
 
 		Optional<Betreuung> optVorgaengerbetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
 		if (optVorgaengerbetreuung.isPresent()) {
 			Betreuung vorgaengerbetreuung = optVorgaengerbetreuung.get();
-			if (vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.VERFUEGT)) {
+			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
 				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
 			} else {
-				return findVorherigeVerfuegungBetreuung(vorgaengerbetreuung);
+				return findVorgaengerVerfuegung(vorgaengerbetreuung);
 			}
 		}
 		return Optional.empty();
 
 	}
 
-
-	private Verfuegung findVorgaengerVerfuegung(Betreuung betreuung) {
-		final Optional<Betreuung> vorgaengerbetr = betreuungService.findBetreuung(betreuung.getVorgaengerId());
-		if (vorgaengerbetr.isPresent()) {
-			if (!vorgaengerbetr.get().getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
-				return vorgaengerbetr.get().getVerfuegung();
-			} else {
-				return findVorgaengerVerfuegung(vorgaengerbetr.get());
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Diese Methode initialisiert den Calculator mit den richtigen Parametern und benotigten Regeln fuer den Mandanten der
