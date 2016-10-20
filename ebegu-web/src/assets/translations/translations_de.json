@@ -502,6 +502,7 @@
     "ANDERE": "Andere",
     "INFOTEXT_ERWERBSPENSUM": "Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
     "ERWERBSPENSEN_LIST_TITLE": "Erwerbspensen Liste",
+    "ERWERBSPENSEN_LIST_HINT": "Sämtliche Erwerbspensen für die ganze Gesuchsperiode müssen hier erfasst werden!",
     "DATE_PLACEHOLDER": "tt.mm.jjjj",
     "PERCENTAGE_PLACEHOLDER": "Angabe in %",
     "FAM_ERGAENZENDE_BETREUUNG_HELP": "noch_nicht_definiert",
