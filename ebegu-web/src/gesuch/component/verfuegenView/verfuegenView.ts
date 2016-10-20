@@ -67,7 +67,19 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
-                    this.$state.go('gesuch.verfuegen');
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
+                });
+            });
+        }
+    }
+
+    schliessenOhneVerfuegen(form: IFormController) {
+        if (form.$valid) {
+            this.verfuegungSchliessenOhenVerfuegen().then(() => {
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
                 });
             });
         }
@@ -172,11 +184,23 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             });
     }
 
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
+        })
+            .then(() => {
+                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+                this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
+            });
+    }
+
     /**
      * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
      */
     private setBemerkungen(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
+        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT ||
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
             this.bemerkungen = '';
@@ -191,7 +215,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
-            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
     }
 
     public openVerfuegungPDF(): void {
@@ -201,5 +226,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
             });
+    }
+
+    public isSameVerfuegungdaten(): boolean {
+        if (this.getVerfuegenToWorkWith()) {
+            return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;
+        }
+        return undefined;
     }
 }
