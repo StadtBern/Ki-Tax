@@ -23,5 +23,15 @@ public interface EbeguConfiguration {
 
 	String getDocumentFilePath();
 
+	/**
+	 * Gibt den (servlet-context relativen) path zur fedlet configuration zurueck die verwendet werden soll
+	 */
+	String getFedletConfigPath();
+
+
+	/**
+	 * Gibt an ob die Client Applikation https verwendet. Wenn true werden cookies nur bei https clients gesetzt
+	 */
+	boolean isClientUsingHTTPS();
 
 }

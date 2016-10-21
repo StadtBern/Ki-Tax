@@ -6,7 +6,6 @@ import ch.dvbern.ebegu.authentication.BenutzerCredentials;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
@@ -25,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-//Berechtigungen: PermitAll weggenommen weil wir das ohne user aufrufen muessen, sonst wird anonymous genommen und man hat 2 principals
+//Berechtigungen: PermitAll weggenommen weil wir das ohne user aus dem loginmodul aufrufen muessen, sonst wird anonymous genommen und man hat 2 principals nach dem loginmodul
 @Stateless(name = "AuthService")
 public class AuthServiceBean implements AuthService {
 
@@ -69,29 +68,25 @@ public class AuthServiceBean implements AuthService {
 
 	@Override
 	@Nonnull
-	public Optional<BenutzerCredentials> loginWithToken(@Nonnull String username, @Nonnull String authToken) {
-		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(authToken)) {
+	public Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull String authToken) {
+		if (StringUtils.isEmpty(authToken)) {
 			return Optional.empty();
 		}
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		ParameterExpression<String> usernameParam = cb.parameter(String.class, "username");
 		ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
 
 		CriteriaQuery<String> query = cb.createQuery(String.class);
 		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-		Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
-		Predicate usernamePredicate = cb.equal(join.get(Benutzer_.username), usernameParam);
+
 		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
-		query.where(usernamePredicate, authTokenPredicate);
-		//todo team hier muessen wir einen anderen Weg finden, um das Password zu holen. Dieses gilt nur jetzt bei dummy users und ist gar nicht sicher
-		query.select(root.get(AuthorisierterBenutzer_.password));
+		query.where(authTokenPredicate);
+		query.select(root.get(AuthorisierterBenutzer_.username));
 
 		try {
 			TypedQuery<String> typedQuery = entityManager.createQuery(query)
-				.setParameter(usernameParam, username)
 				.setParameter(authTokenParam, authToken);
-			String passwordEncrypted = typedQuery.getSingleResult();
+			String username = typedQuery.getSingleResult();
 			BenutzerCredentials credentials = new BenutzerCredentials(username,  authToken);
 			return Optional.of(credentials);
 		} catch (NoResultException ignored) {
@@ -119,47 +114,7 @@ public class AuthServiceBean implements AuthService {
 		}
 	}
 
-	@Override
-	public Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials) {
-		Objects.requireNonNull(credentials);
 
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		ParameterExpression<String> usernameParam = cb.parameter(String.class, "username");
-		ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
-
-		CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
-		Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-		Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
-		Predicate usernamePredicate = cb.equal(join.get(Benutzer_.username), usernameParam);
-		Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
-		query.where(cb.and(usernamePredicate, authTokenPredicate));
-
-		try {
-			TypedQuery<AuthorisierterBenutzer> tq = entityManager.createQuery(query)
-				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-				.setParameter(usernameParam, credentials.getUsername())
-				.setParameter(authTokenParam, credentials.getAuthToken());
-
-			AuthorisierterBenutzer authUser = tq.getSingleResult();
-
-			LocalDateTime now = LocalDateTime.now();
-			LocalDateTime maxDateFromNow = now.minus(Constants.LOGIN_TIMEOUT_SECONDS, ChronoUnit.SECONDS);
-			if (authUser.getLastLogin().isBefore(maxDateFromNow)) {
-				LOG.debug("Token is no longer valid: " + credentials.getAuthToken());
-				return Optional.empty();
-			}
-			authUser.setLastLogin(now);
-			entityManager.persist(authUser);
-			entityManager.flush();
-			LOG.trace("Valid auth Token was refreshed ");
-			return Optional.of(authUser.getId());
-
-		} catch (NoResultException ignored) {
-			LOG.debug("Could not load Authorisierterbenutzer for username '" + credentials.getUsername() + "' and token '" +
-				credentials.getAuthToken() + "'");
-			return Optional.empty();
-		}
-	}
 
 	@Override
 	public AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer) {
@@ -174,19 +129,16 @@ public class AuthServiceBean implements AuthService {
 			existingUser.getVorname(),
 			existingUser.getEmail(),
 			existingUser.getRole());
-
 	}
 
-
 	@Override
-	public Optional<AuthorisierterBenutzer> getUserByLoginToken(String token) {
+	public Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token) {
 
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 			ParameterExpression<String> authTokenParam = cb.parameter(String.class, "authToken");
 
 			CriteriaQuery<AuthorisierterBenutzer> query = cb.createQuery(AuthorisierterBenutzer.class);
 			Root<AuthorisierterBenutzer> root = query.from(AuthorisierterBenutzer.class);
-			Join<AuthorisierterBenutzer, Benutzer> join = root.join(AuthorisierterBenutzer_.benutzer, JoinType.INNER);
 			Predicate authTokenPredicate = cb.equal(root.get(AuthorisierterBenutzer_.authToken), authTokenParam);
 			query.where(authTokenPredicate);
 

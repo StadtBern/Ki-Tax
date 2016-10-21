@@ -15,7 +15,7 @@ appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'Mand
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService) {
-
+    // navigationLogger.toggle();
     routerHelper.configureStates(getStates(), '/pendenzen');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert
@@ -38,9 +38,10 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
 
         let currentPath = angular.copy($location.absUrl());
         console.log("going to login page wiht current path ", currentPath);
-        //wenn wri schon auf der lognseite oder im redirect sind redirecten wir nicht
+
+        //wenn wir schon auf der lognseite oder im redirect sind redirecten wir nicht
         if (currentPath.indexOf('fedletSSOInit') === -1
-            && currentPath.indexOf('auth/login') === -1
+            && ($state.current !== undefined && $state.current.name !== 'login')
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {

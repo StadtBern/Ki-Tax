@@ -15,6 +15,7 @@ package ch.dvbern.ebegu.api.resource.authentication;
 import ch.dvbern.ebegu.api.EbeguApplicationV1;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.omnifaces.security.jaspic.core.AuthParameters;
 import org.omnifaces.security.jaspic.core.HttpMsgContext;
 import org.omnifaces.security.jaspic.core.HttpServerAuthModule;
 import org.omnifaces.security.jaspic.user.TokenAuthenticator;
@@ -36,18 +37,17 @@ import static org.omnifaces.security.cdi.Beans.getReferenceOrNull;
 import static org.omnifaces.security.jaspic.Utils.isEmpty;
 
 /**
- * Authentication module that authenticates based on a token in a cookie the request.
- *
+ * Authentication module / Loginmodule that authenticates based on a token in a cookie the request.
+ * <p>
  * <p>
  * Token to username/roles mapping is delegated to an implementation of {@link TokenAuthenticator}, which
  * should be registered as CDI bean.
- *
+ * <p>
  * <p>
  * <b>NOTE:</b> This module makes the simplifying assumption that CDI is available in a SAM. Unfortunately
  * this is not true for every implementation. See https://java.net/jira/browse/JASPIC_SPEC-14
  *
  * @author Arjan Tijms
- *
  */
 public class CookieTokenAuthModule extends HttpServerAuthModule {
 
@@ -58,8 +58,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 
 	@Override
 	public AuthStatus validateHttpRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMsgContext) throws AuthException {
-		MDC.put(LOG_MDC_EBEGUUSER, "unknown");
-		MDC.put(LOG_MDC_AUTHUSERID, "unknown");
+		prepareLogvars(httpMsgContext);
 //		try {
 //			request.logout();
 //		} catch (ServletException e) {
@@ -67,14 +66,12 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 //			return setResponseUnauthorised(request, httpMsgContext);
 //		}
 
-
-		//todo maybe can to this in web.xml now
-		//httpMsgContext.isProtected()
-
-		String apiBasePath =  request.getContextPath() + EbeguApplicationV1.API_ROOT_PATH;
+		//Exceptional paths that do not require a login
+		String apiBasePath = request.getContextPath() + EbeguApplicationV1.API_ROOT_PATH;
 		String path = request.getRequestURI();
 		AuthDataUtil.getBasePath(request);
-		if (path.startsWith(apiBasePath+ "/auth/login")
+		if (path.startsWith(apiBasePath + "/auth/login")
+			|| path.startsWith(apiBasePath + "/swagger.json")
 			|| path.startsWith(request.getContextPath() + "/mylogin.jsp")
 			|| path.startsWith(request.getContextPath() + "/logout.jsp")
 			|| path.startsWith(request.getContextPath() + "/index.jsp")
@@ -83,15 +80,18 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			|| path.startsWith(request.getContextPath() + "/fedletSloInit")
 			|| path.startsWith(request.getContextPath() + "/fedletlogout")
 			|| path.startsWith(request.getContextPath() + "/fedletSloRedirect")
-			||  path.startsWith(apiBasePath+  "/swagger.json")
 			|| "OPTIONS".equals(request.getMethod())) {
 			// Beim Login Request gibt es noch nichts abzufangen
+			return httpMsgContext.doNothing();
+		}
+		//pages that do not fall under de security-context that was defined in webx.xml
+		if (!httpMsgContext.isProtected()) {
 			return httpMsgContext.doNothing();
 		}
 
 		// Verify that XSRF-Token from HTTP-Header matches Cookie-XSRF-Token
 		if (!verifyXSFRHeader(request)) {
-			return setResponseUnauthorised(request,httpMsgContext);
+			return setResponseUnauthorised(httpMsgContext);
 		}
 		try {
 			// Get AuthId (=loginname, actually not needed) and AuthToken from Cookies.
@@ -99,7 +99,6 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			String authId = AuthDataUtil.getAuthAccessElement(request).get().getAuthId();
 			if (!isEmpty(authToken)) {
 
-				// If a token is present, authenticate with it whether this is strictly required or not.
 				MDC.put(LOG_MDC_EBEGUUSER, authId);
 				TokenAuthenticator tokenAuthenticator = getReferenceOrNull(TokenAuthenticator.class);
 				if (tokenAuthenticator != null) {
@@ -107,66 +106,48 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 					if (tokenAuthenticator.authenticate(authToken)) {
 						LOG.debug("successfully logged in user: " + tokenAuthenticator.getUserName());
 						MDC.put(LOG_MDC_AUTHUSERID, authToken);
-//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //fixme why is this nececessary
+//						httpMsgContext.registerWithContainer(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles()); //weis nicht was der untschied zwischen dem und dem andern ist
 						return httpMsgContext.notifyContainerAboutLogin(tokenAuthenticator.getUserName(), tokenAuthenticator.getApplicationRoles());
-					} else{
+					} else {
 						// Token Verification Failed
 						LOG.debug("Token verification failed for " + tokenAuthenticator.getUserName());
-						return setResponseUnauthorised(request, httpMsgContext);
+						return setResponseUnauthorised(httpMsgContext);
 
 					}
 				} else {
-					LOG.warn("No Bean found for Class " + TokenAuthenticator.class.getSimpleName() + " all auth attempts weill be refused");
+					LOG.warn("No Authenticator found with CDI:  " + TokenAuthenticator.class.getSimpleName() + " all auth attempts will be refused");
 
 				}
 			}
 
 
-
-//			//use token to authorize the request
-//			Optional<BenutzerCredentials> loginWithToken = authService.loginWithToken(authId, authToken);
-//			if (!loginWithToken.isPresent()) {
-//				LOG.debug("Could not load authorisierter_benutzer with username" + authId + " token " + authToken );
-//				setResponseUnauthorised(requestContext, httpMsgContext);
-//				return;
-//			}
-//			BenutzerCredentials credentials = loginWithToken.get();
-//
-//			try {
-//				// EJB Container Login todo team evtl mit request.authenticate
-//				request.login(credentials.getUsername(), credentials.getPasswordEncrypted());
-//
-//			} catch (ServletException e) {
-//				// Container Login Failed
-//				LOG.debug("Container login failed" + credentials.getUsername());
-//				setResponseUnauthorised(requestContext, httpMsgContext);
-//				return;
-//			}
-//
-//			//check if the token is still valid
-//			Optional<String> loginId = authService.verifyToken(credentials);
-//			if (loginId.isPresent()) {
-//				MDC.put(LOG_MDC_AUTHUSERID, String.valueOf(loginId.get()));
-//				LOG.debug("successfully logged in user: " + credentials.getUsername());
-//			} else {
-//				// Token Verification Failed
-//				LOG.debug("Token verification failed for " + credentials.getUsername());
-//				setResponseUnauthorised(requestContext, httpMsgContext);
-//			}
-
-
 		} catch (NoSuchElementException e) {
 			LOG.info("Login with Token failed", e);
-			return setResponseUnauthorised(request, httpMsgContext);
+			return setResponseUnauthorised(httpMsgContext);
 		}
 
 		if (httpMsgContext.isProtected()) {
+			LOG.debug("Access to protected path denied");
 			return httpMsgContext.responseNotFound();
 		}
 
 		return httpMsgContext.doNothing();
 	}
 
+	private void prepareLogvars(HttpMsgContext msgContext) {
+		MDC.put(LOG_MDC_EBEGUUSER, "unknown");
+		MDC.put(LOG_MDC_AUTHUSERID, "unknown");
+
+		if (LOG.isDebugEnabled()) {
+			AuthParameters authParameters = msgContext.getAuthParameters();
+			if (authParameters != null && Boolean.FALSE.equals(authParameters.getNoPassword())) {
+				LOG.debug("Username " + authParameters.getUsername());
+				LOG.debug("Password was passed in request");
+			}
+		}
+	}
+
+	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	private boolean verifyXSFRHeader(HttpServletRequest request) {
 		String xsrfTokenHeader = request.getHeader(AuthDataUtil.PARAM_XSRF_TOKEN);
 
@@ -177,7 +158,7 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			&& RestUtil.isFileDownloadRequest(request);
 		if (!request.getRequestURI().contains("/migration/")) { //migration ist ausgenommen
 			if (!isValidFileDownload && !AuthDataUtil.isValidXsrfParam(xsrfTokenHeader, xsrfTokenCookie)) {
-				LOG.debug("Could not match XSRF Token from Header and Cookie. Header:" +xsrfTokenHeader +  " cookie " +xsrfTokenCookie );
+				LOG.debug("Could not match XSRF Token from Header and Cookie. Header:" + xsrfTokenHeader + " cookie " + xsrfTokenCookie);
 				return false;
 			}
 		}
@@ -185,19 +166,16 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	}
 
 
-
-	private AuthStatus setResponseUnauthorised(HttpServletRequest requestContext, HttpMsgContext httpMsgContext) {
-
+	private AuthStatus setResponseUnauthorised(HttpMsgContext httpMsgContext) {
 		try {
 			httpMsgContext.getResponse().sendError(SC_UNAUTHORIZED);
 		} catch (IOException e) {
 			LOG.error("Error when trying to send 401 back because of missing Authorization");
 			throw new IllegalStateException(e);
 		}
-
 		return SEND_FAILURE;
 
 	}
 
 
-	}
+}

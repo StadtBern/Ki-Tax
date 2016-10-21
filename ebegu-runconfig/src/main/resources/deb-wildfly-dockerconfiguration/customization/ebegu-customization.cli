@@ -44,6 +44,8 @@ xa-data-source add \
 	cache-type=default \
 )
 
+#diese Security domain wird aktuell nicht mehr verwendet, evtl wird sie aber spaeter noch in den stack eingebunden,
+#neu wird die bereits in standalone.xml enthaltene jaspitest domain verwendet
 /subsystem=security/security-domain=ebegu/authentication=classic:add( \
 	login-modules=[ \
 		{ \
@@ -56,6 +58,10 @@ xa-data-source add \
 		} \
 	] \
 )
+
+#Add Properties
+/system-property=ebegu.fedlet.config.path:add(value=fedletConfig/https_test_ebegu_dvbern_ch)
+/system-property=ebegu.client.using.https:add(value=false)
 
 
 #Helperskripts

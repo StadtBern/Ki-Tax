@@ -3,6 +3,8 @@ package ch.dvbern.ebegu.api.resource.authentication;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.util.Constants;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.NotImplementedException;
 import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +19,15 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 
+/**
+ * This Authenticator will check if an Token Passed bz the {@link CookieTokenAuthModule} is actually valid.
+ * To be valid a token must be stored in the Cache already or exist in the authorisierte_benutyer table
+ */
 @RequestScoped
 public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EBEGUTokenAuthenticator.class);
+	private static final long serialVersionUID = 55599436567329056L;
 
 //    @Inject
 //    private UserService userService;
@@ -35,6 +42,8 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
     @Override
     public boolean authenticate(String token) {
+
+		//todo team, hier cache einbauen da das login sehr oft geprueft wird
 //        try {
 //            Cache<String, User> usersCache = cacheManager.getDefaultCache();
 //
@@ -81,20 +90,22 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	private Optional<AuthorisierterBenutzer> readUserFromDatabase(String token) {
 
-		return authService.getUserByLoginToken(token);
+		return authService.validateAndRefreshLoginToken(token);
 
 	}
 
 	@Override
 	public String generateLoginToken() {
-		return null;
+		throw new NotImplementedException("Token is not generated here. Please see in FedletSamlServlet for generation");
 	}
 
 	@Override
 	public void removeLoginToken() {
-
+		//this method is never actually called from our CookieTokenAuthModule
+		authService.logout(user.getAuthToken());
 	}
 
+	@SuppressFBWarnings("NM_CONFUSING")
 	@Override
     public String getUserName() {
         return user == null ? null : user.getUsername();

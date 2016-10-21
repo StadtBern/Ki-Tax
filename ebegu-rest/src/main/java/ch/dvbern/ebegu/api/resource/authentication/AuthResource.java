@@ -64,8 +64,9 @@ public class AuthResource {
 	}
 
 	/**
-	 * extrahiert die Daten aus dem DTO und versucht einzuloggen.
-	 * {@link AuthSecurityInterceptor}
+	 * extrahiert die Daten aus dem DTO und versucht einzuloggen. Fuer das einloggen
+	 * wird das servlet api verwendet  (request.login).
+
 	 * @param loginElement Benutzer Identifikation (Benutzername/Passwort)
 	 * @return im Erfolgsfall eine HTTP Response mit Cookies
 	 */
@@ -75,7 +76,6 @@ public class AuthResource {
 	@PermitAll
 	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
 
-		Optional<AuthAccessElement> accessElement;
 		// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
 		if (!containerLogin(loginElement)) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -92,7 +92,7 @@ public class AuthResource {
 		//todo homa imanol fragen ich glaube das sollten wir nach dem container login
 		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
-		accessElement = authService.login(login);
+		Optional<AuthAccessElement> accessElement = authService.login(login);
 		if (!accessElement.isPresent()) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}

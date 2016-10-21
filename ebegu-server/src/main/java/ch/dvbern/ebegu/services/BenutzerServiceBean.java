@@ -84,8 +84,15 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Benutzer updateOrStoreUserFromIAM(Benutzer benutzer) {
 		Optional<Benutzer> foundUser = this.findBenutzer(benutzer.getUsername());
 		if (foundUser.isPresent()) {
+
+
+
 			benutzer.setId(foundUser.get().getId());
-			benutzer.setVersion(foundUser.get().getVersion()); //hack fuer ol
+			benutzer.setVersion(foundUser.get().getVersion()); //we circumveil the optimistic locking and just save the new version
+			benutzer.setTimestampErstellt(foundUser.get().getTimestampErstellt());
+			//noinspection ConstantConditions
+			benutzer.setUserErstellt(foundUser.get().getUserErstellt());
+
 		}
 		return this.saveBenutzer(benutzer);
 	}

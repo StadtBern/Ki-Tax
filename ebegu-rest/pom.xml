@@ -244,11 +244,9 @@
             <version>0.6-ALPHA</version>
         </dependency>
 
-
         <dependency>
           <groupId>org.jboss.javaee</groupId>
           <artifactId>jboss-jaspi-api</artifactId>
-          <version>1.0.0.GA</version>
             <scope>provided</scope>
         </dependency>
         <!--SWAGGER-API-->

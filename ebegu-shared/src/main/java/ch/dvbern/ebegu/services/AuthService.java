@@ -23,13 +23,11 @@ public interface AuthService {
 	Optional<AuthAccessElement> login(@Nonnull AuthLoginElement loginElement);
 
 	/**
-	 * @param username  Benutzername Identifikation
 	 * @param authToken Authentifizierungs Token Identifikation
-	 * @return BenutzerCredentials mit der angegebenen Identifikation
+	 * @return BenutzerCredentials mit der angegebenen Identifikation falls vorhanden
 	 */
 	@Nonnull
-	@Deprecated
-	Optional<BenutzerCredentials> loginWithToken(@Nonnull final String username,  @Nonnull final String authToken);
+	Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull final String authToken);
 
 	/**
 	 * @param authToken Authentifizierungs Token Identifikation
@@ -37,20 +35,11 @@ public interface AuthService {
 	 */
 	boolean logout(@Nonnull final String authToken);
 
-	/**
-	 * @param credentials Token spezifische Credentials
-	 * @return {@link ch.dvbern.ebegu.entities.AuthorisierterBenutzer#getId()} wenn der Login noch gut ist
-	 * @deprecated
-	 *
-	 */
-	@Deprecated
-	Optional<String> verifyToken(@Nonnull BenutzerCredentials credentials);
 
 	AuthAccessElement createLoginFromIAM(AuthorisierterBenutzer authorisierterBenutzer);
 
 	/**
 	 * gets the logged in user based on the login token
-	 * @param token
 	 */
-	Optional<AuthorisierterBenutzer> getUserByLoginToken(String token);
+	Optional<AuthorisierterBenutzer> validateAndRefreshLoginToken(String token);
 }

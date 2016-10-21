@@ -23,6 +23,8 @@ export class AuthenticationListViewController {
     private redirectionUrl: string = '/ebegu/saml2/jsp/fedletSSOInit.jsp?';
     private relayString: string;
     private redirectionHref: string;
+    private redirecting: boolean;
+    private countdown: number = 5;
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
@@ -39,9 +41,9 @@ export class AuthenticationListViewController {
     }
 
     public redirectTolIAMForLogin(): void {
-        this.$timeout(this.redirect, 8000);
-
-
+        this.redirecting = true;
+        this.$timeout(this.doCountdown, 1000);
+        this.$timeout(this.redirect, 5000);
     }
 
     public createRedirectionURL(): string {
@@ -64,13 +66,21 @@ export class AuthenticationListViewController {
     public redirect = () => {
 
         let urlToGoTo = this.createRedirectionURL();
-        console.log("redirecting to login", urlToGoTo);
+        console.log('redirecting to login', urlToGoTo);
 
         this.$window.open(urlToGoTo, '_self');
     };
 
     private redirectTolIAMForLogout() {
-        console.log("reached login page from lout request");
+        console.log('reached login page from logout request');
+
+    }
+
+    private doCountdown = () => {
+        if (this.countdown > 0) {
+            this.countdown--;
+            this.$timeout(this.doCountdown, 1000);
+        }
 
     }
 }

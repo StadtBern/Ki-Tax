@@ -21,11 +21,12 @@ function getStates(): IState[] {
 export class EbeguLoginState implements IState {
     name = 'login';
     template = '<authentication-view>';
+    //HINWEIS: Soweit ich sehen kann koennen url navigationen mit mehr als einem einzigen slash am Anfang nicht manuell in der Adressbar aufgerufen werden?
     url = '/auth/login/?type&relayPath';
 }
 
 export class EbeguLocalLoginState implements IState {
-    name = 'login.local';
+    name = 'locallogin';
     template = '<dummy-authentication-view>';
     url = '/auth/locallogin';
 }
