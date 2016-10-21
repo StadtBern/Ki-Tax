@@ -13,7 +13,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-8">
-                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM" for="finSitEinkommen_ID"></label>
+                        <label data-translate="FINANZIELLE_SITUATION_MASSGEBENDES_EINKOMMEN_VOR_ABZUG_FAM"
+                               for="finSitEinkommen_ID"></label>
                         <input id="finSitEinkommen_ID" type="text" name="finSitEinkommen"
                                ng-model="vm.berechnungsManager.finanzielleSituationResultate.massgebendesEinkVorAbzFamGr"
                                class="form-control" ng-disabled="true">
@@ -156,10 +157,30 @@
                 </div>
             </div>
 
-            <div class="row marginTop20">
+            <div class="row marginTop20" ng-if="!vm.isSameVerfuegungdaten()">
                 <div class="col-md-12 text-center">
-                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()" button-click="vm.save(form)" button-class="btn btn-sm btn-success">
+                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()" button-click="vm.save(form)"
+                                       button-class="btn btn-sm btn-success">
                         <span data-translate="VERFUEGEN_UPPER"></span>
+                    </dv-loading-button>
+                </div>
+            </div>
+
+            <div class="row marginTop20" ng-if="vm.isSameVerfuegungdaten()">
+                <div class="col-md-4">
+                    <span data-translate="IDENTISCHE_BERECHNUNG"></span>
+                </div>
+                <div class="col-md-4">
+                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()"
+                                       button-click="vm.schliessenOhneVerfuegen(form)"
+                                       button-class="btn btn-sm btn-success">
+                        <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
+                    </dv-loading-button>
+                </div>
+                <div class="col-md-4">
+                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()" button-click="vm.save(form)"
+                                       button-class="btn btn-sm btn-success">
+                        <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
             </div>

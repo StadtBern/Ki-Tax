@@ -15,7 +15,10 @@ import org.hibernate.envers.Audited;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,6 @@ import static java.math.BigDecimal.ZERO;
 public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements Comparable<VerfuegungZeitabschnitt> {
 
 	private static final long serialVersionUID = 7250339356897563374L;
-
 
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
@@ -76,7 +78,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = false)
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
-
 	@Column(nullable = true)
 	private BigDecimal betreuungsstunden;
 
@@ -104,7 +105,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
-
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -181,7 +181,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	public void setAnspruchspensumRest(int anspruchspensumRest) {
 		this.anspruchspensumRest = anspruchspensumRest;
 	}
-
 
 	public void setAnspruchberechtigtesPensum(int anspruchberechtigtesPensum) {
 		this.anspruchberechtigtesPensum = anspruchberechtigtesPensum;
@@ -336,24 +335,24 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
 		// Der Familiengroessen Abzug kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
 		if (other.getAbzugFamGroesse() != null) {
-			Validate.isTrue(this.getAbzugFamGroesse() == null, "Familiengoressenabzug kann nicht gemerged werden" );
+			Validate.isTrue(this.getAbzugFamGroesse() == null, "Familiengoressenabzug kann nicht gemerged werden");
 			this.setAbzugFamGroesse(other.getAbzugFamGroesse());
 		}
 		// Die Familiengroesse kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
 		if (other.getFamGroesse() != null) {
-			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden" );
+			Validate.isTrue(this.getFamGroesse() == null, "Familiengoressen kann nicht gemerged werden");
 			this.setFamGroesse(other.getFamGroesse());
 		}
 	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey) {
-		String bemerkungsText =  ServerMessageUtil.translateEnumValue(msgKey);
+		String bemerkungsText = ServerMessageUtil.translateEnumValue(msgKey);
 		this.addBemerkung(ruleKey.name() + ": " + bemerkungsText);
 
-		}
+	}
 
 	public void addBemerkung(RuleKey ruleKey, MsgKey msgKey, Object... args) {
-		String bemerkungsText =  ServerMessageUtil.translateEnumValue(msgKey, args);
+		String bemerkungsText = ServerMessageUtil.translateEnumValue(msgKey, args);
 		this.addBemerkung(ruleKey.name() + ": " + bemerkungsText);
 	}
 
@@ -378,7 +377,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	/**
-	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten Pensum.
+	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten
+	 * Pensum.
 	 * <p>
 	 * Dieses Pensum kann grösser oder kleiner als das Betreuungspensum sein.
 	 * <p>
@@ -418,6 +418,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		return sb.toString();
 	}
 
+	//TODO: Ist hier Objects.equals() richtig??
 	public boolean isSame(VerfuegungZeitabschnitt that) {
 		if (this == that) {
 			return true;
@@ -436,6 +437,21 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			wohnsitzNichtInGemeindeGS2 == that.wohnsitzNichtInGemeindeGS2 &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
+	}
+
+	/**
+	 * Aller persistierten Daten ohne Kommentar
+	 */
+	public boolean isSamePersistedValues(VerfuegungZeitabschnitt that) {
+		return betreuungspensum == that.betreuungspensum &&
+			anspruchberechtigtesPensum == that.anspruchberechtigtesPensum &&
+			(betreuungsstunden.compareTo(that.betreuungsstunden) == 0) &&
+			(vollkosten.compareTo(that.vollkosten) == 0) &&
+			(elternbeitrag.compareTo(that.elternbeitrag) == 0) &&
+			(abzugFamGroesse.compareTo(that.abzugFamGroesse) == 0) &&
+			(famGroesse.compareTo(that.famGroesse) == 0) &&
+			(massgebendesEinkommenVorAbzugFamgr.compareTo(that.massgebendesEinkommenVorAbzugFamgr) == 0) &&
+			getGueltigkeit().compareTo(that.getGueltigkeit()) == 0;
 	}
 
 	/**

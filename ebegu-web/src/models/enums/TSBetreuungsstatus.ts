@@ -4,5 +4,6 @@ export enum TSBetreuungsstatus {
     SCHULAMT = <any> 'SCHULAMT',
     ABGEWIESEN = <any> 'ABGEWIESEN',
     BESTAETIGT = <any> 'BESTAETIGT',
-    VERFUEGT = <any> 'VERFUEGT'
+    VERFUEGT = <any> 'VERFUEGT',
+    GESCHLOSSEN_OHNE_VERFUEGUNG  = <any> 'GESCHLOSSEN_OHNE_VERFUEGUNG'
 }

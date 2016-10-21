@@ -191,7 +191,6 @@ public class JaxBConverter {
 	}
 
 
-
 	@Nonnull
 	public JaxApplicationProperties applicationPropertyToJAX(@Nonnull final ApplicationProperty applicationProperty) {
 		final JaxApplicationProperties jaxProperty = new JaxApplicationProperties();
@@ -566,8 +565,7 @@ public class JaxBConverter {
 				else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
 				}
-			}
-			else {
+			} else {
 				antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), new Mutationsdaten()));
 			}
 		}
@@ -1364,6 +1362,7 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(verfuegung, jaxVerfuegung);
 			jaxVerfuegung.setGeneratedBemerkungen(verfuegung.getGeneratedBemerkungen());
 			jaxVerfuegung.setManuelleBemerkungen(verfuegung.getManuelleBemerkungen());
+			jaxVerfuegung.setSameVerfuegungsdaten(verfuegung.isSameVerfuegungsdaten());
 
 			if (verfuegung.getZeitabschnitte() != null) {
 				jaxVerfuegung.getZeitabschnitte().addAll(
@@ -1390,6 +1389,7 @@ public class JaxBConverter {
 		convertAbstractFieldsToEntity(jaxVerfuegung, verfuegung);
 		verfuegung.setGeneratedBemerkungen(jaxVerfuegung.getGeneratedBemerkungen());
 		verfuegung.setManuelleBemerkungen(jaxVerfuegung.getManuelleBemerkungen());
+		verfuegung.setSameVerfuegungsdaten(jaxVerfuegung.isSameVerfuegungsdaten());
 
 		//List of Verfuegungszeitabschnitte converten
 		verfuegungZeitabschnitteToEntity(verfuegung.getZeitabschnitte(), jaxVerfuegung.getZeitabschnitte());

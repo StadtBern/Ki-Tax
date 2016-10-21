@@ -24,13 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
@@ -235,6 +232,54 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
 		Assert.assertEquals(new Long(0), secondResult.getLeft());
 		Assert.assertEquals(0, secondResult.getRight().size());
+	}
+
+	@Test
+	public void testSearchWithRoleSachbearbeiterInst() {
+		Benutzer user = TestDataUtil.createDummyAdminAnonymous(persistence);
+		Gesuch gesDagmar =  TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesDagmar.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		gesDagmar = persistence.merge(gesDagmar);
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		gesuch = persistence.merge(gesuch);
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(1), firstResult.getLeft()); //Admin sieht Gesuch im Status IN_BEARBEITUNG_GS nicht, soll anscheinend so sein
+
+		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
+		user.setRole(UserRole.SACHBEARBEITER_INSTITUTION); //Sachbearbeiter findet gesuche die bei seiner institution sind
+		//kita aaregg
+		user.setTraegerschaft(null);
+		user.setInstitution(gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution());
+		user = persistence.merge(user);
+		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), secondResult.getLeft());
+		Assert.assertEquals(2, secondResult.getRight().size());
+
+		gesuch.getFall().setVerantwortlicher(null);
+		persistence.merge(gesuch);
+		//traegerschaftbenutzer setzten
+		Traegerschaft traegerschaft = user.getInstitution().getTraegerschaft();
+		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert",traegerschaft);
+		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, TestDataUtil.createDefaultMandant());
+		gesDagmar.getFall().setVerantwortlicher(verantwortlicherUser);
+		gesDagmar = persistence.merge(gesDagmar);
+		//es muessen immer noch beide gefunden werden da die betreuungen immer noch zu inst des users gehoeren
+		Pair<Long, List<Gesuch>> thirdResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), thirdResult.getLeft());
+		Assert.assertEquals(2, thirdResult.getRight().size());
+
+		//aendere user zu einer anderen institution  -> darf nichts mehr finden
+		Institution institution = TestDataUtil.createAndPersistDefaultInstitution(persistence);
+		user.setInstitution(institution);
+		persistence.merge(user);
+
+		Pair<Long, List<Gesuch>> fourthResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(0), fourthResult.getLeft());
+		Assert.assertEquals(0, fourthResult.getRight().size());
+
 	}
 
 
