@@ -180,7 +180,7 @@ export default class WizardStepManager {
     }
 
     public getNextStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
-        var allStepNames = this.getAllowedSteps();
+        let allStepNames = this.getAllowedSteps();
         let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
         for (let i = currentPosition; i < allStepNames.length; i++) {
             if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
