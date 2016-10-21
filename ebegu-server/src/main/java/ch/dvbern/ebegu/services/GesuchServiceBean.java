@@ -345,7 +345,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	private enum Mode {
 		COUNT,
-		SEARCH;
+		SEARCH
 	}
 
 	@Nonnull

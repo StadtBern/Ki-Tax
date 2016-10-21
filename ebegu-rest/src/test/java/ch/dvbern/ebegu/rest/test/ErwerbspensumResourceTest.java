@@ -39,13 +39,12 @@ public class ErwerbspensumResourceTest extends AbstractEbeguRestTest{
 	private Persistence<Gesuch> persistence;
 	@Inject
 	private JaxBConverter converter;
-	private Gesuch testGesuch;
 	private JaxId gesuchJAXPId;
 
 
 	@Before
 	public void setUp() {
-		testGesuch = TestDataUtil.createDefaultGesuch();
+		final Gesuch testGesuch = TestDataUtil.createDefaultGesuch();
 		TestDataUtil.persistEntities(testGesuch, persistence);
 		gesuchJAXPId = new JaxId(testGesuch.getId());
 	}

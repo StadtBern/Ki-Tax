@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
- * Created by imanol on 25.04.16.
+ * Service fuer Mandant
  */
 public interface MandantService {
 

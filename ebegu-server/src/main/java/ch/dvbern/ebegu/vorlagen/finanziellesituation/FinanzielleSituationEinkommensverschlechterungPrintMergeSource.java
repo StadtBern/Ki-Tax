@@ -23,7 +23,7 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	private BerechnungsgrundlagenInformationPrint berechnung;
 
 	/**
-	 * @param berechnungsgrundlagenFinanziellenSituationPrint
+	 * @param berechnung
 	 */
 	public FinanzielleSituationEinkommensverschlechterungPrintMergeSource(BerechnungsgrundlagenInformationPrint berechnung) {
 		this.berechnung = berechnung;

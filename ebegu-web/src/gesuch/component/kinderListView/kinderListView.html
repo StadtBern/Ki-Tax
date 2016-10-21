@@ -18,7 +18,6 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-class="{'disabled-row': row.kindJA.vorgaengerId !== null}"
                         ng-click="vm.editKind(row)">
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
@@ -30,6 +29,7 @@
                                 </i>
                             </dv-loading-button>
                         </td>
+                        <td ng-if="!(!vm.isGesuchStatusVerfuegenVerfuegt() && row.kindJA.vorgaengerId === null)"></td>
                     </tr>
                     <tr ng-if="vm.getKinderList().length === 0">
                         <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
