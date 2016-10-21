@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * Services fuer Betreuungsgutschein
+ * Services fuer Rules
  */
 @Stateless
 @Local(RulesService.class)

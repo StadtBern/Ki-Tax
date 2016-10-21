@@ -144,8 +144,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
-				//FIXME: Hier muss noch der BetreuungEvaluator angestossen werden um die Verfügung zu berechnen (evaluator.evaluate(gesuch, ...);)
-
 				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
 				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
 				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);

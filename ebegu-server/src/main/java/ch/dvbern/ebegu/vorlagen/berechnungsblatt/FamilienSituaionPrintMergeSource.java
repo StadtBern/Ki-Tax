@@ -13,17 +13,22 @@ package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 
 import java.util.List;
 
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
+/**
+ * @deprecated stattdessen wird die {@link FinanzielleSituationEinkommensverschlechterungPrintMergeSource} benutzt
+ */
+@Deprecated
 public class FamilienSituaionPrintMergeSource implements MergeSource {
 
 	private FamilienSituaionPrint familienSituaion;
 
 	/**
-	 * @param verfuegung
+	 * @param familienSituaionPrint
 	 */
 	public FamilienSituaionPrintMergeSource(FamilienSituaionPrint familienSituaionPrint) {
 		this.familienSituaion = familienSituaionPrint;

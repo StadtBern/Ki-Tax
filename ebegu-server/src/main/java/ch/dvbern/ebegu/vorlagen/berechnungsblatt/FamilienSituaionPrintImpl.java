@@ -23,7 +23,12 @@ import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 
+/**
+ * @deprecated stattdessen wird die {@link FinanzielleSituationEinkommensverschlechterungPrintMergeSource} benutzt
+ */
+@Deprecated
 public class FamilienSituaionPrintImpl implements FamilienSituaionPrint {
 
 	private Gesuch gesuch;

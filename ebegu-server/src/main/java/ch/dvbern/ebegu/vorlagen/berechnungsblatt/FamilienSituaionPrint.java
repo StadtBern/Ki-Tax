@@ -1,5 +1,7 @@
 package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
+
 import java.util.List;
 
 /*
@@ -13,6 +15,10 @@ import java.util.List;
 *
 * Ersteller: zeab am: 03.10.2016
 */
+/**
+ * @deprecated stattdessen wird die {@link FinanzielleSituationEinkommensverschlechterungPrintMergeSource} benutzt
+ */
+@Deprecated
 public interface FamilienSituaionPrint {
 
 	// ****************************************************************************************************************
