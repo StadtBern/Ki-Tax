@@ -165,7 +165,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = query.from(Gesuch.class);
 		// Join all the relevant relations
 		Join<Gesuch, Fall> fall = root.join(Gesuch_.fall, JoinType.INNER);
-		Join<Fall, Benutzer> benutzer = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
+		Join<Fall, Benutzer> verantwortlicher = fall.join(Fall_.verantwortlicher, JoinType.LEFT);
 		Join<Gesuch, Gesuchsperiode> gesuchsperiode = root.join(Gesuch_.gesuchsperiode, JoinType.INNER);
 		Join<Gesuch, Gesuchsteller> gesuchsteller1 = root.join(Gesuch_.gesuchsteller1, JoinType.LEFT);
 		Join<Gesuch, Gesuchsteller> gesuchsteller2 = root.join(Gesuch_.gesuchsteller2, JoinType.LEFT);
@@ -200,10 +200,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				predicates.add(predicateRichtigerAngebotstypOderNichtAusgefuellt);
 				break;
 			case SACHBEARBEITER_TRAEGERSCHAFT:
-				predicates.add(cb.equal(benutzer.get(Benutzer_.traegerschaft), institution.get(Institution_.traegerschaft)));
+				predicates.add(cb.equal(institution.get(Institution_.traegerschaft), user.getTraegerschaft()));
 				break;
 			case SACHBEARBEITER_INSTITUTION:
-				predicates.add(cb.equal(benutzer.get(Benutzer_.institution), institution));
+				// es geht hier nicht um die institution des zugewiesenen benutzers sondern um die institution des eingeloggten benutzers
+				predicates.add(cb.equal(institution, user.getInstitution()));
 				break;
 			case SCHULAMT:
 				predicates.add(cb.equal(institutionstammdaten.get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE));
@@ -257,8 +258,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				String[] strings = predicateObjectDto.getVerantwortlicher().split(" ");
 				predicates.add(
 					cb.and(
-						cb.equal(benutzer.get(Benutzer_.vorname), strings[0]),
-						cb.equal(benutzer.get(Benutzer_.nachname), strings[1])
+						cb.equal(verantwortlicher.get(Benutzer_.vorname), strings[0]),
+						cb.equal(verantwortlicher.get(Benutzer_.nachname), strings[1])
 					));
 			}
 		}
