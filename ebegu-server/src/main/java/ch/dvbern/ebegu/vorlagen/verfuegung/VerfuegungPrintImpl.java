@@ -20,6 +20,8 @@ import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +34,14 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
+	//formatiert
+	private String letzteVerfuegungDatum = "";
+
 	/**
 	 * @param betreuung
 	 */
-	public VerfuegungPrintImpl(Betreuung betreuung) {
-
+	public VerfuegungPrintImpl(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) {
+		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : "-";
 		this.betreuung = betreuung;
 	}
 
@@ -73,17 +78,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 */
 	@Override
 	public String getVerfuegungsdatum() {
-        // TODO (Team) Dies ist das Verfuegungsdatum des *Erstgesuchs* bei Mutationen, also das der früheren Verfugung
-		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent()) {
-			Verfuegung verfuegung1 = verfuegung.get();
-			if (verfuegung1.getTimestampErstellt() != null) {
-				// TODO ZEAB ist das Setzen der Verfuegungsdatum Korrekt
-				return Constants.DATE_FORMATTER.format(verfuegung1.getTimestampErstellt());
-			}
-		}
-		// TODO ZEAB was muss hier passieren?? Leer ausdrucken??
-		return "";
+		return letzteVerfuegungDatum;
 	}
 
 	/**
