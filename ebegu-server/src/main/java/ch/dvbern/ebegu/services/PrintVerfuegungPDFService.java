@@ -34,6 +34,7 @@ public interface PrintVerfuegungPDFService {
 
 	/**
 	 * Erstellt das Verfuegungsdokument für die eingegebene Betreuung
+	 * @param letzteVerfuegungDatum wenn gesetzt wird das Datum der ersetzten Verfuegung im print gedruckt
 	 * @throws MergeDocException
 	 */
 	@Nonnull

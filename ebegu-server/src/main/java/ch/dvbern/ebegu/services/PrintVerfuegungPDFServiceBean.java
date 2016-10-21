@@ -14,7 +14,6 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
-import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
@@ -59,13 +58,9 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
         for (KindContainer kindContainer : gesuch.getKindContainers()) {
             for (Betreuung betreuung : kindContainer.getBetreuungen()) {
                 // Pro Betreuung ein Dokument
-				Optional<Verfuegung> optVorherigeVerfuegung = verfuegungService.findVorgaengerVerfuegung(betreuung);
-				if (optVorherigeVerfuegung.isPresent()) {
-					result.add(printVerfuegungForBetreuung(betreuung, optVorherigeVerfuegung.get().getTimestampErstellt().toLocalDate()));
-				} else {
-					result.add(printVerfuegungForBetreuung(betreuung, null));
-				}
-
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				result.add(printVerfuegungForBetreuung(betreuung, letztesVerfDatum));
             }
         }
 		return result;

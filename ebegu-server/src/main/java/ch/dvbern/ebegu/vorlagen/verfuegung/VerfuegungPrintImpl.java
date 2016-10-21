@@ -41,10 +41,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 * @param betreuung
 	 */
 	public VerfuegungPrintImpl(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) {
-		//TODO Reviewer: was wenn keine letzte verfuegte Betreuung?
-		//TODO - eine Betreuung innerhalb einer Mutation kann auch neu sein.
-		//TODO - dies muesste evtl. sogar im docx selbst gemacht werden.
-		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : "";
+		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : "-";
 		this.betreuung = betreuung;
 	}
 

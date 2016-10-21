@@ -129,8 +129,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 						if(vorgaengerVerfuegung.isPresent()){
 							betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.get());
 						}else{
-							//TODO reviewer: ist das richtig so? sollte hier eine andere Exception geworfen werden?
-							throw new EbeguEntityNotFoundException("calculateVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "VorgaengerVerfuegung not found. BetreuungID: " + betreuung.getId());
+							throw new EbeguEntityNotFoundException("calculateVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "VorgaengerVerfuegung of Betreuung not found even though state is GESCHLOSSEN_OHNE_VERFUEGUNG. BetreuungID: " + betreuung.getId());
 						}
 					}
 				}
@@ -145,7 +144,7 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 	@Nonnull
 	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
-		if(betreuung.getVorgaengerId()==null) return Optional.empty();
+		if(betreuung.getVorgaengerId()==null) {return Optional.empty();}
 
 		Optional<Betreuung> optVorgaengerbetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
 		if (optVorgaengerbetreuung.isPresent()) {
@@ -160,8 +159,16 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 
 	}
 
-
-
+	@Override
+	public Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+		LocalDate letztesVerfDatum = null;
+		if (vorgaengerVerfuegung.isPresent()) {
+			letztesVerfDatum = vorgaengerVerfuegung.get().getTimestampErstellt().toLocalDate();
+		}
+		return Optional.ofNullable(letztesVerfDatum);
+	}
 
 	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);

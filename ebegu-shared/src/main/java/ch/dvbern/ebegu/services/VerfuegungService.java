@@ -5,6 +5,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 
 import javax.annotation.Nonnull;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -56,5 +57,10 @@ public interface VerfuegungService {
 	 */
 	@Nonnull
 	Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull Betreuung betreuung);
+
+	/**
+	 * genau wie findVorgaengerVerfuegung gibt aber nur deren TimestampErstellt zurueck wenn vorhanden
+	 */
+	Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung);
 
 }
