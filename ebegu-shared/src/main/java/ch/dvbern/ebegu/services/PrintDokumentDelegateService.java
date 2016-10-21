@@ -1,10 +1,11 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import java.util.List;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.errors.MergeDocException;
 
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
@@ -48,5 +49,4 @@ public interface PrintDokumentDelegateService {
 	 */
 	@Nonnull
 	byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException;
-
 }

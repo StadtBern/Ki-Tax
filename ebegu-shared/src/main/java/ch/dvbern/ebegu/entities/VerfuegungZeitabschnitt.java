@@ -36,7 +36,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 	private static final long serialVersionUID = 7250339356897563374L;
 
-
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
 	@Transient
@@ -79,7 +78,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@Column(nullable = false)
 	private int anspruchberechtigtesPensum; // = Anpsruch für diese Kita, bzw. Tageseltern Kleinkinder
 
-
 	@Column(nullable = true)
 	private BigDecimal betreuungsstunden;
 
@@ -107,7 +105,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_verfuegung_zeitabschnitt_verfuegung_id"), nullable = false)
 	private Verfuegung verfuegung;
-
 
 	public VerfuegungZeitabschnitt() {
 	}
@@ -184,7 +181,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	public void setAnspruchspensumRest(int anspruchspensumRest) {
 		this.anspruchspensumRest = anspruchspensumRest;
 	}
-
 
 	public void setAnspruchberechtigtesPensum(int anspruchberechtigtesPensum) {
 		this.anspruchberechtigtesPensum = anspruchberechtigtesPensum;
@@ -381,7 +377,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	/**
-	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten Pensum.
+	 * Dieses Pensum ist abhängig vom Erwerbspensum der Eltern respektive von dem durch die Fachstelle definierten
+	 * Pensum.
 	 * <p>
 	 * Dieses Pensum kann grösser oder kleiner als das Betreuungspensum sein.
 	 * <p>

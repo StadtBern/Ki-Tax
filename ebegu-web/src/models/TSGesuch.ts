@@ -4,6 +4,7 @@ import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
 import TSMutationsdaten from './TSMutationsdaten';
+import {TSAntragTyp} from './enums/TSAntragTyp';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
 
@@ -71,6 +72,11 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     set bemerkungen(value: string) {
         this._bemerkungen = value;
     }
+
+    public isMutation(): boolean {
+        return this.typ === TSAntragTyp.MUTATION;
+    }
+
 }
 
 

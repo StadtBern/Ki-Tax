@@ -562,6 +562,15 @@ public final class TestDataUtil {
 		return gesuch;
 	}
 
+
+	public static Institution createAndPersistDefaultInstitution(Persistence<Gesuch> persistence) {
+		Institution inst = createDefaultInstitution();
+		persistence.merge(inst.getMandant());
+		persistence.merge(inst.getTraegerschaft());
+		return persistence.merge(inst);
+
+	}
+
 	private static Gesuch persistAllEntities(Persistence<Gesuch> persistence, LocalDate eingangsdatum, AbstractTestfall testfall) {
 		testfall.createFall(null);
 		testfall.createGesuch(eingangsdatum);
@@ -709,5 +718,6 @@ public final class TestDataUtil {
 		filterDTO.getPagination().setNumber(10);
 		return filterDTO;
 	}
+
 
 }

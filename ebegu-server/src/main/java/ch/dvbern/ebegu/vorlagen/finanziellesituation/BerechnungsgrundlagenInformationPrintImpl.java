@@ -11,9 +11,19 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
+import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrintImpl;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -25,15 +35,17 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	private EinkommensverschlechterungPrint ev1;
 	private EinkommensverschlechterungPrint ev2;
 	private Gesuch gesuch;
+	private Verfuegung famGroessenVerfuegung;
 
 	/**
 	 * Konstruktor
 	 *
 	 * @param gesuch
 	 */
-	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch) {
+	public BerechnungsgrundlagenInformationPrintImpl(Gesuch gesuch, Verfuegung famGroessenVerfuegung) {
 
 		this.gesuch = gesuch;
+		this.famGroessenVerfuegung = famGroessenVerfuegung;
 		// Finanzdaten abfuellen
 		FinanzSituationPrintGesuchsteller fG1 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller1(gesuch);
 		FinanzSituationPrintGesuchsteller fG2 = FinanzSituationPrintGesuchstellerHelper.getFinanzSituationGesuchsteller2(gesuch);
@@ -61,6 +73,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 			}
 		}
 	}
+
 
 	@Override
 	public String getGesuchsteller1Name() {
@@ -108,5 +121,28 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	public EinkommensverschlechterungPrint getEv2() {
 
 		return ev2;
+	}
+
+	@Override
+	public List<BerechnungsblattPrint> getBerechnungsblatt() {
+
+		List<BerechnungsblattPrint> result = new ArrayList<>();
+
+		if (famGroessenVerfuegung != null) {
+			List<VerfuegungZeitabschnitt> zeitabschnitten = famGroessenVerfuegung.getZeitabschnitte();
+			for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnitten) {
+				result.add(new BerechnungsblattPrintImpl(zeitabschnitt));
+			}
+		}
+
+
+		return result;
+
+	}
+
+	@Override
+	public boolean isPrintBerechnungsBlaetter() {
+
+		return !getBerechnungsblatt().isEmpty();
 	}
 }
