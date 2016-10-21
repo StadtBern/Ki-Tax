@@ -72,9 +72,9 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		AuthDataUtil.getBasePath(request);
 		if (path.startsWith(apiBasePath + "/auth/login")
 			|| path.startsWith(apiBasePath + "/swagger.json")
-			|| path.startsWith(request.getContextPath() + "/mylogin.jsp")
+			|| path.startsWith(request.getContextPath() + "/ebeguTestLogin.jsp")
 			|| path.startsWith(request.getContextPath() + "/logout.jsp")
-			|| path.startsWith(request.getContextPath() + "/index.jsp")
+			|| path.startsWith(request.getContextPath() + "/samlinfo.jsp")
 			|| path.startsWith(request.getContextPath() + "/saml2/jsp/")
 			|| path.startsWith(request.getContextPath() + "/fedletapplication")
 			|| path.startsWith(request.getContextPath() + "/fedletSloInit")

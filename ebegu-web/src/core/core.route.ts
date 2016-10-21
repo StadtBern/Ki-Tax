@@ -37,7 +37,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         //user is not yet authenticated, show loginpage
 
         let currentPath = angular.copy($location.absUrl());
-        console.log("going to login page wiht current path ", currentPath);
+        console.log('going to login page wiht current path ', currentPath);
 
         //wenn wir schon auf der lognseite oder im redirect sind redirecten wir nicht
         if (currentPath.indexOf('fedletSSOInit') === -1
@@ -45,7 +45,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {
-            console.log("supressing redirect to ", currentPath);
+            console.log('supressing redirect to ', currentPath);
         }
 
     });

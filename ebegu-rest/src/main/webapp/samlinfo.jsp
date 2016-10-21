@@ -39,7 +39,7 @@
 
 <%@ include file="header.jspf" %>
 <%--
-    index.jsp contains links to test SP or IDP initiated Single Sign-on
+    samlinfo.jsp contains links to test SP or IDP initiated Single Sign-on
 --%>
 <%
     String deployuri = request.getRequestURI();
@@ -148,7 +148,7 @@
             }
             out.println("<p><br><b>Fedlet configuration created under \"" +
                 fedletHomeDir + "\" directory.</b>");
-            out.println("<br><br>Click <a href=\"index.jsp\">here</a> to continue.");
+            out.println("<br><br>Click <a href=\"samlinfo.jsp\">here</a> to continue.");
         } else {
             // check if this WAR contain Fedlet configuration
             boolean confExist = false;
@@ -163,7 +163,7 @@
             if (!dir.exists() || !dir.isDirectory()) {
                 out.println("<p><br><b>Fedlet configuration home directory \"" + fedletHomeDir + "\" does not exist.</b>");
                 if (confExist) {
-                    out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br><br>Click <a href=\"samlinfo.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                     out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory.");
                 } else {
                     out.println("<br>Please follow the README bundled inside your Fedlet.zip or Fedlet-unconfigured.zip file to setup Fedlet configuration.");
@@ -171,7 +171,7 @@
             } else if (!file.exists()) {
                 out.println("<p><br><b>FederationConfig.properties could not be found in \"" + fedletHomeDir + "\".</b>");
                 if (confExist) {
-                    out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br><br>Click <a href=\"samlinfo.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                     out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory.");
                 } else {
                     out.println("<br>Please follow the README bundled inside your Fedlet.zip or Fedlet-unconfigured.zip file to setup Fedlet configuration.");
@@ -243,7 +243,7 @@
                 if ((spEntityID == null) || (idpEntityID == null)) {
                     out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");
                     if (confExist) {
-                        out.println("<p><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
+                        out.println("<p><br>Click <a href=\"samlinfo.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                         out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
                     } else {
                         out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");

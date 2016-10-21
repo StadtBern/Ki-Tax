@@ -30,7 +30,7 @@
 
 <%@ include file="header.jspf" %>
 <%--
-    index.jsp contains links to test SP or IDP initiated Single Sign-on
+    samlinfo.jsp contains links to test SP or IDP initiated Single Sign-on
 --%>
 
 <%
