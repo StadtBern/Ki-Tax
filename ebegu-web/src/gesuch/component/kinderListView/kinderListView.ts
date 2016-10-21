@@ -81,4 +81,16 @@ export class KinderListViewController extends AbstractGesuchViewController {
             });
     }
 
+    /**
+     * Ein Kind darf geloescht werden wenn: Das Gesuch noch nicht verfuegt/verfuegen ist und das vorgaengerId null
+     * ist (es ist ein neues kind) oder in einer mutation wenn es (obwohl ein altes Kind) keine Betreuungen hat
+     * @param kind
+     * @returns {boolean}
+     */
+    public canRemoveKind(kind: TSKindContainer): boolean {
+        return !this.isGesuchStatusVerfuegenVerfuegt()
+            && (this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
+                || !kind.kindJA.vorgaengerId;
+    }
+
 }
