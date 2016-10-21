@@ -140,16 +140,6 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 
 	}
 
-	@Nonnull
-	private Optional<Verfuegung> extractVerfuegung(Betreuung betreuung) {
-
-		Verfuegung verfuegung = betreuung.getVerfuegung();
-		if (verfuegung != null) {
-			return Optional.of(verfuegung);
-		}
-		return Optional.empty();
-	}
-
 	@Override
 	public boolean isPrintBerechnungsBlaetter() {
 
