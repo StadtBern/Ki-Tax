@@ -2,6 +2,7 @@ import IComponentOptions = angular.IComponentOptions;
 import {TSErrorEvent} from '../../../../models/enums/TSErrorEvent';
 import ErrorService from '../../service/ErrorService';
 import TSExceptionReport from '../../../../models/TSExceptionReport';
+import IScope = angular.IScope;
 let templ = require('./dvb-error-messages-panel.html');
 let style = require('./dvb-error-messages-panel.less');
 
@@ -23,15 +24,15 @@ export class DvErrorMessagesPanelComponent {
 
     static $inject: string[] = ['$scope', 'ErrorService'];
     /* @ngInject */
-    constructor(private $scope: any, private errorService: ErrorService) {
+    constructor(private $scope: IScope, private errorService: ErrorService) {
     }
 
     $onInit() {
-        this.$scope.$on(TSErrorEvent.UPDATE, (event: any, errors: Array<TSExceptionReport>) => {
+        this.$scope.$on(TSErrorEvent[TSErrorEvent.UPDATE], (event: any, errors: Array<TSExceptionReport>) => {
             this.errors = errors;
             this.show();
         });
-        this.$scope.$on(TSErrorEvent.CLEAR, () => {
+        this.$scope.$on(TSErrorEvent[TSErrorEvent.CLEAR], () => {
             this.errors = [];
         });
     }

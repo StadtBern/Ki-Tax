@@ -492,9 +492,11 @@ export default class GesuchModelManager {
      * @param gesuchID
      */
     public initMutation(gesuchID: string): void {
+        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
         this.initAntrag(TSAntragTyp.MUTATION);
         this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
         this.gesuch.mutationsdaten = new TSMutationsdaten();
+        this.gesuch.gesuchsperiode = gesuchsperiode;
     }
 
     private initAntrag(antragTyp: TSAntragTyp): void {
@@ -957,11 +959,24 @@ export default class GesuchModelManager {
         return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
-            if (!this.isThereAnyOpenBetreuung()) {
-                this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
-            }
+            this.calculateGesuchStatus();
             this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
+        });
+    }
+
+    private calculateGesuchStatus() {
+        if (!this.isThereAnyOpenBetreuung()) {
+            this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
+        }
+    }
+
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
+        return this.verfuegungRS.verfuegungSchliessenOhneVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
+            this.calculateGesuchStatus();
+            this.backupCurrentGesuch();
+            return;
         });
     }
 
@@ -1004,14 +1019,16 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders al VERFUEGT oder SCHULAMT ist
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders als VERFUEGT oder GESCHLOSSEN_OHNE_VERFUEGUNG oder SCHULAMT ist
      * @returns {boolean}
      */
     public isThereAnyOpenBetreuung(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return true;
                 }
             }
@@ -1089,7 +1106,7 @@ export default class GesuchModelManager {
 
     public saveMutation(): IPromise<TSGesuch> {
         return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
-            .then((response : TSGesuch) => {
+            .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
                     return this.getGesuch();

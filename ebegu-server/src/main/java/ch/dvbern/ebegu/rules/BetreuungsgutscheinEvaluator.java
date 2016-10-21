@@ -27,6 +27,7 @@ public class BetreuungsgutscheinEvaluator {
 	private RestanspruchInitializer restanspruchInitializer = new RestanspruchInitializer();
 	private MonatsRule monatsRule = new MonatsRule(Constants.DEFAULT_GUELTIGKEIT);
 	private VerfuegungsMerger verfuegungsMerger = new VerfuegungsMerger();
+	private VerfuegungsVergleicher verfuegungsVergleicher = new VerfuegungsVergleicher();
 
 	public BetreuungsgutscheinEvaluator(List<Rule> rules) {
 		this.rules = rules;
@@ -153,6 +154,9 @@ public class BetreuungsgutscheinEvaluator {
 					.map(VerfuegungZeitabschnitt::getBemerkungen)
 					.filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toSet());
 				betreuung.getVerfuegung().setGeneratedBemerkungen(String.join(";\n", bemerkungenOfAbschnitte));
+
+				// Ueberpruefen, ob sich die Verfuegungsdaten veraendert haben
+				betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
 			}
 		}
 	}

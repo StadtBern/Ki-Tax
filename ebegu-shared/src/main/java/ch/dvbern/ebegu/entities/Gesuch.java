@@ -105,7 +105,7 @@ public class Gesuch extends AbstractEntity {
 		this.setTyp(AntragTyp.MUTATION);
 
 		if (toCopy.getMutationsdaten() != null) {
-			this.setMutationsdaten(new Mutationsdaten(this.getMutationsdaten()));
+			this.setMutationsdaten(new Mutationsdaten(toCopy.getMutationsdaten()));
 		}
 		if (toCopy.getGesuchsteller1() != null) {
 			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
