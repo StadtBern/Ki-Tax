@@ -18,6 +18,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                        ng-class="{'disabled-row': row.kindJA.vorgaengerId !== null}"
                         ng-click="vm.editKind(row)">
                         <td ng-bind="row.kindJA.vorname"></td>
                         <td ng-bind="row.kindJA.nachname"></td>
