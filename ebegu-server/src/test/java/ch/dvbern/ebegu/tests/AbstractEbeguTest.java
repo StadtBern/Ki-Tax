@@ -104,7 +104,7 @@ public abstract class AbstractEbeguTest {
 			fos.write(data);
 			fos.close();
 			// File external oeffnen
-			// openPDF(tempFile);
+			openPDF(tempFile);
 		} finally {
 			if (fos != null) {
 				fos.close();
