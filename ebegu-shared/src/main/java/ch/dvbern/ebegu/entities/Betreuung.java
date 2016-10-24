@@ -39,6 +39,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	private static final long serialVersionUID = -6776987863150835840L;
 
+	@Transient
+	private Verfuegung vorgaengerVerfuegung;
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuung_kind_id"), nullable = false)
@@ -95,15 +98,21 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 
 	public Betreuung(@Nonnull Betreuung toCopy, @Nonnull KindContainer kindContainer) {
+		this.setVorgaengerId(toCopy.getId());
 		this.kind = kindContainer;
 		this.institutionStammdaten = toCopy.institutionStammdaten;
-		this.betreuungsstatus = toCopy.betreuungsstatus;
-		for (BetreuungspensumContainer betreuungspensumContainer : betreuungspensumContainers) {
+		// Bereits verfuegte Betreuungen werden als BESTAETIGT kopiert, alle anderen behalten ihren Status
+		if (toCopy.betreuungsstatus.isGeschlossen()) {
+			this.betreuungsstatus = Betreuungsstatus.BESTAETIGT;
+		} else {
+			this.betreuungsstatus = toCopy.betreuungsstatus;
+		}
+		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
-		this.verfuegung = null; //TODO (team) Wir verfuegen ja die Mutation neu, oder?
+		this.verfuegung = null;
 		this.vertrag = toCopy.vertrag;
 		this.erweiterteBeduerfnisse = toCopy.erweiterteBeduerfnisse;
 		this.datumAblehnung = toCopy.datumAblehnung;
@@ -265,4 +274,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		compareToBuilder.append(this.getId(), other.getId());
 		return compareToBuilder.toComparison();
 	}
+
+
+	public Verfuegung getVorgaengerVerfuegung() {
+		return vorgaengerVerfuegung;
+	}
+
+	public void setVorgaengerVerfuegung(Verfuegung vorgaengerVerfuegung) {
+		this.vorgaengerVerfuegung = vorgaengerVerfuegung;
+	}
+
 }

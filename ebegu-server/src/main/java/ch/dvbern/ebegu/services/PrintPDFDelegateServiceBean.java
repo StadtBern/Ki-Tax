@@ -11,14 +11,15 @@ package ch.dvbern.ebegu.services;
 * Ersteller: zeab am: 18.08.2016
 */
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.errors.MergeDocException;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.List;
+
+import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.errors.MergeDocException;
 
 /**
  * Implementiert PrintDokumentDelegateService
@@ -54,6 +55,6 @@ public class PrintPDFDelegateServiceBean extends AbstractBaseService implements 
 	@Override
 	public byte[] printFinanziellenSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
 
-		return printFinanzielleSituationService.printFinanzielleSituation(gesuch);
+		return printFinanzielleSituationService.printFinanzielleSituation(gesuch, null);
 	}
 }

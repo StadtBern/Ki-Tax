@@ -8,6 +8,8 @@ import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
+import TSGesuch from '../../../models/TSGesuch';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 describe('dvNavigation', function () {
 
     let navController: NavigatorController;
@@ -72,8 +74,12 @@ describe('dvNavigation', function () {
     describe('nextStep', function () {
         it('moves to gesuch.familiensituation when coming from GESUCH_ERSTELLEN', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.GESUCH_ERSTELLEN);
+            let gesuch: TSGesuch = new TSGesuch();
+            gesuch.typ = TSAntragTyp.GESUCH;
+            gesuch.id = '123';
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
             callNextStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation', { gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation', { gesuchId: '123' });
         });
         it('moves to gesuch.stammdaten when coming from FAMILIENSITUATION', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FAMILIENSITUATION);

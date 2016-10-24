@@ -123,6 +123,7 @@ describe('EbeguRestUtil', function () {
         describe('parseGesuchsteller()', () => {
             it('should transfrom TSGesuchsteller to REST Obj and back', () => {
                 var myGesuchsteller = createGesuchsteller();
+                TestDataUtil.setAbstractFieldsUndefined(myGesuchsteller);
                 myGesuchsteller.telefon = ''; // Ein leerer String im Telefon muss auch behandelt werden
                 let restGesuchsteller = ebeguRestUtil.gesuchstellerToRestObject({}, myGesuchsteller);
                 expect(restGesuchsteller).toBeDefined();
@@ -163,6 +164,7 @@ describe('EbeguRestUtil', function () {
                 fall.nextNumberKind = 2;
                 myGesuch.fall = fall;
                 let gesuchsteller: TSGesuchsteller = createGesuchsteller();
+                TestDataUtil.setAbstractFieldsUndefined(gesuchsteller);
                 myGesuch.gesuchsteller1 = gesuchsteller;
                 myGesuch.gesuchsteller2 = gesuchsteller;
                 let gesuchsperiode: TSGesuchsperiode = new TSGesuchsperiode();

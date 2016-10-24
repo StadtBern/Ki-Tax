@@ -24,13 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 import static ch.dvbern.ebegu.tets.TestDataUtil.createAndPersistFeutzYvonneGesuch;
@@ -145,16 +142,16 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		filterDTO.getSort().setReverse(true);     //aufsteigend
 		//nach fallnummer geordnete liste
 		Pair<Long, List<Gesuch>> resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesuche = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesuche.get(0).getId());
-		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch.getId(), foundGesuche.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesuche.get(4).getId());
 		//genau anders rum ordnen
 		filterDTO.getSort().setReverse(false); //absteigend
 		resultpair = gesuchService.searchAntraege(filterDTO);
-		Assert.assertEquals(new Long(3), resultpair.getLeft());
+		Assert.assertEquals(new Long(5), resultpair.getLeft());
 		List<Gesuch> foundGesucheReversed = resultpair.getRight();
-		Assert.assertEquals(gesuch.getId(), foundGesucheReversed.get(2).getId());
+		Assert.assertEquals(gesuch3.getId(), foundGesucheReversed.get(0).getId());
 
 	}
 
@@ -237,6 +234,54 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Assert.assertEquals(0, secondResult.getRight().size());
 	}
 
+	@Test
+	public void testSearchWithRoleSachbearbeiterInst() {
+		Benutzer user = TestDataUtil.createDummyAdminAnonymous(persistence);
+		Gesuch gesDagmar =  TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesDagmar.setStatus(AntragStatus.IN_BEARBEITUNG_GS);
+		gesDagmar = persistence.merge(gesDagmar);
+		Gesuch gesuch = TestDataUtil.createAndPersistBeckerNoraGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		gesuch.setStatus(AntragStatus.IN_BEARBEITUNG_JA);
+		gesuch = persistence.merge(gesuch);
+
+		AntragTableFilterDTO filterDTO = TestDataUtil.createAntragTableFilterDTO();
+		Pair<Long, List<Gesuch>> firstResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(1), firstResult.getLeft()); //Admin sieht Gesuch im Status IN_BEARBEITUNG_GS nicht, soll anscheinend so sein
+
+		//Die Gesuche sollten im Status IN_BEARBEITUNG_GS sein und zu keinem oder einem Traegerschafts Sachbearbeiter gehoeren, trotzdem sollten wir sie finden
+		user.setRole(UserRole.SACHBEARBEITER_INSTITUTION); //Sachbearbeiter findet gesuche die bei seiner institution sind
+		//kita aaregg
+		user.setTraegerschaft(null);
+		user.setInstitution(gesuch.extractAllBetreuungen().iterator().next().getInstitutionStammdaten().getInstitution());
+		user = persistence.merge(user);
+		Pair<Long, List<Gesuch>> secondResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), secondResult.getLeft());
+		Assert.assertEquals(2, secondResult.getRight().size());
+
+		gesuch.getFall().setVerantwortlicher(null);
+		persistence.merge(gesuch);
+		//traegerschaftbenutzer setzten
+		Traegerschaft traegerschaft = user.getInstitution().getTraegerschaft();
+		Assert.assertNotNull("Unser testaufbau sieht vor, dass die institution zu einer traegerschaft gehoert",traegerschaft);
+		Benutzer verantwortlicherUser = TestDataUtil.createBenutzer(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, traegerschaft, null, TestDataUtil.createDefaultMandant());
+		gesDagmar.getFall().setVerantwortlicher(verantwortlicherUser);
+		gesDagmar = persistence.merge(gesDagmar);
+		//es muessen immer noch beide gefunden werden da die betreuungen immer noch zu inst des users gehoeren
+		Pair<Long, List<Gesuch>> thirdResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(2), thirdResult.getLeft());
+		Assert.assertEquals(2, thirdResult.getRight().size());
+
+		//aendere user zu einer anderen institution  -> darf nichts mehr finden
+		Institution institution = TestDataUtil.createAndPersistDefaultInstitution(persistence);
+		user.setInstitution(institution);
+		persistence.merge(user);
+
+		Pair<Long, List<Gesuch>> fourthResult =  gesuchService.searchAntraege(filterDTO);
+		Assert.assertEquals(new Long(0), fourthResult.getLeft());
+		Assert.assertEquals(0, fourthResult.getRight().size());
+
+	}
+
 
 	@Test
 	public void testAntragMutieren() throws Exception {
@@ -247,7 +292,8 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		Gesuch gesuchVerfuegt = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		gesuchVerfuegt.setStatus(AntragStatus.VERFUEGT);
 		gesuchVerfuegt = gesuchService.updateGesuch(gesuchVerfuegt, true);
-		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId());
+		Mutationsdaten mutationsdaten = new Mutationsdaten();
+		Optional<Gesuch> gesuchOptional = gesuchService.antragMutieren(gesuchVerfuegt.getId(), mutationsdaten, LocalDate.of(1980, Month.MARCH, 25));
 
 		Assert.assertTrue(gesuchOptional.isPresent());
 		Assert.assertEquals(AntragTyp.MUTATION, gesuchOptional.get().getTyp());
@@ -271,7 +317,8 @@ public class GesuchServiceTest extends AbstractEbeguTest {
         findAllIdsOfAbstractEntities(mutation, idsMutation);
         int anzahlObjekteMutation = anzahlObjekte;
 
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation);
+		// Die Mutation hat immer ein Objekt mehr als Erstgesuch, und zwar "Mutationsdaten". Deswegen muessen wir 1 subtrahieren
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
 
         // Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
         // werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.

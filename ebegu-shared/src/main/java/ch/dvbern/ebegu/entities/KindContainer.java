@@ -66,6 +66,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 	}
 
 	public KindContainer(@Nonnull KindContainer toCopy, @Nonnull Gesuch gesuch) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gesuch = gesuch;
 		this.kindGS = null;
 		this.kindJA = new Kind(toCopy.kindJA);

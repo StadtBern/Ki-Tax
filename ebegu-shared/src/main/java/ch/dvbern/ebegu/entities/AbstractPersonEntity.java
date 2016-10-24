@@ -47,6 +47,7 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	}
 
 	public AbstractPersonEntity(@Nonnull AbstractPersonEntity toCopy) {
+		this.setVorgaengerId(toCopy.getId());
 		this.geschlecht = toCopy.geschlecht;
 		this.vorname = toCopy.vorname;
 		this.nachname = toCopy.nachname;

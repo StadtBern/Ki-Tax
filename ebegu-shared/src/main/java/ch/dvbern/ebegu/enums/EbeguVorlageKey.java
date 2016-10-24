@@ -56,10 +56,12 @@ public enum EbeguVorlageKey {
 	}
 
 	public boolean isProGesuchsperiode() {
+
 		return proGesuchsperiode;
 	}
 
 	public void setProGesuchsperiode(boolean proGesuchsperiode) {
+
 		this.proGesuchsperiode = proGesuchsperiode;
 	}
 }

@@ -2,12 +2,12 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.AntragStatus;
-import ch.dvbern.ebegu.enums.Betreuungsstatus;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.rules.Rule;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -23,7 +23,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service fuer GeneratedDokument
@@ -55,6 +59,18 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private VerfuegungService verfuegungService;
+
+	@Inject
+	private MandantService mandantService;
+
+	@Inject
+	ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	EbeguParameterService ebeguParameterService;
+
+	@Inject
+	private RulesService rulesService;
 
 
 	@Override
@@ -130,7 +146,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 			byte[] data;
 			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
-				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch);
+				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
+				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
+				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
 			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
 				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
 			} else {
@@ -141,6 +159,32 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				fileNameForGeneratedDokumentTyp);
 		}
 		return persistedDokument;
+	}
+
+	@Nonnull
+	public BetreuungsgutscheinEvaluator initEvaluator(@Nonnull Gesuch gesuch) {
+		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
+		List<Rule> rules = rulesService.getRulesForGesuchsperiode(mandant, gesuch.getGesuchsperiode());
+		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
+		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
+		loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
+		return bgEvaluator;
+	}
+
+
+	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
+		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
+		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO(paramMap, gesuchsperiode, mandant);
+
+		//Es gibt aktuell einen Parameter der sich aendert am Jahreswechsel
+//		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
+//		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
+//		Validate.isTrue(endjahr == startjahr +1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr"+ endjahr +" sein ");
+//		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
+//		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
+//		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
+//		parameterDTO.setBeitragStadtProTagJahr2((abgeltungJahr2));
+		return parameterDTO;
 	}
 
 	@Override
@@ -166,7 +210,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
 				}
 
-				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung);
+				final byte[] verfuegungsPDF;
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum );
+
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 					matchedBetreuung.getBGNummer());

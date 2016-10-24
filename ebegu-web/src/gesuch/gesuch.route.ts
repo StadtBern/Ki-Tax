@@ -6,7 +6,6 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import IPromise = angular.IPromise;
-import GesuchRS from './service/gesuchRS.rest';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -74,7 +73,6 @@ export class EbeguNewFallState implements IState {
 }
 
 export class EbeguMutationState implements IState {
-    //TODO (team) Hier muss dann auf die (noch nicht vorhandene) Mutations-Einstiegsseite navigiert werden
     name = 'gesuch.mutation';
     url = '/mutation/:gesuchId';
 
@@ -88,7 +86,7 @@ export class EbeguMutationState implements IState {
     };
 
     resolve = {
-        gesuch: getMutation
+        gesuch: createEmptyMutation
     };
 }
 
@@ -467,19 +465,12 @@ export function getGesuchModelManager(gesuchModelManager: GesuchModelManager, be
     return $q.defer(gesuchModelManager.getGesuch());
 }
 
-getMutation.$inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'GesuchRS', '$stateParams', '$q'];
-/* @ngInject */
-export function getMutation(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                                      wizardStepManager: WizardStepManager, gesuchRS: GesuchRS, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
+createEmptyMutation.$inject = ['GesuchModelManager', '$stateParams', '$q'];
+export function createEmptyMutation(gesuchModelManager: GesuchModelManager, $stateParams: IGesuchStateParams, $q: any): IPromise<TSGesuch> {
     if ($stateParams) {
-        let gesuchIdParams = $stateParams.gesuchId;
-        if (gesuchIdParams) {
-            gesuchRS.antragMutieren(gesuchIdParams).then((response : TSGesuch) => {
-                berechnungsManager.clear();
-                wizardStepManager.findStepsFromGesuch(response.id);
-                gesuchModelManager.setGesuch(response);
-                return response;
-            });
+        let gesuchId = $stateParams.gesuchId;
+        if (gesuchId) {
+            gesuchModelManager.initMutation(gesuchId);
         }
     }
     return $q.defer(gesuchModelManager.getGesuch());

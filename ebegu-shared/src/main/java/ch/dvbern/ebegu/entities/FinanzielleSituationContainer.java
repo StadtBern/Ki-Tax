@@ -43,6 +43,7 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	}
 
 	public FinanzielleSituationContainer(@Nonnull FinanzielleSituationContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gesuchsteller = gesuchsteller;
 		this.jahr = toCopy.jahr;
 		this.finanzielleSituationGS = null;
