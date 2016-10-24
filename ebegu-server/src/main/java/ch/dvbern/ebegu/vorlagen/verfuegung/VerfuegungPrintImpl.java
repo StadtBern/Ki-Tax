@@ -14,7 +14,6 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
@@ -35,13 +34,13 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	private Betreuung betreuung;
 
 	//formatiert
-	private String letzteVerfuegungDatum = "";
+	private String letzteVerfuegungDatum;
 
 	/**
 	 * @param betreuung
 	 */
 	public VerfuegungPrintImpl(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) {
-		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : "-";
+		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : null;
 		this.betreuung = betreuung;
 	}
 
@@ -197,11 +196,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return !isPensumGrosser0();
 	}
 
-	/**
-	 * @return true falls es sich um eine Mutation handelt
-	 */
-	public boolean isMutation() {
-		return AntragTyp.MUTATION.equals(betreuung.extractGesuch().getTyp());
+
+	public boolean isVorgaengerVerfuegt() {
+		return letzteVerfuegungDatum != null;
 	}
 
 	@Override

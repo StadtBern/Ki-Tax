@@ -58,9 +58,9 @@ public interface VerfuegungPrint {
 	boolean isPensumIst0();
 
 	/**
-	 * @return true falls eine Mutation ist
+	 * @return true falls eine Vorgänger-Verfügung besteht
 	 */
-	boolean isMutation();
+	boolean isVorgaengerVerfuegt();
 
 	/**
 	 * @return true ob die Bermerkungen ausgedruckt werden muessen
