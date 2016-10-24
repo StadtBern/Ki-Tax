@@ -1,4 +1,4 @@
-<EntityConfig xmlns="urn:sun:fm:SAML:2.0:entityconfig" hosted="1" entityID="https://app.ebegu.ch:8443/ebegu">
+<EntityConfig xmlns="urn:sun:fm:SAML:2.0:entityconfig" hosted="1" entityID="http://app.ebegu.ch:8080/ebegu">
 	<SPSSOConfig metaAlias="/egov_bern/sp">
 		<Attribute name="description">
 			<Value/>
@@ -76,7 +76,6 @@
 			<Value>c=c</Value>
 			<Value>st=st</Value>
 			<Value>sn=sn</Value>
-			<Value>loginName=uid</Value>
 		</Attribute>
 		<Attribute name="saml2AuthModuleName">
 			<Value/>
@@ -91,7 +90,7 @@
 			<Value/>
 		</Attribute>
 		<Attribute name="appLogoutUrl">
-			<Value>https://app.ebegu.ch:8443/ebegu/logout</Value>
+			<Value>http://app.ebegu.ch:8080/ebegu/logout</Value>
 		</Attribute>
 		<Attribute name="assertionTimeSkew">
 			<Value>300</Value>
