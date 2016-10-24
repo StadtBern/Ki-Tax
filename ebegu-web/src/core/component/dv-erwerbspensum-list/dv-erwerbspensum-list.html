@@ -8,6 +8,7 @@
                 <tr>
                     <th st-sort="erwerbspensumJA.taetigkeit" class="sortable" data-translate="TAETIGKEIT"></th>
                     <th st-sort="erwerbspensumJA.gueltigkeit.gueltigAb" class="sortable" data-translate="AB"></th>
+                    <th st-sort="erwerbspensumJA.gueltigkeit.gueltigBis" class="sortable" data-translate="BIS"></th>
                     <th st-sort="erwerbspensumJA.pensum" class="sortable" data-translate="PENSUM"></th>
                     <th st-sort="erwerbspensumJA.zuschlag" class="sortable" data-translate="ZUSCHLAG"></th>
                     <th></th>
@@ -20,6 +21,7 @@
                         ng-bind="row.erwerbspensumJA.taetigkeit | translate"></td>
                     <td ng-if="row.erwerbspensumJA.bezeichnung" ng-bind="row.erwerbspensumJA.bezeichnung"></td>
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
+                    <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
                     <td ng-if="vm.addButtonVisible && row.erwerbspensumJA.vorgaengerId === null">

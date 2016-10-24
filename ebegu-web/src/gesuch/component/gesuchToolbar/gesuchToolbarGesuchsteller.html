@@ -3,7 +3,7 @@
         <div class="md-toolbar-tools">
 
             <!--Fall und Name des Gesuchs-->
-            <span ng-bind="vmgs.getGesuchName()" class=" toolbar-gesuchname"></span>
+            <span ng-bind="vmgs.getGesuchName()" class=" toolbar-gesuchname" style="margin:8px;"></span>
 
             <span flex=""></span>
             <!--Gesuchsperioden-->
@@ -29,7 +29,7 @@
             </md-menu-bar>
 
             <span ng-if="!vmgs.showGesuchPeriodeNavigationMenu()" ng-bind="vmgs.getCurrentGesuchsperiode()"
-                  style="font-size: 14px;"></span>
+                  style="font-size: 14px; margin-right: 10px; margin-left: 10px;"></span>
 
             <!--Gesuchstyp-->
             <md-menu-bar ng-if="vmgs.showAntragTypListNavigationMenu()">
@@ -53,7 +53,7 @@
             </md-menu-bar>
 
             <span ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"
-                  style="font-size: 14px; text-transform: uppercase;"></span>
+                  style="font-size: 14px; margin-right: 10px; margin-left: 10px; text-transform: uppercase;"></span>
 
             <span flex=""></span>
 

@@ -91,7 +91,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      * @param betreuung
      */
     public openVerfuegung(kind: TSKindContainer, betreuung: TSBetreuung): void {
-        if (TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus || TSBetreuungsstatus.VERFUEGT === betreuung.betreuungsstatus) {
+        if (TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus ||
+            TSBetreuungsstatus.VERFUEGT === betreuung.betreuungsstatus ||
+            TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG === betreuung.betreuungsstatus) {
             let kindNumber: number = this.gesuchModelManager.findKind(kind);
             if (kindNumber > 0) {
                 this.gesuchModelManager.setKindNumber(kindNumber);

@@ -20,6 +20,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
@@ -38,7 +39,7 @@ public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintServic
 
 	@Nonnull
 	@Override
-	public byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException {
+	public byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException {
 
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
@@ -50,7 +51,7 @@ public class PrintFinanzielleSituationPDFServiceBean extends AbstractPrintServic
 				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_FINANZIELLE_SITUATION, "/vorlagen/Berechnungsgrundlagen.docx");
 			Objects.requireNonNull(is, "Vorlage fuer Berechnungsgrundlagen nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(
-					docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch))));
+					docxME.getDocument(is, new FinanzielleSituationEinkommensverschlechterungPrintMergeSource(new BerechnungsgrundlagenInformationPrintImpl(gesuch, famGroessenVerfuegung))));
 			is.close();
 			return bytes;
 		} catch (IOException | DocTemplateException e) {

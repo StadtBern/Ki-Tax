@@ -12,14 +12,7 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
-import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
-
-import javax.annotation.Nonnull;
-import java.util.Optional;
-
-import static ch.dvbern.ebegu.vorlagen.PrintUtil.getGesuchstellerAdresse;
 
 /**
  * Transferobjekt
@@ -42,19 +35,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerName() {
 
-		StringBuilder name = new StringBuilder();
-		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1();
-		if (gesuchsteller.isPresent()) {
-			name.append(gesuchsteller.get().getFullName());
-		}
-		if (gesuch.getGesuchsteller2() != null) {
-			Optional<Gesuchsteller> gesuchsteller2 = extractGesuchsteller2();
-			if (gesuchsteller.isPresent()) {
-				name.append("\n");
-				name.append(gesuchsteller2.get().getFullName());
-			}
-		}
-		return name.toString();
+		return PrintUtil.getGesuchstellerName(gesuch);
 	}
 
 	/**
@@ -63,13 +44,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerStrasse() {
 
-		if (extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getStrasse();
-			}
-		}
-		return "";
+		return PrintUtil.getGesuchstellerStrasse(gesuch);
 	}
 
 	/**
@@ -78,13 +53,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	@Override
 	public String getGesuchstellerPLZStadt() {
 
-		if (extractGesuchsteller1().isPresent()) {
-			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1().get());
-			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getPlz() + " " + gesuchstellerAdresse.get().getOrt();
-			}
-		}
-		return "";
+		return PrintUtil.getGesuchstellerPLZStadt(gesuch);
 	}
 
 	/**
@@ -95,25 +64,4 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 
 		return PrintUtil.createFallNummerString(gesuch);
 	}
-
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller1() {
-
-		Gesuchsteller gs1 = gesuch.getGesuchsteller1();
-		if (gs1 != null) {
-			return Optional.of(gs1);
-		}
-		return Optional.empty();
-	}
-
-	@Nonnull
-	private Optional<Gesuchsteller> extractGesuchsteller2() {
-
-		Gesuchsteller gs2 = gesuch.getGesuchsteller2();
-		if (gs2 != null) {
-			return Optional.of(gs2);
-		}
-		return Optional.empty();
-	}
-
 }

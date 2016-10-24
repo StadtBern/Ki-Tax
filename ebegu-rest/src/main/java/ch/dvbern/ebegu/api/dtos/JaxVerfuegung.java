@@ -31,6 +31,7 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 	@Nonnull
 	private List<JaxVerfuegungZeitabschnitt> zeitabschnitte = new ArrayList<>();
 
+	private boolean sameVerfuegungsdaten;
 
 
 	@Nullable
@@ -58,5 +59,13 @@ public class JaxVerfuegung extends JaxAbstractDTO {
 
 	public void setZeitabschnitte(@Nonnull List<JaxVerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
+	}
+
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
 	}
 }

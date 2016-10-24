@@ -29,7 +29,7 @@
                 </md-menu>
 
                 <span ng-if="!vmx.showGesuchPeriodeNavigationMenu()" ng-bind="vmx.getCurrentGesuchsperiode()"
-                      style="font-size: 14px;"></span>
+                      style="font-size: 14px; margin-right: 10px; margin-left: 10px;"></span>
 
                 <!--Gesuchstyp-->
                 <md-menu ng-if="vmx.showAntragTypListNavigationMenu()">
@@ -50,16 +50,17 @@
                 </md-menu>
 
                 <span ng-if="!vmx.showAntragTypListNavigationMenu()" ng-bind="vmx.getAntragTyp()"
-                      style="font-size: 14px; text-transform: uppercase;"></span>
+                style="font-size: 14px; margin-right: 10px; margin-left: 10px; text-transform: uppercase;"></span>
 
                 <span flex=""></span>
 
                 <!-- Mutieren -->
-                <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
-                           aria-label="{{TOOLBAR_MUTIEREN | translate}}">
-                    <span data-translate="TOOLBAR_MUTIEREN"></span>
-                </md-button>
-
+                <md-menu>
+                    <md-button ng-click="vmx.antragMutieren()" ng-show="vmx.mutierenPossibleForCurrentAntrag"
+                               aria-label="{{TOOLBAR_MUTIEREN | translate}}">
+                        <span data-translate="TOOLBAR_MUTIEREN"></span>
+                    </md-button>
+                </md-menu>
                 <!--Kontakt-->
                 <md-menu ng-if="vmx.showKontaktMenu()">
                     <md-button ng-click="$mdOpenMenu()" aria-label="{{vmx.getCurrentGesuchsperiode()}}">

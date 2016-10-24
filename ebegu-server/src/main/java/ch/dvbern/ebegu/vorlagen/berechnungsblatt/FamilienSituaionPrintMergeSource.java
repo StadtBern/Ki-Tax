@@ -1,4 +1,4 @@
-package ch.dvbern.ebegu.vorlagen.finanziellesituation;
+package ch.dvbern.ebegu.vorlagen.berechnungsblatt;
 /*
 * Copyright (c) 2016 DV Bern AG, Switzerland
 *
@@ -11,29 +11,34 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import java.util.List;
+
+import ch.dvbern.ebegu.vorlagen.finanziellesituation.FinanzielleSituationEinkommensverschlechterungPrintMergeSource;
 import ch.dvbern.lib.doctemplate.common.BeanMergeSource;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.common.MergeContext;
 import ch.dvbern.lib.doctemplate.common.MergeSource;
 
-import java.util.List;
+/**
+ * @deprecated stattdessen wird die {@link FinanzielleSituationEinkommensverschlechterungPrintMergeSource} benutzt
+ */
+@Deprecated
+public class FamilienSituaionPrintMergeSource implements MergeSource {
 
-public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource implements MergeSource {
-
-	private BerechnungsgrundlagenInformationPrint berechnung;
+	private FamilienSituaionPrint familienSituaion;
 
 	/**
-	 * @param berechnung
+	 * @param familienSituaionPrint
 	 */
-	public FinanzielleSituationEinkommensverschlechterungPrintMergeSource(BerechnungsgrundlagenInformationPrint berechnung) {
-		this.berechnung = berechnung;
+	public FamilienSituaionPrintMergeSource(FamilienSituaionPrint familienSituaionPrint) {
+		this.familienSituaion = familienSituaionPrint;
 	}
 
 	@Override
 	public Object getData(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		if (key.startsWith("berechnung")) {
-			return new BeanMergeSource(berechnung, "berechnung.").getData(mergeContext, key);
+		if (key.startsWith("familienSituaion")) {
+			return new BeanMergeSource(familienSituaion, "familienSituaion.").getData(mergeContext, key);
 		}
 		return null;
 	}
@@ -41,19 +46,14 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	@Override
 	public Boolean ifStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		return new BeanMergeSource(berechnung, "berechnung.").ifStatement(mergeContext, key);
+		return new BeanMergeSource(familienSituaion, "familienSituaion.").ifStatement(mergeContext, key);
 	}
 
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		String[] array = key.split("[.]+");
-	    String subkey = array[0];
-		if (subkey.equalsIgnoreCase("berechnung")) {
-			return new BeanMergeSource(berechnung, "berechnung.").whileStatement(mergeContext, key);
-		}
-		if (subkey.equalsIgnoreCase("berechnungsblaetter")) {
-			return new BeanMergeSource(berechnung, "berechnungsblaetter.").whileStatement(mergeContext, key);
+		if (key.startsWith("berechnungen")) {
+			return new BeanMergeSource(familienSituaion, "berechnungen.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}

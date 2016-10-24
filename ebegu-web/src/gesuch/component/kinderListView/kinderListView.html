@@ -8,36 +8,36 @@
     <div class="row">
         <div class="col-md-12 table-responsive">
 
-            <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
-                   class="table table-striped table-hover" st-delay="20">
-                <thead>
-                <tr>
-                    <th st-sort="kindJA.vorname" class="sortable" data-translate="VORNAME"></th>
-                    <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
-                    <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                    ng-click="vm.editKind(row)">
-                    <td ng-bind="row.kindJA.vorname"></td>
-                    <td ng-bind="row.kindJA.nachname"></td>
-                    <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                    <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
-                    <td ng-click="$event.stopPropagation()" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                        <dv-loading-button type="button" button-click="vm.removeKind(row)"
-                                           button-class="btn btn-sm">
-                            <i class="fa fa-minus">
-                            </i>
-                        </dv-loading-button>
-                    </td>
-                </tr>
-                <tr ng-if="vm.getKinderList().length === 0">
-                    <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
-                </tr>
-                </tbody>
-            </table>
+                <table st-table="displayedCollection" st-safe-src="vm.getKinderList()"
+                       class="table table-striped table-hover" st-delay="20">
+                    <thead>
+                    <tr>
+                        <th st-sort="kindJA.vorname" class="sortable" data-translate="VORNAME"></th>
+                        <th st-sort="kindJA.nachname" class="sortable" data-translate="NAME"></th>
+                        <th st-sort="kindJA.geburtsdatum" class="sortable" data-translate="GEBURTSDATUM"></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                        ng-class="{'disabled-row': row.kindJA.vorgaengerId !== null}"
+                        ng-click="vm.editKind(row)">
+                        <td ng-bind="row.kindJA.vorname"></td>
+                        <td ng-bind="row.kindJA.nachname"></td>
+                        <td ng-bind="row.kindJA.geburtsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
+                        <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
+                        <td ng-click="$event.stopPropagation()" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt() && row.kindJA.vorgaengerId === null">
+                            <dv-loading-button type="button" button-click="vm.removeKind(row)" button-class="btn btn-sm">
+                                <i class="fa fa-minus">
+                                </i>
+                            </dv-loading-button>
+                        </td>
+                    </tr>
+                    <tr ng-if="vm.getKinderList().length === 0">
+                        <td colspan="4" class="empty-table" data-translate="KINDER_NOCH_KEINE"></td>
+                    </tr>
+                    </tbody>
+                </table>
 
         </div>
         <div class="col-md-12" style="margin-bottom: 20px" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
