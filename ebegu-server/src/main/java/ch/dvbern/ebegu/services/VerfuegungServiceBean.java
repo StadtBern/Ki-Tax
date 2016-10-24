@@ -125,7 +125,12 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 					if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
 						// Wenn wir eine solche nicht verfügte Betruung haben, suchen wir die letzte verfügte betreuung
 						// und kopieren deren Verfügung um sie später vergleichen und mergen zu können
-						betreuung.setVorgaengerVerfuegung(findVorgaengerVerfuegung(betreuung));
+						Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+						if(vorgaengerVerfuegung.isPresent()){
+							betreuung.setVorgaengerVerfuegung(vorgaengerVerfuegung.get());
+						}else{
+							throw new EbeguEntityNotFoundException("calculateVerfuegung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "VorgaengerVerfuegung of Betreuung not found even though state is GESCHLOSSEN_OHNE_VERFUEGUNG. BetreuungID: " + betreuung.getId());
+						}
 					}
 				}
 			}
@@ -135,20 +140,35 @@ public class VerfuegungServiceBean extends AbstractBaseService implements Verfue
 		return gesuch;
 	}
 
+	@Override
+	@Nonnull
+	public Optional<Verfuegung> findVorgaengerVerfuegung(@Nonnull  Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		if(betreuung.getVorgaengerId()==null) {return Optional.empty();}
 
-	private Verfuegung findVorgaengerVerfuegung(Betreuung betreuung) {
-		final Optional<Betreuung> vorgaengerbetr = betreuungService.findBetreuung(betreuung.getVorgaengerId());
-		if (vorgaengerbetr.isPresent()) {
-			if (!vorgaengerbetr.get().getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
-				return vorgaengerbetr.get().getVerfuegung();
+		Optional<Betreuung> optVorgaengerbetreuung = betreuungService.findBetreuung(betreuung.getVorgaengerId());
+		if (optVorgaengerbetreuung.isPresent()) {
+			Betreuung vorgaengerbetreuung = optVorgaengerbetreuung.get();
+			if (!vorgaengerbetreuung.getBetreuungsstatus().equals(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG)) {
+				return Optional.ofNullable(vorgaengerbetreuung.getVerfuegung());
 			} else {
-				return findVorgaengerVerfuegung(vorgaengerbetr.get());
+				return findVorgaengerVerfuegung(vorgaengerbetreuung);
 			}
 		}
-		return null;
+		return Optional.empty();
+
 	}
 
-
+	@Override
+	public Optional<LocalDate> findVorgaengerVerfuegungDate(@Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung, "betreuung darf nicht null sein");
+		Optional<Verfuegung> vorgaengerVerfuegung = findVorgaengerVerfuegung(betreuung);
+		LocalDate letztesVerfDatum = null;
+		if (vorgaengerVerfuegung.isPresent()) {
+			letztesVerfDatum = vorgaengerVerfuegung.get().getTimestampErstellt().toLocalDate();
+		}
+		return Optional.ofNullable(letztesVerfDatum);
+	}
 
 	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
 		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
