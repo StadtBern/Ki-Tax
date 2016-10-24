@@ -51,7 +51,8 @@ export class AuthenticationListViewController {
         // unter einr bestimmten nummer  merken was die url war (in persistence oder session oder cookie) und
         //dann nur diese nummer an das iam geben, so kann man als hacker garantiert den relayState nicht misbrauchen
         // alternativ koennten wir eine domain whitelist fuehren oder sowas
-        //idpEntityID id koennte allenfalls als property hinterlegt werden?, der rst ist glaube ich konstant
+        //idpEntityID und spMetaAlis id koennte allenfalls als property hinterlegt werden?, der rst ist glaube ich konstant
+        //
         let queryParams = {
             'metaAlias': '/egov_bern/sp',
             'idpEntityID': 'https://elogin-test.bern.ch/am',

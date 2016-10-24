@@ -69,6 +69,26 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	@Column(updatable = false, nullable = false)
 	private UserRole role;
 
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String sessionIndex;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlNameId;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlSPEntityID;
+
+	@Nullable
+	@Column(nullable = true)
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	private String samlIDPEntityID;
+
 	@PrePersist
 	protected void prePersist() {
 		lastLogin = LocalDateTime.now();
@@ -131,4 +151,39 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	}
 
 
+	@Nullable
+	public String getSessionIndex() {
+		return sessionIndex;
+	}
+
+	public void setSessionIndex(@Nullable String sessionIndex) {
+		this.sessionIndex = sessionIndex;
+	}
+
+	@Nullable
+	public String getSamlNameId() {
+		return samlNameId;
+	}
+
+	public void setSamlNameId(@Nullable String samlNameId) {
+		this.samlNameId = samlNameId;
+	}
+
+	@Nullable
+	public String getSamlSPEntityID() {
+		return samlSPEntityID;
+	}
+
+	public void setSamlSPEntityID(@Nullable String samlSPEntityID) {
+		this.samlSPEntityID = samlSPEntityID;
+	}
+
+	@Nullable
+	public String getSamlIDPEntityID() {
+		return samlIDPEntityID;
+	}
+
+	public void setSamlIDPEntityID(@Nullable String samlIDPEntityID) {
+		this.samlIDPEntityID = samlIDPEntityID;
+	}
 }

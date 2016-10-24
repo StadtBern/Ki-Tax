@@ -26,6 +26,7 @@ import ch.dvbern.ebegu.util.Constants;
 import com.google.gson.Gson;
 import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.profile.SPACSUtils;
@@ -108,8 +109,13 @@ public class FedletSamlServlet extends HttpServlet {
 				se.getMessage());
 			return;
 		}
-		// END : code is a must for Fedlet (SP) side application
 
+		String idpEntityID = (String) map.get(SAML2Constants.IDPENTITYID);
+		String spEntityID = (String) map.get(SAML2Constants.SPENTITYID);
+
+		NameID nameId = (NameID) map.get(SAML2Constants.NAMEID);
+		String value = nameId.getValue();
+		String sessionIndex = (String) map.get(SAML2Constants.SESSION_INDEX);
 
 		Map<String, Set<String>> userattrs = (Map<String, Set<String>>) map.get(SAML2Constants.ATTRIBUTE_MAP);
 		AuthAccessElement userAuth = null;
@@ -124,6 +130,10 @@ public class FedletSamlServlet extends HttpServlet {
 			authorisedBenutzer.setLastLogin(LocalDateTime.now());
 			authorisedBenutzer.setRole(benutzer.getRole());
 			authorisedBenutzer.setUsername(benutzer.getUsername());
+			authorisedBenutzer.setSessionIndex(sessionIndex);      //SessionIndex and NameID are kept to logout
+			authorisedBenutzer.setSamlNameId(value);
+			authorisedBenutzer.setSamlIDPEntityID(idpEntityID);
+			authorisedBenutzer.setSamlSPEntityID(spEntityID);
 			userAuth = this.authService.createLoginFromIAM(authorisedBenutzer);
 
 			//to inform the client about the logged in user we set some cookies to pass along the generated login token
