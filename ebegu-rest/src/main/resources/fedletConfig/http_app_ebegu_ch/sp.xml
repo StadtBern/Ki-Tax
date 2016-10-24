@@ -1,13 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <EntityDescriptor entityID="http://app.ebegu.ch:8080/ebegu" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
 	<SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
-		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://app.ebegu.ch:8080/ebegu/fedletSloRedirect" ResponseLocation="http://app.ebegu.ch:8080/fedlet/fedletSloRedirect"/>
+		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="http://app.ebegu.ch:8080/ebegu/fedletSloRedirect" ResponseLocation="http://app.ebegu.ch:8080/ebegu/fedletSloRedirect"/>
 		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://app.ebegu.ch:8080/ebegu/fedletSloPOST" ResponseLocation="http://app.ebegu.ch:8080/ebegu/fedletSloPOST"/>
 		<SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="http://app.ebegu.ch:8080/ebegu/fedletSloSoap"/>
 		<NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
-		<AssertionConsumerService isDefault="true" index="0" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://app.ebegu.ch:8080/ebegu/fedletapplication"/>
+		<AssertionConsumerService index="0" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="http://app.ebegu.ch:8080/ebegu/fedletapplication"/>
 		<AssertionConsumerService index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="http://app.ebegu.ch:8080/ebegu/fedletapplication"/>
 	</SPSSODescriptor>
-	<RoleDescriptor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:query="urn:oasis:names:tc:SAML:metadata:ext:query" xsi:type="query:AttributeQueryDescriptorType" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+	<RoleDescriptor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="query:AttributeQueryDescriptorType" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:query="urn:oasis:names:tc:SAML:metadata:ext:query">
 		<KeyDescriptor use="signing">
 			<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 				<ds:X509Data>

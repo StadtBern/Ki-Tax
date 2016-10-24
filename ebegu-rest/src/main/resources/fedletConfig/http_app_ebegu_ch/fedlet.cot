@@ -2,5 +2,5 @@
 sun-fm-saml2-writerservice-url=
 sun-fm-cot-status=Active
 cot-name=FED
-sun-fm-trusted-providers=https\://elogin-test.bern.ch/am,http\://app.ebegu.ch\:8080/fedlet
+sun-fm-trusted-providers=https\://elogin-test.bern.ch/am,http\://app.ebegu.ch\:8080/ebegu
 sun-fm-saml2-readerservice-url=
