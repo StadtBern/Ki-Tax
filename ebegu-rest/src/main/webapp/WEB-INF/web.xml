@@ -27,7 +27,7 @@
 		<web-resource-collection>
 			<web-resource-name>ebegu-web-allowed-pattern</web-resource-name>
 			<url-pattern>/api/v1/swagger.json</url-pattern>
-			<url-pattern>/api/v1/auth/login</url-pattern>
+			<url-pattern>/api/v1/login</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 

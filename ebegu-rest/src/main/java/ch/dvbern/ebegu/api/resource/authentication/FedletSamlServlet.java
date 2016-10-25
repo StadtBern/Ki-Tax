@@ -215,7 +215,7 @@ public class FedletSamlServlet extends HttpServlet {
 //			xsrfCookie.setDomain(".");
 		xsrfCookie.setPath(COOKIE_PATH);
 		xsrfCookie.setMaxAge(Constants.COOKIE_TIMEOUT_SECONDS);
-			xsrfCookie.setSecure(useSecureCookies);
+        xsrfCookie.setSecure(useSecureCookies);
 		xsrfCookie.setHttpOnly(false);
 		response.addCookie(xsrfCookie);
 
