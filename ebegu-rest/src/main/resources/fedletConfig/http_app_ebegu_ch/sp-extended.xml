@@ -144,6 +144,7 @@
 			<Value>test</Value>
 		</Attribute>
 		<Attribute name="defaultRelayState">
+			<!--<Value>http://app.ebegu.ch:3000/#/pendenzen</Value>-->
 			<Value/>
 		</Attribute>
 		<Attribute name="assertionTimeSkew">

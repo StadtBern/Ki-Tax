@@ -243,6 +243,11 @@
             <artifactId>omnifaces-security</artifactId>
             <version>0.6-ALPHA</version>
         </dependency>
+        <dependency>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+          <version>4.5.2</version>
+        </dependency>
 
         <dependency>
           <groupId>org.jboss.javaee</groupId>

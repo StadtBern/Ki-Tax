@@ -5,11 +5,17 @@ import ch.dvbern.ebegu.api.dtos.JaxAuthAccessElement;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
+import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.util.Constants;
 import com.google.gson.Gson;
+import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.common.SAML2Utils;
+import org.apache.http.client.utils.URIBuilder;
+import org.owasp.esapi.ESAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +28,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.NoSuchElementException;
@@ -53,6 +61,9 @@ public class AuthResource {
 	@Inject
 	private JaxBConverter converter;
 
+	@Inject
+	private FedletURLInitializer fedletURLInitializer;
+
 	private boolean containerLogin(@Nonnull JaxAuthLoginElement loginElement) {
 		try {
 			// zuallererst einloggen, damit die SQL-Statements in den Services auch den richtigen Mandant haben...
@@ -63,10 +74,72 @@ public class AuthResource {
 		}
 	}
 
+	@Path("/singleSignOn")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	@GET
+	@PermitAll
+	public Response initSSOLogin(@Nullable @QueryParam("relayPath") String relayPath) {
+		try {
+
+			URIBuilder builder = new URIBuilder(fedletURLInitializer.getSSOInitURI());
+			//prueft ob er relay state param in der Liste der relayStateUrlList in der config entahlten ist
+			if (isRelayStateURLValid(relayPath)) {
+				builder.addParameter("RelayState", relayPath);
+			} else {
+				LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
+			}
+			String initSSOURI = request.getContextPath() + builder.build();
+			return Response.ok(initSSOURI).build();
+
+			//wahrscheinlich muss man redirect url hier als string zurueckgeben da der aufruf ja nicht async sein sollte
+		} catch (URISyntaxException e) {
+			throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login");
+		}
+
+	}
+
+	private boolean isRelayStateURLValid(String relayPath) {
+		return relayPath != null && !relayPath.isEmpty()
+			&& SAML2Utils.isRelayStateURLValid(fedletURLInitializer.getSpMetaAlias(), relayPath, SAML2Constants.SP_ROLE)
+			&& ESAPI.validator().isValidInput("RelayState", relayPath, "URL", 2000, true);
+	}
+
+	@Path("/singleLogout")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	@GET
+	@PermitAll
+	public Response initSingleLogout(@Nullable @QueryParam("relayPath")String relayPath,
+									 @CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
+
+		if (authTokenCookie != null && authTokenCookie.getValue() != null) {
+			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue());
+			if(currentAuthOpt.isPresent()) {
+				String nameID = currentAuthOpt.get().getSamlNameId();
+				String sessionID = currentAuthOpt.get().getSessionIndex();
+				try {
+					URI logoutURI = fedletURLInitializer.createLogoutURI(nameID, sessionID);
+					URIBuilder builder = new URIBuilder(logoutURI);
+					if (isRelayStateURLValid(relayPath)) {
+						builder.addParameter("RelayState", relayPath);
+					} else {
+						LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
+					}
+					String  logoutRedirectURI = request.getContextPath() +  builder.build();
+					return Response.ok(logoutRedirectURI).build();
+				} catch (URISyntaxException e) {
+					throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login");
+				}
+			}
+		}
+		return Response.noContent().build();
+	}
+
 	/**
 	 * extrahiert die Daten aus dem DTO und versucht einzuloggen. Fuer das einloggen
 	 * wird das servlet api verwendet  (request.login).
-
+	 *
 	 * @param loginElement Benutzer Identifikation (Benutzername/Passwort)
 	 * @return im Erfolgsfall eine HTTP Response mit Cookies
 	 */
@@ -115,7 +188,7 @@ public class AuthResource {
 	}
 
 	/**
-	 *   TODO testen, bisher konnte dies nicht getestet werden
+	 * TODO testen, bisher konnte dies nicht getestet werden
 	 */
 	private boolean isCookieSecure() {
 		return request.isSecure();

@@ -2,8 +2,8 @@ import {IRequestConfig, IPromise, IHttpService, IQService, ITimeoutService} from
 import TSUser from '../../models/TSUser';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import HttpBuffer from './HttpBuffer';
-import ICookiesService = angular.cookies.ICookiesService;
 import {TSRole} from '../../models/enums/TSRole';
+import ICookiesService = angular.cookies.ICookiesService;
 
 export default class AuthServiceRS {
 
@@ -69,6 +69,18 @@ export default class AuthServiceRS {
             return res;
         });
     };
+
+    public initSSOLogin(relayPath: string): IPromise<string> {
+        return this.$http.get(this.CONSTANTS.REST_API + 'auth/singleSignOn', {params: {relayPath: relayPath}}).then((res: any) => {
+            return res.data;
+        });
+    }
+
+    public initSingleLogout(relayPath: string): IPromise<string> {
+        return this.$http.get(this.CONSTANTS.REST_API + 'auth/singleLogout', {params: {relayPath: relayPath}}).then((res: any) => {
+            return res.data;
+        });
+    }
 
     /**
      * Gibt true zurueck, wenn der eingelogte Benutzer die gegebene Role hat. Fuer undefined Werte wird immer false zurueckgegeben.

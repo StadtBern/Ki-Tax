@@ -71,6 +71,8 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		String path = request.getRequestURI();
 		AuthDataUtil.getBasePath(request);
 		if (path.startsWith(apiBasePath + "/auth/login")
+			|| path.startsWith(apiBasePath + "/auth/singleSignOn")
+			|| path.startsWith(apiBasePath + "/auth/singleLogout")
 			|| path.startsWith(apiBasePath + "/swagger.json")
 			|| path.startsWith(request.getContextPath() + "/ebeguTestLogin.jsp")
 			|| path.startsWith(request.getContextPath() + "/logout.jsp")

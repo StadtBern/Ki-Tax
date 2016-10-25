@@ -28,6 +28,10 @@
 			<web-resource-name>ebegu-web-allowed-pattern</web-resource-name>
 			<url-pattern>/api/v1/swagger.json</url-pattern>
 			<url-pattern>/api/v1/login</url-pattern>
+			<url-pattern>/api/v1/auth/login</url-pattern>
+			<url-pattern>/api/v1/auth/logout</url-pattern>
+			<url-pattern>/api/v1/auth/singleSignOn</url-pattern>
+			<url-pattern>/api/v1/auth/singleLogout</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 
@@ -104,6 +108,7 @@
 		<description>Dies ist das Servlet welche die SAML2 Antwort der IDP entegegennimmt</description>
 		<servlet-name>fedletapplication</servlet-name>
 		<servlet-class>ch.dvbern.ebegu.api.resource.authentication.FedletSamlServlet</servlet-class>
+		<!--<jsp-file>/fedletSampleApp.jsp</jsp-file>-->
 	</servlet>
 	<servlet>
 		<servlet-name>fedletlogout</servlet-name>

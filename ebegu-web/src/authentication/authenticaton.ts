@@ -5,6 +5,7 @@ import {IAuthenticationStateParams} from './authentication.route';
 import IWindowService = angular.IWindowService;
 import IHttpParamSerializer = angular.IHttpParamSerializer;
 import ITimeoutService = angular.ITimeoutService;
+import ILocationService = angular.ILocationService;
 let template = require('./authentication.html');
 require('./authentication.less');
 
@@ -18,61 +19,72 @@ export class AuthenticationComponentConfig implements IComponentOptions {
 export class AuthenticationListViewController {
 
 
-    static $inject: string[] = ['$state', '$stateParams', '$window', '$httpParamSerializer', '$timeout', 'AuthServiceRS'];
+    static $inject: string[] = ['$state', '$stateParams', '$window', '$httpParamSerializer', '$timeout', 'AuthServiceRS'
+        , '$location'];
 
-    private redirectionUrl: string = '/ebegu/saml2/jsp/fedletSSOInit.jsp?';
+    private redirectionUrl: string = '/ebegu/saml2/jsp/fedletSSOInit.jsp';
     private relayString: string;
     private redirectionHref: string;
+
+    private logoutHref: string;
     private redirecting: boolean;
     private countdown: number = 5;
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
-                private $timeout: ITimeoutService, private authService: AuthServiceRS) {
+                private $timeout: ITimeoutService, private authService: AuthServiceRS, private $location: ILocationService) {
         //wir leiten hier mal direkt weiter, theoretisch koennte man auch eine auswahl praesentieren
+        this.relayString = angular.copy(this.$stateParams.relayPath ? (this.$stateParams.relayPath + '?sendRedirectForValidationNow=true') : '');
+        this.authService.initSSOLogin(this.relayString).then((response) => {
+            this.redirectionUrl = response;
+            this.redirectionHref = response;
+            if (this.$stateParams.type !== undefined && this.$stateParams.type === 'logout') {
+                this.showLogout();
+            } else {
+                this.redirecting = true;
+                this.$timeout(this.doCountdown, 1000);
+                this.$timeout(this.redirect, 5000);
+            }
+        });
 
-        this.relayString = this.$stateParams.relayPath ? (this.$stateParams.relayPath + '?sendRedirectForValidationNow=true') : '';
-        this.redirectionHref = this.createRedirectionURL();
-        if (this.$stateParams.type !== undefined && this.$stateParams.type === 'logout') {
-            this.redirectTolIAMForLogout();
-        } else {
-            this.redirectTolIAMForLogin();
+
+        this.authService.initSingleLogout(this.getBaseURL())
+            .then((responseLogut) => {
+                this.logoutHref = responseLogut;
+            });
+    }
+
+    public getBaseURL(): string {
+        //let port = (this.$location.port() === 80 || this.$location.port() === 443) ? '' : ':' + this.$location.port();
+        let absURL = this.$location.absUrl();
+        let index = absURL.indexOf(this.$location.url())
+        let result = absURL;
+        if (index !== -1) {
+            result = absURL.substr(0, index);
+            let hashindex = result.indexOf('#');
+            if (hashindex !== -1) {
+                result = absURL.substr(0, hashindex);
+            }
+
         }
+        return result;
     }
 
-    public redirectTolIAMForLogin(): void {
-        this.redirecting = true;
-        this.$timeout(this.doCountdown, 1000);
-        this.$timeout(this.redirect, 5000);
+    public singlelogout() {
+        this.authService.logoutRequest().then(() => {
+            this.$window.open(this.logoutHref, '_self');
+        });
     }
 
-    public createRedirectionURL(): string {
-        //todo team? der relayPath sollte besser keine absolute url sein sondern wir sollten uns hier
-        // unter einr bestimmten nummer  merken was die url war (in persistence oder session oder cookie) und
-        //dann nur diese nummer an das iam geben, so kann man als hacker garantiert den relayState nicht misbrauchen
-        // alternativ koennten wir eine domain whitelist fuehren oder sowas
-        //idpEntityID und spMetaAlis id koennte allenfalls als property hinterlegt werden?, der rst ist glaube ich konstant
-        //
-        let queryParams = {
-            'metaAlias': '/egov_bern/sp',
-            'idpEntityID': 'https://elogin-test.bern.ch/am',
-            'binding': 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-            'RelayState': this.relayString
-        };
-
-        let urlToGoTo = this.redirectionUrl + this.$httpParamSerializer(queryParams);
-        return urlToGoTo;
-    }
 
     public redirect = () => {
-
-        let urlToGoTo = this.createRedirectionURL();
+        let urlToGoTo = this.redirectionHref;
         console.log('redirecting to login', urlToGoTo);
 
         this.$window.open(urlToGoTo, '_self');
     };
 
-    private redirectTolIAMForLogout() {
+    private showLogout() {
         console.log('reached login page from logout request');
 
     }

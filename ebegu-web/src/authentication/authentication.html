@@ -4,7 +4,7 @@
         <div class="row">
 
             <h3>Login notwendig</h3>
-            <p ng-show="vm.redirecting" class="col-md-5 col-md-offset-3">
+            <p ng-show="vm.redirecting">
                 Sie werden in {{vm.countdown}} Sekunden an das Login Portal des Kanton Berns weitergeleitet
             </p>
             <!--<div class="col-md-5 col-md-offset-3">-->
@@ -17,8 +17,13 @@
             </div>
 
             <div class="col-md-5 col-md-offset-3">
-                <a href="https://elogin-test.bern.ch/am/UI/Logout">Logout in IAM</a>
+                <a ng-click="vm.singlelogout()">Logout in IAM und in EBEGU</a>
             </div>
+
+            <div class="col-md-5 col-md-offset-3">
+                <a href="https://elogin-test.bern.ch/am/UI/Logout">Logout in IAM aber nicht in EBEGU</a>
+            </div>
+
         </div>
 
     </div>

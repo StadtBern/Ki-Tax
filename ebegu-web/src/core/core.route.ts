@@ -42,6 +42,7 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         //wenn wir schon auf der lognseite oder im redirect sind redirecten wir nicht
         if (currentPath.indexOf('fedletSSOInit') === -1
             && ($state.current !== undefined && $state.current.name !== 'login')
+            && ($state.current !== undefined && $state.current.name !== 'locallogin')
             && currentPath.indexOf('sendRedirectForValidation') === -1) {
             $state.go('login', {relayPath: currentPath, type: 'login'});
         } else {
