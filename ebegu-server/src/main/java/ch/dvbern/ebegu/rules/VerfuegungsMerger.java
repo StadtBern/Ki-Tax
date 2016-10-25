@@ -87,9 +87,7 @@ public class VerfuegungsMerger {
 	}
 
 	private boolean isMeldungRechzeitig(VerfuegungZeitabschnitt verfuegungZeitabschnitt, LocalDate mutationsEingansdatum) {
-		return verfuegungZeitabschnitt.getGueltigkeit().startsSameDay(mutationsEingansdatum) ||
-			verfuegungZeitabschnitt.getGueltigkeit().startsAfter(mutationsEingansdatum);
-
+		return verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb().withDayOfMonth(1).isAfter((mutationsEingansdatum));
 	}
 
 	/**
