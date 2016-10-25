@@ -139,11 +139,8 @@ public enum MathUtil {
 		}
 
 		BigDecimal result = value!=null? value:BigDecimal.ZERO;
-		for (int i = 0; i < augment.length; i++) {
-			BigDecimal valueToAdd = augment[i];
-			if (valueToAdd == null) {
-				continue;
-			} else {
+		for (BigDecimal valueToAdd : augment) {
+			if (valueToAdd != null) {
 				result = result
 					.add(valueToAdd)
 					.setScale(scale, roundingMode);

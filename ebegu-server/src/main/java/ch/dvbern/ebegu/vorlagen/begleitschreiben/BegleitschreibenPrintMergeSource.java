@@ -23,7 +23,7 @@ public class BegleitschreibenPrintMergeSource implements MergeSource {
 	private BegleitschreibenPrint begleitschreiben;
 
 	/**
-	 * @param verfuegung
+	 * @param begleitschreibenPrint
 	 */
 	public BegleitschreibenPrintMergeSource(BegleitschreibenPrint begleitschreibenPrint) {
 		this.begleitschreiben = begleitschreibenPrint;

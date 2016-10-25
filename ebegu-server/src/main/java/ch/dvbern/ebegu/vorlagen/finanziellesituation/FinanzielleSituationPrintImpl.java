@@ -21,13 +21,14 @@ public class FinanzielleSituationPrintImpl extends FinanzDatenPrintImpl implemen
 
 	/**
 	 * Konstruktor
-	 *
-	 * @param finanzielleSituationG1
-	 * @param finanzielleSituationG2
+	 * @param fsGesuchsteller1
+	 * @param fsGesuchsteller2
+	 * @param finanzielleSituationJahr
 	 * @param fallNummer
 	 */
-	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
-			String fallNummer) {
+	public FinanzielleSituationPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1,
+										 FinanzSituationPrintGesuchsteller fsGesuchsteller2, String finanzielleSituationJahr,
+										 String fallNummer) {
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 		this.finanzielleSituationJahr = finanzielleSituationJahr;

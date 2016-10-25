@@ -55,12 +55,10 @@ export class KinderListViewController extends AbstractGesuchViewController {
     }
 
     editKind(kind: any): void {
-        if (kind.vorgaengerId === null) {
-            let kindNumber: number = this.gesuchModelManager.findKind(kind);
-            if (kindNumber > 0) {
-                kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
-                this.openKindView(kindNumber);
-            }
+        let kindNumber: number = this.gesuchModelManager.findKind(kind);
+        if (kindNumber > 0) {
+            kind.isSelected = false; // damit die row in der Tabelle nicht mehr als "selected" markiert ist
+            this.openKindView(kindNumber);
         }
     }
 
@@ -81,6 +79,18 @@ export class KinderListViewController extends AbstractGesuchViewController {
                     this.gesuchModelManager.removeKind();
                 }
             });
+    }
+
+    /**
+     * Ein Kind darf geloescht werden wenn: Das Gesuch noch nicht verfuegt/verfuegen ist und das vorgaengerId null
+     * ist (es ist ein neues kind) oder in einer mutation wenn es (obwohl ein altes Kind) keine Betreuungen hat
+     * @param kind
+     * @returns {boolean}
+     */
+    public canRemoveKind(kind: TSKindContainer): boolean {
+        return !this.isGesuchStatusVerfuegenVerfuegt()
+            && (this.gesuchModelManager.getGesuch().isMutation() && (!kind.betreuungen || kind.betreuungen.length <= 0))
+                || !kind.kindJA.vorgaengerId;
     }
 
 }
