@@ -24,6 +24,8 @@ export class FallCreationViewComponentConfig implements IComponentOptions {
 export class FallCreationViewController extends AbstractGesuchViewController {
     private gesuchsperiodeId: string;
     private createNewParam: boolean = false;
+    private createMutation: boolean = false;
+
     // showError ist ein Hack damit, die Fehlermeldung fuer die Checkboxes nicht direkt beim Laden der Seite angezeigt wird
     // sondern erst nachdem man auf ein checkbox oder auf speichern geklickt hat
     showError: boolean = false;
@@ -36,12 +38,19 @@ export class FallCreationViewController extends AbstractGesuchViewController {
                 private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.readCreateNewParam();
+        this.readCreateMutation();
         this.initViewModel();
     }
 
     private readCreateNewParam() {
         if (this.$stateParams.createNew === 'true') {
             this.createNewParam = true;
+        }
+    }
+
+    private readCreateMutation() {
+        if (this.$stateParams.createMutation === 'true') {
+            this.createMutation = true;
         }
     }
 
@@ -114,14 +123,14 @@ export class FallCreationViewController extends AbstractGesuchViewController {
 
     public isMutationFeldRequired(): boolean {
         return !(this.getMutationsdaten().mutationFamiliensituation
-                || this.getMutationsdaten().mutationGesuchsteller
-                || this.getMutationsdaten().mutationUmzug
-                || this.getMutationsdaten().mutationKind
-                || this.getMutationsdaten().mutationBetreuung
-                || this.getMutationsdaten().mutationAbwesenheit
-                || this.getMutationsdaten().mutationErwerbspensum
-                || this.getMutationsdaten().mutationFinanzielleSituation
-                || this.getMutationsdaten().mutationEinkommensverschlechterung);
+        || this.getMutationsdaten().mutationGesuchsteller
+        || this.getMutationsdaten().mutationUmzug
+        || this.getMutationsdaten().mutationKind
+        || this.getMutationsdaten().mutationBetreuung
+        || this.getMutationsdaten().mutationAbwesenheit
+        || this.getMutationsdaten().mutationErwerbspensum
+        || this.getMutationsdaten().mutationFinanzielleSituation
+        || this.getMutationsdaten().mutationEinkommensverschlechterung);
     }
 
 }

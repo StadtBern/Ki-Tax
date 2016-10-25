@@ -390,7 +390,6 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            //todo imanol try to load data from database and only if nothing is there create a new model
             this.setStammdatenToWorkWith(new TSGesuchsteller());
             this.getStammdatenToWorkWith().adresse = this.initAdresse();
         }
