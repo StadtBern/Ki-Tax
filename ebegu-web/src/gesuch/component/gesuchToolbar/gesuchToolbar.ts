@@ -301,7 +301,7 @@ export class GesuchToolbarController {
 
     public antragMutieren(): void {
         this.mutierenPossibleForCurrentAntrag = false;
-        this.$state.go('gesuch.mutation', {gesuchId: this.gesuchid});
+        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid});
         //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation!
     }
 
