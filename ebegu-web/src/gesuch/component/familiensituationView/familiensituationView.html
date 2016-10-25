@@ -1,7 +1,36 @@
 <div class="familiensituationView row">
-
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="mainTitle">
+                <span data-translate="MUTATION_FAMSITUATION_TITLE"></span>
+            </h4>
+        </div>
+    </div>
+    <hr class="header"/>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="inlineHint" data-translate="MUTATION_FAMSITUATION_HINT"></p>
+        </div>
+    </div>
     <div class="col-md-12">
+
         <form role="form" name="form" class="" novalidate unsaved-warning-form>
+
+            <!--Aenderung per-->
+            <div class="row" ng-if="vm.isMutation()">
+                <div class="col-md-6">
+                    <dv-input-container class="form-group">
+                        <label data-translate="AENDERUNG_PER" for="aenderungPer_ID">
+                        </label>
+                        <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
+                                       ng-model="vm.getFamiliensituation().aenderungPer" ng-required="true"
+                                       class="input-element">
+                        </dv-datepicker>
+                        <dv-error-messages for="form.aenderungPer.$error"
+                                           class="error"></dv-error-messages>
+                    </dv-input-container>
+                </div>
+            </div>
 
             <!--familienstatus-->
             <div class="row">

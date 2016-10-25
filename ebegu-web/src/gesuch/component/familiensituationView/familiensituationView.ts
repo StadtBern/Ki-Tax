@@ -58,7 +58,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
-    private confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
+    public confirmAndSave(form: angular.IFormController): IPromise<TSFamiliensituation> {
         if (this.isConfirmationRequired()) {
             let descriptionText: any = this.$translate.instant('FAMILIENSITUATION_WARNING_BESCHREIBUNG', {
                 gsfullname: this.gesuchModelManager.getGesuch().gesuchsteller2 ? this.gesuchModelManager.getGesuch().gesuchsteller2.getFullName() : ''
@@ -102,5 +102,12 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
         return (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
         && this.initialFamiliensituation.hasSecondGesuchsteller()
         && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+    }
+
+    public isMutation(): boolean {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().isMutation();
+        }
+        return false;
     }
 }
