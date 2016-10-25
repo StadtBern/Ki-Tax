@@ -89,7 +89,7 @@ public class PrintUtil {
 		if (extractGesuchsteller1(gesuch).isPresent()) {
 			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
 			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getStrasse();
+				return gesuchstellerAdresse.get().getStrasse() + " " + gesuchstellerAdresse.get().getHausnummer();
 			}
 		}
 		return "";
