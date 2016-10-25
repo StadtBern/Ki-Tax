@@ -68,26 +68,31 @@
 
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
             <div class="col-md-12 text-center">
-                <md-button ng-if="vm.showGeprueft()"
-                           ng-click="vm.setGesuchStatusGeprueft()"
-                           class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
-                    <span data-translate="GEPRUEFT_UPPER"></span>
-                </md-button>
-                <md-button ng-if="vm.showVerfuegenStarten()"
-                           ng-click="vm.setGesuchStatusVerfuegen()"
-                           class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                <span ng-show="vm.showGeprueft()">
+                    <md-button ng-click="vm.setGesuchStatusGeprueft()"
+                               class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+                        <span data-translate="GEPRUEFT_UPPER"></span>
+                    </md-button>
+                </span>
+                <span ng-show="vm.showVerfuegenStarten()">
+                    <md-button ng-click="vm.setGesuchStatusVerfuegen()"
+                     class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
-                </md-button>
+                    </md-button>
+                </span>
 
-                <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"
-                           aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
-                    <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
-                </md-button>
-
-                <md-button ng-if="vm.showGeprueft()" class="md-raised md-warn md-hue-2"
-                           aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
-                    <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
-                </md-button>
+                <span ng-show="vm.showGeprueft()">
+                    <md-button class="md-raised md-warn md-hue-2"
+                               aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
+                        <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
+                    </md-button>
+                </span>
+                <span ng-show="vm.showGeprueft()">
+                    <md-button class="md-raised md-warn md-hue-2"
+                               aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
+                        <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
+                    </md-button>
+                </span>
             </div>
         </div>
     </div>

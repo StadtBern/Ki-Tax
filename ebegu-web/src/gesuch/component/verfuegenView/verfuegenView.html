@@ -157,28 +157,28 @@
                 </div>
             </div>
 
-            <div class="row marginTop20" ng-if="!vm.isSameVerfuegungdaten()">
+            <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
                 <div class="col-md-12 text-center">
-                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()" button-click="vm.save(form)"
+                    <dv-loading-button type="submit"  button-click="vm.save(form)"
                                        button-class="btn btn-sm btn-success">
                         <span data-translate="VERFUEGEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
             </div>
 
-            <div class="row marginTop20" ng-if="vm.isSameVerfuegungdaten()">
+            <div class="row marginTop20" ng-show="vm.isSameVerfuegungdaten()">
                 <div class="col-md-4">
                     <span data-translate="IDENTISCHE_BERECHNUNG"></span>
                 </div>
-                <div class="col-md-4">
-                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()"
+                <div class="col-md-4"  ng-show="vm.showVerfuegen()">
+                    <dv-loading-button type="submit"
                                        button-click="vm.schliessenOhneVerfuegen(form)"
                                        button-class="btn btn-sm btn-success">
                         <span data-translate="VERFUEGEN_VERZICHTEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
-                <div class="col-md-4">
-                    <dv-loading-button type="submit" ng-if="vm.showVerfuegen()" button-click="vm.save(form)"
+                <div class="col-md-4" ng-show="vm.showVerfuegen()">
+                    <dv-loading-button type="submit"  button-click="vm.save(form)"
                                        button-class="btn btn-sm btn-success">
                         <span data-translate="TROTZDEM_VERFUEGEN_UPPER"></span>
                     </dv-loading-button>
