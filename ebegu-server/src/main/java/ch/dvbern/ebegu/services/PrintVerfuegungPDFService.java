@@ -5,6 +5,8 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.List;
 
 /*
@@ -32,8 +34,9 @@ public interface PrintVerfuegungPDFService {
 
 	/**
 	 * Erstellt das Verfuegungsdokument für die eingegebene Betreuung
+	 * @param letzteVerfuegungDatum wenn gesetzt wird das Datum der ersetzten Verfuegung im print gedruckt
 	 * @throws MergeDocException
 	 */
 	@Nonnull
-	byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException;
+	byte[] printVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException;
 }

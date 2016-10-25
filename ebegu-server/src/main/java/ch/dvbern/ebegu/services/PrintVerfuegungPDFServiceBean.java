@@ -25,13 +25,17 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implementiert VerfuegungsGenerierungPDFService
@@ -39,6 +43,9 @@ import java.util.Objects;
 @Stateless
 @Local(PrintVerfuegungPDFService.class)
 public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implements PrintVerfuegungPDFService {
+
+	@Inject
+	VerfuegungService verfuegungService;
 
 	@Nonnull
 	@Override
@@ -51,7 +58,9 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
         for (KindContainer kindContainer : gesuch.getKindContainers()) {
             for (Betreuung betreuung : kindContainer.getBetreuungen()) {
                 // Pro Betreuung ein Dokument
-                result.add(printVerfuegungForBetreuung(betreuung));
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				result.add(printVerfuegungForBetreuung(betreuung, letztesVerfDatum));
             }
         }
 		return result;
@@ -59,7 +68,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 
 	@Nonnull
 	@Override
-	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException {
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
 		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
@@ -70,7 +79,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 
 		try {
-			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung));
+			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
 			byte[] document = docxME.getDocument(is, mergeSource);
 			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
 			is.close();
