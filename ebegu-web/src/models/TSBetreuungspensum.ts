@@ -13,7 +13,8 @@ export default class TSBetreuungspensum extends TSAbstractPensumEntity {
         this._nichtEingetreten = value;
     }
 
-    constructor(pensum?: number, gueltigkeit?: TSDateRange) {
+    constructor(nichtEingetreten?: boolean, pensum?: number, gueltigkeit?: TSDateRange) {
         super(pensum, gueltigkeit);
+        this.nichtEingetreten = nichtEingetreten;
     }
 }

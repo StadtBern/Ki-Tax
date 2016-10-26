@@ -22,7 +22,7 @@ public class NichtEingetretenCalcRule extends AbstractCalcRule {
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		// Bei Betreuungen mit status nicht eingetreten wird Bemerkung hinzugefügt
-		if (betreuung.getBetreuungsstatus().equals(Betreuungsstatus.NICHT_EINGETRETEN)) {
+		if (betreuung.getBetreuungsstatus() != null && betreuung.getBetreuungsstatus().equals(Betreuungsstatus.NICHT_EINGETRETEN)) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.NICHT_EINGETRETEN, MsgKey.NICHT_EINGETRETEN_MSG);
 		}
 	}
