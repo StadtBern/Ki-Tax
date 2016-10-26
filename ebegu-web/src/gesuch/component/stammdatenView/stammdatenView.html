@@ -65,8 +65,11 @@
                     </div>
                 </div>
 
-                <!-- Adresse-->
-                <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true" prefix="wohn"></dv-adresse>
+                <!-- Adresse. Bei Mutationen nicht editierbar-->
+                <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
+                    <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true"
+                                prefix="wohn"></dv-adresse>
+                </fieldset>
 
                 <!--Korrenspondenzadr Checkbox-->
                 <div class="row">
@@ -106,8 +109,8 @@
                     </div>
                 </div>
 
-                <!--Umzug checkbox-->
-                <div class="row">
+                <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
+                <div class="row" ng-if="!vm.isMutation()">
                     <div class="col-md-6">
                         <div class="checkbox">
                             <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
@@ -123,8 +126,8 @@
                     </div>
                 </div>
 
-                <!-- Umzugadresse -->
-                <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug"
+                <!-- Umzugadresse. Bei Mutationen nicht angezeigt-->
+                <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug && !vm.isMutation()"
                             prefix="umzug"></dv-adresse>
 
                 <!--Email-->
