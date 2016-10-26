@@ -302,4 +302,9 @@ public class Gesuch extends AbstractEntity {
 		return bothFamiliennamen;
 	}
 
+	@Transient
+	public boolean isMutation() {
+		return this.typ == AntragTyp.MUTATION;
+	}
+
 }

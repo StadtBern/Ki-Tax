@@ -79,11 +79,13 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 	/**
 	 * Wenn die neue Familiensituation nur 1GS hat und der zweite GS schon existiert, wird dieser
-	 * und seine Daten endgueltig geloescht
+	 * und seine Daten endgueltig geloescht. Dies gilt aber nur fuer ERSTGESUCH. Bei Mutationen wird
+	 * der 2GS nie geloescht
 	 * @return
 	 */
 	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation) {
-		return gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller();
+		return (!gesuch.isMutation() && gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller())
+			|| (gesuch.isMutation() && gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getVorgaengerId() == null);
 	}
 
 }

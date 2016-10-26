@@ -106,14 +106,14 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Prueft ob der 2. Gesuchtsteller eingetragen werden muss je nach dem was in Familiensituation ausgewaehlt wurde
-     * @returns {boolean} False wenn "Alleinerziehend" oder "weniger als 5 Jahre" und dazu "alleine" ausgewaehlt wurde.
+     * Prueft ob der 2. Gesuchtsteller eingetragen werden muss je nach dem was in Familiensituation ausgewaehlt wurde. Wenn es sich
+     * um eine Mutation handelt wird nur geschaut ob der 2GS bereits existiert. Wenn ja, dann wird er benoetigt, da bei Mutationen darf
+     * der 2GS nicht geloescht werden
      */
     public isGesuchsteller2Required(): boolean {
         if (this.gesuch && this.getFamiliensituation() && this.getFamiliensituation().familienstatus) {
-            return !(((this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND)
-            || (this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE))
-            && (this.getFamiliensituation().gesuchstellerKardinalitaet === TSGesuchstellerKardinalitaet.ALLEINE));
+            return this.getFamiliensituation().hasSecondGesuchsteller()
+                || (this.gesuch.isMutation() && this.gesuch.gesuchsteller2 != null && this.gesuch.gesuchsteller2 !== undefined);
         } else {
             return false;
         }

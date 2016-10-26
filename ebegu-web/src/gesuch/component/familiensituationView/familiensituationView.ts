@@ -95,13 +95,20 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     /**
-     * Confirmation is required when the GS2 already exists and the familiensituation changes from 2GS to 2GS
+     * Confirmation is required when the GS2 already exists and the familiensituation changes from 2GS to 1GS. Or when in a Mutation
+     * the GS2 is new and will be removed
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-        && this.initialFamiliensituation.hasSecondGesuchsteller()
-        && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+        return (
+            !this.isMutation()
+            &&  this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+            && this.initialFamiliensituation.hasSecondGesuchsteller()
+            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller())
+            || (
+                this.isMutation()
+                && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+                && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId);
     }
 
     public isMutation(): boolean {

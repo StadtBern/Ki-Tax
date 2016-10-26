@@ -281,11 +281,16 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+
 				} else if (fromOneGSToTwoGS(oldEntity, newEntity)) {
+
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+
+					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
+						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
+
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 						wizardStep.setVerfuegbar(false);
 					}
