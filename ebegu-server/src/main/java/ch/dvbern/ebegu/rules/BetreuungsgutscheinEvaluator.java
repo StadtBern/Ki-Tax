@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class BetreuungsgutscheinEvaluator {
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 	/**
-	 *  Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
+	 * Berechnet nur die Familiengroesse und Abzuege fuer den Print der Familiensituation, es muss min eine Betreuung existieren
 	 */
 	public Verfuegung evaluateFamiliensituation(Gesuch gesuch) {
 
@@ -69,7 +70,7 @@ public class BetreuungsgutscheinEvaluator {
 			}
 			// Nach dem Durchlaufen aller Rules noch die Monatsstückelungen machen
 			zeitabschnitte = monatsRule.createVerfuegungsZeitabschnitte(firstBetreuungOfGesuch, zeitabschnitte);
-		} else{
+		} else {
 			LOG.warn("Keine Betreuung vorhanden kann Familiengroesse und Abzuege nicht berechnen");
 		}
 
@@ -108,6 +109,8 @@ public class BetreuungsgutscheinEvaluator {
 				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
 					LOG.info("Betruung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
+					restanspruchZeitabschnitte = getRestanspruchBeiVerfuegteBetreung(betreuung);
 					continue;
 				}
 
@@ -159,6 +162,19 @@ public class BetreuungsgutscheinEvaluator {
 				betreuung.getVerfuegung().setSameVerfuegungsdaten(verfuegungsVergleicher.isSameVerfuegungsdaten(betreuung, gesuchForMutaion));
 			}
 		}
+	}
+
+	@Nonnull
+	private List<VerfuegungZeitabschnitt> getRestanspruchBeiVerfuegteBetreung(Betreuung betreuung) {
+		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
+		if (betreuung.getVerfuegung() != null) {
+			restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
+				betreuung, betreuung.getVerfuegung().getZeitabschnitte());
+		} else {
+			restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
+				betreuung, betreuung.getVorgaengerVerfuegung().getZeitabschnitte());
+		}
+		return restanspruchZeitabschnitte;
 	}
 
 	private List<Rule> findRulesToRunForPeriode(Gesuchsperiode gesuchsperiode) {
