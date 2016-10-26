@@ -41,6 +41,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 
 	public Betreuungspensum(@Nonnull Betreuungspensum toCopy) {
 		super(toCopy);
+		this.nichtEingetreten = toCopy.nichtEingetreten;
 	}
 
 	@Override
