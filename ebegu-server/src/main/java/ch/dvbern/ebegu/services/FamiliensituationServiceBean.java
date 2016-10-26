@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
@@ -33,22 +34,47 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	private GesuchstellerService gesuchstellerService;
 	@Inject
 	private WizardStepService wizardStepService;
+	@Inject
+	private EinkommensverschlechterungInfoService einkommensverschlechterungInfoService;
+
 
 	@Nonnull
 	@Override
-	public Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldData, @Nonnull Familiensituation familiensituation) {
-		Objects.requireNonNull(familiensituation);
-		final Familiensituation mergedFamiliensituation = persistence.merge(familiensituation);
+	public Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldFamiliensituation, @Nonnull Familiensituation newFamiliensituation) {
+		Objects.requireNonNull(newFamiliensituation);
+		Objects.requireNonNull(gesuch);
+
+		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt, auch die Mutationsdaten werden aktualisiert
+		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(oldFamiliensituation, newFamiliensituation)) {
+			if (gesuch.getMutationsdaten() != null && (gesuch.getMutationsdaten().getMutationGesuchsteller() == null
+				|| !gesuch.getMutationsdaten().getMutationGesuchsteller())) {
+				gesuch.getMutationsdaten().setMutationGesuchsteller(true);
+			}
+			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
+				newFamiliensituation.setGemeinsameSteuererklaerung(false);
+			}
+			if (gesuch.getEinkommensverschlechterungInfo() != null) { //eigentlich darf es bei einer Mutation nie null sein. Trotzdem zur Sicherheit...
+				if (gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP1() == null) {
+					gesuch.getEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP1(false);
+				}
+				if (gesuch.getEinkommensverschlechterungInfo().getGemeinsameSteuererklaerung_BjP2() == null) {
+					gesuch.getEinkommensverschlechterungInfo().setGemeinsameSteuererklaerung_BjP2(false);
+				}
+				einkommensverschlechterungInfoService.updateEinkommensverschlechterungInfo(gesuch.getEinkommensverschlechterungInfo());
+			}
+		}
+
+		final Familiensituation mergedFamiliensituation = persistence.merge(newFamiliensituation);
 
 		gesuch.setFamiliensituation(mergedFamiliensituation);
 
 		//Alle Daten des GS2 loeschen wenn man von 2GS auf 1GS wechselt und GS2 bereits erstellt wurde
-		if (isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation)) {
+		if (gesuch.getGesuchsteller2() != null && isNeededToRemoveGesuchsteller2(gesuch, mergedFamiliensituation)) {
 			gesuchstellerService.removeGesuchsteller(gesuch.getGesuchsteller2());
 			gesuch.setGesuchsteller2(null);
 		}
 
-		wizardStepService.updateSteps(gesuch.getId(), oldData,
+		wizardStepService.updateSteps(gesuch.getId(), oldFamiliensituation,
 			mergedFamiliensituation, WizardStepName.FAMILIENSITUATION);
 
 		return mergedFamiliensituation;
@@ -85,7 +111,8 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 	 */
 	private boolean isNeededToRemoveGesuchsteller2(Gesuch gesuch, Familiensituation newFamiliensituation) {
 		return (!gesuch.isMutation() && gesuch.getGesuchsteller2() != null && !newFamiliensituation.hasSecondGesuchsteller())
-			|| (gesuch.isMutation() && gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getVorgaengerId() == null);
+			|| (gesuch.isMutation() && gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getVorgaengerId() == null
+			&& !newFamiliensituation.hasSecondGesuchsteller());
 	}
 
 }

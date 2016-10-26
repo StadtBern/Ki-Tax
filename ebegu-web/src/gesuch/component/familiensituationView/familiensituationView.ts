@@ -108,7 +108,9 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             || (
                 this.isMutation()
                 && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-                && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId);
+                && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId
+                && this.initialFamiliensituation.hasSecondGesuchsteller()
+                && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
     }
 
     public isMutation(): boolean {

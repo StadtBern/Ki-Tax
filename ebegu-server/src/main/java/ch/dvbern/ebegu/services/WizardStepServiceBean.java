@@ -4,8 +4,8 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -282,10 +282,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 
-				} else if (fromOneGSToTwoGS(oldEntity, newEntity)) {
+				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity)) {
 
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+						wizardStep.setVerfuegbar(true);
 
 					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
 						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
@@ -335,19 +336,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		WizardStepStatus status = (allBetreuungenRequiringErwerbspensum.size() > 0 && erwerbspensenForGesuch.size() <= 0)
 			? WizardStepStatus.NOK : WizardStepStatus.OK;
 		wizardStep.setWizardStepStatus(status);
-	}
-
-	/**
-	 * Berechnet ob die Daten bei der Familiensituation von einem GS auf 2 GS geaendert wurde.
-	 *
-	 * @param oldFamiliensituation
-	 * @param newFamiliensituation
-	 * @return
-	 */
-	private boolean fromOneGSToTwoGS(Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
-		Validate.notNull(oldFamiliensituation);
-		Validate.notNull(newFamiliensituation);
-		return !oldFamiliensituation.hasSecondGesuchsteller() && newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 	/**

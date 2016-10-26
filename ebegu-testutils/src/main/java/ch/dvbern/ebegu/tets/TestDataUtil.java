@@ -389,6 +389,7 @@ public final class TestDataUtil {
 		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
 		einkommensverschlechterungInfo.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfo);
 		return einkommensverschlechterungInfo;
 
 	}
