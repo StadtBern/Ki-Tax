@@ -245,6 +245,14 @@
                               data-translate-value-date="{{vm.getBetreuungModel().datumBestaetigung  | amDateFormat : 'DD.MM.YYYY'}}"></span>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 well well-status-bestaetigt"
+                             ng-if="vm.isBetreuungsstatusNichtEingetreten() && !vm.isSavingData">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                        <span data-translate="BETREUUNG_NICHT_EINGETRETEN_TEXT"
+                              data-translate-value-date="{{vm.getBetreuungModel().datumBestaetigung  | amDateFormat : 'DD.MM.YYYY'}}"></span>
+                        </div>
+                    </div>
 
                     <!--Platz anfordern-->
                     <div class="row" dv-show-element

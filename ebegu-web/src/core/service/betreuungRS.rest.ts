@@ -34,7 +34,7 @@ export default class BetreuungRS {
     public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
-        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId) + '/' + true, restBetreuung, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId), restBetreuung, {
             headers: {
                 'Content-Type': 'application/json'
             }

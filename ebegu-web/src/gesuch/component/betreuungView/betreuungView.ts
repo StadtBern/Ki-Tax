@@ -257,6 +257,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
             for (let i: number = 0; i < this.getBetreuungspensen().length; i++) {
                 this.getBetreuungspensum(i).betreuungspensumJA.pensum = 0;
+                this.getBetreuungspensum(i).betreuungspensumJA.nichtEingetreten = true;
             }
             this.getBetreuungModel().erweiterteBeduerfnisse = false;
 
@@ -292,6 +293,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public isBetreuungsstatusBestaetigt(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.BESTAETIGT);
+    }
+
+    public isBetreuungsstatusNichtEingetreten(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
 
     public isBetreuungsstatusAusstehend(): boolean {

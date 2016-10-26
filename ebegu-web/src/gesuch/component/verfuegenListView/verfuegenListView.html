@@ -21,7 +21,10 @@
                     <tbody ng-repeat="kindContainer in displayedCollection">
                     <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
                         st-select-mode="single"
-                        ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' && betreuung.betreuungsstatus !== 'VERFUEGT' && betreuung.betreuungsstatus !== 'GESCHLOSSEN_OHNE_VERFUEGUNG'}"
+                        ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' &&
+                        betreuung.betreuungsstatus !== 'VERFUEGT' &&
+                        betreuung.betreuungsstatus !== 'GESCHLOSSEN_OHNE_VERFUEGUNG' &&
+                        betreuung.betreuungsstatus !== 'NICHT_EINGETRETEN'}"
                         ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                         <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                         <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
@@ -76,7 +79,7 @@
                 </span>
                 <span ng-show="vm.showVerfuegenStarten()">
                     <md-button ng-click="vm.setGesuchStatusVerfuegen()"
-                     class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                               class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
                     <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
                     </md-button>
                 </span>

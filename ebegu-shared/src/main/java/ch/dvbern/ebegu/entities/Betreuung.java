@@ -3,7 +3,6 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
-import ch.dvbern.ebegu.validators.BetreuungspensumGroup;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
@@ -28,7 +27,7 @@ import java.util.TreeSet;
 @Audited
 @Entity
 @CheckGrundAblehnung
-@CheckBetreuungspensum(groups = BetreuungspensumGroup.class)
+@CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
 @Table(
 	uniqueConstraints = {

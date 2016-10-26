@@ -23,15 +23,6 @@ public interface BetreuungService {
 	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
 
 	/**
-	 * Speichert die Betreuung neu in der DB falls der Key noch nicht existiert. Sonst wird die existierende Betreuung aktualisiert
-	 * Bean validation wird ausgeschaltet
-	 *
-	 * @param betreuung Die Betreuung als DTO
-	 */
-	@Nonnull
-	public Betreuung saveBetreuungNoBeanValidation(@Valid @Nonnull Betreuung betreuung);
-
-	/**
 	 * @param key PK (id) der Betreuung
 	 * @return Betreuung mit dem gegebenen key oder null falls nicht vorhanden
 	 */

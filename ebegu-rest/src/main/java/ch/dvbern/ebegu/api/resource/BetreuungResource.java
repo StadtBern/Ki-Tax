@@ -45,12 +45,11 @@ public class BetreuungResource {
 
 	@Nonnull
 	@PUT
-	@Path("/{kindId}/{useBeanValidation}")
+	@Path("/{kindId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxBetreuung saveBetreuung(
 		@Nonnull @NotNull @PathParam("kindId") JaxId kindId,
-		@Nonnull @NotNull @PathParam("useBeanValidation") Boolean useBeanValidation,
 		@Nonnull @NotNull @Valid JaxBetreuung betreuungJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -59,12 +58,7 @@ public class BetreuungResource {
 		if (kind.isPresent()) {
 			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
 			convertedBetreuung.setKind(kind.get());
-			Betreuung persistedBetreuung;
-			if (useBeanValidation) {
-				persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
-			} else {
-				persistedBetreuung = this.betreuungService.saveBetreuungNoBeanValidation(convertedBetreuung);
-			}
+			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung);
 
 			return converter.betreuungToJAX(persistedBetreuung);
 		}

@@ -482,6 +482,7 @@
     "BESTAETIGT": "bestätigt",
     "BETREUUNG_WARTEN_TEXT": "warten auf Platzbestätigung.",
     "BETREUUNG_BESTAETIGT_TEXT": "Dieses Betreuungsangebot wurde am {{date}} bestätigt.",
+    "BETREUUNG_NICHT_EINGETRETEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} mutiert zu \"nicht eingetreten\"",
     "BETREUUNG_ABGEWIESEN_TEXT": "Dieses Betreuungsangebot wurde am {{date}} abgewiesen.<p>{{grund}}<p>",
     "GRUND_ABLEHNUNG": "Grund der Ablehnung",
     "SCHULJAHR": "Betrifft Schuljahr {{schuljahr}}",

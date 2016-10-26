@@ -4,7 +4,10 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -520,8 +523,7 @@ public class JaxBConverter {
 			final Optional<Gesuchsteller> gesuchsteller1 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller1().getId());
 			if (gesuchsteller1.isPresent()) {
 				antrag.setGesuchsteller1(gesuchstellerToEntity(antragJAXP.getGesuchsteller1(), gesuchsteller1.get()));
-			}
-			else {
+			} else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller1().getId());
 			}
 		}
@@ -529,8 +531,7 @@ public class JaxBConverter {
 			final Optional<Gesuchsteller> gesuchsteller2 = gesuchstellerService.findGesuchsteller(antragJAXP.getGesuchsteller2().getId());
 			if (gesuchsteller2.isPresent()) {
 				antrag.setGesuchsteller2(gesuchstellerToEntity(antragJAXP.getGesuchsteller2(), gesuchsteller2.get()));
-			}
-			else {
+			} else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getGesuchsteller2().getId());
 			}
 		}
@@ -538,8 +539,7 @@ public class JaxBConverter {
 			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituation().getId());
 			if (famSituation.isPresent()) {
 				antrag.setFamiliensituation(familiensituationToEntity(antragJAXP.getFamiliensituation(), famSituation.get()));
-			}
-			else {
+			} else {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
@@ -548,8 +548,7 @@ public class JaxBConverter {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
 				if (evkiSituation.isPresent()) {
 					antrag.setEinkommensverschlechterungInfo(einkommensverschlechterungInfoToEntity(antragJAXP.getEinkommensverschlechterungInfo(), evkiSituation.get()));
-				}
-				else {
+				} else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getEinkommensverschlechterungInfo().getId());
 				}
 			} else {
@@ -561,8 +560,7 @@ public class JaxBConverter {
 				final Optional<Mutationsdaten> mutationsdaten = mutationsdatenService.findMutationsdaten(antragJAXP.getMutationsdaten().getId());
 				if (mutationsdaten.isPresent()) {
 					antrag.setMutationsdaten(this.mutationsdatenToEntity(antragJAXP.getMutationsdaten(), mutationsdaten.get()));
-				}
-				else {
+				} else {
 					throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getMutationsdaten().getId());
 				}
 			} else {
@@ -1320,6 +1318,7 @@ public class JaxBConverter {
 
 	private Betreuungspensum betreuungspensumToEntity(final JaxBetreuungspensum jaxBetreuungspensum, final Betreuungspensum betreuungspensum) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
+		betreuungspensum.setNichtEingetreten(jaxBetreuungspensum.getNichtEingetreten());
 		return betreuungspensum;
 	}
 
@@ -1500,6 +1499,7 @@ public class JaxBConverter {
 	private JaxBetreuungspensum betreuungspensumToJax(final Betreuungspensum betreuungspensum) {
 		final JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
+		jaxBetreuungspensum.setNichtEingetreten(betreuungspensum.getNichtEingetreten());
 		return jaxBetreuungspensum;
 	}
 
