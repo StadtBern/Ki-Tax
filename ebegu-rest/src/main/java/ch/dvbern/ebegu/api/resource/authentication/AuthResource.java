@@ -94,7 +94,7 @@ public class AuthResource {
 
 			//wahrscheinlich muss man redirect url hier als string zurueckgeben da der aufruf ja nicht async sein sollte
 		} catch (URISyntaxException e) {
-			throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login");
+			throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login", e);
 		}
 
 	}
@@ -129,7 +129,7 @@ public class AuthResource {
 					String  logoutRedirectURI = request.getContextPath() +  builder.build();
 					return Response.ok(logoutRedirectURI).build();
 				} catch (URISyntaxException e) {
-					throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login");
+					throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login" ,e);
 				}
 			}
 		}

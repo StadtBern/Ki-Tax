@@ -28,7 +28,8 @@ export class AuthenticationListViewController {
 
     private logoutHref: string;
     private redirecting: boolean;
-    private countdown: number = 5;
+    private countdown: number = 2;
+
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
                 private $window: IWindowService, private $httpParamSerializer: IHttpParamSerializer,
@@ -43,21 +44,22 @@ export class AuthenticationListViewController {
             } else {
                 this.redirecting = true;
                 this.$timeout(this.doCountdown, 1000);
-                this.$timeout(this.redirect, 5000);
+                this.$timeout(this.redirect, this.countdown * 1000);
             }
         });
 
-
-        this.authService.initSingleLogout(this.getBaseURL())
-            .then((responseLogut) => {
-                this.logoutHref = responseLogut;
-            });
+        if (authService.getPrincipal()) {  // wenn logged in
+            this.authService.initSingleLogout(this.getBaseURL())
+                .then((responseLogut) => {
+                    this.logoutHref = responseLogut;
+                });
+        }
     }
 
     public getBaseURL(): string {
         //let port = (this.$location.port() === 80 || this.$location.port() === 443) ? '' : ':' + this.$location.port();
         let absURL = this.$location.absUrl();
-        let index = absURL.indexOf(this.$location.url())
+        let index = absURL.indexOf(this.$location.url());
         let result = absURL;
         if (index !== -1) {
             result = absURL.substr(0, index);
@@ -74,6 +76,11 @@ export class AuthenticationListViewController {
         this.authService.logoutRequest().then(() => {
             this.$window.open(this.logoutHref, '_self');
         });
+    }
+
+    public isLoggedId(): boolean {
+        console.log('logged in principal', this.authService.getPrincipal());
+        return this.authService.getPrincipal() ? true : false;
     }
 
 

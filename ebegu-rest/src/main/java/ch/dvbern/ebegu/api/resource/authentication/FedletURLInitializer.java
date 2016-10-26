@@ -37,6 +37,7 @@ public class FedletURLInitializer {
 	//single logout params
 
 
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "PreserveStackTrace"})
 	@PostConstruct()
 	private void init() {
 		SAML2MetaManager manager = null;
@@ -55,7 +56,7 @@ public class FedletURLInitializer {
 
 		} catch (SAML2MetaException | URISyntaxException e) {
 			LOG.error("Could not initialize Fedlet with URLS for SAML Login", e);
-			throw new EbeguRuntimeException("init", "Could not initialize Fedlet correctly", spMetaAlias, idpEntityID);
+			throw new EbeguRuntimeException("init", "Could not initialize Fedlet correctly", e, spMetaAlias, idpEntityID);
 		}
 	}
 
@@ -146,8 +147,8 @@ public class FedletURLInitializer {
 	}
 
 
+	@SuppressWarnings(value = {"PMD.UnusedPrivateMethod", "PreserveStackTrace"})
 	public URI createLogoutURI(String nameID, String sessionID) {
-
 		try {
 			URIBuilder uriBuilder = new URIBuilder(SINGLE_LOGOUT_INIT_URL);
 			uriBuilder.addParameter("spEntityID", spEntityID);
@@ -158,7 +159,7 @@ public class FedletURLInitializer {
 			return uriBuilder.build();
 		} catch (URISyntaxException e) {
 			LOG.error("Could not initialize Fedlet with URLS for SAML Logout", e);
-			throw new EbeguRuntimeException("init", "Could not initialize Fedlet correctly", spEntityID, idpEntityID, nameID);
+			throw new EbeguRuntimeException("init", "Could not initialize Fedlet correctly", e, spEntityID, idpEntityID, nameID);
 		}
 	}
 }

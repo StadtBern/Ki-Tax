@@ -16,7 +16,9 @@
                 <a href="{{vm.redirectionHref}}">Login mit IAM</a>
             </div>
 
-            <div class="col-md-5 col-md-offset-3">
+
+
+            <div class="col-md-5 col-md-offset-3" ng-if="vm.isLoggedId()">
                 <a ng-click="vm.singlelogout()">Logout in IAM und in EBEGU</a>
             </div>
 
