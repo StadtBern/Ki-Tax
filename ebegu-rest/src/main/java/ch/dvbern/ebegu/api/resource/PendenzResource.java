@@ -77,7 +77,14 @@ public class PendenzResource {
 			pendenz.setGesuchsperiode(converter.gesuchsperiodeToJAX(betreuung.extractGesuchsperiode()));
 			pendenz.setBetreuungsangebotTyp(betreuung.getBetreuungsangebotTyp());
 			pendenz.setInstitution(converter.institutionToJAX(betreuung.getInstitutionStammdaten().getInstitution()));
-			pendenz.setTyp("PLATZBESTAETIGUNG"); //TODO (Team) Wenn wir dann die Mutationstypen haben, muss dies angepasst werden!
+
+			if (betreuung.getVorgaengerId() == null) {
+				pendenz.setTyp("PLATZBESTAETIGUNG");
+			}else{
+				//Wenn die Betreung eine VorgängerID hat ist sie mutiert
+				pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
+			}
+
 			pendenzenList.add(pendenz);
 		}
 		return pendenzenList;
