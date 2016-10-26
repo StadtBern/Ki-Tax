@@ -19,7 +19,6 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	private static final long serialVersionUID = -9032857320571372370L;
 
 	public Betreuungspensum() {
-
 	}
 
 	public Betreuungspensum(DateRange gueltigkeit) {

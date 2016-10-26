@@ -6,6 +6,9 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.validators.BetreuungspensumGroup;
+import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
+import ch.dvbern.ebegu.validators.CheckBetreuungspensumValidator;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +18,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
-import javax.validation.Valid;
+import javax.validation.*;
+import javax.validation.bootstrap.GenericBootstrap;
 import java.util.*;
 
 /**
@@ -35,9 +39,32 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungsgutscheinEvaluator.class.getSimpleName());
 
 
+	@Inject
+	private ValidatorFactory validatorFactory;
+
+
 	@Override
 	@Nonnull
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
+		Objects.requireNonNull(betreuung);
+
+		final Validator validator = validatorFactory.getValidator();
+		final Set<ConstraintViolation<Betreuung>> validaionErrors = validator.validate(betreuung, BetreuungspensumGroup.class);
+		if(!validaionErrors.isEmpty()){
+			throw new ConstraintViolationException(validaionErrors);
+		}
+
+		final Betreuung mergedBetreuung = persistence.merge(betreuung);
+
+		//jetzt noch wizard step updaten
+		wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+
+		return mergedBetreuung;
+	}
+
+	@Override
+	@Nonnull
+	public Betreuung saveBetreuungNoBeanValidation(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
 
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);

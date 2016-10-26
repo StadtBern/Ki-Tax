@@ -15,10 +15,21 @@ public interface BetreuungService {
 
 	/**
 	 * Speichert die Betreuung neu in der DB falls der Key noch nicht existiert. Sonst wird die existierende Betreuung aktualisiert
+	 * Bean validation wird eingeschaltet
+	 *
 	 * @param betreuung Die Betreuung als DTO
 	 */
 	@Nonnull
 	Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung);
+
+	/**
+	 * Speichert die Betreuung neu in der DB falls der Key noch nicht existiert. Sonst wird die existierende Betreuung aktualisiert
+	 * Bean validation wird ausgeschaltet
+	 *
+	 * @param betreuung Die Betreuung als DTO
+	 */
+	@Nonnull
+	public Betreuung saveBetreuungNoBeanValidation(@Valid @Nonnull Betreuung betreuung);
 
 	/**
 	 * @param key PK (id) der Betreuung
@@ -32,12 +43,14 @@ public interface BetreuungService {
 
 	/**
 	 * entfernt eine Betreuung aus der Databse
+	 *
 	 * @param betreuungId Id der Betreuung zu entfernen
 	 */
 	void removeBetreuung(@Nonnull String betreuungId);
 
 	/**
 	 * entfernt eine Betreuuung aus der Databse. Um diese Methode aufzurufen muss man sich vorher vergewissern, dass die Betreuuung existiert
+	 *
 	 * @param betreuung
 	 */
 	void removeBetreuung(@Nonnull Betreuung betreuung);
@@ -46,7 +59,7 @@ public interface BetreuungService {
 	 * Gibt die Pendenzen fuer einen Benutzer mit Rolle Institution oder Traegerschaft zurueck.
 	 * Dies sind Betreuungen, welche zu einer Institution gehoeren, fuer welche der Benutzer berechtigt ist,
 	 * und deren Status "WARTEN" ist.
-     */
+	 */
 	@Nonnull
 	Collection<Betreuung> getPendenzenForInstitutionsOrTraegerschaftUser();
 
