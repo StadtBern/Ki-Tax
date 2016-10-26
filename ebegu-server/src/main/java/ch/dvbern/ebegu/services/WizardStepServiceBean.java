@@ -239,7 +239,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
 				&& !wizardStep.getVerfuegbar()
 				&& !WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
-				&& AntragTyp.GESUCH.equals(wizardStep.getGesuch().getTyp())) {
+				&& AntragTyp.GESUCH.equals(wizardStep.getGesuch().getTyp())) {    //in mutation soll fin sit und einkommensverschl per default nicht verfuegbar sein
 
 				wizardStep.setVerfuegbar(true);
 			}

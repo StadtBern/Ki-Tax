@@ -4,8 +4,8 @@ import {TSWizardStepName, getTSWizardStepNameValues} from '../../models/enums/TS
 import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
-import IPromise = angular.IPromise;
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import IPromise = angular.IPromise;
 
 export default class WizardStepManager {
 
@@ -190,6 +190,9 @@ export default class WizardStepManager {
         return undefined;
     }
 
+    /**
+     * iterate through the existing steps and get the previous one based on the current position
+     */
     public getPreviousStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
         var allStepNames = this.getAllowedSteps();
         let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;

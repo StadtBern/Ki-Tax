@@ -206,6 +206,7 @@ export class NavigatorController {
 
     /**
      * Berechnet fuer den aktuellen Benutzer und Step, welcher der previous Step ist und wechselt zu diesem.
+     * wenn es kein Sonderfall ist wird der letzte else case ausgefuehrt
      */
     private navigateToPreviousStep() {
 
