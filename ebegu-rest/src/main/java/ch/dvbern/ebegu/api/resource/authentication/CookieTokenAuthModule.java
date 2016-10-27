@@ -56,9 +56,19 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 	private static final String LOG_MDC_AUTHUSERID = "ebeguauthuserid";
 
 
+	@SuppressWarnings("PMD.UnusedFormalParameter")
+	public CookieTokenAuthModule(String loginModuleStackName) {
+		//this is unused, just checked if this could be used to declare this module through standalone.xml instead of
+		//SamRegistrationListener
+	}
+
+	public CookieTokenAuthModule() {
+	}
+
 	@Override
 	public AuthStatus validateHttpRequest(HttpServletRequest request, HttpServletResponse response, HttpMsgContext httpMsgContext) throws AuthException {
 		prepareLogvars(httpMsgContext);
+		//maybe we should do a logout first?
 //		try {
 //			request.logout();
 //		} catch (ServletException e) {
@@ -176,8 +186,5 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 			throw new IllegalStateException(e);
 		}
 		return SEND_FAILURE;
-
 	}
-
-
 }

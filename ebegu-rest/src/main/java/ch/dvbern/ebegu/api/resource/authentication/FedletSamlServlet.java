@@ -21,6 +21,7 @@ import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.util.Constants;
 import com.google.gson.Gson;
@@ -30,7 +31,6 @@ import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.profile.SPACSUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +46,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static ch.dvbern.ebegu.api.resource.authentication.AuthResource.COOKIE_PATH;
 import static ch.dvbern.ebegu.enums.UserRole.GESUCHSTELLER;
@@ -126,7 +123,7 @@ public class FedletSamlServlet extends HttpServlet {
 
 			AuthorisierterBenutzer authorisedBenutzer = new AuthorisierterBenutzer();
 			authorisedBenutzer.setBenutzer(storedBenutzer);
-			authorisedBenutzer.setAuthToken(RandomStringUtils.randomAlphanumeric(Constants.UUID_LENGTH));  //auth token generieren
+			authorisedBenutzer.setAuthToken(UUID.randomUUID().toString());  //auth token generieren
 			authorisedBenutzer.setLastLogin(LocalDateTime.now());
 			authorisedBenutzer.setRole(benutzer.getRole());
 			authorisedBenutzer.setUsername(benutzer.getUsername());
@@ -256,12 +253,13 @@ public class FedletSamlServlet extends HttpServlet {
 
 		String[] strings = role.split(IAM_SEPARATOR_ROLE);
 		if (strings.length == 0) {
-			throw new IllegalStateException("No Role recevied from IAM");
+			throw new IllegalStateException("No valid number of Roles recevied from IAM " + strings.length);
 		}
 
 		String roleName = strings[0];
 		roleName = roleName.replace("EBEGU_", "");
-		UserRole userRole = UserRole.valueOf(roleName);
+
+		UserRole userRole = mapRole(roleName);
 		localUser.setRole(userRole);
 
 		if (UserRole.SACHBEARBEITER_INSTITUTION == userRole && strings.length == 2) {
@@ -278,6 +276,14 @@ public class FedletSamlServlet extends HttpServlet {
 				.findTraegerschaft(traegerschaftID)
 				.orElseThrow((() -> new EbeguEntityNotFoundException("convertAndSetRoleAndInstitution", "Traegerschaft not found: {}", traegerschaftID)));
 			localUser.setTraegerschaft(foundTraegerschaft);
+		}
+	}
+
+	private UserRole mapRole(String roleName) {
+		try {
+			return UserRole.valueOf(roleName);
+		} catch (IllegalArgumentException e) {
+			throw new EbeguRuntimeException("mapRole", "Could not map role '" + roleName + "' received from SAML", e, roleName);
 		}
 	}
 
