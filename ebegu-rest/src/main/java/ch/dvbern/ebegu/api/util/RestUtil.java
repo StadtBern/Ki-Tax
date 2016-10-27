@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.entities.File;
 import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -28,6 +29,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 
 /**
  * Allgemeine Utils fuer Rest Funktionalitaeten
@@ -58,13 +61,10 @@ public final class RestUtil {
 		return new UploadFileInfo(StringUtils.defaultIfBlank(filename, null), new MimeType(contentType));
 	}
 
-	public static boolean isFileDownloadRequest(@Nonnull ContainerRequestContext requestContext) {
-		return requestContext.getUriInfo().getPath().startsWith("/blobs/temp");
-	}
-
 	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
-		//todo heir wohl ebegu prependen
-		return request.getRequestURI().startsWith("/blobs/temp");
+		String context = request.getContextPath() + API_ROOT_PATH;
+		final String blobdataPath = context + "/blobs/temp/blobdata/";
+		return request.getRequestURI().startsWith(blobdataPath);
 	}
 
 	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {
