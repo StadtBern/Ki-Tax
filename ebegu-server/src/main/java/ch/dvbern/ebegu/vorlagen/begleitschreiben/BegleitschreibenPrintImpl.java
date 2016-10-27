@@ -11,6 +11,8 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import org.apache.commons.lang.StringUtils;
+
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
 
@@ -33,8 +35,12 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	 * @return GesuchstellerName
 	 */
 	@Override
-	public String getGesuchstellerName() {
+	public String getGesuchstellerNameOderOrganisation() {
 
+		String bezeichnung = PrintUtil.getOrganisation(gesuch);
+		if (StringUtils.isNotEmpty(bezeichnung)) {
+			return bezeichnung;
+		}
 		return PrintUtil.getGesuchstellerName(gesuch);
 	}
 
@@ -63,5 +69,15 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	public String getFallNummer() {
 
 		return PrintUtil.createFallNummerString(gesuch);
+	}
+
+	@Override
+	public boolean isPrintTextFamilie() {
+
+		if (StringUtils.isNotEmpty(PrintUtil.getOrganisation(gesuch))) {
+			// Text Familie darf nicht gedruckt werden
+			return false;
+		}
+		return true;
 	}
 }
