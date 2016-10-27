@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
@@ -110,7 +111,7 @@ public class BetreuungsgutscheinEvaluator {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
 					LOG.info("Betruung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
 					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
-					restanspruchZeitabschnitte = getRestanspruchBeiVerfuegteBetreung(betreuung);
+					restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
 					continue;
 				}
 
@@ -164,16 +165,20 @@ public class BetreuungsgutscheinEvaluator {
 		}
 	}
 
+	/**
+	 * Wenn eine Verfuegung schon Freigegeben ist wird sei nicht mehr neu berechnet, trotzdem muessen wir den Restanspruch
+	 * beruecksichtigen
+	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> getRestanspruchBeiVerfuegteBetreung(Betreuung betreuung) {
+	private List<VerfuegungZeitabschnitt> getRestanspruchForVerfuegteBetreung(Betreuung betreuung) {
 		List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte;
-		if (betreuung.getVerfuegung() != null) {
-			restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
-				betreuung, betreuung.getVerfuegung().getZeitabschnitte());
-		} else {
-			restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
-				betreuung, betreuung.getVorgaengerVerfuegung().getZeitabschnitte());
+		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
+		if (verfuegungForRestanspruch == null) {
+			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", "Ungueltiger Zustand, verfuegte Betreuung ohne Verfuegung", betreuung.getId());
 		}
+		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
+						betreuung, betreuung.getVerfuegung().getZeitabschnitte());
+
 		return restanspruchZeitabschnitte;
 	}
 
