@@ -21,7 +21,7 @@ export class DvUserNameController {
 
     public logout(): void {
         this.authServiceRS.logoutRequest().then(() => {
-            this.$state.go('login');
+            this.$state.go('login' , {type: 'logout'});
         });
     }
 

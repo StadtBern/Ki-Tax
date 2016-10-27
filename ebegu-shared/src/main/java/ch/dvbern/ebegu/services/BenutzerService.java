@@ -45,4 +45,10 @@ public interface BenutzerService {
      */
 	@Nonnull
 	Optional<Benutzer> getCurrentBenutzer();
+
+	/**
+	 * inserts a user received from iam or updates it if it alreday exists
+	 * @param benutzer
+	 */
+	Benutzer updateOrStoreUserFromIAM(Benutzer benutzer);
 }
