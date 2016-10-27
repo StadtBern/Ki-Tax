@@ -30,8 +30,8 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 
 	/**
 	 * Konstruktor
-	 *  @param fsGesuchsteller1 das {@link FinanzSituationGesuchsteller1}
-	 * @param fsGesuchsteller2 das {@link FinanzSituationGesuchsteller2}
+	 *  @param fsGesuchsteller1 das {@link FinanzSituationPrintGesuchsteller}
+	 * @param fsGesuchsteller2 das {@link FinanzSituationPrintGesuchsteller}
 	 * @param einkommensverschlechterungJahr das Jahr des Einkommenverschleschterung
 	 * @param ereigniseintritt Ereingis datum
 	 * @param grund Grund

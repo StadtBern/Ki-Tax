@@ -33,8 +33,8 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	/**
 	 * Konstruktor
 	 *
-	 * @param finanzielleSituationG1 {@link AbstractFinanzielleSituation}
-	 * @param finanzielleSituationG2 {@link AbstractFinanzielleSituation}
+	 * @param fsGesuchsteller1 {@link AbstractFinanzielleSituation}
+	 * @param fsGesuchsteller2 {@link AbstractFinanzielleSituation}
 	 */
 	public FinanzDatenPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, @Nullable FinanzSituationPrintGesuchsteller fsGesuchsteller2) {
 

@@ -44,7 +44,7 @@ public class ApplicationPropertyServiceBean extends AbstractBaseService implemen
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
-	private static final String NAME_MISSING_MSG = "name muss gesetzt sein";;
+	private static final String NAME_MISSING_MSG = "name muss gesetzt sein";
 
 
 	@Nonnull
