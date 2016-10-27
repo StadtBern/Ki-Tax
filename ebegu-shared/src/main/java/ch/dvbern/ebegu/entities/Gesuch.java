@@ -94,8 +94,8 @@ public class Gesuch extends AbstractEntity {
 
 	@Nullable
 	@Valid
-	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "gesuch")
-	private Set<DokumentGrund> dokumentGrunds = new HashSet<>();
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
+	private Set<DokumentGrund> dokumentGrunds;
 
 
 	public Gesuch() {
@@ -128,8 +128,10 @@ public class Gesuch extends AbstractEntity {
 		}
 
 		if (toCopy.dokumentGrunds != null) {
+			this.dokumentGrunds = new HashSet<>();
+
 			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
-				this.dokumentGrunds.add(new DokumentGrund(dokumentGrund, this));
+				this.addDokumentGrund(new DokumentGrund(dokumentGrund));
 			}
 		}
 
@@ -194,6 +196,11 @@ public class Gesuch extends AbstractEntity {
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
 		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+	}
+
+	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
+		dokumentGrund.setGesuch(this);
+		return !this.dokumentGrunds.contains(dokumentGrund) && this.dokumentGrunds.add(dokumentGrund);
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {

@@ -26,7 +26,7 @@ public class Dokument extends File {
 	}
 
 	//copy
-	public Dokument(Dokument toCopy, DokumentGrund dokumentGrund) {
+	public Dokument(Dokument toCopy, final DokumentGrund dokumentGrund) {
 		super(toCopy);
 		this.setVorgaengerId(toCopy.getId());
 		this.dokumentGrund = dokumentGrund;

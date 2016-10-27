@@ -60,9 +60,8 @@ public class DokumentGrund extends AbstractEntity {
 	}
 
 	//Copy
-	public DokumentGrund(DokumentGrund toCopy, Gesuch gesuch) {
+	public DokumentGrund(DokumentGrund toCopy) {
 		this.setVorgaengerId(toCopy.getId());
-		this.gesuch = gesuch;
 		this.dokumentGrundTyp = toCopy.dokumentGrundTyp;
 		this.fullName = toCopy.fullName;
 		this.tag = toCopy.tag;
@@ -72,7 +71,6 @@ public class DokumentGrund extends AbstractEntity {
 				this.dokumente.add(new Dokument(dokument, this));
 			}
 		}
-		this.dokumente = toCopy.dokumente;
 		this.needed = toCopy.needed;
 	}
 
