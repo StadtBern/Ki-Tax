@@ -91,14 +91,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      * @param betreuung
      */
     public openVerfuegung(kind: TSKindContainer, betreuung: TSBetreuung): void {
-        if (TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus || TSBetreuungsstatus.VERFUEGT === betreuung.betreuungsstatus) {
+        if (TSBetreuungsstatus.BESTAETIGT === betreuung.betreuungsstatus ||
+            TSBetreuungsstatus.VERFUEGT === betreuung.betreuungsstatus ||
+            TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG === betreuung.betreuungsstatus) {
             let kindNumber: number = this.gesuchModelManager.findKind(kind);
             if (kindNumber > 0) {
                 this.gesuchModelManager.setKindNumber(kindNumber);
                 let betreuungNumber: number = this.gesuchModelManager.findBetreuung(betreuung);
                 if (betreuungNumber > 0) {
                     this.gesuchModelManager.setBetreuungNumber(betreuungNumber);
-                    this.$state.go('gesuch.verfuegenView');
+                    this.$state.go('gesuch.verfuegenView', {
+                        gesuchId: this.getGesuchId()
+                    });
                 }
             }
         }
@@ -162,7 +166,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     public showVerfuegenStarten(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.GEPRUEFT)
-            && this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK);
+            && this.wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.OK)
+            && this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN;
     }
 
     public openFinanzielleSituationPDF(): void {

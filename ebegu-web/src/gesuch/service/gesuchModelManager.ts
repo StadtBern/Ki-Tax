@@ -44,6 +44,9 @@ import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import TSMutationsdaten from '../../models/TSMutationsdaten';
+import EbeguUtil from '../../utils/EbeguUtil';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -59,7 +62,7 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS', 'EbeguUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -67,7 +70,7 @@ export default class GesuchModelManager {
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                private antragStatusHistoryRS: AntragStatusHistoryRS) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -75,6 +78,17 @@ export default class GesuchModelManager {
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
+    }
+
+
+    public openGesuch(gesuchId: string): IPromise<TSGesuch> {
+        return this.gesuchRS.findGesuch(gesuchId)
+            .then((response) => {
+                if (response) {
+                    this.setGesuch(response);
+                }
+                return response;
+            });
     }
 
     /**
@@ -146,12 +160,19 @@ export default class GesuchModelManager {
         if (this.gesuch && this.gesuch.timestampErstellt) { //update
             return this.updateGesuch();
         } else { //create
-            return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
-                this.gesuch.fall = angular.copy(fallResponse);
+            if (this.gesuch.fall && this.gesuch.fall.timestampErstellt) {
+                // Fall ist schon vorhanden
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
                     return this.gesuch = gesuchResponse;
                 });
-            });
+            } else {
+                return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
+                    this.gesuch.fall = angular.copy(fallResponse);
+                    return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
+                        return this.gesuch = gesuchResponse;
+                    });
+                });
+            }
         }
     }
 
@@ -370,7 +391,6 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            //todo imanol try to load data from database and only if nothing is there create a new model
             this.setStammdatenToWorkWith(new TSGesuchsteller());
             this.getStammdatenToWorkWith().adresse = this.initAdresse();
         }
@@ -457,14 +477,35 @@ export default class GesuchModelManager {
      */
     public initGesuch(forced: boolean) {
         if (forced || (!forced && !this.gesuch)) {
-            this.gesuch = new TSGesuch();
-            this.gesuch.fall = new TSFall();
-            this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
-            this.wizardStepManager.initWizardSteps();
-            this.setCurrentUserAsFallVerantwortlicher();
+            this.initAntrag(TSAntragTyp.GESUCH);
         }
         this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
+    }
+
+    /**
+     * Diese Methode erstellt eine Fake-Mutation als gesuch fuer das GesuchModelManager. Die Mutation ist noch leer und hat
+     * das ID des Gesuchs aus dem sie erstellt wurde. Damit laden wir die erste Seite auf, in der der Benutzer die Mutationsdaten
+     * eingeben darf. Wenn der Benutzer auf speichern klickt, wird der Service "antragMutieren" mit dem ID des alten Gesuchs
+     * und die neue Mutationsdaten aufgerufen. Das Objekt das man zurueckbekommt, wird dann diese Fake-Mutation mit den richtigen
+     * Daten ueberschreiben
+     * @param gesuchID
+     */
+    public initMutation(gesuchID: string): void {
+        let gesuchsperiode: TSGesuchsperiode = this.gesuch.gesuchsperiode;
+        this.initAntrag(TSAntragTyp.MUTATION);
+        this.gesuch.id = gesuchID; //setzen wir das alte gesuchID, um danach im Server die Mutation erstellen zu koennen
+        this.gesuch.mutationsdaten = new TSMutationsdaten();
+        this.gesuch.gesuchsperiode = gesuchsperiode;
+    }
+
+    private initAntrag(antragTyp: TSAntragTyp): void {
+        this.gesuch = new TSGesuch();
+        this.gesuch.fall = new TSFall();
+        this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
+        this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.wizardStepManager.initWizardSteps();
+        this.setCurrentUserAsFallVerantwortlicher();
     }
 
     /**
@@ -912,17 +953,32 @@ export default class GesuchModelManager {
                 }
             }
         }
+        this.ebeguUtil.handleSmarttablesUpdateBug(this.gesuch.kindContainers);
+
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {
         return this.verfuegungRS.saveVerfuegung(this.getVerfuegenToWorkWith(), this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
             this.setVerfuegenToWorkWith(response);
             this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.VERFUEGT;
-            if (!this.isThereAnyOpenBetreuung()) {
-                this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
-            }
+            this.calculateGesuchStatus();
             this.backupCurrentGesuch();
             return this.getVerfuegenToWorkWith();
+        });
+    }
+
+    private calculateGesuchStatus() {
+        if (!this.isThereAnyOpenBetreuung()) {
+            this.gesuch.status = this.calculateNewStatus(TSAntragStatus.VERFUEGT);
+        }
+    }
+
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
+        return this.verfuegungRS.verfuegungSchliessenOhneVerfuegen(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
+            this.calculateGesuchStatus();
+            this.backupCurrentGesuch();
+            return;
         });
     }
 
@@ -965,14 +1021,16 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders al VERFUEGT oder SCHULAMT ist
+     * Gibt true zurueck wenn es mindestens eine Betreuung gibt, dessen Status anders als VERFUEGT oder GESCHLOSSEN_OHNE_VERFUEGUNG oder SCHULAMT ist
      * @returns {boolean}
      */
     public isThereAnyOpenBetreuung(): boolean {
         let kinderWithBetreuungList: Array<TSKindContainer> = this.getKinderWithBetreuungList();
         for (let kind of kinderWithBetreuungList) {
             for (let betreuung of kind.betreuungen) {
-                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT) {
+                if (betreuung.betreuungsstatus !== TSBetreuungsstatus.SCHULAMT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.VERFUEGT
+                    && betreuung.betreuungsstatus !== TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
                     return true;
                 }
             }
@@ -1035,5 +1093,26 @@ export default class GesuchModelManager {
             }
         }
         return status;
+    }
+
+    /**
+     * Gibt true zurueck, wenn der Antrag ein Erstgesuchist. False bekommt man wenn der Antrag eine Mutation ist
+     * By default (beim Fehler oder leerem Gesuch) wird auch true zurueckgegeben
+     */
+    public isErstgesuch(): boolean {
+        if (this.gesuch) {
+            return this.gesuch.typ === TSAntragTyp.GESUCH;
+        }
+        return true;
+    }
+
+    public saveMutation(): IPromise<TSGesuch> {
+        return this.gesuchRS.antragMutieren(this.gesuch.id, this.gesuch.mutationsdaten, this.gesuch.eingangsdatum)
+            .then((response: TSGesuch) => {
+                this.setGesuch(response);
+                return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    return this.getGesuch();
+                });
+            });
     }
 }

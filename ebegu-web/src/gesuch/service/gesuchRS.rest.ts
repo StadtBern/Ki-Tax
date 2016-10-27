@@ -6,6 +6,8 @@ import WizardStepManager from './wizardStepManager';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import TSAntragDTO from '../../models/TSAntragDTO';
+import TSMutationsdaten from '../../models/TSMutationsdaten';
+import DateUtil from '../../utils/DateUtil';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -94,6 +96,14 @@ export default class GesuchRS implements IEntityRS {
     public getAllAntragDTOForFall(fallId: string): IPromise<TSAntragDTO[]> {
         return this.http.get(this.serviceURL + '/fall/' + encodeURIComponent(fallId)).then((response: any) => {
             return this.ebeguRestUtil.parseAntragDTOs(response.data);
+        });
+    }
+
+    public antragMutieren(antragId: string, mutationsdaten: TSMutationsdaten, dateParam: moment.Moment): IPromise<TSGesuch> {
+        let mutationsdationRestObject: any = this.ebeguRestUtil.mutationsdatenToRestObject({}, mutationsdaten);
+        return this.http.post(this.serviceURL + '/mutieren/' + encodeURIComponent(antragId) + '/',
+                mutationsdationRestObject, {params: {date: DateUtil.momentToLocalDate(dateParam)}}).then((response) => {
+            return this.ebeguRestUtil.parseGesuch(new TSGesuch(), response.data);
         });
     }
 }

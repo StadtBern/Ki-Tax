@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -26,8 +27,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Inject
 	private Persistence<Betreuung> persistence;
-
-
+	@Inject
+	private WizardStepService wizardStepService;
 	@Inject
 	private InstitutionService institutionService;
 
@@ -38,7 +39,13 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Nonnull
 	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung);
-		return persistence.merge(betreuung);
+
+		final Betreuung mergedBetreuung = persistence.merge(betreuung);
+
+		//jetzt noch wizard step updaten
+		wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+
+		return mergedBetreuung;
 	}
 
 	@Override
@@ -68,7 +75,9 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		Objects.requireNonNull(betreuungId);
 		Optional<Betreuung> betreuungToRemove = findBetreuung(betreuungId);
 		betreuungToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, betreuungId));
+		final String gesuchId = betreuungToRemove.get().getKind().getGesuch().getId();
 		persistence.remove(betreuungToRemove.get());
+		wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.BETREUUNG); //auch bei entfernen wizard updaten
 	}
 
 	@Override
@@ -121,5 +130,12 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		}
 		LOG.warn("Tried to read Pendenzen for institution but no institutionen specified");
 		return Collections.emptyList();
+	}
+
+	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung){
+		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
+		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
+		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
+		return persistedBetreuung;
 	}
 }

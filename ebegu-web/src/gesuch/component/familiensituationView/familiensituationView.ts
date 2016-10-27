@@ -38,7 +38,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     initialFamiliensituation: TSFamiliensituation;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-                      'DvDialog', '$translate'];
+        'DvDialog', '$translate'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
@@ -83,8 +83,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     showGesuchstellerKardinalitaet(): boolean {
-        return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
-            || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+        if (this.getFamiliensituation()) {
+            return this.getFamiliensituation().familienstatus === TSFamilienstatus.ALLEINERZIEHEND
+                || this.getFamiliensituation().familienstatus === TSFamilienstatus.WENIGER_FUENF_JAHRE;
+        }
+        return false;
     }
 
     public getFamiliensituation(): TSFamiliensituation {
@@ -97,7 +100,7 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
      */
     private isConfirmationRequired(): boolean {
         return (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-                && this.initialFamiliensituation.hasSecondGesuchsteller()
-                && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+        && this.initialFamiliensituation.hasSecondGesuchsteller()
+        && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
     }
 }

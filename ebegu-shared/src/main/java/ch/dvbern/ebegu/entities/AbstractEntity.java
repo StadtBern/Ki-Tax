@@ -52,6 +52,10 @@ public abstract class AbstractEntity implements Serializable {
 	@Column(nullable = false, length = Constants.UUID_LENGTH)
 	private String userMutiert;
 
+	@Column(nullable = true, length = Constants.UUID_LENGTH)
+	@Size(min = Constants.UUID_LENGTH, max = Constants.UUID_LENGTH)
+	private String vorgaengerId;
+
 	public AbstractEntity() {
 		//da wir teilweise schon eine id brauchen bevor die Entities gespeichert werden initialisieren wir die uuid hier
 		id = UUID.randomUUID().toString();
@@ -108,6 +112,14 @@ public abstract class AbstractEntity implements Serializable {
 
 	public void setUserMutiert(@Nonnull String userMutiert) {
 		this.userMutiert = userMutiert;
+	}
+
+	public String getVorgaengerId() {
+		return vorgaengerId;
+	}
+
+	public void setVorgaengerId(String vorgaengerId) {
+		this.vorgaengerId = vorgaengerId;
 	}
 
 	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
@@ -171,5 +183,9 @@ public abstract class AbstractEntity implements Serializable {
 		return new ToStringBuilder(this)
 			.append("id", getId())
 			.toString();
+	}
+
+	public boolean hasVorgaenger() {
+		return vorgaengerId != null;
 	}
 }

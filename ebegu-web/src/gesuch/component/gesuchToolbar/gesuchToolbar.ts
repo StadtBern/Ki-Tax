@@ -1,47 +1,117 @@
 import {IComponentOptions} from 'angular';
 import UserRS from '../../../core/service/userRS.rest';
-import GesuchModelManager from '../../service/gesuchModelManager';
 import TSUser from '../../../models/TSUser';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSGesuch from '../../../models/TSGesuch';
 import GesuchRS from '../../service/gesuchRS.rest';
-import BerechnungsManager from '../../service/berechnungsManager';
 import {IStateService} from 'angular-ui-router';
 import TSAntragDTO from '../../../models/TSAntragDTO';
+import {IGesuchStateParams} from '../../gesuch.route';
+import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import {TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
-let template = require('./gesuchToolbar.html');
+import IScope = angular.IScope;
+let templateX = require('./gesuchToolbar.html');
+let templateGS = require('./gesuchToolbarGesuchsteller.html');
 require('./gesuchToolbar.less');
 
 export class GesuchToolbarComponentConfig implements IComponentOptions {
     transclude = false;
-    template = template;
+    bindings: any = {
+        gesuchid: '@',
+        onVerantwortlicherChange: '&',
+    };
+
+    template = templateX;
     controller = GesuchToolbarController;
-    controllerAs = 'vm';
+    controllerAs = 'vmx';
+}
+
+export class GesuchToolbarGesuchstellerComponentConfig implements IComponentOptions {
+    transclude = false;
+    bindings: any = {
+        gesuchid: '@'
+    };
+    template = templateGS;
+    controller = GesuchToolbarController;
+    // Darf, wie es scheint nicht 'vm' heissen, sonst werden im gesuchToolBarGesuchsteller.html keine Funktionen gefunden. Bug?!
+    controllerAs = 'vmgs';
 }
 
 export class GesuchToolbarController {
 
     userList: Array<TSUser>;
     antragList: Array<TSAntragDTO>;
+    gesuchid: string;
+
+    onVerantwortlicherChange: (attr: any) => void;
 
     gesuchsperiodeList: { [key: string]: Array<TSAntragDTO> } = {};
     antragTypList: { [key: string]: TSAntragDTO } = {};
+    mutierenPossibleForCurrentAntrag: boolean = false;
 
-    static $inject = ['UserRS', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
-        'BerechnungsManager', '$state'];
+    static $inject = ['UserRS', 'EbeguUtil', 'CONSTANTS', 'GesuchRS',
+        '$state', '$stateParams', '$scope', 'GesuchModelManager'];
 
-    constructor(private userRS: UserRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
+    constructor(private userRS: UserRS, private ebeguUtil: EbeguUtil,
                 private CONSTANTS: any, private gesuchRS: GesuchRS,
-                private berechnungsManager: BerechnungsManager, private $state: IStateService) {
+                private $state: IStateService, private $stateParams: IGesuchStateParams, private $scope: IScope,
+                private gesuchModelManager: GesuchModelManager) {
         this.updateUserList();
         this.updateAntragDTOList();
+
+        //add watchers
+        this.addWatchers($scope);
+
+    }
+
+
+    private addWatchers($scope: angular.IScope) {
+        // needed because of test is not able to inject $scope!
+        if ($scope) {
+            $scope.$watch(() => {
+                return this.gesuchid;
+            }, (newValue, oldValue) => {
+                if (newValue !== oldValue) {
+                    if (this.gesuchid) {
+                        this.updateAntragDTOList();
+                    } else {
+                        this.antragTypList = {};
+                        this.gesuchsperiodeList = {};
+                    }
+                }
+            });
+            $scope.$watch(() => {
+                return this.gesuchModelManager.getGesuch().status;
+            }, (newValue, oldValue) => {
+                if ((newValue !== oldValue) && (newValue === TSAntragStatus.VERFUEGT)) {
+                    this.updateAntragDTOList();
+                }
+            });
+        }
+    }
+
+    public showGesuchPeriodeNavigationMenu(): boolean {
+        return !angular.equals(this.gesuchsperiodeList, {});
+    }
+
+    public showAntragTypListNavigationMenu(): boolean {
+        return !angular.equals(this.antragTypList, {});
+    }
+
+    public showKontaktMenu(): boolean {
+        if (this.getGesuch() && this.getGesuch().gesuchsteller1) {
+            return true;
+        }
+        return false;
     }
 
     public getVerantwortlicherFullName(): string {
-        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().fall && this.gesuchModelManager.getGesuch().fall.verantwortlicher) {
-            return this.gesuchModelManager.getGesuch().fall.verantwortlicher.getFullName();
+        if (this.getGesuch() && this.getGesuch().fall && this.getGesuch().fall.verantwortlicher) {
+            return this.getGesuch().fall.verantwortlicher.getFullName();
         }
         return '';
     }
@@ -53,13 +123,17 @@ export class GesuchToolbarController {
     }
 
     public updateAntragDTOList(): void {
-        let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch && gesuch.id) {
-            this.gesuchRS.getAllAntragDTOForFall(gesuch.fall.id).then((response) => {
+        if (this.getGesuch() && this.getGesuch().id) {
+            this.gesuchRS.getAllAntragDTOForFall(this.getGesuch().fall.id).then((response) => {
                 this.antragList = angular.copy(response);
                 this.updateGesuchperiodeList();
                 this.updateAntragTypList();
+                this.antragMutierenPossible();
             });
+        } else {
+            this.gesuchsperiodeList = {};
+            this.antragTypList = {};
+            this.antragMutierenPossible();
         }
     }
 
@@ -76,10 +150,9 @@ export class GesuchToolbarController {
     }
 
     private updateAntragTypList() {
-        let gesuch = this.gesuchModelManager.getGesuch();
         for (var i = 0; i < this.antragList.length; i++) {
-            let antrag = this.antragList[i];
-            if (gesuch.gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
+            let antrag: TSAntragDTO = this.antragList[i];
+            if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
                 let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum);
 
                 this.antragTypList[txt] = antrag;
@@ -102,9 +175,17 @@ export class GesuchToolbarController {
      * @param verantwortlicher
      */
     public setVerantwortlicher(verantwortlicher: TSUser): void {
-        if (verantwortlicher) {
-            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
-            this.gesuchModelManager.updateFall();
+        this.onVerantwortlicherChange({user: verantwortlicher});
+        this.setUserAsFallVerantwortlicherLocal(verantwortlicher);
+    }
+
+    /**
+     * Change local gesuch to change the current view
+     * @param user
+     */
+    public setUserAsFallVerantwortlicherLocal(user: TSUser) {
+        if (user && this.getGesuch() && this.getGesuch().fall) {
+            this.getGesuch().fall.verantwortlicher = user;
         }
     }
 
@@ -114,19 +195,26 @@ export class GesuchToolbarController {
      * @returns {boolean} true if the given user is already the verantwortlicher of the current fall
      */
     public isCurrentVerantwortlicher(user: TSUser): boolean {
-        return (user && this.gesuchModelManager.getFallVerantwortlicher() && this.gesuchModelManager.getFallVerantwortlicher().username === user.username);
+        return (user && this.getFallVerantwortlicher() && this.getFallVerantwortlicher().username === user.username);
     }
 
+    public getFallVerantwortlicher(): TSUser {
+        if (this.getGesuch() && this.getGesuch().fall) {
+            return this.getGesuch().fall.verantwortlicher;
+        }
+        return undefined;
+    }
+
+    //TODO: Muss mit IAM noch angepasst werden. Fall und Name soll vom Login stammen nicht vom Gesuch, da auf DashbordSeite die Fallnummer und Name des GS angezeigt werden soll
     public getGesuchName(): string {
-        let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch) {
-            var text = this.ebeguUtil.addZerosToNumber(gesuch.fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
-            if (gesuch.gesuchsteller1 && gesuch.gesuchsteller1.nachname) {
-                text = text + ' ' + gesuch.gesuchsteller1.nachname;
+        if (this.getGesuch()) {
+            var text = this.ebeguUtil.addZerosToNumber(this.getGesuch().fall.fallNummer, this.CONSTANTS.FALLNUMMER_LENGTH);
+            if (this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.nachname) {
+                text = text + ' ' + this.getGesuch().gesuchsteller1.nachname;
             }
             return text;
         } else {
-            return '--';
+            return '';
         }
     }
 
@@ -135,27 +223,25 @@ export class GesuchToolbarController {
     }
 
     public getCurrentGesuchsperiode(): string {
-        let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch && gesuch.gesuchsperiode) {
-            return this.getGesuchsperiodeAsString(gesuch.gesuchsperiode);
+
+        if (this.getGesuch() && this.getGesuch().gesuchsperiode) {
+            return this.getGesuchsperiodeAsString(this.getGesuch().gesuchsperiode);
         } else {
-            return '--';
+            return '';
         }
     }
 
     public getAntragTyp(): string {
-        let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch) {
-            return this.ebeguUtil.getAntragTextDateAsString(gesuch.typ, gesuch.eingangsdatum);
+        if (this.getGesuch()) {
+            return this.ebeguUtil.getAntragTextDateAsString(this.getGesuch().typ, this.getGesuch().eingangsdatum);
         } else {
             return '';
         }
     }
 
     public getAntragDatum(): Moment {
-        let gesuch = this.gesuchModelManager.getGesuch();
-        if (gesuch && gesuch.eingangsdatum) {
-            return gesuch.eingangsdatum;
+        if (this.getGesuch() && this.getGesuch().eingangsdatum) {
+            return this.getGesuch().eingangsdatum;
         } else {
             return moment();
         }
@@ -168,13 +254,8 @@ export class GesuchToolbarController {
     public setGesuchsperiode(gesuchsperiodeKey: string) {
         let selectedGesuche = this.gesuchsperiodeList[gesuchsperiodeKey];
         let selectedGesuch: TSAntragDTO = this.getNewest(selectedGesuche);
-        this.gesuchRS.findGesuch(selectedGesuch.antragId)
-            .then((response) => {
-                if (response) {
-                    this.openGesuch(response);
-                    this.updateAntragTypList();
-                }
-            });
+
+        this.goToOpenGesuch(selectedGesuch.antragId);
     }
 
     private getNewest(arrayTSAntragDTO: Array<TSAntragDTO>): TSAntragDTO {
@@ -187,25 +268,48 @@ export class GesuchToolbarController {
         return newest;
     }
 
-    private openGesuch(gesuch: TSGesuch): void {
-        if (gesuch) {
-            this.berechnungsManager.clear();
-
-            // TODO: Diesbezueglich gibt es Probleme in der Reihenfolge mit stateChange im KindView.ts und dem setzen des Gesuches. Siehe Task https://support.dvbern.ch/browse/EBEGU-506
-            this.gesuchModelManager.setGesuch(gesuch);
-            this.$state.go('gesuch.fallcreation');
+    private goToOpenGesuch(gesuchId: string): void {
+        if (gesuchId) {
+            this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: gesuchId});
         }
     }
 
+
     public setAntragTypDatum(antragTypDatumKey: string) {
         let selectedAntragTypGesuch = this.antragTypList[antragTypDatumKey];
-
-        this.gesuchRS.findGesuch(selectedAntragTypGesuch.antragId)
-            .then((response) => {
-                if (response) {
-                    this.openGesuch(response);
-                }
-            });
+        this.goToOpenGesuch(selectedAntragTypGesuch.antragId);
     }
 
+    public antragMutierenPossible(): void {
+        if (this.antragList) {
+            let gesuchInBearbeitungVorhanden = false;
+            for (var i = 0; i < this.antragList.length; i++) {
+                let antragItem: TSAntragDTO = this.antragList[i];
+                // Wir muessen nur die Antraege der aktuell ausgewaehlten Gesuchsperiode beachten
+                if (antragItem.gesuchsperiodeString === this.getCurrentGesuchsperiode()) {
+                    // Falls das Gesuch nicht verfuegt ist, darf nicht mutiert werden
+                    if (antragItem.verfuegt === false) {
+                        gesuchInBearbeitungVorhanden = true;
+                    }
+                }
+            }
+            this.mutierenPossibleForCurrentAntrag = !gesuchInBearbeitungVorhanden;
+        } else {
+            this.mutierenPossibleForCurrentAntrag = false;
+        }
+    }
+
+    public antragMutieren(): void {
+        this.mutierenPossibleForCurrentAntrag = false;
+        this.$state.go('gesuch.mutation', {createMutation: true, gesuchId: this.gesuchid});
+        //TODO (hefr) hier muesste dann noch der blaue balken angepasst werden! NACH der mutation!
+    }
+
+    //TODO (team) den (noch ungespeicherten) Mutationsantrag zur Liste im blauen Balken hinzufuegen
+    private addAntragToList(antrag: TSGesuch): void {
+        let antragDTO = new TSAntragDTO();
+        antragDTO.antragTyp = TSAntragTyp.MUTATION;
+        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum);
+        this.antragTypList[txt] = antragDTO;
+    }
 }

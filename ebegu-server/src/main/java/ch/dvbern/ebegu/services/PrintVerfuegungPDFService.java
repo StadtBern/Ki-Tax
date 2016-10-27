@@ -3,10 +3,10 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.errors.MergeDocException;
-import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
 import java.util.List;
 
 /*
@@ -34,12 +34,9 @@ public interface PrintVerfuegungPDFService {
 
 	/**
 	 * Erstellt das Verfuegungsdokument für die eingegebene Betreuung
-	 * @param betreuung
-	 * @return
+	 * @param letzteVerfuegungDatum wenn gesetzt wird das Datum der ersetzten Verfuegung im print gedruckt
 	 * @throws MergeDocException
-	 * @throws DocTemplateException
-	 * @throws IOException
 	 */
 	@Nonnull
-	byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException;
+	byte[] printVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException;
 }

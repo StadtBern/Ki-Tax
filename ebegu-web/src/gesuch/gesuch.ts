@@ -8,15 +8,18 @@ import {TSWizardStepStatus} from '../models/enums/TSWizardStepStatus';
 import EbeguUtil from '../utils/EbeguUtil';
 import {TSAntragStatus} from '../models/enums/TSAntragStatus';
 import AntragStatusHistoryRS from '../core/service/antragStatusHistoryRS.rest';
+import TSGesuch from '../models/TSGesuch';
+import TSUser from '../models/TSUser';
 import ITranslateService = angular.translate.ITranslateService;
 
 export class GesuchRouteController extends AbstractGesuchViewController {
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'EbeguUtil',
-                                'AntragStatusHistoryRS', 'AuthServiceRS'];
+        'AntragStatusHistoryRS', '$translate'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil, private antragStatusHistoryRS: AntragStatusHistoryRS) {
+                wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch());
     }
@@ -26,7 +29,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     }
 
 
-    public getDateErstgesuch(): string {
+    public getDateFromGesuch(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
             return DateUtil.momentToLocalDateFormat(this.gesuchModelManager.getGesuch().eingangsdatum, 'DD.MM.YYYY');
         }
@@ -87,6 +90,51 @@ export class GesuchRouteController extends AbstractGesuchViewController {
 
     public getUserFullname(): string {
         return this.antragStatusHistoryRS.getUserFullname();
+    }
+
+    public getGesuchId(): string {
+        if (this.getGesuch()) {
+            return this.getGesuch().id;
+        }
+        return undefined;
+    }
+
+    public getGesuch(): TSGesuch {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch();
+        }
+        return undefined;
+    }
+
+    /**
+     * Sets the given user as the verantworlicher fuer den aktuellen Fall
+     * @param verantwortlicher
+     */
+    public setVerantwortlicher(verantwortlicher: TSUser): void {
+        if (verantwortlicher) {
+            this.gesuchModelManager.setUserAsFallVerantwortlicher(verantwortlicher);
+            this.gesuchModelManager.updateFall();
+        }
+    }
+
+    public getGesuchErstellenStepTitle(): string {
+        if (this.gesuchModelManager.isErstgesuch()) {
+            if (this.gesuchModelManager.isGesuchSaved()) {
+                return this.$translate.instant('MENU_ERSTGESUCH_VOM', {
+                    date: this.getDateFromGesuch()
+                });
+            } else {
+                return this.$translate.instant('MENU_ERSTGESUCH');
+            }
+        } else {
+            if (this.gesuchModelManager.isGesuchSaved()) {
+                return this.$translate.instant('MENU_MUTATION_VOM', {
+                    date: this.getDateFromGesuch()
+                });
+            } else {
+                return this.$translate.instant('MENU_MUTATION');
+            }
+        }
     }
 
 }

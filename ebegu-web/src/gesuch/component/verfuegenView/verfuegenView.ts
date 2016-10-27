@@ -14,6 +14,8 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
+import IRootScopeService = angular.IRootScopeService;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -56,16 +58,28 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         form.$setPristine();
     }
 
-    reset() {
+    reset(): void {
         this.gesuchModelManager.restoreBackupOfPreviousGesuch();
     }
 
-    save(form: IFormController) {
+    save(form: IFormController): void {
         if (form.$valid) {
             this.saveVerfuegung().then(() => {
                 this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
                     this.gesuchModelManager.getBetreuungToWorkWith().id, true, null).then(() => {
-                    this.$state.go('gesuch.verfuegen');
+                    this.$state.go('gesuch.verfuegen', {
+                        gesuchId: this.getGesuchId()
+                    });
+                });
+            });
+        }
+    }
+
+    schliessenOhneVerfuegen(form: IFormController) {
+        if (form.$valid) {
+            this.verfuegungSchliessenOhenVerfuegen().then(() => {
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
                 });
             });
         }
@@ -170,11 +184,23 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             });
     }
 
+    public verfuegungSchliessenOhenVerfuegen(): IPromise<void> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN',
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_OHNE_VERFUEGEN'
+        })
+            .then(() => {
+                this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+                this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
+            });
+    }
+
     /**
      * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
      */
     private setBemerkungen(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT) {
+        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT ||
+            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
             this.bemerkungen = '';
@@ -189,7 +215,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
-            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT;
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT
+            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
     }
 
     public openVerfuegungPDF(): void {
@@ -199,5 +226,12 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
             });
+    }
+
+    public isSameVerfuegungdaten(): boolean {
+        if (this.getVerfuegenToWorkWith()) {
+            return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;
+        }
+        return undefined;
     }
 }

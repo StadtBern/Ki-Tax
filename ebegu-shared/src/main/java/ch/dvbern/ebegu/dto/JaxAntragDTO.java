@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.dto;
 
 import ch.dvbern.ebegu.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.ebegu.converters.LocalDateXMLConverter;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -31,6 +32,15 @@ public class JaxAntragDTO {
 		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
 		this.eingangsdatum = eingangsdatum;
 		this.antragTyp = antragTyp;
+	}
+
+	public JaxAntragDTO(String antragId, LocalDate gesuchsperiodeGueltigAb, LocalDate gesuchsperiodeGueltigBis, LocalDate eingangsdatum, AntragTyp antragTyp, AntragStatus antragStatus) {
+		this.antragId = antragId;
+		this.gesuchsperiodeGueltigAb = gesuchsperiodeGueltigAb;
+		this.gesuchsperiodeGueltigBis = gesuchsperiodeGueltigBis;
+		this.eingangsdatum = eingangsdatum;
+		this.antragTyp = antragTyp;
+		this.verfuegt = AntragStatus.VERFUEGT.equals(antragStatus);
 	}
 
 	@NotNull
@@ -72,6 +82,8 @@ public class JaxAntragDTO {
 
 	@NotNull
 	private AntragStatusDTO status;
+
+	private boolean verfuegt;
 
 
 	public JaxAntragDTO() {
@@ -174,5 +186,13 @@ public class JaxAntragDTO {
 
 	public void setStatus(AntragStatusDTO status) {
 		this.status = status;
+	}
+
+	public boolean isVerfuegt() {
+		return verfuegt;
+	}
+
+	public void setVerfuegt(boolean verfuegt) {
+		this.verfuegt = verfuegt;
 	}
 }

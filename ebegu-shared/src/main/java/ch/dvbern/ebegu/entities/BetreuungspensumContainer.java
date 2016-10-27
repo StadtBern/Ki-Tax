@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,16 @@ public class BetreuungspensumContainer extends AbstractEntity implements Compara
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_betreuungspensum_container_betreuungspensum_ja"))
 	private Betreuungspensum betreuungspensumJA;
 
+
+	public BetreuungspensumContainer() {
+	}
+
+	public BetreuungspensumContainer(@Nonnull BetreuungspensumContainer toCopy, @Nonnull Betreuung betreuung) {
+		this.setVorgaengerId(toCopy.getId());
+		this.betreuung = betreuung;
+		this.betreuungspensumGS = null;
+		this.betreuungspensumJA = new Betreuungspensum(toCopy.betreuungspensumJA);
+	}
 
 	public Betreuung getBetreuung() {
 		return this.betreuung;

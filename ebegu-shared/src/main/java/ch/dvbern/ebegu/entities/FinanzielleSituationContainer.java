@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,16 @@ public class FinanzielleSituationContainer extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_finanzielleSituationContainer_finanzielleSituationJA_id"), nullable = true)
 	private FinanzielleSituation finanzielleSituationJA;
 
+	public FinanzielleSituationContainer() {
+	}
+
+	public FinanzielleSituationContainer(@Nonnull FinanzielleSituationContainer toCopy, @Nonnull Gesuchsteller gesuchsteller) {
+		this.setVorgaengerId(toCopy.getId());
+		this.gesuchsteller = gesuchsteller;
+		this.jahr = toCopy.jahr;
+		this.finanzielleSituationGS = null;
+		this.finanzielleSituationJA = new FinanzielleSituation(toCopy.finanzielleSituationJA);
+	}
 
 	public Gesuchsteller getGesuchsteller() {
 		return gesuchsteller;

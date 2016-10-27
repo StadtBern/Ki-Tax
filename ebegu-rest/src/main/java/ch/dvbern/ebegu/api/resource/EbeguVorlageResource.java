@@ -108,7 +108,7 @@ public class EbeguVorlageResource {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response save(@Context HttpServletRequest request, @Context UriInfo uriInfo, MultipartFormDataInput input)
-		throws IOException, ServletException, MimeTypeParseException, SQLException, SerialException, EbeguException {
+		throws IOException, ServletException, MimeTypeParseException, SQLException, EbeguException {
 
 		request.setAttribute(InputPart.DEFAULT_CONTENT_TYPE_PROPERTY, "*/*; charset=UTF-8");
 

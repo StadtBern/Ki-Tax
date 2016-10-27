@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 
 	@Before
 	public void setUp() {
-		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence);
+		gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 
 		wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK));
 		familienStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT));
@@ -62,6 +64,62 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		einkVerStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.EINKOMMENSVERSCHLECHTERUNG, WizardStepStatus.UNBESUCHT));
 		dokStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.DOKUMENTE, WizardStepStatus.UNBESUCHT));
 		verfStep = wizardStepService.saveWizardStep(TestDataUtil.createWizardStepObject(gesuch, WizardStepName.VERFUEGEN, WizardStepStatus.UNBESUCHT));
+	}
+
+	@Test
+	public void createWizardStepListForGesuchTest() {
+		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
+		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
+		Assert.assertNotNull(wizardStepList);
+		Assert.assertEquals(10, wizardStepList.size());
+
+		wizardStepList.forEach(wizardStep -> {
+			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertTrue(wizardStep.getVerfuegbar());
+				Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			}
+			else {
+				Assert.assertFalse(wizardStep.getVerfuegbar());
+				Assert.assertEquals(WizardStepStatus.UNBESUCHT, wizardStep.getWizardStepStatus());
+			}
+		});
+	}
+
+	@Test
+	public void createWizardStepListForMutationTest() {
+		final Gesuch mutation = TestDataUtil.createAndPersistGesuch(persistence);
+		mutation.setTyp(AntragTyp.MUTATION);
+		final Mutationsdaten mutationsdaten = new Mutationsdaten();
+		mutationsdaten.setMutationEinkommensverschlechterung(true);
+		mutationsdaten.setMutationErwerbspensum(true);
+		mutation.setMutationsdaten(mutationsdaten);
+
+		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(mutation);
+
+		Assert.assertNotNull(wizardStepList);
+		Assert.assertEquals(10, wizardStepList.size());
+
+		wizardStepList.forEach(wizardStep -> {
+			// status
+			if (WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertEquals(WizardStepStatus.WARTEN, wizardStep.getWizardStepStatus());
+			}
+			else {
+				Assert.assertEquals(WizardStepStatus.OK, wizardStep.getWizardStepStatus());
+			}
+
+			//verfuegbarkeit
+			if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.DOKUMENTE.equals(wizardStep.getWizardStepName())
+				|| WizardStepName.VERFUEGEN.equals(wizardStep.getWizardStepName())) {
+				Assert.assertTrue(wizardStep.getVerfuegbar());
+			}
+			else {
+				Assert.assertFalse(wizardStep.getVerfuegbar());
+			}
+		});
 	}
 
 	@Test
@@ -77,6 +135,19 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		updateStatus(familienStep, WizardStepStatus.IN_BEARBEITUNG);
 
 		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.FAMILIENSITUATION);
+		Assert.assertEquals(10, wizardSteps.size());
+
+		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());
+	}
+
+	@Test
+	public void updateWizardStepFamiliensituationWhenItDoesntExistYet() {
+		updateStatus(familienStep, WizardStepStatus.IN_BEARBEITUNG);
+		updateStatus(gesuchstellerStep, WizardStepStatus.IN_BEARBEITUNG);
+
+		//oldData ist eine leere Familiensituation
+		final List<WizardStep> wizardSteps = wizardStepService.updateSteps(gesuch.getId(),
+			new Familiensituation(), TestDataUtil.createDefaultFamiliensituation(), WizardStepName.FAMILIENSITUATION);
 		Assert.assertEquals(10, wizardSteps.size());
 
 		Assert.assertEquals(WizardStepStatus.OK, findStepByName(wizardSteps, WizardStepName.FAMILIENSITUATION).getWizardStepStatus());

@@ -21,6 +21,10 @@ public class Verfuegung extends AbstractEntity{
 
 	private static final long serialVersionUID = -6682874795746487562L;
 
+
+	@Transient
+	private boolean sameVerfuegungsdaten;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -34,7 +38,6 @@ public class Verfuegung extends AbstractEntity{
 	@NotNull
 	@OneToOne (optional = false, mappedBy = "verfuegung")
 	private Betreuung betreuung;
-
 
 	@Nonnull
 	@Valid
@@ -65,6 +68,9 @@ public class Verfuegung extends AbstractEntity{
 
 	public void setZeitabschnitte(List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		this.zeitabschnitte = zeitabschnitte;
+		for (VerfuegungZeitabschnitt zeitabschnitt : this.zeitabschnitte) {
+			zeitabschnitt.setVerfuegung(this);
+		}
 	}
 
 	public Betreuung getBetreuung() {
@@ -87,5 +93,13 @@ public class Verfuegung extends AbstractEntity{
 			sb.append(zeitabschnitt);
 		}
 		return sb.toString();
+	}
+
+	public boolean isSameVerfuegungsdaten() {
+		return sameVerfuegungsdaten;
+	}
+
+	public void setSameVerfuegungsdaten(boolean sameVerfuegungsdaten) {
+		this.sameVerfuegungsdaten = sameVerfuegungsdaten;
 	}
 }

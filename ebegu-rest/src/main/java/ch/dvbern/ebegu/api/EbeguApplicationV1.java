@@ -20,6 +20,7 @@ import java.util.Set;
 
 /**
  * Entry-Point of all REST-Services. Used by JAX-RS to List all available Service implementations
+ * Also defines the api root path from the context onwards ebegu/api/v1
  */
 
 /*

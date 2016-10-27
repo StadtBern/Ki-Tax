@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.entities;
 
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -19,6 +20,14 @@ public class PensumFachstelle extends AbstractPensumEntity {
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_pensum_fachstelle_fachstelle_id"))
 	private Fachstelle fachstelle;
+
+	public PensumFachstelle() {
+	}
+
+	public PensumFachstelle(@Nonnull PensumFachstelle toCopy) {
+		super(toCopy);
+		this.fachstelle = toCopy.fachstelle;
+	}
 
 	public Fachstelle getFachstelle() {
 		return fachstelle;

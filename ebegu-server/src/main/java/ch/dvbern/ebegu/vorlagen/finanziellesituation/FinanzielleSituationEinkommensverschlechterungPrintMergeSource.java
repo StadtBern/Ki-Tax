@@ -23,7 +23,7 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	private BerechnungsgrundlagenInformationPrint berechnung;
 
 	/**
-	 * @param berechnungsgrundlagenFinanziellenSituationPrint
+	 * @param berechnung
 	 */
 	public FinanzielleSituationEinkommensverschlechterungPrintMergeSource(BerechnungsgrundlagenInformationPrint berechnung) {
 		this.berechnung = berechnung;
@@ -47,8 +47,13 @@ public class FinanzielleSituationEinkommensverschlechterungPrintMergeSource impl
 	@Override
 	public List<MergeSource> whileStatement(MergeContext mergeContext, String key) throws DocTemplateException {
 
-		if (key.startsWith("berechnung")) {
+		String[] array = key.split("[.]+");
+	    String subkey = array[0];
+		if (subkey.equalsIgnoreCase("berechnung")) {
 			return new BeanMergeSource(berechnung, "berechnung.").whileStatement(mergeContext, key);
+		}
+		if (subkey.equalsIgnoreCase("berechnungsblaetter")) {
+			return new BeanMergeSource(berechnung, "berechnungsblaetter.").whileStatement(mergeContext, key);
 		}
 		return null;
 	}

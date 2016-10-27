@@ -1,30 +1,50 @@
 package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Entitaet zum Speichern von Gesuch in der Datenbank.
  */
 @Audited
 @Entity
-//todo team die FK kann irgendwie nicht ueberschrieben werden. Folgende 2 Moeglichkeiten sollten gehen aber es ueberschreibt den Namen nicht --> Problem mit hibernate-maven-plugin??
-//@AssociationOverride(name = "gesuchsperiode", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_gesuchsperiode_id")))
-//@AssociationOverride(name = "gesuchsperiode", foreignKey = @ForeignKey(name="FK_gesuch_gesuchsperiode_id"))
-public class Gesuch extends AbstractAntragEntity {
+public class Gesuch extends AbstractEntity {
 
 	private static final long serialVersionUID = -8403487439884700618L;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_fall_id"))
+	private Fall fall;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_antrag_gesuchsperiode_id"))
+	private Gesuchsperiode gesuchsperiode;
+
+	@Column(nullable = true)
+	private LocalDate eingangsdatum;
+
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private AntragStatus status;
+
+	@NotNull
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private AntragTyp typ = AntragTyp.GESUCH;
 
 	@Valid
 	@Nullable
@@ -67,6 +87,42 @@ public class Gesuch extends AbstractAntragEntity {
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
 	private String bemerkungen;
 
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
+	private Mutationsdaten mutationsdaten;
+
+
+	public Gesuch() {
+	}
+
+	public Gesuch(@Nonnull Gesuch toCopy) {
+		this.setVorgaengerId(toCopy.getId());
+		this.setFall(toCopy.getFall());
+		this.setGesuchsperiode(toCopy.getGesuchsperiode());
+		this.setEingangsdatum(null);
+		this.setStatus(AntragStatus.IN_BEARBEITUNG_JA); //TODO (team) abhaengig vom eingeloggten Benutzer!
+		this.setTyp(AntragTyp.MUTATION);
+
+		if (toCopy.getMutationsdaten() != null) {
+			this.setMutationsdaten(new Mutationsdaten(toCopy.getMutationsdaten()));
+		}
+		if (toCopy.getGesuchsteller1() != null) {
+			this.setGesuchsteller1(new Gesuchsteller(toCopy.getGesuchsteller1()));
+		}
+		if (toCopy.getGesuchsteller2() != null) {
+			this.setGesuchsteller2(new Gesuchsteller(toCopy.getGesuchsteller2()));
+		}
+		for (KindContainer kindContainer : toCopy.getKindContainers()) {
+			this.addKindContainer(new KindContainer(kindContainer, this));
+		}
+		this.setAntragStatusHistories(new LinkedHashSet<>());
+		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
+		if (toCopy.getEinkommensverschlechterungInfo() != null) {
+			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
+		}
+		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
+	}
 
 	@Nullable
 	public Gesuchsteller getGesuchsteller1() {
@@ -145,6 +201,76 @@ public class Gesuch extends AbstractAntragEntity {
 		this.bemerkungen = bemerkungen;
 	}
 
+	public Fall getFall() {
+		return fall;
+	}
+
+	public final void setFall(Fall fall) {
+		this.fall = fall;
+	}
+
+	public Gesuchsperiode getGesuchsperiode() {
+		return gesuchsperiode;
+	}
+
+	public final void setGesuchsperiode(Gesuchsperiode gesuchsperiode) {
+		this.gesuchsperiode = gesuchsperiode;
+	}
+
+	public LocalDate getEingangsdatum() {
+		return eingangsdatum;
+	}
+
+	public final void setEingangsdatum(LocalDate eingangsdatum) {
+		this.eingangsdatum = eingangsdatum;
+	}
+
+	public AntragStatus getStatus() {
+		return status;
+	}
+
+	public final void setStatus(AntragStatus status) {
+		this.status = status;
+	}
+
+	public AntragTyp getTyp() {
+		return typ;
+	}
+
+	public final void setTyp(AntragTyp typ) {
+		this.typ = typ;
+	}
+
+	@Nullable
+	public final Mutationsdaten getMutationsdaten() {
+		return mutationsdaten;
+	}
+
+	public final void setMutationsdaten(@Nullable Mutationsdaten mutationsdaten) {
+		this.mutationsdaten = mutationsdaten;
+//		if (this.mutationsdaten != null) {
+//			this.mutationsdaten.setGesuch(this);
+//		}
+	}
+
+	@SuppressWarnings("ObjectEquality")
+	public boolean isSame(Gesuch otherAntrag) {
+		if (this == otherAntrag) {
+			return true;
+		}
+		if (otherAntrag == null || getClass() != otherAntrag.getClass()) {
+			return false;
+		}
+		return (Objects.equals(this.getEingangsdatum(), otherAntrag.getEingangsdatum())
+			&& Objects.equals(this.getFall(), otherAntrag.getFall())
+			&& Objects.equals(this.getGesuchsperiode(), otherAntrag.getGesuchsperiode()));
+	}
+
+	public String getAntragNummer() {
+		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
+			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
+	}
+
 	@Transient
 	public List<Betreuung> extractAllBetreuungen() {
 		final List<Betreuung> list = new ArrayList<>();
@@ -152,6 +278,18 @@ public class Gesuch extends AbstractAntragEntity {
 			list.addAll(kind.getBetreuungen());
 		}
 		return list;
+	}
+
+	@Transient
+	public Betreuung extractBetreuungById(String betreuungId) {
+		for (KindContainer kind : getKindContainers()) {
+			for (Betreuung betreuung : kind.getBetreuungen()) {
+				if (betreuung.getId().equals(betreuungId)) {
+					return betreuung;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -162,6 +300,6 @@ public class Gesuch extends AbstractAntragEntity {
 		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
 		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
 		return bothFamiliennamen;
-
 	}
+
 }

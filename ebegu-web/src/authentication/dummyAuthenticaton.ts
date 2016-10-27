@@ -9,14 +9,14 @@ import {TSTraegerschaft} from '../models/TSTraegerschaft';
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
-export class AuthenticationComponentConfig implements IComponentOptions {
+export class DummyAuthenticationComponentConfig implements IComponentOptions {
     transclude = false;
     template = template;
-    controller = AuthenticationListViewController;
+    controller = DummyAuthenticationListViewController;
     controllerAs = 'vm';
 }
 
-export class AuthenticationListViewController {
+export class DummyAuthenticationListViewController {
 
     public usersList: Array<TSUser>;
     private mandant: TSMandant;
@@ -107,12 +107,14 @@ export class AuthenticationListViewController {
 
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
-            if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_JA' || user.getRoleKey() === 'TSRole_ADMIN' || user.getRoleKey() === 'TSRole_GESUCHSTELLER') {
+            if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_JA' || user.getRoleKey() === 'TSRole_ADMIN') {
                 this.$state.go('pendenzen');
             } else  if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
                 this.$state.go('pendenzenInstitution');
             } else if (user.getRoleKey() === 'TSRole_SCHULAMT') {
                 this.$state.go('faelle');
+            } else if (user.getRoleKey() === 'TSRole_GESUCHSTELLER') {
+                this.$state.go('gesuchstellerDashboard');
             }
         });
     }

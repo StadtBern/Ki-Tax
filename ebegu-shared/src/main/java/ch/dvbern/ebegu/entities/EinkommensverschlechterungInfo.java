@@ -4,6 +4,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -77,7 +78,8 @@ public class EinkommensverschlechterungInfo extends AbstractEntity {
 	/**
 	 * Copy Constructor. ACHTUNG kopiert nur daten die in dieser Klasse definiert sind
 	 */
-	public EinkommensverschlechterungInfo(EinkommensverschlechterungInfo that) {
+	public EinkommensverschlechterungInfo(@Nonnull EinkommensverschlechterungInfo that) {
+		this.setVorgaengerId(that.getId());
 		this.einkommensverschlechterung = that.einkommensverschlechterung;
 		this.ekvFuerBasisJahrPlus1 = that.ekvFuerBasisJahrPlus1;
 		this.ekvFuerBasisJahrPlus2 = that.ekvFuerBasisJahrPlus2;

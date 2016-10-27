@@ -7,6 +7,7 @@ import WizardStepRS from './WizardStepRS.rest';
 import TSWizardStep from '../../models/TSWizardStep';
 import {IScope, IQService} from 'angular';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 
 describe('wizardStepManager', function () {
 
@@ -70,15 +71,30 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getWizardSteps().length).toBe(1);
             expect(wizardStepManager.getWizardSteps()[0]).toBe(step);
         });
-    });
-    describe('isNextStepBesucht', function() {
-        it('next step is available because status != UNBESUCHT', function() {
-            createTwoSteps(TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.OK);
+        it('does not find any steps im Server -> minimale steps must be set', function() {
+            let steps: TSWizardStep[] = [];
+            spyOn(wizardStepRS, 'findWizardStepsFromGesuch').and.returnValue($q.when(steps));
+
             wizardStepManager.findStepsFromGesuch('123');
             scope.$apply();
 
+            expect(wizardStepRS.findWizardStepsFromGesuch).toHaveBeenCalledWith('123');
+            expect(wizardStepManager.getWizardSteps()).toBeDefined();
+            expect(wizardStepManager.getWizardSteps().length).toBe(1);
+            expect(wizardStepManager.getWizardSteps()[0].wizardStepName).toBe(TSWizardStepName.GESUCH_ERSTELLEN);
+            expect(wizardStepManager.getWizardSteps()[0].wizardStepStatus).toBe(TSWizardStepStatus.IN_BEARBEITUNG);
+            expect(wizardStepManager.getWizardSteps()[0].verfuegbar).toBe(true);
+            expect(wizardStepManager.getCurrentStep()).toBe(wizardStepManager.getWizardSteps()[0]);
+        });
+    });
+    describe('isNextStepBesucht', function() {
+        it('next step is available because status != UNBESUCHT', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
+
             wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
-            expect(wizardStepManager.isNextStepBesucht()).toBe(true);
+            expect(wizardStepManager.isNextStepBesucht(TSAntragTyp.GESUCH)).toBe(true);
         });
     });
     describe('areAllStepsOK', function() {
@@ -114,17 +130,38 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.hasStepGivenStatus(TSWizardStepName.BETREUUNG, TSWizardStepStatus.NOK)).toBe(false);
         });
     });
-
-
-    function createTwoSteps(name1: TSWizardStepName, name2: TSWizardStepName, status: TSWizardStepStatus) {
-        let step: TSWizardStep = new TSWizardStep();
-        step.wizardStepName = name1;
-        let step2: TSWizardStep = new TSWizardStep();
-        step2.wizardStepName = name2;
-        step2.wizardStepStatus = status;
-        let steps: TSWizardStep[] = [step, step2];
-        spyOn(wizardStepRS, 'findWizardStepsFromGesuch').and.returnValue($q.when(steps));
-    }
+    describe('getNextStep', function() {
+        it('returns ERWERBSPENSUM coming from BETREUUNG for SACHBEARBEITER_JA', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
+            expect(wizardStepManager.getNextStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.ERWERBSPENSUM);
+        });
+        it('returns VERFUEGEN coming from BETREUUNG for SACHBEARBEITER_INSTITUTION', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
+            expect(wizardStepManager.getNextStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.VERFUEGEN);
+        });
+    });
+    describe('getPreviousStep', function() {
+        it('returns BETREUUNG coming from ERWERBSPENSUM for SACHBEARBEITER_JA', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
+            expect(wizardStepManager.getPreviousStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.BETREUUNG);
+        });
+        it('returns BETREUUNG coming from VERFUEGEN for SACHBEARBEITER_INSTITUTION', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
+            expect(wizardStepManager.getPreviousStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.BETREUUNG);
+        });
+    });
 
     function createAllSteps(status: TSWizardStepStatus): void {
         wizardStepManager.getWizardSteps().splice(0, wizardStepManager.getWizardSteps().length);

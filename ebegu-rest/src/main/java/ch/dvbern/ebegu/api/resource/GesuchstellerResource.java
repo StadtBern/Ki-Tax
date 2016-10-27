@@ -1,17 +1,15 @@
 package ch.dvbern.ebegu.api.resource;
 
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
-import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxGesuchsteller;
+import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchstellerService;
-import ch.dvbern.ebegu.services.WizardStepService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.Validate;
@@ -39,8 +37,6 @@ public class GesuchstellerResource {
 
 	@Inject
 	private GesuchstellerService gesuchstellerService;
-	@Inject
-	private WizardStepService wizardStepService;
 	@Inject
 	private GesuchService gesuchService;
 
@@ -72,12 +68,7 @@ public class GesuchstellerResource {
 			}
 
 			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller);
-
-			if ((gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
-				|| (!gesuch.get().getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
-				wizardStepService.updateSteps(gesuchJAXPId.getId(), null, null, WizardStepName.GESUCHSTELLER);
-			}
+			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber);
 
 			return converter.gesuchstellerToJAX(persistedGesuchsteller);
 		}

@@ -27,8 +27,6 @@ public class JaxAuthAccessElement implements Serializable {
 	@Nonnull
 	private String authId = "";
 	@Nonnull
-	private String username = "";
-	@Nonnull
 	private String nachname = "";
 	@Nonnull
 	private String vorname = "";
@@ -41,10 +39,9 @@ public class JaxAuthAccessElement implements Serializable {
 		// jaxb/jaxrs only
 	}
 
-	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String username, @Nonnull String nachname,
+	public JaxAuthAccessElement(@Nonnull String authId, @Nonnull String nachname,
 								@Nonnull String vorname, @Nonnull String email, @Nonnull UserRole role) {
 		this.authId = Objects.requireNonNull(authId);
-		this.username = Objects.requireNonNull(username);
 		this.nachname = Objects.requireNonNull(nachname);
 		this.vorname = Objects.requireNonNull(vorname);
 		this.email = Objects.requireNonNull(email);
@@ -58,15 +55,6 @@ public class JaxAuthAccessElement implements Serializable {
 
 	public void setAuthId(@Nonnull final String authId) {
 		this.authId = authId;
-	}
-
-	@Nonnull
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(@Nonnull String username) {
-		this.username = username;
 	}
 
 	@Nonnull

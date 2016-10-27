@@ -25,13 +25,17 @@ import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Implementiert VerfuegungsGenerierungPDFService
@@ -39,6 +43,9 @@ import java.util.Objects;
 @Stateless
 @Local(PrintVerfuegungPDFService.class)
 public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implements PrintVerfuegungPDFService {
+
+	@Inject
+	VerfuegungService verfuegungService;
 
 	@Nonnull
 	@Override
@@ -48,38 +55,39 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		Objects.requireNonNull(gesuch, "Das Argument 'gesuch' darf nicht leer sein");
 
 		List<byte[]> result = new ArrayList<>();
-
-		try {
-
-			for (KindContainer kindContainer : gesuch.getKindContainers()) {
-				for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-					// Pro Betreuung ein Dokument
-					result.add(printVerfuegungForBetreuung(betreuung));
-				}
-			}
-		} catch (IOException | DocTemplateException e) {
-			throw new MergeDocException("printVerfuegungen()",
-				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
-		}
+        for (KindContainer kindContainer : gesuch.getKindContainers()) {
+            for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+                // Pro Betreuung ein Dokument
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				result.add(printVerfuegungForBetreuung(betreuung, letztesVerfDatum));
+            }
+        }
 		return result;
 	}
 
 	@Nonnull
 	@Override
-	public byte[] printVerfuegungForBetreuung(Betreuung betreuung) throws MergeDocException, DocTemplateException, IOException {
+	public byte[] printVerfuegungForBetreuung(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) throws MergeDocException {
 		final DOCXMergeEngine docxME = new DOCXMergeEngine("Verfuegungsmuster");
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
+		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
+		String defaultVorlagePathFromBetreuungsangebottyp = getDefaultVorlagePathFromBetreuungsangebottyp(betreuung);
 		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-			gueltigkeit.getGueltigBis(), getVorlageFromBetreuungsangebottyp(betreuung), getDefaultVorlagePathFromBetreuungsangebottyp(betreuung));
+			gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp, defaultVorlagePathFromBetreuungsangebottyp);
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 
-		final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME
-			.getDocument(is, new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung))));
-
-		is.close();
-
-		return bytes;
+		try {
+			VerfuegungPrintMergeSource mergeSource = new VerfuegungPrintMergeSource(new VerfuegungPrintImpl(betreuung, letzteVerfuegungDatum));
+			byte[] document = docxME.getDocument(is, mergeSource);
+			final byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(document);
+			is.close();
+			return bytes;
+		} catch (IOException | DocTemplateException e) {
+			throw new MergeDocException("printVerfuegungen()",
+				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
+		}
 	}
 
 	/**

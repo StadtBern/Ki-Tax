@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.errors.MergeDocException;
 
 import javax.annotation.Nonnull;
@@ -22,9 +23,10 @@ public interface PrintFinanzielleSituationPDFService {
 	 * Bereitet die Verfuegungsdokumente auf
 	 *
 	 * @param gesuch das Gesuch
+	 * @param famGroessenVerfuegung
 	 * @return das Dokument FinanzielleSituation
 	 * @throws MergeDocException Falls bei der Generierung von FinanzielleSituation einen Fehler auftritt
 	 */
 	@Nonnull
-	byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch) throws MergeDocException;
+	byte[] printFinanzielleSituation(@Nonnull Gesuch gesuch, Verfuegung famGroessenVerfuegung) throws MergeDocException;
 }

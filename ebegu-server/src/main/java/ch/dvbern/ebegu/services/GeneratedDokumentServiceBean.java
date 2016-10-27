@@ -1,10 +1,14 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.GeneratedDokument;
-import ch.dvbern.ebegu.entities.GeneratedDokument_;
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
-import ch.dvbern.ebegu.enums.GeneratedDokumentTyp;
+import ch.dvbern.ebegu.config.EbeguConfiguration;
+import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
+import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
+import ch.dvbern.ebegu.rules.BetreuungsgutscheinEvaluator;
+import ch.dvbern.ebegu.rules.Rule;
+import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
 
@@ -13,14 +17,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service fuer GeneratedDokument
@@ -34,6 +41,37 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Inject
 	private FileSaverService fileSaverService;
+
+	@Inject
+	private PrintFinanzielleSituationPDFService printFinanzielleSituationPDFService;
+
+	@Inject
+	private FinanzielleSituationService finanzielleSituationService;
+
+	@Inject
+	private EbeguConfiguration ebeguConfiguration;
+
+	@Inject
+	private PrintBegleitschreibenPDFService printBegleitschreibenPDFService;
+
+	@Inject
+	private PrintVerfuegungPDFService verfuegungsGenerierungPDFService;
+
+	@Inject
+	private VerfuegungService verfuegungService;
+
+	@Inject
+	private MandantService mandantService;
+
+	@Inject
+	ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	EbeguParameterService ebeguParameterService;
+
+	@Inject
+	private RulesService rulesService;
+
 
 	@Override
 	@Nonnull
@@ -66,7 +104,6 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	 */
 	@Nonnull
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public GeneratedDokument updateGeneratedDokument(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, Gesuch gesuch, String fileName) throws MimeTypeParseException {
 		final UploadFileInfo savedDokument = fileSaverService.save(data,
 			fileName, gesuch.getId());
@@ -91,5 +128,104 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			fileSaverService.remove(filePathToRemove);
 		}
 		return this.saveGeneratedDokument(generatedDokument);
+	}
+
+	@Override
+	public GeneratedDokument getDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, final GeneratedDokumentTyp dokumentTyp,
+																	 Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(dokumentTyp, gesuch.getAntragNummer());
+		GeneratedDokument persistedDokument = null;
+		if (!forceCreation && AntragStatus.VERFUEGT.equals(gesuch.getStatus()) || AntragStatus.VERFUEGEN.equals(gesuch.getStatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(), fileNameForGeneratedDokumentTyp,
+				ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+		if ((!AntragStatus.VERFUEGT.equals(gesuch.getStatus()) && !AntragStatus.VERFUEGEN.equals(gesuch.getStatus()))
+			|| persistedDokument == null) {
+			// Wenn das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es trotzdem erstellen
+			finanzielleSituationService.calculateFinanzDaten(gesuch);
+
+			byte[] data;
+			if (GeneratedDokumentTyp.FINANZIELLE_SITUATION.equals(dokumentTyp)) {
+				final BetreuungsgutscheinEvaluator evaluator = initEvaluator(gesuch);
+				final Verfuegung famGroessenVerfuegung = evaluator.evaluateFamiliensituation(gesuch);
+				data = printFinanzielleSituationPDFService.printFinanzielleSituation(gesuch, famGroessenVerfuegung);
+			} else if (GeneratedDokumentTyp.BEGLEITSCHREIBEN.equals(dokumentTyp)) {
+				data = printBegleitschreibenPDFService.printBegleitschreiben(gesuch);
+			} else {
+				return null;
+			}
+
+			persistedDokument = updateGeneratedDokument(data, dokumentTyp, gesuch,
+				fileNameForGeneratedDokumentTyp);
+		}
+		return persistedDokument;
+	}
+
+	@Nonnull
+	public BetreuungsgutscheinEvaluator initEvaluator(@Nonnull Gesuch gesuch) {
+		Mandant mandant = mandantService.getFirst();   //gesuch get mandant?
+		List<Rule> rules = rulesService.getRulesForGesuchsperiode(mandant, gesuch.getGesuchsperiode());
+		Boolean enableDebugOutput = applicationPropertyService.findApplicationPropertyAsBoolean(ApplicationPropertyKey.EVALUATOR_DEBUG_ENABLED, true);
+		BetreuungsgutscheinEvaluator bgEvaluator = new BetreuungsgutscheinEvaluator(rules, enableDebugOutput);
+		loadCalculatorParameters(mandant, gesuch.getGesuchsperiode());
+		return bgEvaluator;
+	}
+
+
+	private BGRechnerParameterDTO loadCalculatorParameters(Mandant mandant, @Nonnull Gesuchsperiode gesuchsperiode) {
+		Map<EbeguParameterKey, EbeguParameter> paramMap = ebeguParameterService.getEbeguParameterByGesuchsperiodeAsMap(gesuchsperiode);
+		BGRechnerParameterDTO parameterDTO = new BGRechnerParameterDTO(paramMap, gesuchsperiode, mandant);
+
+		//Es gibt aktuell einen Parameter der sich aendert am Jahreswechsel
+//		int startjahr = gesuchsperiode.getGueltigkeit().getGueltigAb().getYear();
+//		int endjahr = gesuchsperiode.getGueltigkeit().getGueltigBis().getYear();
+//		Validate.isTrue(endjahr == startjahr +1, "Startjahr " + startjahr + " muss ein Jahr vor Endjahr"+ endjahr +" sein ");
+//		BigDecimal abgeltungJahr1 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, startjahr);
+//		BigDecimal abgeltungJahr2 = loadYearlyParameter(PARAM_FIXBETRAG_STADT_PRO_TAG_KITA, endjahr);
+//		parameterDTO.setBeitragStadtProTagJahr1((abgeltungJahr1));
+//		parameterDTO.setBeitragStadtProTagJahr2((abgeltungJahr2));
+		return parameterDTO;
+	}
+
+	@Override
+	public GeneratedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(final Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
+																			   Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException {
+
+		GeneratedDokument persistedDokument = null;
+
+		if (!forceCreation && Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
+			persistedDokument = findGeneratedDokument(gesuch.getId(),
+				DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+					betreuung.getBGNummer()), ebeguConfiguration.getDocumentFilePath() + "/" + gesuch.getId());
+		}
+		// Wenn die Betreuung nicht verfuegt ist oder das Dokument nicht geladen werden konnte, heisst es dass es nicht existiert und wir muessen es erstellen
+		// (Der Status wird auf Verfuegt gesetzt, BEVOR das Dokument erstellt wird!)
+		if (!Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus()) || persistedDokument == null) {
+			finanzielleSituationService.calculateFinanzDaten(gesuch);
+			final Gesuch gesuchWithVerfuegung = verfuegungService.calculateVerfuegung(gesuch);
+
+			Betreuung matchedBetreuung = gesuchWithVerfuegung.extractBetreuungById(betreuung.getId());
+			if (matchedBetreuung != null) {
+				if (!manuelleBemerkungen.isEmpty()) {
+					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
+				}
+
+				final byte[] verfuegungsPDF;
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum );
+
+
+				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
+					matchedBetreuung.getBGNummer());
+
+				persistedDokument = updateGeneratedDokument(verfuegungsPDF, GeneratedDokumentTyp.VERFUEGUNG,
+					gesuch, fileNameForDocTyp);
+			} else {
+				throw new EbeguEntityNotFoundException("getVerfuegungDokumentAccessTokenGeneratedDokument",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "Betreuung not found: " + betreuung.getId());
+			}
+		}
+		return persistedDokument;
 	}
 }

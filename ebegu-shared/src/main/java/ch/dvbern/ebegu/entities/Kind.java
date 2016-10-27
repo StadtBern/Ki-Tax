@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import org.hibernate.envers.Audited;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -47,11 +48,29 @@ public class Kind extends AbstractPersonEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_kind_pensum_fachstelle_id"), nullable = true)
 	private PensumFachstelle pensumFachstelle;
 
+
+	public Kind() {
+
+	}
+
+	public Kind(@Nonnull Kind toCopy) {
+		super(toCopy);
+		this.wohnhaftImGleichenHaushalt = toCopy.wohnhaftImGleichenHaushalt;
+		this.kinderabzug = toCopy.kinderabzug;
+		this.familienErgaenzendeBetreuung = toCopy.familienErgaenzendeBetreuung;
+		this.mutterspracheDeutsch = toCopy.mutterspracheDeutsch;
+		this.einschulung = toCopy.einschulung;
+		if (toCopy.pensumFachstelle != null) {
+			this.pensumFachstelle = new PensumFachstelle(toCopy.pensumFachstelle);
+		}
+	}
+
+	@Nullable
 	public Integer getWohnhaftImGleichenHaushalt() {
 		return wohnhaftImGleichenHaushalt;
 	}
 
-	public void setWohnhaftImGleichenHaushalt(Integer wohnhaftImGleichenHaushalt) {
+	public void setWohnhaftImGleichenHaushalt(@Nullable Integer wohnhaftImGleichenHaushalt) {
 		this.wohnhaftImGleichenHaushalt = wohnhaftImGleichenHaushalt;
 	}
 
