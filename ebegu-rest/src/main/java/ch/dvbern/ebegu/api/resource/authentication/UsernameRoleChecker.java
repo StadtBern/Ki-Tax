@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.api.resource.authentication;
 
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,7 @@ public class UsernameRoleChecker {
 		String pathToLoad = StringUtils.isEmpty(usersRsrcName) ? defaultUsersRsrcName : usersRsrcName;
 		URL url = this.getClass().getClassLoader().getResource(pathToLoad);
 		if (url == null) {
-			throw new EbeguRuntimeException("loadUsers",  USER_MISSING_MESSAGE + pathToLoad, pathToLoad);
+			throw new EbeguRuntimeException("loadUsers", USER_MISSING_MESSAGE + pathToLoad, pathToLoad);
 		}
 		try {
 			try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(pathToLoad)) {
@@ -104,7 +105,7 @@ public class UsernameRoleChecker {
 
 			}
 		} catch (IOException e) {
-			throw new EbeguRuntimeException("loadUsers", USER_MISSING_MESSAGE + pathToLoad,e, pathToLoad);
+			throw new EbeguRuntimeException("loadUsers", USER_MISSING_MESSAGE + pathToLoad, e, pathToLoad);
 		}
 	}
 
@@ -127,7 +128,7 @@ public class UsernameRoleChecker {
 		} else if (passwordToMatch.equals(inputPassword)) {
 			return true;
 		}
-		LOG.trace("Username / Pwassword were invalid " + inputUsername + " / "+ inputPassword);
+		LOG.trace("Username / Pwassword were invalid " + inputUsername + " / " + inputPassword);
 		return false;
 	}
 
@@ -138,7 +139,8 @@ public class UsernameRoleChecker {
 	 */
 	@Nullable
 	@Lock(value = LockType.READ)
-	protected String[] getRoles(@Nullable String username){
+	@SuppressFBWarnings("PZLA_PREFER_ZERO_LENGTH_ARRAYS")
+	protected String[] getRoles(@Nullable String username) {
 		if (username == null) {
 			return null;
 		}
