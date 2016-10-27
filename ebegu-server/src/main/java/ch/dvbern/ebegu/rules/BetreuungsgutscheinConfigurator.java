@@ -68,6 +68,7 @@ public class BetreuungsgutscheinConfigurator {
 		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_5, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5 muss gesetzt sein");
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_6 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6);
 		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_6, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6 muss gesetzt sein");
+
 		FamilienabzugAbschnittRule familienabzugAbschnittRule = new FamilienabzugAbschnittRule(defaultGueltigkeit,
 			param_pauschalabzug_pro_person_familiengroesse_3.getValueAsBigDecimal(),
 			param_pauschalabzug_pro_person_familiengroesse_4.getValueAsBigDecimal(),
