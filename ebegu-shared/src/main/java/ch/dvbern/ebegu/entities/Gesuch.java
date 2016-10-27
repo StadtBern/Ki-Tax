@@ -92,6 +92,11 @@ public class Gesuch extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
 	private Mutationsdaten mutationsdaten;
 
+	@Nullable
+	@Valid
+	@OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "gesuch")
+	private Set<DokumentGrund> dokumentGrunds = new HashSet<>();
+
 
 	public Gesuch() {
 	}
@@ -121,6 +126,11 @@ public class Gesuch extends AbstractEntity {
 		if (toCopy.getEinkommensverschlechterungInfo() != null) {
 			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
 		}
+
+		for (DokumentGrund dokumentGrund : toCopy.getDokumentGrunds()) {
+			this.dokumentGrunds.add(new DokumentGrund(dokumentGrund, this));
+		}
+
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
 	}
 
@@ -242,6 +252,15 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
+	public Set<DokumentGrund> getDokumentGrunds() {
+		return dokumentGrunds;
+	}
+
+	public void setDokumentGrunds(@Nullable Set<DokumentGrund> dokumentGrunds) {
+		this.dokumentGrunds = dokumentGrunds;
+	}
+
+	@Nullable
 	public final Mutationsdaten getMutationsdaten() {
 		return mutationsdaten;
 	}
@@ -274,7 +293,7 @@ public class Gesuch extends AbstractEntity {
 	@Transient
 	public List<Betreuung> extractAllBetreuungen() {
 		final List<Betreuung> list = new ArrayList<>();
-		for (final KindContainer kind: getKindContainers()) {
+		for (final KindContainer kind : getKindContainers()) {
 			list.addAll(kind.getBetreuungen());
 		}
 		return list;
@@ -296,7 +315,7 @@ public class Gesuch extends AbstractEntity {
 	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
 	 */
 	@Transient
-	public String extractFamiliennamenString(){
+	public String extractFamiliennamenString() {
 		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
 		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
 		return bothFamiliennamen;

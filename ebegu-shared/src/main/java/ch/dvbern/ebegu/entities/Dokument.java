@@ -25,6 +25,12 @@ public class Dokument extends File {
 	public Dokument() {
 	}
 
+	//copy
+	public Dokument(Dokument toCopy, DokumentGrund dokumentGrund) {
+		super(toCopy);
+		this.dokumentGrund = dokumentGrund;
+	}
+
 	public Dokument(DokumentGrund dokumentGrund) {
 		this.dokumentGrund = dokumentGrund;
 	}
