@@ -40,6 +40,10 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	private Benutzer benutzer = null;
 
 	// todo team Dieses Feld muss aus Sicherheitsgrunden entfernt werden wenn das dummylogin nicht mehr benoetigt wird
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	@Nullable
 	@Size(max = DB_DEFAULT_MAX_LENGTH)
 	private String password = null;
@@ -103,10 +107,19 @@ public class AuthorisierterBenutzer extends AbstractEntity {
 	}
 
 	@Nullable
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	@Nullable
+	@Deprecated
+	/**
+	 * @deprecated
+	 */
 	public void setPassword(@Nullable String password) {
 		this.password = password;
 	}

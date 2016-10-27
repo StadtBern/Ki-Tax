@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -24,7 +25,6 @@ import javax.annotation.Nullable;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -64,15 +64,9 @@ public class AuthResource {
 	@Inject
 	private FedletURLInitializer fedletURLInitializer;
 
-	private boolean containerLogin(@Nonnull JaxAuthLoginElement loginElement) {
-		try {
-			// zuallererst einloggen, damit die SQL-Statements in den Services auch den richtigen Mandant haben...
-			request.login(loginElement.getUsername(), loginElement.getPassword());
-			return true;
-		} catch (ServletException ignored) {
-			return false;
-		}
-	}
+	@Inject
+	private UsernameRoleChecker usernameRoleChecker;
+
 
 	@Path("/singleSignOn")
 	@Consumes(MediaType.WILDCARD)
@@ -110,35 +104,40 @@ public class AuthResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	@GET
 	@PermitAll
-	public Response initSingleLogout(@Nullable @QueryParam("relayPath")String relayPath,
+	public Response initSingleLogout(@Nullable @QueryParam("relayPath") String relayPath,
 									 @CookieParam(AuthDataUtil.COOKIE_AUTH_TOKEN) Cookie authTokenCookie) {
 
 		if (authTokenCookie != null && authTokenCookie.getValue() != null) {
 			Optional<AuthorisierterBenutzer> currentAuthOpt = authService.validateAndRefreshLoginToken(authTokenCookie.getValue());
-			if(currentAuthOpt.isPresent()) {
+			if (currentAuthOpt.isPresent()) {
 				String nameID = currentAuthOpt.get().getSamlNameId();
 				String sessionID = currentAuthOpt.get().getSessionIndex();
-				try {
-					URI logoutURI = fedletURLInitializer.createLogoutURI(nameID, sessionID);
-					URIBuilder builder = new URIBuilder(logoutURI);
-					if (isRelayStateURLValid(relayPath)) {
-						builder.addParameter("RelayState", relayPath);
-					} else {
-						LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
+				if (sessionID != null) {
+					try {
+						URI logoutURI = fedletURLInitializer.createLogoutURI(nameID, sessionID);
+						URIBuilder builder = new URIBuilder(logoutURI);
+						if (isRelayStateURLValid(relayPath)) {
+							builder.addParameter("RelayState", relayPath);
+						} else {
+							LOG.warn("RelayState Param '{}' seems to be invalid, ignoring", relayPath);
+						}
+						//context path prependen
+						String logoutRedirectURI = request.getContextPath() + builder.build();
+						return Response.ok(logoutRedirectURI).build();
+					} catch (URISyntaxException e) {
+						throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login", e);
 					}
-					String  logoutRedirectURI = request.getContextPath() +  builder.build();
-					return Response.ok(logoutRedirectURI).build();
-				} catch (URISyntaxException e) {
-					throw new EbeguRuntimeException("initSSOLogin", "Could not appendRelay Path to  SSOURL for Saml Login" ,e);
 				}
 			}
 		}
-		return Response.noContent().build();
+
+		return Response.ok(AuthDataUtil.getBasePath(request)).build(); //dummy
 	}
 
 	/**
 	 * extrahiert die Daten aus dem DTO und versucht einzuloggen. Fuer das einloggen
-	 * wird das servlet api verwendet  (request.login).
+	 * Fuer das Login schreiben wir selber eine Logik die direkt ohne Loginmodul ueber den Service einloggt.
+	 * Dabei checken wir unser property File und suchen die gegebene Username/PW kombination
 	 *
 	 * @param loginElement Benutzer Identifikation (Benutzername/Passwort)
 	 * @return im Erfolgsfall eine HTTP Response mit Cookies
@@ -150,11 +149,15 @@ public class AuthResource {
 	public Response login(@Nonnull JaxAuthLoginElement loginElement) {
 
 		// zuerst im Container einloggen, sonst schlaegt in den Entities die Mandanten-Validierung fehl
-		if (!containerLogin(loginElement)) {
+		if (!usernameRoleChecker.checkLogin(loginElement.getUsername(), loginElement.getPassword())) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
+		//wir machen kein rollenmapping sondern versuchen direkt in enum zu transformieren
+		String roleString = usernameRoleChecker.getSingleRole(loginElement.getUsername());
+		UserRole validRole = UserRole.valueOf(roleString);
+
 		AuthLoginElement login = new AuthLoginElement(loginElement.getUsername(), loginElement.getPassword(),
-			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), loginElement.getRole());
+			loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), validRole);
 
 		// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
 		Benutzer benutzer = new Benutzer();

@@ -53,8 +53,10 @@ public class AuthServiceBean implements AuthService {
 
 		AuthorisierterBenutzer authorisierterBenutzer = new AuthorisierterBenutzer();
 		authorisierterBenutzer.setBenutzer(benutzer.get());
-		authorisierterBenutzer.setPassword(loginElement.getPlainTextPassword());
+
 		authorisierterBenutzer.setAuthToken(UUID.randomUUID().toString());  //auth token generieren
+		authorisierterBenutzer.setUsername(loginElement.getUsername());
+		authorisierterBenutzer.setRole(loginElement.getRole()); // hier kommt rolle aus property file
 		entityManager.persist(authorisierterBenutzer);
 		return Optional.of(new AuthAccessElement(
 			authorisierterBenutzer.getUsername(),
