@@ -35,7 +35,7 @@ describe('DvPulldownUserMenuController', function () {
                 scope.$apply();
 
                 expect(authServiceRS.logoutRequest).toHaveBeenCalled();
-                expect($state.go).toHaveBeenCalledWith('login');
+                expect($state.go).toHaveBeenCalledWith('login', {type: 'logout'});
             });
         });
     });
