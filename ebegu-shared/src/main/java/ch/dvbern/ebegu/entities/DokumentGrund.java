@@ -61,6 +61,7 @@ public class DokumentGrund extends AbstractEntity {
 
 	//Copy
 	public DokumentGrund(DokumentGrund toCopy, Gesuch gesuch) {
+		this.setVorgaengerId(toCopy.getId());
 		this.gesuch = gesuch;
 		this.dokumentGrundTyp = toCopy.dokumentGrundTyp;
 		this.fullName = toCopy.fullName;

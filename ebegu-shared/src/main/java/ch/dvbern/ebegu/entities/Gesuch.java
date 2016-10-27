@@ -127,8 +127,10 @@ public class Gesuch extends AbstractEntity {
 			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
 		}
 
-		for (DokumentGrund dokumentGrund : toCopy.getDokumentGrunds()) {
-			this.dokumentGrunds.add(new DokumentGrund(dokumentGrund, this));
+		if (toCopy.dokumentGrunds != null) {
+			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
+				this.dokumentGrunds.add(new DokumentGrund(dokumentGrund, this));
+			}
 		}
 
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
