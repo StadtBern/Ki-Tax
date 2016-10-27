@@ -51,5 +51,14 @@ angemeldet.
 
 
 
+#### Grobe Erklaerung der Konfigurationsfiles des fedlet
+- .keypass: Passwort fuer keystore?
+- .storepass: Passwort fuer keystore?
+- FederationConfig.properties: Diverse Konfigurationseinstellungen fuer das verhalten des Servlets (logging etc)
+- fedlet.cot: Definiert den Circle of trust
+- idp.xml und idp-extended.xml definiert die Metadaten des identity provieders. Also von IAM
+- keystore.jks: File mit dem Schluessel fuer die Signaturpruefug. PW ist changeit
+- sp.xml und sp-extended.xml File fuer die Metadaten des ServiceProviders also EBEGU
+
 
 
