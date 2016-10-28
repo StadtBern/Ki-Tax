@@ -2,6 +2,7 @@ import IRootScopeService = angular.IRootScopeService;
 import {TSErrorEvent} from '../../../models/enums/TSErrorEvent';
 import TSExceptionReport from '../../../models/TSExceptionReport';
 import {TSErrorLevel} from '../../../models/enums/TSErrorLevel';
+import {TSErrorType} from '../../../models/enums/TSErrorType';
 
 
 export default class ErrorService {
@@ -71,6 +72,12 @@ export default class ErrorService {
         }
     }
 
+    addMesageAsError(msg: string) {
+        let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, msg, null);
+        this.addDvbError(error);
+
+    }
+
     /**
      * @param {boolean} isValid when FALSE a new validationError is added. Otherwise the validationError is cleared
      * @param {string} msgKey
@@ -102,5 +109,4 @@ export default class ErrorService {
         }
 
     }
-
 }
