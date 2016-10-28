@@ -152,7 +152,7 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Wenn das Gesuch schon gespeichert ist (timestampErstellt != null), wird dieses nur aktualisiert. Wenn es um ein neues Gesuch handelt
+     * Wenn das Gesuch schon gespeichert ist (timestampErstellt != null), wird dieses nur aktualisiert. Wenn es sich um ein neues Gesuch handelt
      * dann wird zuerst der Fall erstellt, dieser ins Gesuch kopiert und dann das Gesuch erstellt
      * @returns {IPromise<TSGesuch>}
      */
@@ -163,13 +163,17 @@ export default class GesuchModelManager {
             if (this.gesuch.fall && this.gesuch.fall.timestampErstellt) {
                 // Fall ist schon vorhanden
                 return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
-                    return this.gesuch = gesuchResponse;
+                    this.gesuch = gesuchResponse;
+                    this.backupCurrentGesuch();
+                    return this.gesuch;
                 });
             } else {
                 return this.fallRS.createFall(this.gesuch.fall).then((fallResponse: TSFall) => {
                     this.gesuch.fall = angular.copy(fallResponse);
                     return this.gesuchRS.createGesuch(this.gesuch).then((gesuchResponse: any) => {
-                        return this.gesuch = gesuchResponse;
+                        this.gesuch = gesuchResponse;
+                        this.backupCurrentGesuch();
+                        return this.gesuch;
                     });
                 });
             }
@@ -180,7 +184,9 @@ export default class GesuchModelManager {
         return this.familiensituationRS.saveFamiliensituation(this.getFamiliensituation(), this.gesuch.id).then((familienResponse: any) => {
             return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
                 this.gesuch = gesuchResponse;
-                return this.gesuch.familiensituation = familienResponse;
+                this.gesuch.familiensituation = familienResponse;
+                this.backupCurrentGesuch();
+                return this.gesuch.familiensituation;
             });
         });
     }
@@ -191,7 +197,9 @@ export default class GesuchModelManager {
      */
     public updateGesuch(): IPromise<TSGesuch> {
         return this.gesuchRS.updateGesuch(this.gesuch).then((gesuchResponse: any) => {
-            return this.gesuch = gesuchResponse;
+            this.gesuch = gesuchResponse;
+            this.backupCurrentGesuch();
+            return this.gesuch;
         });
     }
 
@@ -214,6 +222,8 @@ export default class GesuchModelManager {
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                    this.backupCurrentGesuch();
+                    //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
                     return this.getStammdatenToWorkWith();
                 });
             });
@@ -223,7 +233,9 @@ export default class GesuchModelManager {
         return this.finanzielleSituationRS.saveFinanzielleSituation(
             this.getStammdatenToWorkWith().finanzielleSituationContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((finSitContRespo: TSFinanzielleSituationContainer) => {
-                return this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
+                this.getStammdatenToWorkWith().finanzielleSituationContainer = finSitContRespo;
+                this.backupCurrentGesuch();
+                return this.getStammdatenToWorkWith().finanzielleSituationContainer;
             });
     }
 
@@ -231,7 +243,9 @@ export default class GesuchModelManager {
         return this.einkommensverschlechterungContainerRS.saveEinkommensverschlechterungContainer(
             this.getStammdatenToWorkWith().einkommensverschlechterungContainer, this.getStammdatenToWorkWith().id, this.gesuch.id)
             .then((ekvContRespo: TSEinkommensverschlechterungContainer) => {
-                return this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
+                this.getStammdatenToWorkWith().einkommensverschlechterungContainer = ekvContRespo;
+                this.backupCurrentGesuch();
+                return this.getStammdatenToWorkWith().einkommensverschlechterungContainer;
             });
     }
 
@@ -239,7 +253,9 @@ export default class GesuchModelManager {
         return this.einkommensverschlechterungInfoRS.saveEinkommensverschlechterungInfo(
             this.getGesuch().einkommensverschlechterungInfo, this.gesuch.id)
             .then((ekvInfoRespo: TSEinkommensverschlechterungInfo) => {
-                return this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
+                this.getGesuch().einkommensverschlechterungInfo = ekvInfoRespo;
+                this.backupCurrentGesuch();
+                return this.getGesuch().einkommensverschlechterungInfo;
             });
     }
 
@@ -513,10 +529,12 @@ export default class GesuchModelManager {
      */
     private backupCurrentGesuch() {
         this.gesuchSnapshot = angular.copy(this.gesuch);
+        //this.wizardStepManager.backupCurrentSteps() todo @beim muessen wir uns ei aktuellen steps auch merken oder werden die dynamisch berechnet wenn man das gesuch wieder resetet?
     }
 
     public restoreBackupOfPreviousGesuch() {
         this.gesuch = this.gesuchSnapshot;
+        //this.wizardStepManager.restorePreviousSteps() brauchen wir das vielleicht auch noch?
     }
 
     public initFamiliensituation() {
@@ -831,6 +849,7 @@ export default class GesuchModelManager {
     public removeKind(): IPromise<void> {
         return this.kindRS.removeKind(this.getKindToWorkWith().id, this.gesuch.id).then((responseKind: any) => {
             this.removeKindFromList();
+            this.backupCurrentGesuch();
             this.gesuchRS.updateGesuch(this.gesuch);
         });
     }
@@ -861,6 +880,7 @@ export default class GesuchModelManager {
     public removeBetreuung(): IPromise<void> {
         return this.betreuungRS.removeBetreuung(this.getBetreuungToWorkWith().id, this.gesuch.id).then((responseBetreuung: any) => {
             this.removeBetreuungFromKind();
+            this.backupCurrentGesuch();
             this.kindRS.saveKind(this.getKindToWorkWith(), this.gesuch.id);
         });
     }
@@ -876,6 +896,7 @@ export default class GesuchModelManager {
                 this.erwerbspensumRS.removeErwerbspensum(pensumToRemove.id, this.getGesuch().id)
                     .then(() => {
                         erwerbspensenOfCurrentGS.splice(index, 1);
+                        this.backupCurrentGesuch();
                     });
             } else {
                 //sonst nur vom gui wegnehmen
@@ -939,7 +960,9 @@ export default class GesuchModelManager {
     public calculateVerfuegungen(): IPromise<void> {
         return this.verfuegungRS.calculateVerfuegung(this.gesuch.id)
             .then((response: TSKindContainer[]) => {
-                return this.updateKinderListWithCalculatedVerfuegungen(response);
+                this.updateKinderListWithCalculatedVerfuegungen(response);
+                this.backupCurrentGesuch();
+                return;
             });
     }
 
@@ -1049,7 +1072,9 @@ export default class GesuchModelManager {
         if (!this.isGesuchStatus(status)) {
             return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
                 return this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch()).then(() => {
-                    return this.gesuch.status = this.calculateNewStatus(status);
+                    this.gesuch.status = this.calculateNewStatus(status);
+                    this.backupCurrentGesuch();
+                    return this.gesuch.status;
                 });
             });
         }
@@ -1111,6 +1136,7 @@ export default class GesuchModelManager {
             .then((response: TSGesuch) => {
                 this.setGesuch(response);
                 return this.wizardStepManager.findStepsFromGesuch(response.id).then(() => {
+                    this.backupCurrentGesuch();
                     return this.getGesuch();
                 });
             });
