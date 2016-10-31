@@ -4,8 +4,6 @@ import TSGesuchsteller from '../../models/TSGesuchsteller';
 import TSAdresse from '../../models/TSAdresse';
 import {TSAdressetyp} from '../../models/enums/TSAdressetyp';
 import TSFamiliensituation from '../../models/TSFamiliensituation';
-import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
-import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
 import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
