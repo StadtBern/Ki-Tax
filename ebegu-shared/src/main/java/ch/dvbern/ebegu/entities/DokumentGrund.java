@@ -106,8 +106,6 @@ public class DokumentGrund extends AbstractEntity {
 	@Transient
 	private boolean needed = true;
 
-
-
 	@Nullable
 	public Set<Dokument> getDokumente() {
 		return dokumente;
