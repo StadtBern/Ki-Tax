@@ -6,7 +6,7 @@ import router from '../dvbModules/router/router.module';
 import AdresseRS from './service/adresseRS.rest';
 import ListResourceRS from './service/listResourceRS.rest';
 import EbeguRestUtil from '../utils/EbeguRestUtil';
-import GesuchstellerRS from './service/gesuchstellerRS.rest.ts';
+import GesuchstellerRS from './service/gesuchstellerRS.rest';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
 import FallRS from '../gesuch/service/fallRS.rest';
