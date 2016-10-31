@@ -25,4 +25,6 @@ public interface BegleitschreibenPrint {
 	String getGesuchstellerPLZStadt();
 
 	String getFallNummer();
+
+	String getDateCreate();
 }

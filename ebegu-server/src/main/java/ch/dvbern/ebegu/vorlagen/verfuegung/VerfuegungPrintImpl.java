@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -221,5 +222,14 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 			return Optional.of(verfuegung);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
 	}
 }

@@ -12,7 +12,11 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Transferobjekt
@@ -63,5 +67,14 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	public String getFallNummer() {
 
 		return PrintUtil.createFallNummerString(gesuch);
+	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
 	}
 }
