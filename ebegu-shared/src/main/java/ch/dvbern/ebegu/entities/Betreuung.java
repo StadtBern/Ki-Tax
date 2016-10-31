@@ -275,6 +275,18 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		return compareToBuilder.toComparison();
 	}
 
+	/**
+	 * @return die Verfuegung oder Vorgaengerverfuegung dieser Betreuung
+	 */
+	@Nullable
+	public Verfuegung getVerfuegungOrVorgaengerVerfuegung(){
+		if (getVerfuegung() != null) {
+			return getVerfuegung();
+		} else{
+			return getVorgaengerVerfuegung();
+		}
+	}
+
 
 	public Verfuegung getVorgaengerVerfuegung() {
 		return vorgaengerVerfuegung;

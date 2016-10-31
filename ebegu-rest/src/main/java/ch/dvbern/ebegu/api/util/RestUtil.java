@@ -14,7 +14,7 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
-import javax.ws.rs.container.ContainerRequestContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static ch.dvbern.ebegu.api.EbeguApplicationV1.API_ROOT_PATH;
 
 /**
  * Allgemeine Utils fuer Rest Funktionalitaeten
@@ -57,8 +59,10 @@ public final class RestUtil {
 		return new UploadFileInfo(StringUtils.defaultIfBlank(filename, null), new MimeType(contentType));
 	}
 
-	public static boolean isFileDownloadRequest(@Nonnull ContainerRequestContext requestContext) {
-		return requestContext.getUriInfo().getPath().startsWith("/blobs/temp");
+	public static boolean isFileDownloadRequest(@Nonnull HttpServletRequest request) {
+		String context = request.getContextPath() + API_ROOT_PATH;
+		final String blobdataPath = context + "/blobs/temp/blobdata/";
+		return request.getRequestURI().startsWith(blobdataPath);
 	}
 
 	public static Response buildDownloadResponse(File file, boolean attachment) throws IOException {

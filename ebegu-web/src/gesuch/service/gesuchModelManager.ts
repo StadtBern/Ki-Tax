@@ -8,7 +8,7 @@ import {TSFamilienstatus} from '../../models/enums/TSFamilienstatus';
 import {TSGesuchstellerKardinalitaet} from '../../models/enums/TSGesuchstellerKardinalitaet';
 import FallRS from './fallRS.rest';
 import GesuchRS from './gesuchRS.rest';
-import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest.ts';
+import GesuchstellerRS from '../../core/service/gesuchstellerRS.rest';
 import FamiliensituationRS from './familiensituationRS.rest';
 import {IPromise, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
@@ -46,6 +46,7 @@ import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSMutationsdaten from '../../models/TSMutationsdaten';
+import EbeguUtil from '../../utils/EbeguUtil';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -61,7 +62,7 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS', 'EbeguUtil'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -69,7 +70,7 @@ export default class GesuchModelManager {
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                private antragStatusHistoryRS: AntragStatusHistoryRS) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -390,7 +391,6 @@ export default class GesuchModelManager {
 
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
-            //todo imanol try to load data from database and only if nothing is there create a new model
             this.setStammdatenToWorkWith(new TSGesuchsteller());
             this.getStammdatenToWorkWith().adresse = this.initAdresse();
         }
@@ -953,6 +953,8 @@ export default class GesuchModelManager {
                 }
             }
         }
+        this.ebeguUtil.handleSmarttablesUpdateBug(this.gesuch.kindContainers);
+
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {

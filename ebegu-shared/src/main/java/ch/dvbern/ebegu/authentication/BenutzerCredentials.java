@@ -19,15 +19,15 @@ public class BenutzerCredentials {
 	@Nonnull
 	private final String username;
 
-	@Nonnull
-	private final String passwordEncrypted;
+	//todo add role
+
+
 
 	@Nonnull
 	private final String authToken;
 
-	public BenutzerCredentials(@Nonnull String username, @Nonnull String passwordEncrypted, @Nonnull String authToken) {
+	public BenutzerCredentials(@Nonnull String username,  @Nonnull String authToken) {
 		this.username = username;
-		this.passwordEncrypted = passwordEncrypted;
 		this.authToken = authToken;
 	}
 
@@ -36,10 +36,6 @@ public class BenutzerCredentials {
 		return username;
 	}
 
-	@Nonnull
-	public String getPasswordEncrypted() {
-		return passwordEncrypted;
-	}
 
 	@Nonnull
 	public String getAuthToken() {

@@ -6,7 +6,7 @@ import router from '../dvbModules/router/router.module';
 import AdresseRS from './service/adresseRS.rest';
 import ListResourceRS from './service/listResourceRS.rest';
 import EbeguRestUtil from '../utils/EbeguRestUtil';
-import GesuchstellerRS from './service/gesuchstellerRS.rest.ts';
+import GesuchstellerRS from './service/gesuchstellerRS.rest';
 import {AdresseComponentConfig} from './component/dv-adresse/dv-adresse';
 import {DvErrorMessagesComponentConfig} from './component/dv-error-messages/dv-error-messages';
 import FallRS from '../gesuch/service/fallRS.rest';
@@ -59,6 +59,7 @@ import {DVNavigation} from './directive/dv-navigation/dv-navigation';
 import {DVAntragListConfig} from './component/dv-antrag-list/dv-antrag-list';
 import AntragStatusHistoryRS from './service/antragStatusHistoryRS.rest';
 import {DvUserNameComponentConfig} from './component/dv-user-name/dv-user-name';
+import {NavigationLogger} from './service/NavigationLogger';
 
 let dynamicDependencies = function (): string[] {
 
@@ -152,6 +153,7 @@ export const EbeguWebCore: angular.IModule = angular
     .service('BerechnungsManager', BerechnungsManager)
     .service('HttpResponseInterceptor', HttpResponseInterceptor)
     .service('WizardStepManager', WizardStepManager)
+    .service('NavigationLogger', NavigationLogger)
     .controller('DVElementController', DVRoleElementController)
     .component('dvAdresse', new AdresseComponentConfig())
     .component('dvErrorMessages', new DvErrorMessagesComponentConfig())
@@ -164,3 +166,4 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvBisher', new DvBisherComponentConfig())
     .component('dvDokumenteList', new DVDokumenteListConfig())
     .component('dvAntragList', new DVAntragListConfig());
+

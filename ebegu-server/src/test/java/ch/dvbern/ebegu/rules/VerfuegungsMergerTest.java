@@ -126,7 +126,7 @@ public class VerfuegungsMergerTest {
 	@Test
 	public void test_Erhoehung_Rechtzeitig_aenderungUndEingangsdatumGleich() {
 
-		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6);
+		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6).minusDays(1);
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(6);
 
 		// Mutiertes Gesuch vorbereiten
@@ -198,7 +198,7 @@ public class VerfuegungsMergerTest {
 	@Test
 	public void test_Erhoehung_Nicht_Rechtzeitig_aenderungVorEingangsdatum() {
 
-		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6);
+		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6).minusDays(1);
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(5).minusDays(1);
 
 		// Mutiertes Gesuch vorbereiten
@@ -268,7 +268,7 @@ public class VerfuegungsMergerTest {
 	@Test
 	public void test_Erhoehung_nicht_Rechtzeitig_aenderungVorEingangsdatum_nichtAnMonatsgrenze() {
 
-		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6);
+		final LocalDate eingangsdatumMuation = START_PERIODE.plusMonths(6).minusDays(1);
 		final LocalDate aenderungsDatumPensum = START_PERIODE.plusMonths(5).plusDays(15);
 
 		// Mutiertes Gesuch vorbereiten

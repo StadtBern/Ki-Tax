@@ -71,6 +71,7 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		this.kindGS = null;
 		this.kindJA = new Kind(toCopy.kindJA);
 		this.kindNummer = toCopy.kindNummer;
+		this.nextNumberBetreuung = toCopy.nextNumberBetreuung;
 		if (toCopy.betreuungen != null) {
 			this.betreuungen = new TreeSet<>();
 			for (Betreuung betreuung : toCopy.betreuungen) {

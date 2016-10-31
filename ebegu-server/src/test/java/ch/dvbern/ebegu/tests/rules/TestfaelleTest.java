@@ -16,6 +16,16 @@ import java.util.List;
 public class TestfaelleTest extends AbstractBGRechnerTest {
 
 	@Test
+	public void indexOfTest() {
+		String deployuri = "/ebegu/index.jsp";
+		int slashLoc = deployuri.indexOf("/", 1);
+		if (slashLoc != -1) {
+			deployuri = deployuri.substring(0, slashLoc);
+		}
+
+	}
+
+	@Test
 	public void testfall01_WaeltiDagmar() {
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaAaregg());
