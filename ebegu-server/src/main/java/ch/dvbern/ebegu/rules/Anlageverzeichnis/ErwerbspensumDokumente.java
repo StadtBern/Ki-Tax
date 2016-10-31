@@ -88,8 +88,8 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
 				case NACHWEIS_ERWERBSPENSUM:
-					// Todo: Wird nur bei Mutation des Erwerbspensums Angestellt verlangt oder bei Neueintritt im Job. Neueintritt = DatumVon >= Periodenstart
-					// Mutation ist noch nicht implementiert...
+					// Wird nur bei Neueintritt im Job verlangt. Neueintritt = DatumVon >= Periodenstart. Bei Mutationen
+					// wird das Erwerbspensum immer beendet und ein neues erfasst. Daher gilt diese Regel immer
 					return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
 						erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT;
 				default:
