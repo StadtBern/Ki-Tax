@@ -26,5 +26,7 @@ public interface BegleitschreibenPrint {
 
 	String getFallNummer();
 
+	String getDateCreate();
+
 	boolean isPrintTextFamilie();
 }

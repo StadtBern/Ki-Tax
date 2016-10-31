@@ -24,8 +24,8 @@ public enum AntragStatus {
     private static final Set<AntragStatus> all = EnumSet.allOf(AntragStatus.class);
     private static final Set<AntragStatus> none = EnumSet.noneOf(AntragStatus.class);
     private static final Set<AntragStatus> forAdminRole = EnumSet.range(FREIGEGEBEN, VERFUEGT);
-    private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = EnumSet.of(IN_BEARBEITUNG_GS, IN_BEARBEITUNG_JA, FREIGABEQUITTUNG, NUR_SCHULAMT);
-    private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
+	private static final Set<AntragStatus> forSachbearbeiterInstitutionRole = EnumSet.range(IN_BEARBEITUNG_GS, VERFUEGT);
+	private static final Set<AntragStatus> forSachbearbeiterTraegerschaftRole = forSachbearbeiterInstitutionRole;
     private static final Set<AntragStatus> forSachbearbeiterJugendamtRole = forAdminRole;
     private static final Set<AntragStatus> forSchulamtRole = forAdminRole;
     private static final Set<AntragStatus> forJuristRole = forSachbearbeiterJugendamtRole;
