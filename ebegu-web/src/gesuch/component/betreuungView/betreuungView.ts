@@ -200,7 +200,7 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         if (this.getBetreuungModel() && (this.getBetreuungspensen() === undefined || this.getBetreuungspensen() === null)) {
             this.getBetreuungModel().betreuungspensumContainers = [];
         }
-        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(undefined, new TSDateRange())));
+        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
     }
 
     public removeBetreuungspensum(betreuungspensumToDelete: TSBetreuungspensumContainer): void {
@@ -251,6 +251,20 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         this.save(TSBetreuungsstatus.ABGEWIESEN, 'pendenzenInstitution', form);
     }
 
+    public platzNichtEingetreten(form: IFormController): void {
+        if (form.$valid) {
+            this.getBetreuungModel().datumBestaetigung = DateUtil.today();
+
+            for (let i: number = 0; i < this.getBetreuungspensen().length; i++) {
+                this.getBetreuungspensum(i).betreuungspensumJA.pensum = 0;
+                this.getBetreuungspensum(i).betreuungspensumJA.nichtEingetreten = true;
+            }
+            this.getBetreuungModel().erweiterteBeduerfnisse = false;
+
+            this.save(TSBetreuungsstatus.NICHT_EINGETRETEN, 'pendenzenInstitution', form);
+        }
+    }
+
     public saveSchulamt(form: IFormController): void {
         if (form.$valid) {
             this.save(TSBetreuungsstatus.SCHULAMT, 'gesuch.betreuungen', form);
@@ -279,6 +293,10 @@ export class BetreuungViewController extends AbstractGesuchViewController {
 
     public isBetreuungsstatusBestaetigt(): boolean {
         return this.isBetreuungsstatus(TSBetreuungsstatus.BESTAETIGT);
+    }
+
+    public isBetreuungsstatusNichtEingetreten(): boolean {
+        return this.isBetreuungsstatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
     }
 
     public isBetreuungsstatusAusstehend(): boolean {
@@ -323,4 +341,27 @@ export class BetreuungViewController extends AbstractGesuchViewController {
             || this.getBetreuungModel().erweiterteBeduerfnisse === true;
     }
 
+    public showFalscheAngaben(): boolean {
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+            && !this.isFromMutation();
+    }
+
+    public showAngabenKorrigieren(): boolean {
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen()) && !this.isGesuchStatusVerfuegenVerfuegt()
+            && this.isFromMutation();
+    }
+
+    public isFromMutation(): boolean {
+        if (this.getBetreuungModel()) {
+            if (this.getBetreuungModel().vorgaengerId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public showAngabeKorrigieren(): boolean {
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
+            && !this.isGesuchStatusVerfuegenVerfuegt() && this.isFromMutation();
+    }
 }

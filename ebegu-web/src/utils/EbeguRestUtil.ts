@@ -1002,6 +1002,7 @@ export default class EbeguRestUtil {
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
+        restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
         return restBetreuungspensum;
     }
 
@@ -1064,6 +1065,7 @@ export default class EbeguRestUtil {
     public parseBetreuungspensum(betreuungspensumTS: TSBetreuungspensum, betreuungspensumFromServer: any): TSBetreuungspensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
+            betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
             return betreuungspensumTS;
         }
         return undefined;

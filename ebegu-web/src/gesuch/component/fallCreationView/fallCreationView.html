@@ -148,7 +148,7 @@
                                                  name="mutationBetreuung"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationBetreuung"
                                                  aria-label="mutationBetreuung" dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">

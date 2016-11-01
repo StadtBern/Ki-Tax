@@ -108,6 +108,10 @@ public class BetreuungsgutscheinConfigurator {
 	private void berechnenAnspruchRegeln() {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
 
+		// - Nicht Eingetreten
+		NichtEingetretenCalcRule nichtEingetretenCalcRule = new NichtEingetretenCalcRule(defaultGueltigkeit);
+		rules.add(nichtEingetretenCalcRule);
+
 		// - Erwerbspensum
 		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
 		rules.add(erwerbspensumCalcRule);
@@ -124,7 +128,6 @@ public class BetreuungsgutscheinConfigurator {
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
 	}
-
 
 
 	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {

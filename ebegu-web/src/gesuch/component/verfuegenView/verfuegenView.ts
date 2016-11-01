@@ -170,7 +170,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
      */
     public showVerfuegen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGEN)
-            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus());
+            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus() || TSBetreuungsstatus.NICHT_EINGETRETEN === this.getBetreuungsstatus());
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {
