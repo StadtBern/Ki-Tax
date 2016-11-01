@@ -6,8 +6,9 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
-import IRootScopeService = angular.IRootScopeService;
 import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import IRootScopeService = angular.IRootScopeService;
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
@@ -27,9 +28,10 @@ export class DummyAuthenticationListViewController {
     private traegerschaftLeoLea: TSTraegerschaft;
     private traegerschaftSGF: TSTraegerschaft;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout'];
 
-    constructor(private $state: IStateService, private authServiceRS: AuthServiceRS, private $rootScope: IRootScopeService) {
+    constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
+                private $rootScope: IRootScopeService, private $timeout: ITimeoutService) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -118,7 +120,11 @@ export class DummyAuthenticationListViewController {
             } else if (user.getRoleKey() === 'TSRole_GESUCHSTELLER') {
                 this.$state.go('gesuchstellerDashboard');
             }
-            this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
+
+            this.$timeout(function () {
+                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
+            }, 1000);
+
         });
     }
 }
