@@ -34,11 +34,18 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 		}
 	}
 
+	/**
+	 * Zuerst schaut ob es eine Aenderung in der Familiensituation gab. Dementsprechend nimmt es die richtige Familiensituation
+	 * um zu wissen ob es ein GS2 gibt, erst dann wird es geprueft ob die Adressen von GS1 oder GS2 in Bern sind
+	 * @param betreuung
+	 * @param verfuegungZeitabschnitt
+	 * @return
+	 */
 	private boolean areNotInBern(Betreuung betreuung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		boolean hasSecondGesuchsteller = false;
 		final Gesuch gesuch = betreuung.extractGesuch();
 		if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null
-			&& gesuch.getFamiliensituation().getAenderungPer().isBefore(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb())) {
+			&& !gesuch.getFamiliensituation().getAenderungPer().isAfter(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb())) {
 
 			hasSecondGesuchsteller = gesuch.getFamiliensituation().hasSecondGesuchsteller();
 		}

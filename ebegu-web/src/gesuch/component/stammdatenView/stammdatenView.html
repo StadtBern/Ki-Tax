@@ -67,7 +67,7 @@
 
                 <!-- Adresse. Bei Mutationen nicht editierbar-->
                 <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
-                    <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="vm.disableWohnadresseFor2GS()"
+                    <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true"
                                 prefix="wohn"></dv-adresse>
                 </fieldset>
 
