@@ -126,10 +126,10 @@ public class Gesuch extends AbstractEntity {
 		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
 
 		if (toCopy.isMutation()) {
-			this.setFamiliensituationErstgesuch(toCopy.getFamiliensituationErstgesuch());
+			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
 		}
 		else { // beim ErstGesuch holen wir direkt die normale Familiensituation
-			this.setFamiliensituationErstgesuch(toCopy.getFamiliensituation());
+			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
 		}
 
 		if (toCopy.getEinkommensverschlechterungInfo() != null) {
@@ -178,7 +178,7 @@ public class Gesuch extends AbstractEntity {
 		return familiensituationErstgesuch;
 	}
 
-	public void setFamiliensituationErstgesuch(@Nullable Familiensituation familiensituationErstgesuch) {
+	public void setFamiliensituationErstgesuch(@Nullable final Familiensituation familiensituationErstgesuch) {
 		this.familiensituationErstgesuch = familiensituationErstgesuch;
 	}
 

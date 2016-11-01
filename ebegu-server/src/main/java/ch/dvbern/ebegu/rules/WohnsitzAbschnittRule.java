@@ -119,13 +119,13 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 							}
 						}
 						// from 2GS to 1GS
-						else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
-							if (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
-								if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-									gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer());
-								}
-								createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+						else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()
+							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer()))) {
+
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
+								gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer());
 							}
+							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
 						}
 					}
 					else {

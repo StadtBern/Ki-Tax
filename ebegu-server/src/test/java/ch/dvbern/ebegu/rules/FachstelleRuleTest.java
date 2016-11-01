@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
@@ -25,6 +26,8 @@ public class FachstelleRuleTest {
 	@Test
 	public void testKitaMitFachstelleWenigerAlsPensum() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(40);
 		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));
@@ -45,6 +48,8 @@ public class FachstelleRuleTest {
 	@Test
 	public void testKitaMitFachstelleUndRestPensum() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, BetreuungsangebotTyp.KITA, 60);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());
 		betreuung.getKind().getKindJA().getPensumFachstelle().setPensum(80);
 		betreuung.getKind().getKindJA().getPensumFachstelle().setGueltigkeit(new DateRange(START_PERIODE, ENDE_PERIODE));

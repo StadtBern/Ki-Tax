@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -28,8 +29,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testKitaEinreichungRechtzeitig() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.FEBRUARY, 1));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.FEBRUARY, 1));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 		List<VerfuegungZeitabschnitt> nextRestanspruch = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
 
@@ -50,8 +53,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testKitaEinreichungZuSpaet() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.OCTOBER, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.OCTOBER, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 		List<VerfuegungZeitabschnitt> nextRestanspruch = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
 		Assert.assertNotNull(result);
@@ -84,8 +89,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testKitaEinreichungInGnadenfrist() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 		List<VerfuegungZeitabschnitt> nextRestanspruch = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
 
@@ -108,8 +115,10 @@ public class EinreichungsfristRuleTest {
 	public void testKitaEinreichungInZuSpaetAberNachDemErsten() {
 		LocalDate betreuungsStart = LocalDate.of(2016, Month.AUGUST, 8);
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(betreuungsStart, ENDE_PERIODE,  BetreuungsangebotTyp.KITA, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 		List<VerfuegungZeitabschnitt> nextRestanspruch = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
 
@@ -133,8 +142,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testTagiEinreichungRechtzeitig() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.TAGI, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.FEBRUARY, 1));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.FEBRUARY, 1));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -156,8 +167,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testTagiEinreichungZuSpaet() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.TAGI, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.OCTOBER, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.OCTOBER, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 		List<VerfuegungZeitabschnitt> nextRestanspruch = EbeguRuleTestsHelper.initializeRestanspruchForNextBetreuung(betreuung, result);
 
@@ -190,8 +203,10 @@ public class EinreichungsfristRuleTest {
 	@Test
 	public void testTagiEinreichungInGnadenfrist() {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE,  BetreuungsangebotTyp.TAGI, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
@@ -214,8 +229,10 @@ public class EinreichungsfristRuleTest {
 	public void testTagiEinreichungInZuSpaetAberNachDemErsten() {
 		LocalDate betreuungsStart = LocalDate.of(2016, Month.AUGUST, 8);
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(betreuungsStart, ENDE_PERIODE,  BetreuungsangebotTyp.TAGI, 60);
-		betreuung.extractGesuch().getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
-		betreuung.extractGesuch().setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.AUGUST, 7));
 		List<VerfuegungZeitabschnitt> result = calculate(betreuung);
 
 		Assert.assertNotNull(result);
