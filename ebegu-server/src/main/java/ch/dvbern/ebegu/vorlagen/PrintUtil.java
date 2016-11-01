@@ -131,4 +131,25 @@ public class PrintUtil {
 		}
 		return Optional.empty();
 	}
+
+	/**
+	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer.
+	 *
+	 * @return GesuchstellerName
+	 */
+
+	public static String getOrganisation(Gesuch gesuch) {
+
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1(gesuch);
+		if (gesuchsteller.isPresent()) {
+			final List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
+			for (GesuchstellerAdresse ad : adressen) {
+				if (ad.getAdresseTyp() == AdresseTyp.KORRESPONDENZADRESSE) {
+					return ad.getOrganisation();
+				}
+			}
+		}
+		return null;
+
+	}
 }

@@ -4,7 +4,10 @@ import ch.dvbern.ebegu.api.dtos.*;
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.entities.*;
-import ch.dvbern.ebegu.enums.*;
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
@@ -315,6 +318,14 @@ public class JaxBConverter {
 			final GesuchstellerAdresse currentAltAdr = gesuchstellerAdresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new GesuchstellerAdresse());
 			final GesuchstellerAdresse altAddrToMerge = gesuchstellerAdresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
+		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
+		else{
+			for (Iterator<GesuchstellerAdresse> iterator = gesuchsteller.getAdressen().iterator(); iterator.hasNext(); ) {
+				GesuchstellerAdresse next = iterator.next();
+				if (next.isKorrespondenzAdresse()) {
+					iterator.remove();
+				}
+			}
 		}
 		// Umzug und Wohnadresse
 		GesuchstellerAdresse umzugAddr = null;
