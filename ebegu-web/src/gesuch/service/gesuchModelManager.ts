@@ -484,7 +484,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.initAntrag(TSAntragTyp.GESUCH);
         }
-        this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());   //todo homa beim fragen, ist das so unnoetig wie es aussieht?
+        this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
     }
 
@@ -1075,7 +1075,7 @@ export default class GesuchModelManager {
     public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (!this.isGesuchStatus(status)) {
             return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
-                return this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch()).then(() => {
+                return this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch()).then(() => {
                     return this.gesuch.status = this.calculateNewStatus(status);
                 });
             });
