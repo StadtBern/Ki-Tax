@@ -279,7 +279,7 @@
                     <!--Angabe korrigieren-->
                     <div class="row" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getGesuchstellerJugendamtRoles()"
-                         dv-show-expression="(vm.isBetreuungsstatusBestaetigt() || vm.isBetreuungsstatusAbgewiesen()) && !vm.isGesuchStatusVerfuegenVerfuegt()">
+                         dv-show-expression="vm.showAngabeKorrigieren()">
                         <div class="col-md-12">
                             <a href="" ng-click="vm.platzAnfordern(form)"
                                data-translate="ANGABEN_KORRIGIEREN"></a>

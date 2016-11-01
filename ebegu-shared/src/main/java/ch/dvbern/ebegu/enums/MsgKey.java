@@ -34,6 +34,7 @@ public enum MsgKey {
 	ANSPRUCHSAENDERUNG_MSG(RuleKey.ANSPRUCHSBERECHNUNGSREGELN_MUTATIONEN),
 
 	NICHT_EINGETRETEN_MSG(RuleKey.NICHT_EINGETRETEN);
+
 	//todo Mutation
 	//Abwesenheit
 	//Familiensituation

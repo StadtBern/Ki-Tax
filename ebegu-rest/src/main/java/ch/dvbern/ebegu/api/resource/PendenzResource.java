@@ -80,7 +80,8 @@ public class PendenzResource {
 
 			if (betreuung.getVorgaengerId() == null) {
 				pendenz.setTyp("PLATZBESTAETIGUNG");
-			}else{
+			}
+			else{
 				//Wenn die Betreung eine VorgängerID hat ist sie mutiert
 				pendenz.setTyp("PLATZBESTAETIGUNG_MUTATION");
 			}

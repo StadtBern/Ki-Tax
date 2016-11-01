@@ -360,4 +360,8 @@ export class BetreuungViewController extends AbstractGesuchViewController {
         return false;
     }
 
+    public showAngabeKorrigieren(): boolean {
+        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
+            && !this.isGesuchStatusVerfuegenVerfuegt() && this.isFromMutation();
+    }
 }
