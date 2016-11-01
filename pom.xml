@@ -319,7 +319,26 @@
                 <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
                 <version>1.7</version>
             </dependency>
+            <dependency>
+                 <groupId>commons-logging</groupId>
+                 <artifactId>commons-logging</artifactId>
+                 <version>1.2</version>
+               </dependency>
+            <dependency>
+              <groupId>javax.servlet</groupId>
+              <artifactId>javax.servlet-api</artifactId>
+              <version>3.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
 

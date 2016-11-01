@@ -103,12 +103,200 @@
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--<dependency>-->
+          <!--<groupId>org.forgerock.http</groupId>-->
+          <!--<artifactId>chf-http-core</artifactId>-->
+          <!--<version>21.0.0</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+          <version>2.6</version>
+        </dependency>
+
+        <dependency>
+         <groupId>commons-logging</groupId>
+         <artifactId>commons-logging</artifactId>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-annotations</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-base</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-cache</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-collect</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+
+
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-concurrent</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+        <dependency>
+          <groupId>org.forgerock.commons.guava</groupId>
+          <artifactId>forgerock-guava-math</artifactId>
+          <version>18.0.4</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.forgerock.commons.guava</groupId>
+              <artifactId>forgerock-guava-primitives</artifactId>
+            <!--ware eigentlich 18.0.4 aber das ist nicht in ihrem repo-->
+          <version>18.0.4</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons</groupId>
+          <artifactId>forgerock-guice-core</artifactId>
+          <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons</groupId>
+          <artifactId>forgerock-util</artifactId>
+          <version>20.1.0</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.glassfish.grizzly</groupId>
+          <artifactId>grizzly-framework</artifactId>
+          <version>2.3.24</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.google.inject</groupId>
+          <artifactId>guice</artifactId>
+          <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.stratos</groupId>
+          <artifactId>guice-assistedinject</artifactId>
+          <version>3.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.stratos</groupId>
+          <artifactId>guice-multibindings</artifactId>
+          <version>3.0</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons</groupId>
+          <artifactId>i18n-core</artifactId>
+          <version>1.4.2</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.forgerock.commons</groupId>
+          <artifactId>i18n-slf4j</artifactId>
+          <version>1.4.2</version>
+        </dependency>
+        <dependency>
+          <groupId>isorelax</groupId>
+          <artifactId>isorelax</artifactId>
+          <version>20030108</version>
+        </dependency>
+
+        <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <!--jaxb ist in version 2 im wildfly drin, versuchen mal ob das auch geht-->
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb1-impl</artifactId>
+          <version>2.0.2</version>
+        </dependency>
+
+        <!--<dependency>-->
+          <!--<groupId>javax.xml.bind</groupId>-->
+          <!--<artifactId>jaxb-api</artifactId>-->
+          <!--<version>1.0.6</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+<!--die war drin, gibts aber nicht-->
+        <!--<dependency>-->
+          <!--<groupId>javax.xml.bind</groupId>-->
+          <!--<artifactId>jaxb-impl</artifactId>-->
+          <!--<version>1.0.6</version>-->
+        <!--</dependency>-->
+
+<!--alle jaxb hab ich mal auf provided-->
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-libs</artifactId>
+          <version>1.0.6</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+          <version>1.0.6</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--transitiv?-->
+        <!--<dependency>-->
+          <!--<groupId>com.googlecode.java-ipv6</groupId>-->
+          <!--<artifactId>java-ipv6</artifactId>-->
+          <!--<version>0.14</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+          <groupId>javax.xml</groupId>
+          <artifactId>jaxp-api</artifactId>
+          <version>1.4.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+
+
+
+
+
+
+
         <dependency>
           <groupId>org.owasp.esapi</groupId>
           <artifactId>esapi</artifactId>
           <version>2.1.0</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
+        <!--eigentlich waere es 13.5.0 aber unsere Freunde bei forgerock bieten das nicht an in ihrem repo-->
         <dependency>
           <groupId>org.forgerock.openam</groupId>
           <artifactId>openam-shared</artifactId>
@@ -119,8 +307,13 @@
                <groupId>*</groupId>
                <artifactId>jss4</artifactId>
             </exclusion>
+                <exclusion>
+                  <groupId>*</groupId>
+                  <artifactId>*</artifactId>
+               </exclusion>
             </exclusions>
         </dependency>
+        <!--eigentlich waere es 13.5.0 aber unsere Freunde bei forgerock bieten das nicht an in ihrem repo-->
         <dependency>
             <groupId>org.forgerock.openam</groupId>
              <artifactId>openam-federation-library</artifactId>
@@ -258,6 +451,12 @@
         <dependency>
           <groupId>io.swagger</groupId>
           <artifactId>swagger-jaxrs</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>org.javassist</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--Test dep-->
