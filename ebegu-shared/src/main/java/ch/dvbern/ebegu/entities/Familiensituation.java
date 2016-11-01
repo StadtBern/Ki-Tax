@@ -41,10 +41,10 @@ public class Familiensituation extends AbstractEntity {
 
 	public Familiensituation(Familiensituation that) {
 		this.setVorgaengerId(that.getId());
-		this.familienstatus = that.getFamilienstatus();
-		this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
-		this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
-		this.aenderungPer = that.getAenderungPer();
+		this.familienstatus = that.familienstatus;
+		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
+		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;
+		this.aenderungPer = that.aenderungPer;
 	}
 
 	@Nonnull
@@ -84,7 +84,7 @@ public class Familiensituation extends AbstractEntity {
 	@Transient
 	public boolean hasSecondGesuchsteller() {
 		if (this.familienstatus != null) {
-			switch (this.familienstatus){
+			switch (this.familienstatus) {
 				case ALLEINERZIEHEND:
 				case WENIGER_FUENF_JAHRE:
 					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());
