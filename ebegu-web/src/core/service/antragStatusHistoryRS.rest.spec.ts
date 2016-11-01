@@ -29,12 +29,12 @@ describe('antragStatusHistoryRS', function () {
         it('check Service name', function () {
             expect(antragStatusHistoryRS.getServiceName()).toBe('AntragStatusHistoryRS');
         });
-        it('should include a findLastStatusChange() function', function () {
-            expect(antragStatusHistoryRS.findLastStatusChange).toBeDefined();
+        it('should include a loadLastStatusChange() function', function () {
+            expect(antragStatusHistoryRS.loadLastStatusChange).toBeDefined();
         });
     });
 
-    describe('findLastStatusChange', () => {
+    describe('loadLastStatusChange', () => {
         it('should return the last status change for the given gesuch', () => {
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.id = '123456';
@@ -44,7 +44,7 @@ describe('antragStatusHistoryRS', function () {
             $httpBackend.expectGET(antragStatusHistoryRS.serviceURL + '/' + encodeURIComponent(gesuch.id)).respond(restAntStatusHistory);
 
             let lastStatusChange: TSAntragStatusHistory;
-            antragStatusHistoryRS.findLastStatusChange(gesuch).then((response) => {
+            antragStatusHistoryRS.loadLastStatusChange(gesuch).then((response) => {
                 lastStatusChange = response;
             });
             $httpBackend.flush();
@@ -55,13 +55,13 @@ describe('antragStatusHistoryRS', function () {
             expect(lastStatusChange).toEqual(antragStatusHistory);
         });
         it('should return undefined if the gesuch is undefined', () => {
-            antragStatusHistoryRS.findLastStatusChange(undefined);
+            antragStatusHistoryRS.loadLastStatusChange(undefined);
             expect(antragStatusHistoryRS.lastChange).toBeUndefined();
         });
         it('should return undefined if the gesuch id is undefined', () => {
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.id = undefined;
-            antragStatusHistoryRS.findLastStatusChange(gesuch);
+            antragStatusHistoryRS.loadLastStatusChange(gesuch);
             expect(antragStatusHistoryRS.lastChange).toBeUndefined();
         });
     });

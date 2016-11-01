@@ -21,7 +21,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
                 wizardStepManager: WizardStepManager, private ebeguUtil: EbeguUtil,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private $translate: ITranslateService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
-        this.antragStatusHistoryRS.findLastStatusChange(this.gesuchModelManager.getGesuch());
+        this.antragStatusHistoryRS.loadLastStatusChange(this.gesuchModelManager.getGesuch());
     }
 
     showFinanzsituationStart(): boolean {
