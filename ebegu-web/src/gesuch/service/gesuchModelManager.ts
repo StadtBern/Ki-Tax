@@ -47,6 +47,10 @@ import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSMutationsdaten from '../../models/TSMutationsdaten';
 import EbeguUtil from '../../utils/EbeguUtil';
+import ErrorService from '../../core/errors/service/ErrorService';
+import TSExceptionReport from '../../models/TSExceptionReport';
+import {TSErrorType} from '../../models/enums/TSErrorType';
+import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -62,7 +66,8 @@ export default class GesuchModelManager {
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
-        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS', 'AntragStatusHistoryRS', 'EbeguUtil'];
+        'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -70,7 +75,7 @@ export default class GesuchModelManager {
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -479,7 +484,7 @@ export default class GesuchModelManager {
         if (forced || (!forced && !this.gesuch)) {
             this.initAntrag(TSAntragTyp.GESUCH);
         }
-        this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch());
+        this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch());
         this.backupCurrentGesuch();
     }
 
@@ -944,14 +949,36 @@ export default class GesuchModelManager {
     }
 
     private updateKinderListWithCalculatedVerfuegungen(kinderWithVerfuegungen: TSKindContainer[]) {
+        if (kinderWithVerfuegungen.length !== this.gesuch.kindContainers.length) {
+            let msg: string = 'ACHTUNG Ungueltiger Zustand, Anzahl zurueckgelieferter Container'
+                + (kinderWithVerfuegungen.length ? kinderWithVerfuegungen.length : 'no_container')
+                + 'stimmt nicht mit erwareter ueberein ' + this.gesuch.kindContainers.length;
+            this.log.error(msg);
+            let error: TSExceptionReport = new TSExceptionReport(TSErrorType.INTERNAL, TSErrorLevel.SEVERE, msg, kinderWithVerfuegungen);
+            this.errorService.addDvbError(error);
+        }
+        //todo beim fragen warum nicht einfach die ganze liste austauschen? Wegen der Reihenfolge?
+        let numOfAssigned = 0;
         for (let i = 0; i < this.gesuch.kindContainers.length; i++) {
             for (let j = 0; j < kinderWithVerfuegungen.length; j++) {
                 if (this.gesuch.kindContainers[i].id === kinderWithVerfuegungen[j].id) {
+                    numOfAssigned++;
                     for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
+                        if (this.gesuch.kindContainers[i].betreuungen.length !== kinderWithVerfuegungen[j].betreuungen.length) {
+                            let msg = 'ACHTUNG unvorhergesehener Zustand. Anzahl Betreuungen eines kindes stimmt nicht mit der berechneten Anzahl Betreuungen ueberein' + this.gesuch.kindContainers[i];
+                            this.log.error(msg, this.gesuch.kindContainers[i]);
+                            this.errorService.addMesageAsError(msg);
+                        }
                         this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];
                     }
                 }
             }
+        }
+        if (numOfAssigned !== this.gesuch.kindContainers.length) {
+            let msg = 'ACHTUNG unvorhergesehener Zustand. Es konnte nicht jeder calculated Kindcontainer vom Server einem Container auf dem Client zugeordnet werden';
+            this.log.error(msg, this.gesuch.kindContainers, kinderWithVerfuegungen);
+
+            this.errorService.addMesageAsError(msg);
         }
         this.ebeguUtil.handleSmarttablesUpdateBug(this.gesuch.kindContainers);
 
@@ -1048,7 +1075,7 @@ export default class GesuchModelManager {
     public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (!this.isGesuchStatus(status)) {
             return this.gesuchRS.updateGesuchStatus(this.gesuch.id, status).then(() => {
-                return this.antragStatusHistoryRS.findLastStatusChange(this.getGesuch()).then(() => {
+                return this.antragStatusHistoryRS.loadLastStatusChange(this.getGesuch()).then(() => {
                     return this.gesuch.status = this.calculateNewStatus(status);
                 });
             });
