@@ -328,7 +328,6 @@ export default class GesuchModelManager {
     }
 
     public getEinkommensverschlechterungToWorkWith(): TSEinkommensverschlechterung {
-        let gesuchsteller: TSGesuchsteller;
         if (this.gesuchstellerNumber === 2) {
             return this.getEkvFromGesuchstellerOfBsj_JA(this.gesuch.gesuchsteller2);
         } else {
@@ -337,7 +336,6 @@ export default class GesuchModelManager {
     }
 
     public getEinkommensverschlechterungToWorkWith_GS(): TSEinkommensverschlechterung {
-        let gesuchsteller: TSGesuchsteller;
         if (this.gesuchstellerNumber === 2) {
             return this.getEkvFromGesuchstellerOfBsj_GS(this.gesuch.gesuchsteller2);
         } else {
@@ -529,12 +527,12 @@ export default class GesuchModelManager {
      */
     private backupCurrentGesuch() {
         this.gesuchSnapshot = angular.copy(this.gesuch);
-        //this.wizardStepManager.backupCurrentSteps() todo @beim muessen wir uns ei aktuellen steps auch merken oder werden die dynamisch berechnet wenn man das gesuch wieder resetet?
+        this.wizardStepManager.backupCurrentSteps();
     }
 
     public restoreBackupOfPreviousGesuch() {
         this.gesuch = this.gesuchSnapshot;
-        //this.wizardStepManager.restorePreviousSteps() brauchen wir das vielleicht auch noch?
+        this.wizardStepManager.restorePreviousSteps();
     }
 
     public initFamiliensituation() {
@@ -728,7 +726,7 @@ export default class GesuchModelManager {
 
     /**
      * Sucht das Gesuch im Server und aktualisiert es mit dem bekommenen Daten
-     * @returns {IPromise<TResult>}
+     * @returns {IPromise<void>}
      */
     private getFallFromServer(): IPromise<TSFall> {
         return this.fallRS.findFall(this.gesuch.fall.id).then((fallResponse) => {
@@ -1066,7 +1064,7 @@ export default class GesuchModelManager {
      * der den Status aktualisiert und erst wenn das geklappt hat, aktualisieren wir den Status auf dem Client.
      * Wird nur durchgefuehrt, wenn der gegebene Status nicht der aktuelle Status ist
      * @param status
-     * @returns {undefined}
+     * @returns {IPromise<TSAntragStatus>}
      */
     public saveGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
         if (!this.isGesuchStatus(status)) {
