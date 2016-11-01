@@ -159,4 +159,6 @@ public interface FinanzDatenPrint {
 	 */
 	BigDecimal getMassgebendesEinkommen();
 
+	String getDateCreate();
+
 }

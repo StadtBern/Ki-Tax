@@ -318,6 +318,14 @@ public class JaxBConverter {
 			final GesuchstellerAdresse currentAltAdr = gesuchstellerAdresseService.getKorrespondenzAdr(gesuchsteller.getId()).orElse(new GesuchstellerAdresse());
 			final GesuchstellerAdresse altAddrToMerge = gesuchstellerAdresseToEntity(gesuchstellerJAXP.getAlternativeAdresse(), currentAltAdr);
 			gesuchsteller.addAdresse(altAddrToMerge);
+		} //else case: Wenn das haeklein "Zustell / Postadrsse" auf client weggenommen wird muss die Korrespondezadr auf dem Server geloescht werden.
+		else{
+			for (Iterator<GesuchstellerAdresse> iterator = gesuchsteller.getAdressen().iterator(); iterator.hasNext(); ) {
+				GesuchstellerAdresse next = iterator.next();
+				if (next.isKorrespondenzAdresse()) {
+					iterator.remove();
+				}
+			}
 		}
 		// Umzug und Wohnadresse
 		GesuchstellerAdresse umzugAddr = null;
@@ -1519,8 +1527,8 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxAuthAccessElement authAccessElementToJax(@Nonnull final AuthAccessElement access) {
-		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getUsername()),
-			String.valueOf(access.getNachname()), String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
+		return new JaxAuthAccessElement(access.getAuthId(), String.valueOf(access.getNachname()),
+			String.valueOf(access.getVorname()), String.valueOf(access.getEmail()), access.getRole());
 	}
 
 	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement loginElement, Benutzer benutzer) {

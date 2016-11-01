@@ -12,7 +12,7 @@ Das Admin gui wird ebenfalls aufgeschaltet und es wird ein user dafuer erzeugt
     Windows: https://docs.docker.com/engine/installation/windows/
 
 
-3A. DOCKER FILE BUILDEN UND STARTEN (beinhaltet ebegu-rest nicht)
+3A. DOCKER FILE BUILDEN UND STARTEN (ebegu-rest ist nicht automatisch deployed)
     Wenn man etwas am File ändern will oder
     Danach kann das Dockerfile mit folgenden befehl gebaut werden:
     docker build --rm --tag dvbern/deb-wildfly-ebegu-dev .
@@ -21,7 +21,7 @@ Das Admin gui wird ebenfalls aufgeschaltet und es wird ein user dafuer erzeugt
     docker run -it --net=host dvbern/deb-wildfly-ebegu-dev
 
 ODER
-3B. DOCKER IMAGE AUS DEM DVBERN REPO STARTEN (inkl. ebegu-rest)
+3B. DOCKER IMAGE AUS DEM DVBERN REPO STARTEN (inkl deploytem ebegu-rest)
 
     Per Maven wird zudem ein image in das dvbern docker repo gepushed welches ausgefuehrt werden kann
 

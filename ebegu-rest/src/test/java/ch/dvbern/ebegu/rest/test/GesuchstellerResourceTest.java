@@ -103,6 +103,24 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 
 
 	@Test
+	public void removeKorrespondenzaddr() throws EbeguException {
+		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
+		JaxAdresse korrArr = TestJaxDataUtil.createTestJaxAdr("korradr");
+		korrArr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+
+		jaxGesuchsteller.setAlternativeAdresse(korrArr);
+		JaxGesuchsteller gesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
+		Assert.assertNotNull(gesuchsteller.getAlternativeAdresse());
+
+		gesuchsteller.setAlternativeAdresse(null);
+		gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
+		//Nun wollen wir testen was passiert wenn man die Korrespondenzadr wieder entfernt
+		Assert.assertNull("Korrespondenzaddr muss geloscht sein", gesuchsteller.getAlternativeAdresse());
+
+	}
+
+	@Test
 	public void findGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller testGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testGesuchsteller, null, null);
