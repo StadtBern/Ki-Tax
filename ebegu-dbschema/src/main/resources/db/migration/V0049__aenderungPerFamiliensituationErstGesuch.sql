@@ -1,3 +1,10 @@
+ALTER TABLE familiensituation
+  ADD COLUMN aenderung_per DATE DEFAULT NULL;
+
+ALTER TABLE familiensituation_aud
+  ADD COLUMN aenderung_per DATE DEFAULT NULL;
+
+
 ALTER TABLE gesuch
   ADD COLUMN familiensituation_erstgesuch_id VARCHAR(36) DEFAULT NULL;
 
