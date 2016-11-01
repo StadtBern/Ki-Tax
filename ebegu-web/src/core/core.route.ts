@@ -9,12 +9,12 @@ import ITimeoutService = angular.ITimeoutService;
 import ILocationService = angular.ILocationService;
 
 appRun.$inject = ['angularMomentConfig', 'RouterHelper', 'ListResourceRS', 'MandantRS', '$rootScope', 'hotkeys',
-    '$timeout', 'AuthServiceRS', '$state', '$location'];
+    '$timeout', 'AuthServiceRS', '$state', '$location', '$window'];
 
 /* @ngInject */
 export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, listResourceRS: ListResourceRS,
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
-                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService) {
+                       authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService) {
     // navigationLogger.toggle();
     routerHelper.configureStates(getStates(), '/pendenzen');
     angularMomentConfig.format = 'DD.MM.YYYY';
@@ -25,12 +25,19 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
         //    oder so  $anchorScroll('top') mit einem <div id="top">;
     });
 
+    // not used anymore?
     $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {
         //do stuff if needed
         if (ENV !== 'test') {
             listResourceRS.getLaenderList();  //initial aufruefen damit cache populiert wird
             mandantRS.getFirst();
         }
+    });
+
+    $rootScope.$on(TSAuthEvent[TSAuthEvent.CHANGE_USER], () => {
+        // User has changed with backdoor, we need to reload app to delete stored data.
+        // See: http://stackoverflow.com/questions/26522875/best-practices-for-clearing-data-in-sevices-on-logout-in-angularjs
+        $window.location.reload();
     });
 
     $rootScope.$on(TSAuthEvent[TSAuthEvent.NOT_AUTHENTICATED], () => {
