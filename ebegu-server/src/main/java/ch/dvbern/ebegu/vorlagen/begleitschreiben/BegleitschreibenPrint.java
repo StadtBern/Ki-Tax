@@ -18,11 +18,15 @@ public interface BegleitschreibenPrint {
 	// mit den Platzhaltern im Word-Template!
 	// ****************************************************************************************************************
 
-	String getGesuchstellerName();
+	String getGesuchstellerNameOderOrganisation();
 
 	String getGesuchstellerStrasse();
 
 	String getGesuchstellerPLZStadt();
 
 	String getFallNummer();
+
+	String getDateCreate();
+
+	boolean isPrintTextFamilie();
 }
