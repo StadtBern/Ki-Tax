@@ -67,28 +67,28 @@
         <br/>
 
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-            <div class="col-md-12 text-center">
-                <span ng-show="vm.showGeprueft()">
+            <div class="col-md-12 text-center row">
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
                     <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
-                                       button-class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+                                       button-class="btn btn-sm btn-success" aria-label="{{GEPRUEFT_UPPER | translate}}">
                         <span data-translate="GEPRUEFT_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                <span ng-show="vm.showVerfuegenStarten()">
+                <span class="col-md-4" ng-show="vm.showVerfuegenStarten()">
                     <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
-                                       button-class="md-raised md-primary"
+                                       button-class="btn btn-sm btn-success"
                                        aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
                         <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                <span ng-show="vm.showGeprueft()">
-                    <dv-loading-button button-class="md-raised md-warn md-hue-2"
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
+                    <dv-loading-button button-class="btn btn-sm"
                                        aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
                         <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                <span ng-show="vm.showGeprueft()">
-                    <dv-loading-button button-class="md-raised md-warn md-hue-2"
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
+                    <dv-loading-button button-class="btn btn-sm"
                                        aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
                         <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
                     </dv-loading-button>
