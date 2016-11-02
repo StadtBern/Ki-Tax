@@ -51,10 +51,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private boolean zuSpaetEingereicht;
 
 	@Transient
-	private boolean wohnsitzNichtInGemeindeGS1;
-
+	private Boolean wohnsitzNichtInGemeindeGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 	@Transient
-	private boolean wohnsitzNichtInGemeindeGS2;
+	private Boolean wohnsitzNichtInGemeindeGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
 	private boolean kindMinestalterUnterschritten;
@@ -269,18 +268,18 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	}
 
 	public boolean isWohnsitzNichtInGemeindeGS1() {
-		return wohnsitzNichtInGemeindeGS1;
+		return wohnsitzNichtInGemeindeGS1 != null ? wohnsitzNichtInGemeindeGS1 : true;
 	}
 
-	public void setWohnsitzNichtInGemeindeGS1(boolean wohnsitzNichtInGemeindeGS1) {
+	public void setWohnsitzNichtInGemeindeGS1(Boolean wohnsitzNichtInGemeindeGS1) {
 		this.wohnsitzNichtInGemeindeGS1 = wohnsitzNichtInGemeindeGS1;
 	}
 
 	public boolean isWohnsitzNichtInGemeindeGS2() {
-		return wohnsitzNichtInGemeindeGS2;
+		return wohnsitzNichtInGemeindeGS2 != null ? wohnsitzNichtInGemeindeGS2 : true;
 	}
 
-	public void setWohnsitzNichtInGemeindeGS2(boolean wohnsitzNichtInGemeindeGS2) {
+	public void setWohnsitzNichtInGemeindeGS2(Boolean wohnsitzNichtInGemeindeGS2) {
 		this.wohnsitzNichtInGemeindeGS2 = wohnsitzNichtInGemeindeGS2;
 	}
 
@@ -329,8 +328,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 
 		this.addBemerkung(other.getBemerkungen());
 		this.setZuSpaetEingereicht(this.isZuSpaetEingereicht() || other.isZuSpaetEingereicht());
-		this.setWohnsitzNichtInGemeindeGS1(this.isWohnsitzNichtInGemeindeGS1() || other.isWohnsitzNichtInGemeindeGS1());
-		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() || other.isWohnsitzNichtInGemeindeGS2());
+
+		this.setWohnsitzNichtInGemeindeGS1(this.isWohnsitzNichtInGemeindeGS1() && other.isWohnsitzNichtInGemeindeGS1());
+		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() && other.isWohnsitzNichtInGemeindeGS2());
+
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
 		// Der Familiengroessen Abzug kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
@@ -432,9 +433,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			Objects.equals(abzugFamGroesse, that.abzugFamGroesse) &&
 			Objects.equals(famGroesse, that.famGroesse) &&
 			Objects.equals(massgebendesEinkommenVorAbzugFamgr, that.massgebendesEinkommenVorAbzugFamgr) &&
+			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (that.isWohnsitzNichtInGemeindeGS1() && that.isWohnsitzNichtInGemeindeGS2()) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
-			wohnsitzNichtInGemeindeGS1 == that.wohnsitzNichtInGemeindeGS1 &&
-			wohnsitzNichtInGemeindeGS2 == that.wohnsitzNichtInGemeindeGS2 &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
 	}

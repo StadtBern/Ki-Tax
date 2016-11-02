@@ -36,7 +36,7 @@
                                 ng-bind="betreuung.betreuungsstatus | translate"></td>
                             <td dv-show-element
                                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                                dv-show-expression="vm.canRemoveBetreuung(betreuung)"
                                 ng-click="$event.stopPropagation()">
                                 <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
                                                    button-class="btn btn-sm">
@@ -46,8 +46,8 @@
                             </td>
                             <td dv-show-element
                                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                dv-show-expression="vm.isGesuchStatusVerfuegenVerfuegt()">
-                                <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen-->
+                                dv-show-expression="!vm.canRemoveBetreuung(betreuung)">
+                                <!-- Fuer Alle ausser Institutionen, wenn der Status ist verfuegt oder Verfuegen oder bei Mutation-->
                             </td>
                             <td dv-show-element
                                 dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()">

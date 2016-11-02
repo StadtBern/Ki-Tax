@@ -13,6 +13,8 @@ export default class WizardStepManager {
     private wizardSteps: Array<TSWizardStep> = [];
     private currentStepName: TSWizardStepName; // keeps track of the name of the current step
 
+    private wizardStepsSnapshot: Array<TSWizardStep> = [];
+
 
     static $inject = ['AuthServiceRS', 'WizardStepRS'];
     /* @ngInject */
@@ -73,7 +75,7 @@ export default class WizardStepManager {
      * Sollten keine WizardSteps gefunden werden, wird die Methode initWizardSteps aufgerufen, um die
      * minimale Steps herzustellen. Die erlaubten Steps fuer den aktuellen Benutzer werden auch gesetzt
      * @param gesuchId
-     * @returns {IPromise<TResult>}
+     * @returns {IPromise<void>}
      */
     public findStepsFromGesuch(gesuchId: string): IPromise<void> {
         return this.wizardStepRS.findWizardStepsFromGesuch(gesuchId).then((response: Array<any>) => {
@@ -248,5 +250,13 @@ export default class WizardStepManager {
             return this.getStepByName(stepName).wizardStepStatus === status;
         }
         return false;
+    }
+
+    public backupCurrentSteps(): void {
+        this.wizardStepsSnapshot = angular.copy(this.wizardSteps);
+    }
+
+    public restorePreviousSteps(): void {
+        this.wizardSteps = this.wizardStepsSnapshot;
     }
 }

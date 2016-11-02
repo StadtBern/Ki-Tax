@@ -22,8 +22,7 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 	@Override
 	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
 
-		//TODO: Sobald die Familiensituation mutiert werden kann muss hier als zweiter Parameter die mutierte Familiensituation angegeben werden
-		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.getFamiliensituation(), gesuch.getFamiliensituation(), null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
+		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.getFamiliensituationErstgesuch(), gesuch.getFamiliensituation(), null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
 
 	}
 
@@ -33,14 +32,14 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 	}
 
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituation1, Familiensituation familiensituation2) {
-		if (familiensituation1 == null || familiensituation2 == null) {
+	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituationErstgesuch, Familiensituation familiensituationMutation) {
+		if (familiensituationErstgesuch == null || familiensituationMutation == null) {
 			return false;
 		}
 		switch (dokumentTyp) {
 			case NACHWEIS_TRENNUNG:
-				//TODO: Sobald die Familiensituation mutiert werden kann muss überprüft werden, ob ein Wechsel von zwei Gesuchsteller auf einen stattgefunden hat.
-				return true;
+				//überprüfen, ob ein Wechsel von zwei Gesuchsteller auf einen stattgefunden hat.
+				return familiensituationErstgesuch.hasSecondGesuchsteller() && !familiensituationMutation.hasSecondGesuchsteller();
 			default:
 				return false;
 		}

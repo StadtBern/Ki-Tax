@@ -1,10 +1,13 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
-import ch.dvbern.ebegu.util.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,16 +21,13 @@ import java.util.List;
  */
 public class ErwerbspensumRuleTest {
 
-	private final ErwerbspensumAbschnittRule erwerbspensumAbschnittRule = new ErwerbspensumAbschnittRule(Constants.DEFAULT_GUELTIGKEIT);
-	private final ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(Constants.DEFAULT_GUELTIGKEIT);
-
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
 	private final LocalDate ENDE_PERIODE = LocalDate.of(2017, Month.JULY, 31);
 
 
 	@Test
 	public void testKeinErwerbspensum() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Betreuung betreuung = createGesuch(true);
 
 		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
 		Assert.assertNotNull(result);
@@ -39,7 +39,7 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testNormalfallZweiGesuchsteller() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Betreuung betreuung = createGesuch(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));
@@ -54,7 +54,7 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testNormalfallEinGesuchsteller() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Betreuung betreuung = createGesuch(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
@@ -68,7 +68,7 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testNurEinErwerbspensumBeiZweiGesuchstellern() throws Exception {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Betreuung betreuung = createGesuch(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
@@ -82,7 +82,7 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testMehrAls100ProzentBeiEinemGesuchsteller() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Betreuung betreuung = createGesuch(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
@@ -96,7 +96,7 @@ public class ErwerbspensumRuleTest {
 
 	@Test
 	public void testMehrAls100ProzentBeiBeidenGesuchstellern() {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
+		Betreuung betreuung = createGesuch(true);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 10));
@@ -110,6 +110,80 @@ public class ErwerbspensumRuleTest {
 		Assert.assertTrue(result.get(0).getBemerkungen().contains("Erwerbspensum GS 2"));
 	}
 
+	@Test
+	public void testFrom1GSTo2GSRechtzeitigEingereicht() {
+		Betreuung betreuung = createGesuch(true);
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setTyp(AntragTyp.MUTATION);
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.DECEMBER, 26));
+
+		from1GSTo2GS(betreuung, gesuch);
+
+	}
+
+	@Test
+	public void testFrom1GSTo2GSSpaetEingereichtAberNiedrigerWert() {
+		Betreuung betreuung = createGesuch(true);
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setTyp(AntragTyp.MUTATION);
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.MAY, 26));
+
+		from1GSTo2GS(betreuung, gesuch);
+	}
+
+	private void from1GSTo2GS(Betreuung betreuung, Gesuch gesuch) {
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 90, 0));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 80, 0));
+
+		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(90, result.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(START_PERIODE, result.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 25), result.get(0).getGueltigkeit().getGueltigBis());
+
+		Assert.assertEquals(70, result.get(1).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 26), result.get(1).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, result.get(1).getGueltigkeit().getGueltigBis());
+	}
+
+	@Test
+	public void testFrom2GSTo1GSRechtzeitigEingereicht() {
+		Betreuung betreuung = createGesuch(true);
+
+		Gesuch gesuch = betreuung.extractGesuch();
+		gesuch.setTyp(AntragTyp.MUTATION);
+		gesuch.setEingangsdatum(LocalDate.of(2016, Month.DECEMBER, 26));
+
+		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 90, 0));
+		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 70, 0));
+
+		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.getFamiliensituation().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+
+		List<VerfuegungZeitabschnitt> result = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(START_PERIODE, result.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 25), result.get(0).getGueltigkeit().getGueltigBis());
+
+		Assert.assertEquals(90, result.get(1).getAnspruchberechtigtesPensum());
+		Assert.assertEquals(LocalDate.of(2017, Month.MARCH, 26), result.get(1).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, result.get(1).getGueltigkeit().getGueltigBis());
+	}
+
 
 	/**
 	 * das Pensum muss wie folgt abgerundet werden:
@@ -119,7 +193,7 @@ public class ErwerbspensumRuleTest {
      */
 	@Test
 	public void testRoundToTens() throws Exception {
-		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		Betreuung betreuung = createGesuch(false);
 		Gesuch gesuch = betreuung.extractGesuch();
 
 		gesuch.getGesuchsteller1().setErwerbspensenContainers(new HashSet<>());
@@ -184,4 +258,16 @@ public class ErwerbspensumRuleTest {
 		Assert.assertEquals(100, result12.get(0).getAnspruchberechtigtesPensum());
 
 	}
+
+
+
+	private Betreuung createGesuch(final boolean gs2) {
+		final Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(gs2);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
+		TestDataUtil.createDefaultAdressenForGS(gesuch, gs2);
+
+		return betreuung;
+	}
+
 }

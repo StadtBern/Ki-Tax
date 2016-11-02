@@ -100,6 +100,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	/**
 	 * Testet, dass das entfernen eines Betreuungspensums auf dem Client dieses aus der Liste auf dem Server loescht.
+	 *
 	 * @throws EbeguException
 	 */
 	@Test

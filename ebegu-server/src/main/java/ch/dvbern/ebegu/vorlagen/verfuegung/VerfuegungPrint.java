@@ -67,4 +67,5 @@ public interface VerfuegungPrint {
 	 */
 	boolean isPrintManuellebemerkung();
 
+	String getDateCreate();
 }

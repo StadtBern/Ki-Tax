@@ -433,7 +433,7 @@ export default class EbeguRestUtil {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
-
+            restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
             return restFamiliensituation;
         }
         return undefined;
@@ -464,6 +464,7 @@ export default class EbeguRestUtil {
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
+            familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
             return familiensituation;
         }
         return undefined;
@@ -1001,6 +1002,7 @@ export default class EbeguRestUtil {
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
+        restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
         return restBetreuungspensum;
     }
 
@@ -1063,6 +1065,7 @@ export default class EbeguRestUtil {
     public parseBetreuungspensum(betreuungspensumTS: TSBetreuungspensum, betreuungspensumFromServer: any): TSBetreuungspensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
+            betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
             return betreuungspensumTS;
         }
         return undefined;
