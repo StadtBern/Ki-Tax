@@ -38,7 +38,7 @@ public class EinreichungsfristRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -63,7 +63,7 @@ public class EinreichungsfristRuleTest {
 		Assert.assertEquals(2, result.size());
 
 		VerfuegungZeitabschnitt abschnitt1 = result.get(0);
-		Assert.assertEquals(60, abschnitt1.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt1.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt1.getBetreuungspensum());
 		Assert.assertEquals(0, abschnitt1.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnitt1.getBgPensum());
@@ -73,7 +73,7 @@ public class EinreichungsfristRuleTest {
 		Assert.assertEquals(false, abschnitt1.isBezahltVollkosten());
 
 		VerfuegungZeitabschnitt abschnitt2 = result.get(1);
-		Assert.assertEquals(60, abschnitt2.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt2.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt2.getBetreuungspensum());
 		Assert.assertEquals(60, abschnitt2.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, abschnitt2.getBgPensum());
@@ -98,7 +98,7 @@ public class EinreichungsfristRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -127,7 +127,7 @@ public class EinreichungsfristRuleTest {
 
 		VerfuegungZeitabschnitt abschnitt2 = result.get(1);
 		Assert.assertEquals(betreuungsStart, abschnitt2.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(60, abschnitt2.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt2.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt2.getBetreuungspensum());
 		Assert.assertEquals(60, abschnitt2.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, abschnitt2.getBgPensum());
@@ -150,7 +150,7 @@ public class EinreichungsfristRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -178,7 +178,7 @@ public class EinreichungsfristRuleTest {
 		Assert.assertEquals(2, result.size());
 
 		VerfuegungZeitabschnitt abschnitt1 = result.get(0);
-		Assert.assertEquals(60, abschnitt1.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt1.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt1.getBetreuungspensum());
 		Assert.assertEquals(60, abschnitt1.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, abschnitt1.getBgPensum());
@@ -188,7 +188,7 @@ public class EinreichungsfristRuleTest {
 		Assert.assertEquals(true, abschnitt1.isBezahltVollkosten());
 
 		VerfuegungZeitabschnitt abschnitt2 = result.get(1);
-		Assert.assertEquals(60, abschnitt2.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt2.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt2.getBetreuungspensum());
 		Assert.assertEquals(60, abschnitt2.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, abschnitt2.getBgPensum());
@@ -211,7 +211,7 @@ public class EinreichungsfristRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -240,7 +240,7 @@ public class EinreichungsfristRuleTest {
 
 		VerfuegungZeitabschnitt abschnitt2 = result.get(1);
 		Assert.assertEquals(betreuungsStart, abschnitt2.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(60, abschnitt2.getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), abschnitt2.getErwerbspensumGS1());
 		Assert.assertEquals(60, abschnitt2.getBetreuungspensum());
 		Assert.assertEquals(60, abschnitt2.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, abschnitt2.getBgPensum());

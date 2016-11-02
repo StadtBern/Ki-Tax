@@ -26,12 +26,12 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 	@Max(100)
 	@Min(0)
 	@NotNull
-	private int erwerbspensumGS1;
+	private Integer erwerbspensumGS1;
 
 	@Max(100)
 	@Min(0)
 	@NotNull
-	private int erwerbspensumGS2;
+	private Integer erwerbspensumGS2;
 
 	@Max(100)
 	@Min(0)
@@ -87,19 +87,19 @@ public class JaxVerfuegungZeitabschnitt extends JaxAbstractDateRangedDTO {
 //	private Verfuegung verfuegung;
 
 
-	public int getErwerbspensumGS1() {
+	public Integer getErwerbspensumGS1() {
 		return erwerbspensumGS1;
 	}
 
-	public void setErwerbspensumGS1(int erwerbspensumGS1) {
+	public void setErwerbspensumGS1(Integer erwerbspensumGS1) {
 		this.erwerbspensumGS1 = erwerbspensumGS1;
 	}
 
-	public int getErwerbspensumGS2() {
+	public Integer getErwerbspensumGS2() {
 		return erwerbspensumGS2;
 	}
 
-	public void setErwerbspensumGS2(int erwerbspensumGS2) {
+	public void setErwerbspensumGS2(Integer erwerbspensumGS2) {
 		this.erwerbspensumGS2 = erwerbspensumGS2;
 	}
 

@@ -30,7 +30,22 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 			erwerbspensumAbschnitte.addAll(getErwerbspensumAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), false));
 		}
 		if (gesuch.getGesuchsteller2() != null) {
-			erwerbspensumAbschnitte.addAll(getErwerbspensumAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller2(), true));
+			final List<VerfuegungZeitabschnitt> zeitabschnitteGS2 = getErwerbspensumAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller2(), true);
+			if (zeitabschnitteGS2.size() > 0) {
+				erwerbspensumAbschnitte.addAll(zeitabschnitteGS2);
+			}
+			else {
+				if (gesuch.getFamiliensituation() != null && !gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller()
+					&& gesuch.getFamiliensituation().hasSecondGesuchsteller() && gesuch.getFamiliensituation().getAenderungPer() != null) {
+					// 1GS to 2GS
+					//Ein Zeitabschnitt wird simuliert, wenn der GS2 existiert aber hat kein Erwerbspensum
+					final DateRange gueltigkeitAbschnitt = new DateRange(gesuch.getFamiliensituation().getAenderungPer(),
+						gesuch.getGesuchsperiode().getGueltigkeit().getGueltigBis());
+					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeitAbschnitt);
+					zeitabschnitt.setErwerbspensumGS2(0);
+					erwerbspensumAbschnitte.add(zeitabschnitt);
+				}
+			}
 		}
 		return erwerbspensumAbschnitte;
 	}
@@ -102,6 +117,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	private VerfuegungZeitabschnitt createZeitAbschnittForGS2(DateRange gueltigkeit, int erwerbspensumTotal) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
+		zeitabschnitt.setErwerbspensumGS1(null);
 		zeitabschnitt.setErwerbspensumGS2(erwerbspensumTotal);
 		return zeitabschnitt;
 	}

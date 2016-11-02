@@ -39,10 +39,10 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	// Zwischenresulate aus DATA-Rules ("Abschnitt")
 
 	@Transient
-	private int erwerbspensumGS1;
+	private Integer erwerbspensumGS1 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
-	private int erwerbspensumGS2;
+	private Integer erwerbspensumGS2 = null; //es muss by default null sein um zu wissen, wann es nicht definiert wurde
 
 	@Transient
 	private int fachstellenpensum;
@@ -141,19 +141,19 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setGueltigkeit(new DateRange(gueltigkeit));
 	}
 
-	public int getErwerbspensumGS1() {
+	public Integer getErwerbspensumGS1() {
 		return erwerbspensumGS1;
 	}
 
-	public void setErwerbspensumGS1(int erwerbspensumGS1) {
+	public void setErwerbspensumGS1(Integer erwerbspensumGS1) {
 		this.erwerbspensumGS1 = erwerbspensumGS1;
 	}
 
-	public int getErwerbspensumGS2() {
+	public Integer getErwerbspensumGS2() {
 		return erwerbspensumGS2;
 	}
 
-	public void setErwerbspensumGS2(int erwerbspensumGS2) {
+	public void setErwerbspensumGS2(Integer erwerbspensumGS2) {
 		this.erwerbspensumGS2 = erwerbspensumGS2;
 	}
 
@@ -315,8 +315,49 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			newBetreuungsstunden = newBetreuungsstunden.add(other.getBetreuungsstunden());
 		}
 		this.setBetreuungsstunden(newBetreuungsstunden);
-		this.setErwerbspensumGS1(this.getErwerbspensumGS1() + other.getErwerbspensumGS1());
-		this.setErwerbspensumGS2(this.getErwerbspensumGS2() + other.getErwerbspensumGS2());
+
+//		if ((this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == null)
+//			|| (this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == 0)
+//			|| (other.getErwerbspensumGS1() == null && this.getErwerbspensumGS1() == 0)) {
+//			this.setErwerbspensumGS1(null);
+//		}
+//		else if ((this.getErwerbspensumGS1() != null && this.getErwerbspensumGS1() == 0) && (other.getErwerbspensumGS1() != null && other.getErwerbspensumGS1() == 0)) {
+//			this.setErwerbspensumGS1(0);
+//		}
+//		else {
+//			this.setErwerbspensumGS1((this.getErwerbspensumGS1() != null ? this.getErwerbspensumGS1() : 0)
+//				+ (other.getErwerbspensumGS1() != null ? other.getErwerbspensumGS1() : 0));
+//		}
+//
+//		if ((this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == null)
+//			|| (this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == 0)
+//			|| (other.getErwerbspensumGS2() == null && this.getErwerbspensumGS2() == 0)) {
+//			this.setErwerbspensumGS2(null);
+//		}
+//		else if ((this.getErwerbspensumGS2() != null && this.getErwerbspensumGS2() == 0) && (other.getErwerbspensumGS2() != null && other.getErwerbspensumGS2() == 0)) {
+//			this.setErwerbspensumGS2(0);
+//		}
+//		else {
+//			this.setErwerbspensumGS2((this.getErwerbspensumGS2() != null ? this.getErwerbspensumGS2() : 0) +
+//				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
+//		}
+
+		if (this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == null) {
+			this.setErwerbspensumGS1(null);
+		}
+		else {
+			this.setErwerbspensumGS1((this.getErwerbspensumGS1() != null ? this.getErwerbspensumGS1() : 0)
+				+ (other.getErwerbspensumGS1() != null ? other.getErwerbspensumGS1() : 0));
+		}
+
+		if (this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == null) {
+			this.setErwerbspensumGS2(null);
+		}
+		else {
+			this.setErwerbspensumGS2((this.getErwerbspensumGS2() != null ? this.getErwerbspensumGS2() : 0) +
+				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
+		}
+
 		BigDecimal massgebendesEinkommenVorAbzugFamgr = ZERO;
 		if (this.getMassgebendesEinkommenVorAbzFamgr() != null) {
 			massgebendesEinkommenVorAbzugFamgr = massgebendesEinkommenVorAbzugFamgr.add(this.getMassgebendesEinkommenVorAbzFamgr());
