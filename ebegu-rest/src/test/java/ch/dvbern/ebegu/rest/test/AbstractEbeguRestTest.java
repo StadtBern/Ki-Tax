@@ -40,7 +40,7 @@ public abstract class AbstractEbeguRestTest {
 
 		PomEquippedResolveStage pom = Maven.resolver().loadPomFromFile("pom.xml");
 		File[] runtimeDeps = pom.importRuntimeDependencies().resolve()
-			.using(new RejectDependenciesStrategy(false,"ch.dvbern.ebegu:ebegu-dbschema")) //wir wollen flyway nicht im test
+			.using(new RejectDependenciesStrategy(false, "ch.dvbern.ebegu:ebegu-dbschema")) //wir wollen flyway nicht im test
 			.asFile();
 		File[] testDeps = pom.importTestDependencies().resolve().withoutTransitivity().asFile();
 
@@ -49,18 +49,22 @@ public abstract class AbstractEbeguRestTest {
 		WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "rest-test.war")
 
 			.addClasses(AbstractEbeguRestTest.class, Persistence.class,
-				ISessionContextService.class, AbstractEntity.class )
+				ISessionContextService.class, AbstractEntity.class)
 
 			.addPackages(true, "ch/dvbern/ebegu/api")
 			.addPackages(true, "ch/dvbern/ebegu/rest/test")
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)
 
+
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")
 			.addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
-				// Deploy our test datasource
+			// Deploy our test datasource
 			.addAsWebInfResource("test-ds.xml");
+		//add openam dependencies
+		addOpenAmDependencies(webArchive);
+
 		if (classesToAdd != null) {
 			webArchive.addClasses(classesToAdd);
 		}
@@ -69,6 +73,23 @@ public abstract class AbstractEbeguRestTest {
 		return webArchive;
 	}
 
-
+	/**
+	 * Wegen IAM haben wir hier einige dependencies einzufuegen die wir nur als jar zur verfuegung haben
+	 * Diese werden in einem maven buildstep in den target Ordner kopiert
+	 */
+	private static void addOpenAmDependencies(WebArchive webArchive) {
+		webArchive.addAsLibraries(new File("target/openam-resources/openam-audit-context-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-audit-core-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-certs-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-federation-library-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-idpdiscovery-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-ldap-utils-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-liberty-schema-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-saml2-schema-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-shared-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-wsfederation-schema-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/openam-xacml3-schema-13.5.0.jar"))
+			.addAsLibraries(new File("target/openam-resources/esapiport-2013-12-04.jar"));
+	}
 
 }
