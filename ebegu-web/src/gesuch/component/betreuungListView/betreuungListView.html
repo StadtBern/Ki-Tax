@@ -1,9 +1,9 @@
 <div class="betreuungListView gesuchModul">
     <div class="row">
         <div class="col-md-12">
-            <h4 class="mainTitle">
+            <h1 class="mainTitle">
                 <span data-translate="KINDER_MIT_BETREUUNG"></span>
-            </h4>
+            </h1>
             <hr class="header"/>
         </div>
     </div>
@@ -11,7 +11,7 @@
     <!--Fuer jedes Kind Tabelle anzeigen-->
     <div class="row">
         <div class="col-md-12">
-            <div ng-repeat="kind in vm.getKinderWithBetreuungList()">
+            <div ng-repeat="kind in vm.getKinderWithBetreuungList()" style="margin:2rem;">
                 <div class="row">
                     <div class="col-md-12">
                         <h4 class="mainTitle">
@@ -44,7 +44,7 @@
                                     dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()"
                                     ng-click="$event.stopPropagation()">
                                     <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
-                                                       button-class="btn btn-sm">
+                                                       button-class="dv-btn-sm">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
@@ -65,11 +65,11 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-12" style="margin-bottom: 20px" dv-show-element
+                    <div class="col-md-12" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                         <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
-                                           button-class="btn btn-sm btn-success">
+                                           button-class="dv-btn-sm color-success">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
                         </dv-loading-button>

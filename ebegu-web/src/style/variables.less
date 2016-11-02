@@ -1,3 +1,27 @@
+@base-font-size: 10px;
+//Breakpoints
+@bp-xs: 480px;
+@bp-sm: 768px; // 768px
+@bp-md: 1024px; //992px; // 1024px
+@bp-lg: 1366px; // 1366px
+@bp-xlg: 1920px; // 1920px
+@bp-xxlg: 2560px; // 2560px
+
+//Media-Queries
+@mq-xs: ~"only screen and (min-width: @{bp-xs})";
+@mq-sm: ~"only screen and (min-width: @{bp-sm})";
+@mq-md: ~"(min-width: @{bp-md})";
+@mq-lg: ~"(min-width: @{bp-lg})";
+@mq-xlg: ~"(min-width: @{bp-xlg}) and (max-width:@{bp-xxlg})";
+@mq-xxlg: ~"(min-width: @{bp-xxlg})";
+@mq-d-sm: ~"only screen and (min-width: @{bp-sm})";
+@mq-d-md: ~"(min-device-width: @{bp-md})";
+@mq-d-lg: ~"(min-device-width: @{bp-lg})";
+@mq-d-xlg: ~"(min-device-width: @{bp-xlg}) and (max-width:@{bp-xxlg})";
+@mq-d-xxlg: ~"(min-device-width: @{bp-xxlg})";
+@mq-retina: ~"(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+
+
 @background-color: white;
 @state-danger-text: red;
 @floating-text-line-height: 2;
@@ -18,6 +42,8 @@
 /*Darker*/
 @dgrey: #858585;
 @dred: #BF0425;
+@dgreen: #109457;
+@dorange: #c4841c;
 @dblue: #4A90E2;
 /*Lighter*/
 @lgrey: #F0F0F0;
@@ -43,12 +69,15 @@
 //Success
 @success-light: @lgreen;
 @success: @green;
+@success-dark: @dgreen;
 //Warning
 @warning-light: @lorange;
 @warning: @orange;
+@warning-dark: @dorange;
 //Danger
 @danger-light: @lred;
 @danger: @red;
+@danger-dark: @dred;
 /* Contrast Color für Error Handling */
 @color-contrast-hue: 359;
 @color-contrast: hsl(@color-contrast-hue, 100%, 67%);
@@ -65,9 +94,9 @@
 @padding-base-horizontal: @small-abstand;
 @padding-base-vertical: @small-abstand;
 /*Navbar */
-@navbar-height: 50px;
+@navbar-height: 5rem;
 
-@sidebar-height: 40px;
+@sidebar-height: 5rem;
 
 /*Position*/
 @page-start: (@navbar-height*2); //40px fuer intro
@@ -80,5 +109,6 @@
 @z-index-sidenav: 101;
 @z-index-kommentar: 101;
 @z-index-toolbar: 104;
+@z-index-dialog: 102;
 
 /**/

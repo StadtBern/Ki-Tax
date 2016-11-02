@@ -17,7 +17,7 @@
 
                     <!--Bezeichnung-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="BEZEICHNUNG" for="bezeichnung"></label>
                                 <input id="bezeichnung" type="text" name="bezeichnung"
@@ -30,7 +30,7 @@
 
                     <!--Taetigkeit-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="TAETIGKEIT_WAEHLEN" for="taetigkeit">
                                 </label>
@@ -50,15 +50,15 @@
 
                     <!--Pensum-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="PENSUM" for="taetigkeitPensum"></label>
                                 <input id="taetigkeitPensum" type="text" name="taetigkeitPensum"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
-                                       ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
-                                <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                                       ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                       ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-error-messages for="form.taetigkeitPensum.$error"
                                                    class="error hint"></dv-error-messages>
                                 <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.pensum"></dv-bisher>
@@ -68,29 +68,29 @@
 
                     <!--Ab Wann / Bis-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="AB" for="taetigkeitAbID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
                                                ng-required="true" class="input-element" placeholder=""
-                                               ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                                               ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                 <dv-error-messages for="form.taetigkeitAb.$error"
                                                    class="error hint"></dv-error-messages>
                             </dv-input-container>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
                                 </label>
                                 <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
-                                               ng-required="false" class="input-element">
+                                               ng-required="false" class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                 <dv-error-messages for="form.taetigkeitBis.$error"
                                                    class="error hint"></dv-error-messages>
                             </dv-input-container>
@@ -116,7 +116,7 @@
 
                     <!--Zuschlagsgrund-->
                     <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="ZUSCHLAGSGRUND_WAEHLEN" for="zuschlagsgrund">
                                 </label>
@@ -136,17 +136,17 @@
 
                 <!--Zuschlagsprozent-->
                 <div class="row" ng-if="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum">
-                    <div class="col-md-6">
+                    <div class="col-sm-12 dv-input-container-small">
                         <dv-input-container class="form-group">
                             <label class="md-no-float" data-translate="ZUSCHLAGSPROZENT" for="zuschlagsprozent"></label>
                             <input type="number" id="zuschlagsprozent" type="text" name="zuschlagsprozent"
                                    ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
                                    dv-max-length class="form-control" max="100"
                                    ng-required="true" ng-pattern="vm.patternPercentage"
-                                   ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                                   ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                   ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
                                                class="error hint"></dv-error-messages>
-                            <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
                             <dv-bisher gs="vm.erwerbspensum.erwerbspensumGS.zuschlagsprozent"></dv-bisher>
                         </dv-input-container>
                     </div>

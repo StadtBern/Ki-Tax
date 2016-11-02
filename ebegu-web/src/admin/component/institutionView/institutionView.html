@@ -32,7 +32,7 @@
 
                                 <td ng-click="$event.stopPropagation()">
                                     <dv-loading-button type="button" button-click="vm.removeInstitution(row)"
-                                                       button-class="btn btn-sm">
+                                                       button-class="dv-btn-sm">
                                         <i class="fa fa-minus">
                                         </i>
                                     </dv-loading-button>
@@ -52,7 +52,7 @@
                                 <!--Knopf zum hinzufügen neuer Institutionen-->
                                 <dv-loading-button type="button"
                                                    ng-click="vm.createInstitution(); form.$setPristine(); form.$setUntouched()"
-                                                   button-class="btn btn-sm btn-success">
+                                                   button-class="dv-btn-sm color-success">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <span data-translate="INSTITUTION_HINZUFUEGEN"></span>
                                 </dv-loading-button>
@@ -63,7 +63,7 @@
                                 <!--todo disable handeln-->
                                 <!--Knopf zum speichern der ausgewählen oder neuer Institution-->
                                 <dv-loading-button type="submit" button-click="vm.saveInstitution(form)"
-                                                   button-class="btn btn-sm btn-success"
+                                                   button-class="dv-btn-sm color-success"
                                                    button-disabled="!vm.isSelectedInstitution()">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <span data-translate="INSTITUTION_SPEICHERN"></span>
@@ -140,7 +140,7 @@
                                                 <td ng-click="$event.stopPropagation()">
                                                     <dv-loading-button type="button"
                                                                        button-click="vm.removeInstitutionStammdaten(row)"
-                                                                       button-class="btn btn-sm">
+                                                                       button-class="dv-btn-sm">
                                                         <i class="fa fa-minus">
                                                         </i>
                                                     </dv-loading-button>
@@ -160,7 +160,7 @@
                                                     <!--Knopf zum hinzufügen einer InstitutionStammdaten zur Institution-->
                                                     <dv-loading-button type="button"
                                                                        ng-click="vm.createInstitutionStammdaten(); form.$setPristine(); form.$setUntouched()"
-                                                                       button-class="btn btn-sm btn-success">
+                                                                       button-class="dv-btn-sm color-success">
                                                         <i class="glyphicon glyphicon-plus"></i>
                                                         <span
                                                             data-translate="INSTITUTION_STAMMDATEN_HINZUFUEGEN"></span>
@@ -172,7 +172,7 @@
                                                     <!--Knopf zum speichern der ausgewählen oder neuer InstitutionStammdaten-->
                                                     <dv-loading-button type="submit"
                                                                        button-click="vm.saveInstitutionStammdaten(form)"
-                                                                       button-class="btn btn-sm btn-success"
+                                                                       button-class="dv-btn-sm color-success"
                                                                        button-disabled="!vm.isSelectedInstitutionStammdaten()">
                                                         <i class="glyphicon glyphicon-plus"></i>
                                                         <span data-translate="INSTITUTION_STAMMDATEN_SPEICHERN"></span>

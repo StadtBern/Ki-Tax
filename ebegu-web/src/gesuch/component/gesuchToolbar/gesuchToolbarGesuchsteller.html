@@ -1,80 +1,71 @@
-<md-content class="gesuch-toolbar-gesuchsteller">
-    <md-toolbar class="gesuch-toolbar-gesuchsteller">
-        <div class="md-toolbar-tools">
-
-            <!--Fall und Name des Gesuchs-->
-            <span ng-bind="vmgs.getGesuchName()" class=" toolbar-gesuchname" style="margin:8px;"></span>
-
+<div class="gesuch-toolbar-gesuchsteller" flex="100">
+    <md-toolbar flex="100">
+        <md-menu-bar flex="100" layout="row" layout-align="start center">
+            <span class="gesuchName" ng-bind="vmgs.getGesuchName()"></span>
             <span flex=""></span>
-            <!--Gesuchsperioden-->
-            <md-menu-bar ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
-                <md-menu>
-                    <md-button class="toolbar-gesuchname" ng-click="$mdOpenMenu()"
-                               aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
-                        <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
-                        <i class="ellipsis-icon fa fa-chevron-down"></i>
-                    </md-button>
-                    <md-menu-content class="toolbar-submenu">
-                        <md-menu-item ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchsperiodeList)"
-                                      ng-value="gesuchsperiodeString">
-                            <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
-                                       aria-label="{{gesuchsperiodeString}}">
+            <md-menu ng-if="vmgs.showGesuchPeriodeNavigationMenu()">
+                <button ng-click="$mdOpenMenu()"
+                        aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
+                    <span ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+                <md-menu-content class="no-padding menu-item-container gesuchsteller">
+                    <md-menu-item class="menu-item-link gesuchsteller"
+                                  ng-repeat="gesuchsperiodeString in vmgs.getKeys(vmgs.gesuchsperiodeList)"
+                                  ng-value="gesuchsperiodeString">
+                        <md-button ng-click="vmgs.setGesuchsperiode(gesuchsperiodeString)"
+                                   aria-label="{{gesuchsperiodeString}}">
                                 <span>
-                                    <a class="toolbar-submenu-a" href="javascript:void(0)">{{gesuchsperiodeString}}</a>
+                                    <a href="javascript:void(0)">{{gesuchsperiodeString}}</a>
                                 </span>
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
 
-            <span ng-if="!vmgs.showGesuchPeriodeNavigationMenu()" ng-bind="vmgs.getCurrentGesuchsperiode()"
-                  style="font-size: 14px; margin-right: 10px; margin-left: 10px;"></span>
+            <span ng-if="!vmgs.showGesuchPeriodeNavigationMenu()" ng-bind="vmgs.getCurrentGesuchsperiode()"></span>
 
             <!--Gesuchstyp-->
-            <md-menu-bar ng-if="vmgs.showAntragTypListNavigationMenu()">
-                <md-menu>
-                    <md-button class="toolbar-gesuchname" ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
-                        <span ng-bind="vmgs.getAntragTyp()"></span>
-                        <i class="ellipsis-icon fa fa-chevron-down"></i>
-                    </md-button>
-                    <md-menu-content class="toolbar-submenu">
-                        <md-menu-item ng-repeat="antragTypDatum in vmgs.getKeys(vmgs.antragTypList)"
-                                      ng-value="antragTypDatum">
-                            <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
-                                       aria-label="{{antragTypDatum}}">
+            <md-menu ng-if="vmgs.showAntragTypListNavigationMenu()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getAntragTyp()}}">
+                    <span ng-bind="vmgs.getAntragTyp()"></span>
+                    <i class="ellipsis-icon fa fa-chevron-down"></i>
+                </button>
+                <md-menu-content class="no-padding menu-item-container gesuchsteller">
+                    <md-menu-item class="menu-item-link gesuchsteller"
+                                  ng-repeat="antragTypDatum in vmgs.getKeys(vmgs.antragTypList)"
+                                  ng-value="antragTypDatum">
+                        <md-button ng-click="vmgs.setAntragTypDatum(antragTypDatum)"
+                                   aria-label="{{antragTypDatum}}">
                                 <span>
-                                    <a class="toolbar-submenu-a" href="javascript:void(0)">{{antragTypDatum}}</a>
+                                    <a href="javascript:void(0)">{{antragTypDatum}}</a>
                                 </span>
-                            </md-button>
-                        </md-menu-item>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
 
-            <span ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"
-                  style="font-size: 14px; margin-right: 10px; margin-left: 10px; text-transform: uppercase;"></span>
+
+            <span ng-if="!vmgs.showAntragTypListNavigationMenu()" ng-bind="vmgs.getAntragTyp()"></span>
 
             <span flex=""></span>
 
             <!--Kontakt-->
-            <md-menu-bar>
-                <md-menu>
-                    <md-button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
-                        <i class="ellipsis-icon fa fa-envelope"></i>
-                        <span data-translate="TOOLBAR_KONTAKT"></span>
-                    </md-button>
-                    <md-menu-content class="toolbar-submenu">
-                        <span class="toolbar-adress">Jugendamt</span>
-                        <span class="toolbar-adress">Betreuungsgutscheine</span>
-                        <span class="toolbar-adress">Effingerstrasse 21</span>
-                        <span class="toolbar-adress">Postfach 3001 Bern</span>
-                        <span class="toolbar-adress">Telefon 031 321 51 15</span>
-                        <span class="toolbar-adress">betreuungsgutscheine@bern.ch</span>
-                    </md-menu-content>
-                </md-menu>
-            </md-menu-bar>
 
-        </div>
+            <md-menu ng-if="vmgs.showKontaktMenu()">
+                <button ng-click="$mdOpenMenu()" aria-label="{{vmgs.getCurrentGesuchsperiode()}}">
+                    <i class="ellipsis-icon fa fa-envelope"></i>
+                    <span data-translate="TOOLBAR_KONTAKT"></span>
+                </button>
+                <md-menu-content class="no-padding menu-item-container kontakt gesuchsteller">
+                    <span class="kontaktTop">Jugendamt</span>
+                    <span>Betreuungsgutscheine</span>
+                    <span>Effingerstrasse 21</span>
+                    <span>Postfach 3001 Bern</span>
+                    <span>Telefon 031 321 51 15</span>
+                    <span class="kontaktBottom">betreuungsgutscheine@bern.ch</span>
+                </md-menu-content>
+            </md-menu>
+        </md-menu-bar>
     </md-toolbar>
-</md-content>
+</div>

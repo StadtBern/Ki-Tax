@@ -1,52 +1,33 @@
 @import '../style/variables.less';
 @import '../style/mixins.less';
 @import '../style/organisms/sidenav.less';
-
 .mainTitle {
     margin-top: 0;
 }
-
 #gesuchContainer {
     background: @contrast-light;
     overflow-y: scroll;
-    //margin-top:40px;
-    position: fixed;
-    left: 350px;
-    right: 0;
-    top: 100px;
-    bottom: 0;
-    //padding-left:371px;
-}
-
-#kommentarContainer + #sidenavContainer + #gesuchContainer {
-    right: 320px;
-    top: 140px;
-}
-
-#kommentarContainer + #sidenavContainer {
-    top: 140px;
+    flex: 1 1 auto;
 }
 
 #kommentarContainer {
-    z-index: @z-index-kommentar;
-    width: 320px;
+    flex: 0 0 auto;
+    background: @contrast-lightest;
+    width: 32rem;
     padding: 0;
-    top: 140px;
     right: 0;
     bottom: 0;
-    position: fixed;
 }
 
 .fixedToolbar {
     position: fixed;
     width: 100%;
-    top: 100px;
+    top: 10rem;
     z-index: @z-index-toolbar;
 }
 
 .gesuchModul {
-
-    padding: 50px 25px 25px 50px;
+    padding: 5rem 2.5rem 2.5rem 5rem;
 }
 
 .betreuung-status {
@@ -73,18 +54,18 @@
 }
 
 .gesuch-status {
-    margin: 50px 25px 25px 25px;
+    margin: 5rem 2.5rem 2.5rem 2.5rem;
     color: @contrast-darkest;
 
     .status {
         .bold();
-        font-size: 14px;
-        letter-spacing: 1px;
+        font-size: 1.4rem;
+        letter-spacing: 0.1rem;
     }
     .zuletzt {
         .italic();
-        font-size: 12px;
-        letter-spacing: 1px;
+        font-size: 1.2rem;
+        letter-spacing: 0.1rem;
     }
 }
 

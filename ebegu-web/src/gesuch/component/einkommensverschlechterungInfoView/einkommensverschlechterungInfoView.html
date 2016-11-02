@@ -7,7 +7,7 @@
 
                     <!--Einkommensverschlechterung-->
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group">
                                 <h4 class="mainQuestion" data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_JA_NEIN"></h4>
                                 <dv-radio-container name="einkommensverschlechterung"
@@ -25,7 +25,7 @@
 
                     <!-- Auswahl Basisjahr Plus 1 -->
                     <div class="row">
-                        <div class="form-group col-md-6" ng-if="vm.showEkvi()">
+                        <div class="form-group col-sm-12 dv-input-container-small" ng-if="vm.showEkvi()">
                             <hr/>
                             <dv-input-container class="form-group dv-radio-container">
                                 <md-checkbox name="ekvFuerBasisJahrPlus1"
@@ -46,7 +46,8 @@
 
                     <!--Auswahl des Stichtages für BasisJahr plus 1-->
                     <div class="row">
-                        <div class="form-group col-md-6 selectGroup" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                        <div class="form-group col-sm-12 dv-input-container-small selectGroup"
+                             ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus1"></label>
                             <select name="stichtagBasisJahrPlus1" id="stichtagBasisJahrPlus1" class="form-control"
@@ -61,7 +62,8 @@
 
                     <!--Grund für BasisJahr plus 1-->
                     <div class="row">
-                        <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus1()">
+                        <div class="form-group col-sm-12 dv-input-container-small"
+                             ng-if="vm.showEkvi() && vm.showJahrPlus1()">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_GRUND_DES_EREIGNISSES"
                                        for="grundFuerBasisJahrPlus1"></label>
@@ -78,7 +80,7 @@
 
                     <!-- Auswahl Basisjahr Plus 2 -->
                     <div class="row">
-                        <div class="form-group col-md-6" ng-if="vm.showEkvi()">
+                        <div class="form-group col-sm-12 dv-input-container-small" ng-if="vm.showEkvi()">
                             <hr/>
                             <dv-input-container class="form-group dv-radio-container">
                                 <md-checkbox name="ekvFuerBasisJahrPlus2"
@@ -99,7 +101,8 @@
 
                     <!--Auswahl des Stichtages für BasisJahr plus 2-->
                     <div class="row">
-                        <div class="form-group col-md-6" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
+                        <div class="form-group col-sm-12 dv-input-container-small"
+                             ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                             <label class="md-no-float" data-translate="EKVI_MONAT_DES_EREIGNISSES"
                                    for="stichtagBasisJahrPlus2"></label>
                             <select name="stichtagBasisJahrPlus2" id="stichtagBasisJahrPlus2" class="form-control"
@@ -114,7 +117,8 @@
 
                     <!--Grund für BasisJahr plus 2-->
                     <div class="row">
-                        <div class="form-group col-md-12" ng-if="vm.showEkvi() && vm.showJahrPlus2()">
+                        <div class="form-group col-sm-12 dv-input-container-small"
+                             ng-if="vm.showEkvi() && vm.showJahrPlus2()">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EKVI_GRUND_DES_EREIGNISSES"
                                        for="grundFuerBasisJahrPlus2"></label>

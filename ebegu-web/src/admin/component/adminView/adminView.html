@@ -48,9 +48,9 @@
             <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
                   ng-if="vm.applicationProperty"
                   unsaved-warning-form>
-                <div class="row" style="margin-top: 20px">
+                <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group top5">
+                        <div class="form-group">
                             <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
                             </label>
                             <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
@@ -61,7 +61,7 @@
                         </div>
 
 
-                        <div class="form-group  top5">
+                        <div class="form-group">
                             <label class="md-no-float" data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
                             </label>
                             <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
@@ -73,9 +73,9 @@
                     </div>
 
                 </div>
-                <div class="row" style="margin-top:25px">
+                <div class="row">
                     <div class="col-md-2">
-                        <dv-loading-button button-class="btn btn-primary" type="submit">
+                        <dv-loading-button button-class="" type="submit">
                             <span data-translate="SAVE"></span>
                         </dv-loading-button>
                     </div>

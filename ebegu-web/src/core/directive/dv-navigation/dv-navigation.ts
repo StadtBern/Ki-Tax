@@ -74,7 +74,7 @@ export class NavigatorController {
         if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
         } else if (this.dvSave) {
-            return this.$translate.instant('ZURUECK_UPPER');
+            return this.$translate.instant('ZURUECK_ONLY_UPPER');
         } else {
             return this.$translate.instant('ZURUECK_ONLY_UPPER');
         }
@@ -88,7 +88,7 @@ export class NavigatorController {
         if (this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt()) {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         } else if (this.dvSave) {
-            return this.$translate.instant('WEITER_UPPER');
+            return this.$translate.instant('WEITER_ONLY_UPPER');
         } else {
             return this.$translate.instant('WEITER_ONLY_UPPER');
         }

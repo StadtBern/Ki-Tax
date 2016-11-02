@@ -1,37 +1,54 @@
 @import '../variables.less';
 @import '../mixins.less';
 
+.checkbox {
+    margin: 0 0 2rem;
+}
 md-checkbox {
+    &.md-focused {
+        //TODO Focus  border:red 20px solid;
+    }
+    .md-container {
+        width: 1.7rem;
+        height: 1.7rem;
+        &:before {
+            content: none !important;
+        }
+    }
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
     .md-label {
         span {
             .h3();
         }
     }
     .md-icon {
-        border: 1px solid @contrast-darkest;
-        border-radius: 2px;
+        border: 0.1rem solid @contrast-darkest;
+        border-radius: 0.2rem;
+        width: 1.7rem;
+        height: 1.7rem;
+        line-height: 1.7rem;
     }
     &.md-checked {
         .md-icon {
             background-color: @contrast-darkest;
             &:after {
-                font-size: 12px;
-                line-height: 20px;
+                font-size: 1rem;
+                line-height: 1.5rem;
                 font-family: 'FontAwesome';
                 left: 0;
                 right: 0;
                 top: 0;
                 bottom: 0;
+                width: auto;
+                height: auto;
                 transform: none;
-                width: 100%;
-                height: 100%;
-                border: none;
-                border-radius: 2px;
+                border-width: 0;
+                border-radius: 0.2rem;
                 content: "\f00c";
                 text-align: center;
                 color: @contrast-lightest;
+                display: block !important;
             }
         }
     }

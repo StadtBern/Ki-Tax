@@ -5,8 +5,6 @@
 @import '~font-awesome/less/font-awesome';
 @fa-font-path: "~font-awesome/fonts/";
 
-@import 'style/variables.less';
-@import 'style/mixins.less';
 @import 'style/typography.less';
 @import 'style/atoms/button.less';
 @import 'style/atoms/input.less';
@@ -14,10 +12,14 @@
 @import 'style/atoms/radio.less';
 @import 'style/organisms/navbar.less';
 @import 'style/molecules/table.less';
+@import 'style/variables.less';
+@import 'style/mixins.less';
+@import 'style/mediaqueries.less';
 /* Add Component LESS Above */
 
 html {
-    height: 100vh;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Required for Angular UI Bootstrap */
@@ -26,11 +28,13 @@ html {
 }
 
 body {
-    //navbar paddingtodo remove me just testing
-    padding-top: @page-start;
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    font-size: 1.6rem;
     .font-family();
     .starter-template {
-        padding: 40px 15px;
+        padding: 4rem 1.5rem;
         text-align: center;
     }
     &.ebegu {
@@ -38,15 +42,20 @@ body {
     }
 }
 
-//logobar
-.navbar-fixed-top {
-    top: @navbar-height;
+.ui-absolute-view {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    flex-direction: column;
 }
 
+.overflow-auto {
+    overflow: auto;
+}
 .dv-progressbar {
     position: fixed;
     width: 100%;
-    top: 95px;
+    top: 9.5rem;
     z-index: @z-index-progressbar;
     .md-container {
         background: none;
@@ -59,9 +68,9 @@ body {
 
 #Intro {
     top: 0;
-    position: fixed;
     background-color: white;
     height: @navbar-height;
+    min-height: @navbar-height;
     width: 100%;
     display: block;
     z-index: @z-index-navbar;
@@ -71,24 +80,24 @@ body {
     background-image: url('assets/images/logo1-bern.png');
     background-repeat: no-repeat;
     background-size: Auto @navbar-height;
-    background-position: left 7px center;
+    background-position: left 0.7rem center;
 }
 
 .logo-text {
     .bold();
     .capitalize();
     .vertical(middle);
-    font-size: 16px;
+    font-size: 1.6rem;
     color: @contrast-darkest;
-    letter-spacing: 1px;
+    letter-spacing: 0.1rem;
     text-align: center;
-    width: 150px;
-    margin: 0 auto;
+    width: 15rem;
+    position: relative;
 }
 
 .userMenu {
-    background-size: Auto 40px;
-    background-position: right 20px center;
+    background-size: Auto 4rem;
+    background-position: right 2rem center;
     float: right;
 }
 
@@ -107,7 +116,7 @@ body {
 //todo das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
-        padding-left: 1px;
+        padding-left: 0.1rem;
     }
 }
 
@@ -141,6 +150,15 @@ form {
 .row.is-flex > [class*='col-'] {
     display: flex;
     flex-direction: column;
+}
+
+.md-dialog-container {
+    z-index: @z-index-dialog;
+}
+
+md-backdrop.md-dialog-backdrop {
+
+    z-index: @z-index-dialog;
 }
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and

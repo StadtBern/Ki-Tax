@@ -6,11 +6,6 @@
 .gesuchstellerDashboardView {
     overflow-y: auto;
     color: #fff;
-    position: fixed;
-    top: 100px;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed; /* fallback */
     background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
     url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed;
@@ -24,7 +19,7 @@
     }
 
     .dashboardHeader {
-        margin-top: 200px;
+        margin-top: 20rem;
         z-index: @z-index-dashboard;
     }
     .dashboardButton {
@@ -39,13 +34,10 @@
             border-radius: 0;
             outline: none;
         }
-        div {
-            position: absolute;
-        }
         h2 {
             font-family: "Open Sans", Arial, Helvetica, sans-serif;
-            font-size: 22px;
-            letter-spacing: 1.5px;
+            font-size: 2.2rem;
+            letter-spacing: 0.15rem;
             color: @contrast-light;
             margin: 0;
         }
@@ -54,10 +46,11 @@
             left: 0;
             background-color: @contrast;
             width: @buttonWidth;
-            height: 100px;
+            height: 10rem;
+            min-width: 0;
 
             & h2 {
-                line-height: 100px;
+                line-height: 10rem;
                 font-weight: 600;
             }
         }
@@ -66,21 +59,23 @@
             left: 0;
             background-color: @primary;
             width: @buttonWidth;
-            height: 40px;
+            height: 4rem;
+            min-width: 0%;
             & h2 {
-                line-height: 40px;
-                font-size: 14px;
+                line-height: 4rem;
+                font-size: 1.4rem;
             }
         }
         .labelNotification {
-            top: 5px;
-            right: 5px;
-            border-radius: 40px;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            border-radius: 4rem;
             background-color: @contrast-lightest;
-            width: 24px;
-            height: 24px;
+            width: 2.4rem;
+            height: 2.4rem;
             vertical-align: center;
-            line-height: 24px;
+            line-height: 2.4rem;
             color: @primary;
             font-weight: bold;
         }

@@ -28,10 +28,14 @@ a {
     .a();
 }
 
-label {
+md-input-container label:not(.md-container-ignore), label {
     .label();
+    color: @danger;
     &:after {
         .label();
+        color: @danger;
+    }
+    .dv-error-messages {
     }
 }
 
@@ -44,4 +48,8 @@ md-input-container:not(.md-input-invalid).md-input-has-value, md-input-container
             color: @contrast-darkest;
         }
     }
+}
+
+.form-group {
+    margin: 0;
 }

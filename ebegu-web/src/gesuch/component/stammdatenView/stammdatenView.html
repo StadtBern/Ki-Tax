@@ -15,11 +15,9 @@
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                           dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                     <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-                    <br/>
-
                     <!--Geschlecht-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="md-no-float" data-translate="GESCHLECHT"></label>
                                 <dv-radio-container name="geschlecht" class="input-element"
@@ -35,7 +33,7 @@
                     </div>
                     <!--Vorname/Name-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
@@ -44,7 +42,7 @@
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                 <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
@@ -57,7 +55,7 @@
 
                     <!--Geburtsdatum-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                                 </label>
@@ -77,7 +75,7 @@
 
                     <!--Korrenspondenzadr Checkbox-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
                                              aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
@@ -99,7 +97,7 @@
 
                     <!-- Diplomatenstatus -->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
                                              aria-label="diplomatenstatus"
@@ -115,7 +113,7 @@
 
                     <!--Umzug checkbox-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
                                              ng-change="vm.umzugadreseClicked()"
@@ -136,7 +134,7 @@
 
                     <!--Email-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="EMAIL" for="email_ID">
                                 </label>
@@ -152,7 +150,7 @@
 
                     <!--Mobile /Telefon-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="MOBILE" for="mobile_ID">
                                 </label>
@@ -163,7 +161,7 @@
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-12">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="TELEFON" for="tel_ID">
                                 </label>
@@ -177,7 +175,7 @@
                     </div>
                     <!--auslaendische tel nummer-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="TELEFON_AUSLAND" for="ausl_tel">
                                 </label>

@@ -4,7 +4,7 @@
 
         <!-- Adresse Zusatz-->
         <div class="row" ng-if="vm.organisation">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_ORGANISATION" for="{{vm.prefix}}-organisation">
                     </label>
@@ -19,7 +19,7 @@
 
         <div class="dv-adresse row">
             <!--Strasse-->
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_STRASSE" for="{{vm.prefix}}-strasse">
                     </label>
@@ -29,7 +29,7 @@
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group secondColumn">
                     <label class="md-no-float" data-translate="ADRESSE_HAUSNUMMER" for="{{vm.prefix}}-hausnummer">
                     </label>
@@ -43,7 +43,7 @@
         </div>
         <!-- Adresse Zusatz-->
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_ZUSATZZEILE" for="{{vm.prefix}}-zusatzzeile">
                     </label>
@@ -57,7 +57,7 @@
         </div>
         <!-- PLZ ORT-->
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_PLZ" for="{{vm.prefix}}-plz">
                     </label>
@@ -67,7 +67,7 @@
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group secondColumn">
                     <label class="md-no-float" data-translate="ADRESSE_ORT" for="{{vm.prefix}}-ort">
                     </label>
@@ -80,7 +80,7 @@
         </div>
         <!-- Gemeinde-->
         <div class="row" ng-if="false">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_GEMEINDE" for="{{vm.prefix}}-gemeinde">
                     </label>
@@ -92,8 +92,8 @@
             </div>
         </div>
         <!-- Land-->
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row" style="margin-bottom:2rem;">
+            <div class="col-sm-12 dv-input-container-small">
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
@@ -111,7 +111,7 @@
         <!-- nicht in Bern wohnhaft-->
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButGesuchsteller()"
              dv-show-expression="vm.showNichtInGemeinde===true">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="checkbox">
                     <md-checkbox ng-model="vm.adresse.nichtInGemeinde" name="nichtInGemeinde"
                                  aria-label="nichtInGemeinde"
@@ -129,7 +129,7 @@
 
         <!-- gueltig ab / gueltig bis -->
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group" ng-if="vm.adresse.showDatumVon">
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGAB" for="{{vm.prefix}}-gueltigAb">
                     </label>
@@ -149,7 +149,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-sm-12 dv-input-container-small">
                 <dv-input-container class="form-group secondColumn" ng-if="false">
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGBIS" for="{{vm.prefix}}-gueltigBis">
                     </label>

@@ -33,7 +33,7 @@
                     </div>
                     <!--Vorname/Name-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
@@ -44,7 +44,7 @@
                                            ja="vm.getContainer().kindJA.vorname"></dv-bisher>
                             </dv-input-container>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group secondColumn">
                                 <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                 <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
@@ -59,15 +59,16 @@
 
                     <!--Geburtsdatum-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
                                 </label>
                                 <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum" placeholder=""
                                                ng-model="vm.getModel().geburtsdatum" ng-required="true"
-                                               class="input-element">
+                                               class="input-element"
+                                               ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
-                                <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
+
                                 <dv-error-messages for="form.geburtsdatum.$error"
                                                    class="error hint"></dv-error-messages>
                                 <dv-bisher gs="vm.getContainer().kindGS.geburtsdatum"
@@ -162,7 +163,7 @@
 
                     <!--Wohnhaft im gleichen Haushalt-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-sm-12 dv-input-container-small">
                             <div class="form-group" ng-show="vm.getModel().familienErgaenzendeBetreuung">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="WOHNHAFT_IM_GLEICHEN_HAUSHALT"
@@ -171,8 +172,8 @@
                                            ng-model="vm.getModel().wohnhaftImGleichenHaushalt" max="100"
                                            dv-max-length class="form-control"
                                            ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                           ng-required="vm.getModel().familienErgaenzendeBetreuung">
-                                    <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                                           ng-required="vm.getModel().familienErgaenzendeBetreuung"
+                                           ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.gleichemHaushalt.$error"
                                                        class="error hint"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.wohnhaftImGleichenHaushalt"
@@ -201,7 +202,7 @@
                     <!--fachstelle-->
                     <div ng-if="vm.isFachstelleRequired()">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-sm-12 dv-input-container-small">
                                 <div class="form-group">
                                     <label class="md-no-float" data-translate="FACHSTELLE" for="fachstelle">
                                     </label>
@@ -219,7 +220,7 @@
 
                         <!--betreuungspensumFachstelle-->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="BETREUUNGSPENSUM_FACHSTELLE"
                                            for="betreuungspensumFachstelle"></label>
@@ -227,8 +228,8 @@
                                            ng-model="vm.getPensumFachstelle().pensum" max="100"
                                            dv-max-length class="form-control"
                                            ng-pattern="vm.CONSTANTS.PATTERN_PERCENTAGE"
-                                           ng-required="vm.isFachstelleRequired()">
-                                    <div class="hint" data-translate="PERCENTAGE_PLACEHOLDER"></div>
+                                           ng-required="vm.isFachstelleRequired()"
+                                           ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                     <dv-error-messages for="form.betreuungspensumFachstelle.$error"
                                                        class="error hint"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensum"
@@ -239,16 +240,16 @@
 
                         <!-- gueltig ab / gueltig bis -->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="VON" for="datumAb">
                                     </label>
                                     <dv-datepicker input-id="datumAb" name="datumAb" placeholder=""
                                                    class="input-element"
                                                    ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigAb"
-                                                   ng-required="vm.isFachstelleRequired()">
+                                                   ng-required="vm.isFachstelleRequired()"
+                                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
-                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                     <dv-error-messages for="form.datumAb.$error"
                                                        class="error hint"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigAb"
@@ -256,16 +257,16 @@
                                 </dv-input-container>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-sm-12 dv-input-container-small">
                                 <dv-input-container class="form-group">
                                     <label class="md-no-float" data-translate="BIS" for="datumBis">
                                     </label>
                                     <dv-datepicker input-id="datumBis" name="datumBis" placeholder=""
                                                    class="input-element"
                                                    ng-model="vm.getPensumFachstelle().gueltigkeit.gueltigBis"
-                                                   ng-required="false">
+                                                   ng-required="false"
+                                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                     </dv-datepicker>
-                                    <div class="hint" data-translate="DATE_PLACEHOLDER"></div>
                                     <dv-error-messages for="form.datumBis.$error"
                                                        class="error hint"></dv-error-messages>
                                     <dv-bisher gs="vm.getContainer().kindGS.pensumFachstelle.gueltigkeit.gueltigBis"

@@ -2,11 +2,12 @@
 @import '../../../style/mixins.less';
 
 .kommentarView {
+    overflow-y: auto;
     height: 100%;
     & > form {
         height: inherit;
         & > div {
-            padding: 10px;
+            padding: 1rem;
         }
     }
     md-input-container {
@@ -14,7 +15,7 @@
             position: static;
         }
         textarea {
-            margin-top: 5px;
+            margin-top: 0.5rem;
         }
         margin: 0;
     }
@@ -28,33 +29,37 @@
     }
 
     .kommentarBottom {
-        position: absolute;
-        bottom: 50px;
-        left: 0;
-        right: 0;
+        /* position: absolute;
+         bottom: 50px;
+         left: 0;
+         right: 0;*/
     }
 
     .kommentarButton {
-        position: absolute;
+        /*position: absolute;
         bottom: 0;
         left: 0;
-        right: 0;
+        right: 0;*/
     }
 
     .kommentar-feld textarea.md-input {
-        border-width: 1px 1px 1px 1px;
+        border-width: 0.1rem 0.1rem 0.1rem 0.1rem;
         border-color: @secondary;
         background-color: @contrast-lightest;
     }
 
     .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
-        padding-left: 10px;
+        padding-left: 1rem;
         color: @secondary;
     }
 
     .kommentar-button {
         background-color: @secondary;
         cursor: pointer;
+        &:hover {
+            background: @secondary-dark;
+            color: @contrast-lightest;
+        }
     }
 
     .bottom-align {
@@ -66,7 +71,7 @@
 
     .kommentar-verfuegung-align {
         position: absolute;
-        bottom: 20px;
+        bottom: 2rem;
         right: 0;
     }
 

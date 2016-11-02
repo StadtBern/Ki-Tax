@@ -22,7 +22,7 @@
     <p class="logo-text">E-BEGU</p>
 </div>
 
-<nav class="navbar navbar-default navbar-fixed-top" dv-show-element
+<nav class="navbar navbar-default" dv-show-element
      dv-show-allowed-roles="['SACHBEARBEITER_JA', 'ADMIN', 'SACHBEARBEITER_INSTITUTION', 'SACHBEARBEITER_TRAEGERSCHAFT']">
     <div class="container">
         <div class="navbar-header">
@@ -55,27 +55,17 @@
                 </li>
 
             </ul>
-        </div><!--/.nav-collapse -->
+        </div> <!--/.nav-collapse -->
     </div>
 </nav>
 
+<dvb-error-messages-panel></dvb-error-messages-panel>
 
-<div class="container-fluid">
-    <!--ErrorPabel exists exactly once on the main page-->
-    <div class="row">
-        <div class="col-md-12">
-            <dvb-error-messages-panel></dvb-error-messages-panel>
-        </div>
-    </div>
-    <div id="content" class="row">
-
-        <md-progress-linear class="dv-progressbar" dv-loading md-mode="indeterminate"></md-progress-linear>
-        <div ui-view class="col-md-12"></div>
-    </div>
-</div>
+<md-progress-linear class="dv-progressbar" dv-loading md-mode="indeterminate"></md-progress-linear>
+<div ui-view class="ui-absolute-view"></div>
 
 
-<footer class="marginTop10">
+<footer>
 </footer>
 </body>
 </html>

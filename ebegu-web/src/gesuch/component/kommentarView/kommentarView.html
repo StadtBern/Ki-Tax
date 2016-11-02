@@ -1,5 +1,5 @@
 <div class="kommentarView">
-    <form role="form" name="form" class="" novalidate>
+    <form role="form" name="form" class="" novalidate layout="column">
         <!--bemerkungen intern-->
         <div class="kommentarTop">
             <dv-input-container class="form-group kommentar-feld">
@@ -10,6 +10,7 @@
                         </textarea>
             </dv-input-container>
         </div>
+        <span flex=""></span>
         <!--bemerkungen Verfügung-->
         <div class="kommentarBottom">
             <dv-input-container class="form-group kommentar-feld">
@@ -24,7 +25,7 @@
         </div>
 
         <div class="kommentarButton" ng-if="!vm.isGesuchUnsaved()">
-            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="btn kommentar-button">
+            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
             </div>
 
