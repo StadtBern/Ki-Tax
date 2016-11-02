@@ -32,8 +32,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
 
-    /* 'dv-stammdaten-view gesuchsteller="vm.aktuellerGesuchsteller" on-upate="vm.updateGesuchsteller(key)">'
-     this.onUpdate({key: data})*/
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
         'CONSTANTS'];
@@ -83,6 +81,24 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
     public getModel(): TSGesuchsteller {
         return this.gesuchModelManager.getStammdatenToWorkWith();
+    }
+
+    public isMutation(): boolean {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().isMutation();
+        }
+        return false;
+    }
+
+    /**
+     * Die Wohnadresse des GS2 darf bei Mutationen in denen der GS2 bereits existiert, nicht geaendert werden.
+     * Die Wohnadresse des GS1 darf bei Mutationen nie geaendert werden
+     * @returns {boolean}
+     */
+    public disableWohnadresseFor2GS(): boolean {
+        return this.isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
+            || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
+                && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
     }
 
 }

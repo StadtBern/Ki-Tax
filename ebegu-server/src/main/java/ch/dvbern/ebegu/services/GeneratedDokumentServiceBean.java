@@ -23,9 +23,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service fuer GeneratedDokument
@@ -208,7 +210,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
 				}
 
-				final byte[] verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung);
+				final byte[] verfuegungsPDF;
+				Optional<LocalDate> optVorherigeVerfuegungDate = verfuegungService.findVorgaengerVerfuegungDate(betreuung);
+				LocalDate letztesVerfDatum = optVorherigeVerfuegungDate.orElse(null);
+				verfuegungsPDF = verfuegungsGenerierungPDFService.printVerfuegungForBetreuung(matchedBetreuung, letztesVerfDatum );
+
 
 				final String fileNameForDocTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.VERFUEGUNG,
 					matchedBetreuung.getBGNummer());

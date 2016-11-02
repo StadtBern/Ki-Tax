@@ -14,12 +14,14 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.Verfuegung;
-import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +34,14 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 
 	private Betreuung betreuung;
 
+	//formatiert
+	private String letzteVerfuegungDatum;
+
 	/**
 	 * @param betreuung
 	 */
-	public VerfuegungPrintImpl(Betreuung betreuung) {
-
+	public VerfuegungPrintImpl(Betreuung betreuung, @Nullable LocalDate letzteVerfuegungDatum) {
+		this.letzteVerfuegungDatum = letzteVerfuegungDatum != null ? Constants.DATE_FORMATTER.format(letzteVerfuegungDatum) : null;
 		this.betreuung = betreuung;
 	}
 
@@ -73,17 +78,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 */
 	@Override
 	public String getVerfuegungsdatum() {
-        // TODO (Team) Dies ist das Verfuegungsdatum des *Erstgesuchs* bei Mutationen, also das der früheren Verfugung
-		Optional<Verfuegung> verfuegung = extractVerfuegung();
-		if (verfuegung.isPresent()) {
-			Verfuegung verfuegung1 = verfuegung.get();
-			if (verfuegung1.getTimestampErstellt() != null) {
-				// TODO ZEAB ist das Setzen der Verfuegungsdatum Korrekt
-				return Constants.DATE_FORMATTER.format(verfuegung1.getTimestampErstellt());
-			}
-		}
-		// TODO ZEAB was muss hier passieren?? Leer ausdrucken??
-		return "";
+		return letzteVerfuegungDatum;
 	}
 
 	/**
@@ -202,11 +197,9 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 		return !isPensumGrosser0();
 	}
 
-	/**
-	 * @return true falls es sich um eine Mutation handelt
-	 */
-	public boolean isMutation() {
-		return AntragTyp.MUTATION.equals(betreuung.extractGesuch().getTyp());
+
+	public boolean isVorgaengerVerfuegt() {
+		return letzteVerfuegungDatum != null;
 	}
 
 	@Override
@@ -229,5 +222,14 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 			return Optional.of(verfuegung);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
 	}
 }

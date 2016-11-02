@@ -32,7 +32,10 @@ export default class AntragStatusHistoryRS {
         return this._lastChange;
     }
 
-    public findLastStatusChange(gesuch: TSGesuch): IPromise<TSAntragStatusHistory> {
+    /**
+     * laedt und merkt sich den letzten Statusuebergang, kann mit #lastChange() ausgelesen werden
+     */
+    public loadLastStatusChange(gesuch: TSGesuch): IPromise<TSAntragStatusHistory> {
         if (gesuch && gesuch.id) {
             return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuch.id))
                 .then((response: any) => {

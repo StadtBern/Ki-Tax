@@ -69,9 +69,11 @@
                         </div>
                     </div>
 
-                    <!-- Adresse-->
+                <!-- Adresse. Bei Mutationen nicht editierbar-->
+                <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
                     <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true"
                                 prefix="wohn"></dv-adresse>
+                </fieldset>
 
                     <!--Korrenspondenzadr Checkbox-->
                     <div class="row">
@@ -111,26 +113,26 @@
                         </div>
                     </div>
 
-                    <!--Umzug checkbox-->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="checkbox">
-                                <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
-                                             ng-change="vm.umzugadreseClicked()"
-                                             dv-enable-element
-                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                    <span data-translate="UMZUG"></span>
-                                </md-checkbox>
-                                <dv-error-messages for="form.umzug.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
+                <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
+                <div class="row" ng-if="!vm.isMutation()">
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
+                                         ng-change="vm.umzugadreseClicked()"
+                                         dv-enable-element
+                                         dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                         dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                <span data-translate="UMZUG"></span>
+                            </md-checkbox>
+                            <dv-error-messages for="form.umzug.$error"
+                                               class="error"></dv-error-messages>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Umzugadresse -->
-                    <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug"
-                                prefix="umzug"></dv-adresse>
+                <!-- Umzugadresse. Bei Mutationen nicht angezeigt-->
+                <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug && !vm.isMutation()"
+                            prefix="umzug"></dv-adresse>
 
                     <!--Email-->
                     <div class="row">

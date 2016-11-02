@@ -3,6 +3,7 @@ export enum TSBetreuungsstatus {
     WARTEN = <any> 'WARTEN',
     SCHULAMT = <any> 'SCHULAMT',
     ABGEWIESEN = <any> 'ABGEWIESEN',
+    NICHT_EINGETRETEN = <any> 'NICHT_EINGETRETEN',
     BESTAETIGT = <any> 'BESTAETIGT',
     VERFUEGT = <any> 'VERFUEGT',
     GESCHLOSSEN_OHNE_VERFUEGUNG  = <any> 'GESCHLOSSEN_OHNE_VERFUEGUNG'

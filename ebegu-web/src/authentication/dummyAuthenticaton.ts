@@ -6,17 +6,20 @@ import AuthServiceRS from './service/AuthServiceRS.rest';
 import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
+import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import IRootScopeService = angular.IRootScopeService;
+import ITimeoutService = angular.ITimeoutService;
 let template = require('./dummyAuthentication.html');
 require('./dummyAuthentication.less');
 
-export class AuthenticationComponentConfig implements IComponentOptions {
+export class DummyAuthenticationComponentConfig implements IComponentOptions {
     transclude = false;
     template = template;
-    controller = AuthenticationListViewController;
+    controller = DummyAuthenticationListViewController;
     controllerAs = 'vm';
 }
 
-export class AuthenticationListViewController {
+export class DummyAuthenticationListViewController {
 
     public usersList: Array<TSUser>;
     private mandant: TSMandant;
@@ -25,9 +28,10 @@ export class AuthenticationListViewController {
     private traegerschaftLeoLea: TSTraegerschaft;
     private traegerschaftSGF: TSTraegerschaft;
 
-    static $inject: string[] = ['$state', 'AuthServiceRS'];
+    static $inject: string[] = ['$state', 'AuthServiceRS', '$rootScope', '$timeout'];
 
-    constructor(private $state: IStateService, private authServiceRS: AuthServiceRS) {
+    constructor(private $state: IStateService, private authServiceRS: AuthServiceRS,
+                private $rootScope: IRootScopeService, private $timeout: ITimeoutService) {
         this.usersList = [];
         this.mandant = this.getMandant();
         this.traegerschaftStadtBern = this.getTraegerschaftStadtBern();
@@ -109,13 +113,18 @@ export class AuthenticationListViewController {
         this.authServiceRS.loginRequest(user).then(() => {
             if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_JA' || user.getRoleKey() === 'TSRole_ADMIN') {
                 this.$state.go('pendenzen');
-            } else  if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
+            } else if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
                 this.$state.go('pendenzenInstitution');
             } else if (user.getRoleKey() === 'TSRole_SCHULAMT') {
                 this.$state.go('faelle');
             } else if (user.getRoleKey() === 'TSRole_GESUCHSTELLER') {
                 this.$state.go('gesuchstellerDashboard');
             }
+
+            this.$timeout(function () {
+                this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
+            }, 1000);
+
         });
     }
 }

@@ -1,17 +1,15 @@
 package ch.dvbern.ebegu.vorlagen;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-
 import com.google.common.base.Strings;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -56,7 +54,7 @@ public class PrintUtil {
 	public static String createFallNummerString(Gesuch gesuch) {
 
 		return Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2, 4) + "."
-				+ Strings.padStart(Long.toString(gesuch.getFall().getFallNummer()), FALLNUMMER_MAXLAENGE, '0');
+			+ Strings.padStart(Long.toString(gesuch.getFall().getFallNummer()), FALLNUMMER_MAXLAENGE, '0');
 	}
 
 	/**
@@ -89,7 +87,11 @@ public class PrintUtil {
 		if (extractGesuchsteller1(gesuch).isPresent()) {
 			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
 			if (gesuchstellerAdresse.isPresent()) {
-				return gesuchstellerAdresse.get().getStrasse();
+				if (gesuchstellerAdresse.get().getHausnummer() != null) {
+					return gesuchstellerAdresse.get().getStrasse() + " " + gesuchstellerAdresse.get().getHausnummer();
+				} else {
+					return gesuchstellerAdresse.get().getStrasse();
+				}
 			}
 		}
 		return "";
@@ -128,5 +130,26 @@ public class PrintUtil {
 			return Optional.of(gs2);
 		}
 		return Optional.empty();
+	}
+
+	/**
+	 * Gibt die Organisationsbezeichnung falls sie eingegeben worden ist, sons leer.
+	 *
+	 * @return GesuchstellerName
+	 */
+
+	public static String getOrganisation(Gesuch gesuch) {
+
+		Optional<Gesuchsteller> gesuchsteller = extractGesuchsteller1(gesuch);
+		if (gesuchsteller.isPresent()) {
+			final List<GesuchstellerAdresse> adressen = gesuchsteller.get().getAdressen();
+			for (GesuchstellerAdresse ad : adressen) {
+				if (ad.getAdresseTyp() == AdresseTyp.KORRESPONDENZADRESSE) {
+					return ad.getOrganisation();
+				}
+			}
+		}
+		return null;
+
 	}
 }

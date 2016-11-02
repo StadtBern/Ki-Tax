@@ -14,10 +14,13 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
 import ch.dvbern.ebegu.util.MathUtil;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * DTO fuer die Finazdaten die im Print gebraucht werden, implementiert den FinanzielleSituationPrint
@@ -33,8 +36,8 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	/**
 	 * Konstruktor
 	 *
-	 * @param finanzielleSituationG1 {@link AbstractFinanzielleSituation}
-	 * @param finanzielleSituationG2 {@link AbstractFinanzielleSituation}
+	 * @param fsGesuchsteller1 {@link AbstractFinanzielleSituation}
+	 * @param fsGesuchsteller2 {@link AbstractFinanzielleSituation}
 	 */
 	public FinanzDatenPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, @Nullable FinanzSituationPrintGesuchsteller fsGesuchsteller2) {
 
@@ -277,4 +280,14 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 		}
 		return null;
 	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
+	}
+
 }

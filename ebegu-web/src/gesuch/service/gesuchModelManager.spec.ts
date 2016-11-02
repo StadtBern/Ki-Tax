@@ -245,7 +245,7 @@ describe('gesuchModelManager', function () {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 gesuchModelManager.initGesuch(false);
                 spyOn(gesuchRS, 'updateGesuchStatus').and.returnValue($q.when({}));
-                spyOn(antragStatusHistoryRS, 'findLastStatusChange').and.returnValue($q.when({}));
+                spyOn(antragStatusHistoryRS, 'loadLastStatusChange').and.returnValue($q.when({}));
 
                 gesuchModelManager.saveGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
 

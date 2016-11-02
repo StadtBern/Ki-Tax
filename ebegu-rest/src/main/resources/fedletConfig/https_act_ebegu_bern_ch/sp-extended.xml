@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EntityConfig entityID="https://ebegu-test.bern.ch/ebegu" hosted="1" xmlns="urn:sun:fm:SAML:2.0:entityconfig">
+	<SPSSOConfig metaAlias="/egov_bern/sp4">
+		<Attribute name="wantLogoutResponseSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="wantAttributeEncrypted">
+			<Value/>
+		</Attribute>
+		<Attribute name="spAuthncontextMapper">
+			<Value>com.sun.identity.saml2.plugins.DefaultSPAuthnContextMapper</Value>
+		</Attribute>
+		<Attribute name="alwaysIdpProxy"/>
+		<Attribute name="autofedAttribute">
+			<Value/>
+		</Attribute>
+		<Attribute name="spSessionSyncEnabled">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="spAuthncontextComparisonType">
+			<Value>exact</Value>
+		</Attribute>
+		<Attribute name="idpProxyList">
+			<Value/>
+		</Attribute>
+		<Attribute name="spDoNotWriteFederationInfo"/>
+		<Attribute name="wantPOSTResponseSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="localAuthURL">
+			<Value/>
+		</Attribute>
+		<Attribute name="wantMNIRequestSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="spAdapterEnv">
+			<Value/>
+		</Attribute>
+		<Attribute name="basicAuthPassword">
+			<Value/>
+		</Attribute>
+		<Attribute name="transientUser">
+			<Value>anonymous</Value>
+		</Attribute>
+		<Attribute name="cotlist">
+			<Value>FED</Value>
+		</Attribute>
+		<Attribute name="spAttributeMapper">
+			<Value>com.sun.identity.saml2.plugins.DefaultSPAttributeMapper</Value>
+		</Attribute>
+		<Attribute name="saeSPUrl">
+			<Value/>
+		</Attribute>
+		<Attribute name="responseArtifactMessageEncoding">
+			<Value>URI</Value>
+		</Attribute>
+		<Attribute name="useNameIDAsSPUserID">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="wantAssertionEncrypted">
+			<Value/>
+		</Attribute>
+		<Attribute name="saml2AuthModuleName">
+			<Value/>
+		</Attribute>
+		<Attribute name="signingCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="relayStateUrlList"/>
+		<Attribute name="appLogoutUrl">
+			<Value>https://ebegu-test.bern.ch/ebegu/logout</Value>
+		</Attribute>
+		<Attribute name="useIntroductionForIDPProxy">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="ECPRequestIDPListGetComplete">
+			<Value/>
+		</Attribute>
+		<Attribute name="attributeMap">
+			<Value>CommonName=cn</Value>
+			<Value>GivenName=givenName</Value>
+			<Value>UserStatus=inetUserStatus</Value>
+			<Value>Email=mail</Value>
+			<Value>Role=bgovEbeguRole</Value>
+			<Value>Phone=telephoneNumber</Value>
+			<Value>mobil=mobile</Value>
+			<Value>language=PreferredLanguage</Value>
+			<Value>postalAddress=postalAddress</Value>
+			<Value>postalCode=postalCode</Value>
+			<Value>street=street</Value>
+			<Value>co=co</Value>
+			<Value>c=c</Value>
+			<Value>st=st</Value>
+			<Value>sn=sn</Value>
+			<Value>loginName=uid</Value>
+		</Attribute>
+		<Attribute name="spAuthncontextClassrefMapping">
+			<Value>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport|0|default</Value>
+		</Attribute>
+		<Attribute name="wantMNIResponseSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="wantLogoutRequestSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="metaAlias"/>
+		<Attribute name="ECPRequestIDPListFinderImpl">
+			<Value>com.sun.identity.saml2.plugins.ECPIDPFinder</Value>
+		</Attribute>
+		<Attribute name="spAccountMapper">
+			<Value>com.sun.identity.saml2.plugins.DefaultLibrarySPAccountMapper</Value>
+		</Attribute>
+		<Attribute name="includeRequestedAuthnContext">
+			<Value>true</Value>
+		</Attribute>
+		<Attribute name="spAdapter">
+			<Value/>
+		</Attribute>
+		<Attribute name="ECPRequestIDPList">
+			<Value/>
+		</Attribute>
+		<Attribute name="saeAppSecretList"/>
+		<Attribute name="idpProxyCount">
+			<Value>0</Value>
+		</Attribute>
+		<Attribute name="wantArtifactResponseSigned">
+			<Value/>
+		</Attribute>
+		<Attribute name="basicAuthOn">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="wantNameIDEncrypted">
+			<Value/>
+		</Attribute>
+		<Attribute name="basicAuthUser">
+			<Value/>
+		</Attribute>
+		<Attribute name="saeSPLogoutUrl"/>
+		<Attribute name="intermediateUrl">
+			<Value/>
+		</Attribute>
+		<Attribute name="useIDPFinder"/>
+		<Attribute name="encryptionCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="defaultRelayState">
+			<Value/>
+		</Attribute>
+		<Attribute name="assertionTimeSkew">
+			<Value>300</Value>
+		</Attribute>
+		<Attribute name="autofedEnabled">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="enableIDPProxy">
+			<Value>false</Value>
+		</Attribute>
+	</SPSSOConfig>
+	<AttributeQueryConfig metaAlias="/attrQuery4">
+		<Attribute name="signingCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="encryptionCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="wantNameIDEncrypted">
+			<Value/>
+		</Attribute>
+		<Attribute name="cotlist">
+			<Value>FED</Value>
+		</Attribute>
+	</AttributeQueryConfig>
+	<XACMLAuthzDecisionQueryConfig metaAlias="/pep4">
+		<Attribute name="signingCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="encryptionCertAlias">
+			<Value>test</Value>
+		</Attribute>
+		<Attribute name="basicAuthOn">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="basicAuthUser">
+			<Value/>
+		</Attribute>
+		<Attribute name="basicAuthPassword">
+			<Value/>
+		</Attribute>
+		<Attribute name="wantXACMLAuthzDecisionResponseSigned">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="wantAssertionEncrypted">
+			<Value>false</Value>
+		</Attribute>
+		<Attribute name="cotlist">
+			<Value>FED</Value>
+		</Attribute>
+	</XACMLAuthzDecisionQueryConfig>
+</EntityConfig>

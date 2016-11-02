@@ -11,7 +11,7 @@ let gesuchTpl = require('./gesuch.html');
 gesuchRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/auth/login');
+    routerHelper.configureStates(getStates(), '/login');
 }
 
 
@@ -74,7 +74,7 @@ export class EbeguNewFallState implements IState {
 
 export class EbeguMutationState implements IState {
     name = 'gesuch.mutation';
-    url = '/mutation/:gesuchId';
+    url = '/mutation/:createMutation/:gesuchId';
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
@@ -430,6 +430,7 @@ export class IKindStateParams implements IStateParamsService {
 
 export class INewFallStateParams implements IStateParamsService {
     createNew: string;
+    createMutation: string;
 }
 
 export class IErwerbspensumStateParams implements IStateParamsService {

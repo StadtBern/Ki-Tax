@@ -4,6 +4,7 @@ import {TSWizardStepName, getTSWizardStepNameValues} from '../../models/enums/TS
 import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import IPromise = angular.IPromise;
 
 export default class WizardStepManager {
@@ -11,6 +12,8 @@ export default class WizardStepManager {
     private allowedSteps: Array<TSWizardStepName> = [];
     private wizardSteps: Array<TSWizardStep> = [];
     private currentStepName: TSWizardStepName; // keeps track of the name of the current step
+
+    private wizardStepsSnapshot: Array<TSWizardStep> = [];
 
 
     static $inject = ['AuthServiceRS', 'WizardStepRS'];
@@ -57,6 +60,7 @@ export default class WizardStepManager {
     }
 
     private setAllowedStepsForInstitutionTraegerschaft(): void {
+        this.allowedSteps = [];
         this.allowedSteps.push(TSWizardStepName.FAMILIENSITUATION);
         this.allowedSteps.push(TSWizardStepName.GESUCHSTELLER);
         this.allowedSteps.push(TSWizardStepName.BETREUUNG);
@@ -69,9 +73,9 @@ export default class WizardStepManager {
 
     /**
      * Sollten keine WizardSteps gefunden werden, wird die Methode initWizardSteps aufgerufen, um die
-     * minimale Steps herzustellen.
+     * minimale Steps herzustellen. Die erlaubten Steps fuer den aktuellen Benutzer werden auch gesetzt
      * @param gesuchId
-     * @returns {IPromise<TResult>}
+     * @returns {IPromise<void>}
      */
     public findStepsFromGesuch(gesuchId: string): IPromise<void> {
         return this.wizardStepRS.findWizardStepsFromGesuch(gesuchId).then((response: Array<any>) => {
@@ -80,6 +84,7 @@ export default class WizardStepManager {
             } else {
                 this.initWizardSteps();
             }
+            this.setAllowedStepsForRole(this.authServiceRS.getPrincipalRole());
         });
     }
 
@@ -164,33 +169,47 @@ export default class WizardStepManager {
      * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
      * @returns {boolean}
      */
-    public isNextStepBesucht(): boolean {
-        return this.getNextStep().wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    public isNextStepBesucht(gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(this.getNextStep(gesuchTyp)).wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
     }
 
     /**
      * Gibt true zurueck wenn der naechste Step enabled (verfuegbar) ist
      * @returns {boolean}
      */
-    public isNextStepEnabled(): boolean {
-        return this.getNextStep().verfuegbar;
+    public isNextStepEnabled(gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(this.getNextStep(gesuchTyp)).verfuegbar;
     }
 
-    private getNextStep(): TSWizardStep {
-        let nextStepName: TSWizardStepName = TSWizardStepName.GESUCH_ERSTELLEN;
-        switch (this.currentStepName) {
-            case TSWizardStepName.GESUCH_ERSTELLEN: nextStepName = TSWizardStepName.FAMILIENSITUATION; break;
-            case TSWizardStepName.FAMILIENSITUATION: nextStepName = TSWizardStepName.GESUCHSTELLER; break;
-            case TSWizardStepName.GESUCHSTELLER: nextStepName = TSWizardStepName.KINDER; break;
-            case TSWizardStepName.KINDER: nextStepName = TSWizardStepName.BETREUUNG; break;
-            case TSWizardStepName.BETREUUNG: nextStepName = TSWizardStepName.ERWERBSPENSUM; break;
-            case TSWizardStepName.ERWERBSPENSUM: nextStepName = TSWizardStepName.FINANZIELLE_SITUATION; break;
-            case TSWizardStepName.FINANZIELLE_SITUATION: nextStepName = TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG; break;
-            case TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG: nextStepName = TSWizardStepName.DOKUMENTE; break;
-            case TSWizardStepName.DOKUMENTE: nextStepName = TSWizardStepName.VERFUEGEN; break;
-            case TSWizardStepName.VERFUEGEN: nextStepName = TSWizardStepName.VERFUEGEN;
+    public getNextStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+        let allStepNames = this.getAllowedSteps();
+        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
+        for (let i = currentPosition; i < allStepNames.length; i++) {
+            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+                return allStepNames[i];
+            }
         }
-        return this.getStepByName(nextStepName);
+        return undefined;
+    }
+
+    /**
+     * iterate through the existing steps and get the previous one based on the current position
+     */
+    public getPreviousStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+        var allStepNames = this.getAllowedSteps();
+        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;
+        for (let i = currentPosition; i >= 0; i--) {
+            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+                return allStepNames[i];
+            }
+        }
+        return undefined;
+    }
+
+    private isStepAvailable(stepName: TSWizardStepName, gesuchTyp: TSAntragTyp): boolean {
+        return this.getStepByName(stepName).verfuegbar
+            || (gesuchTyp === TSAntragTyp.GESUCH
+            && this.getStepByName(stepName).wizardStepStatus === TSWizardStepStatus.UNBESUCHT);
     }
 
     /**
@@ -223,6 +242,7 @@ export default class WizardStepManager {
     /**
      * Gibt true zurueck wenn der Step existiert und sein Status OK ist
      * @param stepName
+     * @param status
      * @returns {boolean}
      */
     public hasStepGivenStatus(stepName: TSWizardStepName, status: TSWizardStepStatus): boolean {
@@ -230,5 +250,13 @@ export default class WizardStepManager {
             return this.getStepByName(stepName).wizardStepStatus === status;
         }
         return false;
+    }
+
+    public backupCurrentSteps(): void {
+        this.wizardStepsSnapshot = angular.copy(this.wizardSteps);
+    }
+
+    public restorePreviousSteps(): void {
+        this.wizardSteps = this.wizardStepsSnapshot;
     }
 }

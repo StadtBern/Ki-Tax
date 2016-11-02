@@ -25,6 +25,8 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final long serialVersionUID = 463057263479503486L;
 	private static final String EBEGU_DEVELOPMENT_MODE = "ebegu.development.mode";
 	private static final String EBEGU_DOCUMENT_FILE_PATH = "ebegu.document.file.path";
+	private static final String EBEGU_FEDLET_CONFIG_PATH = "ebegu.fedlet.config.path";
+	private static final String EBEGU_CLIENT_USING_HTTPS = "ebegu.client.using.https";
 
 	public EbeguConfigurationImpl() {
 
@@ -41,5 +43,13 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 		return getString(EBEGU_DOCUMENT_FILE_PATH, getString("jboss.server.data.dir"));
 	}
 
+	@Override
+	public String getFedletConfigPath() {
+		return getString(EBEGU_FEDLET_CONFIG_PATH, "fedletConfig/http_app_ebegu_ch");
+	}
 
+	@Override
+	public boolean isClientUsingHTTPS() {
+		return getBoolean(EBEGU_CLIENT_USING_HTTPS, false);
+	}
 }
