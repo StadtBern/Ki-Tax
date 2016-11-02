@@ -35,7 +35,8 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 				erwerbspensumAbschnitte.addAll(zeitabschnitteGS2);
 			}
 			else {
-				if (gesuch.getFamiliensituation() != null && !gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller()
+				if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituationErstgesuch() != null
+					&&!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller()
 					&& gesuch.getFamiliensituation().hasSecondGesuchsteller() && gesuch.getFamiliensituation().getAenderungPer() != null) {
 					// 1GS to 2GS
 					//Ein Zeitabschnitt wird simuliert, wenn der GS2 existiert aber hat kein Erwerbspensum

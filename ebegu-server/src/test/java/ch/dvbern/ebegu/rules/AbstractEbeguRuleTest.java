@@ -73,11 +73,11 @@ public class AbstractEbeguRuleTest {
 		Assert.assertEquals(DATUM_4.plusDays(1), fifth.getGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME, fifth.getGueltigkeit().getGueltigBis());
 
-		Assert.assertEquals(Integer.valueOf(0), first.getErwerbspensumGS1());
+		Assert.assertNull(first.getErwerbspensumGS1());
 		Assert.assertEquals(Integer.valueOf(40), second.getErwerbspensumGS1());
 		Assert.assertEquals(Integer.valueOf(100), third.getErwerbspensumGS1());
 		Assert.assertEquals(Integer.valueOf(60), fourth.getErwerbspensumGS1());
-		Assert.assertEquals(Integer.valueOf(0), fifth.getErwerbspensumGS1());
+		Assert.assertNull(fifth.getErwerbspensumGS1());
 
 		Assert.assertEquals(50, first.getBetreuungspensum());
 		Assert.assertEquals(50, second.getBetreuungspensum());

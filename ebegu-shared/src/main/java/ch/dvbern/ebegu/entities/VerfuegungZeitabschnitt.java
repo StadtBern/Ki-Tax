@@ -465,8 +465,8 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		if (this == that) {
 			return true;
 		}
-		return erwerbspensumGS1 == that.erwerbspensumGS1 &&
-			erwerbspensumGS2 == that.erwerbspensumGS2 &&
+		return isSameErwerbspensum(this.erwerbspensumGS1, that.erwerbspensumGS1) &&
+			isSameErwerbspensum(this.erwerbspensumGS2, that.erwerbspensumGS2) &&
 			betreuungspensum == that.betreuungspensum &&
 			fachstellenpensum == that.fachstellenpensum &&
 			anspruchspensumRest == that.anspruchspensumRest &&
@@ -478,6 +478,12 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
+	}
+
+	private boolean isSameErwerbspensum(Integer thisErwerbspensumGS, Integer thatErwerbspensumGS) {
+		return thisErwerbspensumGS == null && thatErwerbspensumGS == null
+			|| !(thisErwerbspensumGS == null || thatErwerbspensumGS == null)
+			&& thisErwerbspensumGS.equals(thatErwerbspensumGS);
 	}
 
 	/**
