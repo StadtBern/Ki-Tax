@@ -56,6 +56,14 @@
 
             <span flex=""></span>
 
+            <!-- Mutieren -->
+            <md-menu>
+                <md-button ng-click="vmgs.antragMutieren()" ng-show="vmgs.mutierenPossibleForCurrentAntrag"
+                           aria-label="{{TOOLBAR_MUTIEREN | translate}}">
+                    <span data-translate="TOOLBAR_MUTIEREN"></span>
+                </md-button>
+            </md-menu>
+
             <!--Kontakt-->
             <md-menu-bar>
                 <md-menu>
