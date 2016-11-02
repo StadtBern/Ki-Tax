@@ -316,32 +316,6 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		}
 		this.setBetreuungsstunden(newBetreuungsstunden);
 
-//		if ((this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == null)
-//			|| (this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == 0)
-//			|| (other.getErwerbspensumGS1() == null && this.getErwerbspensumGS1() == 0)) {
-//			this.setErwerbspensumGS1(null);
-//		}
-//		else if ((this.getErwerbspensumGS1() != null && this.getErwerbspensumGS1() == 0) && (other.getErwerbspensumGS1() != null && other.getErwerbspensumGS1() == 0)) {
-//			this.setErwerbspensumGS1(0);
-//		}
-//		else {
-//			this.setErwerbspensumGS1((this.getErwerbspensumGS1() != null ? this.getErwerbspensumGS1() : 0)
-//				+ (other.getErwerbspensumGS1() != null ? other.getErwerbspensumGS1() : 0));
-//		}
-//
-//		if ((this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == null)
-//			|| (this.getErwerbspensumGS2() == null && other.getErwerbspensumGS2() == 0)
-//			|| (other.getErwerbspensumGS2() == null && this.getErwerbspensumGS2() == 0)) {
-//			this.setErwerbspensumGS2(null);
-//		}
-//		else if ((this.getErwerbspensumGS2() != null && this.getErwerbspensumGS2() == 0) && (other.getErwerbspensumGS2() != null && other.getErwerbspensumGS2() == 0)) {
-//			this.setErwerbspensumGS2(0);
-//		}
-//		else {
-//			this.setErwerbspensumGS2((this.getErwerbspensumGS2() != null ? this.getErwerbspensumGS2() : 0) +
-//				(other.getErwerbspensumGS2() != null ? other.getErwerbspensumGS2() : 0));
-//		}
-
 		if (this.getErwerbspensumGS1() == null && other.getErwerbspensumGS1() == null) {
 			this.setErwerbspensumGS1(null);
 		}

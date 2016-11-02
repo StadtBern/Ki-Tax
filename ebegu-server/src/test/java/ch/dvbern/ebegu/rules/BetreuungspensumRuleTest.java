@@ -168,7 +168,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(null, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, result.get(0).getBgPensum());

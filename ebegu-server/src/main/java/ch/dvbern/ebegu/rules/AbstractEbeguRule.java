@@ -220,7 +220,7 @@ public abstract class AbstractEbeguRule implements Rule {
 			if (foundOverlapping) {
 				result.add(mergedZeitabschnitt);
 			}
-			datumVon = datumBis.plusDays(1); //nachestes vondaumt
+			datumVon = datumBis.plusDays(1); //naechstes vondatum
 		}
 		return result;
 	}
