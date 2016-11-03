@@ -77,7 +77,7 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 
 	@Override
 	public String getDateCreate() {
-		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		final String date_pattern = ServerMessageUtil.getMessage("date_letter_pattern");
 		LocalDate date = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
 
