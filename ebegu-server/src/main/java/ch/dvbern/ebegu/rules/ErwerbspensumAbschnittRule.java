@@ -43,7 +43,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	private List<VerfuegungZeitabschnitt> getErwerbspensumAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, boolean gs2) {
 		List<VerfuegungZeitabschnitt> ewpAbschnitte = new ArrayList<>();
-		Set<ErwerbspensumContainer> ewpContainers = gesuchsteller.getErwerbspensenContainers();
+		Set<ErwerbspensumContainer> ewpContainers = gesuchsteller.getErwerbspensenContainersNotEmpty();
 		for (ErwerbspensumContainer erwerbspensumContainer : ewpContainers) {
 			Erwerbspensum erwerbspensumJA = erwerbspensumContainer.getErwerbspensumJA();
 			final VerfuegungZeitabschnitt zeitabschnitt = toVerfuegungZeitabschnitt(gesuch, erwerbspensumJA, gs2);
@@ -71,21 +71,18 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 		if (gs2 && gesuch.isMutation() && gesuch.getFamiliensituationErstgesuch() != null && gesuch.getFamiliensituation() != null) {
 			if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
 				// 1GS to 2GS
-				if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-					if (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
+				if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())
+					&& gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
 						gueltigkeit.setGueltigAb(gesuch.getFamiliensituation().getAenderungPer());
-					}
-					return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 				}
 			}
 			else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()
-				&& gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
+				&& gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())
+				&& gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
 				// 2GS to 1GS
-				if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
-					gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer().minusDays(1));
-				}
-				return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
+				gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer().minusDays(1));
 			}
+			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 		}
 		else if (gs2 && !gesuch.isMutation()) {
 			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
@@ -102,6 +99,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	@Nonnull
 	private VerfuegungZeitabschnitt createZeitAbschnittForGS2(DateRange gueltigkeit, int erwerbspensumTotal) {
 		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
+		zeitabschnitt.setErwerbspensumGS1(null);
 		zeitabschnitt.setErwerbspensumGS2(erwerbspensumTotal);
 		return zeitabschnitt;
 	}

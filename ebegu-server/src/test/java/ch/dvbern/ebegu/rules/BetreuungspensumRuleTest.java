@@ -34,7 +34,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(-1, result.get(0).getAnspruchspensumRest());
@@ -50,7 +50,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(-1, result.get(0).getAnspruchspensumRest());
@@ -66,7 +66,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -84,7 +84,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -102,7 +102,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(resultBetr2);
 		Assert.assertEquals(1, resultBetr2.size());
-		Assert.assertEquals(80, resultBetr2.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), resultBetr2.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(40, resultBetr2.get(0).getBetreuungspensum());
 		Assert.assertEquals(20, resultBetr2.get(0).getAnspruchberechtigtesPensum()); // Nach der Berechnung des Anspruchs kann der Anspruch nicht hoeher sein als der Restanspruch (20)
 		Assert.assertEquals(20, resultBetr2.get(0).getBgPensum());
@@ -122,7 +122,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(60, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
@@ -148,7 +148,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(80, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(80), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(40, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(20, result.get(0).getAnspruchberechtigtesPensum()); // Nach der Berechnung des Anspruchs kann der Anspruch nicht hoeher sein als der Restanspruch (20)
 		Assert.assertNotNull(result.get(0).getBemerkungen());
@@ -168,7 +168,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(0, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(0), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, result.get(0).getBgPensum());
@@ -186,7 +186,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());     //will 80
 		Assert.assertEquals(80, result.get(0).getAnspruchberechtigtesPensum());     // kriegt 80
 		Assert.assertEquals(80, result.get(0).getBgPensum());
@@ -204,7 +204,7 @@ public class BetreuungspensumRuleTest {
 
 		Assert.assertNotNull(result);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals(60, result.get(0).getErwerbspensumGS1());
+		Assert.assertEquals(Integer.valueOf(60), result.get(0).getErwerbspensumGS1());
 		Assert.assertEquals(80, result.get(0).getBetreuungspensum());
 		Assert.assertEquals(60, result.get(0).getAnspruchberechtigtesPensum());
 		Assert.assertEquals(60, result.get(0).getBgPensum());
