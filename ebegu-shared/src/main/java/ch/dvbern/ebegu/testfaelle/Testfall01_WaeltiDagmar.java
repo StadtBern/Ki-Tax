@@ -34,7 +34,7 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
 		// Kinder
-		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, betreuungenBestaetigt);
+		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
