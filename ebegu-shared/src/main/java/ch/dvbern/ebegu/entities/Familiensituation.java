@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 /**
  * Entitaet zum Speichern von Familiensituation in der Datenbank.
@@ -31,15 +32,19 @@ public class Familiensituation extends AbstractEntity {
 	@Column(nullable = true)
 	private Boolean gemeinsameSteuererklaerung;
 
+	@Column(nullable = true)
+	private LocalDate aenderungPer;
+
 
 	public Familiensituation() {
 	}
 
 	public Familiensituation(Familiensituation that) {
 		this.setVorgaengerId(that.getId());
-		this.familienstatus = that.getFamilienstatus();
-		this.gemeinsameSteuererklaerung = that.getGemeinsameSteuererklaerung();
-		this.gesuchstellerKardinalitaet = that.getGesuchstellerKardinalitaet();
+		this.familienstatus = that.familienstatus;
+		this.gemeinsameSteuererklaerung = that.gemeinsameSteuererklaerung;
+		this.gesuchstellerKardinalitaet = that.gesuchstellerKardinalitaet;
+		this.aenderungPer = that.aenderungPer;
 	}
 
 	@Nonnull
@@ -68,10 +73,18 @@ public class Familiensituation extends AbstractEntity {
 		this.gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
 	}
 
+	public LocalDate getAenderungPer() {
+		return aenderungPer;
+	}
+
+	public void setAenderungPer(LocalDate aenderungPer) {
+		this.aenderungPer = aenderungPer;
+	}
+
 	@Transient
 	public boolean hasSecondGesuchsteller() {
 		if (this.familienstatus != null) {
-			switch (this.familienstatus){
+			switch (this.familienstatus) {
 				case ALLEINERZIEHEND:
 				case WENIGER_FUENF_JAHRE:
 					return EnumGesuchstellerKardinalitaet.ZU_ZWEIT.equals(this.getGesuchstellerKardinalitaet());

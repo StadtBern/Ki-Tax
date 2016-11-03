@@ -1,7 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
@@ -37,6 +36,42 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 	@Override
 	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber) {
 		Objects.requireNonNull(gesuchsteller);
+		Objects.requireNonNull(gesuch);
+		Objects.requireNonNull(gsNumber);
+
+		if (gesuch.isMutation() && gsNumber == 2 && gesuchsteller.getFinanzielleSituationContainer() == null) {
+			// be Mutationen fuer den GS2 muss eine leere Finanzielle Situation hinzugefuegt werden, wenn sie noch nicht existiert
+			final FinanzielleSituationContainer finanzielleSituationContainer = new FinanzielleSituationContainer();
+			final FinanzielleSituation finanzielleSituationJA = new FinanzielleSituation();
+			finanzielleSituationJA.setSteuerveranlagungErhalten(false); // by default
+			finanzielleSituationJA.setSteuererklaerungAusgefuellt(false); // by default
+			finanzielleSituationContainer.setFinanzielleSituationJA(finanzielleSituationJA); // alle Werte by default auf null -> nichts eingetragen
+			finanzielleSituationContainer.setJahr(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getJahr()); // copy it from GS1
+			finanzielleSituationContainer.setGesuchsteller(gesuchsteller);
+			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainer);
+		}
+
+		if (gesuch.isMutation() && gesuch.getEinkommensverschlechterungInfo() == null
+			&& gsNumber == 2 && gesuchsteller.getEinkommensverschlechterungContainer() == null) {
+
+			EinkommensverschlechterungContainer evContainer = new EinkommensverschlechterungContainer();
+			evContainer.setGesuchsteller(gesuchsteller);
+			gesuchsteller.setEinkommensverschlechterungContainer(evContainer);
+			if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer() != null) {
+				if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1() != null) {
+					final Einkommensverschlechterung ekvJABasisJahrPlus1 = new Einkommensverschlechterung();
+					ekvJABasisJahrPlus1.setSteuerveranlagungErhalten(false); // by default
+					ekvJABasisJahrPlus1.setSteuererklaerungAusgefuellt(false); // by default
+					gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus1(ekvJABasisJahrPlus1);
+				}
+				if (gesuch.getGesuchsteller1().getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus2() != null) {
+					final Einkommensverschlechterung ekvJABasisJahrPlus2 = new Einkommensverschlechterung();
+					ekvJABasisJahrPlus2.setSteuerveranlagungErhalten(false); // by default
+					ekvJABasisJahrPlus2.setSteuererklaerungAusgefuellt(false); // by default
+					gesuchsteller.getEinkommensverschlechterungContainer().setEkvJABasisJahrPlus2(ekvJABasisJahrPlus2);
+				}
+			}
+		}
 
 		final Gesuchsteller mergedGesuchsteller = persistence.merge(gesuchsteller);
 

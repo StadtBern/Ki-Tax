@@ -76,6 +76,12 @@ public class Gesuch extends AbstractEntity {
 	@Valid
 	@Nullable
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_familiensituation_erstgesuch_id"))
+	private Familiensituation familiensituationErstgesuch;
+
+	@Valid
+	@Nullable
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_einkommensverschlechterungInfo_id"))
 	private EinkommensverschlechterungInfo einkommensverschlechterungInfo;
 
@@ -91,6 +97,11 @@ public class Gesuch extends AbstractEntity {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
 	private Mutationsdaten mutationsdaten;
+
+	@Nullable
+	@Valid
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
+	private Set<DokumentGrund> dokumentGrunds;
 
 
 	public Gesuch() {
@@ -118,9 +129,26 @@ public class Gesuch extends AbstractEntity {
 		}
 		this.setAntragStatusHistories(new LinkedHashSet<>());
 		this.setFamiliensituation(new Familiensituation(toCopy.getFamiliensituation()));
+
+		if (toCopy.isMutation()) {
+			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
+		}
+		else { // beim ErstGesuch holen wir direkt die normale Familiensituation
+			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
+		}
+
 		if (toCopy.getEinkommensverschlechterungInfo() != null) {
 			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
 		}
+
+		if (toCopy.dokumentGrunds != null) {
+			this.dokumentGrunds = new HashSet<>();
+
+			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
+				this.addDokumentGrund(new DokumentGrund(dokumentGrund));
+			}
+		}
+
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
 	}
 
@@ -159,6 +187,15 @@ public class Gesuch extends AbstractEntity {
 		this.familiensituation = familiensituation;
 	}
 
+	@Nullable
+	public Familiensituation getFamiliensituationErstgesuch() {
+		return familiensituationErstgesuch;
+	}
+
+	public void setFamiliensituationErstgesuch(@Nullable final Familiensituation familiensituationErstgesuch) {
+		this.familiensituationErstgesuch = familiensituationErstgesuch;
+	}
+
 	public Set<AntragStatusHistory> getAntragStatusHistories() {
 		return antragStatusHistories;
 	}
@@ -181,7 +218,12 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
-		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+		return this.kindContainers.add(kindContainer);
+	}
+
+	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
+		dokumentGrund.setGesuch(this);
+		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {
@@ -242,6 +284,15 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
+	public Set<DokumentGrund> getDokumentGrunds() {
+		return dokumentGrunds;
+	}
+
+	public void setDokumentGrunds(@Nullable Set<DokumentGrund> dokumentGrunds) {
+		this.dokumentGrunds = dokumentGrunds;
+	}
+
+	@Nullable
 	public final Mutationsdaten getMutationsdaten() {
 		return mutationsdaten;
 	}
@@ -274,7 +325,7 @@ public class Gesuch extends AbstractEntity {
 	@Transient
 	public List<Betreuung> extractAllBetreuungen() {
 		final List<Betreuung> list = new ArrayList<>();
-		for (final KindContainer kind: getKindContainers()) {
+		for (final KindContainer kind : getKindContainers()) {
 			list.addAll(kind.getBetreuungen());
 		}
 		return list;
@@ -296,10 +347,15 @@ public class Gesuch extends AbstractEntity {
 	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
 	 */
 	@Transient
-	public String extractFamiliennamenString(){
+	public String extractFamiliennamenString() {
 		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
 		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
 		return bothFamiliennamen;
+	}
+
+	@Transient
+	public boolean isMutation() {
+		return this.typ == AntragTyp.MUTATION;
 	}
 
 }

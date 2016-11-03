@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
@@ -117,6 +119,36 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 	}
+
+	@Test
+	public void testZweiGesuchstellerEinerDavonInBernMutationFamiliensituation() {
+		Betreuung betreuung = createTestdata(true);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
+		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+
+		gesuch.getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
+		gesuch.getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false));
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(2, zeitabschnittList.size());
+
+		VerfuegungZeitabschnitt abschnittInBern1 = zeitabschnittList.get(0);
+		Assert.assertEquals(true, abschnittInBern1.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertEquals(0, abschnittInBern1.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(0, abschnittInBern1.getBgPensum());
+
+		VerfuegungZeitabschnitt abschnittInBern2 = zeitabschnittList.get(1);
+		Assert.assertEquals(false, abschnittInBern2.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(100, abschnittInBern2.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(100, abschnittInBern2.getBgPensum());
+	}
+
+
 
 	private Betreuung createTestdata(boolean zweigesuchsteller) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(zweigesuchsteller);
