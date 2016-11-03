@@ -12,6 +12,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,12 +51,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	private Persistence<?> persistence;
 
 	@Test
+	@Ignore
 	public void saveVerfuegung() {
 
+		// TODO: Hier fehlen noch die Tests für Vergleich der Verfügungszeitabschnitte!
 		insertNewEntity(true);
-
 		Gesuch gsw = testfaelleService.createAndSaveTestfaelle("1", true, true);
-
 		Assert.assertNotNull(gsw);
 
 	}

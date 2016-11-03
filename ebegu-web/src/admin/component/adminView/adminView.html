@@ -1,92 +1,93 @@
-<div class="adminView row">
-    <div class="col-md-8 col-md-offset-2">
-        <h1 data-translate="ADMIN"></h1>
+<div class="adminView adminModul">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h1 data-translate="ADMIN"></h1>
 
-        <div class="row">
-            <div class="col-md-12 table-responsive">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
 
-                <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" st-delay="20"
-                       class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
-                        <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
-                        <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
-                        <th data-translate="AKTION"></th>
-                    </tr>
-                    <tr>
-                        <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
-                                   type="text"/></th>
-                        <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
-                                   type="text"/></th>
-                        <th></th>
-                        <th></th>
+                    <table st-table="displayedCollection" st-safe-src="vm.applicationProperties" st-delay="20"
+                           class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th st-sort="name" class="sortable" data-translate="PROPERTY_NAME"></th>
+                            <th st-sort="value" class="sortable" data-translate="PROPERTY_TEXT"></th>
+                            <th st-sort="timestampErstellt" class="sortable" data-translate="TIMEERSTELLT"></th>
+                            <th data-translate="AKTION"></th>
+                        </tr>
+                        <tr>
+                            <th><input st-search="name" class="form-control" placeholder="Suche nach Name"
+                                       type="text"/></th>
+                            <th><input st-search="value" class="form-control" placeholder="Suche Nach Text"
+                                       type="text"/></th>
+                            <th></th>
+                            <th></th>
 
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
-                        ng-click="vm.editRow(row)">
-                        <td ng-bind="row.name"></td>
-                        <td ng-bind="row.value"></td>
-                        <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
-                        <td>
-                            <dv-loading-button type="button" button-click="vm.removeRow(row)"
-                                               button-class="btn btn-sm btn-danger">
-                                <i class="fa fa-trash-o">
-                                </i>
-                            </dv-loading-button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
+                            ng-click="vm.editRow(row)">
+                            <td ng-bind="row.name"></td>
+                            <td ng-bind="row.value"></td>
+                            <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY'"></td>
+                            <td>
+                                <dv-loading-button type="button" button-click="vm.removeRow(row)"
+                                                   button-class="btn btn-sm btn-danger">
+                                    <i class="fa fa-trash-o">
+                                    </i>
+                                </dv-loading-button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
 
+                </div>
             </div>
+
+            <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
+                  ng-if="vm.applicationProperty"
+                  unsaved-warning-form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
+                            </label>
+                            <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
+                                   dv-max-length class="col-md-10 input-element smallfont" required
+                                   ng-disabled="vm.applicationProperty.timestampErstellt">
+                            <dv-error-messages for="form.propertyName.$error"
+                                               class="error col-md-offset-2 col-md-10"></dv-error-messages>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="md-no-float" data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
+                            </label>
+                            <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
+                                   dv-max-length class="col-md-10 smallfont">
+
+                            <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <dv-loading-button button-class="" type="submit">
+                            <span data-translate="SAVE"></span>
+                        </dv-loading-button>
+                    </div>
+                    <div class="col-md-4 ">
+                        <a href="javascript:;" id="cancelLink" unsaved-warning-clear
+                           ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                            <span data-translate="CANCEL"></span>
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <form ng-submit="form.$valid && vm.submit()" name="form" role="form" class="" novalidate
-              ng-if="vm.applicationProperty"
-              unsaved-warning-form>
-            <div class="row" style="margin-top: 20px">
-                <div class="col-md-6">
-                    <div class="form-group top5">
-                        <label data-translate="PROPERTY_NAME" for="propName" class="col-md-2">
-                        </label>
-                        <input id="propName" type="text" name="propertyName" ng-model="vm.applicationProperty.name"
-                               dv-max-length class="col-md-10 input-element smallfont" required
-                               ng-disabled="vm.applicationProperty.timestampErstellt">
-                        <dv-error-messages for="form.propertyName.$error"
-                                           class="error col-md-offset-2 col-md-10"></dv-error-messages>
-                    </div>
-
-
-                    <div class="form-group  top5">
-                        <label data-translate="PROPERTY_TEXT" for="propVal" class="col-md-2">
-                        </label>
-                        <input id="propVal" type="text" name="propertyValue" ng-model="vm.applicationProperty.value"
-                               dv-max-length class="col-md-10 smallfont">
-
-                        <dv-error-messages for="form.propertyValue.$error"></dv-error-messages>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="row" style="margin-top:25px">
-                <div class="col-md-2">
-                    <dv-loading-button button-class="btn btn-primary" type="submit">
-                        <span data-translate="SAVE"></span>
-                    </dv-loading-button>
-                </div>
-                <div class="col-md-4 ">
-                    <a href="javascript:;" id="cancelLink" unsaved-warning-clear
-                       ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
-                        <span data-translate="CANCEL"></span>
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
 
     <div class="col-md-10 col-md-offset-2">
         <h3>
@@ -200,5 +201,4 @@
             </li>
         </ul>
     </div>
-
 </div>

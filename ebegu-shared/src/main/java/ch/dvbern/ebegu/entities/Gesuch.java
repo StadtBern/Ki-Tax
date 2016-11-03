@@ -98,6 +98,11 @@ public class Gesuch extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
 	private Mutationsdaten mutationsdaten;
 
+	@Nullable
+	@Valid
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
+	private Set<DokumentGrund> dokumentGrunds;
+
 
 	public Gesuch() {
 	}
@@ -135,6 +140,15 @@ public class Gesuch extends AbstractEntity {
 		if (toCopy.getEinkommensverschlechterungInfo() != null) {
 			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
 		}
+
+		if (toCopy.dokumentGrunds != null) {
+			this.dokumentGrunds = new HashSet<>();
+
+			for (DokumentGrund dokumentGrund : toCopy.dokumentGrunds) {
+				this.addDokumentGrund(new DokumentGrund(dokumentGrund));
+			}
+		}
+
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
 	}
 
@@ -204,7 +218,12 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
-		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+		return this.kindContainers.add(kindContainer);
+	}
+
+	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
+		dokumentGrund.setGesuch(this);
+		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {
@@ -265,6 +284,15 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Nullable
+	public Set<DokumentGrund> getDokumentGrunds() {
+		return dokumentGrunds;
+	}
+
+	public void setDokumentGrunds(@Nullable Set<DokumentGrund> dokumentGrunds) {
+		this.dokumentGrunds = dokumentGrunds;
+	}
+
+	@Nullable
 	public final Mutationsdaten getMutationsdaten() {
 		return mutationsdaten;
 	}
@@ -297,7 +325,7 @@ public class Gesuch extends AbstractEntity {
 	@Transient
 	public List<Betreuung> extractAllBetreuungen() {
 		final List<Betreuung> list = new ArrayList<>();
-		for (final KindContainer kind: getKindContainers()) {
+		for (final KindContainer kind : getKindContainers()) {
 			list.addAll(kind.getBetreuungen());
 		}
 		return list;
@@ -319,7 +347,7 @@ public class Gesuch extends AbstractEntity {
 	 * @return Den Familiennamen beider Gesuchsteller falls es 2 gibt, sonst Familiennamen von GS1
 	 */
 	@Transient
-	public String extractFamiliennamenString(){
+	public String extractFamiliennamenString() {
 		String bothFamiliennamen = (this.getGesuchsteller1() != null ? this.getGesuchsteller1().getNachname() : "");
 		bothFamiliennamen += this.getGesuchsteller2() != null ? ", " + this.getGesuchsteller2().getNachname() : "";
 		return bothFamiliennamen;

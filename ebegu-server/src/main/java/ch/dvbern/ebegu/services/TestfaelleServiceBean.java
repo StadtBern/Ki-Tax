@@ -27,8 +27,6 @@ import java.util.Optional;
 @Local(TestfaelleService.class)
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 	@Inject
@@ -76,22 +74,22 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 			if ("1".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Dagmar Waelti erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("2".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Yvonne Feutz erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("3".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Marcia Perreira erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Marcia Perreira erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("4".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Laura Walther erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Laura Walther erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("5".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Meret Luethi erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Meret Luethi erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("6".equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-				responseString.append("Fall Nora Becker erstellt, Fallnummer ").append(gesuch.getFall());
+				responseString.append("Fall Nora Becker erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
@@ -117,7 +115,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionStammdatens();
-		
+
 		if ("1".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		} else if ("2".equals(fallid)) {
