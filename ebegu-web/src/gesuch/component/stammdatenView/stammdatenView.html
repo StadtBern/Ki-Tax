@@ -113,41 +113,20 @@
                         </div>
                     </div>
 
-                <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
-                <div class="row" ng-if="!vm.isMutation()">
-                    <div class="col-md-12">
-                        <div class="checkbox">
-                            <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
-                                         ng-change="vm.umzugadreseClicked()"
-                                         dv-enable-element
-                                         dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                         dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                <span data-translate="UMZUG"></span>
-                            </md-checkbox>
-                            <dv-error-messages for="form.umzug.$error"
+                <!--Email-->
+                <div class="row">
+                    <div class="col-sm-12 dv-input-container-small">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" data-translate="EMAIL" for="email_ID">
+                            </label>
+                            <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
+                                   dv-max-length class="form-control" required placeholder="hans.muster@example.com"
+                                   ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
+                            <dv-error-messages for="form.email.$error"
                                                class="error"></dv-error-messages>
-                        </div>
+                        </dv-input-container>
                     </div>
                 </div>
-
-                <!-- Umzugadresse. Bei Mutationen nicht angezeigt-->
-                <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug && !vm.isMutation()"
-                            prefix="umzug"></dv-adresse>
-
-                    <!--Email-->
-                    <div class="row">
-                        <div class="col-sm-12 dv-input-container-small">
-                            <dv-input-container class="form-group">
-                                <label class="md-no-float" data-translate="EMAIL" for="email_ID">
-                                </label>
-                                <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
-                                       dv-max-length class="form-control" required placeholder="hans.muster@example.com"
-                                       ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
-                                <dv-error-messages for="form.email.$error"
-                                                   class="error"></dv-error-messages>
-                            </dv-input-container>
-                        </div>
-                    </div>
 
 
                     <!--Mobile /Telefon-->

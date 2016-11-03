@@ -16,6 +16,7 @@ import TSGesuchsperiode from '../models/TSGesuchsperiode';
 import Moment = moment.Moment;
 import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
+import TSGesuchsteller from '../models/TSGesuchsteller';
 
 export default class TestDataUtil {
 
@@ -103,5 +104,12 @@ export default class TestDataUtil {
         antrag.gesuchsperiodeGueltigAb = gesuchsperiode.gueltigkeit.gueltigAb;
         antrag.gesuchsperiodeGueltigBis = gesuchsperiode.gueltigkeit.gueltigBis;
         return antrag;
+    }
+
+    public static createGesuchsteller(vorname: string, nachname: string): TSGesuchsteller {
+        let gesuchsteller: TSGesuchsteller = new TSGesuchsteller();
+        gesuchsteller.vorname = vorname;
+        gesuchsteller.nachname = nachname;
+        return gesuchsteller;
     }
 }

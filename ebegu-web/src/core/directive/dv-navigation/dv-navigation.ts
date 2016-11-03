@@ -294,6 +294,11 @@ export class NavigatorController {
                 gesuchId: gesuchId
             });
 
+        } else if (stepName === TSWizardStepName.UMZUG) {
+            this.state.go('gesuch.umzug', {
+                gesuchId: gesuchId
+            });
+
         } else if (stepName === TSWizardStepName.KINDER) {
             this.state.go('gesuch.kinder', {
                 gesuchId: gesuchId

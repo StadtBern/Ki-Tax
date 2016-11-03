@@ -10,11 +10,52 @@
 
     <hr class="header"/>
 
+    <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert alert-warning" data-translate="UMZUG_LIST_HINT"></div>
+
     <div class="col-md-12">
 
         <form role="form" name="form" class="" novalidate unsaved-warning-form>
 
+            <!--Gesuchsteller-->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
+                        </label>
+                        <select name="betroffene" id="betroffene"
+                                ng-model="vm.betroffene"
+                                class="form-control"
+                                ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
+                                ng-required="true">
+                        </select>
+                        <dv-error-messages for="form.betroffene.$error"
+                                           class="error"></dv-error-messages>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Umzugadresse-->
+            <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true"
+                        prefix="umzug"></dv-adresse>
+
+
+            <!-- Umzug loeschen-->
+            <div class="col-md-12" style="margin-bottom: 2rem">
+                <dv-loading-button type="button" button-click="vm.removeUmzugAdresse()"
+                                   button-class="dv-btn-sm color-success">
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span data-translate="UMZUG_ENTFERNEN"></span>
+                </dv-loading-button>
+            </div>
+
+            <!-- Umzug hinzufuegen -->
+            <div class="col-md-12" style="margin-bottom: 2rem">
+                <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
+                                   button-class="dv-btn-sm color-success">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span data-translate="UMZUG_HINZUFUEGEN"></span>
+                </dv-loading-button>
+            </div>
 
             <dv-navigation dv-show-element
                            dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"

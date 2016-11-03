@@ -1,5 +1,6 @@
 import TSAdresse from '../../models/TSAdresse';
-import {IHttpService, IHttpPromise} from 'angular';
+import {IHttpService, IHttpPromise, IPromise} from 'angular';
+import TSGesuch from '../../models/TSGesuch';
 
 export default class AdresseRS {
     static $inject = ['$http', 'REST_API'];
@@ -21,4 +22,11 @@ export default class AdresseRS {
         });
     }
 
+    public updateUmzug(adresse: TSAdresse): IPromise<TSGesuch> {
+        return this.http.put(this.serviceURL + '/umzug/', adresse, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 }

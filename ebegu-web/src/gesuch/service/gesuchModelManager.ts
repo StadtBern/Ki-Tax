@@ -49,6 +49,7 @@ import ErrorService from '../../core/errors/service/ErrorService';
 import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
+import AdresseRS from '../../core/service/adresseRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -65,7 +66,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -73,7 +74,8 @@ export default class GesuchModelManager {
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
+                private adresseRS: AdresseRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -1165,5 +1167,11 @@ export default class GesuchModelManager {
                     return this.getGesuch();
                 });
             });
+    }
+
+    public updateUmzug(): IPromise<TSGesuch> {
+        return this.adresseRS.updateUmzug(null).then((response) => {
+           return response;
+        });
     }
 }
