@@ -41,7 +41,7 @@ public class SamRegistrationListener extends BaseServletContextListener {
 		if (fedletConfFolder.exists() && fedletConfFolder.isDirectory()) {
 			System.setProperty(FEDLET_CONFIGURATION_FOLDER, fullPath);
 		} else {
-			LOG.error("Could not load configuration path for Fedlet. '" + fullPath + "'. SAML will use default config folder location");
+			LOG.info("Could not load configuration path for Fedlet. '" + fullPath + "'. SAML will use default config folder location");
 		}
 
 	}
