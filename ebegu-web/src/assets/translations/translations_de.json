@@ -731,5 +731,8 @@
     "GSDASHBOARD_ANTRAEGE": "Aktuelle Anträge",
     "IDENTISCHE_BERECHNUNG": "Identische Berechnung",
     "VERFUEGEN_VERZICHTEN_UPPER": "AUF VERFÜGEN VERZICHTEN",
-    "TROTZDEM_VERFUEGEN_UPPER": "TROTZDEM VERFÜGEN"
+    "TROTZDEM_VERFUEGEN_UPPER": "TROTZDEM VERFÜGEN",
+    "AENDERUNG_PER": "Änderung per",
+    "MUTATION_FAMSITUATION_HINT": "Während der laufenden Gesuchsperiode kann die Familiensituation nur einmal mutiert bzw. die Anzahl der Gesuchsteller verändert werden",
+    "MUTATION_FAMSITUATION_TITLE": "Mutation Familiensituation"
 }

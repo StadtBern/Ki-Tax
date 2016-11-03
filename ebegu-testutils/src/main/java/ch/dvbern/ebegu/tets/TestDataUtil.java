@@ -389,6 +389,7 @@ public final class TestDataUtil {
 		einkommensverschlechterungInfo.setGrundFuerBasisJahrPlus1("Grund fuer basis Jahr Plus 1");
 		einkommensverschlechterungInfo.setEkvFuerBasisJahrPlus2(false);
 		einkommensverschlechterungInfo.setGesuch(gesuch);
+		gesuch.setEinkommensverschlechterungInfo(einkommensverschlechterungInfo);
 		return einkommensverschlechterungInfo;
 
 	}
@@ -720,4 +721,21 @@ public final class TestDataUtil {
 	}
 
 
+	public static void createDefaultAdressenForGS(final Gesuch gesuch, final boolean gs2) {
+		List<GesuchstellerAdresse> adressen1 = new ArrayList<>();
+		final GesuchstellerAdresse adresseGS1 = TestDataUtil.createDefaultGesuchstellerAdresse();
+		adresseGS1.setNichtInGemeinde(false);
+		adresseGS1.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		adressen1.add(adresseGS1);
+		gesuch.getGesuchsteller1().setAdressen(adressen1);
+
+		if (gs2) {
+			List<GesuchstellerAdresse> adressen2 = new ArrayList<>();
+			final GesuchstellerAdresse adresseGS2 = TestDataUtil.createDefaultGesuchstellerAdresse();
+			adresseGS2.setNichtInGemeinde(false);
+			adresseGS2.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+			adressen2.add(adresseGS2);
+			gesuch.getGesuchsteller2().setAdressen(adressen2);
+		}
+	}
 }

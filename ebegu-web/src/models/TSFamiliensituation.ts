@@ -7,14 +7,16 @@ export default class TSFamiliensituation extends TSAbstractEntity {
     private _familienstatus: TSFamilienstatus;
     private _gesuchstellerKardinalitaet: TSGesuchstellerKardinalitaet;
     private _gemeinsameSteuererklaerung: boolean;
+    private _aenderungPer: moment.Moment;
 
 
     constructor(familienstatus?: TSFamilienstatus, gesuchstellerKardinalitaet?: TSGesuchstellerKardinalitaet,
-                bemerkungen?: string, gemeinsameSteuererklaerung?: boolean) {
+                gemeinsameSteuererklaerung?: boolean, aenderungPer?: moment.Moment) {
         super();
         this._familienstatus = familienstatus;
         this._gesuchstellerKardinalitaet = gesuchstellerKardinalitaet;
         this._gemeinsameSteuererklaerung = gemeinsameSteuererklaerung;
+        this._aenderungPer = aenderungPer;
     }
 
     public get familienstatus(): TSFamilienstatus {
@@ -41,7 +43,15 @@ export default class TSFamiliensituation extends TSAbstractEntity {
         this._gemeinsameSteuererklaerung = value;
     }
 
-    // todo team Dieser Code is gleich wie auf dem Server...
+    get aenderungPer(): moment.Moment {
+        return this._aenderungPer;
+    }
+
+    set aenderungPer(value: moment.Moment) {
+        this._aenderungPer = value;
+    }
+
+// todo team Dieser Code is gleich wie auf dem Server...
     public hasSecondGesuchsteller(): boolean {
         switch (this.familienstatus) {
             case TSFamilienstatus.ALLEINERZIEHEND:

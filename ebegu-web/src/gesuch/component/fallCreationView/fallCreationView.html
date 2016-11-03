@@ -74,7 +74,8 @@
                                                  name="mutationFamiliensituation"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  aria-label="mutationFamiliensituation" ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true" dv-enable-element
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationFamiliensituation"
+                                                 dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                         <span data-translate="MUTATION_AUSWAHL_FAMSITUATION"></span>

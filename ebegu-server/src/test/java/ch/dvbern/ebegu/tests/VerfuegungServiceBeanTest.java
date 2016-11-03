@@ -81,6 +81,7 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	public void calculateVerfuegung() {
 
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(1980, Month.MARCH, 25));
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		TestDataUtil.prepareParameters(gesuch.getGesuchsperiode().getGueltigkeit(), persistence);
 		Assert.assertEquals(18, ebeguParameterService.getAllEbeguParameter().size()); //es muessen min 14 existieren jetzt
 		finanzielleSituationService.calculateFinanzDaten(gesuch);
@@ -93,11 +94,12 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
-	public void findVorgaengerVerfuegung(){
+	public void findVorgaengerVerfuegung() {
 		Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(instService, persistence, LocalDate.of(2016, Month.MARCH, 25));
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		KindContainer kind = kindContainers.iterator().next();
-		Assert.assertEquals(kindContainers.size(),1);
+		Assert.assertEquals(kindContainers.size(), 1);
 		Set<Betreuung> betreuungen = kind.getBetreuungen();
 		betreuungen.forEach(this::createAndPersistVerfuegteVerfuegung);
 		Betreuung betreuung = betreuungen.iterator().next();
@@ -109,15 +111,17 @@ public class VerfuegungServiceBeanTest extends AbstractEbeguTest {
 		antragStatusHistory.setBenutzer(TestDataUtil.createAndPersistBenutzer(persistence));
 		antragStatusHistory.setStatus(AntragStatus.VERFUEGT);
 		antragStatusHistory.setGesuch(gesuch);
-		antragStatusHistory.setDatum(LocalDateTime.of(2016, Month.APRIL, 1,0,0));
+		antragStatusHistory.setDatum(LocalDateTime.of(2016, Month.APRIL, 1, 0, 0));
 		antragStatusHistories.add(antragStatusHistory);
+		gesuch.getGesuchsteller1().getAdressen().get(0).setGesuchsteller(gesuch.getGesuchsteller1());
+		persistence.persist(gesuch.getGesuchsteller1().getAdressen().get(0));
 		persistence.persist(antragStatusHistory);
 		persistence.merge(gesuch);
 
 		Mutationsdaten mutationsdaten = new Mutationsdaten();
 		Optional<Gesuch> gesuchOptional = this.gesuchService.antragMutieren(gesuch.getId(), mutationsdaten, LocalDate.now());
 		Assert.assertTrue(gesuchOptional.isPresent());
-		Gesuch mutation = persistence.persist(gesuchOptional.get());
+		Gesuch mutation = persistence.merge(gesuchOptional.get());
 
 		List<Betreuung> allBetreuungenFromGesuch = this.betreuungService.findAllBetreuungenFromGesuch(mutation.getId());
 		Optional<Betreuung> optFolgeBetreeung = allBetreuungenFromGesuch.stream().filter(b -> b.getBetreuungNummer().equals(betreuungNummer)).findAny();

@@ -34,12 +34,12 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		Gesuch gesuch =  betreuung.extractGesuch();
 		if (gesuch.getGesuchsteller1() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
-			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch.getGesuchsteller1(), true));
+			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), true));
 			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte, true));
 		}
 		if (gesuch.getGesuchsteller2() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
-			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch.getGesuchsteller2(), false));
+			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller2(), false));
 			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte, false));
 		}
 		return analysedAbschnitte;
@@ -85,7 +85,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		return result;
 	}
 
-	boolean isWohnsitzNichtInGemeinde(VerfuegungZeitabschnitt zeitabschnitt, boolean gs1) {
+	private boolean isWohnsitzNichtInGemeinde(VerfuegungZeitabschnitt zeitabschnitt, boolean gs1) {
 		if (gs1) {
 			return zeitabschnitt.isWohnsitzNichtInGemeindeGS1();
 		}
@@ -94,22 +94,52 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 
 
 	/**
-	 * geht durch die Erwerpspensen des Gesuchstellers und gibt Abschnitte zurueck
-	 * @param gesuchsteller Der Gesuchsteller dessen Erwerbspensumcontainers zu Abschnitte konvertiert werden
+	 * geht durch die Adressen des Gesuchstellers und gibt Abschnitte zurueck
 	 */
 	@Nonnull
-	private List<VerfuegungZeitabschnitt> getAdresseAbschnittForGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, boolean gs1) {
+	private List<VerfuegungZeitabschnitt> getAdresseAbschnittForGesuchsteller(@Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, boolean gs1) {
 		List<VerfuegungZeitabschnitt> adressenZeitabschnitte = new ArrayList<>();
 		List<GesuchstellerAdresse> gesuchstellerAdressen = gesuchsteller.getAdressen();
-		for (GesuchstellerAdresse gesuchstellerAdresse : gesuchstellerAdressen) {
-			VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.getGueltigkeit());
-			if (gs1) {
-				zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.isNichtInGemeinde());
-			} else {
-				zeitabschnitt.setWohnsitzNichtInGemeindeGS2(gesuchstellerAdresse.isNichtInGemeinde());
-			}
-			adressenZeitabschnitte.add(zeitabschnitt);
-		}
+		gesuchstellerAdressen.stream().filter(gesuchstellerAdresse -> !gesuchstellerAdresse.getAdresseTyp().equals(AdresseTyp.KORRESPONDENZADRESSE))
+			.forEach(gesuchstellerAdresse -> {
+				if (gs1) {
+					VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gesuchstellerAdresse.getGueltigkeit());
+					zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.isNichtInGemeinde());
+					adressenZeitabschnitte.add(zeitabschnitt);
+				} else { // gs2
+					final DateRange gueltigkeit = gesuchstellerAdresse.getGueltigkeit();
+					if (gesuch.getFamiliensituation().getAenderungPer() != null) {
+						// from 1GS to 2GS
+						if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
+								if (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
+									gueltigkeit.setGueltigAb(gesuch.getFamiliensituation().getAenderungPer());
+								}
+								createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+							}
+						}
+						// from 2GS to 1GS
+						else if (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && !gesuch.getFamiliensituation().hasSecondGesuchsteller()
+							&& (gueltigkeit.getGueltigAb().isBefore(gesuch.getFamiliensituation().getAenderungPer()))) {
+
+							if (gueltigkeit.getGueltigBis().isAfter(gesuch.getFamiliensituation().getAenderungPer())) {
+								gueltigkeit.setGueltigBis(gesuch.getFamiliensituation().getAenderungPer());
+							}
+							createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+						}
+					}
+					else {
+						createZeitabschnittForGS2(adressenZeitabschnitte, gesuchstellerAdresse.isNichtInGemeinde(), gueltigkeit);
+					}
+				}
+			});
 		return adressenZeitabschnitte;
+	}
+
+	private void createZeitabschnittForGS2(List<VerfuegungZeitabschnitt> adressenZeitabschnitte, boolean nichtInGemeinde,
+										   DateRange gueltigkeit) {
+		VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
+		zeitabschnitt.setWohnsitzNichtInGemeindeGS2(nichtInGemeinde);
+		adressenZeitabschnitte.add(zeitabschnitt);
 	}
 }
