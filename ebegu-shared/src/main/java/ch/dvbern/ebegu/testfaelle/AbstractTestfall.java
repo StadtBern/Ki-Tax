@@ -105,6 +105,7 @@ public abstract class AbstractTestfall {
 		wohnadresse.setLand(Land.CH);
 		wohnadresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		wohnadresse.setGesuchsteller(gesuchsteller);
+		wohnadresse.setGueltigkeit(gesuchsperiode.getGueltigkeit());
 		return wohnadresse;
 	}
 

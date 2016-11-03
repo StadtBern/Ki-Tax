@@ -73,6 +73,7 @@ public class EinkommenCalcRuleTest {
 	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, angebot, pensum);
 		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.getFinanzDatenDTO().setMassgebendesEinkBjVorAbzFamGr(massgebendesEinkommen);
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 100, 0));

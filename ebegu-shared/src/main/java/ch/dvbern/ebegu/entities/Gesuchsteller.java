@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.entities;
 
 
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.envers.Audited;
 
@@ -160,6 +161,22 @@ public class Gesuchsteller extends AbstractPersonEntity {
 	@Nonnull
 	public Set<ErwerbspensumContainer> getErwerbspensenContainers() {
 		return erwerbspensenContainers;
+	}
+
+	@Nonnull
+	public Set<ErwerbspensumContainer> getErwerbspensenContainersNotEmpty() {
+		if (!erwerbspensenContainers.isEmpty()) {
+			return erwerbspensenContainers;
+		}
+
+		final Set<ErwerbspensumContainer> erwerbspensen = new HashSet();
+		final ErwerbspensumContainer erwerbspensum = new ErwerbspensumContainer();
+		Erwerbspensum pensumJA = new Erwerbspensum();
+		pensumJA.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
+		pensumJA.setPensum(0);
+		erwerbspensum.setErwerbspensumJA(pensumJA);
+		erwerbspensen.add(erwerbspensum);
+		return erwerbspensen;
 	}
 
 	public void setErwerbspensenContainers(@Nonnull final Set<ErwerbspensumContainer> erwerbspensenContainers) {

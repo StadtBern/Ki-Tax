@@ -1,26 +1,237 @@
-.gesuch-toolbar {
-    md-toolbar:not(.md-menu-toolbar) {
-        background-color: rgb(73, 143, 224);
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.md-open-menu-container {
+    box-shadow: none !important;
+}
+
+.menu-item-text {
+    .menu-item-link();
+    color: @contrast-lightest;
+    &:hover {
+        background: none;
+    }
+    margin-bottom: 1rem;
+}
+
+.menu-item-link {
+    .menu-item-link();
+    background: @secondary;
+    color: @contrast-lightest;
+    &:hover {
+        background: @secondary-dark;
+    }
+    a {
+        .menu-item-link();
+        color: @contrast-lightest;
+        background: none;
+        &:hover {
+            color: @contrast-lightest;
+            background: none;
+        }
+    }
+    .md-button {
+        background: none;
+        .menu-item-link();
+        padding: 0 2rem 0;
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused {
+            background: none;
+        }
     }
 
 }
 
+.menu-item-link.gesuchsteller {
+    .menu-item-link();
+    background: @primary;
+    color: @contrast-lightest;
+    &:hover {
+        background: @primary-dark;
+    }
+    a {
+        .menu-item-link();
+        color: @contrast-lightest;
+        background: none;
+        &:hover {
+            color: @contrast-lightest;
+            background: none;
+        }
+    }
+    .md-button {
+
+        .menu-item-link();
+        background: none;
+        padding: 0 2rem 0;
+        &:hover, &.md-default-theme:not([disabled]).md-focused, &:not([disabled]).md-focused {
+            background: @primary-dark;
+        }
+    }
+
+}
+
+.menu-item-container {
+    min-width: 17.5rem !important;
+    width: auto;
+    background: @secondary;
+    &.gesuchsteller {
+        background: @primary;
+    }
+    padding: 1rem 0 1rem !important;
+    &.no-padding {
+        padding: 0 !important;
+    }
+}
+
+.kontakt {
+
+    span {
+        .h1();
+        .normal();
+        margin: 0 2rem 0.5rem;
+        color: @contrast-lightest;
+
+    }
+    .kontaktTop {
+        margin-top: 2rem;
+    }
+    .kontaktBottom {
+        margin-bottom: 2rem;
+    }
+
+}
+
+.gesuch-toolbar {
+    span {
+        .menu-item-link();
+        background: none;
+        &:hover {
+            background: none;
+        }
+    }
+
+    md-toolbar {
+        background-color: @secondary;
+        height: 4rem;
+        min-height: 4rem;
+    }
+    md-menu-bar {
+        padding-left: 2rem;
+        padding-right: 0;
+        button {
+            height: 4rem;
+            min-width: 17.5rem;
+            width: auto;
+            padding: 0 2rem 0;
+            font-size: 1.4rem;
+            background: @secondary;
+            text-align: left;
+
+            &:hover, &:focus {
+                background: @secondary-dark;
+            }
+        }
+        md-menu {
+
+            background: @secondary;
+            &:hover {
+                background: @secondary;
+            }
+            &.md-open {
+                button {
+                    background: @secondary-dark;
+                    &:hover {
+                        background: @secondary-dark;
+                    }
+                }
+            }
+        }
+    }
+    md-menu-item {
+        .md-button {
+            padding: 0;
+        }
+    }
+}
+
+.gesuch-toolbar-gesuchsteller {
+    .gesuchName {
+        .bold();
+        font-size: 1.6rem;
+    }
+    span {
+        .menu-item-link();
+        background: none;
+        &:hover {
+            background: none;
+        }
+    }
+
+    md-toolbar {
+        background-color: @primary;
+        height: @navbar-height;
+        min-height: @navbar-height;
+    }
+    md-menu-bar {
+        padding-left: 2rem;
+        padding-right: 0;
+        button {
+            .bold();
+            height: @navbar-height;
+            min-width: 17.5rem;
+            width: auto;
+            padding: 0 2rem 0;
+            font-size: 1.4rem;
+            background: @primary;
+            text-align: left;
+
+            &:hover, &:focus {
+                background: @primary;
+            }
+        }
+        md-menu {
+
+            background: @primary;
+            &:hover {
+                background: @primary;
+            }
+            &.md-open {
+                button {
+                    background: @primary;
+                    &:hover {
+                        background: @primary;
+                    }
+                }
+            }
+        }
+    }
+
+    md-menu-item {
+        .md-button {
+            padding: 0;
+        }
+    }
+}
+
+md-menu-bar.md-default-theme.md-open:not(.md-keyboard-mode) md-menu:hover > button, md-menu-bar.md-open:not(.md-keyboard-mode) md-menu:hover > button {
+    background: none;
+}
+
 .small-toolbar {
-    min-height: 40px;
-    height: 40px;
+    min-height: 4rem;
+    height: 4rem;
 }
 
 i.ellipsis-icon {
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 
 .toolbar-submenu {
-    background-color: rgb(73, 143, 224);
+    background-color: @secondary;
 }
 
 .toolbar-submenu-item {
     color: #FFFFFF;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 }
 
 .toolbar-submenu-a, .toolbar-submenu-a:hover {
@@ -33,10 +244,24 @@ i.ellipsis-icon {
 
 .toolbar-adress {
     color: #FFFFFF;
-    margin-left: 10px;
+    margin-left: 1rem;
 }
 
 .toolbar-gesuchname {
-    font-size: 14px;
+    font-size: 1.4rem;
 }
 
+
+    .toolbar-gesuchname {
+        font-size: 1.6rem;
+        line-height: @navbar-height;
+        height: @navbar-height;
+        padding: 0;
+        box-sizing: border-box;
+        .bold();
+        text-align: center;
+        text-decoration: none;
+        letter-spacing: 0.15rem;
+        color: @contrast-lightest;
+        text-transform: none;
+    }

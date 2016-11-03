@@ -16,7 +16,7 @@ function getStates(): IState[] {
     return [
         {
             name: 'admin',
-            template: '<dv-admin-view application-properties="$resolve.applicationProperties"></dv-admin-view>',
+            template: '<dv-admin-view flex="auto" class="overflow-auto" application-properties="$resolve.applicationProperties"></dv-admin-view>',
             url: '/admin',
             resolve: {
                 applicationProperties: getApplicationProperties
@@ -24,7 +24,8 @@ function getStates(): IState[] {
         },
         {
             name: 'institution',
-            template: '<dv-institution-view institutionen="$resolve.institutionen" traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
+            template: '<dv-institution-view flex="auto" class="overflow-auto" institutionen="$resolve.institutionen" ' +
+                                           'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
             url: '/institution',
             resolve: {
                 institutionen: getInstitutionen,
@@ -34,12 +35,12 @@ function getStates(): IState[] {
         },
         {
             name: 'parameter',
-            template: '<dv-parameter-view ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
+            template: '<dv-parameter-view flex="auto" class="overflow-auto" ebeguParameter="vm.ebeguParameter"></dv-parameter-view>',
             url: '/parameter',
         },
         {
             name: 'traegerschaft',
-            template: '<dv-traegerschaft-view traegerschaften="$resolve.traegerschaften" ></dv-traegerschaft-view>',
+            template: '<dv-traegerschaft-view flex="auto" class="overflow-auto" traegerschaften="$resolve.traegerschaften" ></dv-traegerschaft-view>',
             url: '/traegerschaft',
             resolve: {
                 traegerschaften: getTraegerschaften,

@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -25,6 +26,8 @@ public class MindestalterRuleTest {
 	@Test
 	public void testKindGenugAlt() {
 		Betreuung betreuung = createTestData(LocalDate.of(2015, Month.MAY, 15), START_PERIODE, ENDE_PERIODE);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
 
 		Assert.assertNotNull(zeitabschnittList);
@@ -38,6 +41,8 @@ public class MindestalterRuleTest {
 	@Test
 	public void testKindAnfangsZuJung() {
 		Betreuung betreuung = createTestData(LocalDate.of(2016, Month.JULY, 15), START_PERIODE, ENDE_PERIODE);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
 
 		Assert.assertNotNull(zeitabschnittList);
