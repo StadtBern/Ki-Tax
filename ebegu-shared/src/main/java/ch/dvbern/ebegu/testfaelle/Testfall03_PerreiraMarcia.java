@@ -17,8 +17,12 @@ import java.util.Collection;
 public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
 
+	public Testfall03_PerreiraMarcia(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList, boolean betreuungenBestaetigt) {
+		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
+	}
+
 	public Testfall03_PerreiraMarcia(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
-		super(gesuchsperiode, institutionStammdatenList);
+		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
 	public Gesuch fillInGesuch() {
@@ -43,7 +47,7 @@ public class Testfall03_PerreiraMarcia extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
 		betreuungKitaAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(50, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));

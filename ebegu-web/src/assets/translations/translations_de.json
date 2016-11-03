@@ -458,6 +458,7 @@
     "MUTATION_AUSWAHL_TEXT": "Bitte wählen Sie folgende Bereiche, welche Ihre Mutation betreffen",
     "PENSUM": "Pensum",
     "LABEL_JA": "Ja",
+    "LABEL_Ok": "OK",
     "LABEL_NEIN": "Nein",
     "PENDENZEN_LIST": "PENDENZENLISTE",
     "LOESCHEN_DIALOG_TITLE": "Wollen Sie das Element wirklich löschen?",

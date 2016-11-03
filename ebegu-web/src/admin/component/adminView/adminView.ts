@@ -3,8 +3,11 @@ import {ApplicationPropertyRS} from '../../service/applicationPropertyRS.rest';
 import EbeguRestUtil from '../../../utils/EbeguRestUtil';
 import {IHttpPromiseCallbackArg, IComponentOptions, IPromise} from 'angular';
 import {TestFaelleRS} from '../../service/testFaelleRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
 require('./adminView.less');
 let template = require('./adminView.html');
+let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
 
 export class AdminViewComponentConfig implements IComponentOptions {
     transclude: boolean = false;
@@ -17,7 +20,7 @@ export class AdminViewComponentConfig implements IComponentOptions {
 }
 
 export class AdminViewController {
-    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH' , 'EbeguRestUtil', 'TestFaelleRS'];
+    static $inject = ['ApplicationPropertyRS', 'MAX_LENGTH', 'EbeguRestUtil', 'TestFaelleRS', 'DvDialog'];
 
     length: number;
     applicationProperty: TSApplicationProperty;
@@ -28,7 +31,7 @@ export class AdminViewController {
 
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
-                testFaelleRS: TestFaelleRS) {
+                testFaelleRS: TestFaelleRS, private dvDialog: DvDialog) {
         this.length = MAX_LENGTH;
         this.applicationProperty = undefined;
         this.applicationPropertyRS = applicationPropertyRS;
@@ -59,7 +62,7 @@ export class AdminViewController {
                     var items: TSApplicationProperty[] = this.ebeguRestUtil.parseApplicationProperties(response.data);
                     if (items != null && items.length > 0) {
                         //todo pruefen ob das item schon existiert hat wie oben
-                        this.applicationProperties =  this.applicationProperties.concat(items[0]);
+                        this.applicationProperties = this.applicationProperties.concat(items[0]);
                         //this.applicationProperties.push(items[0]);
                     }
                 });
@@ -101,9 +104,14 @@ export class AdminViewController {
 
     }
 
-    public createTestFall(testFall: string): IPromise<void> {
-        return this.testFaelleRS.createTestFall(testFall).then(() => {
-            return null;
+    public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IPromise<any> {
+        return this.testFaelleRS.createTestFall(testFall, bestaetigt, verfuegen).then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+
+            });
+
         });
     }
 }

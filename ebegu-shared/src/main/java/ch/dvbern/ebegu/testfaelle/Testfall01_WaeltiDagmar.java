@@ -16,8 +16,13 @@ import java.util.Collection;
  */
 public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 
+	public Testfall01_WaeltiDagmar(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
+								   boolean betreuungenBestaetigt) {
+		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
+	}
+
 	public Testfall01_WaeltiDagmar(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
-		super(gesuchsperiode, institutionStammdatenList);
+		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
 	public Gesuch fillInGesuch() {
@@ -29,19 +34,19 @@ public class Testfall01_WaeltiDagmar extends AbstractTestfall {
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
 		// Kinder
-		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
+		KindContainer kind = createKind(Geschlecht.MAENNLICH, "Wälti", "Simon", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, betreuungenBestaetigt);
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
 		// Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
 		betreuungKitaAaregg.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(80, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JANUARY, 31));
 		betreuungspensumKitaAaregg.setBetreuung(betreuungKitaAaregg);
 		betreuungKitaAaregg.getBetreuungspensumContainers().add(betreuungspensumKitaAaregg);
 		// Kita Brünnen
-		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_BRUENNEN);
+		Betreuung betreuungKitaBruennen = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_BRUENNEN, betreuungenBestaetigt);
 		betreuungKitaBruennen.setBetreuungNummer(2);
 		betreuungKitaBruennen.setKind(kind);
 		kind.getBetreuungen().add(betreuungKitaBruennen);

@@ -18,7 +18,7 @@ export class TestFaelleRS {
         return 'TestFaelleRS';
     }
 
-    public createTestFall(testFall: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall));
+    public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall) + '/' + bestaetigt + '/' + verfuegen);
     }
 }

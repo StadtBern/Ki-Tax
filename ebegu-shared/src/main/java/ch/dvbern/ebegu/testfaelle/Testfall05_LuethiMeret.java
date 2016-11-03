@@ -18,8 +18,12 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 
 	private static final String FAMILIENNAME = "Lüthi";
 
+	public Testfall05_LuethiMeret(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList, boolean betreuungenBestaetigt) {
+		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
+	}
+
 	public Testfall05_LuethiMeret(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
-		super(gesuchsperiode, institutionStammdatenList);
+		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
 	public Gesuch fillInGesuch() {
@@ -41,7 +45,7 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Kita Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		// 50%

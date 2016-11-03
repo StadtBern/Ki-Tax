@@ -18,8 +18,12 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 
 	private static final String FAMILIENNAME = "Feutz";
 
+	public Testfall02_FeutzYvonne(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList, boolean betreuungenBestaetigt) {
+		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
+	}
+
 	public Testfall02_FeutzYvonne(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
-		super(gesuchsperiode, institutionStammdatenList);
+		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
 	public Gesuch fillInGesuch() {
@@ -44,14 +48,14 @@ public class Testfall02_FeutzYvonne extends AbstractTestfall {
 
 		// Betreuungen
 		// Kind 1: Tagi Aaregg
-		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_INSTITUTION_AAREGG);
+		Betreuung betreuungTagiAaregg = createBetreuung(BetreuungsangebotTyp.TAGI, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
 		betreuungTagiAaregg.setKind(kind1);
 		kind1.getBetreuungen().add(betreuungTagiAaregg);
 		BetreuungspensumContainer betreuungspensumTagiAaregg = createBetreuungspensum(60, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
 		betreuungspensumTagiAaregg.setBetreuung(betreuungTagiAaregg);
 		betreuungTagiAaregg.getBetreuungspensumContainers().add(betreuungspensumTagiAaregg);
 		// Kind 2: Kita Aaregg
-		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG);
+		Betreuung betreuungKitaAaregg = createBetreuung(BetreuungsangebotTyp.KITA, ID_INSTITUTION_AAREGG, betreuungenBestaetigt);
 		betreuungKitaAaregg.setKind(kind2);
 		kind2.getBetreuungen().add(betreuungKitaAaregg);
 		BetreuungspensumContainer betreuungspensumKitaAaregg = createBetreuungspensum(40, LocalDate.of(2016, Month.AUGUST, 1), LocalDate.of(2017, Month.JULY, 31));
