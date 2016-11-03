@@ -171,8 +171,8 @@ public abstract class FinanzDatenPrintImpl implements FinanzDatenPrint {
 	@Override
 	public final BigDecimal getBruttovermoegenG2() {
 
-		if (fsGesuchsteller2 != null && this.getFinanzSituationGS2() != null) {
-			this.getFinanzSituationGS2().getBruttovermoegen();
+		if (this.getFinanzSituationGS2() != null) {
+			return this.getFinanzSituationGS2().getBruttovermoegen();
 		}
 		return null;
 
