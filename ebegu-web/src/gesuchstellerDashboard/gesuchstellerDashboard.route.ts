@@ -18,6 +18,6 @@ function getStates(): IState[] {
 
 export class EbeguGesuchstellerDashboardState implements IState {
     name = 'gesuchstellerDashboard';
-    template = '<gesuchsteller-dashboard-view>';
+    template = '<gesuchsteller-dashboard-view class="layout-column flex-100">';
     url = '/gesuchstellerDashboard';
 }

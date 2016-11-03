@@ -1,22 +1,26 @@
 @nodeModules: ~"../node_modules";
+
 @import '~angular-material/angular-material.css';
 @import '~bootstrap/less/bootstrap';
 @import '~font-awesome/less/font-awesome';
-
-//@import '@{nodeModules}/bootstrap/less/bootstrap.less';
-//@import '@{nodeModules}/bootstrap/less/theme.less';
-//@import '@{nodeModules}/font-awesome/less/font-awesome.less';
-//@fa-font-path: "@{nodeModules}/font-awesome/fonts";
 @fa-font-path: "~font-awesome/fonts/";
-//
-/* Component LESS */
-@import 'core/core.module.less';
-@import 'gesuch/gesuch.module.less';
-@import 'admin/admin.module.less';
 
-@import 'variables.less';
-@import 'navbar.less';
+@import 'style/typography.less';
+@import 'style/atoms/button.less';
+@import 'style/atoms/input.less';
+@import 'style/atoms/checkbox.less';
+@import 'style/atoms/radio.less';
+@import 'style/organisms/navbar.less';
+@import 'style/molecules/table.less';
+@import 'style/variables.less';
+@import 'style/mixins.less';
+@import 'style/mediaqueries.less';
 /* Add Component LESS Above */
+
+html {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 /* Required for Angular UI Bootstrap */
 .nav, .pagination, .carousel, .panel-title a {
@@ -24,53 +28,76 @@
 }
 
 body {
-    //navbar paddingtodo remove me just testing
-    padding-top: @page-start;
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    font-size: 1.6rem;
+    .font-family();
     .starter-template {
-        padding: 40px 15px;
+        padding: 4rem 1.5rem;
         text-align: center;
-    };
+    }
     &.ebegu {
-        // Wir setzen die Farbe gleich, wie die Background Farbe von Angular Material Design da sonst der Browser der
-        // Teil des Body ausserhalb des sichtbaren Windows eine andere Farbe hat.
-        background-color: rgb(250,250,250);
+        background-color: @contrast-lightest;
     }
 }
-//logobar
-.navbar-fixed-top {
-    top: 30px;
+
+.ui-absolute-view {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+.dv-progressbar {
+    position: fixed;
+    width: 100%;
+    top: 9.5rem;
+    z-index: @z-index-progressbar;
+    .md-container {
+        background: none;
+        .md-bar {
+            background: @contrast;
+        }
+    }
+
 }
 
 #Intro {
     top: 0;
-    position: fixed;
     background-color: white;
-    height: 40px;
+    height: @navbar-height;
+    min-height: @navbar-height;
     width: 100%;
     display: block;
-    z-index: 1040;
+    z-index: @z-index-navbar;
 }
 
 .logo-bern {
     background-image: url('assets/images/logo1-bern.png');
     background-repeat: no-repeat;
-    background-size: Auto 40px;
-    background-position: left 10px center;
+    background-size: Auto @navbar-height;
+    background-position: left 0.7rem center;
 }
 
 .logo-text {
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
-    font-size: 30px;
+    .bold();
+    .capitalize();
+    .vertical(middle);
+    font-size: 1.6rem;
+    color: @contrast-darkest;
+    letter-spacing: 0.1rem;
     text-align: center;
-    width: 150px;
-    margin: 0 auto;
-    font-weight: bolder;
+    width: 15rem;
+    position: relative;
 }
 
-.userMenu{
-    background-size: Auto 40px;
-    background-position: right 20px center;
+.userMenu {
+    background-size: Auto 4rem;
+    background-position: right 2rem center;
     float: right;
 }
 
@@ -89,7 +116,7 @@ body {
 //todo das braucht es wohl gar nicht mehr
 .form-horizontal {
     dv-error-messages {
-        padding-left: 1px;
+        padding-left: 0.1rem;
     }
 }
 
@@ -115,6 +142,24 @@ form {
 
 }
 
+.row.is-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row.is-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.md-dialog-container {
+    z-index: @z-index-dialog;
+}
+
+md-backdrop.md-dialog-backdrop {
+
+    z-index: @z-index-dialog;
+}
 
 /* Personal preference for BS modal.  The LESS below makes the backdrop white and
    causes the modal to fade in rather than slide in. */

@@ -48,7 +48,7 @@ export class GesuchRouteController extends AbstractGesuchViewController {
                 if (step.wizardStepName === TSWizardStepName.DOKUMENTE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
                     return '';
                 }
-                return 'fa fa-pencil';
+                return 'fa fa-pencil black';
             } else if (status === TSWizardStepStatus.PLATZBESTAETIGUNG || status === TSWizardStepStatus.WARTEN) {
                 return 'fa fa-hourglass orange';
             } else if (status === TSWizardStepStatus.UNBESUCHT) {
