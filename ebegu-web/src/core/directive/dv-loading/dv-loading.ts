@@ -12,7 +12,7 @@ export class DVLoading implements IDirective {
             if (v) {
                 element.show();
             } else {
-                controller.$timeout(function () {
+                controller.$timeout(() => {
                     element.hide();
                 }, 500);
 

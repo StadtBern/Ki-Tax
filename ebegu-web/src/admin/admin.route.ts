@@ -24,7 +24,8 @@ function getStates(): IState[] {
         },
         {
             name: 'institution',
-            template: '<dv-institution-view flex="auto" class="overflow-auto" institutionen="$resolve.institutionen" traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
+            template: '<dv-institution-view flex="auto" class="overflow-auto" institutionen="$resolve.institutionen" ' +
+                                           'traegerschaften="$resolve.traegerschaften" mandant="$resolve.mandant"></dv-institution-view>',
             url: '/institution',
             resolve: {
                 institutionen: getInstitutionen,
