@@ -89,11 +89,11 @@
                         <tbody>
                         <tr ng-repeat="dokument in table2">
                             <td ng-bind="dokument.filename"
-                                ng-class="{true:'vorgaenger', false:''}[vm.hasVorhaenger(dokument)]"></td>
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
-                                ng-class="{true:'vorgaenger', false:''}[vm.hasVorhaenger(dokument)]"></td>
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td ng-bind="dokument.filesize"
-                                ng-class="{true:'vorgaenger', false:''}[vm.hasVorhaenger(dokument)]"></td>
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td>
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black"></span>

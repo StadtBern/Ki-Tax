@@ -129,8 +129,8 @@ public class DokumenteResource {
 		// Files where not in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {
-			// Es dürfen nur dokumente ohne VorgängerId gelöscht werden. D.h. es können nur Files auf dem FS einer
-			// Mutation gelöscht werden, welche neu hinzugefügt worden sind. Kopierte Dokumente des EG dürfen nicht gelöscht werden!
+			// Es duerfen nur dokumente ohne VorgaengerId geloescht werden. D.h. es koennen nur Files auf dem FS einer
+			// Mutation geloescht werden, welche neu hinzugefuegt worden sind. Kopierte Dokumente des EG duerfen nicht geloescht werden!
 			if (dokument.getVorgaengerId() == null) {
 				fileSaverService.remove(dokument.getFilepfad());
 			}

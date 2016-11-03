@@ -87,13 +87,6 @@ export class DVDokumenteListController {
         return false;
     }
 
-    hasVorhaenger(dokument: TSDokument): boolean {
-        if (dokument.vorgaengerId != null) {
-            return true;
-        }
-        return false;
-    }
-
     handleUpload(returnedDG: TSDokumentGrund) {
         this.onUploadDone({dokument: returnedDG});
     }

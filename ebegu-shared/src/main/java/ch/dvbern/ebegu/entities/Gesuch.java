@@ -218,12 +218,12 @@ public class Gesuch extends AbstractEntity {
 
 	public boolean addKindContainer(@NotNull final KindContainer kindContainer) {
 		kindContainer.setGesuch(this);
-		return !this.kindContainers.contains(kindContainer) && this.kindContainers.add(kindContainer);
+		return this.kindContainers.add(kindContainer);
 	}
 
 	public boolean addDokumentGrund(@NotNull final DokumentGrund dokumentGrund) {
 		dokumentGrund.setGesuch(this);
-		return !this.dokumentGrunds.contains(dokumentGrund) && this.dokumentGrunds.add(dokumentGrund);
+		return this.dokumentGrunds.add(dokumentGrund);
 	}
 
 	public FinanzDatenDTO getFinanzDatenDTO() {

@@ -40,4 +40,11 @@ export default class TSAbstractEntity {
     public isNew(): boolean {
         return !this._timestampErstellt;
     }
+
+    public hasVorgaenger(): boolean {
+        if (this.vorgaengerId !== null && this.vorgaengerId !== undefined) {
+            return true;
+        }
+        return false;
+    }
 }
