@@ -204,9 +204,9 @@
                                                  name="mutationFinanzielleSituation"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationFinanzielleSituation"
                                                  aria-label="mutationFinanzielleSituation" dv-enable-element
-                                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                         <span data-translate="MUTATION_AUSWAHL_FINANZIELLESITUATION"></span>
                                     </md-checkbox>
@@ -223,7 +223,7 @@
                                                  name="mutationEinkommensverschlechterung"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationEinkommensverschlechterung"
                                                  aria-label="mutationEinkommensverschlechterung" dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
