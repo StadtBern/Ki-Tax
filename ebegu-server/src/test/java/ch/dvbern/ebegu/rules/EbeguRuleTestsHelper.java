@@ -1,9 +1,6 @@
 package ch.dvbern.ebegu.rules;
 
-import ch.dvbern.ebegu.entities.Betreuung;
-import ch.dvbern.ebegu.entities.Betreuungspensum;
-import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
-import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -99,6 +96,8 @@ public class EbeguRuleTestsHelper {
 
 	public static Betreuung createBetreuungWithPensum(LocalDate von, LocalDate bis, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(angebot);
 		betreuung.setBetreuungspensumContainers(new LinkedHashSet<>());
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();

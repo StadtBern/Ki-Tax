@@ -305,7 +305,11 @@ public class GesuchServiceTest extends AbstractEbeguTest {
 		// Anzahl erstellte Objekte zaehlen, es muessen im Gesuch und in der Mutation
 		// gleich viele sein
 		Gesuch mutation = gesuchOptional.get();
+		Familiensituation oldFamSit = new Familiensituation(mutation.getFamiliensituationErstgesuch());
+		mutation.setFamiliensituationErstgesuch(null);
 		mutation = gesuchService.createGesuch(mutation);
+		mutation.setFamiliensituationErstgesuch(oldFamSit);
+		mutation = gesuchService.updateGesuch(mutation, false);
 
         anzahlObjekte = 0;
         Set<String> idsErstgesuch = new HashSet<>();
@@ -317,8 +321,9 @@ public class GesuchServiceTest extends AbstractEbeguTest {
         findAllIdsOfAbstractEntities(mutation, idsMutation);
         int anzahlObjekteMutation = anzahlObjekte;
 
-		// Die Mutation hat immer ein Objekt mehr als Erstgesuch, und zwar "Mutationsdaten". Deswegen muessen wir 1 subtrahieren
-        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1);
+		// Die Mutation hat immer 2 Objekte mehr als Erstgesuch, und zwar "Mutationsdaten" und "FamiliensituationErstgesuch.
+		// Deswegen muessen wir 2 subtrahieren
+        Assert.assertEquals(anzahlObjekteErstgesuch, anzahlObjekteMutation - 1 - 1);
 
         // Ids, welche in beiden Gesuchen vorkommen ermitteln. Die meisten Objekte muessen kopiert
         // werden, es gibt aber Ausnahmen, wo eine Referenz kopiert wird.

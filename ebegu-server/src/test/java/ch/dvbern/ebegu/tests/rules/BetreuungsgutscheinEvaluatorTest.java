@@ -118,6 +118,8 @@ public class BetreuungsgutscheinEvaluatorTest extends AbstractBGRechnerTest {
 		gesuch.getGesuchsteller2().setFinanzielleSituationContainer(new FinanzielleSituationContainer());
 		gesuch.getGesuchsteller2().getFinanzielleSituationContainer().setFinanzielleSituationJA(new FinanzielleSituation());
 		gesuch.getGesuchsteller2().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(gesuchsperiode.getGueltigAb(), gesuchsperiode.getGueltigBis(), 90, 10));
+		// Adressen
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		// Kind 1
 		Betreuung betreuungKind1 = createBetreuungWithPensum(gesuch, BetreuungsangebotTyp.KITA, gesuchsperiode, 60);
 		betreuungKind1.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());

@@ -433,7 +433,7 @@ export default class EbeguRestUtil {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
-
+            restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
             return restFamiliensituation;
         }
         return undefined;
@@ -464,6 +464,7 @@ export default class EbeguRestUtil {
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
+            familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
             return familiensituation;
         }
         return undefined;
