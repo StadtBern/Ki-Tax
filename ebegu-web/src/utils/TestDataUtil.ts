@@ -17,6 +17,7 @@ import Moment = moment.Moment;
 import TSAntragDTO from '../models/TSAntragDTO';
 import {TSAntragTyp} from '../models/enums/TSAntragTyp';
 import TSGesuchsteller from '../models/TSGesuchsteller';
+import TSAdresse from '../models/TSAdresse';
 
 export default class TestDataUtil {
 
@@ -110,6 +111,14 @@ export default class TestDataUtil {
         let gesuchsteller: TSGesuchsteller = new TSGesuchsteller();
         gesuchsteller.vorname = vorname;
         gesuchsteller.nachname = nachname;
+        gesuchsteller.adressen = [];
         return gesuchsteller;
+    }
+
+    public static createAdresse(strasse: string, nummer: string): TSAdresse {
+        let adresse: TSAdresse = new TSAdresse();
+        adresse.strasse = strasse;
+        adresse.hausnummer = nummer;
+        return adresse;
     }
 }

@@ -13,6 +13,7 @@ import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.Gueltigkeit;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
@@ -382,7 +383,8 @@ public class JaxBConverter {
 			alternativeAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
 
 			jaxGesuchsteller.setAdressen(gesuchstellerAdressenListToJAX(
-				persistedGesuchsteller.getAdressen().stream().filter(gesuchstellerAdresse -> !gesuchstellerAdresse.isKorrespondenzAdresse()).collect(Collectors.toList())
+				persistedGesuchsteller.getAdressen().stream().filter(gesuchstellerAdresse
+					-> !gesuchstellerAdresse.isKorrespondenzAdresse()).sorted(Gueltigkeit.GUELTIG_AB_COMPARATOR).collect(Collectors.toList())
 			));
 		}
 

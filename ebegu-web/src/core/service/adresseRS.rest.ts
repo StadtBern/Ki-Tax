@@ -22,11 +22,4 @@ export default class AdresseRS {
         });
     }
 
-    public updateUmzug(adresse: TSAdresse): IPromise<TSGesuch> {
-        return this.http.put(this.serviceURL + '/umzug/', adresse, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    }
 }

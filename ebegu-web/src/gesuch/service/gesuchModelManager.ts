@@ -1140,9 +1140,4 @@ export default class GesuchModelManager {
             });
     }
 
-    public updateUmzug(): IPromise<TSGesuch> {
-        return this.adresseRS.updateUmzug(null).then((response) => {
-           return response;
-        });
-    }
 }

@@ -129,8 +129,28 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         }
     }
 
-    public getFirstAdresse(): TSAdresse {
-        return this.adressen[0];
+    /**
+     * Wir gehen davon aus dass die Liste von Adressen aus dem Server sortiert kommt.
+     * Deshalb duerfen wir die erste Adresse der Liste als Wohnadresse nehmen
+     */
+    public getWohnAdresse(): TSAdresse {
+        if (this.adressen && this.adressen.length > 0) {
+            return this.adressen[0];
+        }
+        return undefined;
+    }
+
+    /**
+     * Hier wird eine Kopie der Adressen erstellt und die erste Adresse weggemacht. Damit haben wir nur
+     * die Umzugsadressen
+     */
+    public getUmzugAdressen(): Array<TSAdresse> {
+        if (this.adressen && this.adressen.length > 0) {
+            let adressenCopy: Array<TSAdresse> = angular.copy(this.adressen);
+            adressenCopy.splice(0, 1);
+            return adressenCopy;
+        }
+        return [];
     }
 
 }
