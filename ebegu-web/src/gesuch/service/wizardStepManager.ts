@@ -5,6 +5,8 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import TSGesuch from '../../models/TSGesuch';
 import IPromise = angular.IPromise;
 
 export default class WizardStepManager {
@@ -40,6 +42,7 @@ export default class WizardStepManager {
      */
     public initWizardSteps() {
         this.wizardSteps = [new TSWizardStep(undefined, TSWizardStepName.GESUCH_ERSTELLEN, TSWizardStepStatus.IN_BEARBEITUNG, undefined, true)];
+        this.wizardSteps.push(new TSWizardStep(undefined, TSWizardStepName.FAMILIENSITUATION, TSWizardStepStatus.UNBESUCHT, 'init dummy', false));
         this.currentStepName = TSWizardStepName.GESUCH_ERSTELLEN;
     }
 
@@ -84,6 +87,7 @@ export default class WizardStepManager {
             } else {
                 this.initWizardSteps();
             }
+            this.backupCurrentSteps();
             this.setAllowedStepsForRole(this.authServiceRS.getPrincipalRole());
         });
     }
@@ -169,23 +173,24 @@ export default class WizardStepManager {
      * Gibt true zurueck wenn der Status vom naechsten Step != UNBESUCHT ist. D.h. wenn es verfuegbar ist
      * @returns {boolean}
      */
-    public isNextStepBesucht(gesuchTyp: TSAntragTyp): boolean {
-        return this.getStepByName(this.getNextStep(gesuchTyp)).wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
+    public isNextStepBesucht(gesuch: TSGesuch): boolean {
+        return this.getStepByName(this.getNextStep(gesuch)).wizardStepStatus !== TSWizardStepStatus.UNBESUCHT;
     }
 
     /**
      * Gibt true zurueck wenn der naechste Step enabled (verfuegbar) ist
      * @returns {boolean}
      */
-    public isNextStepEnabled(gesuchTyp: TSAntragTyp): boolean {
-        return this.getStepByName(this.getNextStep(gesuchTyp)).verfuegbar;
+    public isNextStepEnabled(gesuch: TSGesuch): boolean {
+        return this.isStepAvailableViaBtn(this.getNextStep(gesuch), gesuch);
+        // return this.getStepByName(this.getNextStep(gesuch)).verfuegbar;
     }
 
-    public getNextStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+    public getNextStep(gesuch: TSGesuch): TSWizardStepName {
         let allStepNames = this.getAllowedSteps();
         let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
         for (let i = currentPosition; i < allStepNames.length; i++) {
-            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
                 return allStepNames[i];
             }
         }
@@ -195,21 +200,43 @@ export default class WizardStepManager {
     /**
      * iterate through the existing steps and get the previous one based on the current position
      */
-    public getPreviousStep(gesuchTyp: TSAntragTyp): TSWizardStepName {
+    public getPreviousStep(gesuch: TSGesuch): TSWizardStepName {
         var allStepNames = this.getAllowedSteps();
         let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;
         for (let i = currentPosition; i >= 0; i--) {
-            if (this.isStepAvailable(allStepNames[i], gesuchTyp)) {
+            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
                 return allStepNames[i];
             }
         }
         return undefined;
     }
 
-    private isStepAvailable(stepName: TSWizardStepName, gesuchTyp: TSAntragTyp): boolean {
-        return this.getStepByName(stepName).verfuegbar
-            || (gesuchTyp === TSAntragTyp.GESUCH
-            && this.getStepByName(stepName).wizardStepStatus === TSWizardStepStatus.UNBESUCHT);
+    /**
+     * gibt true zurueck wenn step mit next/prev button erreichbar sein soll
+     */
+    private isStepAvailableViaBtn(stepName: TSWizardStepName, gesuch: TSGesuch): boolean {
+        let step: TSWizardStep = this.getStepByName(stepName);
+        if (step !== undefined) {
+            return (this.isStepClickableForCurrentRole(step, gesuch)
+                    || (gesuch.typ === TSAntragTyp.GESUCH && step.wizardStepStatus === TSWizardStepStatus.UNBESUCHT));
+        }
+        return false;  // wenn der step undefined ist geben wir mal verfuegbar zurueck
+    }
+
+    /**
+     * gibt true zurueck wenn eins step fuer die aktuelle rolle disabled ist.
+     * Wenn es keine sonderregel gibt wird der default der aus dem server empfangen wurde
+     * zurueckgegeben
+     */
+    public isStepClickableForCurrentRole(step: TSWizardStep, gesuch: TSGesuch) {
+        if (step.wizardStepName === TSWizardStepName.VERFUEGEN) {
+            //verfuegen step fuer alle ausser admin und sachbearbeiter nur verfuegbar wenn status verfuegt
+            if (!this.authServiceRS.isOneOfRoles(TSRole.ADMIN, TSRole.SACHBEARBEITER_JA)
+                && gesuch.status !== TSAntragStatus.VERFUEGT) {
+                return false;    //disabled
+            }
+        }
+        return step.verfuegbar === true;  //wenn keine Sonderbedingung gehen wir davon aus dass der step nicht disabled ist
     }
 
     /**
@@ -227,9 +254,9 @@ export default class WizardStepManager {
                 }
 
             } else if (this.wizardSteps[i].wizardStepName === TSWizardStepName.DOKUMENTE) {
-                    if (this.wizardSteps[i].wizardStepStatus === TSWizardStepStatus.NOK) {
-                        return false;
-                    }
+                if (this.wizardSteps[i].wizardStepStatus === TSWizardStepStatus.NOK) {
+                    return false;
+                }
 
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
                 && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK) {
