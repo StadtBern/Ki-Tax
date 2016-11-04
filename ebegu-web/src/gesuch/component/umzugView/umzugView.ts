@@ -9,6 +9,8 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import ITranslateService = angular.translate.ITranslateService;
 import TSGesuch from '../../../models/TSGesuch';
 import {TSBetroffene} from '../../../models/enums/TSBetroffene';
+import TSAdresse from '../../../models/TSAdresse';
+import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -26,6 +28,7 @@ export class UmzugViewComponentConfig implements IComponentOptions {
 export class UmzugViewController extends AbstractGesuchViewController {
 
     public betroffene: TSBetroffene;
+    public newAdressen: Array<TSAdresse> = [];
 
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate'];
@@ -38,7 +41,6 @@ export class UmzugViewController extends AbstractGesuchViewController {
     }
 
     private initViewModel(): void {
-        // this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;
         this.wizardStepManager.setCurrentStep(TSWizardStepName.UMZUG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
     }
@@ -46,9 +48,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
     public save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
             this.errorService.clearAll();
-            // if (!this.showUmzug) {
-            //     this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
-            // }
+            // todo alle newAdresse muessen in den entsprechenden GS kopiert werden, bevor man sie speichern kann
             return this.gesuchModelManager.updateUmzug().then((response) => {
                 return response;
             });
@@ -91,6 +91,32 @@ export class UmzugViewController extends AbstractGesuchViewController {
         }
 
         return '';
+    }
+
+    public getAdressenListFromGS1(): Array<TSAdresse> {
+        if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
+            return this.gesuchModelManager.getGesuch().gesuchsteller1.adressen;
+        }
+        return [];
+    }
+
+    public removeUmzugAdresse(adresse: TSAdresse): void {
+        var indexOf = this.newAdressen.lastIndexOf(adresse);
+        if (indexOf >= 0) {
+            this.newAdressen.splice(indexOf);
+        } else {
+            // remove from GS
+        }
+    }
+
+    /**
+     * Erstellt eine neue leere Adresse vom Typ WOHNADRESSE
+     */
+    public createUmzugAdresse(): void {
+        let adresse: TSAdresse = new TSAdresse();
+        adresse.showDatumVon = true;
+        adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        this.newAdressen.push(adresse);
     }
 
 }

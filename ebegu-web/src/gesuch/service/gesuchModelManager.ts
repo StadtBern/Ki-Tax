@@ -399,8 +399,6 @@ export default class GesuchModelManager {
 
 
     public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
-        // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
-        this.calculateShowDatumFlags(gesuchsteller);
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -411,7 +409,7 @@ export default class GesuchModelManager {
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
             this.setStammdatenToWorkWith(new TSGesuchsteller());
-            this.getStammdatenToWorkWith().adresse = this.initAdresse();
+            this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
 
@@ -566,14 +564,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public setUmzugAdresse(showUmzug: boolean): void {
-        if (showUmzug) {
-            this.getStammdatenToWorkWith().umzugAdresse = this.initUmzugadresse();
-        } else {
-            this.getStammdatenToWorkWith().umzugAdresse = undefined;
-        }
-    }
-
     /**
      * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
@@ -623,11 +613,11 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initAdresse(): TSAdresse {
-        let wohnAdr = new TSAdresse();
-        wohnAdr.showDatumVon = false;
-        wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return wohnAdr;
+    private initWohnAdresse(): Array<TSAdresse> {
+        let wohnAdresse = new TSAdresse();
+        wohnAdresse.showDatumVon = false;
+        wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        return [wohnAdresse];
     }
 
     private initKorrespondenzAdresse(): TSAdresse {
@@ -635,25 +625,6 @@ export default class GesuchModelManager {
         korrAdr.showDatumVon = false;
         korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
         return korrAdr;
-    }
-
-    private initUmzugadresse(): TSAdresse {
-        let umzugAdr = new TSAdresse();
-        umzugAdr.showDatumVon = true;
-        umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return umzugAdr;
-    }
-
-    public calculateShowDatumFlags(gesuchsteller: TSGesuchsteller): void {
-        if (gesuchsteller.adresse) {
-            gesuchsteller.adresse.showDatumVon = false;
-        }
-        if (gesuchsteller.korrespondenzAdresse) {
-            gesuchsteller.korrespondenzAdresse.showDatumVon = false;
-        }
-        if (gesuchsteller.umzugAdresse) {
-            gesuchsteller.umzugAdresse.showDatumVon = true;
-        }
     }
 
     public getKinderList(): Array<TSKindContainer> {

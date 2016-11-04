@@ -50,7 +50,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }

@@ -11,18 +11,17 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _mobile: string;
     private _telefon: string;
     private _telefonAusland: string;
-    private _adresse: TSAdresse;
+    private _adressen: Array<TSAdresse>;
     private _korrespondenzAdresse: TSAdresse;
-    private _umzugAdresse: TSAdresse;
     private _finanzielleSituationContainer: TSFinanzielleSituationContainer;
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _diplomatenstatus: boolean;
     private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
-                email?: string, mobile?: string, telefon?: string, telefonAusland?: string, umzug?: boolean,
-                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>, diplomatenstatus?: boolean,
-                einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
+                email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
+                finanzielleSituation?: TSFinanzielleSituationContainer, erwerbspensen?: Array<TSErwerbspensumContainer>,
+                diplomatenstatus?: boolean, einkommensverschlechterungContainer?: TSEinkommensverschlechterungContainer) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
@@ -58,20 +57,18 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._telefon = value;
     }
 
-    public get adresse(): TSAdresse {
-        return this._adresse;
+    public get adressen(): Array<TSAdresse> {
+        return this._adressen;
     }
 
-    public set adresse(adr: TSAdresse) {
-        this._adresse = adr;
+    public set adressen(adr: Array<TSAdresse>) {
+        this._adressen = adr;
     }
 
-    public get umzugAdresse(): TSAdresse {
-        return this._umzugAdresse;
-    }
-
-    public set umzugAdresse(value: TSAdresse) {
-        this._umzugAdresse = value;
+    public addAdresse(value: TSAdresse) {
+        if (this._adressen) {
+            this._adressen.push(value);
+        }
     }
 
     public get telefonAusland(): string {
@@ -130,6 +127,10 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         } else {
             return '';
         }
+    }
+
+    public getFirstAdresse(): TSAdresse {
+        return this.adressen[0];
     }
 
 }

@@ -303,7 +303,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull final JaxGesuchsteller gesuchstellerJAXP, @Nonnull final Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getAdressen(), "Wohnadresse muss gesetzt sein");
 		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
@@ -327,19 +327,10 @@ public class JaxBConverter {
 				}
 			}
 		}
-		// Umzug und Wohnadresse
-		GesuchstellerAdresse umzugAddr = null;
-		if (gesuchstellerJAXP.getUmzugAdresse() != null) {
-			umzugAddr = toStoreableAddresse(gesuchstellerJAXP.getUmzugAdresse());
-			gesuchsteller.addAdresse(umzugAddr);
-		}
-		//Wohnadresse (abh von Umzug noch datum setzten)
-		final GesuchstellerAdresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
-		if (umzugAddr != null) {
-			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
-		}
+
+		gesuchstellerJAXP.getAdressen().forEach(jaxAdresse -> gesuchsteller.addAdresse(toStoreableAddresse(jaxAdresse)));
+
 		// Finanzielle Situation
-		gesuchsteller.addAdresse(wohnAddrToMerge);
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
@@ -374,8 +365,8 @@ public class JaxBConverter {
 	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull final Gesuchsteller persistedGesuchsteller) {
 		//TODO (team) Was machen wir hier? Bei Mutation ist der Gesuchsteller anfangs noch nicht gespeichert...
-//		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
-//			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
+		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
+			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		final JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		convertAbstractPersonFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
 		jaxGesuchsteller.setMail(persistedGesuchsteller.getMail());
@@ -387,15 +378,12 @@ public class JaxBConverter {
 
 		if (!persistedGesuchsteller.isNew()) {
 			//relationen laden
-			final Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
-			altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
-			final GesuchstellerAdresse currentWohnadr = gesuchstellerAdresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
-			jaxGesuchsteller.setWohnAdresse(gesuchstellerAdresseToJAX(currentWohnadr));
+			final Optional<GesuchstellerAdresse> alternativeAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+			alternativeAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
 
-			//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-			final Optional<GesuchstellerAdresse> maybeUmzugadresse = gesuchstellerAdresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
-			maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
-				.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(gesuchstellerAdresseToJAX(umzugAdr)));
+			jaxGesuchsteller.setAdressen(gesuchstellerAdressenListToJAX(
+				persistedGesuchsteller.getAdressen().stream().filter(gesuchstellerAdresse -> !gesuchstellerAdresse.isKorrespondenzAdresse()).collect(Collectors.toList())
+			));
 		}
 
 		// Finanzielle Situation
@@ -414,6 +402,10 @@ public class JaxBConverter {
 			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkommensverschlechterungContainer);
 		}
 		return jaxGesuchsteller;
+	}
+
+	private List<JaxAdresse> gesuchstellerAdressenListToJAX(@Nonnull Collection<GesuchstellerAdresse> wohnAdressen) {
+		return wohnAdressen.stream().map(this::gesuchstellerAdresseToJAX).collect(Collectors.toList());
 	}
 
 	public Familiensituation familiensituationToEntity(@Nonnull final JaxFamiliensituation familiensituationJAXP, @Nonnull final Familiensituation familiensituation) {

@@ -1,70 +1,76 @@
-<div class="umzugView row">
+<div class="umzugView gesuchModul">
 
     <div class="row">
         <div class="col-md-12">
-            <h4 class="mainTitle">
+            <h1 class="mainTitle">
                 <span data-translate="UMZUG_TITLE"></span>
-            </h4>
+            </h1>
+            <hr class="header"/>
         </div>
     </div>
 
-    <hr class="header"/>
-
     <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert alert-warning" data-translate="UMZUG_LIST_HINT"></div>
 
-    <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
 
-        <form role="form" name="form" class="" novalidate unsaved-warning-form>
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
 
-            <!--Gesuchsteller-->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
-                        </label>
-                        <select name="betroffene" id="betroffene"
-                                ng-model="vm.betroffene"
-                                class="form-control"
-                                ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
-                                ng-required="true">
-                        </select>
-                        <dv-error-messages for="form.betroffene.$error"
-                                           class="error"></dv-error-messages>
+                <div ng-repeat="adresse in vm.getAdressenListFromGS1()">
+
+                    <!--Gesuchsteller-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <div class="form-group">
+                                <label data-translate="BETROFFENE_WAEHLEN" for="betroffene">
+                                </label>
+                                <select name="betroffene" id="betroffene"
+                                        ng-model="adresse"
+                                        class="form-control"
+                                        ng-options="(vm.getNameFromBetroffene(betroffene)) for betroffene in vm.getBetroffenenList()"
+                                        ng-required="true">
+                                </select>
+                                <dv-error-messages for="form.betroffene.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Umzugadresse-->
+                    <div class="col-md-12 marginTop20">
+                        <dv-adresse adresse="adresse" show-nicht-in-gemeinde="true"
+                                    prefix="umzug"></dv-adresse>
+                    </div>
+
+                    <!-- Umzug loeschen-->
+                    <div class="col-md-12" style="margin-bottom: 2rem">
+                        <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(adresse)"
+                                           button-class="dv-btn-sm color-success">
+                            <i class="glyphicon glyphicon-trash"></i>
+                            <span data-translate="UMZUG_ENTFERNEN"></span>
+                        </dv-loading-button>
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- Umzugadresse-->
-            <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true"
-                        prefix="umzug"></dv-adresse>
+                <!-- Umzug hinzufuegen -->
+                <div class="col-md-12" style="margin-bottom: 2rem">
+                    <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
+                                       button-class="dv-btn-sm color-success">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span data-translate="UMZUG_HINZUFUEGEN"></span>
+                    </dv-loading-button>
+                </div>
 
+                <dv-navigation dv-show-element
+                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                </dv-navigation>
+                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                               dv-next="true">
+                </dv-navigation>
 
-            <!-- Umzug loeschen-->
-            <div class="col-md-12" style="margin-bottom: 2rem">
-                <dv-loading-button type="button" button-click="vm.removeUmzugAdresse()"
-                                   button-class="dv-btn-sm color-success">
-                    <i class="glyphicon glyphicon-trash"></i>
-                    <span data-translate="UMZUG_ENTFERNEN"></span>
-                </dv-loading-button>
-            </div>
-
-            <!-- Umzug hinzufuegen -->
-            <div class="col-md-12" style="margin-bottom: 2rem">
-                <dv-loading-button type="button" button-click="vm.createUmzugAdresse()"
-                                   button-class="dv-btn-sm color-success">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    <span data-translate="UMZUG_HINZUFUEGEN"></span>
-                </dv-loading-button>
-            </div>
-
-            <dv-navigation dv-show-element
-                           dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                           dv-previous="true" dv-next="true" dv-save="vm.save(form)">
-            </dv-navigation>
-            <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                           dv-next="true">
-            </dv-navigation>
-
-        </form>
+            </form>
+        </div>
     </div>
 </div>
