@@ -59,14 +59,14 @@ export class GesuchRouteController extends AbstractGesuchViewController {
     }
 
     /**
-     * Steps are only disabled when the field verfuegbar is false
+     * Steps are disabled when the field verfuegbar is false or if they are not allowed for the current role
      * @param stepName
      * @returns {boolean} Sollte etwas schief gehen, true wird zurueckgegeben
      */
     public isWizardStepDisabled(stepName: TSWizardStepName): boolean {
         var step = this.wizardStepManager.getStepByName(stepName);
         if (step) {
-            return (step.verfuegbar === false);
+            return !this.wizardStepManager.isStepClickableForCurrentRole(step, this.gesuchModelManager.getGesuch());
         }
         return true;
     }
