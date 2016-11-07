@@ -10,7 +10,7 @@
 
     <div class="col-sm-12 col-md-6">
         <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next"
-                           button-disabled="vm.isNextDisabled()" title="{{vm.getTooltip()}}">
+                           button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
             <span ng-bind="vm.getNextButtonName()"></span>
         </dv-loading-button>
     </div>
