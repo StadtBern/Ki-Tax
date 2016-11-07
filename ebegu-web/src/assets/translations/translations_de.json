@@ -741,5 +741,6 @@
     "BETROFFENE_WAEHLEN": "Betroffen",
     "BEIDE_GESUCHSTELLER": "beide Gesuchsteller",
     "UMZUG_ENTFERNEN": "Umzug löschen",
-    "UMZUG_HINZUFUEGEN": "Umzug hinzufügen"
+    "UMZUG_HINZUFUEGEN": "Umzug hinzufügen",
+    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden"
 }

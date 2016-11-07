@@ -5,8 +5,6 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.testfaelle.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -293,6 +291,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2);
 		}
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER);
+		// Umzug wird by default OK und verfuegbar, da es nicht notwendig ist, einen Umzug einzutragen
+		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.UMZUG);
+		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.UMZUG, WizardStepStatus.OK);
 	}
 
 	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
