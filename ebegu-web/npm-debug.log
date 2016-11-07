@@ -15,9 +15,9 @@
 11 silly lifecycle ebeguWeb@0.10.0-SNAPSHOT~start: Args: [ '-c', 'npm run server:dev' ]
 12 silly lifecycle ebeguWeb@0.10.0-SNAPSHOT~start: Returned: code: 1  signal: null
 13 info lifecycle ebeguWeb@0.10.0-SNAPSHOT~start: Failed to exec start script
-14 verbose stack Error: ebeguWeb@0.10.0-SNAPSHOT start: `npm run server:dev`
+14 verbose stack Error: ebeguWeb@0.10.0-SNAPSHOT start: `npm run server:dev`46546
 14 verbose stack Exit status 1
-14 verbose stack     at EventEmitter.<anonymous> (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/lib/utils/lifecycle.js:245:16)
+14 verbose stack     at EventEmitter.<anonymoudasds> (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/lib/utils/lifecycle.js:245:16)
 14 verbose stack     at emitTwo (events.js:87:13)
 14 verbose stack     at EventEmitter.emit (events.js:172:7)
 14 verbose stack     at ChildProcess.<anonymous> (/home/imanol/.nvm/versions/node/v4.3.1/lib/node_modules/npm/lib/utils/spawn.js:24:14)
