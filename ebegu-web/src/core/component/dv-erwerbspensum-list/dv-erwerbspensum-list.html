@@ -24,7 +24,7 @@
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
-                    <td ng-if="vm.addButtonVisible && row.erwerbspensumJA.vorgaengerId === null">
+                    <td ng-if="vm.addButtonVisible">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
                                            button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
