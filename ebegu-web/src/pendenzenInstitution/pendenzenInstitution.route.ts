@@ -18,6 +18,6 @@ function getStates(): IState[] {
 
 export class EbeguPendenzenListState implements IState {
     name = 'pendenzenInstitution';
-    template = '<pendenzen-institution-list-view>';
+    template = '<pendenzen-institution-list-view flex="auto" class="overflow-auto">';
     url = '/pendenzenInstitution';
 }
