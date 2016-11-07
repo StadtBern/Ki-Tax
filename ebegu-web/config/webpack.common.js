@@ -1,10 +1,21 @@
 var webpack = require('webpack');
 var helpers = require('./helpers');
 var loaders = require('./loaders');
+var fs = require('fs');
+var xml2js = require('xml2js');
 
+var parsedversion = 0;
+var parser = new xml2js.Parser();
+fs.readFile(__dirname + '/../pom.xml', function (err, data) {
+    parser.parseString(data, function (err, result) {
+        parsedversion = result['project']['parent'][0]['version'][0];
+        console.log(parsedversion);
+        // console.dir(result);
+        console.log('Done');
+    });
+});
 
-var parsedversion = JSON.stringify(require("../package.json").version) || "unkown";
-var currentTime = new Date(); 
+var currentTime = new Date();
 /**
  * Webpack Plugins
  */
@@ -114,7 +125,7 @@ module.exports = {
     //
     // See: http://webpack.github.io/docs/configuration.html#plugins
     plugins: [
-        
+
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
@@ -157,7 +168,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: 'src/assets', to: 'src/assets'},
         ]),
-        
+
         // Plugin: HtmlWebpackPlugin
         // Description: Simplifies creation of HTML files to serve your webpack bundles.
         // This is especially useful for webpack bundles that include a hash in the filename
