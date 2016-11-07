@@ -52,11 +52,17 @@ export class UmzugViewController extends AbstractGesuchViewController {
         return this.umzugAdressen;
     }
 
-    public save(form: angular.IFormController): IPromise<void> {
+    public save(form: angular.IFormController): IPromise<TSGesuchsteller> {
         if (form.$valid) {
             this.errorService.clearAll();
             this.saveAdresseInGS();
+            this.gesuchModelManager.setGesuchstellerNumber(1);
             return this.gesuchModelManager.updateGesuchsteller().then((response) => {
+                if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
+                    this.gesuchModelManager.setGesuchstellerNumber(2);
+                    return this.gesuchModelManager.updateGesuchsteller();
+                }
+                return this.gesuchModelManager.getStammdatenToWorkWith();
             });
         }
         return undefined;
@@ -135,7 +141,20 @@ export class UmzugViewController extends AbstractGesuchViewController {
         this.umzugAdressen.push(umzugAdresse);
     }
 
+    /**
+     * Zuerst entfernt alle Elemente der Arrays von adressen vom GS1 und GS2, ausser dem ersten Element (Wohnadresse).
+     * Danach fuellt diese mit den Adressen die hier geblieben sind bzw. nicht entfernt wurden, dafuer
+     * nimmt es aus der Liste von umzugAdressen alle eingegebenen Adressen und speichert sie in dem entsprechenden GS
+     */
     private saveAdresseInGS(): void {
+        if (this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.adressen
+            && this.gesuchModelManager.getGesuch().gesuchsteller1.adressen.length > 0) {
+            this.gesuchModelManager.getGesuch().gesuchsteller1.adressen.length = 1;
+        }
+        if (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.adressen
+            && this.gesuchModelManager.getGesuch().gesuchsteller2.adressen.length > 0) {
+            this.gesuchModelManager.getGesuch().gesuchsteller2.adressen.length = 1;
+        }
         this.umzugAdressen.forEach(umzugAdresse => {
 
             if (TSBetroffene.GESUCHSTELLER_1 === umzugAdresse.betroffene) {

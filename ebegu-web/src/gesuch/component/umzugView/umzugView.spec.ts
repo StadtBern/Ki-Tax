@@ -97,16 +97,18 @@ describe('umzugView', function () {
 
             expect(umzugController.getUmzugAdressenList().length).toBe(0);
         });
-        it('should have all adresse for GS1 and GS2', function () {
+        it('should have all adressen for GS1 and GS2', function () {
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Rodolfo', 'Langostino');
             gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('strasse1', '10'));
             let umzugAdresseGS1: TSAdresse = TestDataUtil.createAdresse('umzugstrasse1', '10');
+            umzugAdresseGS1.showDatumVon = true;
             gesuch.gesuchsteller1.addAdresse(umzugAdresseGS1);
 
             gesuch.gesuchsteller2 = TestDataUtil.createGesuchsteller('Conchita', 'Prieto');
             gesuch.gesuchsteller2.addAdresse(TestDataUtil.createAdresse('strasse2', '20'));
             let umzugAdresseGS2: TSAdresse = TestDataUtil.createAdresse('umzugstrasse2', '20');
+            umzugAdresseGS2.showDatumVon = true;
             gesuch.gesuchsteller2.addAdresse(umzugAdresseGS2);
 
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
@@ -140,11 +142,12 @@ describe('umzugView', function () {
     });
 
     describe('createAndRemoveUmzugAdresse', function () {
-        it('should have all adresse for GS1 and GS2', function () {
+        it('should create and remove adressen for GS1 and GS2', function () {
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Rodolfo', 'Langostino');
             gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('strasse1', '10'));
             let umzugAdresseGS1: TSAdresse = TestDataUtil.createAdresse('umzugstrasse1', '10');
+            umzugAdresseGS1.showDatumVon = true;
             gesuch.gesuchsteller1.addAdresse(umzugAdresseGS1);
             gesuch.gesuchsteller2 = TestDataUtil.createGesuchsteller('Conchita', 'Prieto');
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);

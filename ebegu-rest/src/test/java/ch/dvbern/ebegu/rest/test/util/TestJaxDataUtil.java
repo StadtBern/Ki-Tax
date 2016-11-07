@@ -47,9 +47,7 @@ public class TestJaxDataUtil {
 		umzugAdr.setStrasse("neue Strasse");
 		umzugAdr.setGueltigAb(LocalDate.now().plusMonths(1));  //gueltig 1 monat in zukunft
 
-		final List<JaxAdresse> testJaxAdressenList = createTestJaxAdressenList(null);
-		testJaxAdressenList.add(umzugAdr);
-		jaxGesuchsteller.setAdressen(testJaxAdressenList);
+		jaxGesuchsteller.addAdresse(umzugAdr);
 		JaxAdresse altAdr = createTestJaxAdr("alternativ");
 		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		jaxGesuchsteller.setAlternativeAdresse(altAdr);

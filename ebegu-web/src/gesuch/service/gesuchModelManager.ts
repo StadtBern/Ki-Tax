@@ -226,11 +226,13 @@ export default class GesuchModelManager {
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
-                return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
-                    this.backupCurrentGesuch();
-                    //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
-                    return this.getStammdatenToWorkWith();
-                });
+                this.backupCurrentGesuch();
+                return this.getStammdatenToWorkWith();
+                // return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
+                //     //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
+                        //todo Ich habe es weggemacht und getestet. So weit hat es funktioniert...
+                //     return this.getStammdatenToWorkWith();
+                // });
             });
     }
 

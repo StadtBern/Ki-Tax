@@ -329,7 +329,7 @@ public class JaxBConverter {
 			}
 		}
 
-		gesuchstellerJAXP.getAdressen().forEach(jaxAdresse -> gesuchsteller.addAdresse(toStoreableAddresse(jaxAdresse)));
+		sortAndAddAdressenToGesuchsteller(gesuchstellerJAXP, gesuchsteller);
 
 		// Finanzielle Situation
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
@@ -349,6 +349,37 @@ public class JaxBConverter {
 		return gesuchsteller;
 	}
 
+	private void sortAndAddAdressenToGesuchsteller(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
+		// Zuerst wird geguckt, welche Entities nicht im JAX sind und werden dann geloescht
+		for (Iterator<GesuchstellerAdresse> iterator = gesuchsteller.getAdressen().iterator(); iterator.hasNext(); ) {
+			GesuchstellerAdresse next = iterator.next();
+			boolean needsToBeRemoved = true;
+			for (JaxAdresse jaxAdresse : gesuchstellerJAXP.getAdressen()) {
+				if (next.isKorrespondenzAdresse() || next.getId().equals(jaxAdresse.getId())) {
+					needsToBeRemoved = false; // Korrespondezadresse und Adressen die gefunden werden, werden nicht geloescht
+				}
+			}
+			if (needsToBeRemoved) {
+				iterator.remove();
+			}
+		}
+		// Jetzt werden alle Adressen vom Jax auf Entity kopiert
+		gesuchstellerJAXP.getAdressen().forEach(jaxAdresse -> gesuchsteller.addAdresse(toStoreableAddresse(jaxAdresse)));
+
+		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
+		gesuchsteller.getAdressen().sort(Gueltigkeit.GUELTIG_AB_COMPARATOR);
+		List<GesuchstellerAdresse> wohnadressen = gesuchsteller.getAdressen().stream()
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.isKorrespondenzAdresse()).collect(Collectors.toList());
+		for (int i = 0; i < wohnadressen.size(); i++) {
+			if ((i < wohnadressen.size() - 1)) {
+				wohnadressen.get(i).getGueltigkeit().setGueltigBis(wohnadressen.get(i + 1).getGueltigkeit().getGueltigAb().minusDays(1));
+			}
+			else {
+				wohnadressen.get(i).getGueltigkeit().setGueltigBis(Constants.END_OF_TIME); // by default das letzte Datum hat BIS=END_OF_TIME
+			}
+		}
+	}
+
 	@Nonnull
 	private GesuchstellerAdresse toStoreableAddresse(@Nonnull final JaxAdresse adresseToPrepareForSaving) {
 		GesuchstellerAdresse adrToMergeWith = new GesuchstellerAdresse();
@@ -365,7 +396,6 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull final Gesuchsteller persistedGesuchsteller) {
-		//TODO (team) Was machen wir hier? Bei Mutation ist der Gesuchsteller anfangs noch nicht gespeichert...
 		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
 			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		final JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
