@@ -383,6 +383,7 @@
     "KIND_HINZUFUEGEN": "Kind hinzufügen",
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
+    "UMZUG_LOESCHEN": "Wollen Sie die Umzugsadresse wirklich löschen?",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
     "EINSCHULUNG": "Wird das Kind per {{date}} eingeschult? (auch Kindergarten)",

@@ -12,6 +12,8 @@ import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import TSUmzugAdresse from '../../../models/TSUmzugAdresse';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
 import ITranslateService = angular.translate.ITranslateService;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -31,10 +33,12 @@ export class UmzugViewController extends AbstractGesuchViewController {
     private umzugAdressen: Array<TSUmzugAdresse> = [];
 
 
-    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate'];
+    static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
+        'DvDialog'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
-                wizardStepManager: WizardStepManager, private errorService: ErrorService, private $translate: ITranslateService) {
+                wizardStepManager: WizardStepManager, private errorService: ErrorService,
+                private $translate: ITranslateService, private DvDialog: DvDialog) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -44,8 +48,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
         this.umzugAdressen = [];
         this.wizardStepManager.setCurrentStep(TSWizardStepName.UMZUG);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-        this.getAdressenListFromGS1();
-        this.getAdressenListFromGS2();
+        this.extractAdressenListFromBothGS();
     }
 
     public getUmzugAdressenList(): Array<TSUmzugAdresse> {
@@ -105,6 +108,11 @@ export class UmzugViewController extends AbstractGesuchViewController {
         return '';
     }
 
+    private extractAdressenListFromBothGS() {
+        this.getAdressenListFromGS1();
+        this.getAdressenListFromGS2();
+    }
+
     private getAdressenListFromGS1(): void {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller1) {
             this.gesuchModelManager.getGesuch().gesuchsteller1.getUmzugAdressen().forEach(umzugAdresse => {
@@ -114,20 +122,40 @@ export class UmzugViewController extends AbstractGesuchViewController {
         }
     }
 
+    /**
+     * Geht durch die Adressenliste des GS2 durch. Wenn eine Adresse von GS2
+     */
     private getAdressenListFromGS2(): void {
         if (this.gesuchModelManager.getGesuch() && this.gesuchModelManager.getGesuch().gesuchsteller2) {
             this.gesuchModelManager.getGesuch().gesuchsteller2.getUmzugAdressen().forEach(umzugAdresse => {
                 umzugAdresse.showDatumVon = true; // wird benoetigt weil es vom Server nicht kommt
-                this.umzugAdressen.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
+                let foundPosition: number = -1;
+                for (let i = 0; i < this.umzugAdressen.length; i++) {
+                    if (this.umzugAdressen[i].adresse.isSameWohnAdresse(umzugAdresse)) {
+                        foundPosition = i;
+                    }
+                }
+                if (foundPosition >= 0) {
+                    this.umzugAdressen[foundPosition].betroffene = TSBetroffene.BEIDE_GESUCHSTELLER;
+                } else {
+                    this.umzugAdressen.push(new TSUmzugAdresse(TSBetroffene.GESUCHSTELLER_2, umzugAdresse));
+                }
             });
         }
     }
 
     public removeUmzugAdresse(adresse: TSUmzugAdresse): void {
-        var indexOf = this.umzugAdressen.lastIndexOf(adresse);
-        if (indexOf >= 0) {
-            this.umzugAdressen.splice(indexOf, 1);
-        }
+        var remTitleText = this.$translate.instant('UMZUG_LOESCHEN');
+        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+            title: remTitleText,
+            deleteText: ''
+        }).then(() => {   //User confirmed removal
+            console.log('EXECUTEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd');
+            var indexOf = this.umzugAdressen.lastIndexOf(adresse);
+            if (indexOf >= 0) {
+                this.umzugAdressen.splice(indexOf, 1);
+            }
+        });
     }
 
     /**

@@ -14,6 +14,9 @@ import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import ITranslateService = angular.translate.ITranslateService;
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 
 describe('umzugView', function () {
 
@@ -23,6 +26,10 @@ describe('umzugView', function () {
     let berechnungsManager: BerechnungsManager;
     let errorService: ErrorService;
     let $translate: ITranslateService;
+    let dialog: DvDialog;
+    let $q: IQService;
+    let $rootScope: IScope;
+    let $httpBackend: IHttpBackendService;
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -33,12 +40,16 @@ describe('umzugView', function () {
         berechnungsManager = $injector.get('BerechnungsManager');
         errorService = $injector.get('ErrorService');
         $translate = $injector.get('$translate');
+        dialog = $injector.get('DvDialog');
+        $q = $injector.get('$q');
+        $rootScope = $injector.get('$rootScope');
+        $httpBackend = $injector.get('$httpBackend');
     }));
 
     describe('getNameFromBetroffene', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate);
+                wizardStepManager, errorService, $translate, dialog);
         });
         it('should return the names of the GS or beide Gesuchsteller', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -63,7 +74,7 @@ describe('umzugView', function () {
     describe('getBetroffenenList', function () {
         beforeEach(function () {
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate);
+                wizardStepManager, errorService, $translate, dialog);
         });
         it('should return a list with only GS1', function () {
             let gesuch: TSGesuch = new TSGesuch();
@@ -93,7 +104,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(undefined);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate);
+                wizardStepManager, errorService, $translate, dialog);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(0);
         });
@@ -114,7 +125,7 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate);
+                wizardStepManager, errorService, $translate, dialog);
 
             expect(umzugController.getUmzugAdressenList().length).toBe(2);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.GESUCHSTELLER_1);
@@ -122,27 +133,34 @@ describe('umzugView', function () {
             expect(umzugController.getUmzugAdressenList()[1].betroffene).toBe(TSBetroffene.GESUCHSTELLER_2);
             expect(umzugController.getUmzugAdressenList()[1].adresse).toEqual(umzugAdresseGS2);
         });
-        // it('should merge the adresse of GS1 and GS2 in a single one with BEIDE_GESUCHSTELLER', function () {
-        //     let gesuch: TSGesuch = new TSGesuch();
-        //     gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Rodolfo', 'Langostino');
-        //     let adresse2: TSAdresse = TestDataUtil.createAdresse('strasse1', '10');
-        //     gesuch.gesuchsteller1.addAdresse(adresse2);
-        //
-        //     gesuch.gesuchsteller2 = TestDataUtil.createGesuchsteller('Conchita', 'Prieto');
-        //     gesuch.gesuchsteller2.addAdresse(adresse2);
-        //     spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
-        //
-        //     umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-        //         wizardStepManager, errorService, $translate);
-        //
-        //     expect(umzugController.getUmzugAdressenList().length).toBe(1);
-        //     expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.BEIDE_GESUCHSTELLER);
-        //     expect(umzugController.getUmzugAdressenList()[0].adresse).toBe(adresse2);
-        // });
+        it('should merge the adresse of GS1 and GS2 in a single one with BEIDE_GESUCHSTELLER', function () {
+            let gesuch: TSGesuch = new TSGesuch();
+            gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Rodolfo', 'Langostino');
+            let adresse1: TSAdresse = TestDataUtil.createAdresse('strasse1', '10');
+            let adresse2: TSAdresse = TestDataUtil.createAdresse('strasse2', '20');
+            gesuch.gesuchsteller1.addAdresse(adresse1);
+            gesuch.gesuchsteller1.addAdresse(adresse2);
+
+            gesuch.gesuchsteller2 = TestDataUtil.createGesuchsteller('Conchita', 'Prieto');
+            gesuch.gesuchsteller2.addAdresse(adresse1);
+            gesuch.gesuchsteller2.addAdresse(adresse2);
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+
+            umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
+                wizardStepManager, errorService, $translate, dialog);
+
+            expect(umzugController.getUmzugAdressenList().length).toBe(1);
+            expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.BEIDE_GESUCHSTELLER);
+            TestDataUtil.checkGueltigkeitAndSetIfSame(umzugController.getUmzugAdressenList()[0].adresse, adresse2);
+            expect(umzugController.getUmzugAdressenList()[0].adresse).toEqual(adresse2);
+        });
     });
 
     describe('createAndRemoveUmzugAdresse', function () {
         it('should create and remove adressen for GS1 and GS2', function () {
+            spyOn(dialog, 'showDialog').and.returnValue($q.when({}));
+            TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+
             let gesuch: TSGesuch = new TSGesuch();
             gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Rodolfo', 'Langostino');
             gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('strasse1', '10'));
@@ -153,7 +171,8 @@ describe('umzugView', function () {
             spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             umzugController = new UmzugViewController(gesuchModelManager, berechnungsManager,
-                wizardStepManager, errorService, $translate);
+                wizardStepManager, errorService, $translate, dialog);
+
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBe(TSBetroffene.GESUCHSTELLER_1);
@@ -167,6 +186,7 @@ describe('umzugView', function () {
             expect(umzugController.getUmzugAdressenList()[1].adresse.showDatumVon).toBe(true);
 
             umzugController.removeUmzugAdresse(umzugController.getUmzugAdressenList()[0]);
+            $rootScope.$apply();
 
             expect(umzugController.getUmzugAdressenList().length).toBe(1);
             expect(umzugController.getUmzugAdressenList()[0].betroffene).toBeUndefined();

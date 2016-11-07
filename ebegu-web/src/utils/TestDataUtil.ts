@@ -119,6 +119,8 @@ export default class TestDataUtil {
         let adresse: TSAdresse = new TSAdresse();
         adresse.strasse = strasse;
         adresse.hausnummer = nummer;
+        adresse.showDatumVon = true;
+        adresse.gueltigkeit = TestDataUtil.createGesuchsperiode20162017().gueltigkeit;
         return adresse;
     }
 }
