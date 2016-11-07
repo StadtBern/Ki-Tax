@@ -51,7 +51,7 @@
                         </div>
 
                         <!-- Umzug loeschen-->
-                        <div class="col-md-12" style="margin-bottom: 2rem">
+                        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()">
                             <dv-loading-button type="button" button-click="vm.removeUmzugAdresse(umzugAdresse)"
                                                button-class="dv-btn-sm color-success">
                                 <i class="glyphicon glyphicon-trash"></i>
