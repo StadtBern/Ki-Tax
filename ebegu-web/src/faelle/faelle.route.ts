@@ -10,13 +10,13 @@ export function faelleRun(routerHelper: RouterHelper) {
 
 function getStates(): IState[] {
     return [
-        new EbeguPendenzenListState()
+        new EbeguFaelleListState()
     ];
 }
 
 //STATES
 
-export class EbeguPendenzenListState implements IState {
+export class EbeguFaelleListState implements IState {
     name = 'faelle';
     template = '<faelle-list-view flex="auto" class="overflow-auto">';
     url = '/faelle';

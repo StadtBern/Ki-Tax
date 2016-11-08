@@ -10,13 +10,13 @@ export function pendenzRun(routerHelper: RouterHelper) {
 
 function getStates(): IState[] {
     return [
-        new EbeguPendenzenListState()
+        new EbeguPendenzenInstitutionListState()
     ];
 }
 
 //STATES
 
-export class EbeguPendenzenListState implements IState {
+export class EbeguPendenzenInstitutionListState implements IState {
     name = 'pendenzenInstitution';
     template = '<pendenzen-institution-list-view flex="auto" class="overflow-auto">';
     url = '/pendenzenInstitution';
