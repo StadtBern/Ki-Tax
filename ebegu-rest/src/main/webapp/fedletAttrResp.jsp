@@ -77,7 +77,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     try {
         String idpEntityID = request.getParameter("idpEntityID");
 	if ((idpEntityID == null) || 
-            (idpEntityID.length() == 0)) {
+            (idpEntityID.isEmpty())) {
            response.sendError(response.SC_BAD_REQUEST,
 			   SAML2Utils.bundle.getString("nullIDPEntityID"));
 	    return;
@@ -85,7 +85,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
 
         String spEntityID = request.getParameter("spEntityID");
 	if ((spEntityID == null) || 
-            (spEntityID.length() == 0)) {
+            (spEntityID.isEmpty())) {
            response.sendError(response.SC_BAD_REQUEST,
 			   SAML2Utils.bundle.getString("nullSPEntityID"));
 	    return;

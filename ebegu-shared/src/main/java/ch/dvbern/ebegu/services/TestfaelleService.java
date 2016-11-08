@@ -1,10 +1,6 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-
-import java.util.List;
 
 /**
  * Service zum berechnen und speichern der Verfuegung

@@ -37,7 +37,7 @@ public class NeedleTest {
 
 	@InjectIntoMany
 	@ObjectUnderTest
-	private final Persistence<Adresse> persistence = new PersistenceService<Adresse>();
+	private final Persistence<Adresse> persistence = new PersistenceService<>();
 
 	@InjectIntoMany
 	@ObjectUnderTest

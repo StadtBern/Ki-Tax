@@ -26,6 +26,7 @@ public class BemerkungPrintImpl implements BemerkungPrint {
 	/**
 	 * @return Text
 	 */
+	@Override
 	public String getText() {
 
 		return text;

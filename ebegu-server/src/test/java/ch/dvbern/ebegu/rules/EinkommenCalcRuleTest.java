@@ -30,7 +30,7 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, (new BigDecimal("50000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(false, result.get(0).isBezahltVollkosten());
+		Assert.assertFalse(result.get(0).isBezahltVollkosten());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -42,7 +42,7 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0,(new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(0, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(false, result.get(0).isBezahltVollkosten());
+		Assert.assertFalse(result.get(0).isBezahltVollkosten());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -54,7 +54,7 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, (new BigDecimal("50000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(false, result.get(0).isBezahltVollkosten());
+		Assert.assertFalse(result.get(0).isBezahltVollkosten());
 		Assert.assertTrue(result.get(0).getBemerkungen().isEmpty());
 	}
 
@@ -66,7 +66,7 @@ public class EinkommenCalcRuleTest {
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals(0, (new BigDecimal("180000.00")).compareTo(result.get(0).getMassgebendesEinkommen()));
 		Assert.assertEquals(100, result.get(0).getAnspruchberechtigtesPensum());
-		Assert.assertEquals(true, result.get(0).isBezahltVollkosten());
+		Assert.assertTrue(result.get(0).isBezahltVollkosten());
 		Assert.assertFalse(result.get(0).getBemerkungen().isEmpty());
 	}
 

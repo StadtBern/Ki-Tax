@@ -84,6 +84,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		}
 	}
 
+	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum, LocalDate periodenstart) {
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
@@ -100,6 +101,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 	}
 
 
+	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum) {
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
