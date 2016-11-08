@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,6 +29,8 @@ import java.util.TreeMap;
  * der Familiensituation ist das Datum "Aendern per" relevant.
  */
 public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
+
+	private final Logger LOG = LoggerFactory.getLogger(FamilienabzugAbschnittRule.class.getSimpleName());
 
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse3;
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse4;
@@ -133,13 +137,18 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		double familiengroesse = 0;
 		if (gesuch != null) {
 
-			if (gesuch.getFamiliensituation() != null) { // wenn die Familiensituation nicht vorhanden ist, kann man nichts machen (die Daten wurden falsch eingegeben)
+			if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null) { // wenn die Familiensituation nicht vorhanden ist, kann man nichts machen (die Daten wurden falsch eingegeben)
 				if (gesuch.getFamiliensituationErstgesuch() != null && date != null
 					&& date.isBefore(gesuch.getFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1))) {
 
 					familiengroesse = familiengroesse + (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() ? 2 : 1);
 				} else {
 					familiengroesse = familiengroesse + (gesuch.getFamiliensituation().hasSecondGesuchsteller() ? 2 : 1);
+				}
+			} else{
+				LOG.warn("Die Familiengroesse kann noch nicht richtig berechnet werden weil die Familiensituation nicht richtig ausgefuellt ist. Antragnummer: {}" , gesuch.getAntragNummer() );
+				if (gesuch.getFamiliensituationErstgesuch() != null) {
+					familiengroesse = familiengroesse + (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() ? 2 : 1);
 				}
 			}
 
