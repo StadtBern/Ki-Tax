@@ -4,12 +4,10 @@ import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
-
 import com.google.common.base.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -157,9 +155,6 @@ public class PrintUtil {
 
 	/**
 	 * Liefer die Adresszusatz
-	 *
-	 * @param gesuch
-	 * @return Adresszusatz
 	 */
 	public static String getAdresszusatz(Gesuch gesuch) {
 
