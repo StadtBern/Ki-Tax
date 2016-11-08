@@ -154,10 +154,10 @@ public class PrintUtil {
 	}
 
 	/**
-	 * Liefer die Adresszusatz
+	 * Liefer den Adresszusatz
 	 */
+	@Nullable
 	public static String getAdresszusatz(Gesuch gesuch) {
-
 		if (extractGesuchsteller1(gesuch).isPresent()) {
 			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
 			if (gesuchstellerAdresse.isPresent()) {

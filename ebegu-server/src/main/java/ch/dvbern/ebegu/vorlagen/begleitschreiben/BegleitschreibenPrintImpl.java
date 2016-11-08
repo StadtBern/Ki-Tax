@@ -11,12 +11,12 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import org.apache.commons.lang.StringUtils;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -77,7 +77,6 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 
 	@Override
 	public String getDateCreate() {
-
 		final String date_pattern = ServerMessageUtil.getMessage("date_letter_pattern");
 		LocalDate date = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
@@ -95,18 +94,20 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 		return true;
 	}
 
+	/**
+	 * @return true wenn adresszusatz vorhanden
+	 */
 	@Override
 	public boolean isPrintAdresszusatz() {
-
 		if (StringUtils.isNotEmpty(PrintUtil.getAdresszusatz(gesuch))) {
 			return true;
 		}
 		return false;
 	}
 
+	@Nullable
 	@Override
 	public String getAdresszusatz() {
-
 		return PrintUtil.getAdresszusatz(gesuch);
 	}
 }
