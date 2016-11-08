@@ -4,10 +4,12 @@ import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+
 import com.google.common.base.Strings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +28,7 @@ public class PrintUtil {
 	 * @return
 	 */
 	@Nonnull
-	public static Optional<GesuchstellerAdresse> getGesuchstellerAdresse(@Nullable Gesuchsteller gesuchsteller) {
+	private static Optional<GesuchstellerAdresse> getGesuchstellerAdresse(@Nullable Gesuchsteller gesuchsteller) {
 
 		if (gesuchsteller != null) {
 			List<GesuchstellerAdresse> adressen = gesuchsteller.getAdressen();
@@ -151,5 +153,22 @@ public class PrintUtil {
 		}
 		return null;
 
+	}
+
+	/**
+	 * Liefer die Adresszusatz
+	 *
+	 * @param gesuch
+	 * @return Adresszusatz
+	 */
+	public static String getAdresszusatz(Gesuch gesuch) {
+
+		if (extractGesuchsteller1(gesuch).isPresent()) {
+			Optional<GesuchstellerAdresse> gesuchstellerAdresse = getGesuchstellerAdresse(extractGesuchsteller1(gesuch).get());
+			if (gesuchstellerAdresse.isPresent()) {
+				return gesuchstellerAdresse.get().getZusatzzeile();
+			}
+		}
+		return null;
 	}
 }

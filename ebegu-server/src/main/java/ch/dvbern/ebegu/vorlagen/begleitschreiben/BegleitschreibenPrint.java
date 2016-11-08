@@ -29,4 +29,8 @@ public interface BegleitschreibenPrint {
 	String getDateCreate();
 
 	boolean isPrintTextFamilie();
+
+	boolean isPrintAdresszusatz();
+
+	String getAdresszusatz();
 }
