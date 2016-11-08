@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests fuer {@link ch.dvbern.ebegu.validators.CheckBenutzerRolesValidator}
+ * Tests fuer {@link CheckBenutzerRolesValidator}
  */
 public class CheckBenutzerRolesValidatorTest {
 

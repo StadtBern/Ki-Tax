@@ -43,6 +43,7 @@ public class FinanzielleSituation extends AbstractFinanzielleSituation {
 	}
 
 
+	@Override
 	public BigDecimal getNettolohn() {
 		return nettolohn;
 	}

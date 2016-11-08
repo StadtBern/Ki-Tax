@@ -85,9 +85,8 @@ public class CheckZuschlagErwerbspensumMaxZuschlagValidator implements Constrain
 		Optional<EbeguParameter> parameter = ebeguParameterService.getEbeguParameterByKeyAndDate(key, stichtag, em);
 		if (parameter.isPresent()) {
 			return parameter.get().getValueAsInteger();
-		} else{
-			LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key + ". Using 100");
 		}
+		LoggerFactory.getLogger(this.getClass()).warn("No Value available for Validation of key " + key + ". Using 100");
 		return 100; // if no parameter value is stored in database then use 100
 	}
 }

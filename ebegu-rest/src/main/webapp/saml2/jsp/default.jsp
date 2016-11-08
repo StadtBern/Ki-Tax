@@ -46,7 +46,7 @@ org.owasp.esapi.ESAPI"
         "HTTPParameterValue", 2000, true)) {
             messageParam = null;
     }
-    if (messageParam != null && messageParam.length() != 0) {
+    if (messageParam != null && !messageParam.isEmpty()) {
 	%>
 	<%= ESAPI.encoder().encodeForHTML(SAML2Utils.bundle.getString(messageParam)) %>
 	<%

@@ -21,9 +21,9 @@ public class DokumenteUtilTest {
 
 	@Test
 	public void testAllPersistedInNeeded() {
-		Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<DokumentGrund>();
+		Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
 
-		Collection<DokumentGrund> persistedDokumentGrunds = new HashSet<DokumentGrund>();
+		Collection<DokumentGrund> persistedDokumentGrunds = new HashSet<>();
 
 		createGrundNeeded(dokumentGrundsNeeded, DokumentGrundTyp.FAMILIENSITUATION, DokumentTyp.JAHRESLOHNAUSWEISE);
 		createGrundNeeded(dokumentGrundsNeeded, DokumentGrundTyp.FAMILIENSITUATION, DokumentTyp.STEUERERKLAERUNG);
@@ -67,7 +67,7 @@ public class DokumenteUtilTest {
 	}
 
 	private Set<Dokument> getByDokumentType(Set<DokumentGrund> dokumentGrunds, DokumentTyp dokumentTyp) {
-		Set<Dokument> dokumente = new HashSet<Dokument>();
+		Set<Dokument> dokumente = new HashSet<>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
 			if (dokumentGrund.getDokumentTyp().equals(dokumentTyp)) {
@@ -80,7 +80,7 @@ public class DokumenteUtilTest {
 
 	private Set<DokumentGrund> getByGrundTyp(Set<DokumentGrund> dokumentGrundsNeeded, DokumentGrundTyp dokumentGrundTyp) {
 
-		Set<DokumentGrund> dokumentGrundsNeededMerged = new HashSet<DokumentGrund>();
+		Set<DokumentGrund> dokumentGrundsNeededMerged = new HashSet<>();
 		for (DokumentGrund dokumentGrund : dokumentGrundsNeeded) {
 			if (dokumentGrund.getDokumentGrundTyp().equals(dokumentGrundTyp)) {
 				dokumentGrundsNeededMerged.add(dokumentGrund);

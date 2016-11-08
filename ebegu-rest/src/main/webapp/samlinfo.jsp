@@ -48,7 +48,7 @@
         deployuri = deployuri.substring(0, slashLoc);
     }
     String fedletHomeDir = System.getProperty("com.sun.identity.fedlet.home");
-    if ((fedletHomeDir == null) || (fedletHomeDir.trim().length() == 0)) {
+    if ((fedletHomeDir == null) || (fedletHomeDir.trim().isEmpty())) {
         if (System.getProperty("user.home").equals(File.separator)) {
             fedletHomeDir = File.separator + "fedlet";
         } else {
@@ -198,7 +198,7 @@
                     idpEntityID, idpEntityID, "HTTPParameterValue", 2000, true)){
                         idpEntityID = null;
                 }
-                if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
+                if ((idpEntityID == null) || (idpEntityID.isEmpty())) {
                     // find out all trusted IDPs
                     List idpEntities = 
                         manager.getAllRemoteIdentityProviderEntities("/");
@@ -236,8 +236,9 @@
                     out.println("</body>");
                     out.println("</html>");
                     return;
-                } else if (!trustedIDPs.isEmpty()) {  
-                    // get the single IDP entity ID 
+                }
+                if (!trustedIDPs.isEmpty()) {
+                    // get the single IDP entity ID
                     idpEntityID = (String) trustedIDPs.get(0);
                 }
                 if ((spEntityID == null) || (idpEntityID == null)) {
@@ -298,7 +299,7 @@
       <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact">Run Fedlet (SP) initiated Single Sign-On using HTTP Artifact binding</a></td>
     </tr>
 <%
-                    if ((idpMetaAlias != null) && (idpMetaAlias.length() != 0)){
+                    if ((idpMetaAlias != null) && (!idpMetaAlias.isEmpty())){
                         //remote IDP is also FAM, show IDP initiated SSO 
 %>
     <tr>
