@@ -102,7 +102,7 @@ public class BetreuungsgutscheinEvaluator {
 			// am Schluss kommt dann jeweils eine Reduktionsregel die den Anspruch auf den Restanspruch beschraenkt
 			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
 
-			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert nach betreuungsnummer)
+			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert mit comperator gem regel EBEGU-561)
 			List<Betreuung> betreuungen = new ArrayList<>(kindContainer.getBetreuungen());
 			Collections.sort(betreuungen, new BetreuungComparator());
 

@@ -19,14 +19,6 @@ import java.util.List;
  */
 public class DoppelkitaTest extends AbstractBGRechnerTest {
 
-	@Test
-	public void indexOfTest() {
-		String deployuri = "/ebegu/index.jsp";
-		int slashLoc = deployuri.indexOf("/", 1);
-		if (slashLoc != -1) {
-			deployuri = deployuri.substring(0, slashLoc);
-		}
-	}
 
 	/**
 	 * Testet Regel 1: Bei gleichzeitigem Beginn gewinnt die Kita mit dem höheren Pensum
