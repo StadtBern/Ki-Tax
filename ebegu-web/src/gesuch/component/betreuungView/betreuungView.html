@@ -235,6 +235,7 @@
                             </div>
                         </div>
                         <div class="row">
+
                             <div class="col-md-12"
                                  ng-if="vm.isBetreuungsstatusAbgewiesen() && !vm.isSavingData">
                                 <div class=" well well-status-abgewiesen">
@@ -245,6 +246,7 @@
                         </span>
                         </div>
                     </div>
+                        </div>
                     <div class="row">
                         <div class="col-md-12"
                              ng-if="vm.isBetreuungsstatusBestaetigt() && !vm.isSavingData">
@@ -302,7 +304,7 @@
                     <div class="row" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
                          dv-show-expression="vm.isBetreuungsstatusWarten()">
-                        <div class="col-md-6">
+                        <div class="col-md-6 text-right">
                             <dv-loading-button button-click="vm.platzBestaetigen(form)" type="submit"
                                                button-class="color-success"
                                                aria-label="{{BESTAETIGEN_UPPER | translate}}">
@@ -336,13 +338,13 @@
                 <!--Hier wird die Direktive dv-navigation nicht benutzt. Grund dafuer ist, dass die Logik in diesem Fall sehr kompliziert ist.
                     wenn wir die Direktive benutzen wollen muessen wir viel anpassen, daher lohnt es sich die Buttons direkt zu erstellen-->
                 <div class="row marginTop20">
-                    <div class="col-md-6">
+                    <div class="col-md-6 text-right">
                         <dv-loading-button button-click="vm.cancel(form)" button-class="btn btn-link cancel"
                                            type="reset">
                             <span data-translate="ABBRECHEN_UPPER"></span>
                         </dv-loading-button>
                     </div>
-                    <div class="col-md-6 text-right" dv-show-element
+                    <div class="col-md-6" dv-show-element
                          dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                          dv-show-expression="vm.isBetreuungsstatusSchulamt()">
                         <dv-loading-button button-click="vm.saveSchulamt(form)" type="submit"

@@ -13,7 +13,11 @@ md-input-container {
     }
 }
 
-input[type="text"], input[type="number"], input[type="email"], textarea, .md-input-container .md-input textarea {
+[disabled] md-input-container .md-input {
+    background: @contrast-dark;
+}
+
+input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input {
     .table &, &.contrast {
         background: @contrast-light;
     }
@@ -39,10 +43,18 @@ input[type="text"], input[type="number"], input[type="email"], textarea, .md-inp
     //TODO focus style
     /* &:focus {
          border-color:rgba(0,0,0,0) /*@secondary-dark*/;
-        //this simulates the outline that chrome places around focused fields using css
+    //this simulates the outline that chrome places around focused fields using css
     // outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
-        //border: 1px solid @input-boder-focus;
+    //border: 1px solid @input-boder-focus;
     // -webkit-box-shadow: 0px 0px 4px 0px rgba(0,0,0,0) /*@secondary-dark*/;
     //   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0)  /*@secondary-dark*/;
     //  }*/
 }
+
+textarea.md-input {
+    padding: 1rem;
+    .md-input-focused & {
+        padding: 1rem;
+    }
+}
+
