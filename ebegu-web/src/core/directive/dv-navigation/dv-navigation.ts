@@ -155,7 +155,7 @@ export class NavigatorController {
                 if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH && this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
-                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch().typ));
+                    this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
                 }
 
             } else if (this.dvSubStep === 2) {
@@ -174,7 +174,7 @@ export class NavigatorController {
                 this.navigateToStepFinanzielleSituation('1');
 
             } else if (this.dvSubStep === 3) {
-                this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch().typ));
+                this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
             }
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
@@ -200,7 +200,7 @@ export class NavigatorController {
             }
 
         } else { //by default navigieren wir zum naechsten erlaubten Step
-            this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch().typ));
+            this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
         }
     }
 
@@ -239,17 +239,17 @@ export class NavigatorController {
                 } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
-                    this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
+                    this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
                 }
             } else if (this.dvSubStep === 2) {
-                this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
+                this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
             } else if (this.dvSubStep === 3) {
                 this.navigateToStepFinanzielleSituation(this.gesuchModelManager.getGesuchstellerNumber() === 2 ? '2' : '1');
             }
 
         } else if (TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG === this.wizardStepManager.getCurrentStepName()) {
             if (this.dvSubStep === 1) {
-                this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
+                this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
 
             } else if (this.dvSubStep === 2) {
                 this.navigatePreviousEVSubStep2();
@@ -264,7 +264,7 @@ export class NavigatorController {
             this.navigateToStep(TSWizardStepName.VERFUEGEN);
 
         } else {
-            this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch().typ));
+            this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
         }
     }
 
@@ -386,25 +386,31 @@ export class NavigatorController {
      * Checks whether the button should be disable for the current conditions. By default (auch fuer Mutaionen) enabled
      * @returns {boolean}
      */
-    public isNextDisabled(): boolean {
+    public isNextButtonDisabled(): boolean {
+        //if step is disabled in manager we can stop here
+        if (!this.wizardStepManager.isNextStepEnabled(this.gesuchModelManager.getGesuch())) {
+            return true;
+        }
+        // otherwise check specifics
         if (this.gesuchModelManager.getGesuch().typ === TSAntragTyp.GESUCH) {
             if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return !this.gesuchModelManager.isThereAnyKindWithBetreuungsbedarf()
-                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.BETREUUNG === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return !this.gesuchModelManager.isThereAnyBetreuung()
-                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+                    && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
             if (TSWizardStepName.ERWERBSPENSUM === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-                return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch().typ);
+                return this.dvNextDisabled() && !this.wizardStepManager.isNextStepBesucht(this.gesuchModelManager.getGesuch());
             }
         }
+
         return false;
     }
 
     public getTooltip(): string {
-        if (this.isNextDisabled()) {
+        if (this.isNextButtonDisabled()) {
             if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
                 return this.$translate.instant('KINDER_TOOLTIP_REQUIRED');
 

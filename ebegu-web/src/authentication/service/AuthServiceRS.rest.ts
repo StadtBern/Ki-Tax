@@ -84,12 +84,25 @@ export default class AuthServiceRS {
 
     /**
      * Gibt true zurueck, wenn der eingelogte Benutzer die gegebene Role hat. Fuer undefined Werte wird immer false zurueckgegeben.
-     * @param role
-     * @returns {boolean}
      */
     public isRole(role: TSRole) {
         if (role && this.principal) {
             return this.principal.role === role;
+        }
+        return false;
+    }
+
+    /**
+     * gibt true urueck wenn der aktuelle Benutzer eine der uebergebenen Rollen innehat
+     */
+    public isOneOfRoles(...roles: TSRole[]): boolean {
+        if (roles !== undefined && roles !== null && this.principal) {
+            for (var i = 0; i < roles.length; i++) {
+                var role = roles[i];
+                if (role === this.principal.role) {
+                    return true;
+                }
+            }
         }
         return false;
     }

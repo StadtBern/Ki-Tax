@@ -984,8 +984,10 @@ export default class GesuchModelManager {
                     numOfAssigned++;
                     for (let k = 0; k < this.gesuch.kindContainers[i].betreuungen.length; k++) {
                         if (this.gesuch.kindContainers[i].betreuungen.length !== kinderWithVerfuegungen[j].betreuungen.length) {
-                            let msg = 'ACHTUNG unvorhergesehener Zustand. Anzahl Betreuungen eines kindes stimmt nicht mit der berechneten Anzahl Betreuungen ueberein' + this.gesuch.kindContainers[i];
-                            this.log.error(msg, this.gesuch.kindContainers[i]);
+                            let msg = 'ACHTUNG unvorhergesehener Zustand. Anzahl Betreuungen eines Kindes stimmt nicht' +
+                                ' mit der berechneten Anzahl Betreuungen ueberein; erwartet: ' +
+                                this.gesuch.kindContainers[i].betreuungen.length + ' erhalten: ' + kinderWithVerfuegungen[j].betreuungen.length;
+                            this.log.error(msg, this.gesuch.kindContainers[i],  kinderWithVerfuegungen[j]);
                             this.errorService.addMesageAsError(msg);
                         }
                         this.gesuch.kindContainers[i].betreuungen[k] = kinderWithVerfuegungen[j].betreuungen[k];

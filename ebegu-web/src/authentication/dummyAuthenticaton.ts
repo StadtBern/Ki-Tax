@@ -121,7 +121,7 @@ export class DummyAuthenticationListViewController {
                 this.$state.go('gesuchstellerDashboard');
             }
 
-            this.$timeout(function () {
+            this.$timeout(()  => {
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);
             }, 1000);
 
