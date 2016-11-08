@@ -84,21 +84,33 @@ public class FinanzielleSituationRechner {
 	 */
 	private void setEinkommensverschlechterungParameters(@Nonnull Gesuch gesuch, int basisJahrPlus,
 														 final FinanzielleSituationResultateDTO einkVerResultDTO) {
-		Einkommensverschlechterung einkommensverschlechterungGS1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), basisJahrPlus);
+		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 1);
+		Einkommensverschlechterung einkommensverschlechterungGS1_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller1(), 2);
 		final FinanzielleSituation finanzielleSituationGS1 = getFinanzielleSituationGS(gesuch.getGesuchsteller1());
 		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller1(
-			calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS1, finanzielleSituationGS1));
+			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS1,einkommensverschlechterungGS1_Bjp1, einkommensverschlechterungGS1_Bjp2, basisJahrPlus));
 
-		Einkommensverschlechterung einkommensverschlechterungGS2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), basisJahrPlus);
+		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp1 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 1);
+		Einkommensverschlechterung einkommensverschlechterungGS2_Bjp2 = getEinkommensverschlechterungGS(gesuch.getGesuchsteller2(), 2);
 		final FinanzielleSituation finanzielleSituationGS2 = getFinanzielleSituationGS(gesuch.getGesuchsteller2());
 		einkVerResultDTO.setGeschaeftsgewinnDurchschnittGesuchsteller2(
-			calcGeschaeftsgewinnDurchschnitt(einkommensverschlechterungGS2, finanzielleSituationGS2));
+			calcGeschaeftsgewinnDurchschnitt(finanzielleSituationGS2,einkommensverschlechterungGS2_Bjp1, einkommensverschlechterungGS2_Bjp2, basisJahrPlus));
 
-		calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1,
-			calculateNettoJahresLohn(einkommensverschlechterungGS1),
-			einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
-			einkommensverschlechterungGS2, calculateNettoJahresLohn(einkommensverschlechterungGS2),
-			einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
+		if (basisJahrPlus == 2) {
+			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1_Bjp2,
+				calculateNettoJahresLohn(einkommensverschlechterungGS1_Bjp2),
+				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
+				einkommensverschlechterungGS2_Bjp2, calculateNettoJahresLohn(einkommensverschlechterungGS2_Bjp2),
+				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
+		} else {
+			calculateZusammen(einkVerResultDTO, einkommensverschlechterungGS1_Bjp1,
+				calculateNettoJahresLohn(einkommensverschlechterungGS1_Bjp1),
+				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller1(),
+				einkommensverschlechterungGS2_Bjp1, calculateNettoJahresLohn(einkommensverschlechterungGS2_Bjp1),
+				einkVerResultDTO.getGeschaeftsgewinnDurchschnittGesuchsteller2());
+		}
+
+
 
 	}
 
@@ -193,11 +205,22 @@ public class FinanzielleSituationRechner {
 	 * @return
 	 */
 	@Nullable
-	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable Einkommensverschlechterung einkVers, @Nullable FinanzielleSituation finanzielleSituation) {
-		if (finanzielleSituation != null && einkVers != null) {
-			return calcGeschaeftsgewinnDurchschnitt(einkVers.getGeschaeftsgewinnBasisjahr(),
-				finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
-				finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
+	public static BigDecimal calcGeschaeftsgewinnDurchschnitt(@Nullable FinanzielleSituation finanzielleSituation,
+															  @Nullable Einkommensverschlechterung einkVersBjp1,
+															  @Nullable Einkommensverschlechterung einkVersBjp2,
+															  int basisJahrPlus) {
+		if (basisJahrPlus == 1) {
+			if (finanzielleSituation != null && einkVersBjp1 != null) {
+				return calcGeschaeftsgewinnDurchschnitt(einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
+					finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
+					finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
+			}
+		} else if (basisJahrPlus == 2) {
+			if (finanzielleSituation != null && einkVersBjp1 != null && einkVersBjp2 != null) {
+				return calcGeschaeftsgewinnDurchschnitt(einkVersBjp2.getGeschaeftsgewinnBasisjahr(),
+					einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
+					finanzielleSituation.getGeschaeftsgewinnBasisjahr());
+			}
 		}
 		return null;
 	}
