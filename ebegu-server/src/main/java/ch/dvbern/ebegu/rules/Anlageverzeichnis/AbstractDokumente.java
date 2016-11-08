@@ -15,9 +15,9 @@ import java.util.Set;
  */
 abstract class AbstractDokumente<T1, T2> {
 
-	abstract public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis);
+	public abstract void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis);
 
-	abstract public boolean isDokumentNeeded(DokumentTyp dokumentTyp, T1 dataForDocument);
+	public abstract boolean isDokumentNeeded(DokumentTyp dokumentTyp, T1 dataForDocument);
 
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, T1 dataForDocument1, T2 dataForDocument2) {
 		return isDokumentNeeded(dokumentTyp, dataForDocument1);

@@ -51,19 +51,19 @@
     try {
         SAMLUtils.checkHTTPContentLength(request);
         String role = request.getParameter("role");
-        if ((role == null) || (role.length() == 0)) {
+        if ((role == null) || (role.isEmpty())) {
             // default role is any if not specified
             role = "any";
         } 
         String realm = request.getParameter("realm");
-        if ((realm == null) || (realm.length() == 0)) {
+        if ((realm == null) || (realm.isEmpty())) {
             // default to root realm
             realm = "/";
         }
         String entityID = request.getParameter("entityid");
         boolean sign = "true".equalsIgnoreCase(request.getParameter("sign"));
         SAML2MetaManager manager = new SAML2MetaManager();
-        if ((entityID == null) || (entityID.length() == 0)) {
+        if ((entityID == null) || (entityID.isEmpty())) {
             // find first available one
             List providers;
             if ("sp".equals(role)) {
@@ -87,7 +87,7 @@
             }
         }
 
-        if ((entityID == null) || (entityID.length() == 0)) {
+        if ((entityID == null) || (entityID.isEmpty())) {
             errorMsg = "No matching entity metadata found.";
         } else {
             metaXML = SAML2MetaUtils.exportStandardMeta(realm, entityID,

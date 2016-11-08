@@ -99,7 +99,7 @@ public class VerfuegungResource {
 			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-			if (instForCurrBenutzer.size() > 0) {
+			if (!instForCurrBenutzer.isEmpty()) {
 				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 			}
 			return Response.ok(kindContainers).build();

@@ -269,7 +269,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
 						.stream().filter(kindContainer -> kindContainer.getKindJA().getFamilienErgaenzendeBetreuung())
 						.collect(Collectors.toList());
-					WizardStepStatus status = (kinderFromGesuch.size() > 0) ? WizardStepStatus.OK : WizardStepStatus.NOK;
+					WizardStepStatus status = (!kinderFromGesuch.isEmpty()) ? WizardStepStatus.OK : WizardStepStatus.NOK;
 					wizardStep.setWizardStepStatus(status);
 				}
 			}
@@ -333,7 +333,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = (allBetreuungenRequiringErwerbspensum.size() > 0 && erwerbspensenForGesuch.size() <= 0)
+		WizardStepStatus status = (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0)
 			? WizardStepStatus.NOK : WizardStepStatus.OK;
 		wizardStep.setWizardStepStatus(status);
 	}

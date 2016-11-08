@@ -139,7 +139,7 @@
             saml2Auditor.setSSOTokenId(ssoToken);
 
             spEntityID = request.getParameter("spEntityID");
-            if ((spEntityID == null) || (spEntityID.length() == 0)) {
+            if ((spEntityID == null) || (spEntityID.isEmpty())) {
                 List spMetaAliases =
                     manager.getAllHostedServiceProviderMetaAliases("/");
                 if ((spMetaAliases != null) && !spMetaAliases.isEmpty()) {
@@ -208,18 +208,17 @@
         HashMap paramsMap = new HashMap();
         if (SPCache.isFedlet) {
             String sessionIndex = request.getParameter("SessionIndex");
-            if ((sessionIndex == null) || (sessionIndex.length() == 0)) {
+            if ((sessionIndex == null) || (sessionIndex.isEmpty())) {
                 SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "nullSessionIndex",
                     SAML2Utils.bundle.getString("nullSessionIndex"));
                 saml2Auditor.auditAccessFailure(String.valueOf(response.SC_BAD_REQUEST),
                         SAML2Utils.bundle.getString("nullSessionIndex"));
                 return;
-            } else {
-                paramsMap.put("SessionIndex", sessionIndex);
             }
+            paramsMap.put("SessionIndex", sessionIndex);
             String nameID = request.getParameter("NameIDValue");
-            if ((nameID == null) || (nameID.length() == 0)) {
+            if ((nameID == null) || (nameID.isEmpty())) {
                 SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST,
                     "nullNameID",
                     SAML2Utils.bundle.getString("nullNameID"));
