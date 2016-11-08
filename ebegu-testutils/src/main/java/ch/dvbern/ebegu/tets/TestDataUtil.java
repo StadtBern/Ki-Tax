@@ -201,7 +201,7 @@ public final class TestDataUtil {
 
 	public static InstitutionStammdaten createInstitutionStammdatenTagiAaregg() {
 		InstitutionStammdaten instStammdaten = new InstitutionStammdaten();
-		instStammdaten.setId("11111111-1111-1111-1111-111111111174");
+		instStammdaten.setId(AbstractTestfall.ID_INSTITUTION_AAREGG_TAGI);
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(9));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(244));

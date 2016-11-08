@@ -1,15 +1,18 @@
 package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.InstitutionStammdaten;
-
-import java.util.List;
 
 /**
  * Service zum berechnen und speichern der Verfuegung
  */
 public interface TestfaelleService {
+
+	String WaeltiDagmar = "1";
+	String FeutzIvonne = "2";
+	String PerreiraMarcia = "3";
+	String WaltherLaura = "4";
+	String LuethiMeret = "5";
+	String BeckerNora = "6";
 
 	StringBuilder createAndSaveTestfaelle(String fallid,
 										  Integer iterationCount,
@@ -17,6 +20,6 @@ public interface TestfaelleService {
 										  boolean verfuegen);
 
 	Gesuch createAndSaveTestfaelle(String fallid,
-										  boolean betreuungenBestaetigt,
-										  boolean verfuegen);
+								   boolean betreuungenBestaetigt,
+								   boolean verfuegen);
 }

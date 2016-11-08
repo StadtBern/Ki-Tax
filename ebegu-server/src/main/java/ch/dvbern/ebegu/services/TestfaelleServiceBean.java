@@ -5,8 +5,6 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.testfaelle.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +24,7 @@ import java.util.Optional;
 @Stateless
 @Local(TestfaelleService.class)
 public class TestfaelleServiceBean extends AbstractBaseService implements TestfaelleService {
+
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
@@ -116,17 +115,17 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		Gesuchsperiode gesuchsperiode = getGesuchsperiode();
 		List<InstitutionStammdaten> institutionStammdatenList = getInstitutionStammdatens();
 
-		if ("1".equals(fallid)) {
+		if (WaeltiDagmar.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("2".equals(fallid)) {
+		} else if (FeutzIvonne.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("3".equals(fallid)) {
+		} else if (PerreiraMarcia.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("4".equals(fallid)) {
+		} else if (WaltherLaura.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("5".equals(fallid)) {
+		} else if (LuethiMeret.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("6".equals(fallid)) {
+		} else if (BeckerNora.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
 
@@ -178,43 +177,46 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		}
 
 		final Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
+		Fall fall;
 		if (currentBenutzer.isPresent()) {
-			final Fall fall = fromTestfall.createFall(currentBenutzer.get());
-			final Fall persistedFall = fallService.saveFall(fall);
-			fromTestfall.setFall(persistedFall); // dies wird gebraucht, weil fallService.saveFall ein merge macht.
-
-			fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
-			gesuchService.createGesuch(fromTestfall.getGesuch());
-			Gesuch gesuch = fromTestfall.fillInGesuch();
-
-			final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
-
-			saveFamiliensituation(gesuch, wizardStepsFromGesuch);
-			saveGesuchsteller(gesuch, wizardStepsFromGesuch);
-			saveKinder(gesuch, wizardStepsFromGesuch);
-			saveBetreuungen(gesuch, wizardStepsFromGesuch);
-			saveErwerbspensen(gesuch, wizardStepsFromGesuch);
-			saveFinanzielleSituation(gesuch, wizardStepsFromGesuch);
-			saveEinkommensverschlechterung(gesuch, wizardStepsFromGesuch);
-
-			gesuchService.updateGesuch(gesuch, false); // just save all other objects before updating dokumente and verfuegungen
-			saveDokumente(wizardStepsFromGesuch);
-			saveVerfuegungen(gesuch, wizardStepsFromGesuch);
-
-			if (verfuegen) {
-				verfuegungService.calculateVerfuegung(gesuch);
-				gesuch.getKindContainers().stream().forEach(kindContainer -> {
-					kindContainer.getBetreuungen().stream().forEach(betreuung -> {
-						verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId());
-					});
-				});
-			}
-
-			wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
-
-			return gesuch;
+			fall = fromTestfall.createFall(currentBenutzer.get());
+		} else {
+			fall = fromTestfall.createFall();
 		}
-		return null;
+		final Fall persistedFall = fallService.saveFall(fall);
+		fromTestfall.setFall(persistedFall); // dies wird gebraucht, weil fallService.saveFall ein merge macht.
+
+		fromTestfall.createGesuch(LocalDate.of(2016, Month.FEBRUARY, 15));
+		gesuchService.createGesuch(fromTestfall.getGesuch());
+		Gesuch gesuch = fromTestfall.fillInGesuch();
+
+		final List<WizardStep> wizardStepsFromGesuch = wizardStepService.findWizardStepsFromGesuch(gesuch.getId());
+
+		saveFamiliensituation(gesuch, wizardStepsFromGesuch);
+		saveGesuchsteller(gesuch, wizardStepsFromGesuch);
+		saveKinder(gesuch, wizardStepsFromGesuch);
+		saveBetreuungen(gesuch, wizardStepsFromGesuch);
+		saveErwerbspensen(gesuch, wizardStepsFromGesuch);
+		saveFinanzielleSituation(gesuch, wizardStepsFromGesuch);
+		saveEinkommensverschlechterung(gesuch, wizardStepsFromGesuch);
+
+		gesuchService.updateGesuch(gesuch, false); // just save all other objects before updating dokumente and verfuegungen
+		saveDokumente(wizardStepsFromGesuch);
+		saveVerfuegungen(gesuch, wizardStepsFromGesuch);
+
+		if (verfuegen) {
+			verfuegungService.calculateVerfuegung(gesuch);
+			gesuch.getKindContainers().stream().forEach(kindContainer -> {
+				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
+					verfuegungService.persistVerfuegung(betreuung.getVerfuegung(), betreuung.getId());
+				});
+			});
+		}
+
+		wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.VERFUEGEN);
+
+		return gesuch;
+
 	}
 
 	private void saveVerfuegungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {

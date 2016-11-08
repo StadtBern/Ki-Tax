@@ -21,6 +21,8 @@ public abstract class AbstractTestfall {
 
 	public static final String ID_INSTITUTION_AAREGG = "11111111-1111-1111-1111-111111111101";
 	public static final String ID_INSTITUTION_BRUENNEN = "11111111-1111-1111-1111-111111111107";
+	public static final String ID_INSTITUTION_AAREGG_TAGI = "11111111-1111-1111-1111-111111111174";
+
 
 
 	protected Gesuchsperiode gesuchsperiode;
@@ -47,6 +49,10 @@ public abstract class AbstractTestfall {
 		fall = new Fall();
 		fall.setVerantwortlicher(verantwortlicher);
 		return fall;
+	}
+
+	public Fall createFall() {
+		return new Fall();
 	}
 
 	public void createGesuch(LocalDate eingangsdatum) {
