@@ -63,9 +63,14 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	}
 
 	@Override
-	public String getEinkommensverschlechterungJahr() {
-
-		return einkommensverschlechterungJahr;
+	public String getEinkommensverschlechterungTitle() {
+		// Die Strings werden auf Deutsch gesetzt weil saemtliche Texts in den Dokumenten auf Deutsch geschrieben sind.
+		// Sollten wir es hier mit dem Dictionary machen, wuerden wir eine Datei in mehreren Sprachen bekommen
+		String title = "Einkommenverschlechterung";
+		if (ereigniseintritt.isEmpty()) {
+			title = "Berechnungsgrundlagen der Finanziellen Situation";
+		}
+		return title + " " + einkommensverschlechterungJahr;
 	}
 
 	@Override
@@ -80,6 +85,15 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		return grund;
 	}
 
+	@Override
+	public boolean isExistEreigniseintritt() {
+		return (this.ereigniseintritt != null && !this.ereigniseintritt.isEmpty());
+	}
+
+	@Override
+	public boolean isExistGrund() {
+		return (this.grund != null && !this.grund.isEmpty());
+	}
 
 
 	@Override
