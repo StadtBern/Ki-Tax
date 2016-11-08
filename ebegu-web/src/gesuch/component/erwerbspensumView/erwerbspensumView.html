@@ -1,7 +1,7 @@
 <div class="erwerbspensumView gesuchModul">
     <div class="row">
         <div class="col-md-12">
-            <h4 class="mainTitle" ng-bind="vm.gesuchsteller.getFullName()"></h4>
+            <h1 class="mainTitle" ng-bind="vm.gesuchsteller.getFullName()"></h1>
             <hr class="header"/>
             <p data-translate="INFOTEXT_ERWERBSPENSUM"></p>
         </div>
@@ -86,7 +86,7 @@
                             <dv-input-container class="form-group">
                                 <label class="md-no-float" data-translate="BIS" for="taetigkeitBisID">
                                 </label>
-                                <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis" placeholder=""
+                                <dv-datepicker input-id="taetigkeitBisID" name="taetigkeitBis"
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigBis"
                                                ng-required="false" class="input-element"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
