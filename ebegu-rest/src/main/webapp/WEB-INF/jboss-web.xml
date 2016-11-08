@@ -1,3 +1,5 @@
+<!--suppress ALL -->
+
 <jboss-web>
 	<context-root>ebegu</context-root>
 	<security-domain>jaspitest</security-domain>

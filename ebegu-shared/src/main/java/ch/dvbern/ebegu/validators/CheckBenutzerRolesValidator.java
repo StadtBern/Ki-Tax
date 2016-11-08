@@ -30,7 +30,7 @@ public class CheckBenutzerRolesValidator implements ConstraintValidator<CheckBen
 		if (UserRole.SACHBEARBEITER_INSTITUTION.equals(instance.getRole())) {
 			return instance.getInstitution() != null;
 		}
-		else if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(instance.getRole())) {
+		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT.equals(instance.getRole())) {
 			return instance.getTraegerschaft() != null;
 		}
 

@@ -55,7 +55,7 @@ public class RulesServiceBean extends AbstractBaseService implements RulesServic
 			LOG.warn("Mandant wird noch nicht beruecksichtigt. Codeaenderung noetig");
 		}
 		LocalDate stichtag = gesuchsperiode.getGueltigkeit().getGueltigAb();
-		Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameters = new HashMap<EbeguParameterKey, EbeguParameter>();
+		Map<EbeguParameterKey, EbeguParameter> ebeguRuleParameters = new HashMap<>();
 		for (EbeguParameterKey currentParamKey : keysToLoad) {
 			Optional<EbeguParameter> param = ebeguParameterService.getEbeguParameterByKeyAndDate(currentParamKey, stichtag);
 			if (param.isPresent()) {

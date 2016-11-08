@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--<!DOCTYPE dataset SYSTEM "ebegu-testdata.dtd">-->
+<!--suppress ALL -->
 <dataset>
   <mandant id="e3736eb8-6eef-40ef-9e52-96ab48d8f220" timestampErstellt="2016-04-25 16:22:22.0"
 		   timestampMutiert="2016-04-25 16:22:26.0" userErstellt="anonym" userMutiert="anonym" version="0" name="TestMandantDBUnit"/>
