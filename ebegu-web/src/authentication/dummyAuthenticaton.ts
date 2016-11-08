@@ -7,6 +7,7 @@ import {TSMandant} from '../models/TSMandant';
 import TSInstitution from '../models/TSInstitution';
 import {TSTraegerschaft} from '../models/TSTraegerschaft';
 import {TSAuthEvent} from '../models/enums/TSAuthEvent';
+import AuthenticationUtil from '../utils/AuthenticationUtil';
 import IRootScopeService = angular.IRootScopeService;
 import ITimeoutService = angular.ITimeoutService;
 let template = require('./dummyAuthentication.html');
@@ -111,15 +112,8 @@ export class DummyAuthenticationListViewController {
 
     public logIn(user: TSUser): void {
         this.authServiceRS.loginRequest(user).then(() => {
-            if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_JA' || user.getRoleKey() === 'TSRole_ADMIN') {
-                this.$state.go('pendenzen');
-            } else if (user.getRoleKey() === 'TSRole_SACHBEARBEITER_INSTITUTION' || user.getRoleKey() === 'TSRole_SACHBEARBEITER_TRAEGERSCHAFT') {
-                this.$state.go('pendenzenInstitution');
-            } else if (user.getRoleKey() === 'TSRole_SCHULAMT') {
-                this.$state.go('faelle');
-            } else if (user.getRoleKey() === 'TSRole_GESUCHSTELLER') {
-                this.$state.go('gesuchstellerDashboard');
-            }
+
+            AuthenticationUtil.navigateToStartPageForRole(user, this.$state);
 
             this.$timeout(() => {
                 this.$rootScope.$broadcast(TSAuthEvent[TSAuthEvent.CHANGE_USER]);

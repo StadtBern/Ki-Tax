@@ -11,7 +11,7 @@ let gesuchTpl = require('./gesuch.html');
 gesuchRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/login');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 
