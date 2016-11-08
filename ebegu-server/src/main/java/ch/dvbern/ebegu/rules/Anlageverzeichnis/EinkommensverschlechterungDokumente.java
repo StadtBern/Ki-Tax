@@ -82,7 +82,7 @@ public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSitu
 			einkommensverschlechterung = einkommensverschlechterungContainer.getEkvJABasisJahrPlus1();
 		}
 
-		super.getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), basisJahr, gemeinsam,
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), basisJahr, gemeinsam,
 			gesuchstellerNumber, einkommensverschlechterung, DokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG);
 
 		add(getDokument(DokumentTyp.NACHWEIS_EINKOMMENSSITUATION_MONAT, einkommensverschlechterung, gesuchsteller.getFullName(),

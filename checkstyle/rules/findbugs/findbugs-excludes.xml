@@ -1,3 +1,5 @@
+<!--suppress ALL -->
+
 <FindBugsFilter>
 	<Match>
 		<Class name="~.*\._.*"/>

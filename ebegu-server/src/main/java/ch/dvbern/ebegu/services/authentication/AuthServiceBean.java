@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 //Berechtigungen: PermitAll weggenommen weil wir das ohne user aus dem loginmodul aufrufen muessen, sonst wird anonymous genommen und man hat 2 principals nach dem loginmodul
+@SuppressWarnings("OverlyBroadCatchBlock")
 @Stateless(name = "AuthService")
 public class AuthServiceBean implements AuthService {
 
