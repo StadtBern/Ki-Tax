@@ -13,6 +13,7 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import TSGesuch from '../../models/TSGesuch';
 import TSAntragSearchresultDTO from '../../models/TSAntragSearchresultDTO';
 import AuthServiceRS from '../../authentication/service/AuthServiceRS.rest';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 
 describe('faelleListeView', function () {
@@ -75,11 +76,17 @@ describe('faelleListeView', function () {
                 expect($state.go).toHaveBeenCalledWith('gesuch.fallcreation', { createNew: false, gesuchId: '66345345' });
 
             });
-            it('should call findGesuch and open the view gesuch.verfuegen with it for INST/TRAEGER user', function () {
-                spyOn(authServiceRS, 'isRole').and.returnValue(true);
+            it('should call findGesuch and open the view gesuch.betreuungen with it for INS/TRAEGER user if gesuch not verfuegt', function () {
+                spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
                 let tsGesuch = callEditFall('findGesuchForInstitution');
-                expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
+                expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { createNew: false, gesuchId: '66345345' });
             });
+            it('should call findGesuch and open the view gesuch.verfuegen with it for INS/TRAEGER user if gesuch verfuegt', function () {
+               spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+                mockAntrag.status = TSAntragStatus.VERFUEGT;
+               let tsGesuch = callEditFall('findGesuchForInstitution');
+               expect($state.go).toHaveBeenCalledWith('gesuch.verfuegen', { createNew: false, gesuchId: '66345345' });
+           });
         });
     });
 
