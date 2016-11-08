@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import java.math.BigDecimal;
 
@@ -64,11 +65,9 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 
 	@Override
 	public String getEinkommensverschlechterungTitle() {
-		// Die Strings werden auf Deutsch gesetzt weil saemtliche Texts in den Dokumenten auf Deutsch geschrieben sind.
-		// Sollten wir es hier mit dem Dictionary machen, wuerden wir eine Datei in mehreren Sprachen bekommen
-		String title = "Einkommenverschlechterung";
+		String title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_EKV_TITEL");
 		if (ereigniseintritt.isEmpty()) {
-			title = "Berechnungsgrundlagen der Finanziellen Situation";
+			title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_BERECHNUNGSGRUNDL_TITEL");
 		}
 		return title + " " + einkommensverschlechterungJahr;
 	}
