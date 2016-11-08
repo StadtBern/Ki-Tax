@@ -1,6 +1,7 @@
 import {IDirective, IDirectiveFactory, IHttpService} from 'angular';
 import Moment = moment.Moment;
 import ITimeoutService = angular.ITimeoutService;
+import IPromise = angular.IPromise;
 
 export class DVLoading implements IDirective {
     restrict = 'A';
@@ -8,11 +9,14 @@ export class DVLoading implements IDirective {
     controllerAs = 'vm';
 
     link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attributes: ng.IAttributes, controller: DVLoadingController) => {
-        scope.$watch(controller.isLoading, function (v) {
+        let promise: IPromise<any>;
+        scope.$watch(controller.isLoading, (v) => {
+
             if (v) {
+                controller.$timeout.cancel(promise);
                 element.show();
             } else {
-                controller.$timeout(() => {
+                promise = controller.$timeout(() => {
                     element.hide();
                 }, 500);
 

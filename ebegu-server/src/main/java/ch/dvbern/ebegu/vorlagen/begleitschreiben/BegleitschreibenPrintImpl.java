@@ -11,12 +11,12 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 * Ersteller: zeab am: 12.08.2016
 */
 
-import org.apache.commons.lang.StringUtils;
-
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -92,5 +92,22 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return true wenn adresszusatz vorhanden
+	 */
+	@Override
+	public boolean isPrintAdresszusatz() {
+		if (StringUtils.isNotEmpty(PrintUtil.getAdresszusatz(gesuch))) {
+			return true;
+		}
+		return false;
+	}
+
+	@Nullable
+	@Override
+	public String getAdresszusatz() {
+		return PrintUtil.getAdresszusatz(gesuch);
 	}
 }
