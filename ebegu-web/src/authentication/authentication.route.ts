@@ -6,13 +6,14 @@ import IStateParamsService = angular.ui.IStateParamsService;
 authenticationRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function authenticationRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/login');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 function getStates(): IState[] {
     return [
         new EbeguLoginState(),
-        new EbeguLocalLoginState()
+        new EbeguLocalLoginState(),
+        new EbeguStartState()
     ];
 }
 
@@ -30,6 +31,13 @@ export class EbeguLocalLoginState implements IState {
     template = '<dummy-authentication-view>';
     url = '/locallogin';
 }
+
+export class EbeguStartState implements IState {
+    name = 'start';
+    template = '<start-view>';
+    url = '/start';
+}
+
 
 
 export class IAuthenticationStateParams implements IStateParamsService {
