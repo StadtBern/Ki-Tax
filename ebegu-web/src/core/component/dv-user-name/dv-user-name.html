@@ -4,7 +4,7 @@
     <span style="visibility: hidden" ng-bind="vm.getVersion()"></span>
 </md-button>
 
-<md-menu-bar ng-if="vm.getPrincipal()" class="userMenu">
+<md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
     <md-menu>
         <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
             <span ng-bind="vm.getPrincipal().getFullName()"></span>
