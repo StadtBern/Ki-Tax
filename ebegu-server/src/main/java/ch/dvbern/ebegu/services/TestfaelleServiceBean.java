@@ -56,6 +56,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
+	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
@@ -105,6 +106,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 
+	@Override
 	@Nullable
 	public Gesuch createAndSaveTestfaelle(String fallid,
 										  boolean betreuungenBestaetigt,
@@ -116,15 +118,20 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		if ("1".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("2".equals(fallid)) {
+		}
+		if ("2".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("3".equals(fallid)) {
+		}
+		if ("3".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("4".equals(fallid)) {
+		}
+		if ("4".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("5".equals(fallid)) {
+		}
+		if ("5".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("6".equals(fallid)) {
+		}
+		if ("6".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
 

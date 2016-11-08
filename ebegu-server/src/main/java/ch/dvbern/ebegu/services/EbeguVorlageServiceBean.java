@@ -162,7 +162,7 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 	}
 
 	private Set<EbeguVorlage> getEmptyVorlagen(Collection<EbeguVorlage> persistedEbeguVorlagen) {
-		Set<EbeguVorlage> emptyEbeguVorlagen = new HashSet<EbeguVorlage>();
+		Set<EbeguVorlage> emptyEbeguVorlagen = new HashSet<>();
 		final EbeguVorlageKey[] ebeguVorlageKeys = EbeguVorlageKey.values();
 		for (EbeguVorlageKey ebeguVorlageKey : ebeguVorlageKeys) {
 			boolean exist = false;

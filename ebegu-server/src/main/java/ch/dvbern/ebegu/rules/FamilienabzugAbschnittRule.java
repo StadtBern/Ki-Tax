@@ -54,7 +54,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		Gesuch gesuch = betreuung.extractGesuch();
 		final List<VerfuegungZeitabschnitt> familienAbzugZeitabschnitt = createInitialenFamilienAbzug(gesuch);
 
-		Map<LocalDate, Double> famGrMap = new TreeMap<LocalDate, Double>();
+		Map<LocalDate, Double> famGrMap = new TreeMap<>();
 
 		//Suchen aller Geburtstage innerhalb der Gesuchsperiode und speichern in der Liste mit Familiengrösse
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {

@@ -23,7 +23,7 @@ import java.util.Properties;
 public class UsernameRoleChecker {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UsernameRoleChecker.class);
-	private static final java.lang.String ROLE_SEPARATOR = ",";
+	private static final String ROLE_SEPARATOR = ",";
 	private static final String ROLES_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because roles could not be loaded: ";
 	private static final String USER_MISSING_MESSAGE = "Could not initialaze UsernameRoleChecker because users property file  could not be loaded: ";
 
@@ -125,7 +125,8 @@ public class UsernameRoleChecker {
 		if (passwordToMatch == null) {
 			LOG.trace("No password passed to validate");
 			return false;
-		} else if (passwordToMatch.equals(inputPassword)) {
+		}
+		if (passwordToMatch.equals(inputPassword)) {
 			return true;
 		}
 		LOG.trace("Username / Pwassword were invalid " + inputUsername + " / " + inputPassword);

@@ -43,6 +43,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Properties" %>
+<%@ page import="java.io.IOException" %>
 
 
 <%--
@@ -164,7 +165,7 @@
         } else if (isRelayStateURLValid) {
             try {
                  response.sendRedirect(relayState);
-            } catch (java.io.IOException ioe) {
+            } catch (IOException ioe) {
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(
                     "Exception when redirecting to " +
@@ -245,7 +246,7 @@ boolean processSAELogout(
             appSLOUrlStr = SAML2Utils.getAttributeValueFromSPSSOConfig(
                 spConfig, SAML2Constants.SAE_SP_LOGOUT_URL);
         }
-        if ((appSLOUrlStr == null) || (appSLOUrlStr.length() == 0)) {
+        if ((appSLOUrlStr == null) || (appSLOUrlStr.isEmpty())) {
             SAML2Utils.debug.message(
                 "spSLORedir:SAE:appSLOUrl not configured.");
             return false;
@@ -280,7 +281,7 @@ boolean processSAELogout(
             encSecret =
                     (String) hp.get(SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
         }
-        if (secret == null || secret.length() == 0) {
+        if (secret == null || secret.isEmpty()) {
             SAML2Utils.debug.error(
                 "spSLORedir:SAE:processing App SLO:getSAEAttrs no secret/key");
             return false;

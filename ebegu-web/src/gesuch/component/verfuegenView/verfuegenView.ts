@@ -14,7 +14,6 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
-import {TSGesuchEvent} from '../../../models/enums/TSGesuchEvent';
 import IRootScopeService = angular.IRootScopeService;
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
