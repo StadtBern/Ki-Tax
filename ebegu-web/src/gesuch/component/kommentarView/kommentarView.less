@@ -25,6 +25,9 @@
         border: 0.1rem @secondary solid;
         background-color: @contrast-lightest;
         padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+        &[disabled] {
+            background-color: @contrast;
+        }
     }
 
     .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
