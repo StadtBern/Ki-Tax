@@ -5,6 +5,24 @@
     margin: 0 0 2rem;
 }
 md-checkbox {
+    &[disabled] {
+        color: @contrast;
+        .md-label {
+            span {
+                color: @contrast;
+            }
+        }
+        &.md-checked, &:not(.md-checked) {
+            .md-icon {
+                border: 0.1rem solid @contrast;
+            }
+        }
+        &.md-checked {
+            .md-icon {
+                background: @contrast;
+            }
+        }
+    }
     &.md-focused {
         //TODO Focus  border:red 20px solid;
     }

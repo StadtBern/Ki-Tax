@@ -26,12 +26,14 @@ import {EinkommensverschlechterungResultateViewComponentConfig} from './componen
 import {DokumenteViewComponentConfig} from './component/DokumenteView/dokumenteView';
 import {VerfuegenViewComponentConfig} from './component/verfuegenView/verfuegenView';
 import {KommentarViewComponentConfig} from './component/kommentarView/kommentarView';
+import {UmzugViewComponentConfig} from './component/umzugView/umzugView';
 
 export const EbeguWebGesuch =
     angular.module('ebeguWeb.gesuch', [EbeguWebCore.name])
         .run(gesuchRun)
         .component('familiensituationView', new FamiliensituationViewComponentConfig())
         .component('stammdatenView', new StammdatenViewComponentConfig)
+        .component('umzugView', new UmzugViewComponentConfig())
         .component('kinderListView', new KinderListViewComponentConfig())
         .component('finanzielleSituationView', new FinanzielleSituationViewComponentConfig())
         .component('finanzielleSituationStartView', new FinanzielleSituationStartViewComponentConfig())
