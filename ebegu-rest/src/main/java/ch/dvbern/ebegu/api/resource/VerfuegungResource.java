@@ -99,7 +99,7 @@ public class VerfuegungResource {
 			Collection<Institution> instForCurrBenutzer = institutionService.getInstitutionenForCurrentBenutzer();
 
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-			if (instForCurrBenutzer.size() > 0) {
+			if (!instForCurrBenutzer.isEmpty()) {
 				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 			}
 			return Response.ok(kindContainers).build();
@@ -170,6 +170,12 @@ public class VerfuegungResource {
 	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();
+		}
+		if (gesuch.getGesuchsteller1() != null) {
+			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+		}
+		if (gesuch.getGesuchsteller2() != null) {
+			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
 		}
 		persistence.getEntityManager().detach(gesuch);
 	}

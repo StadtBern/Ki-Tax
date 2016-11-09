@@ -141,7 +141,7 @@
         errorMessage, "HTTPParameterValue", 2000, true)){
             errorMessage = null;
     }
-    if (((errorMessage == null) || (errorMessage.length() == 0)) &&
+    if (((errorMessage == null) || (errorMessage.isEmpty())) &&
         (errorCode != null)) {
         errorMessage = SAML2Utils.bundle.getString(errorCode);
     }

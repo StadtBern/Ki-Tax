@@ -26,6 +26,7 @@ public class Testfall04_WaltherLaura extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
+	@Override
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();

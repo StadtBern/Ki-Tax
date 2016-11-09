@@ -33,7 +33,7 @@ public class MindestalterRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittAltGenug = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittAltGenug.isKindMinestalterUnterschritten());
+		Assert.assertFalse(abschnittAltGenug.isKindMinestalterUnterschritten());
 		Assert.assertEquals(100, abschnittAltGenug.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittAltGenug.getBgPensum());
 	}
@@ -48,11 +48,11 @@ public class MindestalterRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittZuJung = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnittZuJung.isKindMinestalterUnterschritten());
+		Assert.assertTrue(abschnittZuJung.isKindMinestalterUnterschritten());
 		Assert.assertEquals(0, abschnittZuJung.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittZuJung.getBgPensum());
 		VerfuegungZeitabschnitt abschnittAltGenug = zeitabschnittList.get(1);
-		Assert.assertEquals(false, abschnittAltGenug.isKindMinestalterUnterschritten());
+		Assert.assertFalse(abschnittAltGenug.isKindMinestalterUnterschritten());
 		Assert.assertEquals(100, abschnittAltGenug.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittAltGenug.getBgPensum());
 	}

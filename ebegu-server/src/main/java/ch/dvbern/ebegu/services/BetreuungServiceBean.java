@@ -133,6 +133,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return Collections.emptyList();
 	}
 
+	@Override
 	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung) {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung);

@@ -20,6 +20,7 @@ public class KitaRechner extends AbstractBGRechner {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
+	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 		// Benoetigte Daten
 		LocalDate von = verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb();

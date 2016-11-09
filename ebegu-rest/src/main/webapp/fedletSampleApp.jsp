@@ -106,7 +106,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     // END : code is a must for Fedlet (SP) side application
     
     String relayUrl = (String) map.get(SAML2Constants.RELAY_STATE);
-    if ((relayUrl != null) && (relayUrl.length() != 0)) {
+    if ((relayUrl != null) && (!relayUrl.isEmpty())) {
         // something special for validation to send redirect
         int stringPos  = relayUrl.indexOf("sendRedirectForValidationNow=true");
         if (stringPos != -1) {
@@ -178,7 +178,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     out.println("<br><b><a href=# onclick=toggleDisp('subj')>Click to view Subject XML</a></b><br>");
     out.println("<span style='display:none;' id=subj><br><textarea rows=10 cols=100>" + subject.toXMLString(true, true) + "</textarea></span>");
 
-    if ((relayUrl != null) && (relayUrl.length() != 0)) {
+    if ((relayUrl != null) && (!relayUrl.isEmpty())) {
         out.println("<br><br>Click <a href=\"" + relayUrl 
             + "\">here</a> to redirect to final destination.");
     }

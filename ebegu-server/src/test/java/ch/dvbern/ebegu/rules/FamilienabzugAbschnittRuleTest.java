@@ -39,7 +39,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void test2PKeinAbzug() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
-		gesuch.setKindContainers(new HashSet<KindContainer>());
+		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer = TestDataUtil.createDefaultKindContainer();
 		gesuch.getKindContainers().add(defaultKindContainer);
 
@@ -54,7 +54,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void test3P_Abzug() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
-		gesuch.setKindContainers(new HashSet<KindContainer>());
+		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
 
@@ -72,7 +72,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void test4P_Abzug() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
-		gesuch.setKindContainers(new HashSet<KindContainer>());
+		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
 
@@ -90,7 +90,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void test3P_Abzug_Kind_waehrendPeriode() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
-		gesuch.setKindContainers(new HashSet<KindContainer>());
+		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
 		final LocalDate geburtsdatum = LocalDate.of(2017, 1, 10);
@@ -119,7 +119,7 @@ public class FamilienabzugAbschnittRuleTest {
 	public void test3P_Abzug_Zwiling_waehrendPeriode() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(true);
 		Gesuch gesuch = betreuung.extractGesuch();
-		gesuch.setKindContainers(new HashSet<KindContainer>());
+		gesuch.setKindContainers(new HashSet<>());
 		final KindContainer defaultKindContainer1 = TestDataUtil.createDefaultKindContainer();
 		final KindContainer defaultKindContainer2 = TestDataUtil.createDefaultKindContainer();
 		final LocalDate geburtsdatum = LocalDate.of(2017, 1, 10);
@@ -173,6 +173,22 @@ public class FamilienabzugAbschnittRuleTest {
 		Gesuch gesuch = createGesuchWithOneGS();
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
 		Assert.assertEquals(1, familiengroesse, DELTA);
+	}
+
+	@Test
+	public void testCalculateFamiliengroesseOneGesuchStellerErstges() {
+		Gesuch gesuch = createGesuchWithOneGS();
+		//aktuell alleinerziehend
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		Assert.assertEquals(1, familiengroesse, DELTA);
+		// jetzt wechseln auf verheiratet
+		Familiensituation erstFamiliensituation = new Familiensituation();
+		erstFamiliensituation.setAenderungPer(null); //im erstgesuch immer null
+		erstFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		erstFamiliensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		gesuch.setFamiliensituationErstgesuch(erstFamiliensituation);
+		double newFamGr = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		Assert.assertEquals(2, newFamGr, DELTA);
 	}
 
 	@Test

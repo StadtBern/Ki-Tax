@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class TageselternRechner extends AbstractBGRechner {
 
 
+	@Override
 	public VerfuegungZeitabschnitt calculate(VerfuegungZeitabschnitt verfuegungZeitabschnitt, Verfuegung verfuegung, BGRechnerParameterDTO parameterDTO) {
 
 		// Benoetigte Daten

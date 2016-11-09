@@ -46,6 +46,7 @@ import java.util.Optional;
 /**
  * REST Resource fuer Institution
  */
+@SuppressWarnings("OverlyBroadCatchBlock")
 @Path("upload")
 @Stateless
 @Api

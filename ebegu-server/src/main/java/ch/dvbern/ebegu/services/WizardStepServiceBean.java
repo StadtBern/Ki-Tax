@@ -88,6 +88,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					WizardStepStatus.OK, mutationsdaten.getMutationFamiliensituation())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER,
 					WizardStepStatus.OK, mutationsdaten.getMutationGesuchsteller())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.UMZUG,
+					WizardStepStatus.OK, mutationsdaten.getMutationUmzug())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER,
 					WizardStepStatus.OK, mutationsdaten.getMutationKind())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG,
@@ -107,6 +109,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.UMZUG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));
@@ -269,7 +272,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
 						.stream().filter(kindContainer -> kindContainer.getKindJA().getFamilienErgaenzendeBetreuung())
 						.collect(Collectors.toList());
-					WizardStepStatus status = (kinderFromGesuch.size() > 0) ? WizardStepStatus.OK : WizardStepStatus.NOK;
+					WizardStepStatus status = (!kinderFromGesuch.isEmpty()) ? WizardStepStatus.OK : WizardStepStatus.NOK;
 					wizardStep.setWizardStepStatus(status);
 				}
 			}
@@ -333,7 +336,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = (allBetreuungenRequiringErwerbspensum.size() > 0 && erwerbspensenForGesuch.size() <= 0)
+		WizardStepStatus status = (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0)
 			? WizardStepStatus.NOK : WizardStepStatus.OK;
 		wizardStep.setWizardStepStatus(status);
 	}

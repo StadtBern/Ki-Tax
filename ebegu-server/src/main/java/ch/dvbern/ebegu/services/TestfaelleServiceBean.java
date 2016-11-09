@@ -5,8 +5,6 @@ import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.testfaelle.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,6 +56,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
+	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
@@ -107,6 +106,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 
+	@Override
 	@Nullable
 	public Gesuch createAndSaveTestfaelle(String fallid,
 										  boolean betreuungenBestaetigt,
@@ -118,15 +118,20 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		if ("1".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("2".equals(fallid)) {
+		}
+		if ("2".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("3".equals(fallid)) {
+		}
+		if ("3".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("4".equals(fallid)) {
+		}
+		if ("4".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("5".equals(fallid)) {
+		}
+		if ("5".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if ("6".equals(fallid)) {
+		}
+		if ("6".equals(fallid)) {
 			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
 
@@ -293,6 +298,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2);
 		}
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER);
+		// Umzug wird by default OK und verfuegbar, da es nicht notwendig ist, einen Umzug einzutragen
+		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.UMZUG);
+		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.UMZUG, WizardStepStatus.OK);
 	}
 
 	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {

@@ -175,7 +175,7 @@
         // if idpEntityID is null redirect to IDP Discovery
         // Service to retrieve.
         metaAlias = request.getParameter("metaAlias");
-        if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+        if ((metaAlias ==  null) || (metaAlias.isEmpty())) {
             SAML2MetaManager manager = new SAML2MetaManager();
             List spMetaAliases = 
                 manager.getAllHostedServiceProviderMetaAliases("/");
@@ -183,7 +183,7 @@
                 // get first one
                 metaAlias = (String) spMetaAliases.get(0);
             }
-            if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
+            if ((metaAlias ==  null) || (metaAlias.isEmpty())) {
                 saml2Auditor.auditAccessFailure(String.valueOf(response.SC_BAD_REQUEST),
                         SAML2Utils.bundle.getString("nullSPEntityID"));
                 SAMLUtils.sendError(request, response, response.SC_BAD_REQUEST, "nullSPEntityID",
@@ -206,7 +206,7 @@
             paramsMap.put(SAML2Constants.BINDING, list);
         } 
 
-        if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
+        if ((idpEntityID == null) || (idpEntityID.isEmpty())) {
             // get reader url
             String readerURL = SAML2Utils.getReaderURL(metaAlias);
             if (readerURL != null) {
@@ -223,7 +223,7 @@
         }
     }
 
-    if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
+    if ((idpEntityID == null) || (idpEntityID.isEmpty())) {
         SAML2MetaManager manager = new SAML2MetaManager();
         List idpEntities = manager.getAllRemoteIdentityProviderEntities("/"); 
         if ((idpEntities == null) || idpEntities.isEmpty()) {

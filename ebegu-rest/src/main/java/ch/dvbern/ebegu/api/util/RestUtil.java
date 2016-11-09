@@ -96,7 +96,7 @@ public final class RestUtil {
 		while (kindsIterator.hasNext()) {
 			final JaxKindContainer kind = kindsIterator.next();
 			purgeSingleKindAndBetreuungenOfInstitutionen(kind, userInstitutionen);
-			if (kind.getBetreuungen().size() == 0) {
+			if (kind.getBetreuungen().isEmpty()) {
 				kindsIterator.remove();
 			}
 		}

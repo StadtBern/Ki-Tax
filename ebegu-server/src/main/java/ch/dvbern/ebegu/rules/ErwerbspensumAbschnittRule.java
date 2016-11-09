@@ -84,10 +84,10 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 			}
 			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 		}
-		else if (gs2 && !gesuch.isMutation()) {
+		if (gs2 && !gesuch.isMutation()) {
 			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 		}
-		else if (!gs2) {
+		if (!gs2) {
 			VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
 			zeitabschnitt.setErwerbspensumGS1(erwerbspensumTotal);
 			return zeitabschnitt;

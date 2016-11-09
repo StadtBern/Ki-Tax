@@ -26,6 +26,9 @@
     span {
         line-height: normal;
     }
+    &[disabled], &[disabled]:hover {
+        background: none;
+    }
 }
 
 .dv-btn-sm {
@@ -50,7 +53,6 @@ a.dv-btn {
 }
 button, .dv-btn {
     .normal();
-    .capitalize();
     white-space: nowrap;
     font-size: 1.4rem;
     text-align: center;

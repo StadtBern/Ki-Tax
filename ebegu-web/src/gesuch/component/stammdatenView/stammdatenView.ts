@@ -27,7 +27,6 @@ export class StammdatenViewComponentConfig implements IComponentOptions {
 
 export class StammdatenViewController extends AbstractGesuchViewController {
     geschlechter: Array<string>;
-    showUmzug: boolean;
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
@@ -51,14 +50,8 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.wizardStepManager.setCurrentStep(TSWizardStepName.GESUCHSTELLER);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
-        this.gesuchModelManager.calculateShowDatumFlags(this.gesuchModelManager.getStammdatenToWorkWith());
-        this.showUmzug = (this.gesuchModelManager.getStammdatenToWorkWith().umzugAdresse) ? true : false;
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
-    }
-
-    umzugadreseClicked() {
-        this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
     }
 
     korrespondenzAdrClicked() {
@@ -67,9 +60,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
     private save(form: angular.IFormController) {
         if (form.$valid) {
-            if (!this.showUmzug) {
-                this.gesuchModelManager.setUmzugAdresse(this.showUmzug);
-            }
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }

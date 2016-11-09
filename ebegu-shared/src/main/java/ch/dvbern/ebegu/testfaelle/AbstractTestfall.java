@@ -15,7 +15,7 @@ import java.util.Collection;
  * Um alles mit den Services durchfuehren zu koennen, muss man zuerst den Fall erstellen, dann
  * das Gesuch erstellen und dann das Gesuch ausfuellen und updaten. Nur so werden alle WizardSteps
  * erstellt und es gibt kein Problem mit den Verknuepfungen zwischen Entities
- * Der richtige Prozess findet man in TestfaelleResource#createAndSaveGesuch()
+ * Der richtige Prozess findet man in TestfaelleService#createAndSaveGesuch()
  */
 public abstract class AbstractTestfall {
 

@@ -444,8 +444,7 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.mobile = '+41 76 300 12 34';
         myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
         myGesuchsteller.korrespondenzAdresse = undefined;
-        myGesuchsteller.umzugAdresse = undefined;
-        myGesuchsteller.adresse = undefined;
+        myGesuchsteller.adressen = [];
         myGesuchsteller.finanzielleSituationContainer = undefined;
         myGesuchsteller.einkommensverschlechterungContainer = undefined;
         return myGesuchsteller;
