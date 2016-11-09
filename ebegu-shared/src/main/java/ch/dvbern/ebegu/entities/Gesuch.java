@@ -333,6 +333,9 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	public String getAntragNummer() {
+		if (getGesuchsperiode() == null) {
+			return "-";
+		}
 		return Integer.toString(getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2)
 			+ "." + StringUtils.leftPad("" + getFall().getFallNummer(), Constants.FALLNUMMER_LENGTH, '0');
 	}

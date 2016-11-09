@@ -66,12 +66,16 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
     isDisabled: boolean;
     formCtrl: IFormController;
     delay: string;
+    type: string;
     forceWaitService: string;
     buttonDisabled: boolean; //true wenn unser element programmatisch disabled wird
     buttonClick: () => void;
 
     /* @ngInject */
     constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
+        if(!this.type) {
+            this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
+        }
 
         this.buttonClicked = () => {
             //wenn der button disabled ist machen wir mal gar nichts

@@ -60,7 +60,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	 */
 	@Nullable
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Gesuch gesuch, @Nonnull Erwerbspensum erwerbspensum, boolean gs2) {
-		final DateRange gueltigkeit = erwerbspensum.getGueltigkeit();
+		final DateRange gueltigkeit = new DateRange(erwerbspensum.getGueltigkeit());
 
 		int erwerbspensumTotal = 0;
 		erwerbspensumTotal += erwerbspensum.getPensum();

@@ -107,7 +107,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 					zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.isNichtInGemeinde());
 					adressenZeitabschnitte.add(zeitabschnitt);
 				} else { // gs2
-					final DateRange gueltigkeit = gesuchstellerAdresse.getGueltigkeit();
+					final DateRange gueltigkeit = new DateRange(gesuchstellerAdresse.getGueltigkeit());
 					if (gesuch.getFamiliensituation().getAenderungPer() != null) {
 						// from 1GS to 2GS
 						if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {
