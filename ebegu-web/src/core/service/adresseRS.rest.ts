@@ -1,6 +1,5 @@
 import TSAdresse from '../../models/TSAdresse';
-import {IHttpService, IHttpPromise, IPromise} from 'angular';
-import TSGesuch from '../../models/TSGesuch';
+import {IHttpService, IHttpPromise} from 'angular';
 
 export default class AdresseRS {
     static $inject = ['$http', 'REST_API'];

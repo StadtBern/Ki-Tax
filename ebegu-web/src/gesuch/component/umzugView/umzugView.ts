@@ -150,7 +150,6 @@ export class UmzugViewController extends AbstractGesuchViewController {
             title: remTitleText,
             deleteText: ''
         }).then(() => {   //User confirmed removal
-            console.log('EXECUTEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd');
             var indexOf = this.umzugAdressen.lastIndexOf(adresse);
             if (indexOf >= 0) {
                 this.umzugAdressen.splice(indexOf, 1);

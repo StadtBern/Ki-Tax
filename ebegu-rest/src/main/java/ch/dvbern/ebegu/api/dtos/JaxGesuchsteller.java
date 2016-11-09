@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -151,7 +152,8 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void addAdresse(JaxAdresse adresse) {
 		if (adressen != null) {
-			adressen.add(adresse);
+		    adressen = new ArrayList<>();
 		}
+		adressen.add(adresse);
 	}
 }

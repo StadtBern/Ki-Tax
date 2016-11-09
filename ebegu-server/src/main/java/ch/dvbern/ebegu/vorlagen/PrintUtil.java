@@ -27,7 +27,7 @@ public class PrintUtil {
 	 * vorhanden dann empty
 	 */
 	@Nonnull
-	private static Optional<GesuchstellerAdresse> getGesuchstellerAdresse(@Nullable Gesuchsteller gesuchsteller) {
+	public static Optional<GesuchstellerAdresse> getGesuchstellerAdresse(@Nullable Gesuchsteller gesuchsteller) {
 
 		if (gesuchsteller != null) {
 			List<GesuchstellerAdresse> adressen = gesuchsteller.getAdressen();

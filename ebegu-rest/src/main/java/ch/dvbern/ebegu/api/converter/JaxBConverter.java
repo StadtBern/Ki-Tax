@@ -82,7 +82,7 @@ public class JaxBConverter {
 	private VerfuegungService verfuegungService;
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JaxBConverter.class);
 
 
 	@Nonnull
@@ -304,7 +304,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull final JaxGesuchsteller gesuchstellerJAXP, @Nonnull final Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getAdressen(), "Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getAdressen(), "Adressen muessen gesetzt sein");
 		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
@@ -606,6 +606,7 @@ public class JaxBConverter {
 		return antrag;
 	}
 
+	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
 	private Mutationsdaten mutationsdatenToEntity(@Nonnull JaxMutationsdaten jaxMutationsdaten, @Nonnull Mutationsdaten mutationsdaten) {
 		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
 		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
@@ -1317,7 +1318,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn("dropped duplicate container " + contToAdd);
 			}
 		}
 
@@ -1442,7 +1443,7 @@ public class JaxBConverter {
 			final VerfuegungZeitabschnitt abschnittToAdd = verfuegungZeitabschnittToEntity(jaxZeitabschnitt, containerToMergeWith);
 			final boolean added = convertedZeitabschnitte.add(abschnittToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
+				LOGGER.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
 			}
 		}
 
@@ -1660,7 +1661,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate container " + dokToAdd);
+				LOGGER.warn("dropped duplicate container " + dokToAdd);
 			}
 		}
 
@@ -1830,6 +1831,7 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
 	public Mutationsdaten mutationsDatenToEntity(JaxMutationsdaten jaxMutationsdaten, Mutationsdaten mutationsdaten) {
 		convertAbstractFieldsToEntity(jaxMutationsdaten, mutationsdaten);
 		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
