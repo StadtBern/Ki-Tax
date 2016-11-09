@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Tests für WohnsitzRule
  */
+@SuppressWarnings("ConstantConditions")
 public class WohnsitzRuleTest {
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
@@ -75,6 +76,37 @@ public class WohnsitzRuleTest {
 		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
+	}
+
+	@Test
+	public void testZweiGesuchstellerNichtInBernWithUmzugGS2InBern() {
+		Betreuung betreuung = createTestdata(true);
+		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
+
+		betreuung.extractGesuch().getGesuchsteller2()
+			.addAdresse(createGesuchstellerAdresse(START_PERIODE, LocalDate.of(2016, Month.DECEMBER, 15), true)); // nur wenn Gesuchsperiode 2016/2017
+		betreuung.extractGesuch().getGesuchsteller2()
+			.addAdresse(createGesuchstellerAdresse(LocalDate.of(2016, Month.DECEMBER, 16), ENDE_PERIODE, false)); // nur wenn Gesuchsperiode 2016/2017
+
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(2, zeitabschnittList.size());
+
+		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(0);
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
+		Assert.assertEquals(START_PERIODE, abschnittNichtInBern.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(2016, Month.DECEMBER, 15), abschnittNichtInBern.getGueltigkeit().getGueltigBis());
+
+		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(1);
+		Assert.assertTrue(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(100, abschnittInBern.getBgPensum());
+		Assert.assertEquals(LocalDate.of(2016, Month.DECEMBER, 16), abschnittInBern.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, abschnittInBern.getGueltigkeit().getGueltigBis());
 	}
 
 	@Test
