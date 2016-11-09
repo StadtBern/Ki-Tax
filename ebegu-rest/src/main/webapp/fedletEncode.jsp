@@ -68,7 +68,7 @@
 
         String strPwd = request.getParameter("password");
 
-        if ((strPwd != null) && (strPwd.trim().length() > 0))  {
+        if ((strPwd != null) && (!strPwd.trim().isEmpty()))  {
             out.println(rb.getString("result-encoded-pwd") + " ");
             out.println((String) AccessController.doPrivileged(
                 new EncodeAction(strPwd.trim())));

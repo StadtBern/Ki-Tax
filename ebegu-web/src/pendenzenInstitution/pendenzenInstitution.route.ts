@@ -5,19 +5,19 @@ import {IState} from 'angular-ui-router';
 pendenzRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function pendenzRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/pendenzenInstitution');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 function getStates(): IState[] {
     return [
-        new EbeguPendenzenListState()
+        new EbeguPendenzenInstitutionListState()
     ];
 }
 
 //STATES
 
-export class EbeguPendenzenListState implements IState {
+export class EbeguPendenzenInstitutionListState implements IState {
     name = 'pendenzenInstitution';
-    template = '<pendenzen-institution-list-view>';
+    template = '<pendenzen-institution-list-view flex="auto" class="overflow-auto">';
     url = '/pendenzenInstitution';
 }

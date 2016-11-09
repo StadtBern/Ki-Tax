@@ -1,31 +1,57 @@
-.kommentar-feld textarea.md-input {
-    border-width: 1px 1px 1px 1px;
-    border-color: #4990E2;
-    background-color: white;
-}
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
 
-.kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
-    padding-left: 10px;
-    color: #4990E2;
-}
+.kommentarView {
+    overflow-y: auto;
+    height: 100%;
+    & > form {
+        height: inherit;
+        & > div {
+            padding: 1rem;
+        }
+    }
+    md-input-container {
+        label:not(.md-container-ignore) {
+            position: static;
+            .h3();
+        }
+        textarea {
+            margin-top: 0.5rem;
+        }
+        margin: 0;
+    }
+    #kommentarIntern, #kommentarVerfuegung {
+        .p();
+        border: 0.1rem @secondary solid;
+        background-color: @contrast-lightest;
+        padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+    }
 
-.kommentar-button.btn {
-    display: block;
-    width: 100%;
-    background-color: #4990E2;
-    color: white;
-    font-weight: bold;
-}
+    .kommentar-feld md-input-container label:not(.md-no-float):not(._md-container-ignore) {
+        padding-left: 1rem;
+        color: @secondary;
+    }
 
-.kommentar .bottom-align {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 0;
-}
+    .kommentar-button {
+        background-color: @secondary;
+        cursor: pointer;
+        &:hover {
+            background: @secondary-dark;
+            color: @contrast-lightest;
+        }
+    }
 
-.kommentar .kommentar-verfuegung-align {
-    position: absolute;
-    bottom: 20px;
-    right: 0;
+    .bottom-align {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0;
+    }
+
+    .kommentar-verfuegung-align {
+        position: absolute;
+        bottom: 2rem;
+        right: 0;
+    }
+
 }

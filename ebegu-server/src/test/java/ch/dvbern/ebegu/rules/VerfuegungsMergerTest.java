@@ -303,7 +303,7 @@ public class VerfuegungsMergerTest {
 
 	private List<VerfuegungZeitabschnitt> splitUpAnsprechberechtigtesPensumAbDatum(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate aenderungsDatumPensum, int ansprechberechtigtesPensum) {
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteSplitted = new ArrayList<VerfuegungZeitabschnitt>();
+		List<VerfuegungZeitabschnitt> zeitabschnitteSplitted = new ArrayList<>();
 		zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().endsBefore(aenderungsDatumPensum)).
 			forEach(zeitabschnitteSplitted::add);
@@ -352,7 +352,8 @@ public class VerfuegungsMergerTest {
 
 	private Betreuung prepareData(BigDecimal massgebendesEinkommen, BetreuungsangebotTyp angebot, int pensum) {
 		Betreuung betreuung = EbeguRuleTestsHelper.createBetreuungWithPensum(START_PERIODE, ENDE_PERIODE, angebot, pensum);
-		Gesuch gesuch = betreuung.extractGesuch();
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		Set<KindContainer> kindContainers = new LinkedHashSet<>();
 		final KindContainer kindContainer = betreuung.getKind();
 		Set<Betreuung> betreuungen = new TreeSet<>();

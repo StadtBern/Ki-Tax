@@ -1,18 +1,19 @@
 <!--Es wird gecheckt ob der Benutzer sich eingeloggt hat. Falls nein, wird ein "Einloggen" Button angezeigt, die zur Loginseite fuehrt.
 Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
 
-<md-button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="userMenu" aria-label="{{'EINLOGGEN' | translate}}">
+<md-button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="user-menu"
+           aria-label="{{'EINLOGGEN' | translate}}">
     <a href="javascript:void(0)"  data-translate="EINLOGGEN"></a>
     <span style="visibility: hidden" ng-bind="vm.getVersion()"></span>
 </md-button>
 
-<md-menu-bar ng-if="vm.getPrincipal()" class="userMenu">
+<md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
     <md-menu>
         <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
             <span ng-bind="vm.getPrincipal().getFullName()"></span>
             <i class="fa fa-angle-down"></i>
         </md-button>
-        <md-menu-content>
+        <md-menu-content class="user-menu">
             <md-menu-item>
                 <md-button ui-sref-active="active" ui-sref="admin" aria-label="{{'ADMIN' | translate}}">
                     <a href="javascript:void(0)" data-translate="ADMIN"></a>

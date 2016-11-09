@@ -423,6 +423,7 @@ public class JaxBConverter {
 		familiensituation.setFamilienstatus(familiensituationJAXP.getFamilienstatus());
 		familiensituation.setGesuchstellerKardinalitaet(familiensituationJAXP.getGesuchstellerKardinalitaet());
 		familiensituation.setGemeinsameSteuererklaerung(familiensituationJAXP.getGemeinsameSteuererklaerung());
+		familiensituation.setAenderungPer(familiensituationJAXP.getAenderungPer());
 		return familiensituation;
 	}
 
@@ -432,6 +433,7 @@ public class JaxBConverter {
 		jaxFamiliensituation.setFamilienstatus(persistedFamiliensituation.getFamilienstatus());
 		jaxFamiliensituation.setGesuchstellerKardinalitaet(persistedFamiliensituation.getGesuchstellerKardinalitaet());
 		jaxFamiliensituation.setGemeinsameSteuererklaerung(persistedFamiliensituation.getGemeinsameSteuererklaerung());
+		jaxFamiliensituation.setAenderungPer(persistedFamiliensituation.getAenderungPer());
 		return jaxFamiliensituation;
 	}
 

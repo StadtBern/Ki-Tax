@@ -1,32 +1,26 @@
-<div class="gesuchstellerDashboardView row">
-
-    <gesuch-toolbar-gesuchsteller class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
-                                  dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']">
+<gesuch-toolbar-gesuchsteller flex="nogrow" class="gesuch-toolbar-gesuchsteller" gesuchid="{{vm.getGesuchId()}}"
+                              dv-show-element dv-show-allowed-roles="['GESUCHSTELLER']">
     </gesuch-toolbar-gesuchsteller>
+<div class="gesuchstellerDashboardView" flex="auto">
+    <div class="dashboardHeader" flex="100" layout="row" layout-align="center center" layout-margin
+         layout-xs="column"
+         layout-align-xs="space-between center">
 
-    <div class="col-md-12 dashboardHeader">
+        <dv-loading-button layout="column" flex="nogrow" type="button"
+                           ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null})"
+                           button-class="dashboardButton">
+            <div flex="auto" class="labelBig"><h2 data-translate="GESUCH"></h2></div>
+            <div flex="auto" class="labelSmall"><h2 data-translate="GSDASHBOARD_BEANTRAGEN"></h2></div>
+        </dv-loading-button>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="pull-right">
-                    <dv-loading-button type="button" ui-sref="gesuch.fallcreation({createNew: true, gesuchId: null})"
-                                       button-class="btn dashboardButton pull-right">
-                        <div class="labelBig"><h2 data-translate="GESUCH"></h2></div>
-                        <div class="labelSmall"><h2 data-translate="GSDASHBOARD_BEANTRAGEN"></h2></div>
-                    </dv-loading-button>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="pull-left">
-                    <dv-loading-button type="button" button-click="vm.goToMitteilungenOeffen()"
-                                       button-class="btn dashboardButton">
-                        <div class="labelBig"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
-                        <div class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
-                        <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
-                    </dv-loading-button>
-                </div>
-            </div>
-        </div>
+
+        <dv-loading-button layout="column" flex="nogrow" type="button" button-click="vm.goToMitteilungenOeffen()"
+                           button-class="dashboardButton">
+            <div flex="auto" class="labelBig"><h2 data-translate="GSDASHBOARD_MITTEILUNGEN"></h2></div>
+            <div flex="auto" class="labelNotification" ng-bind="vm.getNumberMitteilungen()"></div>
+            <div class="labelSmall"><h2 data-translate="GSDASHBOARD_OEFFNEN"></h2></div>
+        </dv-loading-button>
+
     </div>
 
     <div class="col-md-8 col-md-offset-2">
@@ -55,7 +49,8 @@
                 <td class="ellipsis greyBorder"
                     ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                     ng-bind="row.gesuchsperiodeString"></td>
-                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
+                <td class="ellipsis greyBorder"
+                    ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
                 <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.status | translate}}"
                     ng-bind="row.status | translate"></td>

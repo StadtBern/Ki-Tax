@@ -1,22 +1,25 @@
 import {IDirective, IDirectiveFactory, IHttpService} from 'angular';
 import Moment = moment.Moment;
-
-
-interface IDVLoadingController {
-    isLoading: () => {};
-}
+import ITimeoutService = angular.ITimeoutService;
+import IPromise = angular.IPromise;
 
 export class DVLoading implements IDirective {
     restrict = 'A';
     controller = DVLoadingController;
     controllerAs = 'vm';
 
-    link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attributes: ng.IAttributes, controller: IDVLoadingController) => {
-        scope.$watch(controller.isLoading, function (v) {
+    link = (scope: ng.IScope, element: ng.IAugmentedJQuery, attributes: ng.IAttributes, controller: DVLoadingController) => {
+        let promise: IPromise<any>;
+        scope.$watch(controller.isLoading, (v) => {
+
             if (v) {
+                controller.$timeout.cancel(promise);
                 element.show();
             } else {
-                element.hide();
+                promise = controller.$timeout(() => {
+                    element.hide();
+                }, 500);
+
             }
         });
     };
@@ -31,14 +34,14 @@ export class DVLoading implements IDirective {
 /**
  * Direktive  die ein Element ein oder ausblendet jenachdem ob ein http request pending ist
  */
-export class DVLoadingController implements IDVLoadingController {
+export class DVLoadingController {
 
-    static $inject: string[] = ['$http'];
+    static $inject: string[] = ['$http', '$timeout'];
 
     isLoading: () => {};
 
     /* @ngInject */
-    constructor(private $http: IHttpService) {
+    constructor(private $http: IHttpService, public $timeout: ITimeoutService) {
         this.isLoading = (): boolean => {
             return this.$http.pendingRequests.length > 0;
         };

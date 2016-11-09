@@ -16,14 +16,10 @@ export function appRun(angularMomentConfig: any, routerHelper: RouterHelper, lis
                        mandantRS: MandantRS, $rootScope: IRootScopeService, hotkeys: any, $timeout: ITimeoutService,
                        authServiceRS: AuthServiceRS, $state: IStateService, $location: ILocationService, $window: ng.IWindowService) {
     // navigationLogger.toggle();
-    routerHelper.configureStates(getStates(), '/pendenzen');
+    routerHelper.configureStates(getStates(), '/start');
     angularMomentConfig.format = 'DD.MM.YYYY';
     // dieser call macht mit tests probleme, daher wird er fuer test auskommentiert
 
-    $rootScope.$on('$viewContentLoaded', function () {
-        angular.element('html, body').animate({scrollTop: 0}, 200);
-        //    oder so  $anchorScroll('top') mit einem <div id="top">;
-    });
 
     // not used anymore?
     $rootScope.$on(TSAuthEvent[TSAuthEvent.LOGIN_SUCCESS], () => {

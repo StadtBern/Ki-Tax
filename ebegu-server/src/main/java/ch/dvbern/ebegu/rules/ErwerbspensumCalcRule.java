@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -25,19 +26,22 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		Objects.requireNonNull(betreuung.extractGesuch(), "Gesuch muss gesetzt sein");
 		Objects.requireNonNull(betreuung.extractGesuch().getFamiliensituation(), "Familiensituation muss gesetzt sein");
-		boolean hasSecondGesuchsteller = betreuung.extractGesuch().getFamiliensituation().hasSecondGesuchsteller();
+		boolean hasSecondGesuchsteller = hasSecondGSForZeit(betreuung, verfuegungZeitabschnitt.getGueltigkeit());
 		int erwerbspensumOffset = hasSecondGesuchsteller ? 100 : 0;
 		// Erwerbspensum ist immer die erste Rule, d.h. es wird das Erwerbspensum mal als Anspruch angenommen
 		// Das Erwerbspensum muss PRO GESUCHSTELLER auf 100% limitiert werden
-		int erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1();
+		Integer erwerbspensum1 = verfuegungZeitabschnitt.getErwerbspensumGS1() != null ? verfuegungZeitabschnitt.getErwerbspensumGS1() : 0;
 		if (erwerbspensum1 > 100) {
 			erwerbspensum1 = 100;
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM ,  MsgKey.ERWERBSPENSUM_GS1_MSG);
 		}
-		int erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2();
-		if (erwerbspensum2 > 100) {
-			erwerbspensum2 = 100;
-			verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS2_MSG);
+		Integer erwerbspensum2 = 0;
+		if (hasSecondGesuchsteller) {
+			erwerbspensum2 = verfuegungZeitabschnitt.getErwerbspensumGS2() != null ? verfuegungZeitabschnitt.getErwerbspensumGS2() : 0;
+			if (erwerbspensum2 > 100) {
+				erwerbspensum2 = 100;
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.ERWERBSPENSUM, MsgKey.ERWERBSPENSUM_GS2_MSG);
+			}
 		}
 		int anspruch = erwerbspensum1 + erwerbspensum2 - erwerbspensumOffset;
 		if (anspruch <= 0) {
@@ -47,5 +51,16 @@ public class ErwerbspensumCalcRule extends AbstractCalcRule {
 		// Der Anspruch wird immer auf 10-er Schritten gerundet.
 		int roundedAnspruch = MathUtil.roundIntToTens(anspruch);
 		verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(roundedAnspruch);
+	}
+
+	private boolean hasSecondGSForZeit(@Nonnull Betreuung betreuung, @Nonnull DateRange gueltigkeit) {
+		final Gesuch gesuch = betreuung.extractGesuch();
+		if (gesuch.getFamiliensituation().getAenderungPer() != null && gesuch.getFamiliensituationErstgesuch() != null
+		    && gueltigkeit.getGueltigBis().isBefore(gesuch.getFamiliensituation().getAenderungPer())) {
+			return gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller();
+		}
+		else {
+			return gesuch.getFamiliensituation().hasSecondGesuchsteller();
+		}
 	}
 }

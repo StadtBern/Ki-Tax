@@ -1,43 +1,47 @@
-<div class="erwerbspensumListView">
-    <div class="col-md-12">
-        <h4 class="mainTitle">
-            <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
-        </h4>
-        <hr class="header"/>
-
+<div class="erwerbspensumListView gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mainTitle">
+                <span data-translate="ERWERBSPENSEN_LIST_TITLE"></span>
+            </h1>
+            <hr class="header"/>
+        </div>
+    </div>
         <div ng-if="vm.gesuchModelManager.getGesuch().isMutation()" class="alert alert-warning" data-translate="ERWERBSPENSEN_LIST_HINT"></div>
 
         <div ng-if="!vm.isErwerbspensumRequired()">
             <span data-translate="ERWERBSPENSEN_NOT_REQUIRED"></span>
         </div>
 
-        <!--Erwerbspensen von Gesuchsteller 1-->
-        <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
-            <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.getFullName()"></h4>
-            <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
-                                   table-title="Erwerbspensen Gesuchsteller 1"
-                                   add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                                   add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
-                                   on-add="vm.createErwerbspensum(1)"
-                                   on-edit="vm.editPensum(pensum, 1)"
-                                   on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
+    <!--Erwerbspensen von Gesuchsteller 1-->
+    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller1">
+        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller1.getFullName()"></h4>
+        <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS1()" table-id="erwerbspensenGS1"
+                               table-title="Erwerbspensen Gesuchsteller 1"
+                               add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
+                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               on-add="vm.createErwerbspensum(1)"
+                               on-edit="vm.editPensum(pensum, 1)"
+                               on-remove="vm.removePensum(pensum, 1)"></dv-erwerbspensum-list>
 
-        </div>
-        <!--Erwerbspensen von Gesuchsteller 2-->
-        <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2" class="marginTop20">
-            <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.getFullName()"></h4>
-            <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
-                                   table-title="Erwerbspensen Gesuchsteller 2"
-                                   add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
-                                   add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
-                                   on-add="vm.createErwerbspensum(2)"
-                                   on-edit="vm.editPensum(pensum, 2)"
-                                   on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>
-        </div>
+    </div>
+    <!--Erwerbspensen von Gesuchsteller 2-->
+    <div ng-if="vm.gesuchModelManager.getGesuch().gesuchsteller2" class="marginTop20">
+        <h4 ng-bind="vm.gesuchModelManager.getGesuch().gesuchsteller2.getFullName()"></h4>
+        <dv-erwerbspensum-list erwerbspensen="vm.getErwerbspensenListGS2()" table-id="erwerbspensenGS2"
+                               table-title="Erwerbspensen Gesuchsteller 2"
+                               add-button-text="{{'ADD_TAETIGKEIT' | translate}}"
+                               add-button-Visible="!vm.isGesuchStatusVerfuegenVerfuegt()"
+                               on-add="vm.createErwerbspensum(2)"
+                               on-edit="vm.editPensum(pensum, 2)"
+                               on-remove="vm.removePensum(pensum, 2)"></dv-erwerbspensum-list>
     </div>
 
-    <!--Buttons-->
-    <dv-navigation dv-previous="true" dv-next="true" dv-next-disabled="vm.isSaveDisabled()" dv-sub-step="1">
-    </dv-navigation>
-
+    <div class="row">
+        <div class="col-md-12">
+            <!--Buttons-->
+            <dv-navigation dv-previous="true" dv-next="true" dv-next-disabled="vm.isSaveDisabled()" dv-sub-step="1">
+            </dv-navigation>
+        </div>
+    </div>
 </div>

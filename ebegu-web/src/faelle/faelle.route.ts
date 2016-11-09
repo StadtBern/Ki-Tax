@@ -5,19 +5,19 @@ import {IState} from 'angular-ui-router';
 faelleRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function faelleRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/faelle');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 function getStates(): IState[] {
     return [
-        new EbeguPendenzenListState()
+        new EbeguFaelleListState()
     ];
 }
 
 //STATES
 
-export class EbeguPendenzenListState implements IState {
+export class EbeguFaelleListState implements IState {
     name = 'faelle';
-    template = '<faelle-list-view>';
+    template = '<faelle-list-view flex="auto" class="overflow-auto">';
     url = '/faelle';
 }

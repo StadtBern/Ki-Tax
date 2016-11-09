@@ -1,0 +1,35 @@
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
+
+.user-menu {
+    float: right;
+    display: block;
+    font-size: 1.4rem;
+    a {
+        text-decoration: none;
+        color: @contrast-darkest;
+        letter-spacing: normal;
+        font-size: 1.4rem;
+        &:hover {
+            color: @contrast-darkest;
+            text-decoration: none;
+        }
+    }
+    .md-button:not([disabled]):hover {
+        background: @contrast-light;
+    }
+    button {
+        letter-spacing: normal;
+        background: @contrast-lightest;
+        margin: 0;
+        height: @navbar-height;
+        font-size: 1.4rem;
+        span {
+            font-size: 1.4rem;
+        }
+        &:hover {
+            color: @contrast-darkest;
+            background: @contrast-light;
+        }
+    }
+}

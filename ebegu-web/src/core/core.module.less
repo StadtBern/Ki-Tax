@@ -1,7 +1,7 @@
 /* Component LESS */
-@import '../variables.less';
+@import '../style/variables.less';
+@import '../style/mixins.less';
 /* Add Component LESS Above */
-
 .ebegu {
     //smart table
     .st-selected, .table-striped .st-selected {
@@ -18,7 +18,7 @@
     }
 
     .subTitle {
-        font-size: 18px;
+        font-size: 1.8rem;
     }
 
     .bisher {
@@ -27,88 +27,65 @@
         background-color: lightgrey;
     }
 
-    .next, .previous, .cancel, .save {
-        font-size: 16px;
-        font-weight: bold;
-        color: black;
-    }
-
     .inlineHint {
         font-style: italic;
-        font-size: 14px;
+        font-size: 1.4rem;
+        margin-bottom: 3.5rem;
     }
 
     //SmartTable Styles
     .sortable {
         cursor: pointer;
+        white-space: nowrap;
     }
     .sortable:after {
+        font-size: 1.2rem;
+        vertical-align: middle;
+        display: inline-block;
+        line-height: 0.8rem;
         font-family: FontAwesome;
-        content: "\f0dc";
+        content: "\f106\A\f107";
+        white-space: pre;
+        width: 3.0rem;
         padding-left: 1em;
+
     }
     .st-sort-ascent:after {
+        transition: all 3s;
+        font-size: 1.2rem;
         font-family: FontAwesome;
-        content: "\f0de";
+        content: "\f106\A ";
+        white-space: pre;
     }
     .st-sort-descent:after {
+        font-size: 1.2rem;
         font-family: FontAwesome;
-        content: "\f0dd";
+        content: " \A\f107";
+        white-space: pre;
+
     }
 
     hr.header {
-        height: 2px;
+        height: 0.1rem;
         border: none;
         color: #333;
         background-color: #333;
         margin-top: 0;
-    }
-
-    //    error styling
-    form {
-        input[type="text"], input[type="number"] {
-            border: 0;
-            border-bottom: 1px solid lightgray;
-            box-shadow: 0 0 0 @input-boder-focus;
-            outline: 0;
-            border-radius: 0px;
-            font-size: 20px;
-            font-weight: 600;
-            color: black;
-            padding: 2px 2px 1px;
-            -moz-appearance:textfield; // spinner in firefox sieht doof aus -> disable
-        }
-
-        input[type="text"]:placeholder-shown {
-            font-size: 16px;
-        }
-
-        input[type="text"]:focus {
-            border-color: @input-boder-focus;
-            //this simulates the outline that chrome places around focused fields using css
-            outline: none; /*or outline-color:#FFFFFF; if the first doesn't work*/
-            border: 1px solid @input-boder-focus;
-            -webkit-box-shadow: 0px 0px 4px 0px @input-boder-focus;
-            box-shadow: 0px 0px 4px 0px @input-boder-focus;
-        }
-
-        label {
-            font-weight: normal;
-        }
+        margin-bottom: 5rem;
     }
     .marginLeft10 {
-        margin-left: @small-abstand;
+        margin-left: 1rem;
 
     }
     .marginTop10 {
-        margin-top: @small-abstand;
+        margin-top: 1rem;
     }
     .marginTop20 {
-        margin-top: @normal-abstand;
+        margin-top: 2rem;
     }
 
     .marginTop40 {
-        margin-top: 40px;
+        margin-top: 4rem;
     }
 
     //errors sofort nach verlassen des feldes anzeigen oder sobald das form submitted wurde
@@ -120,41 +97,43 @@
         }
 
     }
-
-//    Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
+    // aktuell gibt es eingentlich keine hints mehr
+    // Damit wir unter den inputs hints anzeigen koennen schieben wir die errors noch bisschen runter wenn ein Hint existiert
     .hint {
+        .italic();
+        letter-spacing: 0.135rem;
         position: absolute;
-        left: 2px;
+        left: 0.2rem;
         right: auto;
-        bottom: 7px;
-        font-size: 12px;
-        line-height: 14px;
+        bottom: 0.7rem;
+        font-size: 1.4rem;
+        line-height: 2.5rem;
         transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
-        color: grey;
+        color: @contrast-darkest;
     }
 
-    md-input-container .error.hint [ng-messages]{
+    md-input-container .error.hint [ng-messages] {
         position: relative;
         -webkit-order: 4;
         -ms-flex-order: 4;
         order: 4;
         overflow: hidden;
-        top: 16px;
+        top: 1.6rem;
         clear: left;
     }
 
     ._md-open-menu-container, .md-open-menu-container {
-        z-index: 5000 !important;
+        z-index: @z-index-menu !important;
     }
 
     .well-status-warten {
-        background-color: #f6c49a;
+        background-color: @warning-light;
     }
     .well-status-bestaetigt {
-        background-color: #caeadb;
+        background-color: @success-light;
     }
     .well-status-abgewiesen {
-        background-color: #d35b70;
+        background-color: @danger-light;
     }
 
 }

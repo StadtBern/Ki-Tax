@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.PensumFachstelle;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -85,6 +86,8 @@ public class WohnhaftImGleichenHaushaltRuleTest {
 
 	private Betreuung prepareData(final int pensum, final Integer prozentImGleichemHaushalt, int fachstelle) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getKind().getKindJA().setWohnhaftImGleichenHaushalt(prozentImGleichemHaushalt);
 		if (fachstelle > 0) {
 			betreuung.getKind().getKindJA().setPensumFachstelle(new PensumFachstelle());

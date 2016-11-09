@@ -44,6 +44,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Properties" %>
+<%@ page import="java.io.IOException" %>
 
 <%--
     spSingleLogoutPOST.jsp
@@ -148,7 +149,7 @@
         if (isRelayStateURLValid) {
             try {
                  response.sendRedirect(relayState);
-            } catch (java.io.IOException ioe) {
+            } catch (IOException ioe) {
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(
                     "Exception when redirecting to " +
@@ -261,7 +262,7 @@ boolean processSAELogout(
             encSecret =
                 (String) hp.get(SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
         }
-        if (secret == null || secret.length() == 0) {
+        if (secret == null || secret.isEmpty()) {
             SAML2Utils.debug.error(
                 "spSLOPOST:SAE:processing App SLO:getSAEAttrs no secret/key");
             return false;

@@ -1,32 +1,34 @@
-<div class="fallCreationView row">
+<div class="fallCreationView gesuchModul">
     <div class="row">
         <div class="col-md-12">
-            <h4 class="mainTitle">
+            <h1 class="mainTitle">
                 <span ng-bind="vm.getTitle()"></span>
-            </h4>
+            </h1>
+            <hr class="header"/>
         </div>
     </div>
-    <hr class="header"/>
-    <form role="form" name="form" class="" novalidate unsaved-warning-form>
-        <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="form" class="" novalidate unsaved-warning-form>
+                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
-            <!--Eingangsdatum-->
-            <div class="row">
-                <div class="col-md-6">
-                    <dv-input-container class="form-group">
-                        <label data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
-                        </label>
-                        <dv-datepicker input-id="eingangsdatum_ID" name="eingangsdatum"
-                                       ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
-                                       class="input-element">
-                        </dv-datepicker>
-                        <dv-error-messages for="form.eingangsdatum.$error"
-                                           class="error"></dv-error-messages>
-                    </dv-input-container>
-                </div>
-            </div>
+                    <!--Eingangsdatum-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="EINGANGSDATUM" for="eingangsdatum_ID">
+                                </label>
+                                <dv-datepicker input-id="eingangsdatum_ID" name="eingangsdatum"
+                                               ng-model="vm.getGesuchModel().eingangsdatum" ng-required="true"
+                                               class="input-element">
+                                </dv-datepicker>
+                                <dv-error-messages for="form.eingangsdatum.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
-            <!--Gesuchsperioden. Nur fuer Erstgesuch-->
+                    <!--Gesuchsperioden. Nur fuer Erstgesuch-->
 
             <div ng-if="vm.gesuchModelManager.isErstgesuch()">
                 <div class="row">
@@ -54,7 +56,7 @@
             <!--Mutationelemente auswaehlen. Nur fuer Mutationen-->
             <div ng-if="!vm.gesuchModelManager.isErstgesuch()">
 
-                <p class="inlineHint" data-translate="MUTATION_AUSWAHL_TEXT"></p>
+                        <p class="inlineHint" data-translate="MUTATION_AUSWAHL_TEXT"></p>
 
                 <fieldset ng-disabled="vm.createNewParam">
                     <div ng-if="vm.showError">
@@ -74,7 +76,8 @@
                                                  name="mutationFamiliensituation"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  aria-label="mutationFamiliensituation" ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true" dv-enable-element
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationFamiliensituation"
+                                                 dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                         <span data-translate="MUTATION_AUSWAHL_FAMSITUATION"></span>
@@ -204,9 +207,9 @@
                                                  name="mutationFinanzielleSituation"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationFinanzielleSituation"
                                                  aria-label="mutationFinanzielleSituation" dv-enable-element
-                                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                                 dv-enable-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtRole()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                                         <span data-translate="MUTATION_AUSWAHL_FINANZIELLESITUATION"></span>
                                     </md-checkbox>
@@ -223,7 +226,7 @@
                                                  name="mutationEinkommensverschlechterung"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationEinkommensverschlechterung"
                                                  aria-label="mutationEinkommensverschlechterung" dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
@@ -237,9 +240,10 @@
             </div>
         </fieldset>
 
-        <!--Buttons-->
-        <dv-navigation dv-next="true" dv-save="vm.save(form)">
-        </dv-navigation>
-    </form>
-
+                <!--Buttons-->
+                <dv-navigation dv-next="true" dv-save="vm.save(form)">
+                </dv-navigation>
+            </form>
+        </div>
+    </div>
 </div>

@@ -1,159 +1,161 @@
-<div class="einkommensverschlechterungSteuern row">
-    <div class="col-md-12">
+<div class="einkommensverschlechterungSteuern gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
 
-        <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form novalidate>
-            <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
+            <form ng-submit="vm.submit(form)" role="form" name="form" class="" unsaved-warning-form novalidate>
+                <fieldset ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()">
 
-                <!-- -----------------------------------------BasisJahr+1----------------------------------------------- -->
+                    <!-- -----------------------------------------BasisJahr+1----------------------------------------------- -->
 
-                <div ng-if="vm.showFragen_BjP1()">
+                    <div ng-if="vm.showFragen_BjP1()">
 
 
-                    <h4 class="mainTitle">
+                        <h1 class="mainTitle">
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></span>
-                    </h4>
-                    <hr class="header"/>
+                        </h1>
+                        <hr class="header"/>
 
-                    <!-- Gemeinsame Steuererklaerung -->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
-                                <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
-                                                    ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.gemeinsameStekClicked_BjP1()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP1.$error"
-                                                   class="error"></dv-error-messages>
+                        <!-- Gemeinsame Steuererklaerung -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
+                                    <dv-radio-container name="gemeinsameSteuererklaerung_BjP1"
+                                                        ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP1"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.gemeinsameStekClicked_BjP1()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP1.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Steuerveranlagung -->
+                        <div class="row">
+                            <div class="col-md-12" ng-if="vm.showSteuerveranlagung_BjP1()">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
+                                    <dv-radio-container name="steuerveranlagung_BjP1"
+                                                        ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.steuerveranlagungClicked_BjP1()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.steuerveranlagung_BjP1.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Steuererklärung -->
+                        <div class="row">
+                            <div class="col-md-12"
+                                 ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                        translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h4>
+                                    <dv-radio-container name="steuererklaerung_BjP1"
+                                                        ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.steuererklaerungClicked_BjP1()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.steuererklaerung_BjP1.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Steuerveranlagung -->
-                    <div class="row">
-                        <div class="col-md-12" ng-if="vm.showSteuerveranlagung_BjP1()">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(1)}"></h4>
-                                <dv-radio-container name="steuerveranlagung_BjP1"
-                                                    ng-model="vm.getEkv_GS1_Bjp1().steuerveranlagungErhalten"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.steuerveranlagungClicked_BjP1()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.steuerveranlagung_BjP1.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- -----------------------------------------BasisJahr+2----------------------------------------------- -->
 
-                    <!-- Steuererklärung -->
-                    <div class="row">
-                        <div class="col-md-12"
-                             ng-if="vm.showSteuerveranlagung_BjP1() && vm.showSteuererklaerung_BjP1()">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(1)}}}"></h4>
-                                <dv-radio-container name="steuererklaerung_BjP1"
-                                                    ng-model="vm.getEkv_GS1_Bjp1().steuererklaerungAusgefuellt"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.steuererklaerungClicked_BjP1()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.steuererklaerung_BjP1.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- -----------------------------------------BasisJahr+2----------------------------------------------- -->
-
-                <div ng-if="vm.showFragen_BjP2()">
-                    <!-- Gemeinsame Steuererklaerung -->
-                    <h4 class="mainTitle">
+                    <div ng-if="vm.showFragen_BjP2()">
+                        <!-- Gemeinsame Steuererklaerung -->
+                        <h1 class="mainTitle">
                     <span data-translate="EKVI_ZUSAETZLICHE_FRAGEN"
                           translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></span>
-                    </h4>
-                    <hr class="header"/>
+                        </h1>
+                        <hr class="header"/>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
-                                <dv-radio-container name="gemeinsameSteuererklaerung_BjP2"
-                                                    ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.gemeinsameStekClicked_BjP2()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP2.$error"
-                                                   class="error"></dv-error-messages>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEK_GEMEINSAM"
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
+                                    <dv-radio-container name="gemeinsameSteuererklaerung_BjP2"
+                                                        ng-model="vm.getEinkommensverschlechterungsInfo().gemeinsameSteuererklaerung_BjP2"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.gemeinsameStekClicked_BjP2()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.gemeinsameSteuererklaerung_BjP2.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Steuerveranlagung -->
+                        <div class="row">
+                            <div class="col-md-12" ng-if="vm.showSteuerveranlagung_BjP2()">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
+                                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
+                                    <dv-radio-container name="steuerveranlagung_BjP2"
+                                                        ng-model="vm.getEkv_GS1_Bjp2().steuerveranlagungErhalten"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.steuerveranlagungClicked_BjP2()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.steuerveranlagung_BjP2.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Steuererklärung -->
+                        <div class="row">
+                            <div class="col-md-12"
+                                 ng-if="vm.showSteuerveranlagung_BjP2() && vm.showSteuererklaerung_BjP2()">
+                                <div class="form-group">
+                                    <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
+                                        translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></h4>
+                                    <dv-radio-container name="steuererklaerung_BjP2"
+                                                        ng-model="vm.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt"
+                                                        ng-required="true" class="radio input-element"
+                                                        ng-change="vm.steuererklaerungClicked_BjP2()"
+                                                        dv-enable-element
+                                                        dv-enable-allowed-roles="vm.allowedRoles"
+                                                        dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    </dv-radio-container>
+                                    <dv-error-messages for="form.steuererklaerung_BjP2.$error"
+                                                       class="error"></dv-error-messages>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </fieldset>
 
-                    <!-- Steuerveranlagung -->
-                    <div class="row">
-                        <div class="col-md-12" ng-if="vm.showSteuerveranlagung_BjP2()">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
-                                    translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrPlus(2)}"></h4>
-                                <dv-radio-container name="steuerveranlagung_BjP2"
-                                                    ng-model="vm.getEkv_GS1_Bjp2().steuerveranlagungErhalten"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.steuerveranlagungClicked_BjP2()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.steuerveranlagung_BjP2.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
+                <!-- -------------------------------------------Navigation--------------------------------------------  -->
+                <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="3">
+                </dv-navigation>
+            </form>
 
-                    <!-- Steuererklärung -->
-                    <div class="row">
-                        <div class="col-md-12"
-                             ng-if="vm.showSteuerveranlagung_BjP2() && vm.showSteuererklaerung_BjP2()">
-                            <div class="form-group">
-                                <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERERKLAERUNG"
-                                    translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrPlus(2)}}}"></h4>
-                                <dv-radio-container name="steuererklaerung_BjP2"
-                                                    ng-model="vm.getEkv_GS1_Bjp2().steuererklaerungAusgefuellt"
-                                                    ng-required="true" class="radio input-element"
-                                                    ng-change="vm.steuererklaerungClicked_BjP2()"
-                                                    dv-enable-element
-                                                    dv-enable-allowed-roles="vm.allowedRoles"
-                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                </dv-radio-container>
-                                <dv-error-messages for="form.steuererklaerung_BjP2.$error"
-                                                   class="error"></dv-error-messages>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <!-- -------------------------------------------Navigation--------------------------------------------  -->
-            <dv-navigation dv-previous="true" dv-next="true" dv-save="vm.save(form)" dv-sub-step="3">
-            </dv-navigation>
-        </form>
+        </div>
 
     </div>
-
 </div>

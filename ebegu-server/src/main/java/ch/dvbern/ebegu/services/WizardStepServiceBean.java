@@ -4,8 +4,8 @@ import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.*;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.commons.lang.Validate;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -269,7 +269,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
 						.stream().filter(kindContainer -> kindContainer.getKindJA().getFamilienErgaenzendeBetreuung())
 						.collect(Collectors.toList());
-					WizardStepStatus status = (kinderFromGesuch.size() > 0) ? WizardStepStatus.OK : WizardStepStatus.NOK;
+					WizardStepStatus status = (!kinderFromGesuch.isEmpty()) ? WizardStepStatus.OK : WizardStepStatus.NOK;
 					wizardStep.setWizardStepStatus(status);
 				}
 			}
@@ -281,11 +281,17 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-				} else if (fromOneGSToTwoGS(oldEntity, newEntity)) {
+
+				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity)) {
+
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-					} else if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
-						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
+						wizardStep.setVerfuegbar(true);
+
+					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
+						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
+						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
+
 						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
 						wizardStep.setVerfuegbar(false);
 					}
@@ -327,22 +333,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = (allBetreuungenRequiringErwerbspensum.size() > 0 && erwerbspensenForGesuch.size() <= 0)
+		WizardStepStatus status = (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0)
 			? WizardStepStatus.NOK : WizardStepStatus.OK;
 		wizardStep.setWizardStepStatus(status);
-	}
-
-	/**
-	 * Berechnet ob die Daten bei der Familiensituation von einem GS auf 2 GS geaendert wurde.
-	 *
-	 * @param oldFamiliensituation
-	 * @param newFamiliensituation
-	 * @return
-	 */
-	private boolean fromOneGSToTwoGS(Familiensituation oldFamiliensituation, Familiensituation newFamiliensituation) {
-		Validate.notNull(oldFamiliensituation);
-		Validate.notNull(newFamiliensituation);
-		return !oldFamiliensituation.hasSecondGesuchsteller() && newFamiliensituation.hasSecondGesuchsteller();
 	}
 
 	/**

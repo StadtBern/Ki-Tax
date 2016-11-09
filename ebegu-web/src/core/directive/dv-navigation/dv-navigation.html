@@ -1,19 +1,17 @@
 <div class="row">
-    <div class="col-md-6">
-        <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="btn btn-link previous">
-            <span class="fa fa-chevron-left"></span>
+    <div class="col-sm-12 col-md-6 text-right">
+        <dv-loading-button ng-if="vm.dvPrevious()" button-click="vm.previousStep()" button-class="previous">
             <span ng-bind="vm.getPreviousButtonName()"></span>
         </dv-loading-button>
-        <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="btn btn-link cancel" type="reset">
+        <dv-loading-button ng-if="vm.doesCancelExist()" button-click="vm.cancel()" button-class="cancel" type="reset">
             <span data-translate="ABBRECHEN_UPPER"></span>
         </dv-loading-button>
     </div>
 
-    <div class="col-md-6 text-right">
-        <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="btn btn-link next"
-                           button-disabled="vm.isNextDisabled()" title="{{vm.getTooltip()}}">
+    <div class="col-sm-12 col-md-6">
+        <dv-loading-button ng-if="vm.dvNext()" button-click="vm.nextStep()" button-class="next"
+                           button-disabled="vm.isNextButtonDisabled()" title="{{vm.getTooltip()}}">
             <span ng-bind="vm.getNextButtonName()"></span>
-            <span class="fa fa-chevron-right"></span>
         </dv-loading-button>
     </div>
 </div>

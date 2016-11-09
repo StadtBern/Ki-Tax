@@ -1,0 +1,89 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+.color-success {
+    background: @success;
+    &:hover {
+        background: @success-dark;
+    }
+}
+
+.color-warning {
+    background: @warning;
+    &:hover {
+        background: @warning-dark;
+    }
+}
+
+.color-danger {
+    background: @danger;
+    &:hover {
+        background: @danger-dark;
+    }
+}
+
+.btn-link {
+    span {
+        line-height: normal;
+    }
+}
+
+.dv-btn-sm {
+    height: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    letter-spacing: normal;
+    span {
+        line-height: 3rem;
+    }
+}
+
+a.dv-btn {
+
+    display: block;
+    text-decoration: none;
+    span {
+        text-decoration: none;
+        line-height: 4rem;
+        text-align: center;
+    }
+}
+button, .dv-btn {
+    .normal();
+    .capitalize();
+    white-space: nowrap;
+    font-size: 1.4rem;
+    text-align: center;
+    letter-spacing: 0.2rem;
+    border: none;
+    background: @primary;
+    color: @contrast-lightest;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    height: 4rem;
+    span {
+        line-height: 4rem;
+        text-align: center;
+    }
+    &.active, &:active {
+        background: @primary;
+        color: @contrast-lightest;
+
+    }
+    &:hover {
+        background: @primary-dark;
+        color: @contrast-lightest;
+    }
+
+    &:active, &:hover {
+        outline: none !important;
+        text-decoration: none !important;
+    }
+    &:focus {
+        //TODO: Insert outline or smth
+    }
+    &[disabled], &[disabled]:hover {
+        color: @contrast-lightest;
+        background: @contrast;
+    }
+}

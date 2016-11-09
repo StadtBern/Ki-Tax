@@ -1,22 +1,27 @@
-<div class="betreuungListView">
-    <div class="col-md-12">
-        <h4 class="mainTitle">
-            <span data-translate="KINDER_MIT_BETREUUNG"></span>
-        </h4>
-        <hr class="header"/>
+<div class="betreuungListView gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mainTitle">
+                <span data-translate="KINDER_MIT_BETREUUNG"></span>
+            </h1>
+            <hr class="header"/>
+        </div>
+    </div>
 
-        <!--Fuer jedes Kind Tabelle anzeigen-->
-        <div ng-repeat="kind in vm.getKinderWithBetreuungList()">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4 class="mainTitle">
-                        <span>{{kind.kindJA.getFullName()}}</span>
-                    </h4>
+    <!--Fuer jedes Kind Tabelle anzeigen-->
+    <div class="row">
+        <div class="col-md-12">
+            <div ng-repeat="kind in vm.getKinderWithBetreuungList()" style="margin:2rem;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="mainTitle">
+                            <span>{{kind.kindJA.getFullName()}}</span>
+                        </h1>
+                    </div>
                 </div>
-            </div>
-            <!--Tabelle mit Betreuungen-->
-            <div class="row">
-                <div class="col-md-12 table-responsive">
+                <!--Tabelle mit Betreuungen-->
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
 
                     <table st-table="displayedCollection" st-safe-src="kind.betreuungen"
                            class="table table-striped table-hover">
@@ -39,7 +44,7 @@
                                 dv-show-expression="vm.canRemoveBetreuung(betreuung)"
                                 ng-click="$event.stopPropagation()">
                                 <dv-loading-button type="button" button-click="vm.removeBetreuung(kind, betreuung)"
-                                                   button-class="btn btn-sm">
+                                                   button-class="dv-btn-sm">
                                     <i class="fa fa-minus">
                                     </i>
                                 </dv-loading-button>
@@ -60,22 +65,22 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-12" style="margin-bottom: 20px" dv-show-element
+                <div class="col-md-12" dv-show-element
                      dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                      dv-show-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
                     <dv-loading-button type="button" button-click="vm.createBetreuung(kind)"
-                                       button-class="btn btn-sm btn-success">
+                                       button-class="dv-btn-sm color-success">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span data-translate="BETREUUNG_HINZUFUEGEN"></span>
                     </dv-loading-button>
                 </div>
 
+                </div>
             </div>
+            <!--Buttons-->
+            <dv-navigation dv-previous="true" dv-next="true" dv-sub-step="1">
+            </dv-navigation>
         </div>
-
-        <!--Buttons-->
-        <dv-navigation dv-previous="true" dv-next="true" dv-sub-step="1">
-        </dv-navigation>
-
     </div>
 </div>
+

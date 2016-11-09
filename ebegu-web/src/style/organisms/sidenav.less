@@ -1,0 +1,105 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+#sidenavContainer {
+    color: @contrast-darkest;
+    overflow-y: auto;
+    flex: 0 0 auto;
+    z-index: @z-index-sidenav;
+    width: 35.5rem;
+    background: @contrast-lightest;
+    position: relative;
+    .row {
+        margin: 0;
+    }
+    .gesuchMenu {
+        padding: 0;
+        position: absolute;
+        left: 0;
+
+    }
+    li {
+        position: relative;
+        height: @sidebar-height;
+        box-sizing: content-box;
+        width: 35.5rem;
+        list-style: none;
+        &:before {
+            content: "";
+            position: absolute;
+            left: 2.5rem;
+            bottom: 0;
+            height: 0.1rem;
+            width: 30rem; /* or 100px */
+            border-bottom: 0.1rem solid @contrast;
+        }
+        button {
+            border: none;
+            height: @sidebar-height;
+            text-align: left;
+            padding: 0;
+            &:focus, &:active, &:hover {
+                outline: none !important;
+                text-decoration: none !important;
+            }
+            &[disabled] {
+                color: @contrast-dark;
+            }
+        }
+
+        span {
+            margin-left: 2.5rem;
+            letter-spacing: 0.1rem;
+            line-height: @sidebar-height;
+            font-size: 1.6rem;
+            text-align: left;
+            color: @contrast-darkest;
+        }
+        .fa {
+            margin: 0;
+            text-align: center;
+            padding-right: 3rem;
+        }
+
+    }
+    li.active-element {
+        &:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            height: @sidebar-height;
+            width: 0.7rem; /* or 100px */
+            border-left: 0.7rem solid @primary;
+        }
+        &:before {
+            left: 2.5rem;
+
+        }
+        span {
+            margin-left: 2.5rem;
+            .bold();
+            color: @primary;
+
+        }
+        .fa {
+            margin: 0;
+        }
+
+    }
+
+    .fa-check.green {
+        color: @success;
+    }
+    .fa-close.red {
+        color: @danger;
+    }
+    .fa-hourglass.orange {
+        color: @warning;
+    }
+    .fa-pencil.black {
+        color: @contrast-darkest;
+    }
+
+}
