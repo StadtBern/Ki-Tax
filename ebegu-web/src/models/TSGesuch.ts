@@ -15,6 +15,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
     private _mutationsdaten: TSMutationsdaten;
     private _bemerkungen: string;
+    private _laufnummer: number;
 
 
     public get gesuchsteller1(): TSGesuchsteller {
@@ -71,6 +72,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set bemerkungen(value: string) {
         this._bemerkungen = value;
+    }
+
+    get laufnummer(): number {
+        return this._laufnummer;
+    }
+
+    set laufnummer(value: number) {
+        this._laufnummer = value;
     }
 
     public isMutation(): boolean {

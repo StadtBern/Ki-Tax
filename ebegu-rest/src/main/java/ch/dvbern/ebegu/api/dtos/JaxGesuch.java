@@ -38,6 +38,8 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	@Nullable
 	private JaxMutationsdaten mutationsdaten;
 
+	@Nullable
+	private int laufnummer;
 
 
 	public static long getSerialVersionUID() {
@@ -104,6 +106,15 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 
 	public void setMutationsdaten(@Nullable JaxMutationsdaten mutationsdaten) {
 		this.mutationsdaten = mutationsdaten;
+	}
+
+	@Nullable
+	public int getLaufnummer() {
+		return laufnummer;
+	}
+
+	public void setLaufnummer(@Nullable int laufnummer) {
+		this.laufnummer = laufnummer;
 	}
 }
 

@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -103,6 +104,11 @@ public class Gesuch extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "gesuch")
 	private Set<DokumentGrund> dokumentGrunds;
 
+	@NotNull
+	@Min(0)
+	@Column(nullable = false)
+	private int laufnummer = 0;
+
 
 	public Gesuch() {
 	}
@@ -132,8 +138,7 @@ public class Gesuch extends AbstractEntity {
 
 		if (toCopy.isMutation()) {
 			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
-		}
-		else { // beim ErstGesuch holen wir direkt die normale Familiensituation
+		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
 			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
 		}
 
@@ -150,6 +155,7 @@ public class Gesuch extends AbstractEntity {
 		}
 
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
+		this.setLaufnummer(toCopy.getLaufnummer() + 1);
 	}
 
 	@Nullable
@@ -302,6 +308,15 @@ public class Gesuch extends AbstractEntity {
 //		if (this.mutationsdaten != null) {
 //			this.mutationsdaten.setGesuch(this);
 //		}
+	}
+
+	@Nullable
+	public int getLaufnummer() {
+		return laufnummer;
+	}
+
+	public void setLaufnummer(@Nullable int laufnummer) {
+		this.laufnummer = laufnummer;
 	}
 
 	@SuppressWarnings("ObjectEquality")

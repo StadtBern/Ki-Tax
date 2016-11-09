@@ -194,6 +194,7 @@ describe('EbeguRestUtil', function () {
                 expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
                 expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
                 expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
+                expect(transformedGesuch.laufnummer).toEqual(myGesuch.laufnummer);
                 expect(transformedGesuch.typ).toEqual(myGesuch.typ);
             });
         });

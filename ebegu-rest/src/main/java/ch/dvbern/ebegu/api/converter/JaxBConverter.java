@@ -602,6 +602,7 @@ public class JaxBConverter {
 			}
 		}
 		antrag.setBemerkungen(antragJAXP.getBemerkungen());
+		antrag.setLaufnummer(antragJAXP.getLaufnummer());
 
 		return antrag;
 	}
@@ -649,6 +650,7 @@ public class JaxBConverter {
 			jaxGesuch.setEinkommensverschlechterungInfo(this.einkommensverschlechterungInfoToJAX(persistedGesuch.getEinkommensverschlechterungInfo()));
 		}
 		jaxGesuch.setBemerkungen(persistedGesuch.getBemerkungen());
+		jaxGesuch.setLaufnummer(persistedGesuch.getLaufnummer());
 
 		return jaxGesuch;
 	}
@@ -1798,6 +1800,7 @@ public class JaxBConverter {
 			antrag.setVerantwortlicher(gesuch.getFall().getVerantwortlicher().getFullName());
 		}
 		antrag.setVerfuegt(AntragStatus.VERFUEGT.equals(gesuch.getStatus()));
+		antrag.setLaufnummer(gesuch.getLaufnummer());
 		return antrag;
 	}
 

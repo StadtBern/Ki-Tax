@@ -538,6 +538,7 @@ export default class EbeguRestUtil {
         restGesuch.mutationsdaten = this.mutationsdatenToRestObject({}, gesuch.mutationsdaten);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
         restGesuch.bemerkungen = gesuch.bemerkungen;
+        restGesuch.laufnummer = gesuch.laufnummer;
         return restGesuch;
     }
 
@@ -551,6 +552,7 @@ export default class EbeguRestUtil {
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
+            gesuchTS.laufnummer = gesuchFromServer.laufnummer;
             return gesuchTS;
         }
         return undefined;
@@ -1148,6 +1150,7 @@ export default class EbeguRestUtil {
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
+        restPendenz.laufnummer = pendenz.laufnummer;
         return restPendenz;
     }
 
@@ -1165,6 +1168,7 @@ export default class EbeguRestUtil {
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;
         pendenzTS.verfuegt = pendenzFromServer.verfuegt;
+        pendenzTS.laufnummer = pendenzFromServer.laufnummer;
         return pendenzTS;
     }
 

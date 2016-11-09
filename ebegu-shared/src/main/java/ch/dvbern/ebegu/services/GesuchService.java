@@ -104,4 +104,11 @@ public interface GesuchService {
 
 	@Nonnull
 	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
+
+
+	/**
+	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
+	 * @param fallId
+	 */
+	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 }

@@ -722,7 +722,7 @@
     "VORLAGE_BRIEF_TAGESSTAETTE_SCHULKINDER": "Vorlage Brief Tagesstätte Schulkinder",
     "TOOLBAR_GESUCH": "Erstgesuch",
     "TOOLBAR_GESUCH_NO_DATE": "Erstgesuch",
-    "TOOLBAR_MUTATION": "Mutation vom {{date}}",
+    "TOOLBAR_MUTATION": "Mutation {{nummer}} vom {{date}}",
     "TOOLBAR_MUTATION_NO_DATE": "Mutation",
     "TOOLBAR_MUTIEREN": "MUTIEREN",
     "TOOLBAR_KONTAKT": "KONTAKT",

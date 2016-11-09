@@ -364,16 +364,46 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			root.get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.gueltigkeit).get(DateRange_.gueltigBis),
 			root.get(Gesuch_.eingangsdatum),
 			root.get(Gesuch_.typ),
-			root.get(Gesuch_.status)).distinct(true);
+			root.get(Gesuch_.status),
+			root.get(Gesuch_.laufnummer)).distinct(true);
 
-		ParameterExpression<String> dateParam = cb.parameter(String.class, "fallId");
-		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), dateParam);
+		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 
 		query.where(predicate);
+		query.orderBy(cb.asc(root.get(Gesuch_.laufnummer)));
 		TypedQuery<JaxAntragDTO> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(dateParam, fallId);
-		query.orderBy(cb.asc(root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb)));
-		return q.getResultList();
+		q.setParameter(fallIdParam, fallId);
+		List<JaxAntragDTO> resultList = q.getResultList();
+		return resultList;
+	}
+
+	@Override
+	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+		Predicate predicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		query.where(predicate);
+		query.orderBy(cb.asc(root.get(Gesuch_.timestampErstellt)));
+		TypedQuery<Gesuch> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(fallIdParam, fallId);
+		List<Gesuch> resultList = q.getResultList();
+
+		//Laufnummern einfuegen
+		if(!resultList.isEmpty()){
+			int i = 0;
+			for (Gesuch gesuch : resultList) {
+				if (gesuch.getTyp() == AntragTyp.GESUCH) {
+					gesuch.setLaufnummer(0);
+				} else {
+					i++;
+					gesuch.setLaufnummer(i);
+				}
+				updateGesuch(gesuch, false);
+			}
+		}
 	}
 
 	@Override
