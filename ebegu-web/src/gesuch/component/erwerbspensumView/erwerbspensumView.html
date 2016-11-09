@@ -103,7 +103,7 @@
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensumDisabled"
+                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensumDisabled()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>

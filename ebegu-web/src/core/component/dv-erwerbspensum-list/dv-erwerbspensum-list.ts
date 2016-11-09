@@ -72,7 +72,8 @@ export class DVErwerbspensumListController {
 
     isRemoveAllowed(pensumToEdit: any) {
         // Loeschen erlaubt, wenn Erstgesuch ODER Jugendamt
-        return this.addButtonVisible && (pensumToEdit.erwerbspensumJA.vorgaengerId === null || this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA));
+        return this.addButtonVisible && (pensumToEdit.erwerbspensumJA.vorgaengerId === null ||
+            this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA));
     }
 }
 
