@@ -251,7 +251,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	@Transient
 	public BetreuungsangebotTyp getBetreuungsangebotTyp() {
-		if(getInstitutionStammdaten()!= null) {
+		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
 		return  null;

@@ -190,7 +190,6 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 			doCompare(iteratorExpected.next(),
 				iteratorCalculated.next(), fullName, betreuung);
 		}
-
 	}
 
 	/**

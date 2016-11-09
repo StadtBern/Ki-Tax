@@ -49,7 +49,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	public Optional<Fall> findFallByNumber(@Nonnull Long fallnummer) {
 		Objects.requireNonNull(fallnummer, "fallnummer muss gesetzt sein");
 		return criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
-
 	}
 
 	@Nonnull

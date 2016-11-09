@@ -470,6 +470,4 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		ep.setGueltigkeit(new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME));
 		return ep;
 	}
-
-
 }

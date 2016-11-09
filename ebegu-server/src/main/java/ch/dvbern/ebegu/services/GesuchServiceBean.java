@@ -47,7 +47,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private WizardStepService wizardStepService;
 	@Inject
 	private AntragStatusHistoryService antragStatusHistoryService;
-
 	@Inject
 	private FallService fallService;
 	@Inject

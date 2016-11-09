@@ -66,7 +66,6 @@ public interface GesuchService {
 	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
-	@Nonnull
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
