@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.rest.test.util.TestJaxDataUtil;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimaps;
 import org.jboss.arquillian.junit.Arquillian;
@@ -20,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 
 /**
  * Tests fuer die Klasse AdresseService
@@ -73,10 +75,16 @@ public class GesuchstellerAndAdresseConverterTest extends AbstractEbeguRestTest 
 		Assert.assertNotNull(gesuchsteller.getId());
 		Assert.assertEquals(3, gesuchsteller.getAdressen().size());
 		ImmutableListMultimap<AdresseTyp, GesuchstellerAdresse> adrByTyp = Multimaps.index(gesuchsteller.getAdressen(), GesuchstellerAdresse::getAdresseTyp);
+
 		GesuchstellerAdresse altAdr = adrByTyp.get(AdresseTyp.KORRESPONDENZADRESSE).get(0);
 		Assert.assertNotNull("Korrespondenzadresse muss vorhanden sein", altAdr);
 		Assert.assertTrue(altAdr.isSame(converter.gesuchstellerAdresseToEntity(gesuchstellerWith3Adr.getAlternativeAdresse(), new GesuchstellerAdresse())));
 
+		ImmutableList<GesuchstellerAdresse> wohnAdressen = adrByTyp.get(AdresseTyp.WOHNADRESSE);
+		Assert.assertEquals(LocalDate.of(1000, 1, 1), wohnAdressen.get(0).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getGueltigAb().minusDays(1), wohnAdressen.get(0).getGueltigkeit().getGueltigBis());
+		Assert.assertEquals(gesuchstellerWith3Adr.getAdressen().get(1).getGueltigAb(), wohnAdressen.get(1).getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(9999, 12, 31), wohnAdressen.get(1).getGueltigkeit().getGueltigBis());
 	}
 
 	@Test

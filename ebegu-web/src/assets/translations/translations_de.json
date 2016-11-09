@@ -383,6 +383,7 @@
     "KIND_HINZUFUEGEN": "Kind hinzufügen",
     "KIND_LOESCHEN": "Wollen Sie das Kind {{kindname}} wirklich löschen?",
     "KIND_LOESCHEN_BESCHREIBUNG": "Alle verknüpfte Datenobjekte werden damit auch gelöscht",
+    "UMZUG_LOESCHEN": "Wollen Sie die Umzugsadresse wirklich löschen?",
     "FAM_ERGAENZENDE_BETREUUNG": "Haben oder möchten Sie familienergänzende Betreuung für das Kind?",
     "MUTTERSPRACHE_DEUTSCH": "Ist die Muttersprache des Kindes deutsch?",
     "EINSCHULUNG": "Wird das Kind per {{date}} eingeschult? (auch Kindergarten)",
@@ -507,6 +508,7 @@
     "INFOTEXT_ERWERBSPENSUM": "Massgebend ist das aktuelle Erwerbspensum (gleichgestellt sind anerkannte Ausbildungen und Arbeitslosigkeit im Rahmen der Vermittlungsfähigkeit).",
     "ERWERBSPENSEN_LIST_TITLE": "Erwerbspensen Liste",
     "ERWERBSPENSEN_LIST_HINT": "Sämtliche Erwerbspensen für die ganze Gesuchsperiode müssen hier erfasst werden!",
+    "UMZUG_LIST_HINT": "Sämtliche Umzugsadressen für die ganze Gesuchsperiode müssen hier erfasst werden!",
     "DATE_PLACEHOLDER": "tt.mm.jjjj",
     "PERCENTAGE_PLACEHOLDER": "Angabe in %",
     "FAM_ERGAENZENDE_BETREUUNG_HELP": "noch_nicht_definiert",
@@ -735,5 +737,11 @@
     "TROTZDEM_VERFUEGEN_UPPER": "TROTZDEM VERFÜGEN",
     "AENDERUNG_PER": "Änderung per",
     "MUTATION_FAMSITUATION_HINT": "Während der laufenden Gesuchsperiode kann die Familiensituation nur einmal mutiert bzw. die Anzahl der Gesuchsteller verändert werden",
-    "MUTATION_FAMSITUATION_TITLE": "Mutation Familiensituation"
+    "MUTATION_FAMSITUATION_TITLE": "Mutation Familiensituation",
+    "UMZUG_TITLE": "Umzug",
+    "BETROFFENE_WAEHLEN": "Betroffen",
+    "BEIDE_GESUCHSTELLER": "beide Gesuchsteller",
+    "UMZUG_ENTFERNEN": "Umzug löschen",
+    "UMZUG_HINZUFUEGEN": "Umzug hinzufügen",
+    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden"
 }

@@ -49,6 +49,7 @@ import ErrorService from '../../core/errors/service/ErrorService';
 import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
+import AdresseRS from '../../core/service/adresseRS.rest';
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -65,7 +66,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -73,7 +74,8 @@ export default class GesuchModelManager {
                 private ebeguRestUtil: EbeguRestUtil, private log: ILogService, private authServiceRS: AuthServiceRS,
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
-                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService) {
+                private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
+                private adresseRS: AdresseRS) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -224,6 +226,7 @@ export default class GesuchModelManager {
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
+                this.backupCurrentGesuch();
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     this.backupCurrentGesuch();
                     //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
@@ -397,8 +400,6 @@ export default class GesuchModelManager {
 
 
     public setStammdatenToWorkWith(gesuchsteller: TSGesuchsteller): TSGesuchsteller {
-        // Die Adresse kommt vom Server ohne das Feld 'showDatumVon', weil dieses ein Client-Feld ist
-        this.calculateShowDatumFlags(gesuchsteller);
         if (this.gesuchstellerNumber === 1) {
             return this.gesuch.gesuchsteller1 = gesuchsteller;
         } else {
@@ -409,7 +410,7 @@ export default class GesuchModelManager {
     public initStammdaten(): void {
         if (!this.getStammdatenToWorkWith()) {
             this.setStammdatenToWorkWith(new TSGesuchsteller());
-            this.getStammdatenToWorkWith().adresse = this.initAdresse();
+            this.getStammdatenToWorkWith().adressen = this.initWohnAdresse();
         }
     }
 
@@ -564,14 +565,6 @@ export default class GesuchModelManager {
         }
     }
 
-    public setUmzugAdresse(showUmzug: boolean): void {
-        if (showUmzug) {
-            this.getStammdatenToWorkWith().umzugAdresse = this.initUmzugadresse();
-        } else {
-            this.getStammdatenToWorkWith().umzugAdresse = undefined;
-        }
-    }
-
     /**
      * Gibt das Jahr des Anfangs der Gesuchsperiode minus 1 zurueck. undefined wenn die Gesuchsperiode nicht richtig gesetzt wurde
      * @returns {number}
@@ -621,11 +614,11 @@ export default class GesuchModelManager {
         return undefined;
     }
 
-    private initAdresse(): TSAdresse {
-        let wohnAdr = new TSAdresse();
-        wohnAdr.showDatumVon = false;
-        wohnAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return wohnAdr;
+    private initWohnAdresse(): Array<TSAdresse> {
+        let wohnAdresse = new TSAdresse();
+        wohnAdresse.showDatumVon = false;
+        wohnAdresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
+        return [wohnAdresse];
     }
 
     private initKorrespondenzAdresse(): TSAdresse {
@@ -633,25 +626,6 @@ export default class GesuchModelManager {
         korrAdr.showDatumVon = false;
         korrAdr.adresseTyp = TSAdressetyp.KORRESPONDENZADRESSE;
         return korrAdr;
-    }
-
-    private initUmzugadresse(): TSAdresse {
-        let umzugAdr = new TSAdresse();
-        umzugAdr.showDatumVon = true;
-        umzugAdr.adresseTyp = TSAdressetyp.WOHNADRESSE;
-        return umzugAdr;
-    }
-
-    public calculateShowDatumFlags(gesuchsteller: TSGesuchsteller): void {
-        if (gesuchsteller.adresse) {
-            gesuchsteller.adresse.showDatumVon = false;
-        }
-        if (gesuchsteller.korrespondenzAdresse) {
-            gesuchsteller.korrespondenzAdresse.showDatumVon = false;
-        }
-        if (gesuchsteller.umzugAdresse) {
-            gesuchsteller.umzugAdresse.showDatumVon = true;
-        }
     }
 
     public getKinderList(): Array<TSKindContainer> {
@@ -1166,4 +1140,5 @@ export default class GesuchModelManager {
                 });
             });
     }
+
 }
