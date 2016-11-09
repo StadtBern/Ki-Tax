@@ -215,12 +215,11 @@ public class FinanzielleSituationRechner {
 					finanzielleSituation.getGeschaeftsgewinnBasisjahr(),
 					finanzielleSituation.getGeschaeftsgewinnBasisjahrMinus1());
 			}
-		} else if (basisJahrPlus == 2) {
-			if (finanzielleSituation != null && einkVersBjp1 != null && einkVersBjp2 != null) {
-				return calcGeschaeftsgewinnDurchschnitt(einkVersBjp2.getGeschaeftsgewinnBasisjahr(),
-					einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
-					finanzielleSituation.getGeschaeftsgewinnBasisjahr());
-			}
+		}
+		else if (basisJahrPlus == 2 && finanzielleSituation != null && einkVersBjp1 != null && einkVersBjp2 != null) {
+			return calcGeschaeftsgewinnDurchschnitt(einkVersBjp2.getGeschaeftsgewinnBasisjahr(),
+				einkVersBjp1.getGeschaeftsgewinnBasisjahr(),
+				finanzielleSituation.getGeschaeftsgewinnBasisjahr());
 		}
 		return null;
 	}
