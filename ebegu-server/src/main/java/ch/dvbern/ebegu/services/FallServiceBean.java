@@ -61,10 +61,4 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		persistence.remove(fallToRemove.get());
 	}
 
-	@Override
-	public void updateGesuchLaufnummerOfAllFaelle() {
-		for (Fall fall : getAllFalle()) {
-			gesuchService.updateLaufnummerOfAllGesucheOfFall(fall.getId());
-		}
-	}
 }

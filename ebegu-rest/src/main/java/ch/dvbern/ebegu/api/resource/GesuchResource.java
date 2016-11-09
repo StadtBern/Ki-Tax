@@ -15,7 +15,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
@@ -56,10 +55,6 @@ public class GesuchResource {
 
 	@Inject
 	private GesuchService gesuchService;
-
-	//TODO remove wijo
-	@Inject
-	private FallService fallService;
 
 	@Inject
 	private InstitutionService institutionService;
@@ -299,16 +294,6 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("fallId") JaxId fallJAXPId) {
 		Validate.notNull(fallJAXPId.getId());
 		return gesuchService.getAllAntragDTOForFall(converter.toEntityId(fallJAXPId));
-	}
-
-	//TODO remove wijo
-	@GET
-	@Path("/updatelaufnummern")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateLaufnummern() {
-		fallService.updateGesuchLaufnummerOfAllFaelle();
-		return Response.ok().build();
 	}
 
 	@ApiOperation(value = "Creates a new Antrag of type Mutation in the database")

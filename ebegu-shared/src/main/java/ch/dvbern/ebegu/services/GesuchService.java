@@ -102,6 +102,5 @@ public interface GesuchService {
 	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
 	 * @param fallId
 	 */
-	@Nonnull
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 }

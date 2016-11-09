@@ -375,7 +375,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@Nonnull
 	public void updateLaufnummerOfAllGesucheOfFall(String fallId) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -389,15 +388,17 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		List<Gesuch> resultList = q.getResultList();
 
 		//Laufnummern einfuegen
-		int i = 0;
-		for (Gesuch gesuch : resultList) {
-			if (gesuch.getTyp() == AntragTyp.GESUCH) {
-				gesuch.setLaufnummer(0);
-			} else {
-				i++;
-				gesuch.setLaufnummer(i);
+		if(!resultList.isEmpty()){
+			int i = 0;
+			for (Gesuch gesuch : resultList) {
+				if (gesuch.getTyp() == AntragTyp.GESUCH) {
+					gesuch.setLaufnummer(0);
+				} else {
+					i++;
+					gesuch.setLaufnummer(i);
+				}
+				updateGesuch(gesuch, false);
 			}
-			updateGesuch(gesuch, false);
 		}
 	}
 

@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -137,8 +138,7 @@ public class Gesuch extends AbstractEntity {
 
 		if (toCopy.isMutation()) {
 			this.familiensituationErstgesuch = toCopy.getFamiliensituationErstgesuch();
-		}
-		else { // beim ErstGesuch holen wir direkt die normale Familiensituation
+		} else { // beim ErstGesuch holen wir direkt die normale Familiensituation
 			this.familiensituationErstgesuch = toCopy.getFamiliensituation();
 		}
 
@@ -155,7 +155,7 @@ public class Gesuch extends AbstractEntity {
 		}
 
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
-		this.setLaufnummer(toCopy.getLaufnummer()+1);
+		this.setLaufnummer(toCopy.getLaufnummer() + 1);
 	}
 
 	@Nullable

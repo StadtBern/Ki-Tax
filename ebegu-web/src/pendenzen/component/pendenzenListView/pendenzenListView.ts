@@ -127,8 +127,4 @@ export class PendenzenListViewController {
             this.$state.go('gesuch.fallcreation', {createNew: false, gesuchId: pendenz.antragId});
         }
     }
-    //TODO remove wijo
-    public alleLaufnummernUpdaten(){
-        this.gesuchRS.alleLaufnummernUpdaten();
-    }
 }
