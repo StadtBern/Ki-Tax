@@ -48,6 +48,11 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Inject
 	private AntragStatusHistoryService antragStatusHistoryService;
 
+	@Inject
+	private FallService fallService;
+	@Inject
+	private GesuchsperiodeService gesuchsperiodeService;
+
 	@Nonnull
 	@Override
 	public Gesuch createGesuch(@Nonnull Gesuch gesuch) {
@@ -380,16 +385,35 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		Optional<Gesuch> gesuch = findGesuch(antragId);
 		if (gesuch.isPresent()) {
-
 			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.get());
+			return getGesuchMutation(mutationsdaten, eingangsdatum, gesuchForMutation);
+		}
+		return Optional.empty();
+	}
 
-			if (gesuchForMutation.isPresent()) {
-				Gesuch mutation = new Gesuch(gesuchForMutation.get());
-				mutation.setEingangsdatum(eingangsdatum);
-				mutation.setMutationsdaten(mutationsdaten);
-				mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
-				return Optional.of(mutation);
-			}
+	@Override
+	@Nonnull
+	public Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+										   @Nonnull LocalDate eingangsdatum) {
+		// Mutiert wird immer das Gesuch mit dem letzten Verfügungsdatum
+
+		final Optional<Fall> fall = fallService.findFallByNumber(fallNummer);
+		final Optional<Gesuchsperiode> gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId);
+
+		if (fall.isPresent() && gesuchsperiode.isPresent()) {
+			Optional<Gesuch> gesuchForMutation = getNeustesVerfuegtesGesuchFuerGesuch(gesuchsperiode.get(), fall.get());
+			return getGesuchMutation(mutationsdaten, eingangsdatum, gesuchForMutation);
+		}
+		return Optional.empty();
+	}
+
+	private Optional<Gesuch> getGesuchMutation(@Nonnull Mutationsdaten mutationsdaten, @Nonnull LocalDate eingangsdatum, Optional<Gesuch> gesuchForMutation) {
+		if (gesuchForMutation.isPresent()) {
+			Gesuch mutation = new Gesuch(gesuchForMutation.get());
+			mutation.setEingangsdatum(eingangsdatum);
+			mutation.setMutationsdaten(mutationsdaten);
+			mutation.setStatus(AntragStatus.IN_BEARBEITUNG_JA); // todo im gesuch online darf dies auch IN_BEARBEITUNG_GS sein
+			return Optional.of(mutation);
 		}
 		return Optional.empty();
 	}
@@ -397,6 +421,12 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	@Override
 	@Nonnull
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		return getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
 		// TODO (team): Diese methode macht, was sie sagt, evt. waere es aber sicherer, das *vorgänger*gesuch zu suchen? Könnte über die neue vorgängerId gemacht werden
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
@@ -405,9 +435,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
 
 		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.getGesuchsperiode());
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiode);
 		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
-		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.getFall());
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), fall);
 
 		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
 		query.select(root);

@@ -22,8 +22,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Integration Test mit den Testfällen.
@@ -58,10 +61,14 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	@Inject
 	private EbeguParameterService ebeguParameterService;
 
+	@Inject
+	private GesuchService gesuchService;
+
+
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
 	 */
-	private final static boolean writeToFile = false;
+	private final static boolean writeToFile = true;
 
 	@Before
 	public void init() {
@@ -74,37 +81,50 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void testVerfuegung_WaeltiDagmar() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
 	@Test
 	public void testVerfuegung_FeutzIvonne() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.FeutzIvonne, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
 	@Test
 	public void testVerfuegung_BeckerNora() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
 	@Test
 	public void testVerfuegung_LuethiMeret() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.LuethiMeret, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
 	@Test
 	public void testVerfuegung_PerreiraMarcia() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.PerreiraMarcia, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
 	@Test
 	public void testVerfuegung_WaltherLaura() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaltherLaura, true, true);
-		ueberpruefeVerfuegungszeitabschnitte(gesuch);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
+	public void testVerfuegung_WaeltiDagmar_mutationHeirat() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
+
+		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),
+			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.DECEMBER, 15), LocalDate.of(2017, Month.JANUARY, 15), true);
+
+		final Optional<Gesuch> gesuch1 = gesuchService.findGesuch(mutieren.getId());
+
+		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationHeirat");
+
 	}
 
 
@@ -112,16 +132,17 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	 * Ueberprüfen der Verfügungszeitabschnitte
 	 *
 	 * @param gesuch
+	 * @param addText
 	 */
-	private void ueberpruefeVerfuegungszeitabschnitte(Gesuch gesuch) {
+	private void ueberpruefeVerfuegungszeitabschnitte(Gesuch gesuch, String addText) {
 		Assert.assertNotNull(gesuch);
 
 		gesuch.getKindContainers().stream().forEach(kindContainer -> {
 				kindContainer.getBetreuungen().stream().forEach(betreuung -> {
 					writeResultsToFile(betreuung.getVerfuegung().getZeitabschnitte(), kindContainer.getKindJA().getFullName(),
-						betreuung.getInstitutionStammdaten().getInstitution().getName(), betreuung.getBetreuungNummer());
+						betreuung.getInstitutionStammdaten().getInstitution().getName(), betreuung.getBetreuungNummer(), addText);
 					compareWithDataInFile(betreuung.getVerfuegung().getZeitabschnitte(),
-						kindContainer.getKindJA().getFullName(), betreuung.getInstitutionStammdaten().getInstitution().getName(), betreuung.getBetreuungNummer());
+						kindContainer.getKindJA().getFullName(), betreuung.getInstitutionStammdaten().getInstitution().getName(), betreuung.getBetreuungNummer(), addText);
 				});
 			}
 		);
@@ -130,8 +151,8 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	/**
 	 * Holt die gespeicherten Verfügungszeitabschnitte und vergleicht diese mit den berechneten
 	 */
-	private void compareWithDataInFile(List<VerfuegungZeitabschnitt> zeitabschnitte, String fullName, String betreuung, Integer betreuungNummer) {
-		final VerfuegungszeitabschnitteData expectedVerfuegungszeitabschnitt = getExpectedVerfuegungszeitabschnitt(fullName, betreuung, betreuungNummer);
+	private void compareWithDataInFile(List<VerfuegungZeitabschnitt> zeitabschnitte, String fullName, String betreuung, Integer betreuungNummer, String addText) {
+		final VerfuegungszeitabschnitteData expectedVerfuegungszeitabschnitt = getExpectedVerfuegungszeitabschnitt(fullName, betreuung, betreuungNummer, addText);
 		final VerfuegungszeitabschnitteData calculatedVerfuegungszeitabschnitt = generateVzd(zeitabschnitte, fullName, betreuung, betreuungNummer);
 
 		final Iterator<VerfuegungZeitabschnittData> iteratorExpected = expectedVerfuegungszeitabschnitt.getVerfuegungszeitabschnitte().iterator();
@@ -164,9 +185,9 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	/**
 	 * Holt die gespeicherten Werte aus den Files
 	 */
-	public VerfuegungszeitabschnitteData getExpectedVerfuegungszeitabschnitt(String fullName, String betreuung, Integer betreuungNummer) {
+	public VerfuegungszeitabschnitteData getExpectedVerfuegungszeitabschnitt(String fullName, String betreuung, Integer betreuungNummer, String addText) {
 
-		final String fileNamePath = getFileNamePath(fullName, betreuung, betreuungNummer);
+		final String fileNamePath = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
 		final java.io.File resultFile = new java.io.File(fileNamePath);
 		VerfuegungszeitabschnitteData expectedVerfuegungszeitabschnitteData = null;
 		try {
@@ -182,11 +203,11 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	/**
 	 * Schreibt die berechneten Werte in die Files wenn writeToFile true ist
 	 */
-	public void writeResultsToFile(final List<VerfuegungZeitabschnitt> verfuegungZeitabschnitts, String fullName, String betreuung, Integer betreuungNummer) {
+	public void writeResultsToFile(final List<VerfuegungZeitabschnitt> verfuegungZeitabschnitts, String fullName, String betreuung, Integer betreuungNummer, String addText) {
 		if (writeToFile) {
 			VerfuegungszeitabschnitteData eventResults = generateVzd(verfuegungZeitabschnitts, fullName, betreuung, betreuungNummer);
 
-			String pathname = getFileNamePath(fullName, betreuung, betreuungNummer);
+			String pathname = getFileNamePath(fullName, betreuung, betreuungNummer, addText);
 
 			try {
 				java.io.File file = new java.io.File(pathname);
@@ -208,10 +229,13 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	/**
 	 * Generiert den Pfad für die Files zum speichern der Daten
 	 */
-	private String getFileNamePath(String fullName, String betreuung, Integer betreungsnummer) {
+	private String getFileNamePath(String fullName, String betreuung, Integer betreungsnummer, String addText) {
 		String storePath = "./src/test/resources/VerfuegungResult/";
 
-		final String filename = fullName + betreuung + betreungsnummer;
+		String filename = fullName + betreuung + betreungsnummer;
+		if (addText != null) {
+			filename += addText;
+		}
 		return storePath + filename.replaceAll("[^a-zA-Z0-9.-]", "_") + ".xml";
 	}
 
