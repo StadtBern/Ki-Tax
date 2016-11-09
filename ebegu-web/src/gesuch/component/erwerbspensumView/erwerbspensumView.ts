@@ -137,4 +137,9 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
             this.erwerbspensum.erwerbspensumJA.zuschlagsgrund = undefined;
         }
     }
+
+    erwerbspensumDisabled(): boolean {
+        // Disabled wenn Mutation, ausser bei Bearbeiter Jugendamt
+        return this.erwerbspensum.erwerbspensumJA.vorgaengerId && !this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA);
+    }
 }

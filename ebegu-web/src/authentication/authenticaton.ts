@@ -28,7 +28,7 @@ export class AuthenticationListViewController {
 
     private logoutHref: string;
     private redirecting: boolean;
-    private countdown: number = 2;
+    private countdown: number = 0;
 
 
     constructor(private $state: IStateService, private $stateParams: IAuthenticationStateParams,
