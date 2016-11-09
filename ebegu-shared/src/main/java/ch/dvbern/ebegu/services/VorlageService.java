@@ -1,6 +1,5 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Dokument;
 import ch.dvbern.ebegu.entities.Vorlage;
 
 import javax.annotation.Nonnull;

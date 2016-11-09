@@ -4,8 +4,6 @@ import {EbeguWebGesuch} from '../../gesuch.module';
 import {BetreuungListViewController} from './betreuungListView';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import TSKindContainer from '../../../models/TSKindContainer';
-import TSBetreuung from '../../../models/TSBetreuung';
-import TSKind from '../../../models/TSKind';
 
 describe('betreuungListViewTest', function () {
 

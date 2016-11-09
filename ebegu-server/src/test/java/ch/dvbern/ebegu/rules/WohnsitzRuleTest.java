@@ -32,7 +32,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -45,7 +45,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnitt = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnitt.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnitt.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(0, abschnitt.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnitt.getBgPensum());
 	}
@@ -58,7 +58,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -72,7 +72,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -88,12 +88,12 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(1);
 		Assert.assertEquals(zuzugsDatum, abschnittInBern.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -109,11 +109,11 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(1);
-		Assert.assertEquals(true, abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
 		//Anspruch noch 2 Monate nach wegzug auf Ende Monat
 		Assert.assertEquals(wegzugsDatum.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()), abschnittInBern.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
@@ -138,12 +138,12 @@ public class WohnsitzRuleTest {
 		Assert.assertEquals(2, zeitabschnittList.size());
 
 		VerfuegungZeitabschnitt abschnittInBern1 = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnittInBern1.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittInBern1.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(0, abschnittInBern1.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittInBern1.getBgPensum());
 
 		VerfuegungZeitabschnitt abschnittInBern2 = zeitabschnittList.get(1);
-		Assert.assertEquals(false, abschnittInBern2.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertFalse(abschnittInBern2.isWohnsitzNichtInGemeindeGS2());
 		Assert.assertEquals(100, abschnittInBern2.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern2.getBgPensum());
 	}

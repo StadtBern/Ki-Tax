@@ -37,6 +37,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 	}
 
 
+	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		if (abstractFinanzielleSituation != null) {
 			switch (dokumentTyp) {

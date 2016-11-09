@@ -104,7 +104,7 @@
                 <!-- Liste der Parameter der Gesuchsperiode -->
                 <div ng-if="vm.gesuchsperiode && !vm.gesuchsperiode.isNew()" class="row marginTop20">
                     <div class="col-md-12 marginTop10">
-                        <h2 class="mainTitle">
+                        <h1 class="mainTitle">
                             <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
                             <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
                             <!--</span>-->
@@ -112,7 +112,8 @@
                             <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
                             <span>bis</span>
                             <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                        </h2>
+                        </h1>
+                        <hr class="header"/>
                     </div>
 
                     <!-- Parameter-Liste -->
@@ -147,7 +148,7 @@
 
 
                     <div class="col-md-12 marginTop10">
-                        <h3 class="mainTitle">
+                        <h1 class="mainTitle">
                             <!--<span data-translate="PARAMETER_PRO_GESUCHSPERIODE"-->
                             <!--data-translate-value-periodeVon="vm.gesuchsperiode.gueltigkeit.gueltigAb |  amDateFormat : 'DD.MM.YYYY'">-->
                             <!--</span>-->
@@ -155,7 +156,7 @@
                             <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigAb | amDateFormat:'DD.MM.YYYY'"></span>
                             <span>bis</span>
                             <span ng-bind="vm.gesuchsperiode.gueltigkeit.gueltigBis | amDateFormat:'DD.MM.YYYY'"></span>
-                        </h3>
+                        </h1>
                     </div>
 
                     <!-- Vorlage-Liste -->
@@ -213,9 +214,9 @@
 
                 <!-- Parameter pro Jahr -->
                 <div class="marginTop40">
-                    <h3 class="mainTitle">
+                    <h1 class="mainTitle">
                         <span data-translate="PARAMETER_PRO_JAHR"></span>
-                    </h3>
+                    </h1>
                     <!-- Auswahl Jahr -->
                     <div class="row col-md-12 marginTop10">
                         <div class="form-group">

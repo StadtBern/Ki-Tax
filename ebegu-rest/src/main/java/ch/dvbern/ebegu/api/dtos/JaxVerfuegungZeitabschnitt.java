@@ -2,7 +2,6 @@ package ch.dvbern.ebegu.api.dtos;
 
 import ch.dvbern.ebegu.util.Constants;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

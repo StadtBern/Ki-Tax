@@ -36,7 +36,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 		testgesuch.setGesuchsperiode(TestDataUtil.createDefaultGesuchsperiode());
 		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigAb(LocalDate.of(2015, 1, 1));
 		testgesuch.getGesuchsperiode().getGueltigkeit().setGueltigBis(LocalDate.of(2016, 1, 1));
-		testgesuch.setKindContainers(new HashSet<KindContainer>());
+		testgesuch.setKindContainers(new HashSet<>());
 	}
 
 	private Kind createKind(Gesuch gesuch, String vorname, Kinderabzug ganzerAbzug, String fachstellename, boolean behinderungsbest) {
@@ -184,7 +184,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 	private DokumentGrund getDokumentGrund(Kind kind) {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
-		Assert.assertTrue(calculate.size() == 1);
+		Assert.assertEquals(1, calculate.size());
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.KINDER, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertEquals(kind.getFullName(), dokumentGrund.getFullName());
@@ -193,7 +193,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 	private DokumentGrund checkDokumentGrund(Erwerbspensum erwerbspensum) {
 		final Set<DokumentGrund> calculate = evaluator.calculate(testgesuch);
-		Assert.assertTrue(calculate.size() == 1);
+		Assert.assertEquals(1, calculate.size());
 		final DokumentGrund dokumentGrund = calculate.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.ERWERBSPENSUM, dokumentGrund.getDokumentGrundTyp());
 		Assert.assertEquals(testgesuch.getGesuchsteller1().getFullName(), dokumentGrund.getFullName());
@@ -364,7 +364,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 
 	private Set<DokumentGrund> getDokumentGrundsForGS(Gesuchsteller gesuchsteller, Set<DokumentGrund> dokumentGrunds) {
-		Set<DokumentGrund> grunds = new HashSet<DokumentGrund>();
+		Set<DokumentGrund> grunds = new HashSet<>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
 			if (dokumentGrund.getFullName().equals(gesuchsteller.getFullName())) {
@@ -375,7 +375,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 	}
 
 	private Set<DokumentGrund> getDokumentGrundsForType(DokumentTyp dokumentTyp, Set<DokumentGrund> dokumentGrunds, String fullname, String year) {
-		Set<DokumentGrund> grunds = new HashSet<DokumentGrund>();
+		Set<DokumentGrund> grunds = new HashSet<>();
 
 		for (DokumentGrund dokumentGrund : dokumentGrunds) {
 
@@ -417,7 +417,7 @@ public class DokumentenverzeichnisEvaluatorTest {
 
 		final DokumentGrund dokumentGrund = dokumentGrunds.iterator().next();
 		Assert.assertEquals(DokumentGrundTyp.FINANZIELLESITUATION, dokumentGrund.getDokumentGrundTyp());
-		Assert.assertEquals(null, dokumentGrund.getFullName());
+		Assert.assertNull(dokumentGrund.getFullName());
 		Assert.assertEquals(DokumentTyp.STEUERVERANLAGUNG, dokumentGrund.getDokumentTyp());
 	}
 
