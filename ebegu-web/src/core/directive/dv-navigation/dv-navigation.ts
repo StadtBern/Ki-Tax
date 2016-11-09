@@ -7,6 +7,8 @@ import ErrorService from '../../errors/service/ErrorService';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
 import ITranslateService = angular.translate.ITranslateService;
+import IPromise = angular.IPromise;
+import IQService = angular.IQService;
 let template = require('./dv-navigation.html');
 
 /**
@@ -54,10 +56,10 @@ export class NavigatorController {
     dvNextDisabled: () => any;
     dvSubStep: number;
 
-    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService'];
+    static $inject: string[] = ['WizardStepManager', '$state', 'GesuchModelManager', '$translate', 'ErrorService', '$q'];
     /* @ngInject */
     constructor(private wizardStepManager: WizardStepManager, private state: IStateService, private gesuchModelManager: GesuchModelManager,
-                private $translate: ITranslateService, private errorService: ErrorService) {
+                private $translate: ITranslateService, private errorService: ErrorService, private $q: IQService) {
     }
 
     public doesCancelExist(): boolean {
@@ -99,9 +101,12 @@ export class NavigatorController {
      */
     public nextStep(): void {
         if (!this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt() && this.dvSave) {
-            this.dvSave().then(() => {
-                this.navigateToNextStep();
-            });
+            let returnValue: any = this.dvSave();  //callback ausfuehren, could return promise
+            if (returnValue !== undefined) {
+                this.$q.when(returnValue).then(() => {
+                    this.navigateToNextStep();
+                });
+            }
         } else {
             this.navigateToNextStep();
         }
@@ -141,7 +146,7 @@ export class NavigatorController {
         this.errorService.clearAll();
         if (TSWizardStepName.GESUCHSTELLER === this.wizardStepManager.getCurrentStepName()
             && (this.gesuchModelManager.getGesuchstellerNumber() === 1) && this.gesuchModelManager.isGesuchsteller2Required()) {
-                this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '2');
+            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '2');
 
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
             this.navigateToStep(TSWizardStepName.KINDER);
