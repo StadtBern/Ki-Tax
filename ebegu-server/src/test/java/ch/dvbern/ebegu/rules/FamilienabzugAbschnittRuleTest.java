@@ -176,6 +176,22 @@ public class FamilienabzugAbschnittRuleTest {
 	}
 
 	@Test
+	public void testCalculateFamiliengroesseOneGesuchStellerErstges() {
+		Gesuch gesuch = createGesuchWithOneGS();
+		//aktuell alleinerziehend
+		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		Assert.assertEquals(1, familiengroesse, DELTA);
+		// jetzt wechseln auf verheiratet
+		Familiensituation erstFamiliensituation = new Familiensituation();
+		erstFamiliensituation.setAenderungPer(null); //im erstgesuch immer null
+		erstFamiliensituation.setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		erstFamiliensituation.setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ZU_ZWEIT);
+		gesuch.setFamiliensituationErstgesuch(erstFamiliensituation);
+		double newFamGr = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
+		Assert.assertEquals(2, newFamGr, DELTA);
+	}
+
+	@Test
 	public void testCalculateFamiliengroesseTwoGesuchSteller() {
 		Gesuch gesuch = createGesuchWithTwoGesuchsteller();
 		double familiengroesse = famabAbschnittRule.calculateFamiliengroesse(gesuch, DATE_2005);
