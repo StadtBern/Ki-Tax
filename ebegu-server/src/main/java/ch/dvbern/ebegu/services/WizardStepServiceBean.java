@@ -88,6 +88,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					WizardStepStatus.OK, mutationsdaten.getMutationFamiliensituation())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER,
 					WizardStepStatus.OK, mutationsdaten.getMutationGesuchsteller())));
+				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.UMZUG,
+					WizardStepStatus.OK, mutationsdaten.getMutationUmzug())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER,
 					WizardStepStatus.OK, mutationsdaten.getMutationKind())));
 				wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG,
@@ -107,6 +109,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCH_ERSTELLEN, WizardStepStatus.OK, true)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.FAMILIENSITUATION, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.UNBESUCHT, false)));
+			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.UMZUG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.KINDER, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.BETREUUNG, WizardStepStatus.UNBESUCHT, false)));
 			wizardStepList.add(saveWizardStep(createWizardStepObject(gesuch, WizardStepName.ERWERBSPENSUM, WizardStepStatus.UNBESUCHT, false)));

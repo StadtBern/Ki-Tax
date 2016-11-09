@@ -113,7 +113,7 @@
                                     <md-checkbox ng-model="vm.getMutationsdaten().mutationUmzug" name="mutationUmzug"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationUmzug"
                                                  aria-label="mutationUmzug" dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">

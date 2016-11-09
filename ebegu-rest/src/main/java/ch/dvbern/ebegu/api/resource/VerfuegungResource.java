@@ -171,6 +171,12 @@ public class VerfuegungResource {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();
 		}
+		if (gesuch.getGesuchsteller1() != null) {
+			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+		}
+		if (gesuch.getGesuchsteller2() != null) {
+			gesuch.getGesuchsteller2().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);
+		}
 		persistence.getEntityManager().detach(gesuch);
 	}
 }

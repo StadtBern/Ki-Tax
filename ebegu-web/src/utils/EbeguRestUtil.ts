@@ -263,6 +263,16 @@ export default class EbeguRestUtil {
         antragTS.typ = antragFromServer.typ;
     }
 
+    private adressenListToRestObject(adressen: Array<TSAdresse>): Array<any> {
+        let restAdressenList: Array<any> = [];
+        if (adressen) {
+            for (let i = 0; i < adressen.length; i++) {
+                restAdressenList.push(this.adresseToRestObject({}, adressen[i]));
+            }
+        }
+        return restAdressenList;
+    }
+
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
         if (adresse) {
             this.abstractDateRangeEntityToRestObject(restAdresse, adresse);
@@ -280,6 +290,16 @@ export default class EbeguRestUtil {
         }
         return undefined;
 
+    }
+
+    private parseAdressenList(adressen: Array<any>): Array<TSAdresse> {
+        let adressenList: Array<TSAdresse> = [];
+        if (adressen) {
+            for (let i = 0; i < adressen.length; i++) {
+                adressenList.push(this.parseAdresse(new TSAdresse(), adressen[i]));
+            }
+        }
+        return adressenList;
     }
 
     public parseAdresse(adresseTS: TSAdresse, receivedAdresse: any): TSAdresse {
@@ -336,9 +356,8 @@ export default class EbeguRestUtil {
             restGesuchsteller.mobile = gesuchsteller.mobile || undefined;
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
-            restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
+            restGesuchsteller.adressen = this.adressenListToRestObject(gesuchsteller.adressen);
             restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
-            restGesuchsteller.umzugAdresse = this.adresseToRestObject({}, gesuchsteller.umzugAdresse);
             if (gesuchsteller.finanzielleSituationContainer) {
                 restGesuchsteller.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchsteller.finanzielleSituationContainer);
             }
@@ -366,9 +385,8 @@ export default class EbeguRestUtil {
             gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
-            gesuchstellerTS.adresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.wohnAdresse);
+            gesuchstellerTS.adressen = this.parseAdressenList(gesuchstellerFromServer.adressen);
             gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
-            gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
             gesuchstellerTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerFromServer.finanzielleSituationContainer);
             gesuchstellerTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
                 new TSEinkommensverschlechterungContainer(), gesuchstellerFromServer.einkommensverschlechterungContainer);
