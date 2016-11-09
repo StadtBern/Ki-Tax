@@ -23,7 +23,7 @@
                                 <input id="bezeichnung" type="text" name="bezeichnung"
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.bezeichnung"
                                        dv-max-length class="form-control" ng-required="false"
-                                       ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                                       ng-disabled="vm.erwerbspensumDisabled()">
                             </dv-input-container>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                         class="form-control"
                                         ng-options="(taetigkeit| translate) for taetigkeit in vm.getTaetigkeitenList() "
                                         ng-required="true" ng-change="vm.taetigkeitChanged()"
-                                        ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                                        ng-disabled="vm.erwerbspensumDisabled()">
                                 </select>
                                 <dv-error-messages for="form.taetigkeit.$error"
                                                    class="error"></dv-error-messages>
@@ -57,7 +57,7 @@
                                        ng-model="vm.erwerbspensum.erwerbspensumJA.pensum"
                                        dv-max-length class="form-control" max="100"
                                        ng-required="true" ng-pattern="vm.patternPercentage"
-                                       ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                       ng-disabled="vm.erwerbspensumDisabled()"
                                        ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                 <dv-error-messages for="form.taetigkeitPensum.$error"
                                                    class="error hint"></dv-error-messages>
@@ -74,8 +74,8 @@
                                 </label>
                                 <dv-datepicker input-id="taetigkeitAbID" name="taetigkeitAb"
                                                ng-model="vm.erwerbspensum.erwerbspensumJA.gueltigkeit.gueltigAb"
-                                               ng-required="true" class="input-element"
-                                               ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                               ng-required="true" class="input-element" placeholder=""
+                                               ng-disabled="vm.erwerbspensumDisabled()"
                                                ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
                                 </dv-datepicker>
                                 <dv-error-messages for="form.taetigkeitAb.$error"
@@ -103,7 +103,7 @@
                             <div class="checkbox">
                                 <md-checkbox ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagZuErwerbspensum"
                                              name="zuschlag"
-                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                             ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt() || vm.erwerbspensumDisabled()"
                                              aria-label="{{ZUSCHLAG_ZU_ERWERBSPENSUM | translate}}">
                                     <span data-translate="ZUSCHLAG_ZU_ERWERBSPENSUM"></span>
                                     <dv-tooltip text="'ZUSCHLAGSGRUND_HELP' | translate"></dv-tooltip>
@@ -126,7 +126,7 @@
                                     class="form-control"
                                     ng-options="zuschlagsgrund | translate for zuschlagsgrund in vm.getZuschlagsgrundList() "
                                     ng-required="true"
-                                    ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId">
+                                    ng-disabled="vm.erwerbspensumDisabled()">
                             </select>
                             <dv-error-messages for="form.zuschlagsgrund.$error"
                                                class="error"></dv-error-messages>
@@ -143,7 +143,7 @@
                                    ng-model="vm.erwerbspensum.erwerbspensumJA.zuschlagsprozent"
                                    dv-max-length class="form-control" max="100"
                                    ng-required="true" ng-pattern="vm.patternPercentage"
-                                   ng-disabled="vm.erwerbspensum.erwerbspensumJA.vorgaengerId"
+                                   ng-disabled="vm.erwerbspensumDisabled()"
                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                             <dv-error-messages for="form.zuschlagsprozent.$error"
                                                class="error hint"></dv-error-messages>

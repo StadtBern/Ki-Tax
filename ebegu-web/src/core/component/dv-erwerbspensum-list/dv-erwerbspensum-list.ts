@@ -1,6 +1,9 @@
 import {IComponentOptions} from 'angular';
 import TSErwerbspensum from '../../../models/TSErwerbspensum';
 import TSErwerbspensumContainer from '../../../models/TSErwerbspensumContainer';
+import {TSRole} from '../../../models/enums/TSRole';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+
 let template = require('./dv-erwerbspensum-list.html');
 require('./dv-erwerbspensum-list.less');
 
@@ -34,9 +37,9 @@ export class DVErwerbspensumListController {
     onEdit: (pensumToEdit: any) => void;
     onAdd: () => void;
 
-    static $inject: any[] = [];
+    static $inject: any[] = ['AuthServiceRS'];
     /* @ngInject */
-    constructor() {
+    constructor(private authServiceRS: AuthServiceRS) {
         this.removeButtonTitle = 'Eintrag entfernen';
     }
 
@@ -67,7 +70,11 @@ export class DVErwerbspensumListController {
         this.onAdd();
     }
 
-
+    isRemoveAllowed(pensumToEdit: any) {
+        // Loeschen erlaubt, wenn Erstgesuch ODER Jugendamt
+        return this.addButtonVisible && (pensumToEdit.erwerbspensumJA.vorgaengerId === null ||
+            this.authServiceRS.isRole(TSRole.SACHBEARBEITER_JA));
+    }
 }
 
 
