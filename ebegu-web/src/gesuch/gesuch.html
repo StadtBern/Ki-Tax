@@ -27,7 +27,7 @@
                         ng-disabled="vm.isWizardStepDisabled('GESUCH_ERSTELLEN')">
                     <span ng-bind="vm.getGesuchErstellenStepTitle()"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('GESUCH_ERSTELLEN')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('FAMILIENSITUATION')}"
@@ -37,7 +37,7 @@
                         ng-disabled="vm.isWizardStepDisabled('FAMILIENSITUATION')">
                     <span data-translate="MENU_FAMSITUATION"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  fa ng-class:vm.getIcon('FAMILIENSITUATION')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('GESUCHSTELLER')}" ui-sref-active="active">
@@ -46,20 +46,19 @@
                         ng-disabled="vm.isWizardStepDisabled('GESUCHSTELLER')">
                     <span data-translate="MENU_GESUCHSTELLER"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true"></span>
             </li>
 
-            <li class="row"
-                ng-class="{'active-element': vm.isElementActive('UMZUG')}" ui-sref-active="active">
+            <li class="row" ng-class="{'active-element': vm.isElementActive('UMZUG')}" ui-sref-active="active">
                 <button type="button" class="col-xs-10 btn btn-link"
                         ui-sref="gesuch.umzug({gesuchId: vm.getGesuchId()})"
                         ng-disabled="vm.isWizardStepDisabled('UMZUG')">
                     <span data-translate="MENU_UMZUG"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('UMZUG')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('UMZUG')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('KINDER')}" ui-sref-active="active"
                 dv-show-element
                 dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-xs-10 btn btn-link"
@@ -67,7 +66,7 @@
                         ng-disabled="vm.isWizardStepDisabled('KINDER')">
                     <span data-translate="MENU_KINDER"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('KINDER')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('KINDER')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('BETREUUNG')}" ui-sref-active="active">
@@ -76,7 +75,7 @@
                         ng-disabled="vm.isWizardStepDisabled('BETREUUNG')">
                     <span data-translate="MENU_BETREUUNG"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('BETREUUNG')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-if="!vm.gesuchModelManager.isErstgesuch()"
@@ -86,10 +85,10 @@
                     <!--ng-disabled="vm.isWizardStepDisabled('ABWESENHEIT')">-->
                     <span data-translate="MENU_ABWESENHEIT"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('ABWESENHEIT')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('ABWESENHEIT')" aria-hidden="true"></span>
             </li>
 
-            <li ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
+            <li class="row" ng-class="{'active-element': vm.isElementActive('ERWERBSPENSUM')}" ui-sref-active="active"
                 dv-show-element
                 dv-show-allowed-roles="[vm.TSRole.GESUCHSTELLER, vm.TSRole.SACHBEARBEITER_JA, vm.TSRole.ADMIN]">
                 <button type="button" class="col-xs-10 btn btn-link"
@@ -97,7 +96,7 @@
                         ng-disabled="vm.isWizardStepDisabled('ERWERBSPENSUM')">
                     <span data-translate="MENU_ERWERBSPENSUM"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('ERWERBSPENSUM')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
@@ -109,7 +108,7 @@
                         ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
                     <span data-translate="MENU_FINANZIELLE_SITUATION"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('FINANZIELLE_SITUATION')}" ui-sref-active="active"
@@ -121,7 +120,7 @@
                         ng-disabled="vm.isWizardStepDisabled('FINANZIELLE_SITUATION')">
                     <span data-translate="MENU_FINANZIELLE_SITUATION"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('FINANZIELLE_SITUATION')" aria-hidden="true"></span>
             </li>
 
             <li class="row" ng-class="{'active-element': vm.isElementActive('EINKOMMENSVERSCHLECHTERUNG')}" ui-sref-active="active"
@@ -132,7 +131,7 @@
                         ng-disabled="vm.isWizardStepDisabled('EINKOMMENSVERSCHLECHTERUNG')">
                     <span data-translate="MENU_EINKOMMENSVERSCHLECHTERUNG"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')"
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('EINKOMMENSVERSCHLECHTERUNG')"
                       aria-hidden="true"></span>
             </li>
 
@@ -144,7 +143,7 @@
                         ng-disabled="vm.isWizardStepDisabled('DOKUMENTE')">
                     <span data-translate="MENU_DOKUMENTE"></span>
                 </button>
-                <span class="col-xs-2 ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  ng-class:vm.getIcon('DOKUMENTE')" aria-hidden="true"></span>
             </li>
 
             <li class="row" dv-show-element
@@ -161,7 +160,7 @@
                         ng-disabled="vm.isWizardStepDisabled('VERFUEGEN')">
                     <span data-translate="MENU_VERFUEGEN"></span>
                 </button>
-                <span class="col-xs-2 col-md-2 ng-class:vm.getIcon('VERFUEGEN')" aria-hidden="true"></span>
+                <span class="col-xs-2 fa  col-md-2 ng-class:vm.getIcon('VERFUEGEN')" aria-hidden="true"></span>
             </li>
 
         </ul>
