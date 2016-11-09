@@ -85,7 +85,7 @@ public class JaxAntragDTO {
 	@NotNull
 	private AntragStatusDTO status;
 
-	@Nullable
+	@NotNull
 	private int laufnummer;
 
 	private boolean verfuegt;

@@ -41,5 +41,4 @@ public interface FallService {
 	@Nonnull
 	void removeFall(@Nonnull Fall fall);
 
-
 }

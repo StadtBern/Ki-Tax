@@ -27,8 +27,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	private Persistence<Fall> persistence;
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
-	@Inject
-	private GesuchService gesuchService;
 
 
 	@Nonnull
@@ -60,5 +58,4 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
 		persistence.remove(fallToRemove.get());
 	}
-
 }

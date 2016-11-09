@@ -39,7 +39,6 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
-
     public updateGesuch(gesuch: TSGesuch): IPromise<TSGesuch> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);

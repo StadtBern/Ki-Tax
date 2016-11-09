@@ -17,6 +17,7 @@ public class V0052__UpdateLaufnummern implements JdbcMigration {
 
 	@Override
 	public void migrate(Connection connection) {
+		int counter = 0;
 		try {
 			GesuchService gesuchService = CDI.current().select(GesuchService.class).get();
 			FallService fallService = CDI.current().select(FallService.class).get();
@@ -27,12 +28,15 @@ public class V0052__UpdateLaufnummern implements JdbcMigration {
 			}else {
 				for (Fall fall : faelle) {
 					gesuchService.updateLaufnummerOfAllGesucheOfFall(fall.getId());
-					LOG.info("Laufnummern aktuallisiert");
+					counter++;
 				}
 			}
 		} catch (RuntimeException ex) {
 			LOG.error("Could not perform programmatic migration from flyway");
 			throw ex;
+		} finally {
+			LOG.info("Laufnummern aller Gesuche von  "  + counter + " faellen aktualisiert");
+
 		}
 
 	}
