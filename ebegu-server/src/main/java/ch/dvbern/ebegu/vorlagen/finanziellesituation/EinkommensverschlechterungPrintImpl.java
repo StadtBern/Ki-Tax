@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import java.math.BigDecimal;
 
@@ -27,14 +28,16 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	private String grund;
 	private Einkommensverschlechterung ekvGS1;
 	private Einkommensverschlechterung ekvGS2;
+	private int basisJahrPlus;
 
 	/**
 	 * Konstruktor
-	 *  @param fsGesuchsteller1 das {@link FinanzSituationPrintGesuchsteller}
-	 * @param fsGesuchsteller2 das {@link FinanzSituationPrintGesuchsteller}
+	 *
+	 * @param fsGesuchsteller1               das {@link FinanzSituationPrintGesuchsteller}
+	 * @param fsGesuchsteller2               das {@link FinanzSituationPrintGesuchsteller}
 	 * @param einkommensverschlechterungJahr das Jahr des Einkommenverschleschterung
-	 * @param ereigniseintritt Ereingis datum
-	 * @param grund Grund
+	 * @param ereigniseintritt               Ereingis datum
+	 * @param grund                          Grund
 	 * @param basisJahrPlus
 	 */
 	public EinkommensverschlechterungPrintImpl(FinanzSituationPrintGesuchsteller fsGesuchsteller1, FinanzSituationPrintGesuchsteller fsGesuchsteller2,
@@ -42,20 +45,19 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 
 		super(fsGesuchsteller1, fsGesuchsteller2);
 
+		this.basisJahrPlus = basisJahrPlus;
 		this.einkommensverschlechterungJahr = einkommensverschlechterungJahr;
 		this.ereigniseintritt = ereigniseintritt;
 		this.grund = grund;
 		if (basisJahrPlus == 1) {
 			this.ekvGS1 = fsGesuchsteller1.getEinkommensverschlechterung1();
-		}
-		else {
+		} else {
 			this.ekvGS1 = fsGesuchsteller1.getEinkommensverschlechterung2();
 		}
 		if (fsGesuchsteller2 != null && fsGesuchsteller2.getEinkommensverschlechterung2() != null) {
 			if (basisJahrPlus == 1) {
 				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung1();
-			}
-			else {
+			} else {
 				this.ekvGS2 = fsGesuchsteller2.getEinkommensverschlechterung2();
 			}
 		}
@@ -63,9 +65,12 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	}
 
 	@Override
-	public String getEinkommensverschlechterungJahr() {
-
-		return einkommensverschlechterungJahr;
+	public String getEinkommensverschlechterungTitle() {
+		String title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_EKV_TITEL");
+		if (ereigniseintritt.isEmpty()) {
+			title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_BERECHNUNGSGRUNDL_TITEL");
+		}
+		return title + " " + einkommensverschlechterungJahr;
 	}
 
 	@Override
@@ -80,18 +85,34 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		return grund;
 	}
 
+	@Override
+	public boolean isExistEreigniseintritt() {
+		return (this.ereigniseintritt != null && !this.ereigniseintritt.isEmpty());
+	}
 
+	@Override
+	public boolean isExistGrund() {
+		return (this.grund != null && !this.grund.isEmpty());
+	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {
-		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ekvGS1, this.fsGesuchsteller1.getFinanzielleSituation());
+		final FinanzSituationPrintGesuchsteller fsGesuchsteller = fsGesuchsteller1;
+		return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller.getFinanzielleSituation(),
+			fsGesuchsteller.getEinkommensverschlechterung1(),
+			fsGesuchsteller.getEinkommensverschlechterung2(),
+			basisJahrPlus);
 	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG2() {
 		//hier muessen zum berechnen die Einkommensverschlechterung und die finanzielle Situation benutzt werden
-		if (fsGesuchsteller2 != null ) {
-			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(ekvGS2, this.fsGesuchsteller2.getFinanzielleSituation());
+		if (fsGesuchsteller2 != null) {
+			final FinanzSituationPrintGesuchsteller fsGesuchsteller = fsGesuchsteller2;
+			return FinanzielleSituationRechner.calcGeschaeftsgewinnDurchschnitt(fsGesuchsteller.getFinanzielleSituation(),
+				fsGesuchsteller.getEinkommensverschlechterung1(),
+				fsGesuchsteller.getEinkommensverschlechterung2(),
+				basisJahrPlus);
 		}
 		return null;
 	}

@@ -7,6 +7,7 @@ import ch.dvbern.ebegu.rechner.AbstractBGRechner;
 import ch.dvbern.ebegu.rechner.BGRechnerFactory;
 import ch.dvbern.ebegu.rechner.BGRechnerParameterDTO;
 import ch.dvbern.ebegu.rules.initalizer.RestanspruchInitializer;
+import ch.dvbern.ebegu.util.BetreuungComparator;
 import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -101,9 +102,9 @@ public class BetreuungsgutscheinEvaluator {
 			// am Schluss kommt dann jeweils eine Reduktionsregel die den Anspruch auf den Restanspruch beschraenkt
 			List<VerfuegungZeitabschnitt> restanspruchZeitabschnitte = createInitialenRestanspruch(gesuch.getGesuchsperiode());
 
-			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert nach betreuungsnummer)
+			// Betreuungen werden einzeln berechnet, reihenfolge ist wichtig (sortiert mit comperator gem regel EBEGU-561)
 			List<Betreuung> betreuungen = new ArrayList<>(kindContainer.getBetreuungen());
-			Collections.sort(betreuungen);
+			Collections.sort(betreuungen, new BetreuungComparator());
 
 			for (Betreuung betreuung : betreuungen) {
 

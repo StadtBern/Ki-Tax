@@ -14,7 +14,8 @@ md-input-container {
 }
 
 [disabled] md-input-container .md-input {
-    background: @contrast-dark;
+    background: @contrast;
+    color: @contrast-darkest;
 }
 
 input[type="text"], input[type="number"], input[type="email"], textarea, textarea.md-input {
@@ -22,7 +23,8 @@ input[type="text"], input[type="number"], input[type="email"], textarea, textare
         background: @contrast-light;
     }
     &[disabled] {
-        background: @contrast-dark;
+        background: @contrast;
+        color: @contrast-darkest;
     }
     .placeholder();
     .semi-bold();
