@@ -151,7 +151,7 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	}
 
 	public void addAdresse(JaxAdresse adresse) {
-		if (adressen != null) {
+		if (adressen == null) {
 		    adressen = new ArrayList<>();
 		}
 		adressen.add(adresse);
