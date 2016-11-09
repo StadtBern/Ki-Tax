@@ -31,6 +31,25 @@ export default class TSAdresse extends TSAbstractDateRangedEntity {
         this._organisation = organisation;
     }
 
+    /**
+     * Diese Methode sollte nur benutzt werden, um Wohnadressen zu vergleichen
+     * @param other
+     */
+    public isSameWohnAdresse(other: TSAdresse): boolean {
+        return (
+            this._strasse === other.strasse &&
+            this._hausnummer === other.hausnummer &&
+            this._zusatzzeile === other.zusatzzeile &&
+            this._plz === other.plz &&
+            this._ort === other.ort &&
+            this._land === other.land &&
+            this._gemeinde === other.gemeinde &&
+            this._adresseTyp === other.adresseTyp &&
+            this._nichtInGemeinde === other.nichtInGemeinde &&
+            this.gueltigkeit.gueltigAb.isSame(other.gueltigkeit.gueltigAb)
+            // gueltigBis wird nicht gecheckt, da es nur relevant ist, wann sie eingezogen sind
+        );
+    }
 
     public get strasse(): string {
         return this._strasse;

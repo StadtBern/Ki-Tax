@@ -103,13 +103,21 @@ describe('dvNavigation', function () {
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.betreuungen', { gesuchId: '123' });
         });
-        it('moves to gesuch.kinder when coming from GESUCHSTELLER', () => {
+        it('moves to gesuch.umzug when coming from GESUCHSTELLER', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.GESUCHSTELLER);
-            spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.KINDER);
+            spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.UMZUG);
             mockGesuch();
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
             spyOn(authServiceRS, 'isRole').and.returnValue(false);
+            callNextStep();
+            expect($state.go).toHaveBeenCalledWith('gesuch.umzug', { gesuchId: '123' });
+        });
+        it('moves to gesuch.kinder when coming from UMZUG substep 1', () => {
+            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.UMZUG);
+            spyOn(wizardStepManager, 'getNextStep').and.returnValue(TSWizardStepName.KINDER);
+            mockGesuch();
+            navController.dvSubStep = 1;
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.kinder', { gesuchId: '123' });
         });
@@ -289,19 +297,32 @@ describe('dvNavigation', function () {
             callPreviousStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.familiensituation', { gesuchId: '123' });
         });
-        it('moves to gesuch.kinder when coming from KINDER substep 1 from GS 1', () => {
+        it('moves to gesuch.stammdaten when coming from UMZUG', () => {
+            spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.UMZUG);
+            spyOn(wizardStepManager, 'getPreviousStep').and.returnValue(TSWizardStepName.GESUCHSTELLER);
+            spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
+            mockGesuch();
+            navController.dvSubStep = 1;
+            callPreviousStep();
+            expect($state.go).toHaveBeenCalledWith('gesuch.stammdaten', {gesuchstellerNumber: '1',  gesuchId: '123' });
+        });
+        it('moves to gesuch.umzug when coming from KINDER substep 1', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.KINDER);
+            spyOn(wizardStepManager, 'getPreviousStep').and.returnValue(TSWizardStepName.UMZUG);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             navController.dvSubStep = 1;
+            mockGesuch();
             callPreviousStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.stammdaten', {gesuchstellerNumber: '1',  gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.umzug', {gesuchId: '123' });
         });
-        it('moves to gesuch.kinder when coming from KINDER substep 1 from GS 2', () => {
+        it('moves to gesuch.umzug when coming from KINDER substep 1', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.KINDER);
+            spyOn(wizardStepManager, 'getPreviousStep').and.returnValue(TSWizardStepName.UMZUG);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(2);
             navController.dvSubStep = 1;
+            mockGesuch();
             callPreviousStep();
-            expect($state.go).toHaveBeenCalledWith('gesuch.stammdaten', {gesuchstellerNumber: '2', gesuchId: '' });
+            expect($state.go).toHaveBeenCalledWith('gesuch.umzug', {gesuchId: '123' });
         });
         it('moves to gesuch.kinder when coming from KINDER substep 2', () => {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.KINDER);

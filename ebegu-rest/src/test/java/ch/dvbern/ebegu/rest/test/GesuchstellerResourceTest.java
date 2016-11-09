@@ -60,9 +60,8 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 		JaxGesuchsteller testGesuchsteller = TestJaxDataUtil.createTestJaxGesuchstellerWithUmzug();
 		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testGesuchsteller, null, null);
 		Assert.assertNotNull(jaxGesuchsteller);
-		Assert.assertNotNull(jaxGesuchsteller.getUmzugAdresse());
 		Assert.assertNotNull(jaxGesuchsteller.getAlternativeAdresse());
-		Assert.assertNotNull(jaxGesuchsteller.getWohnAdresse());
+		Assert.assertNotNull(jaxGesuchsteller.getAdressen());
 
 		JaxGesuchsteller foundGesuchsteller = gesuchstellerResource.findGesuchsteller(converter.toJaxId(jaxGesuchsteller));
 		Assert.assertNotNull(foundGesuchsteller);
@@ -73,34 +72,20 @@ public class GesuchstellerResourceTest extends AbstractEbeguRestTest {
 	@Test
 	public void updateGesuchstellerTest() throws EbeguException {
 		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
+		final JaxAdresse oldAdresse = testJaxGesuchsteller.getAdressen().get(0);
 		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
 		JaxAdresse umzugAdr = TestJaxDataUtil.createTestJaxAdr("umzugadr");
 		umzugAdr.setGueltigAb(LocalDate.now().plusDays(7));
 
-		jaxGesuchsteller.setUmzugAdresse(umzugAdr);
+		jaxGesuchsteller.addAdresse(umzugAdr);
 		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
 
-		Assert.assertNotNull(umgezogeneGesuchsteller.getUmzugAdresse());
-		Assert.assertEquals(umgezogeneGesuchsteller.getUmzugAdresse().getStrasse(), umzugAdr.getStrasse());
+		Assert.assertNotNull(umgezogeneGesuchsteller.getAdressen());
+		Assert.assertEquals(2, umgezogeneGesuchsteller.getAdressen().size());
+		Assert.assertEquals(umgezogeneGesuchsteller.getAdressen().get(0).getStrasse(), oldAdresse.getStrasse());
+		Assert.assertEquals(umgezogeneGesuchsteller.getAdressen().get(1).getStrasse(), umzugAdr.getStrasse());
 
 	}
-
-	@Test
-	public void reactivlyAddUmzug() throws EbeguException {
-		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, testJaxGesuchsteller, null, null);
-		JaxAdresse pastUmzug = TestJaxDataUtil.createTestJaxAdr("umzugadr");
-		pastUmzug.setGueltigAb(LocalDate.now().minusDays(7));
-
-		jaxGesuchsteller.setUmzugAdresse(pastUmzug);
-		JaxGesuchsteller umgezogeneGesuchsteller = gesuchstellerResource.saveGesuchsteller(gesuchJAXPId, 1, jaxGesuchsteller, null, null);
-		//Die Frage ist was hier das richtige verhalten ist. Fachlich gilt die Umzugadresse ja in der Gegenwart bereits als
-		// Wohnadresse. Die Frage ist ob man trotzdem im GUI die Umzugadr noch anzeigen muesste
-		Assert.assertNull("Umzugadresse ist bereits gueltige Wohnadresse", umgezogeneGesuchsteller.getUmzugAdresse());
-		Assert.assertEquals(umgezogeneGesuchsteller.getWohnAdresse().getStrasse(), pastUmzug.getStrasse());
-
-	}
-
 
 	@Test
 	public void removeKorrespondenzaddr() throws EbeguException {

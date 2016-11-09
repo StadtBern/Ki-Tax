@@ -219,9 +219,6 @@ export class NavigatorController {
 
             this.navigateToStep(TSWizardStepName.GESUCHSTELLER, '1');
 
-        } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 1) {
-            this.navigateToStep(TSWizardStepName.GESUCHSTELLER, this.gesuchModelManager.getGesuchstellerNumber().toLocaleString());
-
         } else if (TSWizardStepName.KINDER === this.wizardStepManager.getCurrentStepName() && this.dvSubStep === 2) {
             this.navigateToStep(TSWizardStepName.KINDER);
 
@@ -291,6 +288,11 @@ export class NavigatorController {
         } else if (stepName === TSWizardStepName.GESUCHSTELLER) {
             this.state.go('gesuch.stammdaten', {
                 gesuchstellerNumber: gsNumber ? gsNumber : '1',
+                gesuchId: gesuchId
+            });
+
+        } else if (stepName === TSWizardStepName.UMZUG) {
+            this.state.go('gesuch.umzug', {
                 gesuchId: gesuchId
             });
 

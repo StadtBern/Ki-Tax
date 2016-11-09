@@ -49,11 +49,11 @@
                 <span class="col-sm-2 col-md-2 ng-class:vm.getIcon('GESUCHSTELLER')" aria-hidden="true"></span>
             </li>
 
-            <li class="row" ng-if="!vm.gesuchModelManager.isErstgesuch()"
+            <li class="row"
                 ng-class="{'active-element': vm.isElementActive('UMZUG')}" ui-sref-active="active">
-                <button type="button" class="col-sm-10 col-md-10 btn btn-link" ui-sref="gesuch.umzug"
-                        ng-disabled="true">
-                    <!--ng-disabled="vm.isWizardStepDisabled('UMZUG')">-->
+                <button type="button" class="col-sm-10 col-md-10 btn btn-link"
+                        ui-sref="gesuch.umzug({gesuchId: vm.getGesuchId()})"
+                    ng-disabled="vm.isWizardStepDisabled('UMZUG')">
                     <span data-translate="MENU_UMZUG"></span>
                 </button>
                 <span class="col-sm-2 col-md-2 ng-class:vm.getIcon('UMZUG')" aria-hidden="true"></span>

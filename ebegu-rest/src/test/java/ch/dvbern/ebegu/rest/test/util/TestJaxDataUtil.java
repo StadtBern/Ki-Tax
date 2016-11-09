@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Generiert Testdaten fuer JAX DTOs
@@ -21,7 +22,7 @@ public class TestJaxDataUtil {
 		JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		jaxGesuchsteller.setNachname("Jaxter");
 		jaxGesuchsteller.setVorname("Jack");
-		jaxGesuchsteller.setWohnAdresse(createTestJaxAdr(null));
+		jaxGesuchsteller.setAdressen(createTestJaxAdressenList(null));
 		jaxGesuchsteller.setGeburtsdatum(LocalDate.now().minusYears(18));
 		jaxGesuchsteller.setMail("jax.jaxter@example.com");
 		jaxGesuchsteller.setGeschlecht(Geschlecht.MAENNLICH);
@@ -46,7 +47,7 @@ public class TestJaxDataUtil {
 		umzugAdr.setStrasse("neue Strasse");
 		umzugAdr.setGueltigAb(LocalDate.now().plusMonths(1));  //gueltig 1 monat in zukunft
 
-		jaxGesuchsteller.setUmzugAdresse(umzugAdr);
+		jaxGesuchsteller.addAdresse(umzugAdr);
 		JaxAdresse altAdr = createTestJaxAdr("alternativ");
 		altAdr.setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		jaxGesuchsteller.setAlternativeAdresse(altAdr);
@@ -87,6 +88,12 @@ public class TestJaxDataUtil {
 		jaxErwerbspensum.setPensum(70);
 		return jaxErwerbspensum;
 
+	}
+
+	public static List<JaxAdresse> createTestJaxAdressenList(@Nullable String postfix) {
+		final List<JaxAdresse> adressen = new ArrayList<>();
+		adressen.add(createTestJaxAdr(postfix));
+		return adressen;
 	}
 
 	public static JaxAdresse createTestJaxAdr(@Nullable String postfix) {
