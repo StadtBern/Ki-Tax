@@ -68,7 +68,7 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	/**
 	 * Wenn true werden die Testergebnisse neu in die Testfiles geschrieben. Muss für testen immer false sein!
 	 */
-	private final static boolean writeToFile = true;
+	private final static boolean writeToFile = false;
 
 	@Before
 	public void init() {
@@ -115,16 +115,44 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	public void testVerfuegung_MeierMeret() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.MeierMeret, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
 	public void testVerfuegung_WaeltiDagmar_mutationHeirat() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
-
 		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),
 			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.DECEMBER, 15), LocalDate.of(2017, Month.JANUARY, 15), true);
-
-		final Optional<Gesuch> gesuch1 = gesuchService.findGesuch(mutieren.getId());
-
 		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationHeirat");
+	}
 
+	@Test
+	public void testVerfuegung_BeckerNora_mutationHeirat() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.BeckerNora, true, true);
+		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),
+			gesuch.getGesuchsperiode().getId(), LocalDate.of(2017, Month.FEBRUARY, 15), LocalDate.of(2017, Month.FEBRUARY, 15), true);
+		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationHeirat");
+	}
+
+	@Test
+	public void testVerfuegung_PerreiraMarcia_mutationScheidung() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.PerreiraMarcia, true, true);
+		final Gesuch mutieren = testfaelleService.mutierenScheidung(gesuch.getFall().getFallNummer(),
+			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.SEPTEMBER, 30), LocalDate.of(2016, Month.OCTOBER, 15), true);
+		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationScheidung");
+	}
+
+	/**
+	 * Diese Scheidung wurde zu spät eingereicht!
+	 */
+	@Test
+	public void testVerfuegung_MeierMeret_mutationScheidung() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.MeierMeret, true, true);
+		final Gesuch mutieren = testfaelleService.mutierenScheidung(gesuch.getFall().getFallNummer(),
+			gesuch.getGesuchsperiode().getId(), LocalDate.of(2016, Month.NOVEMBER, 15), LocalDate.of(2016, Month.OCTOBER, 15), true);
+		ueberpruefeVerfuegungszeitabschnitte(mutieren, "MutationScheidung");
 	}
 
 

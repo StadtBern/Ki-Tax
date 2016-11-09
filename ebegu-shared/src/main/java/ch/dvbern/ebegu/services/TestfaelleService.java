@@ -16,6 +16,8 @@ public interface TestfaelleService {
 	String WaltherLaura = "4";
 	String LuethiMeret = "5";
 	String BeckerNora = "6";
+	String MeierMeret = "7";
+
 
 	String heirat = "1";
 

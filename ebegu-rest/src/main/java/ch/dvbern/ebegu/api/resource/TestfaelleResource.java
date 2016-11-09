@@ -23,6 +23,8 @@ import java.time.LocalDate;
 @Api
 public class TestfaelleResource {
 
+	private static final String FALL = "Fall ";
+
 	@Inject
 	private TestfaelleService testfaelleService;
 
@@ -68,10 +70,10 @@ public class TestfaelleResource {
 
 		final Gesuch gesuch = testfaelleService.mutierenHeirat(fallNummer, gesuchsperiodeid, mutationsdatum, aenderungPer, false);
 		if (gesuch != null) {
-			return Response.ok("Fall " + gesuch.getFall().getFallNummer() + " mutiert zu heirat").build();
+			return Response.ok(FALL + gesuch.getFall().getFallNummer() + " mutiert zu heirat").build();
 		}
 
-		return Response.ok("Fall " + fallNummer + " konnte nicht mutiert").build();
+		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
 	@GET
@@ -89,10 +91,10 @@ public class TestfaelleResource {
 
 		final Gesuch gesuch = testfaelleService.mutierenScheidung(fallNummer, gesuchsperiodeid, mutationsdatum, aenderungPer, false);
 		if (gesuch != null) {
-			return Response.ok("Fall " + gesuch.getFall().getFallNummer() + " mutiert zu scheidung").build();
+			return Response.ok(FALL + gesuch.getFall().getFallNummer() + " mutiert zu scheidung").build();
 		}
 
-		return Response.ok("Fall " + fallNummer + " konnte nicht mutiert").build();
+		return Response.ok(FALL + fallNummer + " konnte nicht mutiert").build();
 	}
 
 }
