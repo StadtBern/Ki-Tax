@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -92,6 +93,11 @@ public class Gesuch extends AbstractEntity {
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_gesuch_mutationsdaten_id"))
 	private Mutationsdaten mutationsdaten;
 
+	@NotNull
+	@Min(0)
+	@Column(nullable = false)
+	private int laufnummer = 0;
+
 
 	public Gesuch() {
 	}
@@ -122,6 +128,7 @@ public class Gesuch extends AbstractEntity {
 			this.setEinkommensverschlechterungInfo(new EinkommensverschlechterungInfo(toCopy.getEinkommensverschlechterungInfo()));
 		}
 		this.setBemerkungen("Mutation des Gesuchs vom " + toCopy.getEingangsdatum()); //TODO hefr test only!
+		this.setLaufnummer(toCopy.getLaufnummer()+1);
 	}
 
 	@Nullable
@@ -251,6 +258,15 @@ public class Gesuch extends AbstractEntity {
 //		if (this.mutationsdaten != null) {
 //			this.mutationsdaten.setGesuch(this);
 //		}
+	}
+
+	@Nullable
+	public int getLaufnummer() {
+		return laufnummer;
+	}
+
+	public void setLaufnummer(@Nullable int laufnummer) {
+		this.laufnummer = laufnummer;
 	}
 
 	@SuppressWarnings("ObjectEquality")

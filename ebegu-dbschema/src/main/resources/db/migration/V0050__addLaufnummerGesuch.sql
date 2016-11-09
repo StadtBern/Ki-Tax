@@ -1,0 +1,5 @@
+ALTER TABLE gesuch
+  ADD COLUMN laufnummer INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE gesuch_aud
+  ADD COLUMN laufnummer INTEGER;

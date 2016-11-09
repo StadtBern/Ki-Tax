@@ -153,7 +153,7 @@ export class GesuchToolbarController {
         for (var i = 0; i < this.antragList.length; i++) {
             let antrag: TSAntragDTO = this.antragList[i];
             if (this.getGesuch().gesuchsperiode.gueltigkeit.gueltigAb.isSame(antrag.gesuchsperiodeGueltigAb)) {
-                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum);
+                let txt = this.ebeguUtil.getAntragTextDateAsString(antrag.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
 
                 this.antragTypList[txt] = antrag;
             }
@@ -233,7 +233,7 @@ export class GesuchToolbarController {
 
     public getAntragTyp(): string {
         if (this.getGesuch()) {
-            return this.ebeguUtil.getAntragTextDateAsString(this.getGesuch().typ, this.getGesuch().eingangsdatum);
+            return this.ebeguUtil.getAntragTextDateAsString(this.getGesuch().typ, this.getGesuch().eingangsdatum, this.getGesuch().laufnummer);
         } else {
             return '';
         }
@@ -309,7 +309,7 @@ export class GesuchToolbarController {
     private addAntragToList(antrag: TSGesuch): void {
         let antragDTO = new TSAntragDTO();
         antragDTO.antragTyp = TSAntragTyp.MUTATION;
-        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum);
+        let txt = this.ebeguUtil.getAntragTextDateAsString(antragDTO.antragTyp, antrag.eingangsdatum, antrag.laufnummer);
         this.antragTypList[txt] = antragDTO;
     }
 }

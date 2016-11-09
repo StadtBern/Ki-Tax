@@ -39,6 +39,11 @@ export default class GesuchRS implements IEntityRS {
         });
     }
 
+    //TODO remove wijo
+    public alleLaufnummernUpdaten() {
+        return this.http.get(this.serviceURL + '/updatelaufnummern');
+    }
+
     public updateGesuch(gesuch: TSGesuch): IPromise<TSGesuch> {
         let sentGesuch = {};
         sentGesuch = this.ebeguRestUtil.gesuchToRestObject(sentGesuch, gesuch);

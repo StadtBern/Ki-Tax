@@ -41,4 +41,9 @@ public interface FallService {
 	@Nonnull
 	void removeFall(@Nonnull Fall fall);
 
+	/**
+	 * Aktuallisiert die Laufnummern aller Gesuche/Mutationen aller Faelle
+	 */
+	void updateGesuchLaufnummerOfAllFaelle();
+
 }
