@@ -1,6 +1,6 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -42,6 +42,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Fall a =  persistence.find(Fall.class, key);
 		return Optional.ofNullable(a);
+	}
+
+	@Nonnull
+	@Override
+	public Optional<Fall> findFallByNumber(@Nonnull Long fallnummer) {
+		Objects.requireNonNull(fallnummer, "fallnummer muss gesetzt sein");
+		return criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
 	}
 
 	@Nonnull

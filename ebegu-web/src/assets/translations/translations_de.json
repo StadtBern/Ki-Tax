@@ -738,6 +738,8 @@
     "AENDERUNG_PER": "Änderung per",
     "MUTATION_FAMSITUATION_HINT": "Während der laufenden Gesuchsperiode kann die Familiensituation nur einmal mutiert bzw. die Anzahl der Gesuchsteller verändert werden",
     "MUTATION_FAMSITUATION_TITLE": "Mutation Familiensituation",
+    "FALL_MUTIEREN_HEIRAT": "Fall mutieren Heirat",
+    "FALL_MUTIEREN_SCHEIDUNG": "Fall mutieren Scheidung",
     "UMZUG_TITLE": "Umzug",
     "BETROFFENE_WAEHLEN": "Betroffen",
     "BEIDE_GESUCHSTELLER": "beide Gesuchsteller",

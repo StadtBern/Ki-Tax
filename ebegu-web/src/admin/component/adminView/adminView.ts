@@ -28,6 +28,10 @@ export class AdminViewController {
     applicationProperties: TSApplicationProperty[];
     ebeguRestUtil: EbeguRestUtil;
     testFaelleRS: TestFaelleRS;
+    fallId: number;
+    mutationsdatum: moment.Moment;
+    aenderungperHeirat: moment.Moment;
+    aenderungperScheidung: moment.Moment;
 
     /* @ngInject */
     constructor(applicationPropertyRS: ApplicationPropertyRS, MAX_LENGTH: number, ebeguRestUtil: EbeguRestUtil,
@@ -109,9 +113,30 @@ export class AdminViewController {
             return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
                 title: respone.data
             }).then(() => {
-
+                //do nothing
             });
+        });
+    }
 
+    public mutiereFallHeirat(): IPromise<any> {
+        return this.testFaelleRS.mutiereFallHeirat(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',
+            this.mutationsdatum, this.aenderungperHeirat).then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
+        });
+    }
+
+    public mutiereFallScheidung(): IPromise<any> {
+        return this.testFaelleRS.mutiereFallScheidung(this.fallId, '0621fb5d-a187-5a91-abaf-8a813c4d263a',
+            this.mutationsdatum, this.aenderungperScheidung).then((respone) => {
+            return this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
+                title: respone.data
+            }).then(() => {
+                //do nothing
+            });
         });
     }
 }
