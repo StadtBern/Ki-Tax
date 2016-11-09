@@ -1,15 +1,15 @@
-<md-button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="userMenu"
-           aria-label="{{'EINLOGGEN' | translate}}">
+<button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="userMenu"
+        aria-label="{{'EINLOGGEN' | translate}}">
     <a href="javascript:void(0)" data-translate="EINLOGGEN"></a>
     <span style="visibility: hidden" ng-bind="vm.getVersion()"></span>
-</md-button>
+</button>
 
 <md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
     <md-menu>
-        <md-button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
+        <button ng-click="$mdOpenMenu()" aria-label="{{vm.getPrincipal().getFullName()}}">
             <span ng-bind="vm.getPrincipal().getFullName()"></span>
             <i class="fa fa-angle-down"></i>
-        </md-button>
+        </button>
         <md-menu-content class="user-menu">
             <md-menu-item>
                 <md-button ng-click="vm.logout()" aria-label="{{'AUSLOGGEN' | translate}}">
