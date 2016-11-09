@@ -466,7 +466,7 @@
   <inspection_tool class="PackageNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
     <scope name="Production" level="WARNING" enabled="true">
       <option name="m_regex" value="[a-z]*" />
-      <option name="m_minLength" value="3" />
+      <option name="m_minLength" value="2" />
       <option name="m_maxLength" value="25" />
     </scope>
     <option name="m_regex" value="[a-z]*" />

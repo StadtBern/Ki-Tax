@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 
 import java.math.BigDecimal;
 
@@ -64,9 +65,12 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 	}
 
 	@Override
-	public String getEinkommensverschlechterungJahr() {
-
-		return einkommensverschlechterungJahr;
+	public String getEinkommensverschlechterungTitle() {
+		String title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_EKV_TITEL");
+		if (ereigniseintritt.isEmpty()) {
+			title =ServerMessageUtil.getMessage("EINKOMMENSVERSCHLECHTERUNG_PRINT_BERECHNUNGSGRUNDL_TITEL");
+		}
+		return title + " " + einkommensverschlechterungJahr;
 	}
 
 	@Override
@@ -81,6 +85,15 @@ public class EinkommensverschlechterungPrintImpl extends FinanzDatenPrintImpl im
 		return grund;
 	}
 
+	@Override
+	public boolean isExistEreigniseintritt() {
+		return (this.ereigniseintritt != null && !this.ereigniseintritt.isEmpty());
+	}
+
+	@Override
+	public boolean isExistGrund() {
+		return (this.grund != null && !this.grund.isEmpty());
+	}
 
 	@Override
 	public BigDecimal getGeschaeftsgewinnG1() {

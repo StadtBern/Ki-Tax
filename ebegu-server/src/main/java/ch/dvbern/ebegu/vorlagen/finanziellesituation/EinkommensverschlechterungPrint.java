@@ -20,7 +20,7 @@ public interface EinkommensverschlechterungPrint extends FinanzDatenPrint {
 	/**
 	 * @return Einkommenverschlescherungsjahr
 	 */
-	String getEinkommensverschlechterungJahr();
+	String getEinkommensverschlechterungTitle();
 
 	/**
 	 * @return das Ereingis eintritt
@@ -31,4 +31,14 @@ public interface EinkommensverschlechterungPrint extends FinanzDatenPrint {
 	 * @return Grund des Einkommensverschlechterung
 	 */
 	String getGrund();
+
+	/**
+	 * @return true wenn der Ereigniseintritt nicht null oder empty ist
+	 */
+	boolean isExistEreigniseintritt();
+
+	/**
+	 * @return true wenn der Grund nicht null oder empty ist
+	 */
+	boolean isExistGrund();
 }
