@@ -68,7 +68,7 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	public EbeguVorlage copy(DateRange gueltigkeit) {
 
 		EbeguVorlage copiedParam = new EbeguVorlage();
-		copiedParam.setGueltigkeit(gueltigkeit);
+		copiedParam.setGueltigkeit(new DateRange(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis()));
 		copiedParam.setName(this.getName());
 
 		return copiedParam;

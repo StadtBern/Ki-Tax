@@ -303,7 +303,7 @@ public class VerfuegungsMergerTest {
 
 	private List<VerfuegungZeitabschnitt> splitUpAnsprechberechtigtesPensumAbDatum(List<VerfuegungZeitabschnitt> zeitabschnitte, LocalDate aenderungsDatumPensum, int ansprechberechtigtesPensum) {
 
-		List<VerfuegungZeitabschnitt> zeitabschnitteSplitted = new ArrayList<VerfuegungZeitabschnitt>();
+		List<VerfuegungZeitabschnitt> zeitabschnitteSplitted = new ArrayList<>();
 		zeitabschnitte.stream().
 			filter(za -> za.getGueltigkeit().endsBefore(aenderungsDatumPensum)).
 			forEach(zeitabschnitteSplitted::add);

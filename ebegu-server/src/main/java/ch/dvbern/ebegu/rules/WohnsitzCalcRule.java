@@ -44,8 +44,8 @@ public class WohnsitzCalcRule extends AbstractCalcRule {
 	private boolean areNotInBern(Betreuung betreuung, VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		boolean hasSecondGesuchsteller = false;
 		final Gesuch gesuch = betreuung.extractGesuch();
-		if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null
-			&& !gesuch.getFamiliensituation().getAenderungPer().isAfter(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb())) {
+		if (!gesuch.isMutation() || (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null
+			&& !gesuch.getFamiliensituation().getAenderungPer().isAfter(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb()))) {
 
 			hasSecondGesuchsteller = gesuch.getFamiliensituation().hasSecondGesuchsteller();
 		}

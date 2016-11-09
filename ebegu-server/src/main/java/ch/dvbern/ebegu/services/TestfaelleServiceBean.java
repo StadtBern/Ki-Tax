@@ -58,6 +58,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	@Inject
 	private VerfuegungService verfuegungService;
 
+	@Override
 	@Nonnull
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
@@ -111,6 +112,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	}
 
 
+	@Override
 	@Nullable
 	public Gesuch createAndSaveTestfaelle(String fallid,
 										  boolean betreuungenBestaetigt,
@@ -379,6 +381,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2);
 		}
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER);
+		// Umzug wird by default OK und verfuegbar, da es nicht notwendig ist, einen Umzug einzutragen
+		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.UMZUG);
+		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.UMZUG, WizardStepStatus.OK);
 	}
 
 	private void saveFamiliensituation(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {

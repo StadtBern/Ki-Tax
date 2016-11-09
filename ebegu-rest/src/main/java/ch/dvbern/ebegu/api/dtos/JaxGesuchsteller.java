@@ -10,8 +10,10 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
@@ -42,13 +44,10 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	//Adressen
 	@NotNull
 	@Valid
-	private JaxAdresse wohnAdresse;
+	private List<JaxAdresse> adressen;
 
 	@Valid
 	private JaxAdresse alternativeAdresse;
-
-	@Valid
-	private JaxAdresse umzugAdresse;
 
 	@Valid
 	private JaxFinanzielleSituationContainer finanzielleSituationContainer;
@@ -102,12 +101,12 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 		this.zpvNumber = zpvNumber;
 	}
 
-	public JaxAdresse getWohnAdresse() {
-		return wohnAdresse;
+	public List<JaxAdresse> getAdressen() {
+		return adressen;
 	}
 
-	public void setWohnAdresse(final JaxAdresse wohnAdresse) {
-		this.wohnAdresse = wohnAdresse;
+	public void setAdressen(final List<JaxAdresse> adressen) {
+		this.adressen = adressen;
 	}
 
 	public JaxAdresse getAlternativeAdresse() {
@@ -116,14 +115,6 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setAlternativeAdresse(final JaxAdresse alternativeAdresse) {
 		this.alternativeAdresse = alternativeAdresse;
-	}
-
-	public JaxAdresse getUmzugAdresse() {
-		return umzugAdresse;
-	}
-
-	public void setUmzugAdresse(final JaxAdresse umzugAdresse) {
-		this.umzugAdresse = umzugAdresse;
 	}
 
 	public JaxFinanzielleSituationContainer getFinanzielleSituationContainer() {
@@ -157,5 +148,12 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setEinkommensverschlechterungContainer(@Nullable JaxEinkommensverschlechterungContainer einkommensverschlechterungContainer) {
 		this.einkommensverschlechterungContainer = einkommensverschlechterungContainer;
+	}
+
+	public void addAdresse(JaxAdresse adresse) {
+		if (adressen == null) {
+		    adressen = new ArrayList<>();
+		}
+		adressen.add(adresse);
 	}
 }

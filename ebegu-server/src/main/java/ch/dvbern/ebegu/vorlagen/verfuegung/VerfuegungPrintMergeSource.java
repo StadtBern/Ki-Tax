@@ -52,7 +52,8 @@ public class VerfuegungPrintMergeSource implements MergeSource {
 		// ist aber muehsam zu fixen daher lasse ichs mal so
 		if (key.startsWith("Betreuungen")) {
 			return new BeanMergeSource(verfuegung, "Betreuungen.").whileStatement(mergeContext, key);
-		} else if (key.startsWith("Bemerkungen")) {
+		}
+		if (key.startsWith("Bemerkungen")) {
 			return new BeanMergeSource(verfuegung, "Bemerkungen.").whileStatement(mergeContext, key);
 		}
 		return null;

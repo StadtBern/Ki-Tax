@@ -80,6 +80,7 @@ public class PrintBegleitschreibenPDFServiceBeanTest extends AbstractEbeguTest {
 		testfall.createFall(null);
 		testfall.createGesuch(LocalDate.of(1980, Month.MARCH, 25));
 		Gesuch gesuch = testfall.fillInGesuch();
+		gesuch.getGesuchsteller1().getAdressen().stream().forEach(gesuchstellerAdresse -> gesuchstellerAdresse.setZusatzzeile("Test zusatztzeile"));
 		TestDataUtil.calculateFinanzDaten(gesuch);
 		gesuch.setGesuchsperiode(TestDataUtil.createGesuchsperiode1617());
 		// evaluator.evaluate(gesuch, AbstractBGRechnerTest.getParameter());

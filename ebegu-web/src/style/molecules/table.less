@@ -1,17 +1,23 @@
 @import '../variables.less';
 @import '../mixins.less';
 
-table {
-    tr {
-        td {
+table, .table > tbody {
+    & > tr {
+        & > td {
             border-bottom: 0.1rem solid @contrast;
             position: relative;
+            padding: 0.8rem;
+            line-height: 3rem;
+            .dvb-loading-button {
+                text-align: end;
+            }
+
         }
         .betreuung-status {
             &:after {
                 content: "";
                 position: absolute;
-                left: 0;
+                left: 0.8rem;
                 bottom: 0;
                 width: 3rem;
                 height: 0.5rem;
@@ -26,6 +32,9 @@ table {
             }
             &.ABGEWIESEN:after {
                 border-color: @danger;
+            }
+            &.VERFUEGT:after {
+                border-color: @purple;
             }
         }
     }

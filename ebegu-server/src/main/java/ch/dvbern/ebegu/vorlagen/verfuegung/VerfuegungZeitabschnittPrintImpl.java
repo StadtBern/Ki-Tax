@@ -11,21 +11,23 @@ package ch.dvbern.ebegu.vorlagen.verfuegung;
 * Ersteller: zeab am: 12.08.2016
 */
 
+import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.util.Constants;
 
 import java.math.BigDecimal;
 
 public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnittPrint {
 
-	private ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt;
+	private VerfuegungZeitabschnitt verfuegungZeitabschnitt;
 
-	public VerfuegungZeitabschnittPrintImpl(ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+	public VerfuegungZeitabschnittPrintImpl(VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
 		this.verfuegungZeitabschnitt = verfuegungZeitabschnitt;
 	}
 
 	/**
 	 * @return Von
 	 */
+	@Override
 	public String getVon() {
 
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigAb());
@@ -34,6 +36,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Bis
 	 */
+	@Override
 	public String getBis() {
 
 		return Constants.DATE_FORMATTER.format(verfuegungZeitabschnitt.getGueltigkeit().getGueltigBis());
@@ -42,6 +45,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Betreuung
 	 */
+	@Override
 	public int getBetreuung() {
 
 		return verfuegungZeitabschnitt.getBetreuungspensum();
@@ -50,6 +54,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Anspruch
 	 */
+	@Override
 	public int getAnspruch() {
 
 		return verfuegungZeitabschnitt.getAnspruchberechtigtesPensum();
@@ -58,6 +63,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return BGPensum
 	 */
+	@Override
 	public int getBGPensum() {
 		//hier wird das Minimum von (Rest)anspruch und von Betreuung zurueckgegeben. Dies enspricht der Definition des BG-Pensum
 		return Math.min(getBetreuung(), getAnspruch());
@@ -66,6 +72,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Vollkosten
 	 */
+	@Override
 	public BigDecimal getVollkosten() {
 
 		return verfuegungZeitabschnitt.getVollkosten();
@@ -74,6 +81,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Elternbeitrag
 	 */
+	@Override
 	public BigDecimal getElternbeitrag() {
 
 		return verfuegungZeitabschnitt.getElternbeitrag();
@@ -82,6 +90,7 @@ public class VerfuegungZeitabschnittPrintImpl implements VerfuegungZeitabschnitt
 	/**
 	 * @return Verguenstigung
 	 */
+	@Override
 	public BigDecimal getVerguenstigung() {
 
 		return verfuegungZeitabschnitt.getVerguenstigung();

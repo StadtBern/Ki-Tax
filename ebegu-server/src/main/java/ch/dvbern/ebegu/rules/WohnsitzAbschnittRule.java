@@ -47,8 +47,8 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 
 	private List<VerfuegungZeitabschnitt> analyseAdressAbschnitte(Betreuung betreuung, List<VerfuegungZeitabschnitt> adressenAbschnitte, boolean gs1) {
 		List<VerfuegungZeitabschnitt> result = new ArrayList<>();
-		List<VerfuegungZeitabschnitt> zeitabschnittList = super.mergeZeitabschnitte(adressenAbschnitte);
-		zeitabschnittList = super.normalizeZeitabschnitte(zeitabschnittList, betreuung.extractGesuchsperiode());
+		List<VerfuegungZeitabschnitt> zeitabschnittList = mergeZeitabschnitte(adressenAbschnitte);
+		zeitabschnittList = normalizeZeitabschnitte(zeitabschnittList, betreuung.extractGesuchsperiode());
 		VerfuegungZeitabschnitt lastAdresse = null;
 		boolean isFirstAbschnitt = true;
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
@@ -107,7 +107,7 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 					zeitabschnitt.setWohnsitzNichtInGemeindeGS1(gesuchstellerAdresse.isNichtInGemeinde());
 					adressenZeitabschnitte.add(zeitabschnitt);
 				} else { // gs2
-					final DateRange gueltigkeit = gesuchstellerAdresse.getGueltigkeit();
+					final DateRange gueltigkeit = new DateRange(gesuchstellerAdresse.getGueltigkeit());
 					if (gesuch.getFamiliensituation().getAenderungPer() != null) {
 						// from 1GS to 2GS
 						if (!gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() && gesuch.getFamiliensituation().hasSecondGesuchsteller()) {

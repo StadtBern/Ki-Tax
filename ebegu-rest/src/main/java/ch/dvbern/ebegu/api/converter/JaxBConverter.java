@@ -13,6 +13,7 @@ import ch.dvbern.ebegu.services.*;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.Gueltigkeit;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.beanvalidation.embeddables.IBAN;
 import ch.dvbern.lib.date.DateConvertUtils;
@@ -81,7 +82,7 @@ public class JaxBConverter {
 	private VerfuegungService verfuegungService;
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(JaxBConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JaxBConverter.class);
 
 
 	@Nonnull
@@ -303,7 +304,7 @@ public class JaxBConverter {
 	public Gesuchsteller gesuchstellerToEntity(@Nonnull final JaxGesuchsteller gesuchstellerJAXP, @Nonnull final Gesuchsteller gesuchsteller) {
 		Validate.notNull(gesuchsteller);
 		Validate.notNull(gesuchstellerJAXP);
-		Validate.notNull(gesuchstellerJAXP.getWohnAdresse(), "Wohnadresse muss gesetzt sein");
+		Validate.notNull(gesuchstellerJAXP.getAdressen(), "Adressen muessen gesetzt sein");
 		convertAbstractPersonFieldsToEntity(gesuchstellerJAXP, gesuchsteller);
 		gesuchsteller.setMail(gesuchstellerJAXP.getMail());
 		gesuchsteller.setTelefon(gesuchstellerJAXP.getTelefon());
@@ -327,19 +328,10 @@ public class JaxBConverter {
 				}
 			}
 		}
-		// Umzug und Wohnadresse
-		GesuchstellerAdresse umzugAddr = null;
-		if (gesuchstellerJAXP.getUmzugAdresse() != null) {
-			umzugAddr = toStoreableAddresse(gesuchstellerJAXP.getUmzugAdresse());
-			gesuchsteller.addAdresse(umzugAddr);
-		}
-		//Wohnadresse (abh von Umzug noch datum setzten)
-		final GesuchstellerAdresse wohnAddrToMerge = toStoreableAddresse(gesuchstellerJAXP.getWohnAdresse());
-		if (umzugAddr != null) {
-			wohnAddrToMerge.getGueltigkeit().endOnDayBefore(umzugAddr.getGueltigkeit());
-		}
+
+		sortAndAddAdressenToGesuchsteller(gesuchstellerJAXP, gesuchsteller);
+
 		// Finanzielle Situation
-		gesuchsteller.addAdresse(wohnAddrToMerge);
 		if (gesuchstellerJAXP.getFinanzielleSituationContainer() != null) {
 			gesuchsteller.setFinanzielleSituationContainer(finanzielleSituationContainerToStorableEntity(gesuchstellerJAXP.getFinanzielleSituationContainer()));
 		}
@@ -355,6 +347,37 @@ public class JaxBConverter {
 			gesuchsteller.setEinkommensverschlechterungContainer(einkommensverschlechterungContainerToStorableEntity(einkommensverschlechterungContainer));
 		}
 		return gesuchsteller;
+	}
+
+	private void sortAndAddAdressenToGesuchsteller(@Nonnull JaxGesuchsteller gesuchstellerJAXP, @Nonnull Gesuchsteller gesuchsteller) {
+		// Zuerst wird geguckt, welche Entities nicht im JAX sind und werden dann geloescht
+		for (Iterator<GesuchstellerAdresse> iterator = gesuchsteller.getAdressen().iterator(); iterator.hasNext(); ) {
+			GesuchstellerAdresse next = iterator.next();
+			boolean needsToBeRemoved = true;
+			for (JaxAdresse jaxAdresse : gesuchstellerJAXP.getAdressen()) {
+				if (next.isKorrespondenzAdresse() || next.getId().equals(jaxAdresse.getId())) {
+					needsToBeRemoved = false; // Korrespondezadresse und Adressen die gefunden werden, werden nicht geloescht
+				}
+			}
+			if (needsToBeRemoved) {
+				iterator.remove();
+			}
+		}
+		// Jetzt werden alle Adressen vom Jax auf Entity kopiert
+		gesuchstellerJAXP.getAdressen().forEach(jaxAdresse -> gesuchsteller.addAdresse(toStoreableAddresse(jaxAdresse)));
+
+		// Zuletzt werden alle gueltigen Adressen sortiert und mit dem entsprechenden AB und BIS aktualisiert
+		gesuchsteller.getAdressen().sort(Gueltigkeit.GUELTIG_AB_COMPARATOR);
+		List<GesuchstellerAdresse> wohnadressen = gesuchsteller.getAdressen().stream()
+			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.isKorrespondenzAdresse()).collect(Collectors.toList());
+		for (int i = 0; i < wohnadressen.size(); i++) {
+			if ((i < wohnadressen.size() - 1)) {
+				wohnadressen.get(i).getGueltigkeit().setGueltigBis(wohnadressen.get(i + 1).getGueltigkeit().getGueltigAb().minusDays(1));
+			}
+			else {
+				wohnadressen.get(i).getGueltigkeit().setGueltigBis(Constants.END_OF_TIME); // by default das letzte Datum hat BIS=END_OF_TIME
+			}
+		}
 	}
 
 	@Nonnull
@@ -373,9 +396,8 @@ public class JaxBConverter {
 
 	@Nonnull
 	public JaxGesuchsteller gesuchstellerToJAX(@Nonnull final Gesuchsteller persistedGesuchsteller) {
-		//TODO (team) Was machen wir hier? Bei Mutation ist der Gesuchsteller anfangs noch nicht gespeichert...
-//		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
-//			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
+		Validate.isTrue(!persistedGesuchsteller.isNew(), "Gesuchsteller kann nicht nach REST transformiert werden weil sie noch " +
+			"nicht persistiert wurde; Grund dafuer ist, dass wir die aktuelle Wohnadresse aus der Datenbank lesen wollen");
 		final JaxGesuchsteller jaxGesuchsteller = new JaxGesuchsteller();
 		convertAbstractPersonFieldsToJAX(persistedGesuchsteller, jaxGesuchsteller);
 		jaxGesuchsteller.setMail(persistedGesuchsteller.getMail());
@@ -387,15 +409,13 @@ public class JaxBConverter {
 
 		if (!persistedGesuchsteller.isNew()) {
 			//relationen laden
-			final Optional<GesuchstellerAdresse> altAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
-			altAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
-			final GesuchstellerAdresse currentWohnadr = gesuchstellerAdresseService.getCurrentWohnadresse(persistedGesuchsteller.getId());
-			jaxGesuchsteller.setWohnAdresse(gesuchstellerAdresseToJAX(currentWohnadr));
+			final Optional<GesuchstellerAdresse> alternativeAdr = gesuchstellerAdresseService.getKorrespondenzAdr(persistedGesuchsteller.getId());
+			alternativeAdr.ifPresent(adresse -> jaxGesuchsteller.setAlternativeAdresse(gesuchstellerAdresseToJAX(adresse)));
 
-			//wenn heute gueltige Adresse von der Adresse divergiert die bis End of Time gilt dann wurde ein Umzug angegeben
-			final Optional<GesuchstellerAdresse> maybeUmzugadresse = gesuchstellerAdresseService.getNewestWohnadresse(persistedGesuchsteller.getId());
-			maybeUmzugadresse.filter(umzugAdresse -> !currentWohnadr.equals(umzugAdresse))
-				.ifPresent(umzugAdr -> jaxGesuchsteller.setUmzugAdresse(gesuchstellerAdresseToJAX(umzugAdr)));
+			jaxGesuchsteller.setAdressen(gesuchstellerAdressenListToJAX(
+				persistedGesuchsteller.getAdressen().stream().filter(gesuchstellerAdresse
+					-> !gesuchstellerAdresse.isKorrespondenzAdresse()).sorted(Gueltigkeit.GUELTIG_AB_COMPARATOR).collect(Collectors.toList())
+			));
 		}
 
 		// Finanzielle Situation
@@ -414,6 +434,10 @@ public class JaxBConverter {
 			jaxGesuchsteller.setEinkommensverschlechterungContainer(jaxEinkommensverschlechterungContainer);
 		}
 		return jaxGesuchsteller;
+	}
+
+	private List<JaxAdresse> gesuchstellerAdressenListToJAX(@Nonnull Collection<GesuchstellerAdresse> wohnAdressen) {
+		return wohnAdressen.stream().map(this::gesuchstellerAdresseToJAX).collect(Collectors.toList());
 	}
 
 	public Familiensituation familiensituationToEntity(@Nonnull final JaxFamiliensituation familiensituationJAXP, @Nonnull final Familiensituation familiensituation) {
@@ -582,6 +606,7 @@ public class JaxBConverter {
 		return antrag;
 	}
 
+	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
 	private Mutationsdaten mutationsdatenToEntity(@Nonnull JaxMutationsdaten jaxMutationsdaten, @Nonnull Mutationsdaten mutationsdaten) {
 		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());
 		mutationsdaten.setMutationGesuchsteller(jaxMutationsdaten.getMutationGesuchsteller());
@@ -1293,7 +1318,7 @@ public class JaxBConverter {
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
 			final boolean added = transformedBetPenContainers.add(contToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate container " + contToAdd);
+				LOGGER.warn("dropped duplicate container " + contToAdd);
 			}
 		}
 
@@ -1418,7 +1443,7 @@ public class JaxBConverter {
 			final VerfuegungZeitabschnitt abschnittToAdd = verfuegungZeitabschnittToEntity(jaxZeitabschnitt, containerToMergeWith);
 			final boolean added = convertedZeitabschnitte.add(abschnittToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
+				LOGGER.warn("dropped duplicate zeitabschnitt " + abschnittToAdd);
 			}
 		}
 
@@ -1636,7 +1661,7 @@ public class JaxBConverter {
 			final Dokument dokToAdd = dokumentToEntity(jaxDokument, dokumenteToMergeWith, dokumentGrund);
 			final boolean added = transformedDokumente.add(dokToAdd);
 			if (!added) {
-				LOG.warn("dropped duplicate container " + dokToAdd);
+				LOGGER.warn("dropped duplicate container " + dokToAdd);
 			}
 		}
 
@@ -1806,6 +1831,7 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
+	//TODO (team ) zwei fast identische methoden. Fällt aber wohl sowieso weg?
 	public Mutationsdaten mutationsDatenToEntity(JaxMutationsdaten jaxMutationsdaten, Mutationsdaten mutationsdaten) {
 		convertAbstractFieldsToEntity(jaxMutationsdaten, mutationsdaten);
 		mutationsdaten.setMutationFamiliensituation(jaxMutationsdaten.getMutationFamiliensituation());

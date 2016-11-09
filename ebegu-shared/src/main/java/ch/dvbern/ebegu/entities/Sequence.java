@@ -14,7 +14,6 @@ import ch.dvbern.ebegu.enums.SequenceType;
 import ch.dvbern.ebegu.util.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;

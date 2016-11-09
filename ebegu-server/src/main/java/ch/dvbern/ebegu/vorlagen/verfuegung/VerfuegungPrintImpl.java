@@ -102,6 +102,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	/**
 	 * @return Kita Name
 	 */
+	@Override
 	public String getKitaBezeichnung() {
 
 		return betreuung.getInstitutionStammdaten().getInstitution().getName();
@@ -145,6 +146,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 *
 	 * @return
 	 */
+	@Override
 	public List<BemerkungPrint> getManuelleBemerkungen() {
 
 		List<BemerkungPrint> bemerkungen = new ArrayList<>();
@@ -198,6 +200,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 
+	@Override
 	public boolean isVorgaengerVerfuegt() {
 		return letzteVerfuegungDatum != null;
 	}
@@ -205,7 +208,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintManuellebemerkung() {
 
-		return getManuelleBemerkungen().size() > 0;
+		return !getManuelleBemerkungen().isEmpty();
 	}
 
 	@Nonnull

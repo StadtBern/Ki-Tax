@@ -26,6 +26,7 @@ public class Testfall05_LuethiMeret extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
+	@Override
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createVerheiratet();

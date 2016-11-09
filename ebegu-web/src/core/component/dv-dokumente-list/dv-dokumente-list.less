@@ -1,39 +1,59 @@
-.dateientable tbody > tr > td {
-    padding-top: 0.2rem !important;
-    padding-bottom: 0.2rem !important;
-    border-top: 0.1rem solid #F0F0F0;
-}
+@import '../../../style/variables.less';
+@import '../../../style/mixins.less';
 
-.dateientable thead > tr > th {
-    padding-top: 0.2rem !important;
-    padding-bottom: 0.2rem !important;
-    background-color: #F0F0F0;
-    border-top: 0.1rem solid #F0F0F0;
-    border-bottom: 0 solid #F0F0F0;
-}
-
-.dateientable.table > thead > tr > th {
-    border-bottom: 0 solid #F0F0F0;
-}
-
-.dateientable thead > tr {
-    background-color: #F0F0F0;
-
-}
-
-.dokumentgrundtable.table > tbody > tr.dokument-grund-row > td, .dokumentgrundtable.table > thead > tr > th {
-    border-bottom: none;
-    border-top: 0.3rem solid gray;
-}
-
-.dokumentgrundtable td.documents-vailable {
-    background-color: #D0F5E4;
-}
-
-.table > thead > tr.sonstige > th {
-    padding: 0;
-}
-
-.vorgaenger{
-    font-style:italic;
+.dv-dokumente-list {
+    table {
+        background-color: transparent !important;
+    }
+    td.documents-vailable {
+        background: @success-light;
+    }
+    .sonstige {
+        display: none;
+    }
+    .fa-circle {
+        font-size: 1.1rem;
+    }
+    .dateientable {
+        margin-bottom: 0;
+        td {
+            border: none;
+            background-color: @contrast-lightest;
+            height: 3.5rem;
+        }
+        & > thead:first-child > tr:first-child > th, & > thead > tr > th {
+            border-top: none;
+            background-color: transparent;
+        }
+    }
+    table > thead:first-child > tr:first-child > th, table > thead > tr > th {
+        .label();
+        border: 0.1rem solid @contrast-darkest;
+        border-left: none;
+        border-right: none;
+        display: table-cell;
+        height: 3.5rem;
+        vertical-align: middle;
+        padding: 0 0.8rem 0;
+        span {
+            .p();
+            line-height: 0;
+        }
+    }
+    table > tbody > tr > td {
+        .h3();
+        border: 0.1rem solid @contrast;
+        border-left: none;
+        border-right: none;
+        display: table-cell;
+        height: 5rem;
+        vertical-align: middle;
+        padding: 0 0.8rem 0;
+        span {
+            line-height: 0;
+        }
+    }
+    table > tbody > tr:first-child > td {
+        border-top-color: @contrast-darkest;
+    }
 }

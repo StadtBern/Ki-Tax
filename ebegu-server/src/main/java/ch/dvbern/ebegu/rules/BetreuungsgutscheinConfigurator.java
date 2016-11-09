@@ -88,13 +88,13 @@ public class BetreuungsgutscheinConfigurator {
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
-		// - Einreichungsfrist
-		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
-		rules.add(einreichungsfristAbschnittRule);
-
 		// Wohnsitz (Zuzug und Wegzug)
 		WohnsitzAbschnittRule wohnsitzAbschnittRule = new WohnsitzAbschnittRule(defaultGueltigkeit);
 		rules.add(wohnsitzAbschnittRule);
+
+		// - Einreichungsfrist
+		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
+		rules.add(einreichungsfristAbschnittRule);
 
 		// Mindestalter Kind
 		MindestalterAbschnittRule mindestalterAbschnittRule = new MindestalterAbschnittRule(defaultGueltigkeit);

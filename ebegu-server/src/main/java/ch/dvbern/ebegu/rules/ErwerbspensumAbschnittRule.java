@@ -60,7 +60,7 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 	 */
 	@Nullable
 	private VerfuegungZeitabschnitt toVerfuegungZeitabschnitt(@Nonnull Gesuch gesuch, @Nonnull Erwerbspensum erwerbspensum, boolean gs2) {
-		final DateRange gueltigkeit = erwerbspensum.getGueltigkeit();
+		final DateRange gueltigkeit = new DateRange(erwerbspensum.getGueltigkeit());
 
 		int erwerbspensumTotal = 0;
 		erwerbspensumTotal += erwerbspensum.getPensum();
@@ -84,10 +84,10 @@ public class ErwerbspensumAbschnittRule extends AbstractAbschnittRule {
 			}
 			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 		}
-		else if (gs2 && !gesuch.isMutation()) {
+		if (gs2 && !gesuch.isMutation()) {
 			return createZeitAbschnittForGS2(gueltigkeit, erwerbspensumTotal);
 		}
-		else if (!gs2) {
+		if (!gs2) {
 			VerfuegungZeitabschnitt zeitabschnitt = new VerfuegungZeitabschnitt(gueltigkeit);
 			zeitabschnitt.setErwerbspensumGS1(erwerbspensumTotal);
 			return zeitabschnitt;

@@ -22,7 +22,6 @@ public class TestfaelleTest extends AbstractBGRechnerTest {
 		if (slashLoc != -1) {
 			deployuri = deployuri.substring(0, slashLoc);
 		}
-
 	}
 
 	@Test

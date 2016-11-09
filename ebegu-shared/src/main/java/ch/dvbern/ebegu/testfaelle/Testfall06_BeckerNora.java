@@ -25,6 +25,7 @@ public class Testfall06_BeckerNora extends AbstractTestfall {
 		super(gesuchsperiode, institutionStammdatenList, false);
 	}
 
+	@Override
 	public Gesuch fillInGesuch() {
 		// Gesuch, Gesuchsteller
 		Gesuch gesuch = createAlleinerziehend();

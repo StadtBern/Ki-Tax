@@ -7,6 +7,7 @@ md-radio-group.radio {
 
 md-radio-button {
     margin-bottom: 2rem;
+    color: @contrast-darkest;
     &:last-child {
         margin-bottom: 0;
     }
@@ -44,6 +45,24 @@ md-radio-button {
         }
         .md-on {
             transform: scale(0.4);
+        }
+    }
+    &[disabled] {
+        color: @contrast;
+        .md-container {
+            .md-off {
+                border-color: @contrast;
+            }
+        }
+
+        .md-on {
+            background-color: @contrast;
+            border-color: @contrast;
+        }
+        &.md-checked {
+            .md-off {
+                border-color: @contrast;
+            }
         }
     }
 }

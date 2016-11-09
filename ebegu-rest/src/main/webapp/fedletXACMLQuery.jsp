@@ -52,7 +52,7 @@ function checkEmptyResource() {
         deployuri = deployuri.substring(0, slashLoc);
     }
     String fedletHomeDir = System.getProperty("com.sun.identity.fedlet.home");
-    if ((fedletHomeDir == null) || (fedletHomeDir.trim().length() == 0)) {
+    if ((fedletHomeDir == null) || (fedletHomeDir.trim().isEmpty())) {
         if (System.getProperty("user.home").equals(File.separator)) {
             fedletHomeDir = File.separator + "fedlet";
         } else {
