@@ -118,6 +118,16 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
+			<logger category="SAML2.access" use-parent-handlers="true">
+				<level name="ERROR"/>
+			</logger>
+			<logger category="IDFF.access" use-parent-handlers="true">
+				<level name="ERROR"/>
+			</logger>
+			<logger category="COT.access" use-parent-handlers="true">
+				<level name="ERROR"/>
+			</logger>
+
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
