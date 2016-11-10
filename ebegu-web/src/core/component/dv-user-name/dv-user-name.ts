@@ -20,9 +20,7 @@ export class DvUserNameController {
     }
 
     public logout(): void {
-        this.authServiceRS.logoutRequest().then(() => {
-            this.$state.go('login' , {type: 'logout'});
-        });
+        this.$state.go('login' , {type: 'logout'});
     }
 
     public getPrincipal() {
