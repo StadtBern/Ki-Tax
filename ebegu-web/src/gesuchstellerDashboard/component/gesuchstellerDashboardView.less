@@ -1,11 +1,11 @@
 @import "../../style/variables.less";
 
-@buttonWidth: 230px;
-@buttonHeight: 140px;
+@buttonWidth: 23rem;
+@buttonHeight: 14rem;
 
 .gesuchstellerDashboardView {
     overflow-y: auto;
-    color: #fff;
+    color: @contrast-lightest;
     background: url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed; /* fallback */
     background: linear-gradient(rgba(40, 40, 40, 0.85), rgba(40, 40, 40, 0.85)),
     url('../../assets/images/ebegu_platzhalter.jpg') no-repeat center center fixed;
@@ -13,10 +13,6 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-
-    .greyBorder {
-        border-color: #626262;
-    }
 
     .dashboardHeader {
         margin-top: 20rem;

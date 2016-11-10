@@ -76,4 +76,10 @@ xa-data-source add \
 #
 #/subsystem=logging/logger=org.apache.catalina/:add(category=org.apache.catalina,level=TRACE,use-parent-handlers=true)
 #
+
+#Logoutput fuer Fedlet reduzieren
+/subsystem=logging/logger=SAML2.access/:add(category=SAML2.access,level=ERROR,use-parent-handlers=true)
+/subsystem=logging/logger=IDFF.access/:add(category=IDFF.access,level=ERROR,use-parent-handlers=true)
+/subsystem=logging/logger=COT.access/:add(category=COT.access,level=ERROR,use-parent-handlers=true)
+
 run-batch

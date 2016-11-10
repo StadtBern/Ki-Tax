@@ -44,17 +44,17 @@
             <tbody>
             <tr ng-repeat="row in displayedCollection" st-select-row="row" st-select-mode="single"
                 ng-click="vm.editAntrag(row)">
-                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.antragTyp | translate}}"
+                <td class="ellipsis" ellipsis-tooltip="{{row.antragTyp | translate}}"
                     ng-bind="row.antragTyp | translate"></td>
-                <td class="ellipsis greyBorder"
+                <td class="ellipsis"
                     ellipsis-tooltip="{{row.gesuchsperiodeString}}"
                     ng-bind="row.gesuchsperiodeString"></td>
-                <td class="ellipsis greyBorder"
+                <td class="ellipsis"
                     ellipsis-tooltip="{{row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'}}"
                     ng-bind="row.eingangsdatum | amDateFormat : 'DD.MM.YYYY'"></td>
-                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.status | translate}}"
+                <td class="ellipsis" ellipsis-tooltip="{{row.status | translate}}"
                     ng-bind="row.status | translate"></td>
-                <td class="ellipsis greyBorder" ellipsis-tooltip="{{row.verantwortlicher}}"
+                <td class="ellipsis" ellipsis-tooltip="{{row.verantwortlicher}}"
                     ng-bind="row.verantwortlicher"></td>
             </tr>
             </tbody>
