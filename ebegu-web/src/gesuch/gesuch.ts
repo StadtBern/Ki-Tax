@@ -41,16 +41,16 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         if (step) {
             let status = step.wizardStepStatus;
             if (status === TSWizardStepStatus.OK) {
-                return 'fa fa-check green';
+                return 'fa-check green';
             } else if (status === TSWizardStepStatus.NOK) {
-                return 'fa fa-close red';
+                return 'fa-close red';
             } else if (status === TSWizardStepStatus.IN_BEARBEITUNG) {
                 if (step.wizardStepName === TSWizardStepName.DOKUMENTE) { // Dokumenten haben kein Icon wenn nicht alle hochgeladen wurden
                     return '';
                 }
-                return 'fa fa-pencil black';
+                return 'fa-pencil black';
             } else if (status === TSWizardStepStatus.PLATZBESTAETIGUNG || status === TSWizardStepStatus.WARTEN) {
-                return 'fa fa-hourglass orange';
+                return 'fa-hourglass orange';
             } else if (status === TSWizardStepStatus.UNBESUCHT) {
                 return '';
             }
