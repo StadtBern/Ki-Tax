@@ -40,7 +40,7 @@ export class AuthenticationListViewController {
             this.redirectionUrl = response;
             this.redirectionHref = response;
             if (this.$stateParams.type !== undefined && this.$stateParams.type === 'logout') {
-                this.showLogout();
+                this.doLogout();
             } else {
                 this.redirecting = true;
                 this.$timeout(this.doCountdown, 1000);
@@ -48,7 +48,7 @@ export class AuthenticationListViewController {
             }
         });
 
-        if (authService.getPrincipal()) {  // wenn logged in
+        if (this.authService.getPrincipal()) {  // wenn logged in
             this.authService.initSingleLogout(this.getBaseURL())
                 .then((responseLogut) => {
                     this.logoutHref = responseLogut;
@@ -74,7 +74,11 @@ export class AuthenticationListViewController {
 
     public singlelogout() {
         this.authService.logoutRequest().then(() => {
-            this.$window.open(this.logoutHref, '_self');
+            if(this.logoutHref !== '' || this.logoutHref === undefined) {
+                this.$window.open(this.logoutHref, '_self');
+            } else{
+                this.$state.go('start')  // wenn wir nicht in iam ausloggen gehen wir auf start
+            }
         });
     }
 
@@ -91,8 +95,18 @@ export class AuthenticationListViewController {
         this.$window.open(urlToGoTo, '_self');
     };
 
-    private showLogout() {
-        console.log('reached login page from logout request');
+    /**
+     * triggered einen logout, fuer iam user sowohl in iam als auch in ebegu,
+     * bei lokalen benutzern wird auch nur bei uns ausgeloggt
+     */
+    private doLogout() {
+        if (this.authService.getPrincipal()) {  // wenn logged in
+            this.authService.initSingleLogout(this.getBaseURL()).then((responseLogut) => {
+                this.logoutHref = responseLogut;
+                this.singlelogout();
+            });
+        }
+
 
     }
 
