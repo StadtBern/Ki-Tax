@@ -133,17 +133,17 @@
                 <dv-input-container class="form-group" ng-if="vm.showDatumVon()">
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGAB" for="{{vm.prefix}}-gueltigAb">
                     </label>
-                    <p class="input-group">
-                        <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb"
-                                       ng-model="vm.adresse.gueltigkeit.gueltigAb" ng-required="true">
-                        </dv-datepicker>
-                        <!--<span class="input-group-btn">-->
-                        <!--<button type="button" class=" btn-default" ng-click="vm.openPopup()">-->
-                        <!--<i class="fa fa-calendar"></i></button>-->
-                        <!--</span>-->
-                    </p>
-                    <dv-error-messages for="adresseForm.adresseGueltigAb.$error"
-                                       class="error"></dv-error-messages>
+                    <dv-datepicker input-id="{{vm.prefix}}-gueltigAb" input-name="gueltigAb" name="gueltigAb"
+                                   ng-model="vm.adresse.gueltigkeit.gueltigAb"
+                                   class="input-element" ng-required="true"
+                                   ng-attr-placeholder="{{'DATE_PLACEHOLDER' | translate}}">
+                    </dv-datepicker>
+                    <!--<span class="input-group-btn">-->
+                    <!--<button type="button" class="btn btn-default" ng-click="vm.openPopup()">-->
+                    <!--<i class="fa fa-calendar"></i></button>-->
+                    <!--</span>-->
+                    <dv-error-messages for="adresseForm.gueltigAb.$error"
+                                       class="error hint"></dv-error-messages>
                 </dv-input-container>
             </div>
         </div>
@@ -153,11 +153,10 @@
                 <dv-input-container class="form-group secondColumn" ng-if="false">
                     <label class="md-no-float" data-translate="ADRESSE_GUELTIGBIS" for="{{vm.prefix}}-gueltigBis">
                     </label>
-                    <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigAb"
+                    <dv-datepicker input-id="{{vm.prefix}}-gueltigBis" input-name="gueltigBis" name="gueltigBis"
                                    ng-model="vm.adresse.gueltigkeit.gueltigBis" ng-required="true">
                     </dv-datepicker>
-
-                    <dv-error-messages for="adresseForm.adresseGueltigBis.$error"
+                    <dv-error-messages for="adresseForm.gueltigBis.$error"
                                        class="error"></dv-error-messages>
                 </dv-input-container>
             </div>

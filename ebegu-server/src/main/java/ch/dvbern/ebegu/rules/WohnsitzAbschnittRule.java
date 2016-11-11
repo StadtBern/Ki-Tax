@@ -35,37 +35,36 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 		if (gesuch.getGesuchsteller1() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
 			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller1(), true));
-			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte, true));
+			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte));
 		}
 		if (gesuch.getGesuchsteller2() != null) {
 			List<VerfuegungZeitabschnitt> adressenAbschnitte = new ArrayList<>();
 			adressenAbschnitte.addAll(getAdresseAbschnittForGesuchsteller(gesuch, gesuch.getGesuchsteller2(), false));
-			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte, false));
+			analysedAbschnitte.addAll(analyseAdressAbschnitte(betreuung, adressenAbschnitte));
 		}
 		return analysedAbschnitte;
 	}
 
-	private List<VerfuegungZeitabschnitt> analyseAdressAbschnitte(Betreuung betreuung, List<VerfuegungZeitabschnitt> adressenAbschnitte, boolean gs1) {
+	private List<VerfuegungZeitabschnitt> analyseAdressAbschnitte(Betreuung betreuung, List<VerfuegungZeitabschnitt> adressenAbschnitte) {
 		List<VerfuegungZeitabschnitt> result = new ArrayList<>();
 		List<VerfuegungZeitabschnitt> zeitabschnittList = mergeZeitabschnitte(adressenAbschnitte);
 		zeitabschnittList = normalizeZeitabschnitte(zeitabschnittList, betreuung.extractGesuchsperiode());
-		VerfuegungZeitabschnitt lastAdresse = null;
+		VerfuegungZeitabschnitt lastZeitAbschnitt = null;
 		boolean isFirstAbschnitt = true;
 		for (VerfuegungZeitabschnitt zeitabschnitt : zeitabschnittList) {
 			if (isFirstAbschnitt) {
 				// Der erste Abschnitt. Wir wissen noch nicht, ob Zuzug oder Wegzug
 				isFirstAbschnitt = false;
-				lastAdresse = zeitabschnitt;
 				result.add(zeitabschnitt);
 			} else {
 				// Dies ist mindestens die zweite Adresse -> pruefen, ob sich an der Wohnsitz-Situation etwas geaendert hat.
-				if (isWohnsitzNichtInGemeinde(lastAdresse, gs1) != isWohnsitzNichtInGemeinde(zeitabschnitt, gs1)) {
+				if (isWohnsitzNichtInGemeinde(lastZeitAbschnitt) != isWohnsitzNichtInGemeinde(zeitabschnitt)) {
 					// Es hat geaendert. Was war es fuer eine Anpassung?
-					if (isWohnsitzNichtInGemeinde(zeitabschnitt, gs1)) {
+					if (isWohnsitzNichtInGemeinde(zeitabschnitt)) {
 						// Es ist ein Wegzug
 						LOG.info("Wegzug");
 						LocalDate stichtagEndeAnspruch = zeitabschnitt.getGueltigkeit().getGueltigAb().minusDays(1).plusMonths(2).with(TemporalAdjusters.lastDayOfMonth());
-						lastAdresse.getGueltigkeit().setGueltigBis(stichtagEndeAnspruch);
+						lastZeitAbschnitt.getGueltigkeit().setGueltigBis(stichtagEndeAnspruch);
 						if (zeitabschnitt.getGueltigkeit().getGueltigBis().isAfter(stichtagEndeAnspruch.plusDays(1))) {
 							zeitabschnitt.getGueltigkeit().setGueltigAb(stichtagEndeAnspruch.plusDays(1));
 							result.add(zeitabschnitt);
@@ -81,15 +80,13 @@ public class WohnsitzAbschnittRule extends AbstractAbschnittRule {
 					result.add(zeitabschnitt);
 				}
 			}
+			lastZeitAbschnitt = zeitabschnitt;
 		}
 		return result;
 	}
 
-	private boolean isWohnsitzNichtInGemeinde(VerfuegungZeitabschnitt zeitabschnitt, boolean gs1) {
-		if (gs1) {
-			return zeitabschnitt.isWohnsitzNichtInGemeindeGS1();
-		}
-		return zeitabschnitt.isWohnsitzNichtInGemeindeGS2();
+	private boolean isWohnsitzNichtInGemeinde(VerfuegungZeitabschnitt zeitabschnitt) {
+		return (zeitabschnitt.isWohnsitzNichtInGemeindeGS1() && zeitabschnitt.isWohnsitzNichtInGemeindeGS2() );
 	}
 
 
