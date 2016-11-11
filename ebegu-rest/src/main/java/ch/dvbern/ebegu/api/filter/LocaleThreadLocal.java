@@ -8,7 +8,7 @@ import java.util.Locale;
 public final class LocaleThreadLocal {
 
 
-    public static final ThreadLocal<Locale> THREAD_LOCAL = new ThreadLocal<Locale>();
+    public static final ThreadLocal<Locale> THREAD_LOCAL = new ThreadLocal<>();
 
 	private LocaleThreadLocal() {}
 

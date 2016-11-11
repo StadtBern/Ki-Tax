@@ -70,7 +70,7 @@ public class FinanzielleSituationDokumente extends AbstractFinanzielleSituationD
 
 		final FinanzielleSituation finanzielleSituationJA = finanzielleSituationContainer.getFinanzielleSituationJA();
 
-		super.getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
+		getAllDokumenteGesuchsteller(anlageVerzeichnis, gesuchsteller.getFullName(), null, gemeinsam, gesuchstellerNumber, finanzielleSituationJA, DokumentGrundTyp.FINANZIELLESITUATION);
 
 		add(getDokument(DokumentTyp.JAHRESLOHNAUSWEISE, finanzielleSituationJA, gesuchsteller.getFullName(), null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 

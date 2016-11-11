@@ -22,6 +22,9 @@ public interface VerfuegungService {
 	@Nonnull
 	Verfuegung saveVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
 
+	@Nonnull
+	Verfuegung persistVerfuegung(@Nonnull Verfuegung verfuegung, @Nonnull String betreuungId);
+
 	/**
 	 * @param id PK (id) der Verfuegung
 	 * @return Verfuegung mit dem gegebenen key oder null falls nicht vorhanden

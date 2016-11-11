@@ -30,8 +30,8 @@ describe('TestFaelleRS', function () {
     describe('API Usage', function () {
         describe('createTestFall', () => {
             it('should call createTestFall', () => {
-                $httpBackend.expectGET(testFaelleRS.serviceURL + '/testfall/' + encodeURIComponent('1')).respond({});
-                testFaelleRS.createTestFall('1');
+                $httpBackend.expectGET(testFaelleRS.serviceURL + '/testfall/' + encodeURIComponent('1') + '/false/false').respond({});
+                testFaelleRS.createTestFall('1', false, false);
                 $httpBackend.flush();
             });
         });

@@ -11,16 +11,18 @@ import java.util.Collection;
 
 /**
  * Superklasse für Testfaelle des JA
- *
+ * <p>
  * Um alles mit den Services durchfuehren zu koennen, muss man zuerst den Fall erstellen, dann
  * das Gesuch erstellen und dann das Gesuch ausfuellen und updaten. Nur so werden alle WizardSteps
  * erstellt und es gibt kein Problem mit den Verknuepfungen zwischen Entities
- * Der richtige Prozess findet man in TestfaelleResource#createAndSaveGesuch()
+ * Der richtige Prozess findet man in TestfaelleService#createAndSaveGesuch()
  */
 public abstract class AbstractTestfall {
 
 	public static final String ID_INSTITUTION_AAREGG = "11111111-1111-1111-1111-111111111101";
 	public static final String ID_INSTITUTION_BRUENNEN = "11111111-1111-1111-1111-111111111107";
+	public static final String ID_INSTITUTION_AAREGG_TAGI = "11111111-1111-1111-1111-111111111174";
+
 
 
 	protected Gesuchsperiode gesuchsperiode;
@@ -28,10 +30,13 @@ public abstract class AbstractTestfall {
 
 	protected Fall fall = null;
 	protected Gesuch gesuch = null;
+	protected boolean betreuungenBestaetigt;
 
-	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList) {
+	public AbstractTestfall(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
+							boolean betreuungenBestaetigt) {
 		this.gesuchsperiode = gesuchsperiode;
 		this.institutionStammdatenList = institutionStammdatenList;
+		this.betreuungenBestaetigt = betreuungenBestaetigt;
 	}
 
 	public abstract Gesuch fillInGesuch();
@@ -44,6 +49,10 @@ public abstract class AbstractTestfall {
 		fall = new Fall();
 		fall.setVerantwortlicher(verantwortlicher);
 		return fall;
+	}
+
+	public Fall createFall() {
+		return new Fall();
 	}
 
 	public void createGesuch(LocalDate eingangsdatum) {
@@ -105,6 +114,7 @@ public abstract class AbstractTestfall {
 		wohnadresse.setLand(Land.CH);
 		wohnadresse.setAdresseTyp(AdresseTyp.WOHNADRESSE);
 		wohnadresse.setGesuchsteller(gesuchsteller);
+		wohnadresse.setGueltigkeit(gesuchsperiode.getGueltigkeit());
 		return wohnadresse;
 	}
 
@@ -142,9 +152,18 @@ public abstract class AbstractTestfall {
 	}
 
 	protected Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId) {
+		return createBetreuung(betreuungsangebotTyp, institutionsId, false);
+	}
+
+	protected Betreuung createBetreuung(BetreuungsangebotTyp betreuungsangebotTyp, String institutionsId, boolean bestaetigt) {
 		Betreuung betreuung = new Betreuung();
 		betreuung.setInstitutionStammdaten(createInstitutionStammdaten(betreuungsangebotTyp, institutionsId));
-		betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
+		if (!bestaetigt) {
+			betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
+		} else {
+			betreuung.setBetreuungsstatus(Betreuungsstatus.BESTAETIGT);
+			betreuung.setDatumBestaetigung(LocalDate.now());
+		}
 		betreuung.setVertrag(Boolean.TRUE);
 		return betreuung;
 	}

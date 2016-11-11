@@ -29,10 +29,13 @@ export default class EbeguUtil {
         return '';
     }
 
-    public getAntragTextDateAsString(tsAntragTyp: TSAntragTyp, eingangsdatum: Moment): string {
+    public getAntragTextDateAsString(tsAntragTyp: TSAntragTyp, eingangsdatum: Moment, laufnummer: number): string {
         if (tsAntragTyp) {
-            if (tsAntragTyp !== TSAntragTyp.GESUCH && eingangsdatum) {
-                return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp]) + ' ' + eingangsdatum.format('DD.MM.YYYY');
+            if (tsAntragTyp === TSAntragTyp.MUTATION && eingangsdatum) {
+                return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp], {
+                    nummer: laufnummer,
+                    date: eingangsdatum.format('DD.MM.YYYY')
+                });
             }
             return this.$translate.instant('TOOLBAR_' + TSAntragTyp[tsAntragTyp] + '_NO_DATE');
         }

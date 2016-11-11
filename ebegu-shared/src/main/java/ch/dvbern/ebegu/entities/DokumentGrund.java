@@ -59,6 +59,21 @@ public class DokumentGrund extends AbstractEntity {
 		this.dokumentTyp = dokumentTyp;
 	}
 
+	//Copy
+	public DokumentGrund(DokumentGrund toCopy) {
+		this.setVorgaengerId(toCopy.getId());
+		this.dokumentGrundTyp = toCopy.dokumentGrundTyp;
+		this.fullName = toCopy.fullName;
+		this.tag = toCopy.tag;
+		this.dokumentTyp = toCopy.dokumentTyp;
+		if(toCopy.dokumente != null) {
+			for (Dokument dokument : toCopy.dokumente) {
+				this.dokumente.add(new Dokument(dokument, this));
+			}
+		}
+		this.needed = toCopy.needed;
+	}
+
 	@NotNull
 	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_dokumentGrund_gesuch_id"), nullable = false)

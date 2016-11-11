@@ -1,0 +1,128 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+.table > tbody {
+    & > tr, & > tr:first-child {
+        &:hover {
+            background: #fafafa;
+        }
+    }
+}
+
+table, .table > tbody, .table > thead, .table > thead:first-child {
+    & > tr {
+        & > td {
+            .h3();
+            position: relative;
+            line-height: 3rem;
+            height: 5rem;
+            border: 0.1rem solid @contrast;
+            border-left: none;
+            border-right: none;
+            display: table-cell;
+            vertical-align: middle;
+            padding: 0 0.8rem 0;
+            .dvb-loading-button {
+                text-align: end;
+            }
+
+        }
+        & > th, & > th:empty {
+            .label();
+            height: 5rem;
+            vertical-align: middle;
+            border: 0.1rem solid @contrast;
+            border-left: none;
+            border-right: none;
+            display: table-cell !important;
+            padding: 0 0.25rem 0;
+            color: @contrast-darkest;
+            span {
+                .p();
+                line-height: 0;
+            }
+        }
+        .betreuung-status {
+            &:after {
+                content: "";
+                position: absolute;
+                left: 0.8rem;
+                bottom: 0;
+                width: 3rem;
+                height: 0.5rem;
+                border-bottom: 0.5rem solid;
+
+            }
+            &.BESTAETIGT:after {
+                border-color: @success;
+            }
+            &.WARTEN:after {
+                border-color: @warning;
+            }
+            &.ABGEWIESEN:after {
+                border-color: @danger;
+            }
+            &.VERFUEGT:after {
+                border-color: @purple;
+            }
+        }
+    }
+    & > tr:first-child {
+        & > th, & > th:empty {
+            .label();
+            height: 3.5rem;
+            vertical-align: middle;
+            border: 0.1rem solid @contrast-darkest;
+            border-left: none;
+            border-right: none;
+            display: table-cell !important;
+            padding: 0 0.8rem 0;
+            color: @contrast-darkest;
+            span {
+                .p();
+                line-height: 0;
+            }
+        }
+    }
+}
+
+.gesuchstellerDashboardView {
+    .table > tbody {
+        & > tr, & > tr:first-child {
+            &:hover {
+                background: rgba(220, 220, 220, 0.2);
+            }
+        }
+    }
+    table, .table > tbody, .table > thead, .table > thead:first-child {
+        & > tr, & > tr:first-child {
+            & > td {
+                .label();
+                height: 5rem;
+                vertical-align: middle;
+                display: table-cell !important;
+                padding: 0 0.8rem 0;
+                border: 0.1rem solid rgba(220, 220, 220, 0.2);
+                border-left: none;
+                border-right: none;
+            }
+            & > th, & > th:empty {
+                .h3();
+                position: relative;
+                line-height: 3rem;
+                height: 5rem;
+                display: table-cell;
+                vertical-align: middle;
+                padding: 0 0.8rem 0;
+                border: 0.1rem solid @contrast-lightest;
+                border-left: none;
+                border-right: none;
+                color: @contrast-lightest;
+                span {
+                    .p();
+                    line-height: 0;
+                }
+            }
+        }
+    }
+}

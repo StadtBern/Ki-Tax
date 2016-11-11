@@ -43,6 +43,7 @@ public class EinreichungsfristAbschnittRule extends AbstractAbschnittRule {
 				if (betreuungspensum.getGueltigkeit().getGueltigAb().isBefore(firstOfMonthDesEinreichungsMonats)) {
 					VerfuegungZeitabschnitt verfuegungZeitabschnitt = new VerfuegungZeitabschnitt(betreuungspensum.getGueltigkeit());
 					// Der Anspruch beginnt erst am 1. des Monats der Einreichung
+					verfuegungZeitabschnitt.getGueltigkeit().setGueltigAb(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
 					verfuegungZeitabschnitt.getGueltigkeit().setGueltigBis(firstOfMonthDesEinreichungsMonats.minusDays(1));
 					verfuegungZeitabschnitt.setZuSpaetEingereicht(true);
 					// Sicherstellen, dass nicht der ganze Zeitraum vor dem Einreichungsdatum liegt

@@ -3,7 +3,7 @@
         <div class="col-md-12 table-responsive">
             <!--Tabelle-->
             <table st-table="displayedCollection" st-safe-src="vm.erwerbspensen"
-                   class="table table-striped table-hover" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
+                   class="table table-hover" id="{{vm.tableId}}" title="{{vm.tableTitle}}">
                 <thead>
                 <tr>
                     <th st-sort="erwerbspensumJA.taetigkeit" class="sortable" data-translate="TAETIGKEIT"></th>
@@ -24,9 +24,9 @@
                     <td ng-bind="row.erwerbspensumJA.gueltigkeit.gueltigBis | amDateFormat : 'DD.MM.YYYY'"></td>
                     <td ng-bind="row.erwerbspensumJA.pensum ?  row.erwerbspensumJA.pensum + '%' : ''"></td>
                     <td ng-bind="row.erwerbspensumJA.zuschlagsprozent ?  row.erwerbspensumJA.zuschlagsprozent+'%' : ''"></td>
-                    <td ng-if="vm.addButtonVisible && row.erwerbspensumJA.vorgaengerId === null">
+                    <td ng-if="vm.isRemoveAllowed(row)">
                         <dv-loading-button type="button" ng-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="btn btn-sm" title="{{vm.removeButtonTitle}}">
+                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>
                         </dv-loading-button>
@@ -43,8 +43,8 @@
     </div>
     <!--Addbutton -->
     <div class="row" ng-if="vm.addButtonVisible">
-        <div class="col-md-12" style="margin-bottom: 20px">
-            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="btn btn-sm btn-success">
+        <div class="col-md-12" style="margin-bottom: 2rem">
+            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success">
                 <i class="glyphicon glyphicon-plus">
                 </i> {{vm.addButtonText}}
             </dv-loading-button>

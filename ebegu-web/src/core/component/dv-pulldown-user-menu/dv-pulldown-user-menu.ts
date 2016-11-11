@@ -20,9 +20,7 @@ export class DvPulldownUserMenuController {
     }
 
     public logout(): void {
-        this.authServiceRS.logoutRequest().then(() => {
-            this.$state.go('login', {type: 'logout'});
-        });
+        this.$state.go('login', {type: 'logout'});
     }
 
     public getPrincipal() {
@@ -31,6 +29,10 @@ export class DvPulldownUserMenuController {
 
     public getVersion(): string {
         return VERSION;
+    }
+
+    public getBuildtimestamp(): string {
+        return BUILDTSTAMP;
     }
 
 }

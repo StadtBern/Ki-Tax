@@ -263,6 +263,16 @@ export default class EbeguRestUtil {
         antragTS.typ = antragFromServer.typ;
     }
 
+    private adressenListToRestObject(adressen: Array<TSAdresse>): Array<any> {
+        let restAdressenList: Array<any> = [];
+        if (adressen) {
+            for (let i = 0; i < adressen.length; i++) {
+                restAdressenList.push(this.adresseToRestObject({}, adressen[i]));
+            }
+        }
+        return restAdressenList;
+    }
+
     public adresseToRestObject(restAdresse: any, adresse: TSAdresse): TSAdresse {
         if (adresse) {
             this.abstractDateRangeEntityToRestObject(restAdresse, adresse);
@@ -280,6 +290,16 @@ export default class EbeguRestUtil {
         }
         return undefined;
 
+    }
+
+    private parseAdressenList(adressen: Array<any>): Array<TSAdresse> {
+        let adressenList: Array<TSAdresse> = [];
+        if (adressen) {
+            for (let i = 0; i < adressen.length; i++) {
+                adressenList.push(this.parseAdresse(new TSAdresse(), adressen[i]));
+            }
+        }
+        return adressenList;
     }
 
     public parseAdresse(adresseTS: TSAdresse, receivedAdresse: any): TSAdresse {
@@ -336,9 +356,8 @@ export default class EbeguRestUtil {
             restGesuchsteller.mobile = gesuchsteller.mobile || undefined;
             restGesuchsteller.telefon = gesuchsteller.telefon || undefined;
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
-            restGesuchsteller.wohnAdresse = this.adresseToRestObject({}, gesuchsteller.adresse); //achtung heisst im jax wohnadresse nicht adresse
+            restGesuchsteller.adressen = this.adressenListToRestObject(gesuchsteller.adressen);
             restGesuchsteller.alternativeAdresse = this.adresseToRestObject({}, gesuchsteller.korrespondenzAdresse);
-            restGesuchsteller.umzugAdresse = this.adresseToRestObject({}, gesuchsteller.umzugAdresse);
             if (gesuchsteller.finanzielleSituationContainer) {
                 restGesuchsteller.finanzielleSituationContainer = this.finanzielleSituationContainerToRestObject({}, gesuchsteller.finanzielleSituationContainer);
             }
@@ -366,9 +385,8 @@ export default class EbeguRestUtil {
             gesuchstellerTS.mobile = gesuchstellerFromServer.mobile;
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
-            gesuchstellerTS.adresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.wohnAdresse);
+            gesuchstellerTS.adressen = this.parseAdressenList(gesuchstellerFromServer.adressen);
             gesuchstellerTS.korrespondenzAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.alternativeAdresse);
-            gesuchstellerTS.umzugAdresse = this.parseAdresse(new TSAdresse(), gesuchstellerFromServer.umzugAdresse);
             gesuchstellerTS.finanzielleSituationContainer = this.parseFinanzielleSituationContainer(new TSFinanzielleSituationContainer(), gesuchstellerFromServer.finanzielleSituationContainer);
             gesuchstellerTS.einkommensverschlechterungContainer = this.parseEinkommensverschlechterungContainer(
                 new TSEinkommensverschlechterungContainer(), gesuchstellerFromServer.einkommensverschlechterungContainer);
@@ -433,7 +451,7 @@ export default class EbeguRestUtil {
             restFamiliensituation.familienstatus = familiensituation.familienstatus;
             restFamiliensituation.gesuchstellerKardinalitaet = familiensituation.gesuchstellerKardinalitaet;
             restFamiliensituation.gemeinsameSteuererklaerung = familiensituation.gemeinsameSteuererklaerung;
-
+            restFamiliensituation.aenderungPer = DateUtil.momentToLocalDate(familiensituation.aenderungPer);
             return restFamiliensituation;
         }
         return undefined;
@@ -464,6 +482,7 @@ export default class EbeguRestUtil {
             familiensituation.familienstatus = familiensituationFromServer.familienstatus;
             familiensituation.gesuchstellerKardinalitaet = familiensituationFromServer.gesuchstellerKardinalitaet;
             familiensituation.gemeinsameSteuererklaerung = familiensituationFromServer.gemeinsameSteuererklaerung;
+            familiensituation.aenderungPer = DateUtil.localDateToMoment(familiensituationFromServer.aenderungPer);
             return familiensituation;
         }
         return undefined;
@@ -519,6 +538,7 @@ export default class EbeguRestUtil {
         restGesuch.mutationsdaten = this.mutationsdatenToRestObject({}, gesuch.mutationsdaten);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
         restGesuch.bemerkungen = gesuch.bemerkungen;
+        restGesuch.laufnummer = gesuch.laufnummer;
         return restGesuch;
     }
 
@@ -532,6 +552,7 @@ export default class EbeguRestUtil {
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
+            gesuchTS.laufnummer = gesuchFromServer.laufnummer;
             return gesuchTS;
         }
         return undefined;
@@ -1001,6 +1022,7 @@ export default class EbeguRestUtil {
 
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
+        restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
         return restBetreuungspensum;
     }
 
@@ -1063,6 +1085,7 @@ export default class EbeguRestUtil {
     public parseBetreuungspensum(betreuungspensumTS: TSBetreuungspensum, betreuungspensumFromServer: any): TSBetreuungspensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
+            betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
             return betreuungspensumTS;
         }
         return undefined;
@@ -1127,6 +1150,7 @@ export default class EbeguRestUtil {
         restPendenz.verantwortlicher = pendenz.verantwortlicher;
         restPendenz.status = pendenz.status;
         restPendenz.verfuegt = pendenz.verfuegt;
+        restPendenz.laufnummer = pendenz.laufnummer;
         return restPendenz;
     }
 
@@ -1144,6 +1168,7 @@ export default class EbeguRestUtil {
         pendenzTS.verantwortlicher = pendenzFromServer.verantwortlicher;
         pendenzTS.status = pendenzFromServer.status;
         pendenzTS.verfuegt = pendenzFromServer.verfuegt;
+        pendenzTS.laufnummer = pendenzFromServer.laufnummer;
         return pendenzTS;
     }
 

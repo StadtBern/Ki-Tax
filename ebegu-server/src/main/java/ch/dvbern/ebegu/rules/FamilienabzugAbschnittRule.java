@@ -7,6 +7,8 @@ import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.MathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,6 +29,8 @@ import java.util.TreeMap;
  * der Familiensituation ist das Datum "Aendern per" relevant.
  */
 public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
+
+	private final Logger LOG = LoggerFactory.getLogger(FamilienabzugAbschnittRule.class.getSimpleName());
 
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse3;
 	private final BigDecimal pauschalabzugProPersonFamiliengroesse4;
@@ -54,7 +58,7 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 		Gesuch gesuch = betreuung.extractGesuch();
 		final List<VerfuegungZeitabschnitt> familienAbzugZeitabschnitt = createInitialenFamilienAbzug(gesuch);
 
-		Map<LocalDate, Double> famGrMap = new TreeMap<LocalDate, Double>();
+		Map<LocalDate, Double> famGrMap = new TreeMap<>();
 
 		//Suchen aller Geburtstage innerhalb der Gesuchsperiode und speichern in der Liste mit Familiengrösse
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
@@ -64,6 +68,13 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 				famGrMap.put(beginMonatNachGeb, calculateFamiliengroesse(gesuch, beginMonatNachGeb));
 			}
 		}
+
+		if (gesuch.getFamiliensituation() != null && gesuch.getFamiliensituation().getAenderungPer() != null) {
+			// die familiensituation aendert sich jetzt erst ab dem naechsten Monat, deswegen .plusMonths(1).withDayOfMonth(1)
+			final LocalDate aenderungPerBeginningNextMonth = gesuch.getFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1);
+			famGrMap.put(aenderungPerBeginningNextMonth, calculateFamiliengroesse(gesuch, aenderungPerBeginningNextMonth));
+		}
+
 		// aufsteigend durch die Geburtstage gehen und immer den letzen Abschnitt  unterteilen in zwei Abschnitte
 		for (Map.Entry<LocalDate, Double> entry : famGrMap.entrySet()) {
 			final VerfuegungZeitabschnitt lastVerfuegungZeitabschnitt = familienAbzugZeitabschnitt.get(familienAbzugZeitabschnitt.size() - 1);
@@ -125,12 +136,20 @@ public class FamilienabzugAbschnittRule extends AbstractAbschnittRule {
 	double calculateFamiliengroesse(Gesuch gesuch, @Nullable LocalDate date) {
 		double familiengroesse = 0;
 		if (gesuch != null) {
-			if (gesuch.getGesuchsteller1() != null) {
-				familiengroesse++;
+
+			if (gesuch.getFamiliensituation() != null) { // wenn die Familiensituation nicht vorhanden ist, kann man nichts machen (die Daten wurden falsch eingegeben)
+				if (gesuch.getFamiliensituationErstgesuch() != null && date != null && (
+					gesuch.getFamiliensituation().getAenderungPer() == null //wenn aenderung per nicht gesetzt ist nehmen wir wert aus erstgesuch
+					|| date.isBefore(gesuch.getFamiliensituation().getAenderungPer().plusMonths(1).withDayOfMonth(1)))) {
+
+					familiengroesse = familiengroesse + (gesuch.getFamiliensituationErstgesuch().hasSecondGesuchsteller() ? 2 : 1);
+				} else {
+					familiengroesse = familiengroesse + (gesuch.getFamiliensituation().hasSecondGesuchsteller() ? 2 : 1);
+				}
+			} else{
+				LOG.warn("Die Familiengroesse kann noch nicht richtig berechnet werden weil die Familiensituation nicht richtig ausgefuellt ist. Antragnummer: {}" , gesuch.getAntragNummer() );
 			}
-			if (gesuch.getGesuchsteller2() != null) {
-				familiengroesse++;
-			}
+
 			for (KindContainer kindContainer : gesuch.getKindContainers()) {
 				if (kindContainer.getKindJA() != null && (date == null || kindContainer.getKindJA().getGeburtsdatum().isBefore(date))) {
 					if (kindContainer.getKindJA().getKinderabzug() == Kinderabzug.HALBER_ABZUG) {

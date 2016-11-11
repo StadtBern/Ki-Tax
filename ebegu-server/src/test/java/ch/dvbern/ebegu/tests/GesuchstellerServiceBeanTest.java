@@ -2,7 +2,9 @@ package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
 import ch.dvbern.ebegu.entities.EinkommensverschlechterungContainer;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.services.GesuchstellerService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -100,6 +102,31 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(ekvJABasisJahrPlus2);
 		Assert.assertEquals(0, ekvJABasisJahrPlus2.getNettolohnJan().compareTo(BigDecimal.valueOf(4)));
 
+	}
+
+	@Test
+	public void testSaveGesuchsteller2Mutation() {
+		Gesuchsteller gesuchsteller = insertNewEntity();
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		gesuch.setTyp(AntragTyp.MUTATION);
+
+		gesuch.setGesuchsteller1(TestDataUtil.createDefaultGesuchsteller());
+		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
+		gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(TestDataUtil.createDefaultEinkommensverschlechterungsContainer());
+
+		final Gesuchsteller savedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, gesuch, 2);
+
+		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer());
+		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA());
+		Assert.assertFalse(savedGesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuererklaerungAusgefuellt());
+		Assert.assertFalse(savedGesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA().getSteuerveranlagungErhalten());
+		Assert.assertEquals(gesuch.getGesuchsteller1().getFinanzielleSituationContainer().getJahr(),
+			savedGesuchsteller.getFinanzielleSituationContainer().getJahr());
+
+		Assert.assertNotNull(savedGesuchsteller.getEinkommensverschlechterungContainer());
+		Assert.assertNotNull(savedGesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1());
+		Assert.assertFalse(savedGesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().getSteuererklaerungAusgefuellt());
+		Assert.assertFalse(savedGesuchsteller.getEinkommensverschlechterungContainer().getEkvJABasisJahrPlus1().getSteuerveranlagungErhalten());
 	}
 
 

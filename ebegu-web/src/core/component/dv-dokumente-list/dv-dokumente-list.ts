@@ -44,7 +44,7 @@ export class DVDokumenteListController {
     sonstige: boolean;
 
     static $inject: any[] = ['UploadRS', 'GesuchModelManager', 'EbeguUtil', 'DownloadRS', 'DvDialog', 'WizardStepManager',
-                             '$log'];
+        '$log'];
     /* @ngInject */
     constructor(private uploadRS: UploadRS, private gesuchModelManager: GesuchModelManager, private ebeguUtil: EbeguUtil,
                 private downloadRS: DownloadRS, private dvDialog: DvDialog, private wizardStepManager: WizardStepManager,

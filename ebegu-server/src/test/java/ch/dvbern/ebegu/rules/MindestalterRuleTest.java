@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -25,12 +26,14 @@ public class MindestalterRuleTest {
 	@Test
 	public void testKindGenugAlt() {
 		Betreuung betreuung = createTestData(LocalDate.of(2015, Month.MAY, 15), START_PERIODE, ENDE_PERIODE);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
 
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittAltGenug = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittAltGenug.isKindMinestalterUnterschritten());
+		Assert.assertFalse(abschnittAltGenug.isKindMinestalterUnterschritten());
 		Assert.assertEquals(100, abschnittAltGenug.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittAltGenug.getBgPensum());
 	}
@@ -38,16 +41,18 @@ public class MindestalterRuleTest {
 	@Test
 	public void testKindAnfangsZuJung() {
 		Betreuung betreuung = createTestData(LocalDate.of(2016, Month.JULY, 15), START_PERIODE, ENDE_PERIODE);
+		final Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		List<VerfuegungZeitabschnitt> zeitabschnittList = calculate(betreuung);
 
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittZuJung = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnittZuJung.isKindMinestalterUnterschritten());
+		Assert.assertTrue(abschnittZuJung.isKindMinestalterUnterschritten());
 		Assert.assertEquals(0, abschnittZuJung.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittZuJung.getBgPensum());
 		VerfuegungZeitabschnitt abschnittAltGenug = zeitabschnittList.get(1);
-		Assert.assertEquals(false, abschnittAltGenug.isKindMinestalterUnterschritten());
+		Assert.assertFalse(abschnittAltGenug.isKindMinestalterUnterschritten());
 		Assert.assertEquals(100, abschnittAltGenug.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittAltGenug.getBgPensum());
 	}

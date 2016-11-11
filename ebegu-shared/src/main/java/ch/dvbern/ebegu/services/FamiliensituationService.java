@@ -15,12 +15,12 @@ public interface FamiliensituationService {
 	/**
 	 * Aktualisiert idn Familiensituation in der DB oder erstellt sie wenn sie noch nicht existiert
 	 *
-	 * @param gesuch
-	 * @param oldData
-	 *@param familiensituation die Familiensituation als DTO  @return Die aktualisierte Familiensituation
+	 * @param gesuch -
+	 * @param oldFamiliensituation -
+	 *@param newFamiliensituation die Familiensituation als DTO  @return Die aktualisierte Familiensituation
 	 */
 	@Nonnull
-	Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldData, @Nonnull Familiensituation familiensituation);
+	Familiensituation saveFamiliensituation(Gesuch gesuch, Familiensituation oldFamiliensituation, @Nonnull Familiensituation newFamiliensituation);
 
 	/**
 	 *

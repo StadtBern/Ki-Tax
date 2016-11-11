@@ -1,4 +1,4 @@
-import {IComponentOptions, IFilterService} from 'angular';
+import {IComponentOptions, IFilterService, IPromise, ILogService} from 'angular';
 import TSAbstractAntragEntity from '../../../models/TSAbstractAntragEntity';
 import {TSAntragTyp, getTSAntragTypValues} from '../../../models/enums/TSAntragTyp';
 import {TSAntragStatus, getTSAntragStatusValues} from '../../../models/enums/TSAntragStatus';
@@ -10,8 +10,6 @@ import EbeguUtil from '../../../utils/EbeguUtil';
 import TSAntragSearchresultDTO from '../../../models/TSAntragSearchresultDTO';
 import {InstitutionRS} from '../../service/institutionRS.rest';
 import GesuchsperiodeRS from '../../service/gesuchsperiodeRS.rest';
-import IPromise = angular.IPromise;
-import ILogService = angular.ILogService;
 import Moment = moment.Moment;
 let template = require('./dv-antrag-list.html');
 require('./dv-antrag-list.less');

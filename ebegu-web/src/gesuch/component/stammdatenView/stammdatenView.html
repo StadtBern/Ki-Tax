@@ -1,140 +1,123 @@
-<div class="stammdatenView row">
-    <div class="col-md-12">
-        <h4 class="mainTitle">
-            <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
-        </h4>
-        <hr class="header"/>
-        <form role="form" name="form" class="" novalidate
-              unsaved-warning-form>
-            <fieldset dv-enable-element dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                      dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
-                <br/>
-
-                <!--Geschlecht-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label data-translate="GESCHLECHT"></label>
-                            <dv-radio-container name="geschlecht" class="input-element"
-                                                ng-required="true" items="vm.geschlechter"
-                                                ng-model="vm.getModel().geschlecht" dv-enable-element
-                                                dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                            </dv-radio-container>
-                            <dv-error-messages for="form.geschlecht.$error"
-                                               class="error"></dv-error-messages>
+<div class="stammdatenView gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mainTitle">
+                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
+            </h1>
+            <hr class="header"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form role="form" name="form" class="" novalidate
+                  unsaved-warning-form>
+                <fieldset dv-enable-element
+                          dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                          dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                    <p class="inlineHint" data-translate="PFLICHTFELDER_HINT"></p>
+                    <!--Geschlecht-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="md-no-float" data-translate="GESCHLECHT"></label>
+                                <dv-radio-container name="geschlecht" class="input-element"
+                                                    ng-required="true" items="vm.geschlechter"
+                                                    ng-model="vm.getModel().geschlecht" dv-enable-element
+                                                    dv-enable-allowed-roles="vm.allowedRoles"
+                                                    dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                </dv-radio-container>
+                                <dv-error-messages for="form.geschlecht.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!--Vorname/Name-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="VORNAME" for="vorname_ID"></label>
-                            <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
-                                   dv-max-length class="form-control" required>
-                            <dv-error-messages for="form.vorname.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--Vorname/Name-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="VORNAME" for="vorname_ID"></label>
+                                <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModel().vorname"
+                                       dv-max-length class="form-control input-dv" required>
+                                <dv-error-messages for="form.vorname.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
+                                <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
+                                       dv-max-length class="form-control" required>
+                                <dv-error-messages for="form.name.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group secondColumn">
-                            <label data-translate="NAME" for="name_ID"></label>
-                            <input id="name_ID" type="text" name="name" ng-model="vm.getModel().nachname"
-                                   dv-max-length class="form-control" required>
-                            <dv-error-messages for="form.name.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
-                    </div>
-                </div>
 
-                <!--Geburtsdatum-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
-                            </label>
-                            <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
-                                           ng-model="vm.getModel().geburtsdatum" ng-required="true"
-                                           class="input-element">
-                            </dv-datepicker>
-                            <dv-error-messages for="form.geburtsdatum.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--Geburtsdatum-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="GEBURTSDATUM" for="geburtsdatum_ID">
+                                </label>
+                                <dv-datepicker input-id="geburtsdatum_ID" name="geburtsdatum"
+                                               ng-model="vm.getModel().geburtsdatum" ng-required="true"
+                                               class="input-element">
+                                </dv-datepicker>
+                                <dv-error-messages for="form.geburtsdatum.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
                     </div>
-                </div>
 
                 <!-- Adresse. Bei Mutationen nicht editierbar-->
                 <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
-                    <dv-adresse adresse="vm.getModel().adresse" show-nicht-in-gemeinde="true"
+                    <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
                                 prefix="wohn"></dv-adresse>
                 </fieldset>
 
-                <!--Korrenspondenzadr Checkbox-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class=" checkbox">
-                            <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
-                                         aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
-                                         dv-enable-element
-                                         dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                         dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                <span data-translate="KORRESPONDENZADR"></span>
-                                <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
-                            </md-checkbox>
-                            <dv-error-messages for="form.korrespondenzAdr.$error"
-                                               class="error"></dv-error-messages>
+                    <!--Korrenspondenzadr Checkbox-->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.showKorrespondadr" name="korrespondenzAdr"
+                                             aria-label="korrespondenzAdr" ng-change="vm.korrespondenzAdrClicked()"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="KORRESPONDENZADR"></span>
+                                    <dv-tooltip text="'KORRESPONDENZADR_HELP' | translate"></dv-tooltip>
+                                </md-checkbox>
+                                <dv-error-messages for="form.korrespondenzAdr.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
-                            prefix="korrespondenz"
-                            organisation="true"></dv-adresse>
+                    <dv-adresse adresse="vm.getModel().korrespondenzAdresse" ng-if="vm.showKorrespondadr"
+                                prefix="korrespondenz"
+                                organisation="true"></dv-adresse>
 
-                <!-- Diplomatenstatus -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class=" checkbox">
-                            <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
-                                         aria-label="diplomatenstatus"
-                                         dv-enable-element
-                                         dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                         dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
-                            </md-checkbox>
-                            <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
+                    <!-- Diplomatenstatus -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.getModel().diplomatenstatus" name="diplomatenstatus"
+                                             aria-label="diplomatenstatus"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                    <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.diplomatenstatus.$error" class="error"></dv-error-messages>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
-                <div class="row" ng-if="!vm.isMutation()">
-                    <div class="col-md-6">
-                        <div class="checkbox">
-                            <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
-                                         ng-change="vm.umzugadreseClicked()"
-                                         dv-enable-element
-                                         dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                                         dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
-                                <span data-translate="UMZUG"></span>
-                            </md-checkbox>
-                            <dv-error-messages for="form.umzug.$error"
-                                               class="error"></dv-error-messages>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Umzugadresse. Bei Mutationen nicht angezeigt-->
-                <dv-adresse adresse="vm.getModel().umzugAdresse" show-nicht-in-gemeinde="true" ng-if="vm.showUmzug && !vm.isMutation()"
-                            prefix="umzug"></dv-adresse>
 
                 <!--Email-->
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-sm-12 dv-input-container-small">
                         <dv-input-container class="form-group">
-                            <label data-translate="EMAIL" for="email_ID">
+                            <label class="md-no-float" data-translate="EMAIL" for="email_ID">
                             </label>
                             <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
                                    dv-max-length class="form-control" required placeholder="hans.muster@example.com"
@@ -146,55 +129,56 @@
                 </div>
 
 
-                <!--Mobile /Telefon-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="MOBILE" for="mobile_ID">
-                            </label>
-                            <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
-                                   dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
-                                   ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
-                            <dv-error-messages for="form.mobile.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--Mobile /Telefon-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="MOBILE" for="mobile_ID">
+                                </label>
+                                <input id="mobile_ID" type="text" name="mobile" ng-model="vm.getModel().mobile"
+                                       dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
+                                       ng-pattern="vm.CONSTANTS.PATTERN_MOBILE">
+                                <dv-error-messages for="form.mobile.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group secondColumn">
+                                <label class="md-no-float" data-translate="TELEFON" for="tel_ID">
+                                </label>
+                                <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
+                                       dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
+                                       ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
+                                <dv-error-messages for="form.telefon.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group secondColumn">
-                            <label data-translate="TELEFON" for="tel_ID">
-                            </label>
-                            <input id="tel_ID" type="text" name="telefon" ng-model="vm.getModel().telefon"
-                                   dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
-                                   ng-pattern="vm.CONSTANTS.PATTERN_PHONE">
-                            <dv-error-messages for="form.telefon.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--auslaendische tel nummer-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="TELEFON_AUSLAND" for="ausl_tel">
+                                </label>
+                                <input id="ausl_tel" type="text" name="telefonAusland"
+                                       ng-model="vm.getModel().telefonAusland"
+                                       dv-max-length class="form-control">
+                                <dv-error-messages for="form.telefonAusland.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
                     </div>
-                </div>
-                <!--auslaendische tel nummer-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <dv-input-container class="form-group">
-                            <label data-translate="TELEFON_AUSLAND" for="ausl_tel">
-                            </label>
-                            <input id="ausl_tel" type="text" name="telefonAusland"
-                                   ng-model="vm.getModel().telefonAusland"
-                                   dv-max-length class="form-control">
-                            <dv-error-messages for="form.telefonAusland.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
 
-            <!--Buttons-->
-            <dv-navigation dv-show-element
-                           dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                           dv-previous="true" dv-next="true" dv-save="vm.save(form)">
-            </dv-navigation>
-            <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                           dv-previous="true" dv-next="true">
-            </dv-navigation>
-        </form>
+                <!--Buttons-->
+                <dv-navigation dv-show-element
+                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                               dv-previous="true" dv-next="true" dv-save="vm.save(form)">
+                </dv-navigation>
+                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                               dv-previous="true" dv-next="true">
+                </dv-navigation>
+            </form>
+        </div>
     </div>
 </div>

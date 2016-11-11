@@ -1,4 +1,4 @@
-<div class="institutionView row">
+<div class="traegerschaftView adminModul">
     <div class="col-md-8 col-md-offset-2">
         <h1 data-translate="TRAEGERSCHAFT"></h1>
 
@@ -24,7 +24,7 @@
 
                             <!--<td>-->
                                 <!--<dv-loading-button type="button" button-click="vm.removeTraegerschaft(row)"-->
-                                                   <!--button-class="btn btn-sm">-->
+                            <!--button-class=" btn-sm">-->
                                     <!--<i class="fa fa-minus">-->
                                     <!--</i>-->
                                 <!--</dv-loading-button>-->
@@ -36,7 +36,7 @@
                             <td>
                                 <!--Name der Traegerschaft-->
                                 <dv-input-container>
-                                    <label data-translate="NAME" for="name_ID"></label>
+                                    <label class="md-no-float" data-translate="NAME" for="name_ID"></label>
                                     <input id="name_ID" type="text" name="name"
                                            ng-model="vm.newTraegerschaft.name"
                                            dv-max-length class="form-control" required>
@@ -48,14 +48,14 @@
 
                             <td>
                                 <dv-loading-button type="submit" button-click="vm.saveTraegerschaft(form)"
-                                                   button-class="btn btn-sm" style="margin-top: 20px">
+                                                   button-class="dv-btn-sm" style="margin-top: 2rem">
                                     <i class="fa fa-plus"></i>
                                 </dv-loading-button>
                             </td>
 
                             <!--<td>-->
                                 <!--<dv-loading-button type="button" button-click="vm.clearNewTraegerschaft()"-->
-                                                   <!--button-class="btn btn-sm" style="margin-top: 20px">-->
+                            <!--button-class=" btn-sm" style="margin-top: 20px">-->
                                     <!--<i class="fa fa-minus"></i>-->
                                 <!--</dv-loading-button>-->
                             <!--</td>-->
@@ -76,7 +76,7 @@
                     <dv-input-container class="form-group">
                         <dv-loading-button type="button"
                                            ng-click="vm.createTraegerschaft(); form.$setPristine(); form.$setUntouched()"
-                                           button-class="btn btn-sm btn-success" button-disabled="vm.newTraegerschaft">
+                                           button-class="dv-btn-sm color-success" button-disabled="vm.newTraegerschaft">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>
                         </dv-loading-button>

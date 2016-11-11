@@ -11,7 +11,7 @@ let gesuchTpl = require('./gesuch.html');
 gesuchRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function gesuchRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/login');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 
@@ -21,6 +21,7 @@ function getStates(): IState[] {
         new EbeguGesuchState(),
         new EbeguFamiliensituationState(),
         new EbeguStammdatenState(),
+        new EbeguUmzugState(),
         new EbeguKinderListState(),
         new EbeguFinanzielleSituationStartState(),
         new EbeguFinanzielleSituationState(),
@@ -115,6 +116,24 @@ export class EbeguStammdatenState implements IState {
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
             template: '<stammdaten-view>'
+        },
+        'kommentarViewPort': {
+            template: '<kommentar-view>'
+        }
+    };
+
+    resolve = {
+        gesuch: getGesuchModelManager
+    };
+}
+
+export class EbeguUmzugState implements IState {
+    name = 'gesuch.umzug';
+    url = '/umzug/:gesuchId';
+
+    views: { [name: string]: IState } = {
+        'gesuchViewPort': {
+            template: '<umzug-view>'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'

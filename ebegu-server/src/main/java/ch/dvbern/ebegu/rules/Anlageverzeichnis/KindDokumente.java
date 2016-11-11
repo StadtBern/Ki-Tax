@@ -46,6 +46,7 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 		}
 	}
 
+	@Override
 	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
 		if (kind != null) {
 			switch (dokumentTyp) {

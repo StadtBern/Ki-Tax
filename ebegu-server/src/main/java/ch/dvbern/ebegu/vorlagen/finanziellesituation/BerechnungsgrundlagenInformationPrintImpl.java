@@ -11,7 +11,6 @@ package ch.dvbern.ebegu.vorlagen.finanziellesituation;
 * Ersteller: zeab am: 23.08.2016
 */
 
-import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
@@ -20,10 +19,8 @@ import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrint;
 import ch.dvbern.ebegu.vorlagen.berechnungsblatt.BerechnungsblattPrintImpl;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Implementiert den {@link BerechnungsgrundlagenInformationPrint}. Diese Klasse enthält die Daten fuer die
@@ -59,17 +56,31 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 
 		if (fG1.getEinkommensverschlechterungInfo() != null && fG1.getEinkommensverschlechterungInfo().getEinkommensverschlechterung()) {
 			// Einkommensverschleschtereung Jahr 1
-			String einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
-			String ereigniseintritt = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
+			String einkommensverschlechterungJahr1;
+			String ereigniseintritt1 = "";
+			if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1() != null) {
+				einkommensverschlechterungJahr1 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1().getYear());
+				ereigniseintritt1 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus1());
+			}
+			else {
+				einkommensverschlechterungJahr1 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear());
+			}
 			String grundEv1 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus1();
-			ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv1, 1);
+			ev1 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr1, ereigniseintritt1, grundEv1, 1);
 
 			// Einkommensverschleschtereung Jahr 2
 			if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
-				einkommensverschlechterungJahr = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2().getYear());
-				ereigniseintritt = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2());
+				String einkommensverschlechterungJahr2;
+				String ereigniseintritt2 = "";
+				if (fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2() != null) {
+					einkommensverschlechterungJahr2 = Integer.toString(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2().getYear());
+					ereigniseintritt2 = Constants.DATE_FORMATTER.format(fG1.getEinkommensverschlechterungInfo().getStichtagFuerBasisJahrPlus2());
+				}
+				else {
+					einkommensverschlechterungJahr2 = Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear() + 1);
+				}
 				String grundEv2 = fG1.getEinkommensverschlechterungInfo().getGrundFuerBasisJahrPlus2();
-				ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr, ereigniseintritt, grundEv2, 2);
+				ev2 = new EinkommensverschlechterungPrintImpl(fG1, fG2, einkommensverschlechterungJahr2, ereigniseintritt2, grundEv2, 2);
 			}
 		}
 	}
@@ -84,6 +95,7 @@ public class BerechnungsgrundlagenInformationPrintImpl implements Berechnungsgru
 	@Override
 	public String getGesuchsteller2Name() {
 
+		//noinspection ConstantConditions
 		return isExistGesuchsteller2() ? gesuch.getGesuchsteller2().getFullName() : null;
 	}
 

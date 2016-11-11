@@ -194,6 +194,7 @@ describe('EbeguRestUtil', function () {
                 expect(transformedGesuch.kindContainers).toEqual(myGesuch.kindContainers);
                 expect(transformedGesuch.einkommensverschlechterungInfo).toEqual(myGesuch.einkommensverschlechterungInfo);
                 expect(transformedGesuch.bemerkungen).toEqual(myGesuch.bemerkungen);
+                expect(transformedGesuch.laufnummer).toEqual(myGesuch.laufnummer);
                 expect(transformedGesuch.typ).toEqual(myGesuch.typ);
             });
         });
@@ -246,9 +247,9 @@ describe('EbeguRestUtil', function () {
                     createInstitution(), undefined, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(instStam);
 
-                let tsBetreuungspensumGS: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                let tsBetreuungspensumGS: TSBetreuungspensum = new TSBetreuungspensum(false, 25, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumGS);
-                let tsBetreuungspensumJA: TSBetreuungspensum = new TSBetreuungspensum(50, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                let tsBetreuungspensumJA: TSBetreuungspensum = new TSBetreuungspensum(false, 50, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumJA);
                 let tsBetreuungspensumContainer: TSBetreuungspensumContainer = new TSBetreuungspensumContainer(tsBetreuungspensumGS, tsBetreuungspensumJA);
                 TestDataUtil.setAbstractFieldsUndefined(tsBetreuungspensumContainer);
@@ -279,7 +280,7 @@ describe('EbeguRestUtil', function () {
         });
         describe('parseBetreuungspensum', () => {
             it('should transform TSBetreuungspensum to REST object and back', () => {
-                let betreuungspensum: TSBetreuungspensum = new TSBetreuungspensum(25, new TSDateRange(DateUtil.today(), DateUtil.today()));
+                let betreuungspensum: TSBetreuungspensum = new TSBetreuungspensum(false, 25, new TSDateRange(DateUtil.today(), DateUtil.today()));
                 TestDataUtil.setAbstractFieldsUndefined(betreuungspensum);
 
                 let restBetreuungspensum: TSBetreuungspensum = ebeguRestUtil.betreuungspensumToRestObject({}, betreuungspensum);
@@ -444,8 +445,7 @@ describe('EbeguRestUtil', function () {
         myGesuchsteller.mobile = '+41 76 300 12 34';
         myGesuchsteller.mail = 'Til.Testgesuchsteller@example.com';
         myGesuchsteller.korrespondenzAdresse = undefined;
-        myGesuchsteller.umzugAdresse = undefined;
-        myGesuchsteller.adresse = undefined;
+        myGesuchsteller.adressen = [];
         myGesuchsteller.finanzielleSituationContainer = undefined;
         myGesuchsteller.einkommensverschlechterungContainer = undefined;
         return myGesuchsteller;

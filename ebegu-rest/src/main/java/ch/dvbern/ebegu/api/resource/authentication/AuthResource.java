@@ -131,7 +131,7 @@ public class AuthResource {
 			}
 		}
 
-		return Response.ok(AuthDataUtil.getBasePath(request)).build(); //dummy
+		return Response.ok("").build(); //dummy
 	}
 
 	/**

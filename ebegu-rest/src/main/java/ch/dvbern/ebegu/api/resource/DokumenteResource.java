@@ -126,10 +126,14 @@ public class DokumenteResource {
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
 
-		// Files where no in the list anymore, should be deleted on Filesystem!
+		// Files where not in the list anymore, should be deleted on Filesystem!
 		Set<Dokument> dokumentsToRemove = findDokumentToRemove(dokumentGrundJAXP, dokumentGrundFromDB);
 		for (Dokument dokument : dokumentsToRemove) {
-			fileSaverService.remove(dokument.getFilepfad());
+			// Es duerfen nur dokumente ohne VorgaengerId geloescht werden. D.h. es koennen nur Files auf dem FS einer
+			// Mutation geloescht werden, welche neu hinzugefuegt worden sind. Kopierte Dokumente des EG duerfen nicht geloescht werden!
+			if (dokument.getVorgaengerId() == null) {
+				fileSaverService.remove(dokument.getFilepfad());
+			}
 		}
 
 		DokumentGrund dokumentGrundToMerge = converter.dokumentGrundToEntity(dokumentGrundJAXP, dokumentGrundFromDB);

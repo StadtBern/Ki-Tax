@@ -68,6 +68,7 @@ public class BetreuungsgutscheinConfigurator {
 		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_5, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_5 muss gesetzt sein");
 		EbeguParameter param_pauschalabzug_pro_person_familiengroesse_6 = ebeguParameter.get(PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6);
 		Objects.requireNonNull(param_pauschalabzug_pro_person_familiengroesse_6, "Parameter PARAM_PAUSCHALABZUG_PRO_PERSON_FAMILIENGROESSE_6 muss gesetzt sein");
+
 		FamilienabzugAbschnittRule familienabzugAbschnittRule = new FamilienabzugAbschnittRule(defaultGueltigkeit,
 			param_pauschalabzug_pro_person_familiengroesse_3.getValueAsBigDecimal(),
 			param_pauschalabzug_pro_person_familiengroesse_4.getValueAsBigDecimal(),
@@ -87,13 +88,13 @@ public class BetreuungsgutscheinConfigurator {
 		EinkommenAbschnittRule einkommenAbschnittRule = new EinkommenAbschnittRule(defaultGueltigkeit);
 		rules.add(einkommenAbschnittRule);
 
-		// - Einreichungsfrist
-		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
-		rules.add(einreichungsfristAbschnittRule);
-
 		// Wohnsitz (Zuzug und Wegzug)
 		WohnsitzAbschnittRule wohnsitzAbschnittRule = new WohnsitzAbschnittRule(defaultGueltigkeit);
 		rules.add(wohnsitzAbschnittRule);
+
+		// - Einreichungsfrist
+		EinreichungsfristAbschnittRule einreichungsfristAbschnittRule = new EinreichungsfristAbschnittRule(defaultGueltigkeit);
+		rules.add(einreichungsfristAbschnittRule);
 
 		// Mindestalter Kind
 		MindestalterAbschnittRule mindestalterAbschnittRule = new MindestalterAbschnittRule(defaultGueltigkeit);
@@ -106,6 +107,10 @@ public class BetreuungsgutscheinConfigurator {
 
 	private void berechnenAnspruchRegeln() {
 		// GRUNDREGELN_CALC: Berechnen / Ändern den Anspruch
+
+		// - Nicht Eingetreten
+		NichtEingetretenCalcRule nichtEingetretenCalcRule = new NichtEingetretenCalcRule(defaultGueltigkeit);
+		rules.add(nichtEingetretenCalcRule);
 
 		// - Erwerbspensum
 		ErwerbspensumCalcRule erwerbspensumCalcRule = new ErwerbspensumCalcRule(defaultGueltigkeit);
@@ -123,7 +128,6 @@ public class BetreuungsgutscheinConfigurator {
 		WohnhaftImGleichenHaushaltCalcRule wohnhaftImGleichenHaushaltRule = new WohnhaftImGleichenHaushaltCalcRule(defaultGueltigkeit);
 		rules.add(wohnhaftImGleichenHaushaltRule);
 	}
-
 
 
 	private void reduktionsRegeln(Map<EbeguParameterKey, EbeguParameter> ebeguParameter) {

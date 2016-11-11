@@ -24,6 +24,7 @@ public abstract class File extends AbstractEntity {
 
 	private static final long serialVersionUID = -4502262818759522627L;
 
+	// copy
 	public File(File file) {
 		this.filename = file.filename;
 		this.filepfad = file.filepfad;

@@ -14,6 +14,7 @@ import java.util.Set;
 /**
  * Utility-Klasse, um Validierungen in Unit-Tests zu prüfen.
  */
+@SuppressWarnings("OverloadedVarargsMethod")
 public final class ValidationTestHelper {
 
 
@@ -21,7 +22,7 @@ public final class ValidationTestHelper {
 	}
 
 	/**
-	 * Stellt sicher dass mindestens eine beiliebige {@link javax.validation.ConstraintViolation} auf dem mittels Parameter
+	 * Stellt sicher dass mindestens eine beiliebige {@link ConstraintViolation} auf dem mittels Parameter
 	 * <tt>bean</tt> gegebenen Bean vorhanden ist.
 	 * <p>
 	 * Wenn dies trotzdem der Fall ist wird ein {@link AssertionError} geworfen.
@@ -29,12 +30,12 @@ public final class ValidationTestHelper {
 	 * @param bean das zu prüfende Bean
 	 * @param <T>  Type des Beans
 	 */
-	public static <T> void assertViolated(final @Nonnull T bean) {
+	public static <T> void assertViolated(@Nonnull final T bean) {
 		assertViolation(null, bean, null, true, "At least one Validation constraint on bean " + bean);
 	}
 
 	/**
-	 * Stellt sicher dass mindestens eine beiliebige {@link javax.validation.ConstraintViolation} auf dem mittels Parameter
+	 * Stellt sicher dass mindestens eine beiliebige {@link ConstraintViolation} auf dem mittels Parameter
 	 * <tt>bean</tt> gegebenen Bean vorhanden ist.
 	 * <p>
 	 * Wenn dies trotzdem der Fall ist wird ein {@link AssertionError} geworfen.
@@ -43,13 +44,13 @@ public final class ValidationTestHelper {
 	 * @param groups Validations-Gruppen
 	 * @param <T>    Type des Beans
 	 */
-	public static <T> void assertViolated(final @Nonnull T bean, final Class<?>... groups) {
+	public static <T> void assertViolated(@Nonnull final T bean, final Class<?>... groups) {
 		assertViolation(null, bean, null, true, "At least one Validation constraint on bean " + bean, groups);
 	}
 
 
 	/**
-	 * Stellt sicher dass keine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter
+	 * Stellt sicher dass keine {@link ConstraintViolation} auf dem mittels Parameter
 	 * <tt>bean</tt> gegebenen Bean vorhanden ist.
 	 * <p>
 	 * Wenn dies trotzdem der Fall ist wird ein {@link AssertionError} geworfen.
@@ -57,13 +58,13 @@ public final class ValidationTestHelper {
 	 * @param bean das zu prüfende Bean
 	 * @param <T>  Type des Beans
 	 */
-	public static <T> void assertNotViolated(final @Nonnull T bean) {
+	public static <T> void assertNotViolated(@Nonnull final T bean) {
 		assertViolation(null, bean, null, false, "At least one Validation constraint on bean " + bean);
 	}
 
 
 	/**
-	 * Stellt sicher dass keine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass keine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
 	 * Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
@@ -74,22 +75,22 @@ public final class ValidationTestHelper {
 	 * @param propertyPaths das Property. Wenn null, wird nicht geprüft ob keine Violation auf gegebenem Property ist
 	 * @param <T>           Type des Beans
 	 */
-	public static <T> void assertNotViolated(final @Nonnull Class<? extends Annotation> clazz,
-											 final @Nonnull T bean,
-											 final @Nonnull String... propertyPaths) {
+	public static <T> void assertNotViolated(@Nonnull final Class<? extends Annotation> clazz,
+											 @Nonnull final T bean,
+											 @Nonnull final String... propertyPaths) {
 		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", propertyPaths);
 	}
 
 
-	public static <T> void assertNotViolated(final @Nonnull Class<? extends Annotation> clazz,
-											 final @Nonnull T bean,
-											 final @Nonnull ValidatorFactory factory,
-											 final @Nonnull String... propertyPaths) {
+	public static <T> void assertNotViolated(@Nonnull final Class<? extends Annotation> clazz,
+											 @Nonnull final T bean,
+											 @Nonnull final ValidatorFactory factory,
+											 @Nonnull final String... propertyPaths) {
 		assertViolation(clazz, bean, false, "Validation constraint found with Annotation {0} on propertyPath {1}", factory, propertyPaths);
 	}
 
 	/**
-	 * Stellt sicher dass keine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass keine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
 	 * Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
@@ -116,14 +117,14 @@ public final class ValidationTestHelper {
 	 * @param bean  das zu prüfende Bean
 	 * @param <T>   Type des Beans
 	 */
-	public static <T> void assertNotViolated(final @Nonnull Class<? extends Annotation> clazz,
-											 final @Nonnull T bean) {
+	public static <T> void assertNotViolated(@Nonnull final Class<? extends Annotation> clazz,
+											 @Nonnull final T bean) {
 		assertViolation(clazz, bean, null, false, "Validation constraint found with Annotation {0} on propertyPath {1}");
 	}
 
 
 	/**
-	 * Stellt sicher dass keine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass keine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist.
 	 * <p/>
 	 * Wenn dies trotzdem der Fall ist wird ein {@link AssertionError} geworfen.
@@ -138,7 +139,7 @@ public final class ValidationTestHelper {
 
 
 	/**
-	 * Stellt sicher dass eine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass eine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
 	 * Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
@@ -149,22 +150,22 @@ public final class ValidationTestHelper {
 	 * @param propertyPaths das Property. Wenn null, wird nicht geprüft ob die Violation auf dem Property liegt.
 	 * @param <T>           Type des Beans
 	 */
-	public static <T> void assertViolated(final @Nonnull Class<? extends Annotation> clazz,
-										  final @Nonnull T bean,
-										  final @Nonnull String... propertyPaths) {
+	public static <T> void assertViolated(@Nonnull final Class<? extends Annotation> clazz,
+										  @Nonnull final T bean,
+										  @Nonnull final String... propertyPaths) {
 		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", propertyPaths);
 	}
 
-	public static <T> void assertViolated(final @Nonnull Class<? extends Annotation> clazz,
-										  final @Nonnull T bean,
-										  final @Nonnull ValidatorFactory factory,
-										  final @Nonnull String... propertyPaths) {
+	public static <T> void assertViolated(@Nonnull final Class<? extends Annotation> clazz,
+										  @Nonnull final T bean,
+										  @Nonnull final ValidatorFactory factory,
+										  @Nonnull final String... propertyPaths) {
 		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", factory, propertyPaths);
 	}
 
 
 	/**
-	 * Stellt sicher dass eine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass eine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> vorhanden ist welche über eine Annotation der
 	 * Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
@@ -176,16 +177,16 @@ public final class ValidationTestHelper {
 	 * @param groups        die Validierungs-Gruppen.
 	 * @param <T>           Type des Beans
 	 */
-	public static <T> void assertViolated(final @Nonnull Class<? extends Annotation> clazz,
-										  final @Nonnull T bean,
-										  final @Nonnull String[] propertyPaths,
+	public static <T> void assertViolated(@Nonnull final Class<? extends Annotation> clazz,
+										  @Nonnull final T bean,
+										  @Nonnull final String[] propertyPaths,
 										  final Class<?>... groups) {
 		assertViolation(clazz, bean, true, "No validation constraint found with Annotation {0} on property {1}", propertyPaths, groups);
 	}
 
 
 	/**
-	 * Stellt sicher dass eine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass eine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean auf dem gegebenem Property <tt>propertyPath</tt> NICHT vorhanden ist welche über eine Annotation der
 	 * Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
@@ -197,9 +198,9 @@ public final class ValidationTestHelper {
 	 * @param groups        die Validierungs-Gruppen.
 	 * @param <T>           Type des Beans
 	 */
-	public static <T> void assertNotViolated(final @Nonnull Class<? extends Annotation> clazz,
-											 final @Nonnull T bean,
-											 final @Nonnull String[] propertyPaths,
+	public static <T> void assertNotViolated(@Nonnull final Class<? extends Annotation> clazz,
+											 @Nonnull final T bean,
+											 @Nonnull final String[] propertyPaths,
 											 final Class<?>... groups) {
 		assertViolation(clazz, bean, false, "No validation constraint found with Annotation {0} on property {1}", propertyPaths, groups);
 	}
@@ -218,14 +219,14 @@ public final class ValidationTestHelper {
 	 * @param <T>   Type des Beans
 	 * @see #assertViolated(Class, Object, String...)
 	 */
-	public static <T> void assertViolated(final @Nonnull Class<? extends Annotation> clazz,
-										  final @Nonnull T bean) {
+	public static <T> void assertViolated(@Nonnull final Class<? extends Annotation> clazz,
+										  @Nonnull final T bean) {
 		assertViolation(clazz, bean, null, true, "No validation constraint found with Annotation {0} on property {1}");
 	}
 
 
 	/**
-	 * Stellt sicher dass eine {@link javax.validation.ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
+	 * Stellt sicher dass eine {@link ConstraintViolation} auf dem mittels Parameter <tt>bean</tt>
 	 * gegebenen Bean vorhanden ist welche über eine Annotation der Klasse <tt>clazz</tt> verursacht worden ist.
 	 * <p>
 	 * Wenn dies wieder erwarten nicht Fall ist wird ein {@link AssertionError} geworfen.
@@ -261,6 +262,7 @@ public final class ValidationTestHelper {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static <T> void assertViolation(@Nullable final Class<? extends Annotation> clazz, final T bean, @Nullable final String property,
 											final boolean expectedMatching, final String messageFormat, Class... groups) {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -268,10 +270,11 @@ public final class ValidationTestHelper {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static <T> void assertViolation(@Nullable final Class<? extends Annotation> clazz, final T bean, @Nullable final String property,
 											final boolean expectedMatching, final String messageFormat, final ValidatorFactory factory, Class... groups) {
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<T>> violations = null;
+		Set<ConstraintViolation<T>> violations;
 		if (groups == null || groups.length == 0) {
 			violations = validator.validate(bean);
 		} else {

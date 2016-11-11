@@ -5,7 +5,7 @@ import {IState} from 'angular-ui-router';
 gesuchstellerDashboardRun.$inject = ['RouterHelper'];
 /* @ngInject */
 export function gesuchstellerDashboardRun(routerHelper: RouterHelper) {
-    routerHelper.configureStates(getStates(), '/gesuchstellerDashboard');
+    routerHelper.configureStates(getStates(), '/start');
 }
 
 function getStates(): IState[] {
@@ -18,6 +18,6 @@ function getStates(): IState[] {
 
 export class EbeguGesuchstellerDashboardState implements IState {
     name = 'gesuchstellerDashboard';
-    template = '<gesuchsteller-dashboard-view>';
+    template = '<gesuchsteller-dashboard-view class="layout-column flex-100">';
     url = '/gesuchstellerDashboard';
 }

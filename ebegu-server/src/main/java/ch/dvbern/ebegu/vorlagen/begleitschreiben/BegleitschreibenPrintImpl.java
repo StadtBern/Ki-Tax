@@ -12,7 +12,13 @@ package ch.dvbern.ebegu.vorlagen.begleitschreiben;
 */
 
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.vorlagen.PrintUtil;
+import org.apache.commons.lang.StringUtils;
+
+import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Transferobjekt
@@ -33,8 +39,12 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	 * @return GesuchstellerName
 	 */
 	@Override
-	public String getGesuchstellerName() {
+	public String getGesuchstellerNameOderOrganisation() {
 
+		String bezeichnung = PrintUtil.getOrganisation(gesuch);
+		if (StringUtils.isNotEmpty(bezeichnung)) {
+			return bezeichnung;
+		}
 		return PrintUtil.getGesuchstellerName(gesuch);
 	}
 
@@ -63,5 +73,41 @@ public class BegleitschreibenPrintImpl implements BegleitschreibenPrint {
 	public String getFallNummer() {
 
 		return PrintUtil.createFallNummerString(gesuch);
+	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_letter_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
+	}
+
+	@Override
+	public boolean isPrintTextFamilie() {
+
+		if (StringUtils.isNotEmpty(PrintUtil.getOrganisation(gesuch))) {
+			// Text Familie darf nicht gedruckt werden
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return true wenn adresszusatz vorhanden
+	 */
+	@Override
+	public boolean isPrintAdresszusatz() {
+		if (StringUtils.isNotEmpty(PrintUtil.getAdresszusatz(gesuch))) {
+			return true;
+		}
+		return false;
+	}
+
+	@Nullable
+	@Override
+	public String getAdresszusatz() {
+		return PrintUtil.getAdresszusatz(gesuch);
 	}
 }

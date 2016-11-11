@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,6 +102,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	/**
 	 * @return Kita Name
 	 */
+	@Override
 	public String getKitaBezeichnung() {
 
 		return betreuung.getInstitutionStammdaten().getInstitution().getName();
@@ -144,6 +146,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	 *
 	 * @return
 	 */
+	@Override
 	public List<BemerkungPrint> getManuelleBemerkungen() {
 
 		List<BemerkungPrint> bemerkungen = new ArrayList<>();
@@ -197,6 +200,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	}
 
 
+	@Override
 	public boolean isVorgaengerVerfuegt() {
 		return letzteVerfuegungDatum != null;
 	}
@@ -204,7 +208,7 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 	@Override
 	public boolean isPrintManuellebemerkung() {
 
-		return getManuelleBemerkungen().size() > 0;
+		return !getManuelleBemerkungen().isEmpty();
 	}
 
 	@Nonnull
@@ -221,5 +225,14 @@ public class VerfuegungPrintImpl implements VerfuegungPrint {
 			return Optional.of(verfuegung);
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public String getDateCreate() {
+		final String date_pattern = ServerMessageUtil.getMessage("date_pattern");
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(date_pattern);
+
+		return date.format(formatter);
 	}
 }

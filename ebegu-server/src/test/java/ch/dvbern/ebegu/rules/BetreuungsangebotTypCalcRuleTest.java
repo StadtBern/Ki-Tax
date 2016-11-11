@@ -72,6 +72,7 @@ public class BetreuungsangebotTypCalcRuleTest {
 	private Betreuung prepareData(BetreuungsangebotTyp betreuungsangebotTyp) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
 		Gesuch gesuch = betreuung.extractGesuch();
+		TestDataUtil.createDefaultAdressenForGS(gesuch, false);
 		betreuung.getInstitutionStammdaten().setBetreuungsangebotTyp(betreuungsangebotTyp);
 		gesuch.getGesuchsteller1().addErwerbspensumContainer(TestDataUtil.createErwerbspensum(START_PERIODE, ENDE_PERIODE, 60, 0));
 		BetreuungspensumContainer betreuungspensumContainer = new BetreuungspensumContainer();

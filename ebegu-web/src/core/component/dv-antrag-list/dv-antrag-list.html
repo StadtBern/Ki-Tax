@@ -4,7 +4,7 @@
         <div class="col-md-12 table-responsive">
             <!--Tabelle-->
             <table st-table="vm.displayedCollection" st-delay="20"
-                   st-pipe="vm.callServer" class="table table-striped fixedtable table-hover" id="{{vm.tableId}}"
+                   st-pipe="vm.callServer" class="table fixedtable table-hover" id="{{vm.tableId}}"
                    title="{{vm.tableTitle}}">
                 <thead>
                 <!--Sortierspalten-->
@@ -98,7 +98,7 @@
 
                     <td class="ellipsis" ng-if="vm.isActionsVisible()">
                         <dv-loading-button type="button" button-click="vm.removeClicked(row); $event.stopPropagation()"
-                                           button-class="btn btn-sm" title="{{vm.removeButtonTitle}}">
+                                           button-class="dv-btn-sm" title="{{vm.removeButtonTitle}}">
                             <i class="fa fa-minus">
                             </i>
                         </dv-loading-button>
@@ -123,8 +123,8 @@
     <!--Addbutton -->
     <div class="row">
 
-        <div class="col-md-12" style="margin-bottom: 20px" ng-if="vm.isAddButtonVisible()">
-            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="btn btn-sm btn-success">
+        <div class="col-md-12" style="margin-bottom: 2rem" ng-if="vm.isAddButtonVisible()">
+            <dv-loading-button type="button" button-click="vm.addClicked()" button-class="dv-btn-sm color-success">
                 <i class="glyphicon glyphicon-plus">
                 </i> {{vm.addButtonText}}
             </dv-loading-button>

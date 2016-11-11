@@ -1,5 +1,6 @@
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import {IHttpService, IHttpPromise} from 'angular';
+import DateUtil from '../../utils/DateUtil';
 
 export class TestFaelleRS {
     serviceURL: string;
@@ -18,7 +19,27 @@ export class TestFaelleRS {
         return 'TestFaelleRS';
     }
 
-    public createTestFall(testFall: string): IHttpPromise<any> {
-        return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall));
+    public createTestFall(testFall: string, bestaetigt: boolean, verfuegen: boolean): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/testfall/' + encodeURIComponent(testFall) + '/' + bestaetigt + '/' + verfuegen);
+    }
+
+    public mutiereFallHeirat(fallNummer: Number, gesuchsperiodeid: string, mutationsdatum: moment.Moment, aenderungper: moment.Moment): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/mutationHeirat/' + fallNummer + '/' +
+            encodeURIComponent(gesuchsperiodeid), {
+            params: {
+                mutationsdatum: DateUtil.momentToLocalDate(mutationsdatum),
+                aenderungper: DateUtil.momentToLocalDate(aenderungper)
+            }
+        });
+    }
+
+    public mutiereFallScheidung(fallNummer: Number, gesuchsperiodeid: string, mutationsdatum: moment.Moment, aenderungper: moment.Moment): IHttpPromise<String> {
+        return this.http.get(this.serviceURL + '/mutationScheidung/' + fallNummer + '/' +
+            encodeURIComponent(gesuchsperiodeid), {
+            params: {
+                mutationsdatum: DateUtil.momentToLocalDate(mutationsdatum),
+                aenderungper: DateUtil.momentToLocalDate(aenderungper)
+            }
+        });
     }
 }

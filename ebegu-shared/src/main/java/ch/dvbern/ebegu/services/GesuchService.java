@@ -2,7 +2,9 @@ package ch.dvbern.ebegu.services;
 
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
 import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
+import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mutationsdaten;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -64,7 +66,6 @@ public interface GesuchService {
 	 *
 	 * @param gesuch der Gesuch zu entfernen
 	 */
-	@Nonnull
 	void removeGesuch(@Nonnull Gesuch gesuch);
 
 	@Nonnull
@@ -91,9 +92,23 @@ public interface GesuchService {
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
 
+	@Nonnull
+	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+									@Nonnull LocalDate eingangsdatum);
+
 	/**
 	 * Gibt das neuste verfügte Gesuch (mit dem neuesten Verfuegungsdatum) in der gleichen Gesuchsperiode zurück
 	 */
 	@Nonnull
 	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch);
+
+	@Nonnull
+	Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall);
+
+
+	/**
+	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
+	 * @param fallId
+	 */
+	void updateLaufnummerOfAllGesucheOfFall(String fallId);
 }

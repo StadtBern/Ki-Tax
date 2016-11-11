@@ -110,6 +110,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	/**
 	 * Liest alle Betreuungen die zu einer der mitgegebenen Institution gehoeren und die im Status WARTEN sind
+	 *
 	 * @param institutionen
 	 * @return
 	 */
@@ -132,7 +133,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		return Collections.emptyList();
 	}
 
-	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung){
+	@Override
+	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung) {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);

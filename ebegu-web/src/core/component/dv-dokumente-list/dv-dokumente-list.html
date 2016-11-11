@@ -1,15 +1,14 @@
-<div class="dv-dokumente-list">
+<div class="dv-dokumente-list row">
 
     <div class="col-md-12 table-responsive" ng-if="vm.dokumente.length">
 
-        <h4 class="mainTitle">
+        <h2>
             <span data-translate="{{vm.tableTitle}}"></span>
             {{vm.titleValue}}
-        </h4>
-        <hr class="header"/>
+        </h2>
 
         <table st-table="table" st-safe-src="vm.dokumente" st-
-               class="table table-striped dokumentgrundtable" id="{{vm.tableId}}">
+               class="table dokumentgrundtable" id="{{vm.tableId}}">
             <thead>
             <tr ng-if="!vm.sonstige">
                 <!--without tag-->
@@ -17,11 +16,11 @@
                     <span data-translate="DOK_DOKUMENT"> </span>
                 </th>
 
-                <th width="15%" st-sort="tag" class="sortable" ng-if="vm.tag">
+                <th width="20%" st-sort="tag" class="sortable" ng-if="vm.tag">
                     <span data-translate="{{vm.tag}}"></span>
                 </th>
 
-                <th width="30%" st-sort="fullName" class="sortable" st-sort-default="true">
+                <th width="25%" st-sort="fullName" class="sortable" st-sort-default="true">
                     <span data-translate="DOK_FUER"> </span>
                 </th>
 
@@ -40,7 +39,7 @@
                 <td ng-bind="row.dokumentTyp | translate" ngf-drop="vm.uploadAnhaenge($files, row)"
                     ngf-drag-over-class="'dragover'" ngf-multiple="true"
                     ngf-max-size="'10MB'" ngf-max-total-size="'100MB'"
-                    ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)]"></td>
+                    ng-class="{true:'documents-vailable', false:''}[vm.hasDokuments(row)&&!vm.sonstige]"></td>
 
                 <!--with tag-->
                 <td ng-bind="row.tag" ng-if="!vm.sonstige && vm.tag"
@@ -60,15 +59,15 @@
                 <td ng-if="!vm.isGesuchStatusVerfuegenVerfuegt()" ng-click="$event.stopPropagation()">
                     <a ngf-select="vm.uploadAnhaenge($files, row)" ngf-multiple="true"
                        ngf-max-size="'10MB'" ngf-max-total-size="100MB"
-                       class="fa fa-file-text-o" aria-hidden="true" style="color: black"></a>
+                       class="fa fa-upload" aria-hidden="true" style="color: black"></a>
                 </td>
                 <td ng-if="vm.isGesuchStatusVerfuegenVerfuegt()"></td>
             </tr>
             <tr id="rowexpand" colspan="100%" ng-repeat-end>
-                <td ng-if="vm.hasDokuments(row)" colspan="100%" style="padding: 0px">
-                    <table st-table="table2" st-safe-src="row.dokumente" class="table table-striped dateientable">
+                <td ng-if="vm.hasDokuments(row)" colspan="100%" style="padding: 0">
+                    <table st-table="table2" st-safe-src="row.dokumente" class="table dateientable">
                         <thead>
-                        <tr style="background-color: lightgray">
+                        <tr style="background-color: transparent">
                             <!--without tag-->
                             <th width="45%" st-sort="filename" class="sortable" st-sort-default="true">
                                 <span data-translate="DATEINAME"></span>
@@ -88,9 +87,12 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="dokument in table2">
-                            <td ng-bind="dokument.filename"></td>
-                            <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"></td>
-                            <td ng-bind="dokument.filesize"></td>
+                            <td ng-bind="dokument.filename"
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
+                            <td ng-bind="dokument.timestampMutiert | amDateFormat : 'DD.MM.YYYY'"
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
+                            <td ng-bind="dokument.filesize"
+                                ng-class="{true:'vorgaenger', false:''}[dokument.hasVorgaenger()]"></td>
                             <td>
                                 <span ng-click="vm.download(dokument, true)" class="fa fa-download" aria-hidden="true"
                                       style="color: black"></span>

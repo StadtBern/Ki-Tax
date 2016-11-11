@@ -1,15 +1,17 @@
-<div class="verfuegenListView row">
-    <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-12">
-                <h3 data-translate="VERFUEGUNGEN_UPPER"></h3>
-            </div>
+<div class="verfuegenListView gesuchModul">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 data-translate="VERFUEGUNGEN_UPPER"></h1>
+            <hr class="header"/>
         </div>
-        <div class="row">
-            <div class="col-md-12 table-responsive">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12 table-responsive">
 
                 <table st-table="displayedCollection" st-safe-src="vm.getKinderWithBetreuungList()"
-                       class="table table-striped table-hover" st-delay="20">
+                       class="table table-hover" st-delay="20">
                     <thead>
                     <tr>
                         <th data-translate="KIND_UPPER"></th>
@@ -21,7 +23,10 @@
                     <tbody ng-repeat="kindContainer in displayedCollection">
                     <tr ng-repeat="betreuung in kindContainer.betreuungen" st-select-row="betreuung"
                         st-select-mode="single"
-                        ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' && betreuung.betreuungsstatus !== 'VERFUEGT' && betreuung.betreuungsstatus !== 'GESCHLOSSEN_OHNE_VERFUEGUNG'}"
+                        ng-class="{'disabled-row': betreuung.betreuungsstatus !== 'BESTAETIGT' &&
+                        betreuung.betreuungsstatus !== 'VERFUEGT' &&
+                        betreuung.betreuungsstatus !== 'GESCHLOSSEN_OHNE_VERFUEGUNG' &&
+                        betreuung.betreuungsstatus !== 'NICHT_EINGETRETEN'}"
                         ng-click="vm.openVerfuegung(kindContainer, betreuung)">
                         <td ng-bind="kindContainer.kindJA.getFullName()"></td>
                         <td ng-bind="betreuung.institutionStammdaten.institution.name"></td>
@@ -37,68 +42,69 @@
                     </tbody>
                 </table>
 
+                </div>
             </div>
-        </div>
 
-        <br>
 
-        <!--FinanzielleSituationPDF anzeigen-->
-        <div class="row text-left" dv-show-element
-             dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-            <div class="col-md-12">
-                <i class="fa fa-file-text-o"></i>
-                <button type="button" class="btn btn-link"
-                        ng-click="vm.openFinanzielleSituationPDF()">
-                    <span data-translate="PDF_FINSITUATION_ANZEIGEN"></span>
-                </button>
+            <!--FinanzielleSituationPDF anzeigen-->
+            <div class="row text-left" dv-show-element
+                 dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
+                <div class="col-md-12">
+                    <i class="fa fa-file-text-o"></i>
+                    <button type="button" class=" btn-link"
+                            ng-click="vm.openFinanzielleSituationPDF()">
+                        <span data-translate="PDF_FINSITUATION_ANZEIGEN"></span>
+                    </button>
+                </div>
             </div>
-        </div>
-        <!--Begleitschreiben anzeigen-->
-        <div class="row text-left">
-            <div class="col-md-12">
-                <i class="fa fa-file-text-o"></i>
-                <button type="button" class="btn btn-link"
-                        ng-click="vm.openBegleitschreibenPDF()">
-                    <span data-translate="PDF_BEGLEITSCHREIBEN_ANZEIGEN"></span>
-                </button>
+            <!--Begleitschreiben anzeigen-->
+            <div class="row text-left">
+                <div class="col-md-12">
+                    <i class="fa fa-file-text-o"></i>
+                    <button type="button" class=" btn-link"
+                            ng-click="vm.openBegleitschreibenPDF()">
+                        <span data-translate="PDF_BEGLEITSCHREIBEN_ANZEIGEN"></span>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <br>
+            <br>
 
         <div class="row" dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
-            <div class="col-md-12 text-center">
-                <span ng-show="vm.showGeprueft()">
-                    <md-button ng-click="vm.setGesuchStatusGeprueft()"
-                               class="md-raised md-primary" aria-label="{{GEPRUEFT_UPPER | translate}}">
+            <div class="col-md-12 text-center row">
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
+                    <dv-loading-button type="button" button-click="vm.setGesuchStatusGeprueft()"
+                                       button-class="dv-btn-sm color-success" aria-label="{{GEPRUEFT_UPPER | translate}}">
                         <span data-translate="GEPRUEFT_UPPER"></span>
-                    </md-button>
+                    </dv-loading-button>
                 </span>
-                <span ng-show="vm.showVerfuegenStarten()">
-                    <md-button ng-click="vm.setGesuchStatusVerfuegen()"
-                     class="md-raised md-primary" aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
-                    <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
-                    </md-button>
+                <span class="col-md-4" ng-show="vm.showVerfuegenStarten()">
+                    <dv-loading-button button-click="vm.setGesuchStatusVerfuegen()"
+                                       button-class="dv-btn-sm color-success"
+                                       aria-label="{{VERFUEGUNG_STARTEN_UPPER | translate}}">
+                        <span data-translate="VERFUEGUNG_STARTEN_UPPER"></span>
+                    </dv-loading-button>
                 </span>
-
-                <span ng-show="vm.showGeprueft()">
-                    <md-button class="md-raised md-warn md-hue-2"
-                               aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
+                    <dv-loading-button button-class="dv-btn-sm"
+                                       aria-label="{{ERSTE_MAHNUNG_UPPER | translate}}">
                         <span data-translate="ERSTE_MAHNUNG_UPPER"></span>
-                    </md-button>
+                    </dv-loading-button>
                 </span>
-                <span ng-show="vm.showGeprueft()">
-                    <md-button class="md-raised md-warn md-hue-2"
-                               aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
+                <span class="col-md-4" ng-show="vm.showGeprueft()">
+                    <dv-loading-button button-class="dv-btn-sm"
+                                       aria-label="{{ZURUECK_GESUCHSTELLER_UPPER | translate}}">
                         <span data-translate="ZURUECK_GESUCHSTELLER_UPPER"></span>
-                    </md-button>
+                    </dv-loading-button>
                 </span>
             </div>
         </div>
     </div>
-
-    <!--Buttons-->
-    <dv-navigation dv-previous="true" dv-next="false" dv-sub-step="1">
-    </dv-navigation>
-
+    </div>
+    <div class="row marginTop20">
+        <div class="col-md-12"><!--Buttons-->
+            <dv-navigation dv-previous="true" dv-next="false" dv-sub-step="1">
+            </dv-navigation>
+        </div>
+    </div>
 </div>

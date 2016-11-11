@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.*;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
+import ch.dvbern.ebegu.enums.EnumFamilienstatus;
+import ch.dvbern.ebegu.enums.EnumGesuchstellerKardinalitaet;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.types.DateRange;
 import org.junit.Assert;
@@ -16,6 +18,7 @@ import java.util.List;
 /**
  * Tests für WohnsitzRule
  */
+@SuppressWarnings("ConstantConditions")
 public class WohnsitzRuleTest {
 
 	private final LocalDate START_PERIODE = LocalDate.of(2016, Month.AUGUST, 1);
@@ -30,7 +33,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -43,7 +46,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnitt = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnitt.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnitt.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(0, abschnitt.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnitt.getBgPensum());
 	}
@@ -56,7 +59,7 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -70,9 +73,40 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(1, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
+	}
+
+	@Test
+	public void testZweiGesuchstellerNichtInBernWithUmzugGS2InBern() {
+		Betreuung betreuung = createTestdata(true);
+		betreuung.extractGesuch().getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
+
+		betreuung.extractGesuch().getGesuchsteller2()
+			.addAdresse(createGesuchstellerAdresse(START_PERIODE, LocalDate.of(2016, Month.DECEMBER, 15), true)); // nur wenn Gesuchsperiode 2016/2017
+		betreuung.extractGesuch().getGesuchsteller2()
+			.addAdresse(createGesuchstellerAdresse(LocalDate.of(2016, Month.DECEMBER, 16), ENDE_PERIODE, false)); // nur wenn Gesuchsperiode 2016/2017
+
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(2, zeitabschnittList.size());
+
+		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(0);
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
+		Assert.assertEquals(START_PERIODE, abschnittNichtInBern.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(LocalDate.of(2016, Month.DECEMBER, 15), abschnittNichtInBern.getGueltigkeit().getGueltigBis());
+
+		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(1);
+		Assert.assertTrue(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(100, abschnittInBern.getBgPensum());
+		Assert.assertEquals(LocalDate.of(2016, Month.DECEMBER, 16), abschnittInBern.getGueltigkeit().getGueltigAb());
+		Assert.assertEquals(ENDE_PERIODE, abschnittInBern.getGueltigkeit().getGueltigBis());
 	}
 
 	@Test
@@ -86,12 +120,12 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(true, abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(1);
 		Assert.assertEquals(zuzugsDatum, abschnittInBern.getGueltigkeit().getGueltigAb());
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 	}
@@ -107,16 +141,46 @@ public class WohnsitzRuleTest {
 		Assert.assertNotNull(zeitabschnittList);
 		Assert.assertEquals(2, zeitabschnittList.size());
 		VerfuegungZeitabschnitt abschnittInBern = zeitabschnittList.get(0);
-		Assert.assertEquals(false, abschnittInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertFalse(abschnittInBern.isWohnsitzNichtInGemeindeGS1());
 		Assert.assertEquals(100, abschnittInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(100, abschnittInBern.getBgPensum());
 		VerfuegungZeitabschnitt abschnittNichtInBern = zeitabschnittList.get(1);
-		Assert.assertEquals(true, abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertTrue(abschnittNichtInBern.isWohnsitzNichtInGemeindeGS1());
 		//Anspruch noch 2 Monate nach wegzug auf Ende Monat
 		Assert.assertEquals(wegzugsDatum.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()), abschnittInBern.getGueltigkeit().getGueltigBis());
 		Assert.assertEquals(0, abschnittNichtInBern.getAnspruchberechtigtesPensum());
 		Assert.assertEquals(0, abschnittNichtInBern.getBgPensum());
 	}
+
+	@Test
+	public void testZweiGesuchstellerEinerDavonInBernMutationFamiliensituation() {
+		Betreuung betreuung = createTestdata(true);
+		final Gesuch gesuch = betreuung.extractGesuch();
+
+		gesuch.setFamiliensituationErstgesuch(new Familiensituation());
+		gesuch.getFamiliensituationErstgesuch().setFamilienstatus(EnumFamilienstatus.ALLEINERZIEHEND);
+		gesuch.getFamiliensituationErstgesuch().setGesuchstellerKardinalitaet(EnumGesuchstellerKardinalitaet.ALLEINE);
+		gesuch.getFamiliensituation().setFamilienstatus(EnumFamilienstatus.VERHEIRATET);
+		gesuch.getFamiliensituation().setAenderungPer(LocalDate.of(2017, Month.MARCH, 26));
+
+		gesuch.getGesuchsteller1().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, true));
+		gesuch.getGesuchsteller2().addAdresse(createGesuchstellerAdresse(START_PERIODE, ENDE_PERIODE, false));
+		List<VerfuegungZeitabschnitt> zeitabschnittList = EbeguRuleTestsHelper.calculate(betreuung);
+		Assert.assertNotNull(zeitabschnittList);
+		Assert.assertEquals(2, zeitabschnittList.size());
+
+		VerfuegungZeitabschnitt abschnittInBern1 = zeitabschnittList.get(0);
+		Assert.assertTrue(abschnittInBern1.isWohnsitzNichtInGemeindeGS1());
+		Assert.assertEquals(0, abschnittInBern1.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(0, abschnittInBern1.getBgPensum());
+
+		VerfuegungZeitabschnitt abschnittInBern2 = zeitabschnittList.get(1);
+		Assert.assertFalse(abschnittInBern2.isWohnsitzNichtInGemeindeGS2());
+		Assert.assertEquals(100, abschnittInBern2.getAnspruchberechtigtesPensum());
+		Assert.assertEquals(100, abschnittInBern2.getBgPensum());
+	}
+
+
 
 	private Betreuung createTestdata(boolean zweigesuchsteller) {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(zweigesuchsteller);

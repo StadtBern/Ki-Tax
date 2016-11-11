@@ -1,4 +1,34 @@
-@import '../variables.less';
+@import '../style/variables.less';
+@import '../style/mixins.less';
+@import '../style/organisms/sidenav.less';
+.mainTitle {
+    margin-top: 0;
+}
+#gesuchContainer {
+    background: @contrast-light;
+    overflow-y: scroll;
+    flex: 1 1 auto;
+}
+
+#kommentarContainer {
+    flex: 0 0 auto;
+    background: @contrast-lightest;
+    width: 32rem;
+    padding: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.fixedToolbar {
+    position: fixed;
+    width: 100%;
+    top: 10rem;
+    z-index: @z-index-toolbar;
+}
+
+.gesuchModul {
+    padding: 5rem 2.5rem 2.5rem 5rem;
+}
 
 .betreuung-status {
     font-style: italic;
@@ -18,62 +48,24 @@
 
 .BESTAETIGT {
 }
-.sidenav {
-    li {
-        height: 20px;
-        margin-top: 12px;
-        margin-right: 40px;
-        margin-left: 10px;
-        list-style: none;
-        border-bottom: 1px solid lightgray;
-
-        button {
-            text-align: left;
-            padding: 0 0 0 15px;
-        }
-        button:focus, button:active {
-            outline: none !important;
-        }
-        button[disabled]{
-            color: #777777;
-        }
-
-        span {
-            padding-right: 3px;
-            text-align: right;
-        }
-
-    }
-    li.active-element {
-        border-bottom: 2px solid black;
-        border-left: 4px solid @color-guide;;
-    }
-
-    .fa-check.green {
-        color: #16cc77;
-    }
-    .fa-close.red {
-        color: #d50025;
-    }
-    .fa-hourglass.orange{
-        color: #f5a623;
-    }
-
-}
 
 .right-side {
     background-color: #ECF1F4;
 }
 
 .gesuch-status {
-    color: rgb(73, 143, 224);
-    margin-left: 70px;
+    margin: 5rem 2.5rem 2.5rem 2.5rem;
+    color: @contrast-darkest;
 
     .status {
-        font-weight: bold;
+        .bold();
+        font-size: 1.4rem;
+        letter-spacing: 0.1rem;
     }
     .zuletzt {
-        font-style: italic;
+        .italic();
+        font-size: 1.2rem;
+        letter-spacing: 0.1rem;
     }
 }
 
@@ -84,8 +76,10 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 .gesuchbody.row > [class*='col-'] {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
 }
 
@@ -94,3 +88,4 @@
         cursor:text;
     }
 }
+

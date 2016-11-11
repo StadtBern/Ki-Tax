@@ -71,7 +71,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final Gesuch myGesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(myGesuch);
 		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(10, wizardStepList.size());
+		Assert.assertEquals(11, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
 			if (WizardStepName.GESUCH_ERSTELLEN.equals(wizardStep.getWizardStepName())) {
@@ -97,7 +97,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(mutation);
 
 		Assert.assertNotNull(wizardStepList);
-		Assert.assertEquals(10, wizardStepList.size());
+		Assert.assertEquals(11, wizardStepList.size());
 
 		wizardStepList.forEach(wizardStep -> {
 			// status
@@ -201,6 +201,7 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertTrue(findStepByName(wizardSteps, WizardStepName.EINKOMMENSVERSCHLECHTERUNG).getVerfuegbar());
 	}
 
+	//TODO: TEST failed, aber warum? Keine Aenderungen in diesen Files....
 	@Test
 	public void updateWizardStepKinder() {
 		updateStatus(kinderStep, WizardStepStatus.IN_BEARBEITUNG);

@@ -56,10 +56,6 @@ export class DvAdresseController {
             });
     }
 
-    createItem() {
-        this.adresse = new TSAdresse('', '', '', '', '', undefined, '', undefined, undefined, undefined, undefined);
-    }
-
     resetForm() {
         this.adresse = undefined;
     }
@@ -70,6 +66,21 @@ export class DvAdresseController {
 
     public isGesuchStatusVerfuegenVerfuegt(): boolean {
         return this.gesuchModelManager.isGesuchStatusVerfuegenVerfuegt();
+    }
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    public disableWohnadresseFor2GS(): boolean {
+        return (this.prefix !== 'umzug')
+            && (this.gesuchModelManager.getGesuch().isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
+                || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
+                && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined)));
+    }
+
+    public showDatumVon(): boolean {
+        return this.adresse.showDatumVon;
     }
 
 }

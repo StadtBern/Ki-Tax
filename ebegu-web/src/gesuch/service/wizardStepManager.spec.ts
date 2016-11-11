@@ -8,6 +8,8 @@ import TSWizardStep from '../../models/TSWizardStep';
 import {IScope, IQService} from 'angular';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
+import TSGesuch from '../../models/TSGesuch';
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 describe('wizardStepManager', function () {
 
@@ -16,6 +18,9 @@ describe('wizardStepManager', function () {
     let wizardStepRS: WizardStepRS;
     let scope: IScope;
     let $q: IQService;
+
+    let gesuchAntrag: TSGesuch = new TSGesuch;
+
 
     beforeEach(angular.mock.module(EbeguWebCore.name));
 
@@ -27,33 +32,39 @@ describe('wizardStepManager', function () {
         wizardStepManager = $injector.get('WizardStepManager');
     }));
 
+    beforeEach(() => {
+        gesuchAntrag.typ = TSAntragTyp.GESUCH;
+    });
+
     describe('construct the object', function() {
         it('constructs the steps for Institution', function() {
             spyOn(authServiceRS, 'getPrincipalRole').and.returnValue(TSRole.SACHBEARBEITER_INSTITUTION);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
             expect(wizardStepManager.getAllowedSteps()).toBeDefined();
-            expect(wizardStepManager.getAllowedSteps().length).toBe(4);
+            expect(wizardStepManager.getAllowedSteps().length).toBe(5);
             expect(wizardStepManager.getAllowedSteps()[0]).toBe(TSWizardStepName.FAMILIENSITUATION);
             expect(wizardStepManager.getAllowedSteps()[1]).toBe(TSWizardStepName.GESUCHSTELLER);
-            expect(wizardStepManager.getAllowedSteps()[2]).toBe(TSWizardStepName.BETREUUNG);
-            expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.VERFUEGEN);
+            expect(wizardStepManager.getAllowedSteps()[2]).toBe(TSWizardStepName.UMZUG);
+            expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getAllowedSteps()[4]).toBe(TSWizardStepName.VERFUEGEN);
         });
         it('constructs the steps for JA', function() {
             spyOn(authServiceRS, 'getPrincipalRole').and.returnValue(TSRole.SACHBEARBEITER_JA);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
-            expect(wizardStepManager.getAllowedSteps().length).toBe(10);
+            expect(wizardStepManager.getAllowedSteps().length).toBe(11);
             expect(wizardStepManager.getAllowedSteps()[0]).toBe(TSWizardStepName.GESUCH_ERSTELLEN);
             expect(wizardStepManager.getAllowedSteps()[1]).toBe(TSWizardStepName.FAMILIENSITUATION);
             expect(wizardStepManager.getAllowedSteps()[2]).toBe(TSWizardStepName.GESUCHSTELLER);
-            expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.KINDER);
-            expect(wizardStepManager.getAllowedSteps()[4]).toBe(TSWizardStepName.BETREUUNG);
-            expect(wizardStepManager.getAllowedSteps()[5]).toBe(TSWizardStepName.ERWERBSPENSUM);
-            expect(wizardStepManager.getAllowedSteps()[6]).toBe(TSWizardStepName.FINANZIELLE_SITUATION);
-            expect(wizardStepManager.getAllowedSteps()[7]).toBe(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
-            expect(wizardStepManager.getAllowedSteps()[8]).toBe(TSWizardStepName.DOKUMENTE);
-            expect(wizardStepManager.getAllowedSteps()[9]).toBe(TSWizardStepName.VERFUEGEN);
+            expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.UMZUG);
+            expect(wizardStepManager.getAllowedSteps()[4]).toBe(TSWizardStepName.KINDER);
+            expect(wizardStepManager.getAllowedSteps()[5]).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getAllowedSteps()[6]).toBe(TSWizardStepName.ERWERBSPENSUM);
+            expect(wizardStepManager.getAllowedSteps()[7]).toBe(TSWizardStepName.FINANZIELLE_SITUATION);
+            expect(wizardStepManager.getAllowedSteps()[8]).toBe(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+            expect(wizardStepManager.getAllowedSteps()[9]).toBe(TSWizardStepName.DOKUMENTE);
+            expect(wizardStepManager.getAllowedSteps()[10]).toBe(TSWizardStepName.VERFUEGEN);
         });
     });
     describe('findStepsFromGesuch', function() {
@@ -80,7 +91,7 @@ describe('wizardStepManager', function () {
 
             expect(wizardStepRS.findWizardStepsFromGesuch).toHaveBeenCalledWith('123');
             expect(wizardStepManager.getWizardSteps()).toBeDefined();
-            expect(wizardStepManager.getWizardSteps().length).toBe(1);
+            expect(wizardStepManager.getWizardSteps().length).toBe(2); //erste 2 states sind definiert
             expect(wizardStepManager.getWizardSteps()[0].wizardStepName).toBe(TSWizardStepName.GESUCH_ERSTELLEN);
             expect(wizardStepManager.getWizardSteps()[0].wizardStepStatus).toBe(TSWizardStepStatus.IN_BEARBEITUNG);
             expect(wizardStepManager.getWizardSteps()[0].verfuegbar).toBe(true);
@@ -94,7 +105,7 @@ describe('wizardStepManager', function () {
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
 
             wizardStepManager.setCurrentStep(TSWizardStepName.GESUCH_ERSTELLEN);
-            expect(wizardStepManager.isNextStepBesucht(TSAntragTyp.GESUCH)).toBe(true);
+            expect(wizardStepManager.isNextStepBesucht(gesuchAntrag)).toBe(true);
         });
     });
     describe('areAllStepsOK', function() {
@@ -136,14 +147,23 @@ describe('wizardStepManager', function () {
             wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
-            expect(wizardStepManager.getNextStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.ERWERBSPENSUM);
+            expect(wizardStepManager.getNextStep(gesuchAntrag)).toBe(TSWizardStepName.ERWERBSPENSUM);
         });
-        it('returns VERFUEGEN coming from BETREUUNG for SACHBEARBEITER_INSTITUTION', function() {
+        it('returns VERFUEGEN coming from BETREUUNG for SACHBEARBEITER_INSTITUTION IF VERFUEGT', function() {
             createAllSteps(TSWizardStepStatus.OK);
+            gesuchAntrag.status = TSAntragStatus.VERFUEGT;
             wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
-            expect(wizardStepManager.getNextStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.VERFUEGEN);
+            expect(wizardStepManager.getNextStep(gesuchAntrag)).toBe(TSWizardStepName.VERFUEGEN);
+        });
+        it('returns undefined coming from BETREUUNG for SACHBEARBEITER_INSTITUTION IF Not VERFUEGT', function() {
+            createAllSteps(TSWizardStepStatus.OK);
+            gesuchAntrag.status = TSAntragStatus.IN_BEARBEITUNG_GS;
+            wizardStepManager.setCurrentStep(TSWizardStepName.BETREUUNG);
+            wizardStepManager.getAllowedSteps().splice(0);
+            wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
+            expect(wizardStepManager.getNextStep(gesuchAntrag)).toBe(undefined);
         });
     });
     describe('getPreviousStep', function() {
@@ -152,14 +172,14 @@ describe('wizardStepManager', function () {
             wizardStepManager.setCurrentStep(TSWizardStepName.ERWERBSPENSUM);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_JA);
-            expect(wizardStepManager.getPreviousStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getPreviousStep(gesuchAntrag)).toBe(TSWizardStepName.BETREUUNG);
         });
         it('returns BETREUUNG coming from VERFUEGEN for SACHBEARBEITER_INSTITUTION', function() {
             createAllSteps(TSWizardStepStatus.OK);
             wizardStepManager.setCurrentStep(TSWizardStepName.VERFUEGEN);
             wizardStepManager.getAllowedSteps().splice(0);
             wizardStepManager.setAllowedStepsForRole(TSRole.SACHBEARBEITER_INSTITUTION);
-            expect(wizardStepManager.getPreviousStep(TSAntragTyp.GESUCH)).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getPreviousStep(gesuchAntrag)).toBe(TSWizardStepName.BETREUUNG);
         });
     });
 

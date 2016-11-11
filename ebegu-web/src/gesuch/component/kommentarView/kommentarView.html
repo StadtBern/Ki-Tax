@@ -1,47 +1,31 @@
-<div class="kommentar row">
-
-    <form role="form" name="form" class="" novalidate>
-
-        <br/>
-
+<div class="kommentarView">
+    <form role="form" name="form" class="" novalidate layout="column">
         <!--bemerkungen intern-->
-        <div class="col-md-12">
+        <div class="kommentarTop">
             <dv-input-container class="form-group kommentar-feld">
-                <label class="inlineHint" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
-                        <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
-                                  ng-blur="vm.saveStepBemerkung()" ng-disabled="vm.isStepCommentDisabled()"
-                                  ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
+                <label class="md-no-float" for="kommentarIntern" data-translate="BEMERKUNGEN_INTERN"></label>
+                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarIntern"
+                          ng-blur="vm.saveStepBemerkung()" ng-disabled="vm.isStepCommentDisabled()"
+                          ng-model="vm.getCurrentWizardStep().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>
-
-        <!--Just some spare to avoid overwriting by bottom alignment elements-->
-        <div class="col-md-12">
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-        </div>
-
+        <span flex=""></span>
         <!--bemerkungen Verfügung-->
-        <div class="kommentar-verfuegung-align col-md-12">
+        <div class="kommentarBottom">
             <dv-input-container class="form-group kommentar-feld">
-                <label class="inlineHint" for="kommentarVerfuegung"
+                <label class="md-no-float" for="kommentarVerfuegung"
                        data-translate="BEMERKUNGEN_VERFUEGUNG"></label>
-                        <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
-                                  ng-blur="vm.saveBemerkungZurVerfuegung()"
-                                  ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
-                                  ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
+                <textarea md-no-autogrow class="form-control" rows="4" id="kommentarVerfuegung"
+                          ng-blur="vm.saveBemerkungZurVerfuegung()"
+                          ng-disabled="vm.isGesuchStatusVerfuegenVerfuegt()"
+                          ng-model="vm.getGesuch().bemerkungen" maxlength="1000">
                         </textarea>
             </dv-input-container>
         </div>
 
-        <div class="bottom-align col-md-12" ng-if="!vm.isGesuchUnsaved()">
-            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="btn kommentar-button">
+        <div class="kommentarButton" ng-if="!vm.isGesuchUnsaved()">
+            <div ng-if="vm.hasPapiergesuch()" ng-click="vm.download()" class="dv-btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_OEFFNEN"></span>
             </div>
 
@@ -50,12 +34,9 @@
                  ngf-max-size="'10MB'" ngf-max-total-size="100MB"
                  ngf-drop="vm.upload($files)"
                  ngf-drag-over-class="'dragover'"
-                 class="btn kommentar-button">
+                 class="dv-btn kommentar-button">
                 <span data-translate="PAPIERGESUCH_LADEN"></span>
             </div>
         </div>
-
-
     </form>
-
 </div>

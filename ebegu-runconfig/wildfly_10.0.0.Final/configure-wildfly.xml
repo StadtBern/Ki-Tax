@@ -10,6 +10,7 @@
   ~ Ansicht übergeben ist jede weitere Verteilung durch den Kunden an Dritte untersagt
   -->
 
+<!--suppress ALL -->
 <project name="ebegu-config-wildfly-10" default="config-local">
 
 	<property file="build.properties"/>
