@@ -6,14 +6,14 @@ var xml2js = require('xml2js');
 
 var parsedversion = 0;
 var parser = new xml2js.Parser();
-fs.readFile(__dirname + '/../pom.xml', function (err, data) {
-    parser.parseString(data, function (err, result) {
-        parsedversion = result['project']['parent'][0]['version'][0];
-        console.log(parsedversion);
-        // console.dir(result);
-        console.log('Done');
-    });
-});
+
+var contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
+
+var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>","im");
+var myMatchArray = re.exec(contents);
+parsedversion = ( myMatchArray !== null) ?  myMatchArray[1] : 'unknown';
+console.log("Parsed Version from pom is " + parsedversion);
+
 
 var currentTime = new Date();
 /**

@@ -31,4 +31,8 @@ export class DvUserNameController {
         return VERSION;
     }
 
+    public getBuildtimestamp(): string {
+        return BUILDTSTAMP;
+    }
+
 }

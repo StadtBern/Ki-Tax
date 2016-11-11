@@ -31,4 +31,8 @@ export class DvPulldownUserMenuController {
         return VERSION;
     }
 
+    public getBuildtimestamp(): string {
+        return BUILDTSTAMP;
+    }
+
 }

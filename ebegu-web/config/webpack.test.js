@@ -186,8 +186,8 @@ module.exports = {
         new DefinePlugin({
             'ENV': JSON.stringify(ENV),
             'HMR': false,
-            'VERSION': METADATA.version,
-            'BUILDTSTAMP': METADATA.buildtstamp,
+            'VERSION': JSON.stringify(METADATA.version),
+            'BUILDTSTAMP': JSON.stringify(METADATA.buildtstamp),
             'process.env': {
                 'ENV': JSON.stringify(ENV),
                 'NODE_ENV': JSON.stringify(ENV),
