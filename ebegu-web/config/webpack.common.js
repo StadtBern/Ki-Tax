@@ -12,8 +12,7 @@ var contents = fs.readFileSync(__dirname + '/../pom.xml').toString();
 var re = new RegExp("<artifactId>ebegu</artifactId>[\\s\\S]*?<version>(.*?)</version>[\\s\\S]*?<packaging>pom</packaging>","im");
 var myMatchArray = re.exec(contents);
 parsedversion = ( myMatchArray !== null) ?  myMatchArray[1] : 'unknown';
-console.log("Parsed Version is " + parsedversion);
-
+console.log("Parsed Version from pom is " + parsedversion);
 
 
 var currentTime = new Date();
