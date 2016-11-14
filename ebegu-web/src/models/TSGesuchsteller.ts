@@ -153,5 +153,12 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         return [];
     }
 
+    /**
+     * Schaut ob der GS1 oder der GS2 mindestens eine umzugsadresse hat
+     */
+    public isThereAnyUmzug(): boolean {
+        return this.getUmzugAdressen().length > 0;
+    }
+
 }
 

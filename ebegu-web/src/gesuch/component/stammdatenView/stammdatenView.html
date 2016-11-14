@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-12">
             <h1 class="mainTitle">
-                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
+                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
             </h1>
             <hr class="header"/>
         </div>
@@ -117,7 +117,7 @@
                     <div class="row" ng-if="!vm.isMutation()">
                         <div class="col-md-12">
                             <div class="checkbox">
-                                <md-checkbox ng-model="vm.gesuchModelManager.showUmzug" name="umzug" aria-label="umzug"
+                                <md-checkbox ng-model="vm.showUmzug" name="umzug" aria-label="umzug"
                                              dv-enable-element
                                              dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                              dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt() && !vm.isThereAnyUmzug()">
