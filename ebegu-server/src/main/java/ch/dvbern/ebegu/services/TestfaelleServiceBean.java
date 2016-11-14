@@ -60,6 +60,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 	@Override
 	@Nonnull
+	@SuppressWarnings("PMD.NcssMethodCount")
 	public StringBuilder createAndSaveTestfaelle(String fallid,
 												 Integer iterationCount,
 												 boolean betreuungenBestaetigt,
