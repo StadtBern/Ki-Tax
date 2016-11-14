@@ -4,7 +4,7 @@ Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
 <button ng-if="!vm.getPrincipal()" ui-sref-active="active" ui-sref="login" class="user-menu"
         aria-label="{{'EINLOGGEN' | translate}}">
     <a href="javascript:void(0)"  data-translate="EINLOGGEN"></a>
-    <span style="visibility: hidden" ng-bind="vm.getVersion()"></span>
+
 </button>
 
 <md-menu-bar ng-if="vm.getPrincipal()" class="user-menu">
@@ -41,6 +41,9 @@ Sollte der Benutzer eingeloggt sein, wird das normale user menu angezeigt-->
                 <md-button ng-click="vm.logout()" aria-label="{{'AUSLOGGEN' | translate}}">
                     <a href="javascript:void(0)" data-translate="AUSLOGGEN"></a>
                 </md-button>
+            </md-menu-item>
+            <md-menu-item class="versionInfo" style="color: lightgray;">
+                <span>Vers: {{vm.getVersion()}}: {{vm.getBuildtimestamp()}}</span>
             </md-menu-item>
         </md-menu-content>
     </md-menu>
