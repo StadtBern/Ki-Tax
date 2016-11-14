@@ -94,6 +94,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (MeierMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				responseString.append("Fall Meier Meret erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+			} else if (UmzugAusInAusBern.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
@@ -123,18 +126,27 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 
 		if (WaeltiDagmar.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (FeutzIvonne.equals(fallid)) {
+		}
+		if (FeutzIvonne.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (PerreiraMarcia.equals(fallid)) {
+		}
+		if (PerreiraMarcia.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall03_PerreiraMarcia(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (WaltherLaura.equals(fallid)) {
+		}
+		if (WaltherLaura.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall04_WaltherLaura(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (LuethiMeret.equals(fallid)) {
+		}
+		if (LuethiMeret.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall05_LuethiMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (BeckerNora.equals(fallid)) {
+		}
+		if (BeckerNora.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall06_BeckerNora(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
-		} else if (MeierMeret.equals(fallid)) {
+		}
+		if (MeierMeret.equals(fallid)) {
 			return createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+		}
+		if (UmzugAusInAusBern.equals(fallid)) {
+			return createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 		}
 
 		return null;
