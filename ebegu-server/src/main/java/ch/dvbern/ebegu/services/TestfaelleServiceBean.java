@@ -94,6 +94,9 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 			} else if (MeierMeret.equals(fallid)) {
 				final Gesuch gesuch = createAndSaveGesuch(new Testfall07_MeierMeret(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				responseString.append("Fall Meier Meret erstellt, Fallnummer ").append(gesuch.getFall().getFallNummer());
+			} else if (UmzugAusInAusBern.equals(fallid)) {
+				final Gesuch gesuch = createAndSaveGesuch(new Testfall08_UmzugAusInAusBern(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
+				responseString.append("Fall Umzug Aus-In-Aus Bern Fallnummer ").append(gesuch.getFall().getFallNummer());
 			} else if ("all".equals(fallid)) {
 				createAndSaveGesuch(new Testfall01_WaeltiDagmar(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);
 				createAndSaveGesuch(new Testfall02_FeutzYvonne(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt), verfuegen);

@@ -14,17 +14,17 @@ import java.util.Collection;
 
 /**
  * Dieser TestFall ist eine Kopie von Waelti Dagmar (im Status vom 10.11.2016) aber mit
- *  - Wohnadresse NICHT in Bern
- *  - Umzugsadresse ab 15.12.2016 in Bern
- *  - Umzugsadresse ab 01.01.2016 NICHT in Bern
- *
+ * - Wohnadresse NICHT in Bern
+ * - Umzugsadresse ab 15.12.2016 in Bern
+ * - Umzugsadresse ab 01.01.2017 NICHT in Bern
+ * <p>
  * PS: Die Daten von Waelti Dagmar werden direkt kopiert anstatt die Methoden aufzurufen. Dieses dupliziert Code aber
  * macht einfacher, diesen Fall einzeln betrachten und verwalten zu koennen, anstatt vom Test von Waelti Dagmar abzuhaengen
  */
 public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 
 	public Testfall08_UmzugAusInAusBern(Gesuchsperiode gesuchsperiode, Collection<InstitutionStammdaten> institutionStammdatenList,
-								   boolean betreuungenBestaetigt) {
+										boolean betreuungenBestaetigt) {
 		super(gesuchsperiode, institutionStammdatenList, betreuungenBestaetigt);
 	}
 
@@ -53,14 +53,14 @@ public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 		// Umzugsadresse am 01.01.2017 NICHT in Bern
 		GesuchstellerAdresse umzugAusBern = createWohnadresse(gesuchsteller1);
 		umzugAusBern.setNichtInGemeinde(true);
-		umzugAusBern.setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear, 1, 1), Constants.END_OF_TIME));
+		umzugAusBern.setGueltigkeit(new DateRange(LocalDate.of(gesuchsperiodeFirstYear + 1, 1, 1), Constants.END_OF_TIME));
 		gesuchsteller1.getAdressen().add(umzugAusBern);
 
 		// Erwerbspensum
 		ErwerbspensumContainer erwerbspensum = createErwerbspensum(60, 20);
 		gesuchsteller1.addErwerbspensumContainer(erwerbspensum);
 		// Kinder
-		KindContainer kind = createKind(Geschlecht.MAENNLICH, "DeLucia", "Paco", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
+		KindContainer kind = createKind(Geschlecht.MAENNLICH, getNachname(), "Paco", LocalDate.of(2014, Month.APRIL, 13), Kinderabzug.GANZER_ABZUG, true);
 		kind.setGesuch(gesuch);
 		gesuch.getKindContainers().add(kind);
 		// Betreuungen
@@ -90,7 +90,7 @@ public class Testfall08_UmzugAusInAusBern extends AbstractTestfall {
 
 	@Override
 	public String getNachname() {
-		return "DeLucia";
+		return "Zügelmann";
 	}
 
 	@Override
