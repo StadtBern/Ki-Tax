@@ -64,7 +64,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
-            if (this.gesuchModelManager.showUmzug) {
+            if (this.gesuchModelManager.showUmzug || this.isMutation()) {
                 this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
             } else {
                 this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);

@@ -81,6 +81,7 @@ export default class GesuchModelManager {
         this.fachstellenList = [];
         this.institutionenList = [];
         this.activeGesuchsperiodenList = [];
+        this.showUmzug = false;
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
@@ -92,6 +93,8 @@ export default class GesuchModelManager {
             .then((response) => {
                 if (response) {
                     this.setGesuch(response);
+                    this.showUmzug = false; // reset to false to avoid using old values
+                    this.setShowUmzug();
                     this.setHiddenSteps();
                 }
                 return response;
@@ -99,7 +102,7 @@ export default class GesuchModelManager {
     }
 
     public setShowUmzug(): void {
-        this.showUmzug = this.showUmzug || this.getGesuch().isThereAnyUmzug();
+        this.showUmzug = this.showUmzug || (this.getGesuch() ? this.getGesuch().isThereAnyUmzug() : false);
     }
 
     /**
@@ -122,6 +125,7 @@ export default class GesuchModelManager {
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
         this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+        this.setHiddenSteps();
     }
 
     public getGesuch(): TSGesuch {
@@ -540,6 +544,8 @@ export default class GesuchModelManager {
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
         this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.showUmzug = false;
+        this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
     }
