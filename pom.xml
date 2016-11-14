@@ -337,6 +337,15 @@
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>8.1.0.Final</version>
+                <!-- Provided as we use the Infinispan provided by Wildfly -->
+                <scope>provided</scope>
+            </dependency>
+
+
         </dependencies>
 
     </dependencyManagement>

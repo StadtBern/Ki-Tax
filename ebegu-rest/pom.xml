@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebegu</artifactId>
         <groupId>ch.dvbern.ebegu</groupId>
@@ -11,7 +12,6 @@
     <packaging>war</packaging>
 
 
-
     <build>
         <plugins>
             <plugin>
@@ -21,9 +21,15 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.infinispan export</Dependencies>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
 
@@ -118,6 +124,11 @@
             <artifactId>javamelody-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Dependencies fuer Fedlet Applikation von Forgerock Openam-->
         <dependency>
             <groupId>javax.activation</groupId>

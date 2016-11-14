@@ -3,12 +3,17 @@ package ch.dvbern.ebegu.api.resource.authentication;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MonitoringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.NotImplementedException;
+import org.infinispan.Cache;
+import org.infinispan.manager.CacheContainer;
 import org.omnifaces.security.jaspic.user.TokenAuthenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
@@ -29,52 +34,48 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	private static final Logger LOG = LoggerFactory.getLogger(EBEGUTokenAuthenticator.class);
 	private static final long serialVersionUID = 55599436567329056L;
 
-//    @Inject
-//    private UserService userService;
-//
-//    @Inject
-//    private CacheManager cacheManager;
+	@Resource(lookup = "java:jboss/infinispan/container/ebeguCache")
+	private CacheContainer cacheContainer;
+
 
     private AuthorisierterBenutzer user;  //todo homa maybe change to credentials
 
 	@Inject
 	private AuthService authService;
 
+	private Cache<String, AuthorisierterBenutzer> cache;
+
+	@PostConstruct
+	void init() {
+		if (cacheContainer == null) {
+			LOG.warn("ACHTUNG: Cache konnte nicht initialisiert werden. " +
+				"Ist die Infinispan Cache konfiguration im Standalone.xml korrekt und ist der Dependencies Eintrag im MANIFEST.MF gesetzt?");
+		}
+		this.cache = cacheContainer.getCache();
+	}
+
     @Override
     public boolean authenticate(String token) {
-
-		//todo team, hier cache einbauen da das login sehr oft geprueft wird
-//        try {
-//            Cache<String, User> usersCache = cacheManager.getDefaultCache();
-//
-//            User cachedUser = usersCache.get(token);
-//            if (cachedUser != null) {
-//                user = cachedUser;
-//            } else {
-
-
-
-			Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(token);
-			if(!authUser.isPresent()){
-				LOG.debug("Could not load authorisierter_benutzer with  token  " + token );
-				return false;
+		return MonitoringUtil.monitor(EBEGUTokenAuthenticator.class, "auth", () -> {
+			AuthorisierterBenutzer cachedUser = cache.get(token);
+			if (cachedUser != null) {
+				user = cachedUser;
+			} else {
+				Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(token);
+				if (!authUser.isPresent()) {
+					LOG.debug("Could not load authorisierter_benutzer with  token  " + token);
+					return false;
+				}
+				user = authUser.get();
+				cache.putForExternalRead(token, user);
+				boolean stillValid = verifyTokenStillValid();
+				if (!stillValid) {
+					return false;
+				}
 			}
-			user = authUser.get();
-		boolean stillValid =  verifyTokenStillValid();
-		if (!stillValid) {
-			return false;
-		}
 
-
-
-//			user = userService.getUserByLoginToken(token);
-//                usersCache.put(token, user);
-//            }
-//        } catch (InvalidCredentialsException e) {
-//            return false;
-//        }
-
-        return true;
+			return true;
+		});
     }
 
 	private boolean verifyTokenStillValid() {

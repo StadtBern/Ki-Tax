@@ -88,6 +88,13 @@
             <groupId>fr.opensagres.xdocreport</groupId>
             <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
         </dependency>
+        <!--infinispan aus jboss fuer cacheing-->
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
         <!--tests der validators-->
         <dependency>
