@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.api.resource.authentication;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.MonitoringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.NotImplementedException;
 import org.omnifaces.security.jaspic.user.TokenAuthenticator;
@@ -40,10 +41,11 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	@Inject
 	private AuthService authService;
 
-    @Override
-    public boolean authenticate(String token) {
+	@Override
+	public boolean authenticate(String token) {
+		return MonitoringUtil.monitor(EBEGUTokenAuthenticator.class, "auth", () -> {
 
-		//todo team, hier cache einbauen da das login sehr oft geprueft wird
+			//todo team, hier cache einbauen da das login sehr oft geprueft wird
 //        try {
 //            Cache<String, User> usersCache = cacheManager.getDefaultCache();
 //
@@ -53,18 +55,16 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 //            } else {
 
 
-
 			Optional<AuthorisierterBenutzer> authUser = readUserFromDatabase(token);
-			if(!authUser.isPresent()){
-				LOG.debug("Could not load authorisierter_benutzer with  token  " + token );
+			if (!authUser.isPresent()) {
+				LOG.debug("Could not load authorisierter_benutzer with  token  " + token);
 				return false;
 			}
 			user = authUser.get();
-		boolean stillValid =  verifyTokenStillValid();
-		if (!stillValid) {
-			return false;
-		}
-
+			boolean stillValid = verifyTokenStillValid();
+			if (!stillValid) {
+				return false;
+			}
 
 
 //			user = userService.getUserByLoginToken(token);
@@ -74,8 +74,9 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 //            return false;
 //        }
 
-        return true;
-    }
+			return true;
+		});
+	}
 
 	private boolean verifyTokenStillValid() {
 		LocalDateTime now = LocalDateTime.now();
