@@ -6,10 +6,10 @@ import {IStateService} from 'angular-ui-router';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import IQService = angular.IQService;
-import IScope = angular.IScope;
 import TSGesuch from '../../../models/TSGesuch';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
+import IQService = angular.IQService;
+import IScope = angular.IScope;
 describe('dvNavigation', function () {
 
     let navController: NavigatorController;
@@ -32,7 +32,7 @@ describe('dvNavigation', function () {
         gesuchModelManager = $injector.get('GesuchModelManager');
         authServiceRS = $injector.get('AuthServiceRS');
         navController = new NavigatorController(wizardStepManager, $state, gesuchModelManager,
-            $injector.get('$translate'), $injector.get('ErrorService'));
+            $injector.get('$translate'), $injector.get('ErrorService'), $q);
         navController.dvSave = () => {
             return $q.when({});
         };
