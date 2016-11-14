@@ -44,5 +44,6 @@
 	<entity class="ch.dvbern.ebegu.entities.Vorlage"/>
 	<entity class="ch.dvbern.ebegu.entities.GeneratedDokument"/>
 	<entity class="ch.dvbern.ebegu.entities.Mutationsdaten"/>
+	<entity class="ch.dvbern.ebegu.entities.Abwesenheit"/>
 
 </entity-mappings>

@@ -61,6 +61,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
 
+	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
+	private Set<Abwesenheit> abwesenheiten = new TreeSet<>();
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -110,6 +114,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
+		for (Abwesenheit abwesenheit : toCopy.getAbwesenheiten()) {
+			this.abwesenheiten.add(new Abwesenheit(abwesenheit, this));
+		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
 		this.verfuegung = null;
@@ -149,6 +156,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
+	}
+
+	public Set<Abwesenheit> getAbwesenheiten() {
+		return abwesenheiten;
+	}
+
+	public void setAbwesenheiten(Set<Abwesenheit> abwesenheiten) {
+		this.abwesenheiten = abwesenheiten;
 	}
 
 	@Nullable

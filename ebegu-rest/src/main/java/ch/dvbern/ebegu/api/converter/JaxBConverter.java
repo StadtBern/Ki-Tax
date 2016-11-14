@@ -1247,6 +1247,10 @@ public class JaxBConverter {
 
 		betreuungsPensumContainersToEntity(betreuungJAXP.getBetreuungspensumContainers(), betreuung.getBetreuungspensumContainers());
 		setBetreuungInbetreuungsPensumContainers(betreuung.getBetreuungspensumContainers(), betreuung);
+
+		abwesenheitenToEntity(betreuungJAXP.getAbwesenheiten(), betreuung.getAbwesenheiten());
+		setBetreuungInAbwesenheiten(betreuung.getAbwesenheiten(), betreuung);
+
 		betreuung.setBetreuungsstatus(betreuungJAXP.getBetreuungsstatus());
 		betreuung.setVertrag(betreuungJAXP.getVertrag());
 		betreuung.setErweiterteBeduerfnisse(betreuungJAXP.getErweiterteBeduerfnisse());
@@ -1300,6 +1304,12 @@ public class JaxBConverter {
 		}
 	}
 
+	private void setBetreuungInAbwesenheiten(final Set<Abwesenheit> abwesenheiten, final Betreuung betreuung) {
+		for (final Abwesenheit abwesenheit : abwesenheiten) {
+			abwesenheit.setBetreuung(betreuung);
+		}
+	}
+
 	/**
 	 * Goes through the whole list of jaxBetPenContainers. For each (jax)Container that already exists as Entity it merges both and adds the resulting
 	 * (jax) container to the list. If the container doesn't exist it creates a new one and adds it to the list. Thus all containers that existed as entity
@@ -1314,7 +1324,7 @@ public class JaxBConverter {
 		for (final JaxBetreuungspensumContainer jaxBetPensContainer : jaxBetPenContainers) {
 			final BetreuungspensumContainer containerToMergeWith = existingBetreuungspensen
 				.stream()
-				.filter(existingBetPensumEntity -> existingBetPensumEntity.getId().equals(jaxBetPensContainer.getId()))
+				.filter(existingBetPenEntity -> existingBetPenEntity.getId().equals(jaxBetPensContainer.getId()))
 				.reduce(StreamsUtil.toOnlyElement())
 				.orElse(new BetreuungspensumContainer());
 			final BetreuungspensumContainer contToAdd = betreuungspensumContainerToEntity(jaxBetPensContainer, containerToMergeWith);
@@ -1331,6 +1341,33 @@ public class JaxBConverter {
 		existingBetreuungspensen.addAll(transformedBetPenContainers);
 	}
 
+	private void abwesenheitenToEntity(final List<JaxAbwensenheit> jaxAbwesenheiten,
+									   final Collection<Abwesenheit> existingAbwesenheiten) {
+		final Set<Abwesenheit> transformedabwesenheiten = new TreeSet<>();
+		for (final JaxAbwensenheit jaxAbwesenheit : jaxAbwesenheiten) {
+			final Abwesenheit abwesenheitToMergeWith = existingAbwesenheiten
+				.stream()
+				.filter(existingAbwesenheitEntity -> existingAbwesenheitEntity.getId().equals(jaxAbwesenheit.getId()))
+				.reduce(StreamsUtil.toOnlyElement())
+				.orElse(new Abwesenheit());
+			final Abwesenheit abwesenheitToAdd = abwesenheitToEntity(jaxAbwesenheit, abwesenheitToMergeWith);
+			final boolean added = transformedabwesenheiten.add(abwesenheitToAdd);
+			if (!added) {
+				LOGGER.warn("dropped duplicate abwesenheit " + abwesenheitToAdd);
+			}
+		}
+
+		//change the existing collection to reflect changes
+		// Already tested: All existing Abwesenheiten of the list remain as they were, that means their data are updated
+		// and the objects are not created again. ID and InsertTimeStamp are the same as before
+		existingAbwesenheiten.clear();
+		existingAbwesenheiten.addAll(transformedabwesenheiten);
+	}
+
+	private Abwesenheit abwesenheitToEntity(final JaxAbwensenheit jaxAbwesenheit, final Abwesenheit abwesenheit) {
+		convertAbstractDateRangedFieldsToEntity(jaxAbwesenheit, abwesenheit);
+		return abwesenheit;
+	}
 
 	private BetreuungspensumContainer betreuungspensumContainerToEntity(final JaxBetreuungspensumContainer jaxBetPenContainers, final BetreuungspensumContainer bpContainer) {
 		Validate.notNull(jaxBetPenContainers);
@@ -1374,6 +1411,7 @@ public class JaxBConverter {
 		jaxBetreuung.setDatumAblehnung(betreuungFromServer.getDatumAblehnung());
 		jaxBetreuung.setDatumBestaetigung(betreuungFromServer.getDatumBestaetigung());
 		jaxBetreuung.setBetreuungspensumContainers(betreuungsPensumContainersToJax(betreuungFromServer.getBetreuungspensumContainers()));
+		jaxBetreuung.setAbwesenheiten(abwesenheitenToJax(betreuungFromServer.getAbwesenheiten()));
 		jaxBetreuung.setBetreuungsstatus(betreuungFromServer.getBetreuungsstatus());
 		jaxBetreuung.setVertrag(betreuungFromServer.getVertrag());
 		jaxBetreuung.setErweiterteBeduerfnisse(betreuungFromServer.getErweiterteBeduerfnisse());
@@ -1516,6 +1554,24 @@ public class JaxBConverter {
 			}
 		}
 		return jaxContainers;
+	}
+
+	private List<JaxAbwensenheit> abwesenheitenToJax(final Set<Abwesenheit> abwesenheiten) {
+		final List<JaxAbwensenheit> jaxContainers = new ArrayList<>();
+		if (abwesenheiten != null) {
+			for (final Abwesenheit abwesenheit : abwesenheiten) {
+				jaxContainers.add(abwesenheitToJax(abwesenheit));
+			}
+		}
+		return jaxContainers;
+	}
+
+	private JaxAbwensenheit abwesenheitToJax(final Abwesenheit abwesenheit) {
+		if (abwesenheit != null) {
+			final JaxAbwensenheit jaxAbwensenheit = new JaxAbwensenheit();
+			convertAbstractDateRangedFieldsToJAX(abwesenheit, jaxAbwensenheit);
+		}
+		return null;
 	}
 
 	private JaxBetreuungspensumContainer betreuungsPensumContainerToJax(final BetreuungspensumContainer betreuungspensumContainer) {
