@@ -61,6 +61,7 @@ export default class GesuchModelManager {
     private fachstellenList: Array<TSFachstelle>;
     private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
+    showUmzug: boolean;
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -91,9 +92,26 @@ export default class GesuchModelManager {
             .then((response) => {
                 if (response) {
                     this.setGesuch(response);
+                    this.setHiddenSteps();
                 }
                 return response;
             });
+    }
+
+    public setShowUmzug(): void {
+        this.showUmzug = this.showUmzug || this.getGesuch().isThereAnyUmzug();
+    }
+
+    /**
+     * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
+     * Oder ggf. aus der Liste entfernt
+     */
+    private setHiddenSteps() {
+        if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
+            this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
+        } else {
+            this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+        }
     }
 
     /**

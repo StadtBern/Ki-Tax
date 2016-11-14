@@ -51,6 +51,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
+        this.gesuchModelManager.setShowUmzug();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
     }
 
@@ -62,6 +63,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         if (form.$valid) {
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
+            }
+            if (this.gesuchModelManager.showUmzug) {
+                this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+            } else {
+                this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
             }
             this.errorService.clearAll();
             return this.gesuchModelManager.updateGesuchsteller();
@@ -89,6 +95,10 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         return this.isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
             || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
                 && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
+    }
+
+    public isThereAnyUmzug(): boolean {
+        return this.gesuchModelManager.getGesuch().isThereAnyUmzug();
     }
 
 }

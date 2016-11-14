@@ -12,6 +12,7 @@ import IPromise = angular.IPromise;
 export default class WizardStepManager {
 
     private allowedSteps: Array<TSWizardStepName> = [];
+    private hiddenSteps: Array<TSWizardStepName> = []; // alle Steps die obwohl allowed, ausgeblendet werden muessen
     private wizardSteps: Array<TSWizardStep> = [];
     private currentStepName: TSWizardStepName; // keeps track of the name of the current step
 
@@ -287,5 +288,31 @@ export default class WizardStepManager {
 
     public restorePreviousSteps(): void {
         this.wizardSteps = this.wizardStepsSnapshot;
+    }
+
+    /**
+     * Guckt zuerst dass der Step in der Liste von allowedSteps ist. wenn ja wird es geguckt
+     * ob der Step in derl Liste hiddenSteps ist.
+     * allowed und nicht hidden Steps -> true
+     * alle anderen -> false
+     */
+    public isStepVisible(stepName: TSWizardStepName): boolean {
+        return (this.allowedSteps.indexOf(stepName) >= 0 && this.hiddenSteps.indexOf(stepName) < 0);
+    }
+
+    public hideStep(stepName: TSWizardStepName): void {
+        if (this.hiddenSteps.indexOf(stepName) < 0) {
+            this.hiddenSteps.push(stepName);
+        }
+    }
+
+    /**
+     * Obwohl das Wort unhide nicht existiert, finde ich den Begriff ausfuehrlicher fuer diesen Fall als show
+     */
+    public unhideStep(stepName: TSWizardStepName): void {
+        var indexOf = this.hiddenSteps.indexOf(stepName);
+        if (indexOf >= 0) {
+            this.hiddenSteps.splice(indexOf, 1);
+        }
     }
 }
