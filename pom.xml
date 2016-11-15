@@ -10,7 +10,7 @@
 
     <groupId>ch.dvbern.ebegu</groupId>
     <artifactId>ebegu</artifactId>
-    <version>0.12.0-SNAPSHOT</version>
+    <version>0.13.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>eBEGU - Multimodule Project</name>
@@ -642,6 +642,7 @@
                         <id>checkstyle-check</id>
                         <phase>validate</phase>
                         <configuration>
+                            <skip>${skip-code-validation}</skip>
                             <configLocation>checkstyle/rules/checkstyle/checkstyle-rules.xml</configLocation>
                             <suppressionsLocation>checkstyle/rules/checkstyle/checkstyle-suppressions.xml
                             </suppressionsLocation>
@@ -665,6 +666,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
+                    <skip>${skip-code-validation}</skip>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
                         <ruleset>http://sonar-neu/api/qualityprofiles/export?language=java&amp;name=E-BEGU&amp;exporterKey=pmd
@@ -689,6 +691,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <configuration>
+                    <skip>${skip-code-validation}</skip>
                     <!--
                         Enables analysis which takes more memory but finds more bugs.
                         If you run out of memory, changes the value of the effort element

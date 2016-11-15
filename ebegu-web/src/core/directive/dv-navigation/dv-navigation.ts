@@ -191,7 +191,10 @@ export class NavigatorController {
                         this.navigateToStepEinkommensverschlechterung('1', undefined);
                     }
                 } else {
-                    this.navigateToStep(TSWizardStepName.DOKUMENTE);
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
+                        this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+                    });
+
                 }
 
             } else if (this.dvSubStep === 2) {
@@ -334,11 +337,9 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.DOKUMENTE) {
-            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
                 this.state.go('gesuch.dokumente', {
                     gesuchId: gesuchId
                 });
-            });
 
         } else if (stepName === TSWizardStepName.VERFUEGEN) {
             this.state.go('gesuch.verfuegen', {
@@ -500,7 +501,9 @@ export class NavigatorController {
             && this.gesuchModelManager.getGesuch().einkommensverschlechterungInfo.ekvFuerBasisJahrPlus2 === true) {
             this.navigateToStepEinkommensverschlechterungResultate('2');
         } else {
-            this.navigateToStep(TSWizardStepName.DOKUMENTE);
+            this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK).then(() => {
+                this.navigateToStep(this.wizardStepManager.getNextStep(this.gesuchModelManager.getGesuch()));
+            });
         }
     };
 
