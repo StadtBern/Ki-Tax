@@ -91,9 +91,22 @@ export default class GesuchModelManager {
             .then((response) => {
                 if (response) {
                     this.setGesuch(response);
+                    this.setHiddenSteps();
                 }
                 return response;
             });
+    }
+
+    /**
+     * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
+     * Oder ggf. aus der Liste entfernt
+     */
+    private setHiddenSteps() {
+        if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
+            this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
+        } else {
+            this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
+        }
     }
 
     /**
@@ -104,6 +117,7 @@ export default class GesuchModelManager {
     public setGesuch(gesuch: TSGesuch): void {
         this.gesuch = gesuch;
         this.wizardStepManager.findStepsFromGesuch(this.gesuch.id);
+        this.setHiddenSteps();
     }
 
     public getGesuch(): TSGesuch {
@@ -223,6 +237,8 @@ export default class GesuchModelManager {
      * Speichert den StammdatenToWorkWith.
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
+        // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
+        let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
@@ -230,6 +246,7 @@ export default class GesuchModelManager {
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     this.backupCurrentGesuch();
                     //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
+                    this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
                     return this.getStammdatenToWorkWith();
                 });
             });
@@ -522,6 +539,7 @@ export default class GesuchModelManager {
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
         this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
+        this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
     }
