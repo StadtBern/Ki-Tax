@@ -1804,6 +1804,37 @@ public class JaxBConverter {
 		return antrag;
 	}
 
+	public Mahnung mahnungToEntity(@Nonnull final JaxMahnung jaxMahnung, @Nonnull final Mahnung mahnung) {
+		Validate.notNull(mahnung);
+		Validate.notNull(jaxMahnung);
+		convertAbstractFieldsToEntity(jaxMahnung, mahnung);
+
+		Optional<Gesuch> gesuchFromDB = gesuchService.findGesuch(jaxMahnung.getGesuch().getId());
+		if (gesuchFromDB.isPresent()) {
+			mahnung.setGesuch(this.gesuchToEntity(jaxMahnung.getGesuch(), gesuchFromDB.get()));
+		} else {
+			throw new EbeguEntityNotFoundException("mahnungToEntity", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, jaxMahnung.getGesuch());
+		}
+
+		mahnung.setMahnungTyp(jaxMahnung.getMahnungTyp());
+		mahnung.setDatumFristablauf(jaxMahnung.getDatumFristablauf());
+		mahnung.setBemerkungen(jaxMahnung.getBemerkungen());
+		mahnung.setActive(jaxMahnung.isActive());
+		return mahnung;
+	}
+
+	public JaxMahnung mahnungToJAX(@Nonnull final Mahnung persistedMahnung) {
+		final JaxMahnung jaxMahnung = new JaxMahnung();
+		convertAbstractFieldsToJAX(persistedMahnung, jaxMahnung);
+
+		jaxMahnung.setGesuch(this.gesuchToJAX(persistedMahnung.getGesuch()));
+		jaxMahnung.setMahnungTyp(persistedMahnung.getMahnungTyp());
+		jaxMahnung.setDatumFristablauf(persistedMahnung.getDatumFristablauf());
+		jaxMahnung.setBemerkungen(persistedMahnung.getBemerkungen());
+		jaxMahnung.setActive(persistedMahnung.isActive());
+		return jaxMahnung;
+	}
+
 	/**
 	 * Geht durch die ganze Liste von KindContainers durch und gibt ein Set mit den BetreuungsangebotTyp aller Institutionen zurueck.
 	 * Da ein Set zurueckgegeben wird, sind die Daten nie dupliziert.
