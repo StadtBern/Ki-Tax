@@ -27,6 +27,7 @@ import java.io.File;
 @ArquillianSuiteDeployment
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
+//@ServerSetup(InstallPicketLinkFileBasedSetupTask.class)
 public abstract class AbstractEbeguRestTest {
 
 
@@ -55,7 +56,7 @@ public abstract class AbstractEbeguRestTest {
 			.addPackages(true, "ch/dvbern/ebegu/rest/test")
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)
-
+			.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")

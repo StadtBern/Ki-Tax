@@ -71,6 +71,7 @@ public abstract class AbstractEbeguTest {
 				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
 				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx").addAsResource("font/sRGB.profile", "font/sRGB.profile")
 				.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml").addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+				.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 				// Deploy our test datasource
 				.addAsWebInfResource("test-ds.xml");
 		if (classesToAdd != null) {

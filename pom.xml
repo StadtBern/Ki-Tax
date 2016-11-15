@@ -803,6 +803,33 @@
                     <version>2.0.0</version>
                 </plugin>
 
+                <!--resource plugin soll fuer arquillian tests unser standalone-test.xml kopieren-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>copy-standalonex.xml-for-test</id>
+                            <!-- here the phase you need -->
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${jbossHome}/standalone/configuration/</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/src/test/resources/</directory>
+                                        <includes>standalone-test.xml</includes>
+                                        <filtering>false</filtering>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
                 <!-- todo fabio fragen ob man nicht das vom parent-pom verwenden kann-->
                 <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->

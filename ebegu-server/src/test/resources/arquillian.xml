@@ -5,13 +5,14 @@
 	<defaultProtocol type="Servlet 3.0"/>
 	<container qualifier="wildfly-container" default="true">
 		<configuration>
-			<!--<property name="jbossHome">target/wildfly-${version.org.wildfly}</property>-->
+			<!--<property name="jbossHome">target/wildfly-10.0.0.Final</property>-->
 			<!--Die naechste Zeilen wurden auch in der Konfiguration des surefire plugins im pom spezifiziert, so gelten
 			sie auch fuer embedded wildfly (dieser beachtet die javaVmArguments hier nicht weil er in der vm der ide laeuft -->
 			<property name="javaVmArguments">-Djboss.socket.binding.port-offset=10000 -Xms512m -Xmx1024m -XX:MaxPermSize=512m</property>
 			<!-- Port offset allows running the tests while a WildFly server is already running, note that the offset is
 						 added to the default management port 9990 as well, this needs to be specified -->
     		<property name="managementPort">19990</property>
+			<property name="serverConfig">standalone-test.xml</property>
 		</configuration>
 	</container>
 

@@ -38,6 +38,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.0.1</version>
                 <executions>
+                    <!--im parent ist noch eine execution definiert welche das standalone.xml kopoiert-->
                     <execution>
                         <id>copy-openam-resources-for-test</id>
                         <!-- here the phase you need -->
@@ -56,6 +57,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

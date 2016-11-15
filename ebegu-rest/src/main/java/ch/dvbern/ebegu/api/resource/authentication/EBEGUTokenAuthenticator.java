@@ -45,6 +45,7 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 
 	private Cache<String, AuthorisierterBenutzer> cache;
 
+	@SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH", justification = "should be injected")
 	@PostConstruct
 	void init() {
 		if (cacheContainer == null) {
