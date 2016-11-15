@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
@@ -29,6 +30,7 @@ import java.util.TreeSet;
 @CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
+@CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
@@ -63,7 +65,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
-	private Set<Abwesenheit> abwesenheiten = new TreeSet<>();
+	private Set<AbwesenheitContainer> abwesenheitContainers = new TreeSet<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -114,8 +116,8 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
-		for (Abwesenheit abwesenheit : toCopy.getAbwesenheiten()) {
-			this.abwesenheiten.add(new Abwesenheit(abwesenheit, this));
+		for (AbwesenheitContainer abwesenheitContainer : toCopy.getAbwesenheitContainers()) {
+			this.abwesenheitContainers.add(new AbwesenheitContainer(abwesenheitContainer, this));
 		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
@@ -158,12 +160,12 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		this.betreuungspensumContainers = betreuungspensumContainers;
 	}
 
-	public Set<Abwesenheit> getAbwesenheiten() {
-		return abwesenheiten;
+	public Set<AbwesenheitContainer> getAbwesenheitContainers() {
+		return abwesenheitContainers;
 	}
 
-	public void setAbwesenheiten(Set<Abwesenheit> abwesenheiten) {
-		this.abwesenheiten = abwesenheiten;
+	public void setAbwesenheitContainers(Set<AbwesenheitContainer> abwesenheiten) {
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable

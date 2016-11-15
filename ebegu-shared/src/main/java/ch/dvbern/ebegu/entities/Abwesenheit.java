@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -14,30 +15,26 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class Abwesenheit extends AbstractDateRangedEntity {
+@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
+public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<Abwesenheit> {
 
 	private static final long serialVersionUID = -6776981643150835840L;
-
-	@NotNull
-	@ManyToOne(optional = false)
-	@JoinColumn(foreignKey = @ForeignKey(name = "FK_abwesenheit_betreuung_id"), nullable = false)
-	private Betreuung betreuung;
 
 
 	public Abwesenheit() {
 
 	}
 
-	public Abwesenheit(@Nonnull Abwesenheit toCopy, @Nonnull Betreuung betreuung) {
+	public Abwesenheit(Abwesenheit toCopy) {
 		super(toCopy);
-		this.betreuung = betreuung;
 	}
 
-	public Betreuung getBetreuung() {
-		return betreuung;
+	@Override
+	public int compareTo(Abwesenheit o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getGueltigkeit(), o.getGueltigkeit());
+		builder.append(this.getId(), o.getId());
+		return builder.toComparison();
 	}
 
-	public void setBetreuung(Betreuung betreuung) {
-		this.betreuung = betreuung;
-	}
 }
