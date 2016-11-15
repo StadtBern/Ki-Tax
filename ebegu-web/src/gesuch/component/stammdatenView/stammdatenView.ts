@@ -30,7 +30,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     showKorrespondadr: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
-    showUmzug: boolean;
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
@@ -52,13 +51,8 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.geschlechter = EnumEx.getNames(TSGeschlecht);
         this.showKorrespondadr = (this.gesuchModelManager.getStammdatenToWorkWith().korrespondenzAdresse) ? true : false;
-        if (this.gesuchModelManager.getGesuchstellerNumber() == 2) {
-            this.showUmzug = this.gesuchModelManager.showUmzugGS2;
-        } else {
-            this.showUmzug = this.gesuchModelManager.showUmzugGS1;
-        }
-        this.gesuchModelManager.setShowUmzug();
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
+        this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
     }
 
     korrespondenzAdrClicked() {
@@ -70,14 +64,9 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
-
-            if (this.gesuchModelManager.getGesuchstellerNumber() == 2) {
-                this.gesuchModelManager.showUmzugGS2 = this.showUmzug;
-            } else {
-                this.gesuchModelManager.showUmzugGS1 = this.showUmzug;
-            }
-
-            if (this.gesuchModelManager.showUmzugGS1 || this.gesuchModelManager.showUmzugGS2 || this.isMutation()) {
+            if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
+                || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
+                || this.isMutation()) {
                 this.wizardStepManager.unhideStep(TSWizardStepName.UMZUG);
             } else {
                 this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
