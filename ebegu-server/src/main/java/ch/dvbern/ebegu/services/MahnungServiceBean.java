@@ -26,8 +26,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
-	@Inject
-	private GesuchService gesuchService;
 
 	@Override
 	@Nonnull
