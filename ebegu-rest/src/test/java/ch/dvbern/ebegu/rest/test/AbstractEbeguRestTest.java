@@ -5,6 +5,7 @@ import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
@@ -32,6 +33,7 @@ public abstract class AbstractEbeguRestTest {
 
 
 	@Deployment
+	@OverProtocol("Servlet 3.0")
 	public static Archive<?> createTestArchive() {
 
 		return createTestArchive(null);

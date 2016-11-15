@@ -13,6 +13,9 @@
 						 added to the default management port 9990 as well, this needs to be specified -->
     		<property name="managementPort">19990</property>
 			<property name="serverConfig">standalone-test.xml</property>
+			<!--<property name="javaVmArguments">-Xmx512m -XX:MaxPermSize=256m -Djboss.bind.address=${arquillian.localAddress}-->
+		                <!-- -Dserver-config=${project.basedir}/src/test/resources/test-standalone.xml-->
+		            <!--</property>-->
 		</configuration>
 	</container>
 
