@@ -17,6 +17,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -38,11 +39,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     initialFamiliensituation: TSFamiliensituation;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate'];
+        'DvDialog', '$translate', '$q'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private $translate: ITranslateService) {
+                private $translate: ITranslateService, private $q: IQService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.familienstatusValues = getTSFamilienstatusValues();
@@ -76,6 +77,11 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getFamiliensituation());
+            }
             this.errorService.clearAll();
             return this.gesuchModelManager.updateFamiliensituation();
         }
@@ -102,15 +108,15 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     private isConfirmationRequired(): boolean {
         return (
             !this.isMutation()
-            &&  this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+            && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
             && this.initialFamiliensituation.hasSecondGesuchsteller()
             && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller())
             || (
-                this.isMutation()
-                && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-                && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId
-                && this.initialFamiliensituation.hasSecondGesuchsteller()
-                && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+            this.isMutation()
+            && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+            && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId
+            && this.initialFamiliensituation.hasSecondGesuchsteller()
+            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
     }
 
     public isMutation(): boolean {

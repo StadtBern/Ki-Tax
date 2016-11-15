@@ -13,6 +13,8 @@ import {TSRole} from '../../../models/enums/TSRole';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IQService = angular.IQService;
+import IPromise = angular.IPromise;
 let template = require('./stammdatenView.html');
 require('./stammdatenView.less');
 
@@ -33,11 +35,11 @@ export class StammdatenViewController extends AbstractGesuchViewController {
 
 
     static $inject = ['$stateParams', 'EbeguRestUtil', 'GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'CONSTANTS'];
+        'CONSTANTS', '$q'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, ebeguRestUtil: EbeguRestUtil, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager, private CONSTANTS: any) {
+                wizardStepManager: WizardStepManager, private CONSTANTS: any, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.ebeguRestUtil = ebeguRestUtil;
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
@@ -58,13 +60,19 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController) {
+    private save(form: angular.IFormController): IPromise<TSGesuchsteller>  {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
+            }
             if (!this.showKorrespondadr) {
                 this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
             }
             this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuchsteller();
+            return this.gesuchModelManager.updateGesuchsteller(false);
+
         }
         return undefined;
     }

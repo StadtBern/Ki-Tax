@@ -130,12 +130,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * @param oldEntity
 	 * @param newEntity
 	 * @param stepName
+	 * @param isMutation
 	 */
 	private void updateAllStatus(List<WizardStep> wizardSteps, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
 		if (WizardStepName.FAMILIENSITUATION.equals(stepName) && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
 			updateAllStatusForFamiliensituation(wizardSteps, (Familiensituation) oldEntity, (Familiensituation) newEntity);
 		} else if (WizardStepName.GESUCHSTELLER.equals(stepName)) {
 			updateAllStatusForGesuchsteller(wizardSteps);
+		} else if (WizardStepName.UMZUG.equals(stepName)) {
+			updateAllStatusForUmzug(wizardSteps);
 		} else if (WizardStepName.BETREUUNG.equals(stepName)) {
 			updateAllStatusForBetreuung(wizardSteps);
 		} else if (WizardStepName.KINDER.equals(stepName)) {
@@ -237,7 +240,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForGesuchsteller(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+				setWizardStepOkOrMutiert(wizardStep);
 			} else if ((WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 				|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))
 				&& !wizardStep.getVerfuegbar()
@@ -246,6 +249,22 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 				wizardStep.setVerfuegbar(true);
 			}
+		}
+	}
+
+	private void updateAllStatusForUmzug(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep : wizardSteps) {
+			if (WizardStepName.UMZUG.equals(wizardStep.getWizardStepName())) {
+				setWizardStepOkOrMutiert(wizardStep);
+			}
+		}
+	}
+
+	private void setWizardStepOkOrMutiert(WizardStep wizardStep) {
+		if (AntragTyp.MUTATION.equals(wizardStep.getGesuch().getTyp())) {
+			wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+		} else {
+			wizardStep.setWizardStepStatus(WizardStepStatus.OK);
 		}
 	}
 
@@ -283,8 +302,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep : wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) { // vermeide, dass der Status eines unbesuchten Steps geaendert wird
 				if (WizardStepName.FAMILIENSITUATION.equals(wizardStep.getWizardStepName())) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-
+					setWizardStepOkOrMutiert(wizardStep);
 				} else if (EbeguUtil.fromOneGSToTwoGS(oldEntity, newEntity)) {
 
 					if (WizardStepName.GESUCHSTELLER.equals(wizardStep.getWizardStepName())) {
@@ -292,6 +310,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setVerfuegbar(true);
 
 					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
+
 						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
 

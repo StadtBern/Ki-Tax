@@ -49,12 +49,13 @@ public class GesuchstellerResource {
 		"umzugadresse are both stored as consecutive wohnadressen in the database")
 	@Nullable
 	@PUT
-	@Path("/{gesuchId}/gsNumber/{gsNumber}")
+	@Path("/{gesuchId}/gsNumber/{gsNumber}/{umzug}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchsteller saveGesuchsteller(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
+		@Nonnull @NotNull @PathParam ("umzug") Boolean umzug,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -68,7 +69,7 @@ public class GesuchstellerResource {
 			}
 
 			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber);
+			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
 
 			return converter.gesuchstellerToJAX(persistedGesuchsteller);
 		}

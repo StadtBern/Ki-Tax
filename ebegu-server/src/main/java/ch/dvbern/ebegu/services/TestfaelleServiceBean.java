@@ -173,7 +173,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 		if (gesuchOptional.isPresent()) {
 			final Gesuch mutation = gesuchOptional.get();
 			familiensituationService.saveFamiliensituation(mutation, mutation.getFamiliensituation(), newFamsit);
-			final Gesuchsteller gesuchsteller2 = gesuchstellerService.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2);
+			final Gesuchsteller gesuchsteller2 = gesuchstellerService.saveGesuchsteller(createGesuchstellerHeirat(mutation.getGesuchsteller1()), mutation, 2, false);
 
 			mutation.setGesuchsteller2(gesuchsteller2);
 			gesuchService.createGesuch(mutation);
@@ -388,10 +388,10 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveGesuchsteller(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		if (gesuch.getGesuchsteller1() != null) {
 			setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER, WizardStepStatus.IN_BEARBEITUNG);
-			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller1(), gesuch, 1);
+			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller1(), gesuch, 1, false);
 		}
 		if (gesuch.getGesuchsteller2() != null) {
-			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2);
+			gesuchstellerService.saveGesuchsteller(gesuch.getGesuchsteller2(), gesuch, 2, false);
 		}
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.GESUCHSTELLER);
 		// Umzug wird by default OK und verfuegbar, da es nicht notwendig ist, einen Umzug einzutragen
