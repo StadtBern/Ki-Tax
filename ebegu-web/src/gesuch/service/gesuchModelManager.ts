@@ -61,8 +61,6 @@ export default class GesuchModelManager {
     private fachstellenList: Array<TSFachstelle>;
     private institutionenList: Array<TSInstitutionStammdaten>;
     private activeGesuchsperiodenList: Array<TSGesuchsperiode>;
-    showUmzugGS1: boolean;
-    showUmzugGS2: boolean;
 
 
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
@@ -82,8 +80,6 @@ export default class GesuchModelManager {
         this.fachstellenList = [];
         this.institutionenList = [];
         this.activeGesuchsperiodenList = [];
-        this.showUmzugGS1 = false;
-        this.showUmzugGS2 = false;
         this.updateFachstellenList();
         this.updateInstitutionenList();
         this.updateActiveGesuchsperiodenList();
@@ -95,18 +91,10 @@ export default class GesuchModelManager {
             .then((response) => {
                 if (response) {
                     this.setGesuch(response);
-                    this.showUmzugGS1 = false; // reset to false to avoid using old values
-                    this.showUmzugGS2 = false; // reset to false to avoid using old values
-                    this.setShowUmzug();
                     this.setHiddenSteps();
                 }
                 return response;
             });
-    }
-
-    public setShowUmzug(): void {
-        this.showUmzugGS1 = this.showUmzugGS1 || ((this.getGesuch() && this.getGesuch().gesuchsteller1) ? this.getGesuch().gesuchsteller1.isThereAnyUmzug() : false);
-        this.showUmzugGS2 = this.showUmzugGS2 || ((this.getGesuch() && this.getGesuch().gesuchsteller2) ? this.getGesuch().gesuchsteller2.isThereAnyUmzug() : false);
     }
 
     /**
@@ -249,6 +237,8 @@ export default class GesuchModelManager {
      * Speichert den StammdatenToWorkWith.
      */
     public updateGesuchsteller(): IPromise<TSGesuchsteller> {
+        // Da showUmzug nicht im Server gespeichert wird, muessen wir den alten Wert kopieren und nach der Aktualisierung wiedersetzen
+        let tempShowUmzug: boolean = this.getStammdatenToWorkWith().showUmzug;
         return this.gesuchstellerRS.saveGesuchsteller(this.getStammdatenToWorkWith(), this.gesuch.id, this.gesuchstellerNumber)
             .then((gesuchstellerResponse: any) => {
                 this.setStammdatenToWorkWith(gesuchstellerResponse);
@@ -256,6 +246,7 @@ export default class GesuchModelManager {
                 return this.gesuchRS.updateGesuch(this.gesuch).then(() => {
                     this.backupCurrentGesuch();
                     //todo reviewer frage team: muessen wir hier das gesuch wirklich separat speichern? wir brauchen die antwort gar nicht
+                    this.getStammdatenToWorkWith().showUmzug = tempShowUmzug;
                     return this.getStammdatenToWorkWith();
                 });
             });
@@ -548,8 +539,6 @@ export default class GesuchModelManager {
         this.gesuch.fall = new TSFall();
         this.gesuch.typ = antragTyp; // by default ist es ein Erstgesuch
         this.gesuch.status = TSAntragStatus.IN_BEARBEITUNG_JA; //TODO (team) wenn der GS das Gesuch erstellt, kommt hier IN_BEARBEITUN_GS
-        this.showUmzugGS1 = false;
-        this.showUmzugGS2 = false;
         this.setHiddenSteps();
         this.wizardStepManager.initWizardSteps();
         this.setCurrentUserAsFallVerantwortlicher();
