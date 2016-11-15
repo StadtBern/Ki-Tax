@@ -85,10 +85,10 @@ xa-data-source add \
 
 #Cache konfigurieren
 
-/subsystem=infinispan/cache-container=ebeguCache:add()
-/subsystem=infinispan/cache-container=ebeguCache/local-cache=cachedb:add()
-/subsystem=infinispan/cache-container=ebeguCache/local-cache=cachedb/transaction=TRANSACTION:add(mode=FULL_XA)
-/subsystem=infinispan/cache-container=ebeguCache/local-cache=cachedb/eviction=EVICTION:add(strategy=LRU, max-entries=10000)
-/subsystem=infinispan/cache-container=ebeguCache/local-cache=cachedb/expiration=EXPIRATION:add(lifespan=1800000)
+/subsystem=infinispan/cache-container=ebeguCache:add(default-cache="ebeguAuthorizationCache")
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache:add()
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/transaction=TRANSACTION:add(mode=FULL_XA)
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/eviction=EVICTION:add(strategy=LRU, max-entries=10000)
+/subsystem=infinispan/cache-container=ebeguCache/local-cache=ebeguAuthorizationCache/expiration=EXPIRATION:add(lifespan=1800000)
 
 run-batch
