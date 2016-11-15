@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Integration Test mit den Testfällen.
@@ -117,6 +116,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	@Test
 	public void testVerfuegung_MeierMeret() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.MeierMeret, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
+	public void testVerfuegung_UmzugAusInAusBern() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.UmzugAusInAusBern, true, true);
 		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
 	}
 
