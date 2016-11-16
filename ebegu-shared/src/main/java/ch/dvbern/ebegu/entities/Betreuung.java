@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.entities;
 import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.validators.CheckAbwesenheitDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensum;
 import ch.dvbern.ebegu.validators.CheckBetreuungspensumDatesOverlapping;
 import ch.dvbern.ebegu.validators.CheckGrundAblehnung;
@@ -29,6 +30,7 @@ import java.util.TreeSet;
 @CheckGrundAblehnung
 @CheckBetreuungspensum
 @CheckBetreuungspensumDatesOverlapping
+@CheckAbwesenheitDatesOverlapping
 @Table(
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"betreuungNummer", "kind_id"}, name = "UK_betreuung_kind_betreuung_nummer"),
@@ -60,6 +62,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	@Valid
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
 	private Set<BetreuungspensumContainer> betreuungspensumContainers = new TreeSet<>();
+
+	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "betreuung")
+	private Set<AbwesenheitContainer> abwesenheitContainers = new TreeSet<>();
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -110,6 +116,9 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		for (BetreuungspensumContainer betreuungspensumContainer : toCopy.getBetreuungspensumContainers()) {
 			this.betreuungspensumContainers.add(new BetreuungspensumContainer(betreuungspensumContainer, this));
 		}
+		for (AbwesenheitContainer abwesenheitContainer : toCopy.getAbwesenheitContainers()) {
+			this.abwesenheitContainers.add(new AbwesenheitContainer(abwesenheitContainer, this));
+		}
 		this.grundAblehnung = toCopy.grundAblehnung;
 		this.betreuungNummer = toCopy.betreuungNummer;
 		this.verfuegung = null;
@@ -149,6 +158,14 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 	public void setBetreuungspensumContainers(Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		this.betreuungspensumContainers = betreuungspensumContainers;
+	}
+
+	public Set<AbwesenheitContainer> getAbwesenheitContainers() {
+		return abwesenheitContainers;
+	}
+
+	public void setAbwesenheitContainers(Set<AbwesenheitContainer> abwesenheiten) {
+		this.abwesenheitContainers = abwesenheiten;
 	}
 
 	@Nullable
@@ -254,7 +271,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
-		return  null;
+		return null;
 	}
 
 	/**
@@ -282,10 +299,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	 * @return die Verfuegung oder Vorgaengerverfuegung dieser Betreuung
 	 */
 	@Nullable
-	public Verfuegung getVerfuegungOrVorgaengerVerfuegung(){
+	public Verfuegung getVerfuegungOrVorgaengerVerfuegung() {
 		if (getVerfuegung() != null) {
 			return getVerfuegung();
-		} else{
+		} else {
 			return getVorgaengerVerfuegung();
 		}
 	}
