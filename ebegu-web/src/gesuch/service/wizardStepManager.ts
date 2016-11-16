@@ -13,6 +13,7 @@ import IQService = angular.IQService;
 export default class WizardStepManager {
 
     private allowedSteps: Array<TSWizardStepName> = [];
+    private hiddenSteps: Array<TSWizardStepName> = []; // alle Steps die obwohl allowed, ausgeblendet werden muessen
     private wizardSteps: Array<TSWizardStep> = [];
     private currentStepName: TSWizardStepName; // keeps track of the name of the current step
 
@@ -53,6 +54,12 @@ export default class WizardStepManager {
 
     public getWizardSteps(): Array<TSWizardStep> {
         return this.wizardSteps;
+    }
+
+    public getVisibleSteps(): Array<TSWizardStepName> {
+        return this.allowedSteps.filter(element =>
+            !this.isStepHidden(element)
+        );
     }
 
     public setAllowedStepsForRole(role: TSRole): void {
@@ -190,11 +197,11 @@ export default class WizardStepManager {
     }
 
     public getNextStep(gesuch: TSGesuch): TSWizardStepName {
-        let allStepNames = this.getAllowedSteps();
-        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) + 1;
-        for (let i = currentPosition; i < allStepNames.length; i++) {
-            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
-                return allStepNames[i];
+        let allVisibleStepNames = this.getVisibleSteps();
+        let currentPosition: number = allVisibleStepNames.indexOf(this.getCurrentStepName()) + 1;
+        for (let i = currentPosition; i < allVisibleStepNames.length; i++) {
+            if (this.isStepAvailableViaBtn(allVisibleStepNames[i], gesuch)) {
+                return allVisibleStepNames[i];
             }
         }
         return undefined;
@@ -204,11 +211,11 @@ export default class WizardStepManager {
      * iterate through the existing steps and get the previous one based on the current position
      */
     public getPreviousStep(gesuch: TSGesuch): TSWizardStepName {
-        var allStepNames = this.getAllowedSteps();
-        let currentPosition: number = allStepNames.indexOf(this.getCurrentStepName()) - 1;
+        var allVisibleStepNames = this.getVisibleSteps();
+        let currentPosition: number = allVisibleStepNames.indexOf(this.getCurrentStepName()) - 1;
         for (let i = currentPosition; i >= 0; i--) {
-            if (this.isStepAvailableViaBtn(allStepNames[i], gesuch)) {
-                return allStepNames[i];
+            if (this.isStepAvailableViaBtn(allVisibleStepNames[i], gesuch)) {
+                return allVisibleStepNames[i];
             }
         }
         return undefined;
@@ -293,5 +300,34 @@ export default class WizardStepManager {
 
     public restorePreviousSteps(): void {
         this.wizardSteps = this.wizardStepsSnapshot;
+    }
+
+    /**
+     * Guckt zuerst dass der Step in der Liste von allowedSteps ist. wenn ja wird es geguckt
+     * ob der Step in derl Liste hiddenSteps ist.
+     * allowed und nicht hidden Steps -> true
+     * alle anderen -> false
+     */
+    public isStepVisible(stepName: TSWizardStepName): boolean {
+        return (this.allowedSteps.indexOf(stepName) >= 0 && !this.isStepHidden(stepName));
+    }
+
+    public hideStep(stepName: TSWizardStepName): void {
+        if (!this.isStepHidden(stepName)) {
+            this.hiddenSteps.push(stepName);
+        }
+    }
+
+    /**
+     * Obwohl das Wort unhide nicht existiert, finde ich den Begriff ausfuehrlicher fuer diesen Fall als show
+     */
+    public unhideStep(stepName: TSWizardStepName): void {
+        if (this.isStepHidden(stepName)) {
+            this.hiddenSteps.splice(this.hiddenSteps.indexOf(stepName), 1);
+        }
+    }
+
+    private isStepHidden(stepName: TSWizardStepName): boolean {
+       return this.hiddenSteps.indexOf(stepName) >= 0;
     }
 }

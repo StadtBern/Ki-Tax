@@ -30,13 +30,13 @@ public class CheckBetreuungspensumDatesOverlappingValidator implements Constrain
 	private boolean checkOverlapping(String type, Set<BetreuungspensumContainer> betreuungspensumContainers) {
 		// Da es wahrscheinlich wenige Betreuungspensen innerhalb einer Betreuung gibt, macht es vielleicht mehr Sinn diese Version zu nutzen
 		List<Betreuungspensum> gueltigkeitStream = betreuungspensumContainers.stream()
-			.filter(cont -> type.equalsIgnoreCase("GS") ? cont.getBetreuungspensumGS() != null : cont.getBetreuungspensumJA() != null)
-			.map(type.equalsIgnoreCase("GS") ? BetreuungspensumContainer::getBetreuungspensumGS : BetreuungspensumContainer::getBetreuungspensumJA)
+			.filter(cont -> "GS".equalsIgnoreCase(type) ? cont.getBetreuungspensumGS() != null : cont.getBetreuungspensumJA() != null)
+			.map("GS".equalsIgnoreCase(type) ? BetreuungspensumContainer::getBetreuungspensumGS : BetreuungspensumContainer::getBetreuungspensumJA)
 			.collect(Collectors.toList());
 
 		//Achtung hier MUSS instanz verglichen werden
 		return gueltigkeitStream.stream()
 			.anyMatch(o1 -> gueltigkeitStream.stream()
-				.anyMatch(o2 -> o1 != o2 && o1.getGueltigkeit().intersects(o2.getGueltigkeit())));
+				.anyMatch(o2 -> !o1.equals(o2) && o1.getGueltigkeit().intersects(o2.getGueltigkeit())));
 	}
 }

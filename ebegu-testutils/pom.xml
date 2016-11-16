@@ -18,7 +18,12 @@
             <groupId>ch.dvbern.lib</groupId>
             <artifactId>dvbern-lib-cdi-persistence-api</artifactId>
         </dependency>
+        <dependency>
+               <groupId>org.wildfly.arquillian</groupId>
+               <artifactId>wildfly-arquillian-common</artifactId>
+               <version>${version.wildfly-arquillian-containers}</version>
+                 <scope>compile</scope>
+             </dependency>
     </dependencies>
-
 
 </project>

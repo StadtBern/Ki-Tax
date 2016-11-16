@@ -64,6 +64,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
 		Root<Betreuung> root = query.from(Betreuung.class);
 		root.fetch(Betreuung_.betreuungspensumContainers, JoinType.LEFT);
+		root.fetch(Betreuung_.abwesenheitContainers, JoinType.LEFT);
 		query.select(root);
 		Predicate idPred = cb.equal(root.get(Betreuung_.id), key);
 		query.where(idPred);

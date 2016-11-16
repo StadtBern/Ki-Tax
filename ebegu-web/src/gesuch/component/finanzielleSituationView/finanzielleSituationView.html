@@ -4,7 +4,7 @@
 
             <h1 class="mainTitle">
             <span data-translate="FINANZIELLE_SITUATION"
-                  translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></span>
+                  translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr(), gesuchsteller: vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}"></span>
             </h1>
             <hr class="header"/>
         </div>
@@ -16,7 +16,7 @@
 
                     <!--Steuerveranlagung -->
                     <div class="row">
-                        <div class="col-md-6" ng-if="vm.showSteuerveranlagung()">
+                        <div class="col-xs-12" ng-if="vm.showSteuerveranlagung()">
                             <div class="form-group">
                                 <h4 class="mainQuestion" data-translate="FINANZIELLE_SITUATION_STEUERVERANLAGUNG"
                                     translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></h4>
@@ -58,11 +58,6 @@
                     <p class="inlineHint" data-translate="FINANZIELLE_SITUATION_HINT2"
                        translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahr()}"></p>
 
-                    <!-- Gesuchsteller -->
-                    <h5 class="subTitle">
-                        <span>{{vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}}</span>
-                        <!--{{vm.gesuchModelManager.gesuchstellerNumber}}-->
-                    </h5>
 
                     <!-- Nettolohn -->
                     <div class="row">

@@ -11,15 +11,15 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Die Betreuungspensen einer Betreuung duerfen sich nicht ueberlappen
+ * Die Abwesenheiten einer Betreuung duerfen sich nicht ueberlappen
  */
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = CheckBetreuungspensumDatesOverlappingValidator.class)
+@Constraint(validatedBy = CheckAbwesenheitDatesOverlappingValidator.class)
 @Documented
-public @interface CheckBetreuungspensumDatesOverlapping {
+public @interface CheckAbwesenheitDatesOverlapping {
 
-	String message() default "{invalid_betreuungspensen_dates}";
+	String message() default "{invalid_abwesenheiten_dates}";
 
 	Class<?>[] groups() default {};
 
