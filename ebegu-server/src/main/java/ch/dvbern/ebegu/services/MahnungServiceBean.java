@@ -6,10 +6,8 @@ import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.apache.poi.ss.formula.functions.T;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -49,6 +47,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			}
 		}
 		return persistence.persist(mahnung);
+	}
+
+	@Override
+	@Nonnull
+	public Optional<Mahnung> findMahnung(@Nonnull String mahnungId) {
+		Objects.requireNonNull(mahnungId, "mahnungId muss gesetzt sein");
+		Mahnung mahnung =  persistence.find(Mahnung.class, mahnungId);
+		return Optional.ofNullable(mahnung);
 	}
 
 	@Override
