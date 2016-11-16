@@ -3,12 +3,7 @@ package ch.dvbern.ebegu.entities;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
 
 /**
  * Entity fuer Abwesenheit.

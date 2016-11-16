@@ -271,7 +271,7 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 		if (getInstitutionStammdaten() != null) {
 			return getInstitutionStammdaten().getBetreuungsangebotTyp();
 		}
-		return  null;
+		return null;
 	}
 
 	/**
@@ -299,10 +299,10 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 	 * @return die Verfuegung oder Vorgaengerverfuegung dieser Betreuung
 	 */
 	@Nullable
-	public Verfuegung getVerfuegungOrVorgaengerVerfuegung(){
+	public Verfuegung getVerfuegungOrVorgaengerVerfuegung() {
 		if (getVerfuegung() != null) {
 			return getVerfuegung();
-		} else{
+		} else {
 			return getVorgaengerVerfuegung();
 		}
 	}

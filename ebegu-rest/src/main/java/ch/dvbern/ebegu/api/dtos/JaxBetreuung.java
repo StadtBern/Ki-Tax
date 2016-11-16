@@ -63,7 +63,6 @@ public class JaxBetreuung extends JaxAbstractDTO {
 	private LocalDate datumBestaetigung = null;
 
 
-
 	public JaxInstitutionStammdaten getInstitutionStammdaten() {
 		return institutionStammdaten;
 	}
