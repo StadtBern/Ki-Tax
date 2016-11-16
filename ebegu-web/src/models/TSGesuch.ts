@@ -86,6 +86,16 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         return this.typ === TSAntragTyp.MUTATION;
     }
 
+    /**
+     * Schaut ob der GS1 oder der GS2 mindestens eine umzugsadresse hat
+     */
+    public isThereAnyUmzug(): boolean {
+        if (this.gesuchsteller1 && this.gesuchsteller1.getUmzugAdressen().length > 0) {
+            return true;
+        }
+        if (this.gesuchsteller2 && this.gesuchsteller2.getUmzugAdressen().length > 0) {
+            return true;
+        }
+        return false;
+    }
 }
-
-

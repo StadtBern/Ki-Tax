@@ -17,6 +17,7 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _erwerbspensenContainer: Array<TSErwerbspensumContainer>;
     private _diplomatenstatus: boolean;
     private _einkommensverschlechterungContainer: TSEinkommensverschlechterungContainer;
+    private _showUmzug: boolean = false;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
@@ -119,6 +120,14 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._einkommensverschlechterungContainer = value;
     }
 
+    get showUmzug(): boolean {
+        return this._showUmzug;
+    }
+
+    set showUmzug(value: boolean) {
+        this._showUmzug = value;
+    }
+
     public getPhone(): string {
         if (this.mobile) {
             return this.mobile;
@@ -151,6 +160,13 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
             return adressenCopy;
         }
         return [];
+    }
+
+    /**
+     * Schaut ob der GS1 oder der GS2 mindestens eine umzugsadresse hat
+     */
+    public isThereAnyUmzug(): boolean {
+        return this.getUmzugAdressen().length > 0;
     }
 
 }

@@ -21,6 +21,7 @@ import VerfuegungRS from '../../core/service/verfuegungRS.rest';
 import AntragStatusHistoryRS from '../../core/service/antragStatusHistoryRS.rest';
 import {TSWizardStepName} from '../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
+import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 
 describe('gesuchModelManager', function () {
 
@@ -318,6 +319,42 @@ describe('gesuchModelManager', function () {
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZURUECKGEWIESEN)).toEqual(TSAntragStatus.ZURUECKGEWIESEN);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG);
                 expect(gesuchModelManager.calculateNewStatus(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN)).toEqual(TSAntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+            });
+        });
+        describe('hideSteps', function () {
+            it('should hide the step UMZUG for Erstgesuch without umzug', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                gesuchModelManager.initGesuch(true);
+
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).not.toHaveBeenCalled();
+            });
+            it('should unhide the step UMZUG for Mutation', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.typ = TSAntragTyp.MUTATION;
+                gesuchModelManager.setGesuch(gesuch);
+
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+            });
+            it('should unhide the step UMZUG for Erstgesuch with umzug', function() {
+                TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
+                spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
+                spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
+                let gesuch: TSGesuch = new TSGesuch();
+                gesuch.typ = TSAntragTyp.GESUCH;
+                gesuch.gesuchsteller1 = TestDataUtil.createGesuchsteller('Julio', 'Iglesias');
+                gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('wohnstrasse', '1'));
+                gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));
+                gesuchModelManager.setGesuch(gesuch);
+
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
             });
         });
     });
