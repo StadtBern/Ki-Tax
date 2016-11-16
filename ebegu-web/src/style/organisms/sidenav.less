@@ -44,22 +44,28 @@
                 outline: none !important;
                 text-decoration: none !important;
             }
-            &[disabled] {
+            &[disabled] span {
                 color: @contrast-dark;
+            }
+            span {
+                margin-left: 2.5rem;
+                letter-spacing: 0.1rem;
+                line-height: @sidebar-height;
+                height: @sidebar-height;
+                font-size: 1.6rem;
+                text-align: left;
+                color: @contrast-darkest;
+                display: block;
             }
         }
 
         span {
-            margin-left: 2.5rem;
             letter-spacing: 0.1rem;
             line-height: @sidebar-height;
             height: @sidebar-height;
             font-size: 1.6rem;
-            text-align: left;
             color: @contrast-darkest;
             display: block;
-        }
-        .fa {
             margin: 0;
             text-align: center;
             padding: 0 3rem 0 0;
