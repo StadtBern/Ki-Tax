@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-12">
             <h1 class="mainTitle">
-                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.gesuchstellerNumber}}
+                <span data-translate="GESUCHSTELLERIN"></span> {{vm.gesuchModelManager.getGesuchstellerNumber()}}
             </h1>
             <hr class="header"/>
         </div>
@@ -69,11 +69,11 @@
                         </div>
                     </div>
 
-                <!-- Adresse. Bei Mutationen nicht editierbar-->
-                <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
-                    <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
-                                prefix="wohn"></dv-adresse>
-                </fieldset>
+                    <!-- Adresse. Bei Mutationen nicht editierbar-->
+                    <fieldset ng-disabled="vm.disableWohnadresseFor2GS()"> <!-- Dieses disabled wird vom obigen disabled ueberschrieben wenn VERFUEGT -->
+                        <dv-adresse adresse="vm.getModel().getWohnAdresse()" show-nicht-in-gemeinde="true"
+                                    prefix="wohn"></dv-adresse>
+                    </fieldset>
 
                     <!--Korrenspondenzadr Checkbox-->
                     <div class="row">
@@ -113,20 +113,36 @@
                         </div>
                     </div>
 
-                <!--Email-->
-                <div class="row">
-                    <div class="col-sm-12 dv-input-container-small">
-                        <dv-input-container class="form-group">
-                            <label class="md-no-float" data-translate="EMAIL" for="email_ID">
-                            </label>
-                            <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
-                                   dv-max-length class="form-control" required placeholder="hans.muster@example.com"
-                                   ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
-                            <dv-error-messages for="form.email.$error"
-                                               class="error"></dv-error-messages>
-                        </dv-input-container>
+                    <!--Umzug checkbox. Bei Mutationen nicht angezeigt-->
+                    <div class="row" ng-if="!vm.isMutation()">
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <md-checkbox ng-model="vm.getModel().showUmzug" name="umzug" aria-label="umzug"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt() && !vm.isThereAnyUmzug()">
+                                    <span data-translate="UMZUG"></span>
+                                </md-checkbox>
+                                <dv-error-messages for="form.umzug.$error"
+                                                   class="error"></dv-error-messages>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <!--Email-->
+                    <div class="row">
+                        <div class="col-sm-12 dv-input-container-small">
+                            <dv-input-container class="form-group">
+                                <label class="md-no-float" data-translate="EMAIL" for="email_ID">
+                                </label>
+                                <input id="email_ID" type="email" name="email" ng-model="vm.getModel().mail"
+                                       dv-max-length class="form-control" required placeholder="hans.muster@example.com"
+                                       ng-pattern="vm.CONSTANTS.PATTERN_EMAIL">
+                                <dv-error-messages for="form.email.$error"
+                                                   class="error"></dv-error-messages>
+                            </dv-input-container>
+                        </div>
+                    </div>
 
 
                     <!--Mobile /Telefon-->
