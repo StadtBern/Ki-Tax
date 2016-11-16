@@ -1591,6 +1591,7 @@ public class JaxBConverter {
 		if (abwesenheit != null) {
 			final JaxAbwesenheit jaxAbwesenheit = new JaxAbwesenheit();
 			convertAbstractDateRangedFieldsToJAX(abwesenheit, jaxAbwesenheit);
+			return jaxAbwesenheit;
 		}
 		return null;
 	}
@@ -1599,7 +1600,7 @@ public class JaxBConverter {
 		if (abwesenheitContainer != null) {
 			final JaxAbwesenheitContainer jaxAbwesenheitContainer = new JaxAbwesenheitContainer();
 			convertAbstractFieldsToJAX(abwesenheitContainer, jaxAbwesenheitContainer);
-			if (abwesenheitContainer.getAbwesenheitJA() != null) {
+			if (abwesenheitContainer.getAbwesenheitGS() != null) {
 				jaxAbwesenheitContainer.setAbwensenheitGS(abwesenheitToJax(abwesenheitContainer.getAbwesenheitGS()));
 			}
 			if (abwesenheitContainer.getAbwesenheitJA() != null) {

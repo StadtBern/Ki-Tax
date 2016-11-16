@@ -51,6 +51,8 @@ import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSFile from '../models/TSFile';
 import TSMutationsdaten from '../models/TSMutationsdaten';
+import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
+import TSAbwesenheit from '../models/TSAbwesenheit';
 
 
 export default class EbeguRestUtil {
@@ -1005,6 +1007,12 @@ export default class EbeguRestUtil {
                 restBetreuung.betreuungspensumContainers.push(this.betreuungspensumContainerToRestObject({}, betPensCont));
             });
         }
+        if (betreuung.abwesenheitContainers) {
+            restBetreuung.abwesenheitContainers = [];
+            betreuung.abwesenheitContainers.forEach((abwesenheitCont: TSAbwesenheitContainer) => {
+                restBetreuung.abwesenheitContainers.push(this.abwesenheitContainerToRestObject({}, abwesenheitCont));
+            });
+        }
         restBetreuung.betreuungNummer = betreuung.betreuungNummer;
         return restBetreuung;
     }
@@ -1020,10 +1028,26 @@ export default class EbeguRestUtil {
         return restBetPensCont;
     }
 
+    public abwesenheitContainerToRestObject(restAbwesenheitCont: any, abwesenheitCont: TSAbwesenheitContainer): any {
+        this.abstractEntityToRestObject(restAbwesenheitCont, abwesenheitCont);
+        if (abwesenheitCont.abwesenheitGS) {
+            restAbwesenheitCont.abwesenheitGS = this.abwesenheitToRestObject({}, abwesenheitCont.abwesenheitGS);
+        }
+        if (abwesenheitCont.abwesenheitJA) {
+            restAbwesenheitCont.abwesenheitJA = this.abwesenheitToRestObject({}, abwesenheitCont.abwesenheitJA);
+        }
+        return restAbwesenheitCont;
+    }
+
     public betreuungspensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungspensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
         restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
         return restBetreuungspensum;
+    }
+
+    public abwesenheitToRestObject(restAbwesenheit: any, abwesenheit: TSAbwesenheit): any {
+        this.abstractDateRangeEntityToRestObject(restAbwesenheit, abwesenheit);
+        return restAbwesenheit;
     }
 
     private parseBetreuungList(betreuungen: Array<any>): TSBetreuung[] {
@@ -1049,6 +1073,7 @@ export default class EbeguRestUtil {
             betreuungTS.betreuungsstatus = betreuungFromServer.betreuungsstatus;
             betreuungTS.institutionStammdaten = this.parseInstitutionStammdaten(new TSInstitutionStammdaten(), betreuungFromServer.institutionStammdaten);
             betreuungTS.betreuungspensumContainers = this.parseBetreuungspensumContainers(betreuungFromServer.betreuungspensumContainers);
+            betreuungTS.abwesenheitContainers = this.parseAbwesenheitContainers(betreuungFromServer.abwesenheitContainers);
             betreuungTS.betreuungNummer = betreuungFromServer.betreuungNummer;
             betreuungTS.verfuegung = this.parseVerfuegung(new TSVerfuegung(), betreuungFromServer.verfuegung);
             return betreuungTS;
@@ -1068,6 +1093,18 @@ export default class EbeguRestUtil {
         return betPensContainers;
     }
 
+    public parseAbwesenheitContainers(data: Array<any>): TSAbwesenheitContainer[] {
+        let abwesenheitContainers: TSAbwesenheitContainer[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                abwesenheitContainers[i] = this.parseAbwesenheitContainer(new TSAbwesenheitContainer(), data[i]);
+            }
+        } else if (data) {
+            abwesenheitContainers[0] = this.parseAbwesenheitContainer(new TSAbwesenheitContainer(), data);
+        }
+        return abwesenheitContainers;
+    }
+
     public parseBetreuungspensumContainer(betPensContainerTS: TSBetreuungspensumContainer, betPensContFromServer: any): TSBetreuungspensumContainer {
         if (betPensContFromServer) {
             this.parseAbstractEntity(betPensContainerTS, betPensContFromServer);
@@ -1082,11 +1119,33 @@ export default class EbeguRestUtil {
         return undefined;
     }
 
+    public parseAbwesenheitContainer(abwesenheitContainerTS: TSAbwesenheitContainer, abwesenheitContFromServer: any): TSAbwesenheitContainer {
+        if (abwesenheitContFromServer) {
+            this.parseAbstractEntity(abwesenheitContainerTS, abwesenheitContFromServer);
+            if (abwesenheitContFromServer.abwesenheitGS) {
+                abwesenheitContainerTS.abwesenheitGS = this.parseAbwesenheit(new TSAbwesenheit(), abwesenheitContFromServer.abwesenheitGS);
+            }
+            if (abwesenheitContFromServer.abwesenheitJA) {
+                abwesenheitContainerTS.abwesenheitJA = this.parseAbwesenheit(new TSAbwesenheit(), abwesenheitContFromServer.abwesenheitJA);
+            }
+            return abwesenheitContainerTS;
+        }
+        return undefined;
+    }
+
     public parseBetreuungspensum(betreuungspensumTS: TSBetreuungspensum, betreuungspensumFromServer: any): TSBetreuungspensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
             betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
             return betreuungspensumTS;
+        }
+        return undefined;
+    }
+
+    public parseAbwesenheit(abwesenheitTS: TSAbwesenheit, abwesenheitFromServer: any): TSAbwesenheit {
+        if (abwesenheitFromServer) {
+            this.parseDateRangeEntity(abwesenheitTS, abwesenheitFromServer);
+            return abwesenheitTS;
         }
         return undefined;
     }
