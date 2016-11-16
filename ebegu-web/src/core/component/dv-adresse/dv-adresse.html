@@ -101,8 +101,9 @@
                             ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
                             class="form-control"
                             required>
-                        <dv-error-messages for="adresseForm.adresseLand.$error"
-                                           class="error"></dv-error-messages>
+                    </select>
+                    <dv-error-messages for="adresseForm.adresseLand.$error"
+                                       class="error"></dv-error-messages>
                 </div>
             </div>
         </div>
