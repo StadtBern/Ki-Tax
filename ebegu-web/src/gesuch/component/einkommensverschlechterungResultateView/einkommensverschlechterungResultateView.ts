@@ -83,7 +83,6 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
                 // promise immediately
                 // Update wizardStepStatus also if the form is empty and not dirty
                 return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
-
             }
 
             this.errorService.clearAll();

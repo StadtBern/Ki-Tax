@@ -273,10 +273,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
-			if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())) {
-				if (wizardStep.getGesuch().isMutation()) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
-				}
+			if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName()) && wizardStep.getGesuch().isMutation()) {
+				wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
 			}
 		}
 	}
@@ -340,7 +338,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						wizardStep.setVerfuegbar(true);
 
 					} else if (!wizardStep.getGesuch().isMutation() // fuer Mutationen bleiben diese beide Steps immer noch gruen, da die Werte direkt auf 0 gesetzt werden
-
 						&& (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())
 						|| WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName()))) {
 

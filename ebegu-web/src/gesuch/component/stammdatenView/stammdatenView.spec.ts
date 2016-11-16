@@ -8,12 +8,14 @@ import IInjectorService = angular.auto.IInjectorService;
 import IHttpBackendService = angular.IHttpBackendService;
 import IScope = angular.IScope;
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
+import IQService = angular.IQService;
 
 describe('stammdatenView', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let stammdatenViewController: StammdatenViewController;
     let $stateParams: IStammdatenStateParams;
+    let $q: IQService;
 
     beforeEach(angular.mock.module('ebeguWeb.gesuch'));
 
@@ -25,8 +27,9 @@ describe('stammdatenView', function () {
         let $stateParams = $injector.get('$stateParams');
         $stateParams.gesuchstellerNumber = 1;
         gesuchModelManager.initGesuch(false);
+        $q = $injector.get('$q');
         stammdatenViewController = new StammdatenViewController($stateParams, undefined, gesuchModelManager,
-            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'));
+            undefined, undefined, wizardStepManager, $injector.get('CONSTANTS'), $q);
     }));
 
     describe('disableWohnadresseFor2GS', function () {

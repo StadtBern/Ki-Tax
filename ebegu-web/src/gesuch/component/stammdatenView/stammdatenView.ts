@@ -72,7 +72,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
             }
             this.errorService.clearAll();
             return this.gesuchModelManager.updateGesuchsteller(false);
-
         }
         return undefined;
     }

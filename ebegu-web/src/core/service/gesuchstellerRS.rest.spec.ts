@@ -57,11 +57,11 @@ describe('GesuchstellerRS', function () {
             it('should updateGesuchsteller a gesuchsteller and her adresses', () => {
                     mockGesuchsteller.nachname = 'changedname';
                     let updatedGesuchsteller: TSGesuchsteller;
-                    $httpBackend.expectPUT(gesuchstellerRS.serviceURL + '/' + dummyGesuchID + '/gsNumber/1', ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller))
+                    $httpBackend.expectPUT(gesuchstellerRS.serviceURL + '/' + dummyGesuchID + '/gsNumber/1/false', ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller))
                         .respond(ebeguRestUtil.gesuchstellerToRestObject({}, mockGesuchsteller));
 
 
-                    gesuchstellerRS.saveGesuchsteller(mockGesuchsteller, dummyGesuchID, 1).then((result) => {
+                    gesuchstellerRS.saveGesuchsteller(mockGesuchsteller, dummyGesuchID, 1, false).then((result) => {
                         updatedGesuchsteller = result;
                     });
                     $httpBackend.flush();
