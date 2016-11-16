@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.dto.FinanzielleSituationResultateDTO;
 import ch.dvbern.ebegu.entities.FinanzielleSituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
@@ -35,19 +36,29 @@ public class FinanzielleSituationServiceBean extends AbstractBaseService impleme
 	@Inject
 	private FinanzielleSituationRechner finSitRechner;
 
+	@Inject
+	private WizardStepService wizardStepService;
+
 
 	@Nonnull
 	@Override
-	public FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation) {
+	public FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId) {
 		Objects.requireNonNull(finanzielleSituation);
-		return persistence.merge(finanzielleSituation);
+		FinanzielleSituationContainer finanzielleSituationPersisted = persistence.merge(finanzielleSituation);
+
+		if(gesuchId != null) {
+			wizardStepService.updateSteps(gesuchId, null, null, WizardStepName.FINANZIELLE_SITUATION);
+		}
+
+		return finanzielleSituationPersisted;
+
 	}
 
 	@Nonnull
 	@Override
 	public Optional<FinanzielleSituationContainer> findFinanzielleSituation(@Nonnull String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		FinanzielleSituationContainer finanzielleSituation =  persistence.find(FinanzielleSituationContainer.class, id);
+		FinanzielleSituationContainer finanzielleSituation = persistence.find(FinanzielleSituationContainer.class, id);
 		return Optional.ofNullable(finanzielleSituation);
 	}
 

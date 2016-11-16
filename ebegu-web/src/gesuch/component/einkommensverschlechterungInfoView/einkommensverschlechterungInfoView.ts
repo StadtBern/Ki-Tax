@@ -12,8 +12,9 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import ITranslateService = angular.translate.ITranslateService;
 import {TSRole} from '../../../models/enums/TSRole';
+import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
 
 let template = require('./einkommensverschlechterungInfoView.html');
 require('./einkommensverschlechterungInfoView.less');
@@ -36,11 +37,11 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'EbeguUtil'
-        , 'WizardStepManager', 'DvDialog'];
+        , 'WizardStepManager', 'DvDialog', '$q'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private CONSTANTS: any, private errorService: ErrorService, private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager,
-                private DvDialog: DvDialog) {
+                private DvDialog: DvDialog, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.initViewModel();
@@ -129,6 +130,11 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
 
     private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungInfo> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.getGesuch().einkommensverschlechterungInfo);
+            }
             this.errorService.clearAll();
             if (this.getEinkommensverschlechterungsInfo().einkommensverschlechterung) {
                 if (this.getEinkommensverschlechterungsInfo().ekvFuerBasisJahrPlus1 === undefined) {
@@ -171,9 +177,9 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
      */
     private isConfirmationRequired(): boolean {
         return (this.initialEinkVersInfo.einkommensverschlechterung !== undefined && this.initialEinkVersInfo.einkommensverschlechterung !== null
-            && !this.getGesuch().einkommensverschlechterungInfo.einkommensverschlechterung
-            && this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
-            && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined);
+        && !this.getGesuch().einkommensverschlechterungInfo.einkommensverschlechterung
+        && this.getGesuch().gesuchsteller1 && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
+        && this.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined);
     }
 
 }

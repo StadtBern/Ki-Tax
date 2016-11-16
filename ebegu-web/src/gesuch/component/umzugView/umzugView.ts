@@ -11,9 +11,10 @@ import TSAdresse from '../../../models/TSAdresse';
 import {TSAdressetyp} from '../../../models/enums/TSAdressetyp';
 import TSUmzugAdresse from '../../../models/TSUmzugAdresse';
 import TSGesuchsteller from '../../../models/TSGesuchsteller';
-import ITranslateService = angular.translate.ITranslateService;
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import ITranslateService = angular.translate.ITranslateService;
+import IQService = angular.IQService;
 let template = require('./umzugView.html');
 require('./umzugView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -31,14 +32,15 @@ export class UmzugViewComponentConfig implements IComponentOptions {
 export class UmzugViewController extends AbstractGesuchViewController {
 
     private umzugAdressen: Array<TSUmzugAdresse> = [];
+    dirty = false;
 
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager', 'ErrorService', '$translate',
-        'DvDialog'];
+        'DvDialog', '$q'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private errorService: ErrorService,
-                private $translate: ITranslateService, private DvDialog: DvDialog) {
+                private $translate: ITranslateService, private DvDialog: DvDialog, private $q: IQService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
@@ -57,13 +59,19 @@ export class UmzugViewController extends AbstractGesuchViewController {
 
     public save(form: angular.IFormController): IPromise<TSGesuchsteller> {
         if (form.$valid) {
+            if (!form.$dirty && !this.dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
+            }
+
             this.errorService.clearAll();
             this.saveAdresseInGS();
             this.gesuchModelManager.setGesuchstellerNumber(1);
-            return this.gesuchModelManager.updateGesuchsteller().then((response) => {
+            return this.gesuchModelManager.updateGesuchsteller(true).then((response) => {
                 if (this.gesuchModelManager.getGesuch().gesuchsteller2) {
                     this.gesuchModelManager.setGesuchstellerNumber(2);
-                    return this.gesuchModelManager.updateGesuchsteller();
+                    return this.gesuchModelManager.updateGesuchsteller(true);
                 }
                 return this.gesuchModelManager.getStammdatenToWorkWith();
             });
@@ -150,6 +158,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
             title: remTitleText,
             deleteText: ''
         }).then(() => {   //User confirmed removal
+            this.dirty = true;
             var indexOf = this.umzugAdressen.lastIndexOf(adresse);
             if (indexOf >= 0) {
                 this.umzugAdressen.splice(indexOf, 1);
@@ -166,6 +175,7 @@ export class UmzugViewController extends AbstractGesuchViewController {
         adresse.adresseTyp = TSAdressetyp.WOHNADRESSE;
         let umzugAdresse: TSUmzugAdresse = new TSUmzugAdresse(undefined, adresse);
         this.umzugAdressen.push(umzugAdresse);
+        this.dirty = true;
     }
 
     /**

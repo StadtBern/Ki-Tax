@@ -10,6 +10,7 @@ import TSFinanzielleSituation from '../../../models/TSFinanzielleSituation';
 import WizardStepManager from '../../service/wizardStepManager';
 import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
 import {TSRole} from '../../../models/enums/TSRole';
+import IQService = angular.IQService;
 let template = require('./einkommensverschlechterungView.html');
 require('./einkommensverschlechterungView.less');
 
@@ -29,12 +30,12 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
     allowedRoles: Array<TSRole>;
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', '$log',
-        'WizardStepManager'];
+        'WizardStepManager', '$q'];
 
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, private $log: ILogService,
-                wizardStepManager: WizardStepManager) {
+                wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedGesuchstelllerNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         let parsedBasisJahrPlusNum: number = parseInt($stateParams.basisjahrPlus, 10);
@@ -101,6 +102,11 @@ export class EinkommensverschlechterungViewController extends AbstractGesuchView
 
     private save(form: angular.IFormController): IPromise<TSEinkommensverschlechterungContainer> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().einkommensverschlechterungContainer);
+            }
             this.errorService.clearAll();
             return this.gesuchModelManager.saveEinkommensverschlechterungContainer();
         }

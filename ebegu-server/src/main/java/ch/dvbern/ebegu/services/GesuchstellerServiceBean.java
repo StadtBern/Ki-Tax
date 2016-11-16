@@ -34,7 +34,8 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 	@Nonnull
 	@Override
-	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber) {
+	public Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber,
+										   boolean umzug) {
 		Objects.requireNonNull(gesuchsteller);
 		Objects.requireNonNull(gesuch);
 		Objects.requireNonNull(gsNumber);
@@ -77,7 +78,11 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 
 		if ((gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 2)
 			|| (!gesuch.getFamiliensituation().hasSecondGesuchsteller() && gsNumber == 1)) {
-			wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+			if (umzug) {
+				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.UMZUG);
+			} else {
+				wizardStepService.updateSteps(gesuch.getId(), null, null, WizardStepName.GESUCHSTELLER);
+			}
 		}
 
 		return mergedGesuchsteller;
@@ -87,7 +92,7 @@ public class GesuchstellerServiceBean extends AbstractBaseService implements Ges
 	@Override
 	public Optional<Gesuchsteller> findGesuchsteller(@Nonnull final String id) {
 		Objects.requireNonNull(id, "id muss gesetzt sein");
-		Gesuchsteller a =  persistence.find(Gesuchsteller.class, id);
+		Gesuchsteller a = persistence.find(Gesuchsteller.class, id);
 		return Optional.ofNullable(a);
 	}
 

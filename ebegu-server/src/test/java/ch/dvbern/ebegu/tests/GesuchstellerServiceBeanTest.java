@@ -41,7 +41,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchstellerService);
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchsteller();
 
-		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1);
+		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
 		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
 		Gesuchsteller nextGesuchsteller = allGesuchsteller.iterator().next();
@@ -59,7 +59,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertEquals("tim.tester@example.com", gesuchsteller.getMail());
 
 		gesuchsteller.setMail("fritz.mueller@example.com");
-		Gesuchsteller updatedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1);
+		Gesuchsteller updatedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
 		Assert.assertEquals("fritz.mueller@example.com", updatedGesuchsteller.getMail());
 	}
 
@@ -78,7 +78,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		Assert.assertNotNull(gesuchstellerService);
 		Gesuchsteller gesuchsteller = TestDataUtil.createDefaultGesuchstellerWithEinkommensverschlechterung();
 
-		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1);
+		gesuchstellerService.saveGesuchsteller(gesuchsteller, TestDataUtil.createDefaultGesuch(), 1, false);
 		Collection<Gesuchsteller> allGesuchsteller = gesuchstellerService.getAllGesuchsteller();
 		Assert.assertEquals(1, allGesuchsteller.size());
 
@@ -114,7 +114,7 @@ public class GesuchstellerServiceBeanTest extends AbstractEbeguTest {
 		gesuch.getGesuchsteller1().setFinanzielleSituationContainer(TestDataUtil.createFinanzielleSituationContainer());
 		gesuch.getGesuchsteller1().setEinkommensverschlechterungContainer(TestDataUtil.createDefaultEinkommensverschlechterungsContainer());
 
-		final Gesuchsteller savedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, gesuch, 2);
+		final Gesuchsteller savedGesuchsteller = gesuchstellerService.saveGesuchsteller(gesuchsteller, gesuch, 2, false);
 
 		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer());
 		Assert.assertNotNull(savedGesuchsteller.getFinanzielleSituationContainer().getFinanzielleSituationJA());
