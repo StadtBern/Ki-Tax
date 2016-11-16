@@ -74,10 +74,10 @@ export class AuthenticationListViewController {
 
     public singlelogout() {
         this.authService.logoutRequest().then(() => {
-            if(this.logoutHref !== '' || this.logoutHref === undefined) {
+            if (this.logoutHref !== '' || this.logoutHref === undefined) {
                 this.$window.open(this.logoutHref, '_self');
-            } else{
-                this.$state.go('start')  // wenn wir nicht in iam ausloggen gehen wir auf start
+            } else {
+                this.$state.go('start');  // wenn wir nicht in iam ausloggen gehen wir auf start
             }
         });
     }

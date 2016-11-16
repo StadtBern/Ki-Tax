@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
-public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum>{
+public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum> {
 
 	private static final long serialVersionUID = -9032857320571372370L;
 

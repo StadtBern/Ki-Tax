@@ -5,7 +5,7 @@
 
             <h1 class="mainTitle">
             <span data-translate="EKVI_EINKOMMENSVERSCHLECHTERUNG_FUER_BASISJAHR"
-                  translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith()}"></span>
+                  translate-values="{basisjahr: vm.gesuchModelManager.getBasisjahrToWorkWith(), gesuchsteller:vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}"></span>
             </h1>
             <hr class="header"/>
         </div>
@@ -60,12 +60,6 @@
                     <p class="inlineHint" data-translate="EKVI__HINT_VERANLAGUNGSVERFUEGUNG"
                        translate-values="{basisjahr: {{vm.gesuchModelManager.getBasisjahrToWorkWith()}}}"
                        ng-if="vm.showHintSteuerveranlagung()"></p>
-
-                    <!-- Gesuchsteller -->
-                    <h5 class="subTitle">
-                        <span>{{vm.gesuchModelManager.getStammdatenToWorkWith().getFullName()}}</span>
-                    </h5>
-
                     <!-- Nettolohn Jan-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-small">
