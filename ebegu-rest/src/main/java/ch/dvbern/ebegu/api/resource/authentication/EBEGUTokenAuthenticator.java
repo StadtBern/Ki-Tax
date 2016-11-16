@@ -38,7 +38,7 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	private CacheContainer cacheContainer;
 
 
-    private AuthorisierterBenutzer user;  //todo homa maybe change to credentials
+    private AuthorisierterBenutzer user;
 
 	@Inject
 	private AuthService authService;
