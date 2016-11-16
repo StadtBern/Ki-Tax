@@ -26,6 +26,10 @@ let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
     transclude = false;
+    bindings: any = {
+        // Bereits vorhandene Mahnungen
+        mahnungList: '<'
+    };
     template = template;
     controller = VerfuegenListViewController;
     controllerAs = 'vm';
@@ -34,7 +38,7 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     private kinderWithBetreuungList: Array<TSKindContainer>;
-    private mahnungList: Array<TSMahnung> = [];
+    mahnungList: TSMahnung[];
     private mahnung: TSMahnung;
     private tempAntragStatus: TSAntragStatus;
 
@@ -84,10 +88,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         //todo wenn man aus der verfuegung zurueck kommt muss man hier nicht neu berechnen
         this.gesuchModelManager.calculateVerfuegungen().then(() => {
             this.kinderWithBetreuungList = this.gesuchModelManager.getKinderWithBetreuungList();
-        });
-        // Bereits vorhandene Mahnungen lesen
-        this.mahnungRS.findMahnungen(this.getGesuch()).then((response) => {
-            this.mahnungList = response;
         });
     }
 
@@ -275,7 +275,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
             });
     }
 
-    public openMahnungPDF(mahnung :TSMahnung): void {
+    public openMahnungPDF(mahnung : TSMahnung): void {
         window.alert('Not yet implemented');
     }
 
