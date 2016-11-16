@@ -47,6 +47,7 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getAllowedSteps()[1]).toBe(TSWizardStepName.GESUCHSTELLER);
             expect(wizardStepManager.getAllowedSteps()[2]).toBe(TSWizardStepName.UMZUG);
             expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.ABWESENHEIT);
             expect(wizardStepManager.getAllowedSteps()[4]).toBe(TSWizardStepName.VERFUEGEN);
         });
         it('constructs the steps for JA', function() {
@@ -60,6 +61,7 @@ describe('wizardStepManager', function () {
             expect(wizardStepManager.getAllowedSteps()[3]).toBe(TSWizardStepName.UMZUG);
             expect(wizardStepManager.getAllowedSteps()[4]).toBe(TSWizardStepName.KINDER);
             expect(wizardStepManager.getAllowedSteps()[5]).toBe(TSWizardStepName.BETREUUNG);
+            expect(wizardStepManager.getAllowedSteps()[5]).toBe(TSWizardStepName.ABWESENHEIT);
             expect(wizardStepManager.getAllowedSteps()[6]).toBe(TSWizardStepName.ERWERBSPENSUM);
             expect(wizardStepManager.getAllowedSteps()[7]).toBe(TSWizardStepName.FINANZIELLE_SITUATION);
             expect(wizardStepManager.getAllowedSteps()[8]).toBe(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);

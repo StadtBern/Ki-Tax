@@ -745,5 +745,8 @@
     "BEIDE_GESUCHSTELLER": "beide Gesuchsteller",
     "UMZUG_ENTFERNEN": "Umzug löschen",
     "UMZUG_HINZUFUEGEN": "Umzug hinzufügen",
-    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden"
+    "UMZUG_HINT": "Umzüge, die in der Zukunft liegen, können bereits zum jetzigen Punkt angegeben werden",
+    "ABWESENHEIT": "Abwesenheit",
+    "ABWESENHEIT_ENTFERNEN": "Abwesenheit löschen",
+    "ABWESENHEIT_ERFASSEN": "Abwesenheit erfassen"
 }

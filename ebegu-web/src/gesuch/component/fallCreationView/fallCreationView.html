@@ -169,7 +169,7 @@
                                                  name="mutationAbwesenheit"
                                                  ng-required="vm.isMutationFeldRequired()" class="input-element"
                                                  ng-click="vm.setShowError(true)"
-                                                 ng-disabled="true"
+                                                 ng-disabled="!vm.createMutation && vm.getMutationsdaten().mutationAbwesenheit"
                                                  aria-label="mutationAbwesenheit" dv-enable-element
                                                  dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                                                  dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
