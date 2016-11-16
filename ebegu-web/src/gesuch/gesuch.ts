@@ -71,6 +71,13 @@ export class GesuchRouteController extends AbstractGesuchViewController {
         return true;
     }
 
+    public isStepVisible(stepName: TSWizardStepName): boolean {
+        if (stepName) {
+            return this.wizardStepManager.isStepVisible(stepName);
+        }
+        return true;
+    }
+
     public isElementActive(stepName: TSWizardStepName): boolean {
         return this.wizardStepManager.getCurrentStepName() === stepName;
     }

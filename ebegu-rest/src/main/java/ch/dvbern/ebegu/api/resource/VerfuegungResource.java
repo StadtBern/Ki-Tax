@@ -170,6 +170,7 @@ public class VerfuegungResource {
 	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (Betreuung betreuung : gesuch.extractAllBetreuungen()) {
 			betreuung.getBetreuungspensumContainers().size();
+			betreuung.getAbwesenheitContainers().size();
 		}
 		if (gesuch.getGesuchsteller1() != null) {
 			gesuch.getGesuchsteller1().getAdressen().forEach(GesuchstellerAdresse::getAdresseTyp);

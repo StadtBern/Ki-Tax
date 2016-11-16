@@ -97,10 +97,10 @@
                 <div class="form-group">
                     <label class="md-no-float" data-translate="ADRESSE_LAND" for="{{vm.prefix}}-land">
                     </label>
-                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.adresse.land" class="form-control"
+                    <select name="adresseLand" id="{{vm.prefix}}-land" ng-model="vm.adresse.land"
+                            ng-options="land.code as land.name for land in vm.laenderList | orderBy: 'name'"
+                            class="form-control"
                             required>
-                        <option ng-repeat="land in vm.laenderList | orderBy: 'name'" ng-value="land.code"
-                                ng-bind="land.name" ng-selected="land.code == vm.adresse.land"></option>
                     </select>
                     <dv-error-messages for="adresseForm.adresseLand.$error"
                                        class="error"></dv-error-messages>

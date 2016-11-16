@@ -1,13 +1,16 @@
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.tets.util.InfinispanTestCacheSetupTask;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -27,10 +30,12 @@ import java.io.File;
 @ArquillianSuiteDeployment
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
+@ServerSetup(InfinispanTestCacheSetupTask.class)
 public abstract class AbstractEbeguRestTest {
 
 
 	@Deployment
+	@OverProtocol("Servlet 3.0")
 	public static Archive<?> createTestArchive() {
 
 		return createTestArchive(null);
@@ -55,7 +60,7 @@ public abstract class AbstractEbeguRestTest {
 			.addPackages(true, "ch/dvbern/ebegu/rest/test")
 			.addAsLibraries(runtimeDeps)
 			.addAsLibraries(testDeps)
-
+			.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 
 			.addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
 			.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml")

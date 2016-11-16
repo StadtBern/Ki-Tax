@@ -31,6 +31,7 @@ import java.util.Set;
 @RunWith(Arquillian.class)
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
+//@ServerSetup(InstallPicketLinkFileBasedSetupTask.class)
 public class BetreuungResourceTest extends AbstractEbeguRestTest {
 
 	private static final UriInfo RESTEASY_URI_INFO = new ResteasyUriInfo("test", "test", "test");
