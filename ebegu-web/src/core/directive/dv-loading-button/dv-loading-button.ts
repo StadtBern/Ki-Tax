@@ -73,7 +73,7 @@ export class DVLoadingButtonController implements IDVLoadingButtonController {
 
     /* @ngInject */
     constructor(private $http: IHttpService, private $scope: any, private $timeout: ITimeoutService) {
-        if(!this.type) {
+        if (!this.type) {
             this.type = 'button'; //wenn kein expliziter type angegeben wurde nehmen wir default button
         }
 
