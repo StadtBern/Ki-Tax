@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 /**
  * Entity fuer Abwesenheit.
  */
+@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
-@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 public class Abwesenheit extends AbstractDateRangedEntity implements Comparable<Abwesenheit> {
 
 	private static final long serialVersionUID = -6776981643150835840L;

@@ -238,9 +238,13 @@ public class Betreuung extends AbstractEntity implements Comparable<Betreuung> {
 
 		boolean pensenSame = this.getBetreuungspensumContainers().stream().allMatch(
 			(pensCont) -> otherBetreuung.getBetreuungspensumContainers().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(pensCont)));
+
+		boolean abwesenheitenSame = this.getAbwesenheitContainers().stream().allMatch(
+			(abwesenheitCont) -> otherBetreuung.getAbwesenheitContainers().stream().anyMatch(otherAbwesenheitCont -> otherAbwesenheitCont.isSame(abwesenheitCont)));
+
 		boolean statusSame = Objects.equals(this.getBetreuungsstatus(), otherBetreuung.getBetreuungsstatus());
 		boolean stammdatenSame = this.getInstitutionStammdaten().isSame(otherBetreuung.getInstitutionStammdaten());
-		return pensenSame && statusSame && stammdatenSame;
+		return pensenSame && abwesenheitenSame && statusSame && stammdatenSame;
 	}
 
 	@Transient
