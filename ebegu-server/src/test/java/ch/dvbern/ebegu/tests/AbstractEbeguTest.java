@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.tests;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.tets.util.InfinispanTestCacheSetupTask;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
@@ -9,6 +10,7 @@ import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -31,6 +33,7 @@ import java.io.IOException;
 @ArquillianSuiteDeployment
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
+@ServerSetup(InfinispanTestCacheSetupTask.class)
 public abstract class AbstractEbeguTest {
 
 	@Rule
@@ -71,6 +74,7 @@ public abstract class AbstractEbeguTest {
 				.addAsResource("vorlagen/Berechnungsgrundlagen.docx", "vorlagen/Berechnungsgrundlagen.docx")
 				.addAsResource("vorlagen/Begleitschreiben.docx", "vorlagen/Begleitschreiben.docx").addAsResource("font/sRGB.profile", "font/sRGB.profile")
 				.addAsWebInfResource("META-INF/test-beans.xml", "beans.xml").addAsResource("META-INF/test-orm.xml", "META-INF/orm.xml")
+				.addAsManifestResource("META-INF/TEST-MANIFEST.MF", "MANIFEST.MF")
 				// Deploy our test datasource
 				.addAsWebInfResource("test-ds.xml");
 		if (classesToAdd != null) {

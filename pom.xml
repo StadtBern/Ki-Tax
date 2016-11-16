@@ -33,7 +33,7 @@
 
         <version.flyway>3.2.1</version.flyway>
         <version.slf4j>1.7.10</version.slf4j>
-        <version.wildfly-arquillian-containers>1.0.2.Final</version.wildfly-arquillian-containers>
+        <version.wildfly-arquillian-containers>1.1.0.Final</version.wildfly-arquillian-containers>
         <version.wildfly.container>10.0.0.Final</version.wildfly.container>
 
     </properties>
@@ -337,6 +337,15 @@
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>8.1.0.Final</version>
+                <!-- Provided as we use the Infinispan provided by Wildfly -->
+                <scope>provided</scope>
+            </dependency>
+
+
         </dependencies>
 
     </dependencyManagement>
@@ -512,15 +521,6 @@
 
             </dependencies>
 
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
 
@@ -545,18 +545,10 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>1.1.0.Final</version>
+                    <version>${version.wildfly-arquillian-containers}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <!-- Arquillian WildFly remote profile -->
@@ -793,6 +785,7 @@
                     <artifactId>hibernate-maven-plugin</artifactId>
                     <version>2.0.0</version>
                 </plugin>
+
 
                 <!-- todo fabio fragen ob man nicht das vom parent-pom verwenden kann-->
                 <!--<plugin>-->
