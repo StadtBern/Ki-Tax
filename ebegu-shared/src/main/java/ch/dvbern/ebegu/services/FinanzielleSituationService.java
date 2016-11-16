@@ -16,9 +16,10 @@ public interface FinanzielleSituationService {
 	/**
 	 * Speichert die FinanzielleSituation neu in der DB falls der Key noch nicht existiert.
 	 * @param finanzielleSituation Die FinanzielleSituation als DTO
+	 * @param gesuchId
 	 */
 	@Nonnull
-	FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation);
+	FinanzielleSituationContainer saveFinanzielleSituation(@Nonnull FinanzielleSituationContainer finanzielleSituation, String gesuchId);
 
 	/**
 	 * @param key PK (id) der FinanzielleSituation

@@ -10,6 +10,7 @@ import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlech
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import IQService = angular.IQService;
 let template = require('./einkommensverschlechterungResultateView.html');
 require('./einkommensverschlechterungResultateView.less');
 
@@ -34,7 +35,8 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
     /* @ngInject */
     constructor($stateParams: IEinkommensverschlechterungResultateStateParams, gesuchModelManager: GesuchModelManager,
-                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService, wizardStepManager: WizardStepManager) {
+                berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
+                wizardStepManager: WizardStepManager) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.parsedBasisJahrPlusNum = parseInt($stateParams.basisjahrPlus, 10);
         this.gesuchModelManager.setBasisJahrPlusNumber(this.parsedBasisJahrPlusNum);
@@ -75,6 +77,15 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
 
     private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
+
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                // Update wizardStepStatus also if the form is empty and not dirty
+                return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+
+            }
+
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
                 this.gesuchModelManager.setGesuchstellerNumber(1);

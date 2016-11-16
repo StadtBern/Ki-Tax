@@ -8,6 +8,7 @@ import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import IPromise = angular.IPromise;
+import IQService = angular.IQService;
 
 export default class WizardStepManager {
 
@@ -18,9 +19,9 @@ export default class WizardStepManager {
     private wizardStepsSnapshot: Array<TSWizardStep> = [];
 
 
-    static $inject = ['AuthServiceRS', 'WizardStepRS'];
+    static $inject = ['AuthServiceRS', 'WizardStepRS', '$q'];
     /* @ngInject */
-    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS) {
+    constructor(private authServiceRS: AuthServiceRS, private wizardStepRS: WizardStepRS, private $q: IQService) {
         this.setAllowedStepsForRole(authServiceRS.getPrincipalRole());
     }
 
@@ -103,19 +104,36 @@ export default class WizardStepManager {
      * Der Step wird aktualisiert und die Liste von Steps wird nochmal aus dem Server geholt. Sollte der Status gleich sein,
      * wird nichts gemacht und undefined wird zurueckgegeben. Der Status wird auch auf verfuegbar gesetzt
      * @param stepName
-     * @param stepStatus
+     * @param newStepStatus
      * @returns {any}
      */
-    private updateWizardStepStatus(stepName: TSWizardStepName, stepStatus: TSWizardStepStatus): IPromise<void> {
+    private updateWizardStepStatus(stepName: TSWizardStepName, newStepStatus: TSWizardStepStatus): IPromise<void> {
         let step: TSWizardStep = this.getStepByName(stepName);
         step.verfuegbar = true;
-        step.wizardStepStatus = this.maybeChangeStatus(step.wizardStepStatus, stepStatus);
-        if (step.wizardStepStatus === stepStatus) { // nur wenn der Status sich geaendert hat updaten und steps laden
+        if (this.needNewStatusSave(step.wizardStepStatus, newStepStatus)) { // nur wenn der Status sich geaendert hat updaten und steps laden
+            step.wizardStepStatus = newStepStatus;
             return this.wizardStepRS.updateWizardStep(step).then((response: TSWizardStep) => {
                 return this.findStepsFromGesuch(response.gesuchId);
             });
         }
-        return undefined;
+        return this.$q.when();
+    }
+
+    private needNewStatusSave(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus) {
+        if (oldStepStatus === newStepStatus) {
+            return false;
+        }
+
+        if ((newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG || newStepStatus === TSWizardStepStatus.WARTEN)
+            && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
+            return false;
+        }
+
+        if (newStepStatus === TSWizardStepStatus.OK && oldStepStatus === TSWizardStepStatus.MUTIERT) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -138,22 +156,6 @@ export default class WizardStepManager {
         });
     }
 
-    /**
-     * Den Status einer Seite setzen auf newStepStatus wenn dies erlaubt ist. Wenn nicht kommt der alte zurueck.
-     * Im normalen Fall wird diese Methode gebraucht um von UNBESUCHT auf IN_BEARBEITUNG zu wechseln.
-     *
-     * @param oldStepStatus
-     * @param newStepStatus
-     * @returns {TSWizardStepStatus}
-     */
-    private maybeChangeStatus(oldStepStatus: TSWizardStepStatus, newStepStatus: TSWizardStepStatus): TSWizardStepStatus {
-        //wenn wir vorher auf was anderem sind als unbesucht dann bleiben wir da statt auf IN_BEARBEITUNG zu gehen.
-        if ((newStepStatus === TSWizardStepStatus.IN_BEARBEITUNG || newStepStatus === TSWizardStepStatus.WARTEN)
-            && oldStepStatus !== TSWizardStepStatus.UNBESUCHT) {
-            return oldStepStatus;
-        }
-        return newStepStatus;
-    }
 
     /**
      * Diese Methode ist eine Ausnahme. Im ersten Step haben wir das Problem, dass das Gesuch noch nicht existiert. Deswegen koennen
@@ -250,7 +252,7 @@ export default class WizardStepManager {
     public areAllStepsOK(): boolean {
         for (let i = 0; i < this.wizardSteps.length; i++) {
             if (this.wizardSteps[i].wizardStepName === TSWizardStepName.BETREUUNG) {
-                if (this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK
+                if (!this.isStatusOk(this.wizardSteps[i].wizardStepStatus)
                     && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.PLATZBESTAETIGUNG) {
                     return false;
                 }
@@ -261,11 +263,15 @@ export default class WizardStepManager {
                 }
 
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
-                && this.wizardSteps[i].wizardStepStatus !== TSWizardStepStatus.OK) {
+                && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private isStatusOk(wizardStepStatus: TSWizardStepStatus) {
+        return wizardStepStatus === TSWizardStepStatus.OK || wizardStepStatus === TSWizardStepStatus.MUTIERT;
     }
 
     /**

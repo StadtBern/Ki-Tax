@@ -79,7 +79,7 @@ public class FinanzielleSituationResource {
 			if (gesuchsteller.isPresent()) {
 				FinanzielleSituationContainer convertedFinSitCont = converter.finanzielleSituationContainerToStorableEntity(finanzielleSituationJAXP);
 				convertedFinSitCont.setGesuchsteller(gesuchsteller.get());
-				FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont);
+				FinanzielleSituationContainer persistedFinanzielleSituation = this.finanzielleSituationService.saveFinanzielleSituation(convertedFinSitCont, gesuch.get().getId());
 
 				URI uri = uriInfo.getBaseUriBuilder()
 					.path(FinanzielleSituationResource.class)

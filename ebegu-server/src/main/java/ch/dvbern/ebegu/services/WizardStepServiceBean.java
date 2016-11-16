@@ -145,13 +145,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			updateAllStatusForKinder(wizardSteps);
 		} else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
 			updateAllStatusForErwerbspensum(wizardSteps);
-		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && oldEntity instanceof EinkommensverschlechterungInfo
-			&& newEntity instanceof EinkommensverschlechterungInfo) {
+		} else if (WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(stepName) && newEntity instanceof EinkommensverschlechterungInfo) {
 			updateAllStatusForEinkommensverschlechterungInfo(wizardSteps, (EinkommensverschlechterungInfo) oldEntity, (EinkommensverschlechterungInfo) newEntity);
 		} else if (WizardStepName.DOKUMENTE.equals(stepName)) {
 			updateAllStatusForDokumente(wizardSteps);
 		} else if (WizardStepName.VERFUEGEN.equals(stepName)) {
 			updateAllStatusForVerfuegen(wizardSteps);
+		} else if (WizardStepName.FINANZIELLE_SITUATION.equals(stepName)) {
+			updateAllStatusForFinSit(wizardSteps);
 		} else {
 			updateStatusSingleStep(wizardSteps, stepName);
 		}
@@ -163,9 +164,11 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())
 				&& WizardStepName.EINKOMMENSVERSCHLECHTERUNG.equals(wizardStep.getWizardStepName())) {
 				if (!newEntity.getEinkommensverschlechterung()) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.OK);
-				} else if (!oldEntity.getEinkommensverschlechterung()) {
+					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+				} else if (oldEntity != null && !oldEntity.getEinkommensverschlechterung()) {
 					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				} else if (wizardStep.getGesuch().isMutation()) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
 				}
 			}
 		}
@@ -187,7 +190,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 						break;
 					}
 				}
-				wizardStep.setWizardStepStatus(allNeededDokumenteUploaded ? WizardStepStatus.OK : WizardStepStatus.IN_BEARBEITUNG);
+				if (allNeededDokumenteUploaded) {
+					wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+				} else {
+					if (wizardStep.getGesuch().isMutation()) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+					} else {
+						wizardStep.setWizardStepStatus(WizardStepStatus.IN_BEARBEITUNG);
+					}
+				}
 			}
 		}
 	}
@@ -260,11 +271,25 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
+	private void updateAllStatusForFinSit(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep : wizardSteps) {
+			if (WizardStepName.FINANZIELLE_SITUATION.equals(wizardStep.getWizardStepName())) {
+				if (wizardStep.getGesuch().isMutation()) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+				}
+			}
+		}
+	}
+
 	private void setWizardStepOkOrMutiert(WizardStep wizardStep) {
+		wizardStep.setWizardStepStatus(getWizardStepStatusOkOrMutiert(wizardStep));
+	}
+
+	private WizardStepStatus getWizardStepStatusOkOrMutiert(WizardStep wizardStep) {
 		if (AntragTyp.MUTATION.equals(wizardStep.getGesuch().getTyp())) {
-			wizardStep.setWizardStepStatus(WizardStepStatus.MUTIERT);
+			return WizardStepStatus.MUTIERT;
 		} else {
-			wizardStep.setWizardStepStatus(WizardStepStatus.OK);
+			return WizardStepStatus.OK;
 		}
 	}
 
@@ -291,7 +316,12 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
 						.stream().filter(kindContainer -> kindContainer.getKindJA().getFamilienErgaenzendeBetreuung())
 						.collect(Collectors.toList());
-					WizardStepStatus status = (!kinderFromGesuch.isEmpty()) ? WizardStepStatus.OK : WizardStepStatus.NOK;
+					WizardStepStatus status;
+					if (kinderFromGesuch.isEmpty()) {
+						status = WizardStepStatus.NOK;
+					} else {
+						status = getWizardStepStatusOkOrMutiert(wizardStep);
+					}
 					wizardStep.setWizardStepStatus(status);
 				}
 			}
@@ -324,7 +354,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 	private void checkStepStatusForBetreuung(WizardStep wizardStep) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = WizardStepStatus.OK;
+		WizardStepStatus status = getWizardStepStatusOkOrMutiert(wizardStep);
 		if (betreuungenFromGesuch.size() <= 0) {
 			status = WizardStepStatus.NOK;
 		} else {
@@ -356,7 +386,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
 		WizardStepStatus status = (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0)
-			? WizardStepStatus.NOK : WizardStepStatus.OK;
+			? WizardStepStatus.NOK : getWizardStepStatusOkOrMutiert(wizardStep);
 		wizardStep.setWizardStepStatus(status);
 	}
 
