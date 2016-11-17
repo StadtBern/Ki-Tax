@@ -103,10 +103,10 @@ describe('gesuchModelManager', function () {
                 spyOn(betreuungRS, 'saveBetreuung').and.returnValue($q.when(gesuchModelManager.getBetreuungToWorkWith()));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when({}));
 
-                gesuchModelManager.updateBetreuung();
+                gesuchModelManager.updateBetreuung(false);
                 scope.$apply();
 
-                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined);
+                expect(betreuungRS.saveBetreuung).toHaveBeenCalledWith(gesuchModelManager.getBetreuungToWorkWith(), '2afc9d9a-957e-4550-9a22-97624a000feb', undefined, false);
                 expect(kindRS.findKind).toHaveBeenCalledWith('2afc9d9a-957e-4550-9a22-97624a000feb');
                 expect(gesuchModelManager.getKindToWorkWith().nextNumberBetreuung).toEqual(5);
             });
@@ -323,16 +323,17 @@ describe('gesuchModelManager', function () {
             });
         });
         describe('hideSteps', function () {
-            it('should hide the step UMZUG for Erstgesuch without umzug', function() {
+            it('should hide the steps ABWESENHEIT and UMZUG for Erstgesuch without umzug', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
                 gesuchModelManager.initGesuch(true);
 
                 expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).not.toHaveBeenCalled();
             });
-            it('should unhide the step UMZUG for Mutation', function() {
+            it('should unhide the steps ABWESENHEIT and UMZUG for Mutation', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -342,8 +343,9 @@ describe('gesuchModelManager', function () {
 
                 expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
             });
-            it('should unhide the step UMZUG for Erstgesuch with umzug', function() {
+            it('should unhide the step UMZUG for Erstgesuch with umzug and hide ABWESENHEIT', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
                 spyOn(wizardStepManager, 'hideStep').and.returnValue(undefined);
                 spyOn(wizardStepManager, 'unhideStep').and.returnValue(undefined);
@@ -354,14 +356,16 @@ describe('gesuchModelManager', function () {
                 gesuch.gesuchsteller1.addAdresse(TestDataUtil.createAdresse('umzug', '2'));
                 gesuchModelManager.setGesuch(gesuch);
 
-                expect(wizardStepManager.hideStep).not.toHaveBeenCalled();
+                expect(wizardStepManager.hideStep).not.toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.hideStep).toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
                 expect(wizardStepManager.unhideStep).toHaveBeenCalledWith(TSWizardStepName.UMZUG);
+                expect(wizardStepManager.unhideStep).not.toHaveBeenCalledWith(TSWizardStepName.ABWESENHEIT);
             });
         });
         describe('updateBetreuungen', function () {
             it('should return empty Promise for undefined betreuung list', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen(undefined);
+                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
                 promise.then(() => {
@@ -372,7 +376,7 @@ describe('gesuchModelManager', function () {
             });
             it('should return empty Promise for empty betreuung list', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([]);
+                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
                 promise.then(() => {
@@ -399,7 +403,7 @@ describe('gesuchModelManager', function () {
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([betreuung]);
+                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([betreuung], true);
 
                 expect(promise).toBeDefined();
                 let promiseExecuted: TSBetreuung = undefined;

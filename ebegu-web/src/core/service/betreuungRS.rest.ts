@@ -31,10 +31,10 @@ export default class BetreuungRS {
             });
     }
 
-    public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string): IPromise<TSBetreuung> {
+    public saveBetreuung(betreuung: TSBetreuung, kindId: string, gesuchId: string, abwesenheit: boolean): IPromise<TSBetreuung> {
         let restBetreuung = {};
         restBetreuung = this.ebeguRestUtil.betreuungToRestObject(restBetreuung, betreuung);
-        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId), restBetreuung, {
+        return this.http.put(this.serviceURL + '/' + encodeURIComponent(kindId) + '/' + abwesenheit, restBetreuung, {
             headers: {
                 'Content-Type': 'application/json'
             }

@@ -271,6 +271,8 @@ export default class WizardStepManager {
                 }
 
             } else if (this.wizardSteps[i].wizardStepName !== TSWizardStepName.VERFUEGEN
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.ABWESENHEIT
+                && this.wizardSteps[i].wizardStepName !== TSWizardStepName.UMZUG
                 && !this.isStatusOk(this.wizardSteps[i].wizardStepStatus)) {
                 return false;
             }

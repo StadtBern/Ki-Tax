@@ -103,6 +103,14 @@ export default class GesuchModelManager {
      * Oder ggf. aus der Liste entfernt
      */
     private setHiddenSteps(): void {
+        //Abwesenheit
+        if (!this.gesuch.isMutation()) {
+            this.wizardStepManager.hideStep(TSWizardStepName.ABWESENHEIT);
+        } else {
+            this.wizardStepManager.unhideStep(TSWizardStepName.ABWESENHEIT);
+        }
+
+        //Umzug
         if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
             this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
         } else {
@@ -692,8 +700,8 @@ export default class GesuchModelManager {
         }
     }
 
-    public updateBetreuung(): IPromise<TSBetreuung> {
-        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id)
+    public updateBetreuung(abwesenheit: boolean): IPromise<TSBetreuung> {
+        return this.betreuungRS.saveBetreuung(this.getBetreuungToWorkWith(), this.getKindToWorkWith().id, this.gesuch.id, abwesenheit)
             .then((betreuungResponse: any) => {
                 this.getKindFromServer();
                 this.backupCurrentGesuch();
@@ -1163,7 +1171,7 @@ export default class GesuchModelManager {
     /**
      * Aktuslisiert alle gegebenen Betreuungen.
      */
-    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>): IPromise<TSBetreuung> {
+    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<TSBetreuung> {
         let deferred = this.$q.defer();
         if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
             var updatedBetreuungen: number = 0;
@@ -1175,7 +1183,7 @@ export default class GesuchModelManager {
                         let localBetreuungIndex: number = angular.copy(updatedBetreuungen);
                         this.findKindById(kindContainer.id);
                         this.findBetreuungById(betreuung.id);
-                        this.updateBetreuung().then(() => {
+                        this.updateBetreuung(saveForAbwesenheit).then(() => {
                             //wenn alle betreuungenToUpdate bereits aktualisiert wurden, machen wir deferred.resolve,
                             //damit wir nur ein Promise zurueckgeben koennen
                             if (localBetreuungIndex === betreuungenToUpdate.length) {
@@ -1198,7 +1206,7 @@ export default class GesuchModelManager {
                 if (betreuungenToUpdate[i].id === betreuung.id) {
                     return true;
                 }
-            };
+            }
         }
         return false;
     }

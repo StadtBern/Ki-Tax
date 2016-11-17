@@ -37,13 +37,18 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 	@Override
 	@Nonnull
-	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung) {
+	public Betreuung saveBetreuung(@Valid @Nonnull Betreuung betreuung, Boolean abwesenheit) {
 		Objects.requireNonNull(betreuung);
 
 		final Betreuung mergedBetreuung = persistence.merge(betreuung);
 
 		//jetzt noch wizard step updaten
-		wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+		if (abwesenheit) {
+			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.ABWESENHEIT);
+		}
+		else {
+			wizardStepService.updateSteps(mergedBetreuung.getKind().getGesuch().getId(), null, null, WizardStepName.BETREUUNG);
+		}
 
 		return mergedBetreuung;
 	}
@@ -137,7 +142,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@Override
 	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung) {
 		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
-		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
+		final Betreuung persistedBetreuung = saveBetreuung(betreuung, false);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;
 	}

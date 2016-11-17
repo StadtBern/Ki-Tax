@@ -128,12 +128,6 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 * Hier wird es geschaut, was fuer ein Objekttyp aktualisiert wurde. Dann wird die entsprechende Logik durchgefuehrt, um zu wissen welche anderen
 	 * Steps von diesen Aenderungen beeinflusst wurden. Mit dieser Information werden alle betroffenen Status dementsprechend geaendert.
 	 * Dazu werden die Angaben in oldEntity mit denen in newEntity verglichen und dann wird entsprechend reagiert
-	 *
-	 * @param wizardSteps
-	 * @param oldEntity
-	 * @param newEntity
-	 * @param stepName
-	 * @param isMutation
 	 */
 	private void updateAllStatus(List<WizardStep> wizardSteps, AbstractEntity oldEntity, AbstractEntity newEntity, WizardStepName stepName) {
 		if (WizardStepName.FAMILIENSITUATION.equals(stepName) && oldEntity instanceof Familiensituation && newEntity instanceof Familiensituation) {
@@ -144,6 +138,8 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			updateAllStatusForUmzug(wizardSteps);
 		} else if (WizardStepName.BETREUUNG.equals(stepName)) {
 			updateAllStatusForBetreuung(wizardSteps);
+		} else if (WizardStepName.ABWESENHEIT.equals(stepName)) {
+			updateAllStatusForAbwesenheit(wizardSteps);
 		} else if (WizardStepName.KINDER.equals(stepName)) {
 			updateAllStatusForKinder(wizardSteps);
 		} else if (WizardStepName.ERWERBSPENSUM.equals(stepName)) {
@@ -269,6 +265,14 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForUmzug(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.UMZUG.equals(wizardStep.getWizardStepName())) {
+				setWizardStepOkOrMutiert(wizardStep);
+			}
+		}
+	}
+
+	private void updateAllStatusForAbwesenheit(List<WizardStep> wizardSteps) {
+		for (WizardStep wizardStep : wizardSteps) {
+			if (WizardStepName.ABWESENHEIT.equals(wizardStep.getWizardStepName())) {
 				setWizardStepOkOrMutiert(wizardStep);
 			}
 		}

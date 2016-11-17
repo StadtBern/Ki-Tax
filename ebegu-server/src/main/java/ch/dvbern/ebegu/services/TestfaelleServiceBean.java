@@ -375,7 +375,7 @@ public class TestfaelleServiceBean extends AbstractBaseService implements Testfa
 	private void saveBetreuungen(Gesuch gesuch, List<WizardStep> wizardStepsFromGesuch) {
 		setWizardStepInStatus(wizardStepsFromGesuch, WizardStepName.BETREUUNG, WizardStepStatus.IN_BEARBEITUNG);
 		gesuch.getKindContainers().forEach(kindContainer
-			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung)));
+			-> kindContainer.getBetreuungen().forEach(betreuung -> betreuungService.saveBetreuung(betreuung, false)));
 		setWizardStepVerfuegbar(wizardStepsFromGesuch, WizardStepName.BETREUUNG);
 	}
 

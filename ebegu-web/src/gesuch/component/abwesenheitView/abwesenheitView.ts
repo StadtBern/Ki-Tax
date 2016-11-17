@@ -127,7 +127,7 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
                 this.addChangedBetreuungToList(abwesenheit);
             });
 
-            return this.gesuchModelManager.updateBetreuungen(this.changedBetreuungen);
+            return this.gesuchModelManager.updateBetreuungen(this.changedBetreuungen, true);
         }
         return undefined;
     }
