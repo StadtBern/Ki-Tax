@@ -84,6 +84,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         }
     }
 
+    nichtEintreten(form: IFormController) {
+        if (form.$valid) {
+            this.verfuegungNichtEintreten().then(() => {
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
+                });
+            });
+        }
+    }
+
     public getVerfuegenToWorkWith(): TSVerfuegung {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getVerfuegenToWorkWith();
@@ -169,7 +179,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
      */
     public showVerfuegen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGEN)
-            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus() || TSBetreuungsstatus.NICHT_EINGETRETEN === this.getBetreuungsstatus());
+            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus());
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {
@@ -192,6 +202,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
                 this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
                 this.gesuchModelManager.verfuegungSchliessenOhenVerfuegen();
             });
+    }
+
+    public verfuegungNichtEintreten(): IPromise<void> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN'
+        }).then(() => {
+            this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+            this.gesuchModelManager.verfuegungSchliessenNichtEintreten();
+        });
     }
 
     /**

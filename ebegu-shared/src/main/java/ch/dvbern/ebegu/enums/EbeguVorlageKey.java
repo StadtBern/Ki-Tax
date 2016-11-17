@@ -17,6 +17,9 @@ public enum EbeguVorlageKey {
 	// Eine Angebotsübergreifende Verfügung Verfügung Kita Verfügung des Angebots Kita
 	VORLAGE_NICHT_EINTRETENSVERFUEGUNG,
 
+	// Vorlage fuer Nicht-Eintreten bei Schulkindern
+	VORLAGE_INFOSCHREIBEN_MAXIMALTARIF,
+
 	// Verfügung des Angebots Tageseltern Kleinkinder
 	VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER,
 

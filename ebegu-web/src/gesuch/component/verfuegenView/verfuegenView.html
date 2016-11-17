@@ -162,10 +162,17 @@
                 </div>
 
             <div class="row marginTop20" ng-show="!vm.isSameVerfuegungdaten() && vm.showVerfuegen()">
-                <div class="col-md-12 text-center">
+                <div class="col-md-4 text-center">
                     <dv-loading-button type="submit"  button-click="vm.save(form)"
                                        button-class="dv-btn-sm color-success">
                         <span data-translate="VERFUEGEN_UPPER"></span>
+                    </dv-loading-button>
+                </div>
+                <div class="col-md-4"  ng-show="vm.showVerfuegen() && vm.gesuchModelManager.isErstgesuch()">
+                    <dv-loading-button type="submit"
+                                       button-click="vm.nichtEintreten(form)"
+                                       button-class="dv-btn-sm color-success">
+                        <span data-translate="VERFUEGEN_NICHT_EINTRETEN_UPPER"></span>
                     </dv-loading-button>
                 </div>
             </div>

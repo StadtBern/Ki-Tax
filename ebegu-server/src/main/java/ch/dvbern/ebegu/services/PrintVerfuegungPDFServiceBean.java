@@ -14,6 +14,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.KindContainer;
+import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.EbeguVorlageKey;
 import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.types.DateRange;
@@ -98,6 +99,13 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 	 */
 	@Nonnull
 	private String getDefaultVorlagePathFromBetreuungsangebottyp(final Betreuung betreuung) {
+		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
+			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				return "/vorlagen/Nichteintretensverfuegung.docx";
+			} else {
+				return "/vorlagen/Infoschreiben Maxtarif.docx";
+			}
+		}
 		switch (betreuung.getBetreuungsangebotTyp()) {
 			case TAGESELTERN_KLEINKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx";
 			case TAGESELTERN_SCHULKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx";
@@ -109,6 +117,13 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 
 	@Nonnull
 	private EbeguVorlageKey getVorlageFromBetreuungsangebottyp(final Betreuung betreuung) {
+		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
+			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				return EbeguVorlageKey.VORLAGE_NICHT_EINTRETENSVERFUEGUNG;
+			} else {
+				return EbeguVorlageKey.VORLAGE_INFOSCHREIBEN_MAXIMALTARIF;
+			}
+		}
 		switch (betreuung.getBetreuungsangebotTyp()) {
 			case TAGESELTERN_KLEINKIND: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_TAGESELTERN_KLEINKINDER;
 			case TAGESELTERN_SCHULKIND: return EbeguVorlageKey.VORLAGE_BRIEF_TAGESELTERN_SCHULKINDER;
@@ -117,5 +132,4 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 			default: return EbeguVorlageKey.VORLAGE_VERFUEGUNG_KITA;
 		}
 	}
-
 }

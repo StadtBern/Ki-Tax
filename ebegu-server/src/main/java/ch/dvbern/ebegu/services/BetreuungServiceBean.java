@@ -135,8 +135,20 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	}
 
 	@Override
-	public Betreuung schliessenOhneVerfuegen(Betreuung betreuung) {
-		betreuung.setBetreuungsstatus(Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
+	@Nonnull
+	public Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung) {
+		return schliessen(betreuung, Betreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG);
+	}
+
+	@Override
+	@Nonnull
+	public Betreuung nichtEintreten(@Nonnull Betreuung betreuung) {
+		return schliessen(betreuung, Betreuungsstatus.NICHT_EINGETRETEN);
+	}
+
+	@Nonnull
+	private Betreuung schliessen(@Nonnull Betreuung betreuung, @Nonnull Betreuungsstatus status) {
+		betreuung.setBetreuungsstatus(status);
 		final Betreuung persistedBetreuung = saveBetreuung(betreuung);
 		wizardStepService.updateSteps(persistedBetreuung.extractGesuch().getId(), null, null, WizardStepName.VERFUEGEN);
 		return persistedBetreuung;
