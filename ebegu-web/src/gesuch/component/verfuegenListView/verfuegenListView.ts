@@ -174,7 +174,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public showErsteMahnungAusloesen(): boolean {
-        console.log('Mahnung=', this.mahnung);
         return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG;
     }
 
@@ -185,7 +184,6 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public showZweiteMahnungAusloesen(): boolean {
-        console.log('Mahnung=', this.mahnung);
         return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
     }
 
@@ -224,10 +222,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     private createMahnung(typ: TSMahnungTyp): void {
-        this.mahnung = new TSMahnung();
-        this.mahnung.mahnungTyp = typ;
-        this.mahnung.gesuch = this.getGesuch();
-        this.mahnung.active = true;
+        this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
+            this.mahnung = new TSMahnung();
+            this.mahnung.mahnungTyp = typ;
+            this.mahnung.gesuch = this.getGesuch();
+            this.mahnung.active = true;
+            this.mahnung.bemerkungen = generatedBemerkungen.data;
+        });
     }
 
     public dokumenteKomplett(): void {

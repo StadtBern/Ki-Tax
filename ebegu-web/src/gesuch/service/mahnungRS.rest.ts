@@ -47,4 +47,12 @@ export default class MahnungRS implements IEntityRS {
             }
         });
     }
+
+    public getInitialeBemerkungen(gesuch: TSGesuch): IHttpPromise<string> {
+        return this.http.get(this.serviceURL + '/bemerkungen/' + encodeURIComponent(gesuch.id), {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        });
+    }
 }

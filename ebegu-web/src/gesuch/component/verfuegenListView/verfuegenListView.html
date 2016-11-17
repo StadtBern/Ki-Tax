@@ -102,7 +102,7 @@
                     <dv-input-container class="form-group">
                         <label class="md-no-float" for="datumFristablaufID" data-translate="MAHNUNG_FRISTABLAUF"></label>
                         <dv-datepicker input-id="datumFristablaufID" name="datumFristablauf" class="form-control dv-input-container-small input-element"
-                                       ng-model="vm.mahnung.datumFristablauf" dateRequired="true">
+                                       ng-model="vm.mahnung.datumFristablauf" ng-required="true">
                         </dv-datepicker>
                         <dv-error-messages for="formMahnung.datumFristablauf.$error" class="error"></dv-error-messages>
                     </dv-input-container>
