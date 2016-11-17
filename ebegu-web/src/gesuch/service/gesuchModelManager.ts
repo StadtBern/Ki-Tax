@@ -50,6 +50,7 @@ import TSExceptionReport from '../../models/TSExceptionReport';
 import {TSErrorType} from '../../models/enums/TSErrorType';
 import {TSErrorLevel} from '../../models/enums/TSErrorLevel';
 import AdresseRS from '../../core/service/adresseRS.rest';
+import IQService = angular.IQService;
 
 export default class GesuchModelManager {
     private gesuch: TSGesuch;
@@ -66,7 +67,7 @@ export default class GesuchModelManager {
     static $inject = ['FamiliensituationRS', 'FallRS', 'GesuchRS', 'GesuchstellerRS', 'FinanzielleSituationRS', 'KindRS', 'FachstelleRS',
         'ErwerbspensumRS', 'InstitutionStammdatenRS', 'BetreuungRS', 'GesuchsperiodeRS', 'EbeguRestUtil', '$log', 'AuthServiceRS',
         'EinkommensverschlechterungContainerRS', 'VerfuegungRS', 'WizardStepManager', 'EinkommensverschlechterungInfoRS',
-        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS'];
+        'AntragStatusHistoryRS', 'EbeguUtil', 'ErrorService', 'AdresseRS', '$q'];
     /* @ngInject */
     constructor(private familiensituationRS: FamiliensituationRS, private fallRS: FallRS, private gesuchRS: GesuchRS, private gesuchstellerRS: GesuchstellerRS,
                 private finanzielleSituationRS: FinanzielleSituationRS, private kindRS: KindRS, private fachstelleRS: FachstelleRS, private erwerbspensumRS: ErwerbspensumRS,
@@ -75,7 +76,7 @@ export default class GesuchModelManager {
                 private einkommensverschlechterungContainerRS: EinkommensverschlechterungContainerRS, private verfuegungRS: VerfuegungRS,
                 private wizardStepManager: WizardStepManager, private einkommensverschlechterungInfoRS: EinkommensverschlechterungInfoRS,
                 private antragStatusHistoryRS: AntragStatusHistoryRS, private ebeguUtil: EbeguUtil, private errorService: ErrorService,
-                private adresseRS: AdresseRS) {
+                private adresseRS: AdresseRS, private $q: IQService) {
 
         this.fachstellenList = [];
         this.institutionenList = [];
@@ -101,7 +102,7 @@ export default class GesuchModelManager {
      * Mit den Daten vom Gesuch, werden die entsprechenden Steps der Liste hiddenSteps hinzugefuegt.
      * Oder ggf. aus der Liste entfernt
      */
-    private setHiddenSteps() {
+    private setHiddenSteps(): void {
         if (!this.gesuch.isMutation() && !this.getGesuch().isThereAnyUmzug()) {
             this.wizardStepManager.hideStep(TSWizardStepName.UMZUG);
         } else {
@@ -1159,4 +1160,46 @@ export default class GesuchModelManager {
             });
     }
 
+    /**
+     * Aktuslisiert alle gegebenen Betreuungen.
+     */
+    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>): IPromise<TSBetreuung> {
+        let deferred = this.$q.defer();
+        if (betreuungenToUpdate) {
+            var updatedBetreuungen: number = 0;
+            this.getGesuch().kindContainers.forEach((kindContainer) => {
+                kindContainer.betreuungen.forEach((betreuung) => {
+                    if (this.isNeededToUpdateBetreuung(betreuungenToUpdate, betreuung)) {
+                        updatedBetreuungen++;
+                        //wir brauchen eine Kopie weil updatedBetreuungen sich in jeder Iteration geaendert wird und wir den richtigen Index verlieren
+                        let localBetreuungIndex: number = angular.copy(updatedBetreuungen);
+                        this.findKindById(kindContainer.id);
+                        this.findBetreuungById(betreuung.id);
+                        this.updateBetreuung().then(() => {
+                            //wenn alle betreuungenToUpdate bereits aktualisiert wurden, machen wir deferred.resolve,
+                            //damit wir nur ein Promise zurueckgeben koennen
+                            if (localBetreuungIndex === betreuungenToUpdate.length) {
+                                deferred.resolve(this.getBetreuungToWorkWith());
+                            }
+                        });
+                    }
+                });
+            });
+        } else {
+            //Auch wenn nichts gemacht wird, muss die Promise resolved werden
+            deferred.resolve();
+        }
+        return deferred.promise;
+    }
+
+    private isNeededToUpdateBetreuung(betreuungenToUpdate: Array<TSBetreuung>, betreuung: TSBetreuung) {
+        if (betreuungenToUpdate && betreuung) {
+            for (let i = 0; i < betreuungenToUpdate.length; i++) {
+                if (betreuungenToUpdate[i].id === betreuung.id) {
+                    return true;
+                }
+            };
+        }
+        return false;
+    }
 }

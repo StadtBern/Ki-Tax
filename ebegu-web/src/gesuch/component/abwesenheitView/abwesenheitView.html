@@ -70,8 +70,7 @@
 
                         <!--abwesenheit entfernen-->
                         <div class="row" dv-show-element
-                             dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                             dv-show-expression="($index > 0) || (vm.getAbwesenheiten().length > 1)">
+                             dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                             <div class="col-md-12">
                                 <dv-loading-button type="button"
                                                    button-click="vm.removeAbwesenheit(abwesenheitInstance)"
@@ -81,6 +80,7 @@
                                 </dv-loading-button>
                             </div>
                         </div>
+                        <br/>
                     </div>
                 </fieldset>
 
