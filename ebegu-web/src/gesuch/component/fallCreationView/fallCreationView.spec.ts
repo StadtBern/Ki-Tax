@@ -25,8 +25,9 @@ describe('fallCreationView', function () {
         $rootScope = $injector.get('$rootScope');
         form = {};
         form.$valid = true;
+        form.$dirty = true;
         fallCreationview = new FallCreationViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'));
+            $injector.get('ErrorService'), $injector.get('$stateParams'), $injector.get('WizardStepManager'), $injector.get('$translate'), $q);
     }));
 
     describe('nextStep', () => {

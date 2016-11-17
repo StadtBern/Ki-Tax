@@ -1,4 +1,5 @@
 export enum TSWizardStepStatus {
+    MUTIERT = <any> 'MUTIERT',
     OK = <any> 'OK',
     NOK = <any> 'NOK',
     PLATZBESTAETIGUNG = <any> 'PLATZBESTAETIGUNG',
@@ -9,6 +10,7 @@ export enum TSWizardStepStatus {
 
 export function getTSWizardStepStatusValues(): Array<TSWizardStepStatus> {
     return [
+        TSWizardStepStatus.MUTIERT,
         TSWizardStepStatus.OK,
         TSWizardStepStatus.NOK,
         TSWizardStepStatus.PLATZBESTAETIGUNG,

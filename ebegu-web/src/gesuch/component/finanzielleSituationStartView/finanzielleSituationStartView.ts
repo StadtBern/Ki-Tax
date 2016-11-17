@@ -10,6 +10,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSGesuch from '../../../models/TSGesuch';
 import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import IQService = angular.IQService;
 let template = require('./finanzielleSituationStartView.html');
 require('./finanzielleSituationStartView.less');
 
@@ -25,11 +26,12 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     allowedRoles: Array<TSRoleUtil>;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager) {
+                wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
 
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
@@ -52,8 +54,19 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
 
     private save(form: angular.IFormController): IPromise<TSGesuch> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getGesuch());
+            }
             this.errorService.clearAll();
-            return this.gesuchModelManager.updateGesuch();
+            return this.gesuchModelManager.updateGesuch().then((gesuch: TSGesuch) => {
+                // Nötig, da nur das ganze Gesuch upgedated wird und die Aeenderng bei der FinSit sonst nicht bemerkt werden
+                if (this.gesuchModelManager.getGesuch().isMutation()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.MUTIERT);
+                }
+                return gesuch;
+            });
         }
         return undefined;
     }

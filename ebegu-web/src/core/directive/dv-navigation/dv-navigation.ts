@@ -337,9 +337,9 @@ export class NavigatorController {
             });
 
         } else if (stepName === TSWizardStepName.DOKUMENTE) {
-                this.state.go('gesuch.dokumente', {
-                    gesuchId: gesuchId
-                });
+            this.state.go('gesuch.dokumente', {
+                gesuchId: gesuchId
+            });
 
         } else if (stepName === TSWizardStepName.VERFUEGEN) {
             this.state.go('gesuch.verfuegen', {
