@@ -92,17 +92,17 @@
                     <hr class="header"/>
 
                     <dv-input-container class="form-group kommentar-feld">
-                        <label class="md-no-float" for="kommentarMahnung" data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
-                        <textarea name="kommentarMahnung" md-no-autogrow class="form-control" rows="4" id="kommentarMahnung"
+                        <label class="md-no-float" for="bemerkungenID" data-translate="MAHNUNG_FEHLENDE_DOKUMENTE"></label>
+                        <textarea name="bemerkungen" md-no-autogrow class="form-control input-element" rows="4" id="bemerkungenID"
                             ng-model="vm.mahnung.bemerkungen" ng-required="true" maxlength="1000">
                         </textarea>
-                        <dv-error-messages for="formMahnung.kommentarMahnung.$error" class="error"></dv-error-messages>
+                        <dv-error-messages for="formMahnung.bemerkungen.$error" class="error"></dv-error-messages>
                     </dv-input-container>
 
                     <dv-input-container class="form-group">
-                        <label class="md-no-float" for="datumFristablauf" data-translate="MAHNUNG_FRISTABLAUF"></label>
-                        <dv-datepicker input-id="datumFristablauf" name="datumFristablauf" class="form-control dv-input-container-small"
-                                       ng-model="vm.mahnung.datumFristablauf" ng-required="true">
+                        <label class="md-no-float" for="datumFristablaufID" data-translate="MAHNUNG_FRISTABLAUF"></label>
+                        <dv-datepicker input-id="datumFristablaufID" name="datumFristablauf" class="form-control dv-input-container-small input-element"
+                                       ng-model="vm.mahnung.datumFristablauf" dateRequired="true">
                         </dv-datepicker>
                         <dv-error-messages for="formMahnung.datumFristablauf.$error" class="error"></dv-error-messages>
                     </dv-input-container>
@@ -158,14 +158,14 @@
                         <span data-translate="ZWEITE_MAHNUNG_AUSLOESEN_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                 <span class="col-md-4" ng-show="vm.hasStatusMahnung()">
+                 <span class="col-md-4" ng-show="vm.showDokumenteKomplett()">
                     <dv-loading-button button-click="vm.dokumenteKomplett()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{DOKUMENTE_KOMPLETT_UPPER | translate}}">
                         <span data-translate="DOKUMENTE_KOMPLETT_UPPER"></span>
                     </dv-loading-button>
                 </span>
-                 <span class="col-md-4" ng-show="vm.hasStatusMahnung()">
+                 <span class="col-md-4" ng-show="vm.showDokumenteNichtKomplett()">
                     <dv-loading-button button-click="vm.dokumenteNichtKomplett()"
                                        button-class="dv-btn-sm"
                                        aria-label="{{DOKUMENTE_NICHT_KOMPLETT_UPPER | translate}}">

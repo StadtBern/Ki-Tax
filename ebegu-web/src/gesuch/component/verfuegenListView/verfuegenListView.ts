@@ -179,7 +179,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public showZweiteMahnungErstellen(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) && this.mahnung === undefined;
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+        this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN))
+            && this.mahnung === undefined;
     }
 
     public showZweiteMahnungAusloesen(): boolean {
@@ -187,9 +189,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
     }
 
-    public hasStatusMahnung(): boolean {
+    public showDokumenteKomplett(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+    }
+
+    public showDokumenteNichtKomplett(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
     }
 
     public ersteMahnungErstellen(): void {
@@ -229,15 +238,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public dokumenteNichtKomplett(): void {
-        // Nur Gesuchstatus zuruecksetzen
-        this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA);
-    }
-
-    public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
-        if (this.gesuchModelManager) {
-            return this.gesuchModelManager.saveGesuchStatus(status);
+        // Nur Gesuchstatus zuruecksetzen, und zwar zurueck auf MAHNUNG (die jeweils relevante)
+        if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
+            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
+        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
+            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
         }
-        return undefined;
     }
 
     /**

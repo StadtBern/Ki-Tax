@@ -4,6 +4,7 @@ import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
 import IPromise = angular.IPromise;
+import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
 
 export default class AbstractGesuchViewController {
 
@@ -32,5 +33,12 @@ export default class AbstractGesuchViewController {
         } else {
             return '';
         }
+    }
+
+    public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
+        if (this.gesuchModelManager) {
+            return this.gesuchModelManager.saveGesuchStatus(status);
+        }
+        return undefined;
     }
 }
