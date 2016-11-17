@@ -106,17 +106,14 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
      * @returns {boolean}
      */
     private isConfirmationRequired(): boolean {
-        return (
-            !this.isMutation()
-            && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
+        return ((!this.isMutation() && this.checkChanged2To1GS())) ||
+            (this.isMutation() && this.checkChanged2To1GS() && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId );
+    }
+
+    private checkChanged2To1GS() {
+        return this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
             && this.initialFamiliensituation.hasSecondGesuchsteller()
-            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller())
-            || (
-            this.isMutation()
-            && this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.id
-            && !this.gesuchModelManager.getGesuch().gesuchsteller2.vorgaengerId
-            && this.initialFamiliensituation.hasSecondGesuchsteller()
-            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller());
+            && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller();
     }
 
     public isMutation(): boolean {
@@ -124,5 +121,26 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             return this.gesuchModelManager.getGesuch().isMutation();
         }
         return false;
+    }
+
+    public isMutationAndDateSet(): boolean {
+        if (!this.isMutation()) {
+            return true;
+        } else {
+            if (this.getFamiliensituation().aenderungPer !== null && this.getFamiliensituation().aenderungPer !== undefined) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public isEnabled(): boolean {
+        if (this.isMutationAndDateSet() && !this.isGesuchStatusVerfuegenVerfuegt()) {
+            console.debug('return true');
+            return true
+        } else {
+            console.debug('return false');
+            return false;
+        }
     }
 }

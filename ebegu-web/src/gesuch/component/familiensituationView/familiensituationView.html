@@ -25,14 +25,13 @@
                             <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
                             </label>
                             <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
-                                           ng-model="vm.getFamiliensituation().aenderungPer" ng-required="true"
+                                           ng-model="vm.getFamiliensituation().aenderungPer"
                                            class="input-element">
                             </dv-datepicker>
-                            <dv-error-messages for="form.aenderungPer.$error"
-                                               class="error"></dv-error-messages>
                         </dv-input-container>
                     </div>
                 </div>
+
 
                 <!--familienstatus-->
                 <div class="row">
@@ -44,9 +43,10 @@
                             <dv-radio-container name="familienstatus"
                                                 ng-model="vm.getFamiliensituation().familienstatus"
                                                 ng-required="true"
-                                                class="input-element" items="vm.familienstatusValues" dv-enable-element
+                                                class="input-element" items="vm.familienstatusValues"
+                                                dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                dv-enable-expression="vm.isEnabled()">
                             </dv-radio-container>
                             <dv-error-messages for="form.familienstatus.$error"
                                                class="error"></dv-error-messages>
@@ -65,13 +65,14 @@
                                                 class="input-element" items="vm.gesuchstellerKardinalitaetValues"
                                                 dv-enable-element
                                                 dv-enable-allowed-roles="vm.allowedRoles"
-                                                dv-enable-expression="!vm.isGesuchStatusVerfuegenVerfuegt()">
+                                                dv-enable-expression="vm.isEnabled()">
                             </dv-radio-container>
                             <dv-error-messages for="form.gesuchstellerKardinalitaet.$error"
                                                class="error"></dv-error-messages>
                         </div>
                     </div>
                 </div>
+
 
                 <dv-navigation dv-show-element
                                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"

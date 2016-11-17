@@ -50,7 +50,6 @@ import TSEbeguVorlage from '../models/TSEbeguVorlage';
 import TSVorlage from '../models/TSVorlage';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSFile from '../models/TSFile';
-import TSMutationsdaten from '../models/TSMutationsdaten';
 
 
 export default class EbeguRestUtil {
@@ -535,7 +534,6 @@ export default class EbeguRestUtil {
         restGesuch.einkommensverschlechterungInfo = this.einkommensverschlechterungInfoToRestObject({}, gesuch.einkommensverschlechterungInfo);
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
-        restGesuch.mutationsdaten = this.mutationsdatenToRestObject({}, gesuch.mutationsdaten);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
@@ -548,7 +546,6 @@ export default class EbeguRestUtil {
             gesuchTS.einkommensverschlechterungInfo = this.parseEinkommensverschlechterungInfo(new TSEinkommensverschlechterungInfo(), gesuchFromServer.einkommensverschlechterungInfo);
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
-            gesuchTS.mutationsdaten = this.parseMutationsdaten(new TSMutationsdaten(), gesuchFromServer.mutationsdaten);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
@@ -1516,37 +1513,4 @@ export default class EbeguRestUtil {
         return restAntragStatusHistory;
     }
 
-    public parseMutationsdaten(mutationsdatenTS: TSMutationsdaten, mutationsdatenFromServer: any): TSMutationsdaten {
-        if (mutationsdatenFromServer) {
-            this.parseAbstractEntity(mutationsdatenTS, mutationsdatenFromServer);
-            mutationsdatenTS.mutationFamiliensituation = mutationsdatenFromServer.mutationFamiliensituation;
-            mutationsdatenTS.mutationGesuchsteller = mutationsdatenFromServer.mutationGesuchsteller;
-            mutationsdatenTS.mutationUmzug = mutationsdatenFromServer.mutationUmzug;
-            mutationsdatenTS.mutationKind = mutationsdatenFromServer.mutationKind;
-            mutationsdatenTS.mutationBetreuung = mutationsdatenFromServer.mutationBetreuung;
-            mutationsdatenTS.mutationAbwesenheit = mutationsdatenFromServer.mutationAbwesenheit;
-            mutationsdatenTS.mutationErwerbspensum = mutationsdatenFromServer.mutationErwerbspensum;
-            mutationsdatenTS.mutationFinanzielleSituation = mutationsdatenFromServer.mutationFinanzielleSituation;
-            mutationsdatenTS.mutationEinkommensverschlechterung = mutationsdatenFromServer.mutationEinkommensverschlechterung;
-            return mutationsdatenTS;
-        }
-        return undefined;
-    }
-
-    public mutationsdatenToRestObject(restMutationsdaten: any, mutationsdaten: TSMutationsdaten): any {
-        if (mutationsdaten) {
-            this.abstractEntityToRestObject(restMutationsdaten, mutationsdaten);
-            restMutationsdaten.mutationFamiliensituation = mutationsdaten.mutationFamiliensituation;
-            restMutationsdaten.mutationGesuchsteller = mutationsdaten.mutationGesuchsteller;
-            restMutationsdaten.mutationUmzug = mutationsdaten.mutationUmzug;
-            restMutationsdaten.mutationKind = mutationsdaten.mutationKind;
-            restMutationsdaten.mutationBetreuung = mutationsdaten.mutationBetreuung;
-            restMutationsdaten.mutationAbwesenheit = mutationsdaten.mutationAbwesenheit;
-            restMutationsdaten.mutationErwerbspensum = mutationsdaten.mutationErwerbspensum;
-            restMutationsdaten.mutationFinanzielleSituation = mutationsdaten.mutationFinanzielleSituation;
-            restMutationsdaten.mutationEinkommensverschlechterung = mutationsdaten.mutationEinkommensverschlechterung;
-            return restMutationsdaten;
-        }
-        return undefined;
-    }
 }

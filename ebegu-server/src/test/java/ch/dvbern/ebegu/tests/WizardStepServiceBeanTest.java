@@ -89,10 +89,6 @@ public class WizardStepServiceBeanTest extends AbstractEbeguTest {
 	public void createWizardStepListForMutationTest() {
 		final Gesuch mutation = TestDataUtil.createAndPersistGesuch(persistence);
 		mutation.setTyp(AntragTyp.MUTATION);
-		final Mutationsdaten mutationsdaten = new Mutationsdaten();
-		mutationsdaten.setMutationEinkommensverschlechterung(true);
-		mutationsdaten.setMutationErwerbspensum(true);
-		mutation.setMutationsdaten(mutationsdaten);
 
 		final List<WizardStep> wizardStepList = wizardStepService.createWizardStepList(mutation);
 

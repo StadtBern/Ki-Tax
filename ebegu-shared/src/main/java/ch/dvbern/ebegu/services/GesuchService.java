@@ -5,7 +5,6 @@ import ch.dvbern.ebegu.dto.suchfilter.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Mutationsdaten;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -88,12 +87,12 @@ public interface GesuchService {
 	/**
 	 * Erstellt eine neue Mutation fuer die Gesuchsperiode und Fall des uebergebenen Antrags. Es wird immer der letzt
 	 * verfuegte Antrag kopiert fuer die Mutation. Die Uebergebenen Mutationsdaten werden angehaengt
-     */
+	 */
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
+	Optional<Gesuch> antragMutieren(@Nonnull String antragId, LocalDate eingangsdatum);
 
 	@Nonnull
-	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
+	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId,
 									@Nonnull LocalDate eingangsdatum);
 
 	/**
@@ -108,6 +107,7 @@ public interface GesuchService {
 
 	/**
 	 * fuellt die laufnummern der Gesuche/Mutationen eines Falls auf (nach timestamperstellt)
+	 *
 	 * @param fallId
 	 */
 	void updateLaufnummerOfAllGesucheOfFall(String fallId);

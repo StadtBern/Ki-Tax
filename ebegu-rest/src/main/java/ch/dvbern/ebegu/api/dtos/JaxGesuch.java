@@ -36,9 +36,6 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	private String bemerkungen;
 
 	@Nullable
-	private JaxMutationsdaten mutationsdaten;
-
-	@Nullable
 	private int laufnummer;
 
 
@@ -98,16 +95,7 @@ public class JaxGesuch extends JaxAbstractAntragDTO {
 	public void setBemerkungen(@Nullable String bemerkungen) {
 		this.bemerkungen = bemerkungen;
 	}
-
-	@Nullable
-	public JaxMutationsdaten getMutationsdaten() {
-		return mutationsdaten;
-	}
-
-	public void setMutationsdaten(@Nullable JaxMutationsdaten mutationsdaten) {
-		this.mutationsdaten = mutationsdaten;
-	}
-
+	
 	@Nullable
 	public int getLaufnummer() {
 		return laufnummer;

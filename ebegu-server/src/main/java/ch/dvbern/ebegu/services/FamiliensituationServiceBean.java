@@ -46,10 +46,7 @@ public class FamiliensituationServiceBean extends AbstractBaseService implements
 
 		// Falls noch nicht vorhanden, werden die GemeinsameSteuererklaerung fuer FS und EV auf false gesetzt, auch die Mutationsdaten werden aktualisiert
 		if (gesuch.isMutation() && EbeguUtil.fromOneGSToTwoGS(oldFamiliensituation, newFamiliensituation)) {
-			if (gesuch.getMutationsdaten() != null && (gesuch.getMutationsdaten().getMutationGesuchsteller() == null
-				|| !gesuch.getMutationsdaten().getMutationGesuchsteller())) {
-				gesuch.getMutationsdaten().setMutationGesuchsteller(true);
-			}
+
 			if (newFamiliensituation.getGemeinsameSteuererklaerung() == null) {
 				newFamiliensituation.setGemeinsameSteuererklaerung(false);
 			}

@@ -3,7 +3,6 @@ import TSKindContainer from './TSKindContainer';
 import TSAbstractAntragEntity from './TSAbstractAntragEntity';
 import TSFamiliensituation from './TSFamiliensituation';
 import TSEinkommensverschlechterungInfo from './TSEinkommensverschlechterungInfo';
-import TSMutationsdaten from './TSMutationsdaten';
 import {TSAntragTyp} from './enums/TSAntragTyp';
 
 export default class TSGesuch extends TSAbstractAntragEntity {
@@ -13,7 +12,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
     private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
-    private _mutationsdaten: TSMutationsdaten;
     private _bemerkungen: string;
     private _laufnummer: number;
 
@@ -56,14 +54,6 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     set einkommensverschlechterungInfo(value: TSEinkommensverschlechterungInfo) {
         this._einkommensverschlechterungInfo = value;
-    }
-
-    get mutationsdaten(): TSMutationsdaten {
-        return this._mutationsdaten;
-    }
-
-    set mutationsdaten(value: TSMutationsdaten) {
-        this._mutationsdaten = value;
     }
 
     get bemerkungen(): string {
