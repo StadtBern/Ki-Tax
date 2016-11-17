@@ -575,6 +575,14 @@ public class JaxBConverter {
 				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituation().getId());
 			}
 		}
+		if (antragJAXP.getFamiliensituationErstgesuch() != null && antragJAXP.getFamiliensituationErstgesuch().getId() != null) {
+			final Optional<Familiensituation> famSituation = familiensituationService.findFamiliensituation(antragJAXP.getFamiliensituationErstgesuch().getId());
+			if (famSituation.isPresent()) {
+				antrag.setFamiliensituationErstgesuch(familiensituationToEntity(antragJAXP.getFamiliensituationErstgesuch(), famSituation.get()));
+			} else {
+				throw new EbeguEntityNotFoundException(exceptionString, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, antragJAXP.getFamiliensituationErstgesuch().getId());
+			}
+		}
 		if (antragJAXP.getEinkommensverschlechterungInfo() != null) {
 			if (antragJAXP.getEinkommensverschlechterungInfo().getId() != null) {
 				final Optional<EinkommensverschlechterungInfo> evkiSituation = einkommensverschlechterungInfoService.findEinkommensverschlechterungInfo(antragJAXP.getEinkommensverschlechterungInfo().getId());
@@ -614,6 +622,9 @@ public class JaxBConverter {
 		}
 		if (persistedGesuch.getFamiliensituation() != null) {
 			jaxGesuch.setFamiliensituation(this.familiensituationToJAX(persistedGesuch.getFamiliensituation()));
+		}
+		if (persistedGesuch.getFamiliensituationErstgesuch() != null) {
+			jaxGesuch.setFamiliensituationErstgesuch(this.familiensituationToJAX(persistedGesuch.getFamiliensituationErstgesuch()));
 		}
 		for (final KindContainer kind : persistedGesuch.getKindContainers()) {
 			jaxGesuch.getKindContainers().add(kindContainerToJAX(kind));

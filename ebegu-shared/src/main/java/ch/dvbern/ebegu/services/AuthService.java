@@ -25,8 +25,10 @@ public interface AuthService {
 	/**
 	 * @param authToken Authentifizierungs Token Identifikation
 	 * @return BenutzerCredentials mit der angegebenen Identifikation falls vorhanden
+	 * @deprecated  sieht aus als ob das nicht mehr benutzt wird, evtl entfernen
 	 */
 	@Nonnull
+	@Deprecated()
 	Optional<BenutzerCredentials> getCredentialsForAuthorizedToken(@Nonnull final String authToken);
 
 	/**

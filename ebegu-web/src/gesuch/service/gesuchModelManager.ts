@@ -148,6 +148,13 @@ export default class GesuchModelManager {
         return undefined;
     }
 
+    public getFamiliensituationErstgesuch(): TSFamiliensituation {
+        if (this.gesuch) {
+            return this.gesuch.familiensituationErstgesuch;
+        }
+        return undefined;
+    }
+
     public updateFachstellenList(): void {
         this.fachstelleRS.getAllFachstellen().then((response: any) => {
             this.fachstellenList = angular.copy(response);

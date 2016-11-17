@@ -20,14 +20,27 @@
 
                 <!--Aenderung per-->
                 <div class="row" ng-if="vm.isMutation()">
-                    <div class="col-sm-12 dv-input-container-small">
+                    <div class="col-md-12">
                         <dv-input-container class="form-group">
-                            <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
-                            </label>
-                            <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
-                                           ng-model="vm.getFamiliensituation().aenderungPer"
-                                           class="input-element">
-                            </dv-datepicker>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="md-no-float" data-translate="AENDERUNG_PER" for="aenderungPer_ID">
+                                    </label>
+                                    <dv-datepicker input-id="aenderungPer_ID" name="aenderungPer"
+                                                   ng-model="vm.getFamiliensituation().aenderungPer"
+                                                   class="input-element">
+                                    </dv-datepicker>
+                                </div>
+
+                                <div ng-if="vm.showError()" class="col-md-6">
+                                    <div class="dv-error-messages">
+                                        <div role="alert">
+                                            <div data-translate="ERROR_DATUM_GESETZT_BEI_MUTATION"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </dv-input-container>
                     </div>
                 </div>
@@ -73,14 +86,18 @@
                     </div>
                 </div>
 
-
-                <dv-navigation dv-show-element
-                               dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
-                               dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)">
-                </dv-navigation>
-                <dv-navigation dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
-                               dv-next="true">
-                </dv-navigation>
+                <div class="row">
+                    <div class="col-md-12">
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                       dv-previous="true" dv-next="true" dv-save="vm.confirmAndSave(form)">
+                        </dv-navigation>
+                        <dv-navigation dv-show-element
+                                       dv-show-allowed-roles="vm.TSRoleUtil.getTraegerschaftInstitutionRoles()"
+                                       dv-next="true">
+                        </dv-navigation>
+                    </div>
+                </div>
 
             </form>
         </div>

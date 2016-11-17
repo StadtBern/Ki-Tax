@@ -11,6 +11,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     private _gesuchsteller2: TSGesuchsteller;
     private _kindContainers: Array<TSKindContainer>;
     private _familiensituation: TSFamiliensituation;
+    private _familiensituationErstgesuch: TSFamiliensituation;
     private _einkommensverschlechterungInfo: TSEinkommensverschlechterungInfo;
     private _bemerkungen: string;
     private _laufnummer: number;
@@ -87,5 +88,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
             return true;
         }
         return false;
+    }
+
+
+    get familiensituationErstgesuch(): TSFamiliensituation {
+        return this._familiensituationErstgesuch;
+    }
+
+    set familiensituationErstgesuch(value: TSFamiliensituation) {
+        this._familiensituationErstgesuch = value;
     }
 }

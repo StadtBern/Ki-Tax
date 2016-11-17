@@ -18,6 +18,7 @@ import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import ITranslateService = angular.translate.ITranslateService;
 import IQService = angular.IQService;
+import IScope = angular.IScope;
 let template = require('./familiensituationView.html');
 require('./familiensituationView.less');
 let removeDialogTemplate = require('../../dialog/removeDialogTemplate.html');
@@ -37,19 +38,30 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     gesuchstellerKardinalitaetValues: Array<TSGesuchstellerKardinalitaet>;
     allowedRoles: Array<TSRole>;
     initialFamiliensituation: TSFamiliensituation;
+    savedClicked: boolean = false;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'ErrorService', 'WizardStepManager',
-        'DvDialog', '$translate', '$q'];
+        'DvDialog', '$translate', '$q', '$scope'];
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private errorService: ErrorService, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private $translate: ITranslateService, private $q: IQService) {
+                private $translate: ITranslateService, private $q: IQService, private $scope: IScope) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.familienstatusValues = getTSFamilienstatusValues();
         this.gesuchstellerKardinalitaetValues = getTSGesuchstellerKardinalitaetValues();
         this.initialFamiliensituation = angular.copy(this.gesuchModelManager.getFamiliensituation());
         this.initViewModel();
+
+        if ($scope) {
+            $scope.$watch(() => {
+                return this.gesuchModelManager.getFamiliensituation().aenderungPer;
+            }, (newValue, oldValue) => {
+                if ((newValue !== oldValue) && (!newValue)) {
+                    this.resetFamsit();
+                }
+            });
+        }
     }
 
     private initViewModel(): void {
@@ -76,13 +88,15 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
     }
 
     private save(form: angular.IFormController): IPromise<TSFamiliensituation> {
-        if (form.$valid) {
+        this.savedClicked = true;
+        if (form.$valid && !this.hasEmptyAenderungPer() && !this.hasError()) {
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
                 return this.$q.when(this.gesuchModelManager.getFamiliensituation());
             }
             this.errorService.clearAll();
+
             return this.gesuchModelManager.updateFamiliensituation();
         }
         return undefined;
@@ -98,6 +112,10 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public getFamiliensituation(): TSFamiliensituation {
         return this.gesuchModelManager.getFamiliensituation();
+    }
+
+    public getFamiliensituationErstgesuch(): TSFamiliensituation {
+        return this.gesuchModelManager.getFamiliensituationErstgesuch();
     }
 
     /**
@@ -116,12 +134,6 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             && !this.gesuchModelManager.getFamiliensituation().hasSecondGesuchsteller();
     }
 
-    public isMutation(): boolean {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().isMutation();
-        }
-        return false;
-    }
 
     public isMutationAndDateSet(): boolean {
         if (!this.isMutation()) {
@@ -142,5 +154,27 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
             console.debug('return false');
             return false;
         }
+    }
+
+    public hasEmptyAenderungPer(): boolean {
+        if (this.isMutation() && !this.getFamiliensituation().aenderungPer && !this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
+            return true;
+        }
+        return false;
+    }
+
+    public resetFamsit() {
+        this.getFamiliensituation().isRevertFamiliensituation(this.getFamiliensituationErstgesuch())
+    }
+
+    public hasError(): boolean {
+        if (this.isMutation() && this.getFamiliensituation().aenderungPer && this.getFamiliensituationErstgesuch().isSameFamiliensituation(this.getFamiliensituation())) {
+            return true;
+        }
+        return false;
+    }
+
+    public showError(): boolean {
+        return this.hasError() && this.savedClicked;
     }
 }

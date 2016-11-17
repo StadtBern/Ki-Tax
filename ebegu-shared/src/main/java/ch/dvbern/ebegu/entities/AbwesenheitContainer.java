@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.entities;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nonnull;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class AbwesenheitContainer extends AbstractEntity {
+public class AbwesenheitContainer extends AbstractEntity implements Comparable<AbwesenheitContainer> {
 
 	private static final long serialVersionUID = -8876987863152535840L;
 
@@ -66,5 +67,26 @@ public class AbwesenheitContainer extends AbstractEntity {
 
 	public void setAbwesenheitJA(Abwesenheit abwesenheitJA) {
 		this.abwesenheitJA = abwesenheitJA;
+	}
+
+	@SuppressWarnings({"ObjectEquality", "OverlyComplexBooleanExpression"})
+	public boolean isSame(AbwesenheitContainer otherAbwesenheitContainer) {
+		if (this == otherAbwesenheitContainer) {
+			return true;
+		}
+		if (otherAbwesenheitContainer == null || getClass() != otherAbwesenheitContainer.getClass()) {
+			return false;
+		}
+
+		return getAbwesenheitGS().isSame(otherAbwesenheitContainer.getAbwesenheitGS()) &&
+			getAbwesenheitJA().isSame(otherAbwesenheitContainer.getAbwesenheitJA());
+	}
+
+	@Override
+	public int compareTo(AbwesenheitContainer o) {
+		CompareToBuilder builder = new CompareToBuilder();
+		builder.append(this.getAbwesenheitJA(), o.getAbwesenheitJA());
+		builder.append(this.getAbwesenheitJA().getId(), o.getAbwesenheitJA().getId());
+		return builder.toComparison();
 	}
 }

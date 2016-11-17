@@ -61,11 +61,16 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         this.gesuchModelManager.setKorrespondenzAdresse(this.showKorrespondadr);
     }
 
-    private save(form: angular.IFormController): IPromise<TSGesuchsteller>  {
+    private save(form: angular.IFormController): IPromise<TSGesuchsteller> {
         if (form.$valid) {
             if (!form.$dirty) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 1 &&
+                    !this.gesuchModelManager.isGesuchsteller2Required()) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK)
+                }
+
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
             }
             if (!this.showKorrespondadr) {
@@ -88,13 +93,6 @@ export class StammdatenViewController extends AbstractGesuchViewController {
         return this.gesuchModelManager.getStammdatenToWorkWith();
     }
 
-    public isMutation(): boolean {
-        if (this.gesuchModelManager.getGesuch()) {
-            return this.gesuchModelManager.getGesuch().isMutation();
-        }
-        return false;
-    }
-
     /**
      * Die Wohnadresse des GS2 darf bei Mutationen in denen der GS2 bereits existiert, nicht geaendert werden.
      * Die Wohnadresse des GS1 darf bei Mutationen nie geaendert werden
@@ -103,7 +101,7 @@ export class StammdatenViewController extends AbstractGesuchViewController {
     public disableWohnadresseFor2GS(): boolean {
         return this.isMutation() && (this.gesuchModelManager.getGesuchstellerNumber() === 1
             || (this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== null
-                && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
+            && this.gesuchModelManager.getStammdatenToWorkWith().vorgaengerId !== undefined));
     }
 
     public isThereAnyUmzug(): boolean {

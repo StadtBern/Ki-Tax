@@ -29,6 +29,7 @@
     "ERROR_FORMAT": "Falsches Format",
     "ERROR_DATE": "Falsches Datums Format",
     "ERROR_MINDESTENS_EIN_WERT": "Es muss mindestens ein Mutationsbereich gewählt werden",
+    "ERROR_DATUM_GESETZT_BEI_MUTATION": "Bei einer Mutation muss die Familiensituation geändert werden wenn ein Datum gesetzt ist",
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",

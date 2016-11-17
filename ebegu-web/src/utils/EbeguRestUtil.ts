@@ -535,6 +535,7 @@ export default class EbeguRestUtil {
         restGesuch.gesuchsteller1 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller1);
         restGesuch.gesuchsteller2 = this.gesuchstellerToRestObject({}, gesuch.gesuchsteller2);
         restGesuch.familiensituation = this.familiensituationToRestObject({}, gesuch.familiensituation);
+        restGesuch.familiensituationErstgesuch = this.familiensituationToRestObject({}, gesuch.familiensituationErstgesuch);
         restGesuch.bemerkungen = gesuch.bemerkungen;
         restGesuch.laufnummer = gesuch.laufnummer;
         return restGesuch;
@@ -547,6 +548,7 @@ export default class EbeguRestUtil {
             gesuchTS.gesuchsteller1 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller1);
             gesuchTS.gesuchsteller2 = this.parseGesuchsteller(new TSGesuchsteller(), gesuchFromServer.gesuchsteller2);
             gesuchTS.familiensituation = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituation);
+            gesuchTS.familiensituationErstgesuch = this.parseFamiliensituation(new TSFamiliensituation(), gesuchFromServer.familiensituationErstgesuch);
             gesuchTS.kindContainers = this.parseKindContainerList(gesuchFromServer.kindContainers);
             gesuchTS.bemerkungen = gesuchFromServer.bemerkungen;
             gesuchTS.laufnummer = gesuchFromServer.laufnummer;

@@ -1,5 +1,6 @@
 package ch.dvbern.ebegu.tests;
 
+import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.BetreuungspensumContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -42,11 +43,10 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		Betreuung persitedBetreuung = persistBetreuung();
 		Betreuung betreuung = betreuungService.findBetreuungWithBetreuungsPensen(persitedBetreuung.getId());
 		Assert.assertNotNull(betreuung);
-		Betreuung savedBetreuung = betreuung;
 
-		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), savedBetreuung.getBetreuungsstatus());
+		Assert.assertEquals(persitedBetreuung.getBetreuungsstatus(), betreuung.getBetreuungsstatus());
 
-		betreuungService.saveBetreuung(savedBetreuung);
+		betreuungService.saveBetreuung(betreuung);
 		Optional<Betreuung> updatedBetreuung = betreuungService.findBetreuung(persitedBetreuung.getId());
 		Assert.assertTrue(updatedBetreuung.isPresent());
 
@@ -71,6 +71,9 @@ public class BetreuungServiceTest extends AbstractEbeguTest {
 		Betreuung betreuung = TestDataUtil.createDefaultBetreuung();
 		for (BetreuungspensumContainer container : betreuung.getBetreuungspensumContainers()) {
 			persistence.persist(container);
+		}
+		for (AbwesenheitContainer abwesenheit : betreuung.getAbwesenheitContainers()) {
+			persistence.persist(abwesenheit);
 		}
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getTraegerschaft());
 		persistence.persist(betreuung.getInstitutionStammdaten().getInstitution().getMandant());

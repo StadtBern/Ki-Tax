@@ -33,4 +33,11 @@ export default class AbstractGesuchViewController {
             return '';
         }
     }
+
+    public isMutation(): boolean {
+        if (this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch().isMutation();
+        }
+        return false;
+    }
 }

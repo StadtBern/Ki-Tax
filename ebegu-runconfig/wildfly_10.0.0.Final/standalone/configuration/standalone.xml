@@ -315,6 +315,13 @@
                 </local-cache>
                 <local-cache name="timestamps"/>
             </cache-container>
+			<cache-container name="ebeguCache" default-cache="ebeguAuthorizationCache">
+				<local-cache name="ebeguAuthorizationCache">
+					<transaction mode="FULL_XA"/>
+					<eviction strategy="LRU" max-entries="10000"/>
+					<expiration lifespan="1800000"/>
+				</local-cache>
+			</cache-container>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:jaxrs:1.0"/>
         <subsystem xmlns="urn:jboss:domain:jca:4.0">

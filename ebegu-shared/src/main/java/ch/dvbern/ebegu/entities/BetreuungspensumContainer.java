@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @Audited
 @Entity
-public class BetreuungspensumContainer extends AbstractEntity implements Comparable<BetreuungspensumContainer>{
+public class BetreuungspensumContainer extends AbstractEntity implements Comparable<BetreuungspensumContainer> {
 
 	private static final long serialVersionUID = -6784987861150035840L;
 

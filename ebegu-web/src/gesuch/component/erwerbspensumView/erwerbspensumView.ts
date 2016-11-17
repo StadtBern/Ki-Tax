@@ -100,6 +100,12 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController {
 
     save(form: IFormController): IPromise<any> {
         if (form.$valid) {
+
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getGesuch().gesuchsteller1.erwerbspensenContainer);
+            }
             this.maybeResetZuschlagsgrund(this.erwerbspensum);
             this.errorService.clearAll();
             return this.gesuchModelManager.saveErwerbspensum(this.gesuchsteller, this.erwerbspensum);
