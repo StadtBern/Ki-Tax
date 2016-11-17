@@ -1165,7 +1165,7 @@ export default class GesuchModelManager {
      */
     public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>): IPromise<TSBetreuung> {
         let deferred = this.$q.defer();
-        if (betreuungenToUpdate) {
+        if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
             var updatedBetreuungen: number = 0;
             this.getGesuch().kindContainers.forEach((kindContainer) => {
                 kindContainer.betreuungen.forEach((betreuung) => {
