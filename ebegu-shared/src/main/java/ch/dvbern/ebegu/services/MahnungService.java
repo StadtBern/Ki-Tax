@@ -35,4 +35,9 @@ public interface MahnungService {
 	 * Setzt den Status zurueck auf "in Bearbeitung". Setzt die offenen Mahnungen auf inaktiv.
 	 */
 	void dokumenteKomplettErhalten(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Ueberprueft fuer alle aktiven Mahnungen, ob deren Ablauffrist eingetreten ist
+	 */
+	void fristAblaufTimer();
 }

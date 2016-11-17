@@ -3,6 +3,7 @@ package ch.dvbern.ebegu.services;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mahnung_;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -15,7 +16,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,6 +76,32 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		}
 	}
 
+	@Override
+	public void fristAblaufTimer() {
+		// Es muessen alle ueberprueft werden, die noch aktiv sind und deren Ablaufdatum < NOW liegt
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+		Root<Mahnung> root = query.from(Mahnung.class);
+		query.distinct(true);
+
+		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
+		Predicate predicateAbgelaufen = cb.lessThan(root.get(Mahnung_.datumFristablauf), LocalDate.now());
+		query.where(predicateAktiv, predicateAbgelaufen);
+
+
+		query.select(root.get(Mahnung_.gesuch));
+		List<Gesuch> gesucheMitAbgelaufenenMahnungen = persistence.getCriteriaResults(query);
+		for (Gesuch gesuch : gesucheMitAbgelaufenenMahnungen) {
+			if (AntragStatus.ERSTE_MAHNUNG.equals(gesuch.getStatus())) {
+				gesuch.setStatus(AntragStatus.ERSTE_MAHNUNG_ABGELAUFEN);
+			} else if (AntragStatus.ZWEITE_MAHNUNG.equals(gesuch.getStatus())) {
+				gesuch.setStatus(AntragStatus.ZWEITE_MAHNUNG_ABGELAUFEN);
+			} else {
+				throw new IllegalArgumentException("Mahnung abgelaufen fuer ein Gesuch, welches nicht im Status MAHNUNG war");
+			}
+		}
+	}
+
 	@Nonnull
 	private Optional<Mahnung> findAktiveErstMahnung() {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -84,6 +113,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 		query.where(predicateTyp, predicateAktiv);
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!
 		Mahnung aktiveErstMahnung = persistence.getCriteriaSingleResult(query);
-		return Optional.of(aktiveErstMahnung);
+		return Optional.ofNullable(aktiveErstMahnung);
 	}
 }
