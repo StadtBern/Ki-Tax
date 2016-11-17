@@ -148,10 +148,8 @@ export class FamiliensituationViewController extends AbstractGesuchViewControlle
 
     public isEnabled(): boolean {
         if (this.isMutationAndDateSet() && !this.isGesuchStatusVerfuegenVerfuegt()) {
-            console.debug('return true');
             return true
         } else {
-            console.debug('return false');
             return false;
         }
     }

@@ -70,6 +70,9 @@ export class StammdatenViewController extends AbstractGesuchViewController {
                     !this.gesuchModelManager.isGesuchsteller2Required()) {
                     this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK)
                 }
+                if (this.gesuchModelManager.getGesuchstellerNumber() === 2 ) {
+                    this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK)
+                }
 
                 return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith());
             }

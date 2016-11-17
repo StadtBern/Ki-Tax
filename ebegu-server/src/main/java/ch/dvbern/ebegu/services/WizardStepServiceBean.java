@@ -200,7 +200,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	private void updateAllStatusForErwerbspensum(List<WizardStep> wizardSteps) {
 		for (WizardStep wizardStep : wizardSteps) {
 			if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
-				checkStepStatusForErwerbspensum(wizardStep);
+				checkStepStatusForErwerbspensum(wizardStep, false);
 			}
 		}
 	}
@@ -282,9 +282,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep : wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
-					checkStepStatusForBetreuung(wizardStep);
+					checkStepStatusForBetreuung(wizardStep, false);
 				} else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
-					checkStepStatusForErwerbspensum(wizardStep);
+					checkStepStatusForErwerbspensum(wizardStep, true);
 				}
 			}
 		}
@@ -294,9 +294,9 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		for (WizardStep wizardStep : wizardSteps) {
 			if (!WizardStepStatus.UNBESUCHT.equals(wizardStep.getWizardStepStatus())) {
 				if (WizardStepName.BETREUUNG.equals(wizardStep.getWizardStepName())) {
-					checkStepStatusForBetreuung(wizardStep);
+					checkStepStatusForBetreuung(wizardStep, true);
 				} else if (WizardStepName.ERWERBSPENSUM.equals(wizardStep.getWizardStepName())) {
-					checkStepStatusForErwerbspensum(wizardStep);
+					checkStepStatusForErwerbspensum(wizardStep, true);
 				} else if (WizardStepName.KINDER.equals(wizardStep.getWizardStepName())) {
 					final List<KindContainer> kinderFromGesuch = kindService.findAllKinderFromGesuch(wizardStep.getGesuch().getId())
 						.stream().filter(kindContainer -> kindContainer.getKindJA().getFamilienErgaenzendeBetreuung())
@@ -336,9 +336,15 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		}
 	}
 
-	private void checkStepStatusForBetreuung(WizardStep wizardStep) {
+	private void checkStepStatusForBetreuung(WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = getWizardStepStatusOkOrMutiert(wizardStep);
+		WizardStepStatus status;
+		if (changesBecauseOtherStates) {
+			status = WizardStepStatus.OK;
+		} else {
+			status = getWizardStepStatusOkOrMutiert(wizardStep);
+		}
+
 		if (betreuungenFromGesuch.size() <= 0) {
 			status = WizardStepStatus.NOK;
 		} else {
@@ -360,7 +366,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 	 *
 	 * @param wizardStep
 	 */
-	private void checkStepStatusForErwerbspensum(WizardStep wizardStep) {
+	private void checkStepStatusForErwerbspensum(WizardStep wizardStep, boolean changesBecauseOtherStates) {
 		final List<Betreuung> allBetreuungenRequiringErwerbspensum = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId())
 			.stream().filter(betreuung ->
 				betreuung.getKind().getKindJA().getPensumFachstelle() == null
@@ -369,8 +375,16 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			.collect(Collectors.toList());
 
 		final Collection<ErwerbspensumContainer> erwerbspensenForGesuch = erwerbspensumService.findErwerbspensenFromGesuch(wizardStep.getGesuch().getId());
-		WizardStepStatus status = (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0)
-			? WizardStepStatus.NOK : getWizardStepStatusOkOrMutiert(wizardStep);
+
+		WizardStepStatus status;
+		if (!allBetreuungenRequiringErwerbspensum.isEmpty() && erwerbspensenForGesuch.size() <= 0) {
+			status = WizardStepStatus.NOK;
+		} else if (changesBecauseOtherStates) {
+			status = WizardStepStatus.OK;
+		} else {
+			status = getWizardStepStatusOkOrMutiert(wizardStep);
+		}
+
 		wizardStep.setWizardStepStatus(status);
 	}
 

@@ -118,23 +118,5 @@ export class FallCreationViewController extends AbstractGesuchViewController {
             return this.$translate.instant('ART_DER_MUTATION');
         }
     }
-    // public getMutationsdaten(): TSMutationsdaten {
-    //     if (this.gesuchModelManager.getGesuch()) {
-    //         return this.gesuchModelManager.getGesuch().mutationsdaten;
-    //     }
-    //     return undefined;
-    // }
-    //
-    // public isMutationFeldRequired(): boolean {
-    //     return !(this.getMutationsdaten().mutationFamiliensituation
-    //     || this.getMutationsdaten().mutationGesuchsteller
-    //     || this.getMutationsdaten().mutationUmzug
-    //     || this.getMutationsdaten().mutationKind
-    //     || this.getMutationsdaten().mutationBetreuung
-    //     || this.getMutationsdaten().mutationAbwesenheit
-    //     || this.getMutationsdaten().mutationErwerbspensum
-    //     || this.getMutationsdaten().mutationFinanzielleSituation
-    //     || this.getMutationsdaten().mutationEinkommensverschlechterung);
-    // }
 
 }
