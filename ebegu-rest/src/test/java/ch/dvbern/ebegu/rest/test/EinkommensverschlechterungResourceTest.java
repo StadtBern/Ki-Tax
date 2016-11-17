@@ -30,7 +30,6 @@ import javax.ws.rs.core.UriInfo;
 public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTest {
 
 
-
 	@Inject
 	private GesuchstellerResource gesuchstellerResource;
 
@@ -50,7 +49,7 @@ public class EinkommensverschlechterungResourceTest extends AbstractEbeguRestTes
 		TestDataUtil.persistEntities(testGesuch, persistence);
 		TestDataUtil.createDummyAdminAnonymous(persistence);
 		JaxGesuchsteller testJaxGesuchsteller = TestJaxDataUtil.createTestJaxGesuchsteller();
-		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, testJaxGesuchsteller, uri, null);
+		JaxGesuchsteller jaxGesuchsteller = gesuchstellerResource.saveGesuchsteller(new JaxId(testGesuch.getId()), 1, false, testJaxGesuchsteller, uri, null);
 		Assert.assertNotNull(jaxGesuchsteller);
 
 		JaxEinkommensverschlechterungContainer jaxEinkommensverschlechterungContainer = TestJaxDataUtil.createTestJaxEinkommensverschlechterungContianer();

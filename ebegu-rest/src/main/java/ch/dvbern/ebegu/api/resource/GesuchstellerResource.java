@@ -46,15 +46,17 @@ public class GesuchstellerResource {
 
 	@ApiOperation(value = "Updates a Gesuchsteller or creates it if it doesn't exist in the database. The transfer object also has a relation to adressen " +
 		"(wohnadresse, umzugadresse, korrespondenzadresse) these are stored in the database as well. Note that wohnadresse and" +
-		"umzugadresse are both stored as consecutive wohnadressen in the database")
+		"umzugadresse are both stored as consecutive wohnadressen in the database. Umzugs flag wird gebraucht, um WizardSteps" +
+		"richtig zu setzen.")
 	@Nullable
 	@PUT
-	@Path("/{gesuchId}/gsNumber/{gsNumber}")
+	@Path("/{gesuchId}/gsNumber/{gsNumber}/{umzug}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuchsteller saveGesuchsteller(
 		@Nonnull @NotNull @PathParam ("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull @PathParam ("gsNumber") Integer gsNumber,
+		@Nonnull @NotNull @PathParam ("umzug") Boolean umzug,
 		@Nonnull @NotNull @Valid JaxGesuchsteller gesuchstellerJAXP,
 		@Context UriInfo uriInfo,
 		@Context HttpServletResponse response) throws EbeguException {
@@ -68,7 +70,7 @@ public class GesuchstellerResource {
 			}
 
 			Gesuchsteller convertedGesuchsteller = converter.gesuchstellerToEntity(gesuchstellerJAXP, gesuchstellerToMerge);
-			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber);
+			Gesuchsteller persistedGesuchsteller = this.gesuchstellerService.saveGesuchsteller(convertedGesuchsteller, gesuch.get(), gsNumber, umzug);
 
 			return converter.gesuchstellerToJAX(persistedGesuchsteller);
 		}

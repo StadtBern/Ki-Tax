@@ -8,6 +8,7 @@ import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanziell
 import ErrorService from '../../../core/errors/service/ErrorService';
 import WizardStepManager from '../../service/wizardStepManager';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import IQService = angular.IQService;
 let template = require('./finanzielleSituationResultateView.html');
 require('./finanzielleSituationResultateView.less');
 
@@ -26,11 +27,12 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
     gesuchsteller1FinSit: TSFinanzielleSituationContainer;
     gesuchsteller2FinSit: TSFinanzielleSituationContainer;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager) {
+                wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
         this.calculate();
@@ -56,6 +58,12 @@ export class FinanzielleSituationResultateViewController extends AbstractGesuchV
 
     private save(form: angular.IFormController): IPromise<void> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                // Update wizardStepStatus also if the form is empty and not dirty
+                return this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.OK);
+            }
             this.errorService.clearAll();
             if (this.gesuchModelManager.getGesuch().gesuchsteller1) {
                 this.gesuchModelManager.setGesuchstellerNumber(1);

@@ -11,6 +11,7 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import {TSRole} from '../../../models/enums/TSRole';
 import IPromise = angular.IPromise;
+import IQService = angular.IQService;
 let template = require('./finanzielleSituationView.html');
 require('./finanzielleSituationView.less');
 
@@ -27,11 +28,12 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
     public showSelbstaendig: boolean;
     allowedRoles: Array<TSRole>;
 
-    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService', 'WizardStepManager'];
+    static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager', 'CONSTANTS', 'ErrorService',
+        'WizardStepManager', '$q'];
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager,
                 berechnungsManager: BerechnungsManager, private CONSTANTS: any, private errorService: ErrorService,
-                wizardStepManager: WizardStepManager) {
+                wizardStepManager: WizardStepManager, private $q: IQService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         let parsedNum: number = parseInt($stateParams.gesuchstellerNumber, 10);
         this.gesuchModelManager.setGesuchstellerNumber(parsedNum);
@@ -82,6 +84,11 @@ export class FinanzielleSituationViewController extends AbstractGesuchViewContro
 
     private save(form: angular.IFormController): IPromise<TSFinanzielleSituationContainer> {
         if (form.$valid) {
+            if (!form.$dirty) {
+                // If there are no changes in form we don't need anything to update on Server and we could return the
+                // promise immediately
+                return this.$q.when(this.gesuchModelManager.getStammdatenToWorkWith().finanzielleSituationContainer);
+            }
             this.errorService.clearAll();
             return this.gesuchModelManager.saveFinanzielleSituation();
         }

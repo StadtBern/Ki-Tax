@@ -18,7 +18,7 @@ public interface GesuchstellerService {
 	 * @param gsNumber
 	 */
 	@Nonnull
-	Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber);
+	Gesuchsteller saveGesuchsteller(@Nonnull Gesuchsteller gesuchsteller, final Gesuch gesuch, Integer gsNumber, boolean umzug);
 
 	/**
 
