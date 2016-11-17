@@ -19,6 +19,7 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSMahnung from '../../../models/TSMahnung';
 import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
+import {getMahnungen} from '../../gesuch.route';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -235,6 +236,9 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
         this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
             this.mahnungRS.dokumenteKomplettErhalten(this.getGesuch());
+            this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
+                this.mahnungList = reloadedMahnungen;
+            });
         });
     }
 

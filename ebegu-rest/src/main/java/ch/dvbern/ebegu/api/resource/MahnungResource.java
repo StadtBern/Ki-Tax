@@ -12,6 +12,7 @@ import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.MahnungService;
 import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -124,13 +125,19 @@ public class MahnungResource {
 		Gesuch gesuch = gesuchOptional.get();
 		StringBuilder bemerkungenBuilder = new StringBuilder();
 
+
+
 		final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
 			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
 				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch));
 
 		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
 			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				bemerkungenBuilder.append("- ").append(dokumentGrund.getDokumentGrundTyp()).append(" / ").append(dokumentGrund.getDokumentTyp()).append(" ").append(dokumentGrund.getFullName()).append("\n");
+				bemerkungenBuilder.
+					append("- ").
+					append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp())).
+					append(" (").
+					append(dokumentGrund.getFullName()).append(")\n");
 			}
 		}
 		return bemerkungenBuilder.toString();
