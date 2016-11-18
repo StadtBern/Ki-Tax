@@ -1169,15 +1169,38 @@ export default class GesuchModelManager {
     }
 
     /**
-     * Aktuslisiert alle gegebenen Betreuungen.
+     * Aktualisiert alle gegebenen Betreuungen.
+     * ACHTUNG. Die Betreuungen muessen existieren damit alles richtig funktioniert
      */
     public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<Array<TSBetreuung>> {
         if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
-            return this.betreuungRS.saveBetreuungen(betreuungenToUpdate, this.gesuch.id, saveForAbwesenheit);
+            return this.betreuungRS.saveBetreuungen(betreuungenToUpdate, this.gesuch.id, saveForAbwesenheit).then((updatedBetreuungen: Array<TSBetreuung>) => {
+                //update data of Betreuungen
+                this.gesuch.kindContainers.forEach((kindContainer: TSKindContainer) => {
+                    for (let i = 0; i < kindContainer.betreuungen.length; i++) {
+                        let indexOfUpdatedBetreuung = this.wasBetreuungUpdated(kindContainer.betreuungen[i], updatedBetreuungen);
+                        if (indexOfUpdatedBetreuung >= 0) {
+                            kindContainer.betreuungen[i] = updatedBetreuungen[indexOfUpdatedBetreuung];
+                        }
+                    }
+                });
+                return updatedBetreuungen;
+            });
         } else {
             let defer = this.$q.defer();
             defer.resolve();
             return defer.promise;
         }
+    }
+
+    private wasBetreuungUpdated(betreuung: TSBetreuung, updatedBetreuungen: Array<TSBetreuung>): number {
+        if (betreuung && updatedBetreuungen) {
+            for (let i = 0; i < updatedBetreuungen.length; i++) {
+                if (updatedBetreuungen[i].id === betreuung.id) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }

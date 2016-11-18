@@ -388,9 +388,13 @@ describe('gesuchModelManager', function () {
             it('should return a Promise with the Betreuung that was updated', function() {
                 let myGesuch = new TSGesuch();
                 myGesuch.id = 'gesuchID';
+                TestDataUtil.setAbstractFieldsUndefined(myGesuch);
                 let betreuung: TSBetreuung = new TSBetreuung();
                 betreuung.id = 'betreuungId';
                 let betreuungen: Array<TSBetreuung> = [betreuung];
+                let kindContainer: TSKindContainer = new TSKindContainer(undefined, undefined, betreuungen);
+                kindContainer.id = 'kindID';
+                myGesuch.kindContainers = [kindContainer];
 
                 spyOn(betreuungRS, 'saveBetreuungen').and.returnValue($q.when([betreuung]));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when(undefined));
