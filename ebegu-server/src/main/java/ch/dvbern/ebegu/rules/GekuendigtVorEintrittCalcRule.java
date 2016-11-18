@@ -21,7 +21,7 @@ public class GekuendigtVorEintrittCalcRule extends AbstractCalcRule {
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		// Bei Betreuungen mit status nicht eingetreten wird Bemerkung hinzugefügt
+		// Bei Betreuungen mit status GEKUENDIGT_VOR_EINTRITT wird Bemerkung hinzugefügt
 		if (Betreuungsstatus.GEKUENDIGT_VOR_EINTRITT.equals(betreuung.getBetreuungsstatus())) {
 			verfuegungZeitabschnitt.addBemerkung(RuleKey.GEKUENDIGT_VOR_EINTRITT, MsgKey.GEKUENDIGT_VOR_EINTRITT_MSG);
 		}
