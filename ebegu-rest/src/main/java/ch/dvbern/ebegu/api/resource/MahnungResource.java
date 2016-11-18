@@ -3,16 +3,11 @@ package ch.dvbern.ebegu.api.resource;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxMahnung;
-import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
-import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.MahnungService;
-import ch.dvbern.ebegu.util.DokumenteUtil;
-import ch.dvbern.ebegu.util.ServerMessageUtil;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.Validate;
 
@@ -29,7 +24,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -45,12 +39,6 @@ public class MahnungResource {
 
 	@Inject
 	private MahnungService mahnungService;
-
-	@Inject
-	private DokumentGrundService dokumentGrundService;
-
-	@Inject
-	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
 	@Inject
 	private JaxBConverter converter;
@@ -123,23 +111,6 @@ public class MahnungResource {
 			return null;
 		}
 		Gesuch gesuch = gesuchOptional.get();
-		StringBuilder bemerkungenBuilder = new StringBuilder();
-
-
-
-		final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
-			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
-				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch));
-
-		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
-			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
-				bemerkungenBuilder.
-					append("- ").
-					append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp())).
-					append(" (").
-					append(dokumentGrund.getFullName()).append(")\n");
-			}
-		}
-		return bemerkungenBuilder.toString();
+		return mahnungService.getInitialeBemerkungen(gesuch);
 	}
 }

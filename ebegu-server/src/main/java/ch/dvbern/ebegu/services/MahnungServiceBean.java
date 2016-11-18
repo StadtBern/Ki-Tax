@@ -1,12 +1,17 @@
 package ch.dvbern.ebegu.services;
 
+import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
+import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
+import ch.dvbern.ebegu.util.DokumenteUtil;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.ejb.Local;
@@ -17,10 +22,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service fuer Mahnungen
@@ -34,6 +36,12 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private DokumentGrundService dokumentGrundService;
+
+	@Inject
+	private DokumentenverzeichnisEvaluator dokumentenverzeichnisEvaluator;
 
 
 	@Override
@@ -74,6 +82,29 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 			mahnung.setActive(false);
 			persistence.persist(mahnung);
 		}
+	}
+
+	@Override
+	@Nonnull
+	public String getInitialeBemerkungen(@Nonnull Gesuch gesuch) {
+		final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
+			.mergeNeededAndPersisted(dokumentenverzeichnisEvaluator.calculate(gesuch),
+				dokumentGrundService.getAllDokumentGrundByGesuch(gesuch));
+
+		StringBuilder bemerkungenBuilder = new StringBuilder();
+		for (DokumentGrund dokumentGrund : dokumentGrundsMerged) {
+			if (dokumentGrund.isNeeded() && dokumentGrund.isEmpty()) {
+				bemerkungenBuilder.append("- ");
+				bemerkungenBuilder.append(ServerMessageUtil.translateEnumValue(dokumentGrund.getDokumentTyp()));
+				if (StringUtils.isNotEmpty(dokumentGrund.getFullName())) {
+					bemerkungenBuilder.append(" (");
+					bemerkungenBuilder.append(dokumentGrund.getFullName());
+					bemerkungenBuilder.append(")");
+				}
+				bemerkungenBuilder.append("\n");
+			}
+		}
+		return bemerkungenBuilder.toString();
 	}
 
 	@Override
