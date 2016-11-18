@@ -7,7 +7,6 @@ import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
@@ -34,9 +33,6 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 
 	@Inject
 	private Persistence<Mahnung> persistence;
-
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
 	private DokumentGrundService dokumentGrundService;
@@ -72,7 +68,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public Collection<Mahnung> findMahnungenForGesuch(@Nonnull Gesuch gesuch) {
-		return criteriaQueryHelper.getEntitiesByAttribute(Mahnung.class, gesuch, Mahnung_.gesuch);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
+		Root<Mahnung> root = query.from(Mahnung.class);
+
+		Predicate prediateGesuch = cb.equal(root.get(Mahnung_.gesuch), gesuch);
+		query.where(prediateGesuch);
+		query.orderBy(cb.asc(root.get(Mahnung_.timestampErstellt)));
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override

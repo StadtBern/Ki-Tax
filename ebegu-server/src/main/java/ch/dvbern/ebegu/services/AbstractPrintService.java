@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,7 +39,7 @@ public class AbstractPrintService extends AbstractBaseService {
 	 * @return
 	 */
 	@Nonnull
-	protected InputStream getVorlageStream(LocalDate dateAb, LocalDate dateBis, EbeguVorlageKey vorlageKey, String defaultVorlagePath) {
+	protected InputStream getVorlageStream(@Nonnull LocalDate dateAb, @Nonnull LocalDate dateBis, @Nonnull EbeguVorlageKey vorlageKey) {
 		final Optional<EbeguVorlage> vorlage = ebeguVorlageService.getEbeguVorlageByDatesAndKey(dateAb, dateBis,
 			vorlageKey, createEntityManager());
 		if (vorlage.isPresent() && vorlage.get().getVorlage() != null) {
@@ -47,12 +48,13 @@ public class AbstractPrintService extends AbstractBaseService {
 			} catch (final FileNotFoundException e) {
 				// Wenn die Datei nicht gefunden wird, die Exception Message wird gelogt und das default-template geladen
 				LOG.error("Die Datei mit der Vorlage fuer " + vorlageKey + " wurde nicht gefunden. Die default Vorlage ("
-					+ defaultVorlagePath + ") wird stattdessen benutzt");
+					+ vorlageKey.getDefaultVorlagePath() + ") wird stattdessen benutzt");
 			}
 		}
-		return AbstractPrintService.class.getResourceAsStream(defaultVorlagePath);
+		return AbstractPrintService.class.getResourceAsStream(vorlageKey.getDefaultVorlagePath());
 	}
 
+	@Nullable
 	private EntityManager createEntityManager() {
 		if (entityManagerFactory != null) {
 			return  entityManagerFactory.createEntityManager(); // creates a new EntityManager
