@@ -3,8 +3,9 @@ import BerechnungsManager from '../service/berechnungsManager';
 import {TSRole} from '../../models/enums/TSRole';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import WizardStepManager from '../service/wizardStepManager';
-import IPromise = angular.IPromise;
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSBetreuungsstatus} from '../../models/enums/TSBetreuungsstatus';
+import IPromise = angular.IPromise;
 
 export default class AbstractGesuchViewController {
 
@@ -40,5 +41,16 @@ export default class AbstractGesuchViewController {
             return this.gesuchModelManager.saveGesuchStatus(status);
         }
         return undefined;
+    }
+
+    public isGesuchInStatus(status : TSAntragStatus): boolean {
+        return status === this.gesuchModelManager.getGesuch().status;
+    }
+
+    public isBetreuungInStatus(status: TSBetreuungsstatus): boolean {
+        if (this.gesuchModelManager.getBetreuungToWorkWith()) {
+            return status === this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
+        }
+        return false;
     }
 }

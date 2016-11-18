@@ -13,7 +13,7 @@ public class VerfuegungsVergleicher {
 	public boolean isSameVerfuegungsdaten(Betreuung betreuung, Gesuch gesuchForMutation) {
 
 		// Wenn keine Mutation vorhanden ist muss nicht gemerged werden
-		if (gesuchForMutation == null) {
+		if (gesuchForMutation == null || betreuung.extractGesuch().equals(gesuchForMutation)) {
 			return false;
 		}
 
