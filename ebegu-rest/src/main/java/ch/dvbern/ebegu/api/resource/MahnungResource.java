@@ -109,7 +109,7 @@ public class MahnungResource {
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
 
 		if (!gesuchOptional.isPresent()) {
-			return null;
+			return "";
 		}
 		Gesuch gesuch = gesuchOptional.get();
 		return mahnungService.getInitialeBemerkungen(gesuch);
