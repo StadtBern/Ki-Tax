@@ -14,4 +14,5 @@ public interface UserRoleName {
 	String STEUERAMT = "STEUERAMT";
 	String SCHULAMT = "SCHULAMT";
 
+
 }

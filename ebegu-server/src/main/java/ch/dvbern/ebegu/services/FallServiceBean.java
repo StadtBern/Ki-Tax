@@ -42,6 +42,7 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
+		authorizer.checkWriteAuthorization(fall);
 		return persistence.merge(fall);
 	}
 
@@ -60,7 +61,11 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Override
 	public Optional<Fall> findFallByNumber(@Nonnull Long fallnummer) {
 		Objects.requireNonNull(fallnummer, "fallnummer muss gesetzt sein");
-		return criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
+		Optional<Fall> fallOptional = criteriaQueryHelper.getEntityByUniqueAttribute(Fall.class, fallnummer, Fall_.fallNummer);
+		if (fallOptional.isPresent()) {
+			authorizer.checkReadAuthorizationFall(fallOptional.get());
+		}
+		return fallOptional;
 	}
 
 	@Nonnull
@@ -69,7 +74,6 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 		return new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
 	}
 
-	@Nonnull
 	@Override
 	public void removeFall(@Nonnull Fall fall) {
 		Validate.notNull(fall);

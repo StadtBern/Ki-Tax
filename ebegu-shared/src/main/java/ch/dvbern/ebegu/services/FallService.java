@@ -43,7 +43,6 @@ public interface FallService {
 	 *
 	 * @param fall der Fall als DTO
 	 */
-	@Nonnull
 	void removeFall(@Nonnull Fall fall);
 
 }

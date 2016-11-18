@@ -4,6 +4,8 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -24,12 +26,17 @@ public interface Authorizer {
 	/**
 	 * prueft ob der aktuelle user berechtigt ist ein gesuch zu erstellen
 	 */
-	void checkGesuchCreateAuth();
+	void checkCreateAuthorizationGesuch();
 
 	/**
 	 * prueft ob ein Benutzer einen Fall lesen kall
 	 */
 	void checkReadAuthorizationFall(String fallId);
+
+	/**
+	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf
+	 */
+	void checkWriteAuthorization(@Nullable Fall fall);
 
 	/**
 	 * prueft ob der aktuell eingeloggte benutzer den Fall mit id schreibend bearbeiten darf

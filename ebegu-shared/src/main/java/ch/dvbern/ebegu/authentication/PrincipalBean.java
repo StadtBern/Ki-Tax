@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.BenutzerService;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
@@ -50,6 +51,7 @@ public class PrincipalBean {
 
 	}
 
+	@Nonnull
 	public Benutzer getBenutzer() {
 		if (benutzer == null) {
 			loadNormalUser();
@@ -57,7 +59,7 @@ public class PrincipalBean {
 		return benutzer;
 	}
 
-	@Nonnull
+	@Nullable
 	public Mandant getMandant() {
 		if (mandant == null) {
 			mandant = getBenutzer() != null ? getBenutzer().getMandant() : null;
@@ -87,7 +89,7 @@ public class PrincipalBean {
 		return Arrays.stream(role).map(Enum::name).anyMatch(this::isCallerInRole);
 	}
 
-	public boolean isCallerInRole(UserRole role) {
+	public boolean isCallerInRole(@Nonnull UserRole role) {
 		checkNotNull(role);
 		return this.isCallerInRole(role.name());
 	}

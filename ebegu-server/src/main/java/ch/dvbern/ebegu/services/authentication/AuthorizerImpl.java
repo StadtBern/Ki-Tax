@@ -59,7 +59,7 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
-	public void checkGesuchCreateAuth() {
+	public void checkCreateAuthorizationGesuch() {
 		if (principalBean.isCallerInAnyOfRole(UserRole.GESUCHSTELLER, UserRole.SACHBEARBEITER_JA, UserRole.ADMIN, UserRole.SUPER_ADMIN)) {
 			return;
 		}
@@ -124,6 +124,15 @@ public class AuthorizerImpl implements Authorizer {
 		}
 	}
 
+	@Override
+	public void checkWriteAuthorization(@Nullable Fall fall) {
+		if (fall != null) {
+			boolean allowed = isWriteAuthorized(fall, principalBean.getPrincipal().getName());
+			if (!allowed) {
+				throwViolation(fall);
+			}
+		}
+	}
 
 	@Override
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
@@ -133,15 +142,7 @@ public class AuthorizerImpl implements Authorizer {
 			return;
 		}
 		Fall fall = fallOptional.get();
-		if (principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN.name(), UserRole.ADMIN.name())) {
-			return;
-		}
-		if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER.name())) {
-			if (fall.getUserErstellt() != null && fall.getUserErstellt().equals(principalBean.getPrincipal().getName())) {
-				return;
-			}
-		}
-		throwViolation(fall);
+		checkWriteAuthorization(fall);
 	}
 
 	@Override

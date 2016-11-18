@@ -377,7 +377,7 @@ public class Gesuch extends AbstractEntity {
 	}
 
 	@Transient
-	public boolean hasBetreuungOfInstitution(final Institution institution) {
+	public boolean hasBetreuungOfInstitution(@Nullable final Institution institution) {
 		if (institution == null) {
 			return false;
 		}
