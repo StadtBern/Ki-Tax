@@ -46,7 +46,7 @@ public class PrintBegleitschreibenPDFServiceBean extends AbstractPrintService im
 		try {
 			final DateRange gueltigkeit = gesuch.getGesuchsperiode().getGueltigkeit();
 			InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN, "/vorlagen/Begleitschreiben.docx");
+				gueltigkeit.getGueltigBis(), EbeguVorlageKey.VORLAGE_BEGLEITSCHREIBEN);
 			Objects.requireNonNull(is, "Vorlage fuer Begleitschreiben nicht gefunden");
 			byte[] bytes = new GeneratePDFDocumentHelper().generatePDFDocument(docxME.getDocument(is, new BegleitschreibenPrintMergeSource(new BegleitschreibenPrintImpl(gesuch))));
 			is.close();

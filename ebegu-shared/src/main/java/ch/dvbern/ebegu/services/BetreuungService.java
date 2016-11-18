@@ -57,5 +57,16 @@ public interface BetreuungService {
 	@Nonnull
 	List<Betreuung> findAllBetreuungenFromGesuch(String gesuchId);
 
-	Betreuung schliessenOhneVerfuegen(Betreuung betreuung);
+	/**
+	 * Schliesst die Betreuung (Status GESCHLOSSEN_OHNE_VERFUEGUNG) ohne eine neue Verfuegung zu erstellen
+	 * (bei gleichbleibenden Daten)
+     */
+	@Nonnull
+	Betreuung schliessenOhneVerfuegen(@Nonnull Betreuung betreuung);
+
+	/**
+	 * Schliesst die Betreuung mit Status NICHT_EINGETRETEN.
+     */
+	@Nonnull
+	Betreuung nichtEintreten(@Nonnull Betreuung betreuung);
 }

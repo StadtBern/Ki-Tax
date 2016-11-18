@@ -6,6 +6,7 @@ import TSGesuch from '../models/TSGesuch';
 import BerechnungsManager from './service/berechnungsManager';
 import WizardStepManager from './service/wizardStepManager';
 import IPromise = angular.IPromise;
+import MahnungRS from './service/mahnungRS.rest';
 let gesuchTpl = require('./gesuch.html');
 
 gesuchRun.$inject = ['RouterHelper'];
@@ -332,7 +333,7 @@ export class EbeguVerfuegenListState implements IState {
 
     views: { [name: string]: IState } = {
         'gesuchViewPort': {
-            template: '<verfuegen-list-view>'
+            template: '<verfuegen-list-view mahnung-list="$resolve.mahnungList">'
         },
         'kommentarViewPort': {
             template: '<kommentar-view>'
@@ -340,7 +341,8 @@ export class EbeguVerfuegenListState implements IState {
     };
 
     resolve = {
-        gesuch: getGesuchModelManager
+        gesuch: getGesuchModelManager,
+        mahnungList: getMahnungen
     };
 }
 
@@ -483,6 +485,15 @@ export class IEinkommensverschlechterungStateParams implements IStateParamsServi
 
 export class IEinkommensverschlechterungResultateStateParams implements IStateParamsService {
     basisjahrPlus: string;
+}
+
+
+
+// FIXME dieses $inject wird ignoriert, d.h, der Parameter der Funktion muss exact dem Namen des Services entsprechen (Grossbuchstaben am Anfang). Warum?
+getMahnungen.$inject = ['GesuchModelManager', 'MahnungRS'];
+/* @ngInject */
+export function getMahnungen(GesuchModelManager: GesuchModelManager, MahnungRS: MahnungRS) {
+    return MahnungRS.findMahnungen(GesuchModelManager.getGesuch());
 }
 
 

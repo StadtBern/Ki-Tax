@@ -46,5 +46,6 @@
 	<entity class="ch.dvbern.ebegu.entities.Mutationsdaten"/>
 	<entity class="ch.dvbern.ebegu.entities.Abwesenheit"/>
 	<entity class="ch.dvbern.ebegu.entities.AbwesenheitContainer"/>
+	<entity class="ch.dvbern.ebegu.entities.Mahnung"/>
 
 </entity-mappings>

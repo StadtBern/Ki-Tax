@@ -1031,6 +1031,15 @@ export default class GesuchModelManager {
         });
     }
 
+    public verfuegungSchliessenNichtEintreten(): IPromise<void> {
+        return this.verfuegungRS.nichtEintreten(this.gesuch.id, this.getBetreuungToWorkWith().id).then((response) => {
+            this.getBetreuungToWorkWith().betreuungsstatus = TSBetreuungsstatus.NICHT_EINGETRETEN;
+            this.calculateGesuchStatus();
+            this.backupCurrentGesuch();
+            return;
+        });
+    }
+
     public getVerfuegenToWorkWith(): TSVerfuegung {
         if (this.getKindToWorkWith() && this.getBetreuungToWorkWith()) {
             return this.getBetreuungToWorkWith().verfuegung;

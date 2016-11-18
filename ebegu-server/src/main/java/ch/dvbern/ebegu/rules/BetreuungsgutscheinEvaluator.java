@@ -110,7 +110,7 @@ public class BetreuungsgutscheinEvaluator {
 
 				if (Betreuungsstatus.VERFUEGT.equals(betreuung.getBetreuungsstatus())) {
 					// Verfuegte Betreuungen duerfen nicht neu berechnet werden
-					LOG.info("Betruung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
+					LOG.info("Betreuung ist schon verfuegt. Keine Neuberechnung durchgefuehrt");
 					// Restanspruch muss mit Daten von Verfügung für nächste Betreuung richtig gesetzt werden
 					restanspruchZeitabschnitte = getRestanspruchForVerfuegteBetreung(betreuung);
 					continue;

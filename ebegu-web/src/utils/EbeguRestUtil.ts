@@ -53,6 +53,7 @@ import TSFile from '../models/TSFile';
 import TSMutationsdaten from '../models/TSMutationsdaten';
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAbwesenheit from '../models/TSAbwesenheit';
+import TSMahnung from '../models/TSMahnung';
 
 
 export default class EbeguRestUtil {
@@ -1605,6 +1606,45 @@ export default class EbeguRestUtil {
             restMutationsdaten.mutationFinanzielleSituation = mutationsdaten.mutationFinanzielleSituation;
             restMutationsdaten.mutationEinkommensverschlechterung = mutationsdaten.mutationEinkommensverschlechterung;
             return restMutationsdaten;
+        }
+        return undefined;
+    }
+
+    public mahnungToRestObject(restMahnung: any, tsMahnung: TSMahnung): any {
+        if (tsMahnung) {
+            this.abstractEntityToRestObject(restMahnung, tsMahnung);
+            restMahnung.gesuch = this.gesuchToRestObject({}, tsMahnung.gesuch);
+            restMahnung.mahnungTyp = tsMahnung.mahnungTyp;
+            restMahnung.datumFristablauf = DateUtil.momentToLocalDate(tsMahnung.datumFristablauf);
+            restMahnung.bemerkungen = tsMahnung.bemerkungen;
+            restMahnung.active = tsMahnung.active;
+            return restMahnung;
+        }
+        return undefined;
+    }
+
+    public parseMahnungen(data: Array<any>): TSMahnung[] {
+        var mahnungen: TSMahnung[] = [];
+        if (data && Array.isArray(data)) {
+            for (var i = 0; i < data.length; i++) {
+                mahnungen[i] = this.parseMahnung(new TSMahnung(), data[i]);
+            }
+        } else {
+            mahnungen[0] = this.parseMahnung(new TSMahnung(), data);
+        }
+        return mahnungen;
+    }
+
+    public parseMahnung(tsMahnung: TSMahnung, mahnungFromServer: any): TSMahnung {
+        if (mahnungFromServer) {
+            this.parseAbstractEntity(tsMahnung, mahnungFromServer);
+
+            tsMahnung.gesuch = this.parseGesuch(new TSGesuch(), mahnungFromServer.gesuch);
+            tsMahnung.mahnungTyp = mahnungFromServer.mahnungTyp;
+            tsMahnung.datumFristablauf = DateUtil.localDateToMoment(mahnungFromServer.datumFristablauf);
+            tsMahnung.bemerkungen = mahnungFromServer.bemerkungen;
+            tsMahnung.active = mahnungFromServer.active;
+            return tsMahnung;
         }
         return undefined;
     }
