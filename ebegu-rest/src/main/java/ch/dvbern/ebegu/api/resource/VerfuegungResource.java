@@ -147,7 +147,7 @@ public class VerfuegungResource {
 
 	@Nullable
 	@POST
-	@Path("/{betreuungId}")
+	@Path("/schliessenOhneVerfuegen/{betreuungId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verfuegungSchliessenOhneVerfuegen(
@@ -161,7 +161,21 @@ public class VerfuegungResource {
 		throw new EbeguEntityNotFoundException("verfuegungSchliessenOhneVerfuegen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
 	}
 
+	@Nullable
+	@POST
+	@Path("/nichtEintreten/{betreuungId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response schliessenNichtEintreten(
+		@Nonnull @NotNull @PathParam ("betreuungId") JaxId betreuungId) throws EbeguException {
 
+		Optional<Betreuung> betreuung = betreuungService.findBetreuung(betreuungId.getId());
+		if (betreuung.isPresent()) {
+			betreuungService.nichtEintreten(betreuung.get());
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("nichtEintreten", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "BetreuungID invalid: " + betreuungId.getId());
+	}
 
 	/**
 	 * Hack, welcher das Gesuch detached, damit es auf keinen Fall gespeichert wird. Vorher muessen die Lazy geloadeten

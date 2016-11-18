@@ -10,6 +10,7 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -466,15 +467,30 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
+	public Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch) {
+		if (StringUtils.isNotEmpty(gesuch.getVorgaengerId())) {
+			Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getVorgaengerId());
+			if (gesuchOptional.isPresent()) {
+				Gesuch gesuchToEvaluate = gesuchOptional.get();
+				if (AntragStatus.VERFUEGT.equals(gesuchToEvaluate.getStatus())) {
+					return gesuchOptional;
+				} else {
+					return getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(gesuchToEvaluate);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	@Nonnull
 	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
 		authorizer.checkReadAuthorization(gesuch);
 		return getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
 	}
 
-	@Override
 	@Nonnull
-	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
-		// TODO (team): Diese methode macht, was sie sagt, evt. waere es aber sicherer, das *vorgänger*gesuch zu suchen? Könnte über die neue vorgängerId gemacht werden
+	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
 		authorizer.checkReadAuthorizationFall(fall);
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
