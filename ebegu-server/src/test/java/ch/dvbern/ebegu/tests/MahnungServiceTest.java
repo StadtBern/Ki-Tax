@@ -61,17 +61,13 @@ public class MahnungServiceTest extends AbstractEbeguTest {
 		Assert.assertNotNull(zweiteMahnung);
 	}
 
-	@Test
+	@Test (expected = EbeguRuntimeException.class)
 	public void createZweiteMahnungOhneErsteMahnung() {
 		Assert.assertNotNull(mahnungService);
 		TestDataUtil.createAndPersistBenutzer(persistence);
 
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
-		try {
-			mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch));
-		} catch(EJBException e) {
-			Assert.assertEquals(EbeguRuntimeException.class, ExceptionUtils.getRootCause(e).getClass());
-		}
+		mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch));
 	}
 
 	@Test
