@@ -753,4 +753,30 @@ public final class TestDataUtil {
 		mahnung.setGesuch(gesuch);
 		return mahnung;
 	}
+
+	public static AbwesenheitContainer createShortAbwesenheitContainer(final Gesuchsperiode gesuchsperiode) {
+		final AbwesenheitContainer abwesenheitContainer = new AbwesenheitContainer();
+		abwesenheitContainer.setAbwesenheitJA(createShortAbwesenheit(gesuchsperiode));
+		return abwesenheitContainer;
+	}
+
+	private static Abwesenheit createShortAbwesenheit(final Gesuchsperiode gesuchsperiode) {
+		final Abwesenheit abwesenheit = new Abwesenheit();
+		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
+			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT - 1)));
+		return abwesenheit;
+	}
+
+	public static AbwesenheitContainer createLongAbwesenheitContainer(final Gesuchsperiode gesuchsperiode) {
+		final AbwesenheitContainer abwesenheitContainer = new AbwesenheitContainer();
+		abwesenheitContainer.setAbwesenheitJA(createLongAbwesenheit(gesuchsperiode));
+		return abwesenheitContainer;
+	}
+
+	private static Abwesenheit createLongAbwesenheit(final Gesuchsperiode gesuchsperiode) {
+		final Abwesenheit abwesenheit = new Abwesenheit();
+		abwesenheit.setGueltigkeit(new DateRange(gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1),
+			gesuchsperiode.getGueltigkeit().getGueltigAb().plusMonths(1).plusDays(Constants.ABWESENHEIT_DAYS_LIMIT)));
+		return abwesenheit;
+	}
 }
