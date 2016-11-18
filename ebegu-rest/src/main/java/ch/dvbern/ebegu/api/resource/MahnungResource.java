@@ -80,6 +80,7 @@ public class MahnungResource {
 			.collect(Collectors.toList());
 	}
 
+	@Nonnull
 	@PUT
 	@Path("/{gesuchId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -97,7 +98,7 @@ public class MahnungResource {
 		return Response.ok().build();
 	}
 
-	@Nullable
+	@Nonnull
 	@GET
 	@Path("/bemerkungen/{gesuchId}")
 	@Consumes(MediaType.WILDCARD)
