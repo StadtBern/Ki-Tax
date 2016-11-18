@@ -47,8 +47,7 @@ export default class VerfuegungRS {
     }
 
     public verfuegungSchliessenOhneVerfuegen(gesuchId: string, betreuungId: string): IPromise<void> {
-
-        return this.http.post(this.serviceURL + '/' + encodeURIComponent(betreuungId), {
+        return this.http.post(this.serviceURL + '/schliessenOhneVerfuegen/' + encodeURIComponent(betreuungId), {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -60,5 +59,16 @@ export default class VerfuegungRS {
         });
     }
 
-
+    public nichtEintreten(gesuchId: string, betreuungId: string): IPromise<void> {
+        return this.http.post(this.serviceURL + '/nichtEintreten/' + encodeURIComponent(betreuungId), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Verfuegung REST object ', response.data);
+                return;
+            });
+        });
+    }
 }

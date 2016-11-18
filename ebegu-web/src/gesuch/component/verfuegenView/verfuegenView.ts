@@ -15,6 +15,7 @@ import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import TSDownloadFile from '../../../models/TSDownloadFile';
 import IRootScopeService = angular.IRootScopeService;
+import TSBetreuung from '../../../models/TSBetreuung';
 let template = require('./verfuegenView.html');
 require('./verfuegenView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -84,6 +85,16 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         }
     }
 
+    nichtEintreten(form: IFormController) {
+        if (form.$valid) {
+            this.verfuegungNichtEintreten().then(() => {
+                this.$state.go('gesuch.verfuegen', {
+                    gesuchId: this.getGesuchId()
+                });
+            });
+        }
+    }
+
     public getVerfuegenToWorkWith(): TSVerfuegung {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getVerfuegenToWorkWith();
@@ -112,6 +123,10 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
+    public getBetreuung() : TSBetreuung {
+        return this.gesuchModelManager.getBetreuungToWorkWith();
+    }
+
     public getKindName(): string {
         if (this.gesuchModelManager && this.gesuchModelManager.getKindToWorkWith() && this.gesuchModelManager.getKindToWorkWith().kindJA) {
             return this.gesuchModelManager.getKindToWorkWith().kindJA.getFullName();
@@ -120,8 +135,8 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public getInstitutionName(): string {
-        if (this.gesuchModelManager && this.gesuchModelManager.getBetreuungToWorkWith() && this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten) {
-            return this.gesuchModelManager.getBetreuungToWorkWith().institutionStammdaten.institution.name;
+        if (this.gesuchModelManager && this.getBetreuung() && this.getBetreuung().institutionStammdaten) {
+            return this.getBetreuung().institutionStammdaten.institution.name;
         }
         return undefined;
     }
@@ -129,14 +144,14 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     public getBetreuungNumber(): string {
         if (this.ebeguUtil && this.gesuchModelManager && this.gesuchModelManager.getKindToWorkWith() && this.gesuchModelManager.getBetreuungToWorkWith()) {
             return this.ebeguUtil.calculateBetreuungsId(this.getGesuchsperiode(), this.getFall(), this.gesuchModelManager.getKindToWorkWith().kindNummer,
-                this.gesuchModelManager.getBetreuungToWorkWith().betreuungNummer);
+                this.getBetreuung().betreuungNummer);
         }
         return undefined;
     }
 
     public getBetreuungsstatus(): TSBetreuungsstatus {
         if (this.gesuchModelManager && this.gesuchModelManager.getBetreuungToWorkWith()) {
-            return this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus;
+            return this.getBetreuung().betreuungsstatus;
         }
         return undefined;
     }
@@ -169,7 +184,7 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
      */
     public showVerfuegen(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.VERFUEGEN)
-            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus() || TSBetreuungsstatus.NICHT_EINGETRETEN === this.getBetreuungsstatus());
+            && (TSBetreuungsstatus.BESTAETIGT === this.getBetreuungsstatus());
     }
 
     public saveVerfuegung(): IPromise<TSVerfuegung> {
@@ -194,12 +209,22 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             });
     }
 
+    public verfuegungNichtEintreten(): IPromise<void> {
+        return this.DvDialog.showDialog(removeDialogTempl, RemoveDialogController, {
+            title: 'CONFIRM_CLOSE_VERFUEGUNG_NICHT_EINTRETEN',
+            deleteText: 'BESCHREIBUNG_CLOSE_VERFUEGUNG_NICHT_EINTRETEN'
+        }).then(() => {
+            this.getVerfuegenToWorkWith().manuelleBemerkungen = this.bemerkungen;
+            this.gesuchModelManager.verfuegungSchliessenNichtEintreten();
+        });
+    }
+
     /**
      * Die Bemerkungen sind immer die generierten, es sei denn das Angebot ist schon verfuegt
      */
     private setBemerkungen(): void {
-        if (this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT ||
-            this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
+        if (this.getBetreuung().betreuungsstatus === TSBetreuungsstatus.VERFUEGT ||
+            this.getBetreuung().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG) {
             this.bemerkungen = this.getVerfuegenToWorkWith().manuelleBemerkungen;
         } else {
             this.bemerkungen = '';
@@ -214,13 +239,13 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
 
     public isBemerkungenDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().status !== TSAntragStatus.VERFUEGEN
-            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.VERFUEGT
-            || this.gesuchModelManager.getBetreuungToWorkWith().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
+            || this.getBetreuung().betreuungsstatus === TSBetreuungsstatus.VERFUEGT
+            || this.getBetreuung().betreuungsstatus === TSBetreuungsstatus.GESCHLOSSEN_OHNE_VERFUEGUNG;
     }
 
     public openVerfuegungPDF(): void {
         this.downloadRS.getAccessTokenVerfuegungGeneratedDokument(this.gesuchModelManager.getGesuch().id,
-            this.gesuchModelManager.getBetreuungToWorkWith().id, false, this.bemerkungen)
+            this.getBetreuung().id, false, this.bemerkungen)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
@@ -232,5 +257,17 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
             return this.getVerfuegenToWorkWith().sameVerfuegungsdaten;
         }
         return undefined;
+    }
+
+    public showVerfuegungsDetails(): boolean {
+        return !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
+    }
+
+    public showVerfuegungPdfLink(): boolean {
+        return !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
+    }
+
+    public showNichtEintretenPdfLink(): boolean {
+        return !this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
     }
 }

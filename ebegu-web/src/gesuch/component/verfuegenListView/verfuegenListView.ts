@@ -16,6 +16,10 @@ import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {TSGeneratedDokumentTyp} from '../../../models/enums/TSGeneratedDokumentTyp';
 import TSDownloadFile from '../../../models/TSDownloadFile';
+import TSMahnung from '../../../models/TSMahnung';
+import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
+import MahnungRS from '../../service/mahnungRS.rest';
+import {getMahnungen} from '../../gesuch.route';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
@@ -23,6 +27,10 @@ let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
 
 export class VerfuegenListViewComponentConfig implements IComponentOptions {
     transclude = false;
+    bindings: any = {
+        // Bereits vorhandene Mahnungen
+        mahnungList: '<'
+    };
     template = template;
     controller = VerfuegenListViewController;
     controllerAs = 'vm';
@@ -31,15 +39,18 @@ export class VerfuegenListViewComponentConfig implements IComponentOptions {
 export class VerfuegenListViewController extends AbstractGesuchViewController {
 
     private kinderWithBetreuungList: Array<TSKindContainer>;
+    mahnungList: TSMahnung[];
+    private mahnung: TSMahnung;
+    private tempAntragStatus: TSAntragStatus;
 
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$log'];
+        'DvDialog', 'DownloadRS', 'MahnungRS', '$log'];
 
     /* @ngInject */
     constructor(private $state: IStateService, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private ebeguUtil: EbeguUtil, wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
-                private downloadRS: DownloadRS, private $log: ILogService) {
+                private downloadRS: DownloadRS, private mahnungRS: MahnungRS, private $log: ILogService) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager);
         this.initViewModel();
     }
@@ -85,6 +96,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return this.kinderWithBetreuungList;
     }
 
+    public getMahnungList(): Array<TSMahnung> {
+        return this.mahnungList;
+    }
+
     /**
      * Nur bestaetigte Betreuungen koennen geoeffnet werden
      * @param kind
@@ -119,6 +134,13 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
+    public getGesuch() {
+        if (this.gesuchModelManager && this.gesuchModelManager.getGesuch()) {
+            return this.gesuchModelManager.getGesuch();
+        }
+        return undefined;
+    }
+
     public getGesuchsperiode() {
         if (this.gesuchModelManager) {
             return this.gesuchModelManager.getGesuchsperiode();
@@ -148,11 +170,85 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
         });
     }
 
-    public setGesuchStatus(status: TSAntragStatus): IPromise<TSAntragStatus> {
-        if (this.gesuchModelManager) {
-            return this.gesuchModelManager.saveGesuchStatus(status);
+    public showErsteMahnungErstellen(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) && this.mahnung === undefined;
+    }
+
+    public showErsteMahnungAusloesen(): boolean {
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ERSTE_MAHNUNG;
+    }
+
+    public showZweiteMahnungErstellen(): boolean {
+        return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+        this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_ABGELAUFEN))
+            && this.mahnung === undefined;
+    }
+
+    public showZweiteMahnungAusloesen(): boolean {
+        return this.mahnung !== undefined && this.mahnung.mahnungTyp === TSMahnungTyp.ZWEITE_MAHNUNG;
+    }
+
+    public showDokumenteKomplett(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+    }
+
+    public showDokumenteNichtKomplett(): boolean {
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
+            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
+    }
+
+    public ersteMahnungErstellen(): void {
+        this.tempAntragStatus = TSAntragStatus.ERSTE_MAHNUNG;
+        this.createMahnung(TSMahnungTyp.ERSTE_MAHNUNG);
+    }
+
+    public zweiteMahnungErstellen(): void {
+        this.tempAntragStatus = TSAntragStatus.ZWEITE_MAHNUNG;
+        this.createMahnung(TSMahnungTyp.ZWEITE_MAHNUNG);
+    }
+
+    public saveMahnung(form: angular.IFormController): void {
+        if (form.$valid) {
+            this.mahnungRS.saveMahnung(this.mahnung).then((mahnungResponse: TSMahnung) => {
+                this.setGesuchStatus(this.tempAntragStatus).then(any => {
+                    this.mahnungList.push(mahnungResponse);
+                    this.tempAntragStatus = undefined;
+                    this.mahnung = undefined;
+                });
+            });
         }
-        return undefined;
+    }
+
+    private createMahnung(typ: TSMahnungTyp): void {
+        this.mahnungRS.getInitialeBemerkungen(this.getGesuch()).then(generatedBemerkungen => {
+            this.mahnung = new TSMahnung();
+            this.mahnung.mahnungTyp = typ;
+            this.mahnung.gesuch = this.getGesuch();
+            this.mahnung.active = true;
+            this.mahnung.bemerkungen = generatedBemerkungen.data;
+        });
+    }
+
+    public dokumenteKomplett(): void {
+        // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
+        this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
+            this.mahnungRS.dokumenteKomplettErhalten(this.getGesuch());
+            this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
+                this.mahnungList = reloadedMahnungen;
+            });
+        });
+    }
+
+    public dokumenteNichtKomplett(): void {
+        // Nur Gesuchstatus zuruecksetzen, und zwar zurueck auf MAHNUNG (die jeweils relevante)
+        if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
+            this.setGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG);
+        } else if (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN)) {
+            this.setGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG);
+        }
     }
 
     /**
@@ -161,7 +257,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
      */
     public showGeprueft(): boolean {
         return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA)
-            && this.wizardStepManager.areAllStepsOK();
+            && this.wizardStepManager.areAllStepsOK() && this.mahnung === undefined;
     }
 
     /**
@@ -188,6 +284,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false);
             });
+    }
+
+    public openMahnungPDF(mahnung : TSMahnung): void {
+        window.alert('Not yet implemented');
     }
 
     private createNeededPDFs(): IPromise<TSDownloadFile> {
