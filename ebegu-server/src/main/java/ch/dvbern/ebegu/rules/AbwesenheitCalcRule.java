@@ -2,6 +2,7 @@ package ch.dvbern.ebegu.rules;
 
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
+import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
 
 import javax.annotation.Nonnull;
@@ -16,14 +17,17 @@ import javax.annotation.Nonnull;
  */
 public class AbwesenheitCalcRule extends AbstractCalcRule {
 
-	//TODO (Team) Kann erst umgesetzt werden, wenn wir die Mutationen haben!
-
 	public AbwesenheitCalcRule(@Nonnull DateRange validityPeriod) {
 		super(RuleKey.ABWESENHEIT, RuleType.REDUKTIONSREGEL, validityPeriod);
 	}
 
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
-		  //todo sobald mutation bereit bemerkung erstellen
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+			if (verfuegungZeitabschnitt.isLongAbwesenheit()) {
+				verfuegungZeitabschnitt.setBezahltVollkosten(true);
+				verfuegungZeitabschnitt.addBemerkung(RuleKey.ABWESENHEIT, MsgKey.ABWESENHEIT_MSG);
+			}
+		}
 	}
 }

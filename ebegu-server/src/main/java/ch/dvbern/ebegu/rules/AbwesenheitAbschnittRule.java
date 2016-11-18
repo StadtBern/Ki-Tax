@@ -29,16 +29,19 @@ public class AbwesenheitAbschnittRule extends AbstractAbschnittRule {
 	 * Die Abwesenheiten der Betreuung werden zuerst nach gueltigkeit sortiert. Danach suchen wir die erste lange Abweseneheit und erstellen
 	 * die 2 entsprechenden Zeitabschnitte. Alle anderen Abwesenheiten werden nicht beruecksichtigt
 	 * Sollte es keine lange Abwesenheit geben, wird eine leere Liste zurueckgegeben
+	 * Nur fuer Betreuungen die isAngebotJugendamtKleinkind
 	 */
 	@Nonnull
 	@Override
 	protected List<VerfuegungZeitabschnitt> createVerfuegungsZeitabschnitte(@Nonnull Betreuung betreuung, @Nonnull List<VerfuegungZeitabschnitt> zeitabschnitte) {
-		final List<AbwesenheitContainer> sortedAbwesenheiten = betreuung.getAbwesenheitContainers().stream().sorted().collect(Collectors.toList());
-		for (final AbwesenheitContainer abwesenheit : sortedAbwesenheiten) {
-			final Abwesenheit abwesenheitJA = abwesenheit.getAbwesenheitJA();
-			if (abwesenheitJA != null && exceedsAbwesenheitTimeLimit(abwesenheitJA)) {
-				LocalDate volltarifStart = calculateStartVolltarif(abwesenheitJA);
-				return createAbwesenheitZeitAbschnitte(betreuung, volltarifStart);
+		if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+			final List<AbwesenheitContainer> sortedAbwesenheiten = betreuung.getAbwesenheitContainers().stream().sorted().collect(Collectors.toList());
+			for (final AbwesenheitContainer abwesenheit : sortedAbwesenheiten) {
+				final Abwesenheit abwesenheitJA = abwesenheit.getAbwesenheitJA();
+				if (abwesenheitJA != null && exceedsAbwesenheitTimeLimit(abwesenheitJA)) {
+					LocalDate volltarifStart = calculateStartVolltarif(abwesenheitJA);
+					return createAbwesenheitZeitAbschnitte(betreuung, volltarifStart);
+				}
 			}
 		}
 		return new ArrayList<>();
