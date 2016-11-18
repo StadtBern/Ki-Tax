@@ -19,7 +19,6 @@ import TSDownloadFile from '../../../models/TSDownloadFile';
 import TSMahnung from '../../../models/TSMahnung';
 import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import MahnungRS from '../../service/mahnungRS.rest';
-import {getMahnungen} from '../../gesuch.route';
 let template = require('./verfuegenListView.html');
 require('./verfuegenListView.less');
 let removeDialogTempl = require('../../dialog/removeDialogTemplate.html');
