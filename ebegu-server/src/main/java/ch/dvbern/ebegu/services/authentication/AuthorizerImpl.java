@@ -16,7 +16,6 @@ import javax.ejb.EJBAccessException;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -83,6 +82,13 @@ public class AuthorizerImpl implements Authorizer {
 			throwViolation(fall);
 		}
 
+	}
+
+	@Override
+	public void checkReadAuthorizationFaelle(Collection<Fall> faelle) {
+		if (faelle != null) {
+			faelle.forEach(this::checkReadAuthorizationFall);
+		}
 	}
 
 	private boolean isReadAuthorizedFall(Fall fall) {
@@ -154,6 +160,15 @@ public class AuthorizerImpl implements Authorizer {
 	}
 
 	@Override
+	public void checkWriteAuthorization(Verfuegung verfuegung) {
+		//nur sachbearbeiter ja und admins duefen verfuegen
+		if (!principalBean.isCallerInAnyOfRole(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SACHBEARBEITER_JA)) {
+			throwViolation(verfuegung);
+		}
+
+	}
+
+	@Override
 	public void checkReadAuthorization(Betreuung betr) {
 		boolean allowed = isReadAuthorized(betr);
 		if (!allowed) {
@@ -161,13 +176,30 @@ public class AuthorizerImpl implements Authorizer {
 		}
 	}
 
+
 	@Override
-	public void checkReadAuthorization(@Nullable List<Betreuung> betreuungen) {
+	public void checkReadAuthorizationBetreuungen(@Nullable Collection<Betreuung> betreuungen) {
 		if (betreuungen != null) {
 			betreuungen.stream()
 				.filter(betreuung -> !isReadAuthorized(betreuung))
 				.findAny()
 				.ifPresent(this::throwViolation);
+		}
+	}
+
+
+	@Override
+	public void checkReadAuthorization(Verfuegung verfuegung) {
+		if (verfuegung != null) {
+			//an betreuung delegieren
+			checkReadAuthorization(verfuegung.getBetreuung());
+		}
+	}
+
+	@Override
+	public void checkReadAuthorizationVerfuegungen(Collection<Verfuegung> verfuegungen) {
+		if (verfuegungen != null) {
+			verfuegungen.forEach(this::checkReadAuthorization);
 		}
 	}
 
@@ -226,6 +258,7 @@ public class AuthorizerImpl implements Authorizer {
 		return false;
 
 	}
+
 
 	private boolean isWriteAuthorized(AbstractEntity entity, String principalName) {
 		return isSachbearbeiterJAOrGSOwner(entity, principalName);

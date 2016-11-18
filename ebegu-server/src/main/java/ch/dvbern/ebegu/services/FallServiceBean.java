@@ -71,14 +71,17 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Nonnull
 	@Override
 	public Collection<Fall> getAllFalle() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
+		ArrayList<Fall> faelle = new ArrayList<>(criteriaQueryHelper.getAll(Fall.class));
+		authorizer.checkReadAuthorizationFaelle(faelle);
+		return faelle;
 	}
 
 	@Override
 	public void removeFall(@Nonnull Fall fall) {
 		Validate.notNull(fall);
 		Optional<Fall> fallToRemove = findFall(fall.getId());
-		fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
-		persistence.remove(fallToRemove.get());
+		Fall loadedFall = fallToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeFall", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, fall));
+		authorizer.checkWriteAuthorization(loadedFall);
+		persistence.remove(loadedFall);
 	}
 }
