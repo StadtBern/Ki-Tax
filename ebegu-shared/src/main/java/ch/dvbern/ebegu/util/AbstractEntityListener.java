@@ -73,7 +73,7 @@ public class AbstractEntityListener {
 		}
 		else if (entity instanceof Fall) {
 			Fall fall = (Fall) entity;
-			Mandant mandant = getMandantService().getFirst(); //todo team der mandant sollte aus dem prinipal gelesen werden
+			Mandant mandant = getPrincipalBean().getMandant();
 			Long nextFallNr = getSequenceService().createNumberTransactional(SequenceType.FALL_NUMMER, mandant);
 			fall.setFallNummer(nextFallNr);
 			fall.setMandant(mandant);

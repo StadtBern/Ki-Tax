@@ -32,6 +32,7 @@
     "TAETIGKEIT": "Tätigkeit",
     "ERROR_MAX": "Maximaler Wert überschritten",
     "ERROR_UNEXPECTED": "Es ist ein unerwarteter Fehler aufgetreten",
+    "ERROR_UNAUTHORIZED": "Sie sind für diese Aktion nicht berechtigt",
     "ERWERBSPENSUM_LOESCHEN": "Wollen Sie das Erwerbspensum wirklich löschen",
     "FAELLE_LIST": "Alle Fälle",
     "FILE_LOESCHEN": "Wollen Sie das Dokument wirklich löschen",

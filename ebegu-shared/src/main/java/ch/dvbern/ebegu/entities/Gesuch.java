@@ -376,4 +376,14 @@ public class Gesuch extends AbstractEntity {
 		return this.typ == AntragTyp.MUTATION;
 	}
 
+	@Transient
+	public boolean hasBetreuungOfInstitution(final Institution institution) {
+		if (institution == null) {
+			return false;
+		}
+		return kindContainers.stream()
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.anyMatch(betreuung -> betreuung.getInstitutionStammdaten().getInstitution().equals(institution));
+
+	}
 }

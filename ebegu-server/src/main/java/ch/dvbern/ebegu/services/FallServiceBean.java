@@ -1,6 +1,7 @@
 package ch.dvbern.ebegu.services;
 
-import ch.dvbern.ebegu.entities.*;
+import ch.dvbern.ebegu.entities.Fall;
+import ch.dvbern.ebegu.entities.Fall_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -8,6 +9,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -16,11 +18,14 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ch.dvbern.ebegu.enums.UserRoleName.*;
+
 /**
  * Service fuer Fall
  */
 @Stateless
 @Local(FallService.class)
+@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, JURIST, REVISOR, SACHBEARBEITER_TRAEGERSCHAFT, SACHBEARBEITER_INSTITUTION, GESUCHSTELLER, STEUERAMT})
 public class FallServiceBean extends AbstractBaseService implements FallService {
 
 	@Inject
@@ -28,9 +33,13 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
 
+	@Inject
+	private Authorizer authorizer;
+
 
 	@Nonnull
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA,  GESUCHSTELLER })
 	public Fall saveFall(@Nonnull Fall fall) {
 		Objects.requireNonNull(fall);
 		return persistence.merge(fall);
@@ -41,6 +50,9 @@ public class FallServiceBean extends AbstractBaseService implements FallService 
 	public Optional<Fall> findFall(@Nonnull String key) {
 		Objects.requireNonNull(key, "id muss gesetzt sein");
 		Fall a =  persistence.find(Fall.class, key);
+		if (a != null) {
+			authorizer.checkReadAuthorizationFall(a);
+		}
 		return Optional.ofNullable(a);
 	}
 

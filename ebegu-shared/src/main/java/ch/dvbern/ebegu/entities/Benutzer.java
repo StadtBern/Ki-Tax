@@ -2,6 +2,8 @@ package ch.dvbern.ebegu.entities;
 
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.validators.CheckBenutzerRoles;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.annotation.Nullable;
@@ -17,6 +19,8 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 })
 @Audited
 @CheckBenutzerRoles
+@Cacheable      //@Reviewer cache oder nicht cache ist hier die frage
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Benutzer extends AbstractEntity {
 
 	private static final long serialVersionUID = 6372688971894279665L;

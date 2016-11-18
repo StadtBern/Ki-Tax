@@ -92,6 +92,9 @@ public interface GesuchService {
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull String antragId, @Nonnull Mutationsdaten mutationsdaten, LocalDate eingangsdatum);
 
+	/**
+	 * hilfsmethode zur mutation von faellen ueber das gui. Wird fuer testzwecke benoetigt
+	 */
 	@Nonnull
 	Optional<Gesuch> antragMutieren(@Nonnull Long fallNummer, @Nonnull String gesuchsperiodeId, @Nonnull Mutationsdaten mutationsdaten,
 									@Nonnull LocalDate eingangsdatum);
