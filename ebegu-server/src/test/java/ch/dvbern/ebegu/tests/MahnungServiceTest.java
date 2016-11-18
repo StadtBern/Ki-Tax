@@ -4,6 +4,7 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.MahnungService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
@@ -69,7 +70,7 @@ public class MahnungServiceTest extends AbstractEbeguTest {
 		try {
 			mahnungService.createMahnung(TestDataUtil.createMahnung(MahnungTyp.ZWEITE_MAHNUNG, gesuch));
 		} catch(EJBException e) {
-			Assert.assertEquals(IllegalArgumentException.class, ExceptionUtils.getRootCause(e).getClass());
+			Assert.assertEquals(EbeguRuntimeException.class, ExceptionUtils.getRootCause(e).getClass());
 		}
 	}
 
