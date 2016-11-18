@@ -1171,43 +1171,13 @@ export default class GesuchModelManager {
     /**
      * Aktuslisiert alle gegebenen Betreuungen.
      */
-    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<TSBetreuung> {
-        let deferred = this.$q.defer();
+    public updateBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, saveForAbwesenheit: boolean): IPromise<Array<TSBetreuung>> {
         if (betreuungenToUpdate && betreuungenToUpdate.length > 0) {
-            var updatedBetreuungen: number = 0;
-            this.getGesuch().kindContainers.forEach((kindContainer) => {
-                kindContainer.betreuungen.forEach((betreuung) => {
-                    if (this.isNeededToUpdateBetreuung(betreuungenToUpdate, betreuung)) {
-                        updatedBetreuungen++;
-                        //wir brauchen eine Kopie weil updatedBetreuungen sich in jeder Iteration geaendert wird und wir den richtigen Index verlieren
-                        let localBetreuungIndex: number = angular.copy(updatedBetreuungen);
-                        this.findKindById(kindContainer.id);
-                        this.findBetreuungById(betreuung.id);
-                        this.updateBetreuung(saveForAbwesenheit).then(() => {
-                            //wenn alle betreuungenToUpdate bereits aktualisiert wurden, machen wir deferred.resolve,
-                            //damit wir nur ein Promise zurueckgeben koennen
-                            if (localBetreuungIndex === betreuungenToUpdate.length) {
-                                deferred.resolve(this.getBetreuungToWorkWith());
-                            }
-                        });
-                    }
-                });
-            });
+            return this.betreuungRS.saveBetreuungen(betreuungenToUpdate, this.gesuch.id, saveForAbwesenheit);
         } else {
-            //Auch wenn nichts gemacht wird, muss die Promise resolved werden
-            deferred.resolve();
+            let defer = this.$q.defer();
+            defer.resolve();
+            return defer.promise;
         }
-        return deferred.promise;
-    }
-
-    private isNeededToUpdateBetreuung(betreuungenToUpdate: Array<TSBetreuung>, betreuung: TSBetreuung) {
-        if (betreuungenToUpdate && betreuung) {
-            for (let i = 0; i < betreuungenToUpdate.length; i++) {
-                if (betreuungenToUpdate[i].id === betreuung.id) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

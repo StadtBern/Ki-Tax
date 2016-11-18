@@ -53,4 +53,30 @@ export default class BetreuungRS {
                 return response;
             });
     }
+
+    /**
+     * Diese Methode ruft den Service um alle uebergebenen Betreuungen zu speichern.
+     * Dies wird empfohlen wenn mehrere Betreuungen gleichzeitig gespeichert werden muessen,
+     * damit alles in einer Transaction passiert. Z.B. fuer Abwesenheiten
+     */
+    public saveBetreuungen(betreuungenToUpdate: Array<TSBetreuung>, gesuchId: string, saveForAbwesenheit: boolean): IPromise<Array<TSBetreuung>> {
+        let restBetreuungen: Array<any> = [];
+        betreuungenToUpdate.forEach((betreuungToUpdate: TSBetreuung) => {
+            restBetreuungen.push(this.ebeguRestUtil.betreuungToRestObject({}, betreuungToUpdate));
+        });
+        return this.http.put(this.serviceURL + '/all/' + saveForAbwesenheit, restBetreuungen, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.wizardStepManager.findStepsFromGesuch(gesuchId).then(() => {
+                this.log.debug('PARSING Betreuung REST object ', response.data);
+                let convertedBetreuungen: Array<TSBetreuung> = [];
+                response.data.forEach((returnedBetreuung: any) => {
+                    convertedBetreuungen.push(this.ebeguRestUtil.parseBetreuung(new TSBetreuung(), returnedBetreuung));
+                });
+                return convertedBetreuungen;
+            });
+        });
+    }
 }

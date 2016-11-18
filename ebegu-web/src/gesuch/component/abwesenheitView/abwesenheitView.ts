@@ -102,13 +102,13 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
         return this.betreuungList;
     }
 
-    public save(form: angular.IFormController): IPromise<TSBetreuung> {
+    public save(form: angular.IFormController): IPromise<Array<TSBetreuung>> {
         if (form.$valid) {
             this.errorService.clearAll();
             if (!form.$dirty && !this.removed) {
                 // If there are no changes in form we don't need anything to update on Server and we could return the
                 // promise immediately
-                return this.$q.when(this.gesuchModelManager.getBetreuungToWorkWith());
+                return this.$q.when([this.gesuchModelManager.getBetreuungToWorkWith()]);
             }
 
             //Zuerst loeschen wir alle Abwesenheiten jeder Betreuung
@@ -118,13 +118,13 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
                     betreuung.abwesenheitContainers.length = 0;
                 });
             });
-            //Jetzt koennen wir alle geaenderten Abwesenheiten nochmal hinzufuegen hinzufuegen
+            //Jetzt koennen wir alle geaenderten Abwesenheiten nochmal hinzufuegen
             this.abwesenheitList.forEach((abwesenheit: AbwesenheitUI) => {
                 if (!abwesenheit.kindBetreuung.betreuung.abwesenheitContainers) {
                     abwesenheit.kindBetreuung.betreuung.abwesenheitContainers = [];
                 }
                 abwesenheit.kindBetreuung.betreuung.abwesenheitContainers.push(abwesenheit.abwesenheit);
-                this.addChangedBetreuungToList(abwesenheit);
+                this.addChangedBetreuungToList(abwesenheit.kindBetreuung.betreuung);
             });
 
             return this.gesuchModelManager.updateBetreuungen(this.changedBetreuungen, true);
@@ -132,27 +132,49 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
         return undefined;
     }
 
-    private addChangedBetreuungToList(abwesenheit: AbwesenheitUI) {
-        if (this.changedBetreuungen.indexOf(abwesenheit.kindBetreuung.betreuung) < 0) {
-            this.changedBetreuungen.push(abwesenheit.kindBetreuung.betreuung);
+    /**
+     * Anhand des IDs schaut es ob die gegebene Betreuung bereits in der Liste changedBetreuungen ist.
+     * Nur wenn sie noch nicht da ist, wird sie hinzugefuegt
+     */
+    private addChangedBetreuungToList(betreuung: TSBetreuung) {
+        let betreuungAlreadyChanged: boolean = false;
+        this.changedBetreuungen.forEach((changedBetreuung) => {
+            if (changedBetreuung.id === betreuung.id) {
+                betreuungAlreadyChanged = true;
+            }
+        });
+        if (!betreuungAlreadyChanged) {
+            this.changedBetreuungen.push(betreuung);
         }
     }
 
-    public removeAbwesenheit(abwesenheit: AbwesenheitUI): void {
-        var remTitleText = this.$translate.instant('ABWESENHEIT_LOESCHEN');
-        this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
-            title: remTitleText,
-            deleteText: ''
-        }).then(() => {   //User confirmed removal
-            let indexOf = this.abwesenheitList.lastIndexOf(abwesenheit);
-            if (indexOf >= 0) {
-                if (abwesenheit.kindBetreuung) {
-                    this.removed = true;
-                    this.addChangedBetreuungToList(abwesenheit);
-                }
-                this.abwesenheitList.splice(indexOf, 1);
+    /**
+     * Nur wenn die Abwesenheit bereits existiert (in der DB) wird es nach Confirmation gefragt.
+     * Sonst wird sie einfach geloescht
+     */
+    public removeAbwesenheitConfirm(abwesenheit: AbwesenheitUI): void {
+        if (abwesenheit.abwesenheit.id) {
+            var remTitleText = this.$translate.instant('ABWESENHEIT_LOESCHEN');
+            this.DvDialog.showDialog(removeDialogTemplate, RemoveDialogController, {
+                title: remTitleText,
+                deleteText: ''
+            }).then(() => {   //User confirmed removal
+                this.removeAbwesenheit(abwesenheit);
+            });
+        } else {
+            this.removeAbwesenheit(abwesenheit);
+        }
+    }
+
+    private removeAbwesenheit(abwesenheit: AbwesenheitUI) {
+        let indexOf = this.abwesenheitList.lastIndexOf(abwesenheit);
+        if (indexOf >= 0) {
+            if (abwesenheit.kindBetreuung) {
+                this.removed = true;
+                this.addChangedBetreuungToList(abwesenheit.kindBetreuung.betreuung);
             }
-        });
+            this.abwesenheitList.splice(indexOf, 1);
+        }
     }
 
     public createAbwesenheit(): void {
@@ -178,5 +200,17 @@ export class AbwesenheitViewController extends AbstractGesuchViewController {
             return kindBetreuung.kind.kindJA.getFullName() + ' - ' + kindBetreuung.betreuung.institutionStammdaten.institution.name;
         }
         return '';
+    }
+
+    /**
+     * Diese Methode macht es moeglich, dass in einer Abwesenheit, das Betreuungsangebot geaendert werden kann. Damit fuegen wir die
+     * Betreuung der Liste changedBetreuungen hinzu, damit sie danach aktualisiert wird
+     */
+    public changedAngebot(oldKindID: string, oldBetreuungID: string): void {
+        this.gesuchModelManager.findKindById(oldKindID);
+        this.gesuchModelManager.findBetreuungById(oldBetreuungID);
+        if (this.gesuchModelManager.getBetreuungToWorkWith() && this.gesuchModelManager.getBetreuungToWorkWith().id) {
+            this.addChangedBetreuungToList(this.gesuchModelManager.getBetreuungToWorkWith());
+        }
     }
 }

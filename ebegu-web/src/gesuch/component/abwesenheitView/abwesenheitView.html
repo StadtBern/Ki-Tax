@@ -26,8 +26,9 @@
                                     <select name="betreuungsangebot-{{$index}}" id="betreuungsangebot-{{$index}}"
                                             ng-model="abwesenheitInstance.kindBetreuung"
                                             class="form-control"
-                                            ng-options="vm.getTextForBetreuungDDL(betreuungsangebot) for betreuungsangebot in vm.getBetreuungList()"
-                                            ng-required="true">
+                                            ng-options="betreuungsangebot as vm.getTextForBetreuungDDL(betreuungsangebot) for betreuungsangebot in vm.getBetreuungList()"
+                                            ng-required="true"
+                                            ng-change="vm.changedAngebot('{{abwesenheitInstance.kindBetreuung.kind.id}}', '{{abwesenheitInstance.kindBetreuung.betreuung.id}}')">
                                     </select>
                                     <dv-error-messages for="form['betreuungsangebot-' + $index].$error"
                                                        class="error"></dv-error-messages>
@@ -73,7 +74,7 @@
                              dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()">
                             <div class="col-md-12">
                                 <dv-loading-button type="button"
-                                                   button-click="vm.removeAbwesenheit(abwesenheitInstance)"
+                                                   button-click="vm.removeAbwesenheitConfirm(abwesenheitInstance)"
                                                    button-class="dv-btn-sm color-warning">
                                     <i class="glyphicon glyphicon-minus"></i>
                                     <span data-translate="ABWESENHEIT_ENTFERNEN"></span>

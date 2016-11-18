@@ -25,6 +25,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -64,6 +66,27 @@ public class BetreuungResource {
 			return converter.betreuungToJAX(persistedBetreuung);
 		}
 		throw new EbeguEntityNotFoundException("saveBetreuung", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "KindContainerId invalid: " + kindId.getId());
+	}
+
+	@Nonnull
+	@PUT
+	@Path("/all/{abwesenheit}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<JaxBetreuung> saveBetreuungen(
+		@Nonnull @NotNull @Valid List<JaxBetreuung> betreuungenJAXP,
+		@Nonnull @NotNull @PathParam ("abwesenheit") Boolean abwesenheit,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) throws EbeguException {
+
+		List<JaxBetreuung> resultBetreuungen = new ArrayList<>();
+		betreuungenJAXP.forEach(betreuungJAXP -> {
+			Betreuung convertedBetreuung = converter.betreuungToStoreableEntity(betreuungJAXP);
+			Betreuung persistedBetreuung = this.betreuungService.saveBetreuung(convertedBetreuung, abwesenheit);
+
+			resultBetreuungen.add(converter.betreuungToJAX(persistedBetreuung));
+		});
+		return resultBetreuungen;
 	}
 
 	@Nullable

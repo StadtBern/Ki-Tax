@@ -365,7 +365,7 @@ describe('gesuchModelManager', function () {
         describe('updateBetreuungen', function () {
             it('should return empty Promise for undefined betreuung list', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen(undefined, true);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(undefined, true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
                 promise.then(() => {
@@ -376,7 +376,7 @@ describe('gesuchModelManager', function () {
             });
             it('should return empty Promise for empty betreuung list', function() {
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([], true);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen([], true);
                 expect(promise).toBeDefined();
                 let promiseExecuted: boolean = false;
                 promise.then(() => {
@@ -388,33 +388,30 @@ describe('gesuchModelManager', function () {
             it('should return a Promise with the Betreuung that was updated', function() {
                 let myGesuch = new TSGesuch();
                 myGesuch.id = 'gesuchID';
-                TestDataUtil.setAbstractFieldsUndefined(myGesuch);
                 let betreuung: TSBetreuung = new TSBetreuung();
                 betreuung.id = 'betreuungId';
                 let betreuungen: Array<TSBetreuung> = [betreuung];
-                let kindContainer: TSKindContainer = new TSKindContainer(undefined, undefined, betreuungen);
-                kindContainer.id = 'kindID';
-                myGesuch.kindContainers = [kindContainer];
 
-                spyOn(gesuchModelManager, 'updateBetreuung').and.returnValue($q.when(betreuung));
+                spyOn(betreuungRS, 'saveBetreuungen').and.returnValue($q.when([betreuung]));
                 spyOn(wizardStepManager, 'findStepsFromGesuch').and.returnValue($q.when(undefined));
                 spyOn(gesuchModelManager, 'setHiddenSteps').and.returnValue(undefined);
                 gesuchModelManager.setGesuch(myGesuch);
 
                 TestDataUtil.mockDefaultGesuchModelManagerHttpCalls($httpBackend);
 
-                let promise: IPromise<TSBetreuung> = gesuchModelManager.updateBetreuungen([betreuung], true);
+                let promise: IPromise<Array<TSBetreuung>> = gesuchModelManager.updateBetreuungen(betreuungen, true);
 
                 expect(promise).toBeDefined();
-                let promiseExecuted: TSBetreuung = undefined;
+                let promiseExecuted: Array<TSBetreuung> = undefined;
                 promise.then((response) => {
                     promiseExecuted = response;
                 });
 
                 $httpBackend.flush();
 
-                expect(gesuchModelManager.updateBetreuung).toHaveBeenCalled();
-                expect(promiseExecuted).toEqual(betreuung);
+                expect(betreuungRS.saveBetreuungen).toHaveBeenCalledWith(betreuungen, myGesuch.id, true);
+                expect(promiseExecuted.length).toBe(1);
+                expect(promiseExecuted[0]).toEqual(betreuung);
             });
         });
     });
