@@ -189,9 +189,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     }
 
     public showDokumenteKomplett(): boolean {
-        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
-            this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG) ||
+        return this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ERSTE_MAHNUNG_DOKUMENTE_HOCHGELADEN) ||
             this.gesuchModelManager.isGesuchStatus(TSAntragStatus.ZWEITE_MAHNUNG_DOKUMENTE_HOCHGELADEN);
     }
 
@@ -235,9 +233,10 @@ export class VerfuegenListViewController extends AbstractGesuchViewController {
     public dokumenteKomplett(): void {
         // Gesuchstatus zuruecksetzen UND die Mahnungen auf erledigt setzen
         this.setGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA).then(any => {
-            this.mahnungRS.dokumenteKomplettErhalten(this.getGesuch());
-            this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
-                this.mahnungList = reloadedMahnungen;
+            this.mahnungRS.dokumenteKomplettErhalten(this.getGesuch()).then(any => {
+                this.mahnungRS.findMahnungen(this.getGesuch()).then(reloadedMahnungen => {
+                    this.mahnungList = reloadedMahnungen;
+                });
             });
         });
     }

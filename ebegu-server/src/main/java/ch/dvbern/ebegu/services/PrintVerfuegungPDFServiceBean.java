@@ -74,9 +74,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 
 		final DateRange gueltigkeit = betreuung.extractGesuchsperiode().getGueltigkeit();
 		EbeguVorlageKey vorlageFromBetreuungsangebottyp = getVorlageFromBetreuungsangebottyp(betreuung);
-		String defaultVorlagePathFromBetreuungsangebottyp = getDefaultVorlagePathFromBetreuungsangebottyp(betreuung);
-		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(),
-			gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp, defaultVorlagePathFromBetreuungsangebottyp);
+		InputStream is = getVorlageStream(gueltigkeit.getGueltigAb(), gueltigkeit.getGueltigBis(), vorlageFromBetreuungsangebottyp);
 		Objects.requireNonNull(is, "Vorlage fuer die Verfuegung nicht gefunden");
 
 		try {
@@ -88,31 +86,6 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 		} catch (IOException | DocTemplateException e) {
 			throw new MergeDocException("printVerfuegungen()",
 				"Bei der Generierung der Verfuegungsmustervorlage ist ein Fehler aufgetreten", e, new Objects[] {});
-		}
-	}
-
-	/**
-	 * Sucht die Vorlage by default je nach dem welchen Angebottype, die Betreuung hat.
-	 * Die Vorlage fuer KITA wird im Fehlerfall zurueckgegeben
-	 * @param betreuung
-	 * @return
-	 */
-	@Nonnull
-	private String getDefaultVorlagePathFromBetreuungsangebottyp(final Betreuung betreuung) {
-		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
-			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
-				//key verwenden wie unten
-				return "/vorlagen/Nichteintretensverfuegung.docx";
-			} else {
-				return "/vorlagen/Infoschreiben Maxtarif.docx";
-			}
-		}
-		switch (betreuung.getBetreuungsangebotTyp()) {
-			case TAGESELTERN_KLEINKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_kleinkinder.docx";
-			case TAGESELTERN_SCHULKIND: return "/vorlagen/Verfuegungsmuster_tageseltern_schulkinder.docx";
-			case TAGI: return "/vorlagen/Verfuegungsmuster_tagesstaette_schulkinder.docx";
-			case KITA:
-			default: return "/vorlagen/Verfuegungsmuster_kita.docx";
 		}
 	}
 

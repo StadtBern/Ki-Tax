@@ -268,6 +268,9 @@ export class VerfuegenViewController extends AbstractGesuchViewController {
     }
 
     public showNichtEintretenPdfLink(): boolean {
-        return !this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
+        let nichtVerfuegt = !this.isBetreuungInStatus(TSBetreuungsstatus.VERFUEGT);
+        let mutation = !this.gesuchModelManager.isErstgesuch();
+        let nichtNichteingetreten = !this.isBetreuungInStatus(TSBetreuungsstatus.NICHT_EINGETRETEN);
+        return nichtVerfuegt && !(mutation && nichtNichteingetreten);
     }
 }

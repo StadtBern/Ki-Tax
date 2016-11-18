@@ -72,7 +72,14 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	@Override
 	@Nonnull
 	public Collection<Mahnung> findMahnungenForGesuch(@Nonnull Gesuch gesuch) {
-		return criteriaQueryHelper.getEntitiesByAttribute(Mahnung.class, gesuch, Mahnung_.gesuch);
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
+		Root<Mahnung> root = query.from(Mahnung.class);
+
+		Predicate prediateGesuch = cb.equal(root.get(Mahnung_.gesuch), gesuch);
+		query.where(prediateGesuch);
+		query.orderBy(cb.asc(root.get(Mahnung_.timestampErstellt)));
+		return persistence.getCriteriaResults(query);
 	}
 
 	@Override
