@@ -6,6 +6,7 @@ import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mahnung_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.MahnungTyp;
+import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.rules.Anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.util.DokumenteUtil;
@@ -49,12 +50,12 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	public Mahnung createMahnung(@Nonnull Mahnung mahnung) {
 		Objects.requireNonNull(mahnung);
 		if (MahnungTyp.ZWEITE_MAHNUNG.equals(mahnung.getMahnungTyp())) {
-			// Die Vorgaenger-Mahnung suchen und verknuepfen, wird im Dokument gebraucht
-			Optional<Mahnung> erstMahnung = findAktiveErstMahnung();
+			// Die Erst-Mahnung suchen und verknuepfen, wird im Dokument gebraucht
+			Optional<Mahnung> erstMahnung = findAktiveErstMahnung(mahnung.getGesuch());
 			if (erstMahnung.isPresent()) {
 				mahnung.setVorgaengerId(erstMahnung.get().getId());
 			} else {
-				throw new IllegalArgumentException("Zweitmahnung erstellt ohne aktive Erstmahnung!");
+				throw new EbeguRuntimeException("createMahnung", "Zweitmahnung erstellt ohne aktive Erstmahnung! "+mahnung.getId(), mahnung.getId());
 			}
 		}
 		return persistence.persist(mahnung);
@@ -134,14 +135,15 @@ public class MahnungServiceBean extends AbstractBaseService implements MahnungSe
 	}
 
 	@Nonnull
-	private Optional<Mahnung> findAktiveErstMahnung() {
+	private Optional<Mahnung> findAktiveErstMahnung(Gesuch gesuch) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mahnung> query = cb.createQuery(Mahnung.class);
 		Root<Mahnung> root = query.from(Mahnung.class);
 		query.select(root);
 		Predicate predicateTyp = cb.equal(root.get(Mahnung_.mahnungTyp), MahnungTyp.ERSTE_MAHNUNG);
 		Predicate predicateAktiv = cb.equal(root.get(Mahnung_.active), Boolean.TRUE);
-		query.where(predicateTyp, predicateAktiv);
+		Predicate predicateGesuch = cb.equal(root.get(Mahnung_.gesuch), gesuch);
+		query.where(predicateTyp, predicateAktiv, predicateGesuch);
 		// Wirft eine NonUnique-Exception, falls mehrere aktive ErstMahnungen!
 		Mahnung aktiveErstMahnung = persistence.getCriteriaSingleResult(query);
 		return Optional.ofNullable(aktiveErstMahnung);

@@ -450,30 +450,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 	@Override
 	@Nonnull
-	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-		Join<Gesuch, AntragStatusHistory> join = root.join(Gesuch_.antragStatusHistories, JoinType.INNER);
-
-		Predicate predicateStatus = cb.equal(root.get(Gesuch_.status), AntragStatus.VERFUEGT);
-		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuch.getGesuchsperiode());
-		Predicate predicateAntragStatus = cb.equal(join.get(AntragStatusHistory_.status), AntragStatus.VERFUEGT);
-		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall), gesuch.getFall());
-
-		query.where(predicateStatus, predicateGesuchsperiode, predicateAntragStatus, predicateFall);
-		query.select(root);
-		query.orderBy(cb.desc(join.get(AntragStatusHistory_.datum))); // Das mit dem neuesten Verfuegungsdatum
-		List<Gesuch> criteriaResults = persistence.getCriteriaResults(query, 1);
-		if (criteriaResults.isEmpty()) {
-			return Optional.empty();
-		}
-		return Optional.of(criteriaResults.get(0));
-	}
-
-	@Override
-	@Nonnull
 	public Optional<Gesuch> getNeuestesVerfuegtesVorgaengerGesuchFuerGesuch(Gesuch gesuch) {
 		if (StringUtils.isNotEmpty(gesuch.getVorgaengerId())) {
 			Optional<Gesuch> gesuchOptional = findGesuch(gesuch.getVorgaengerId());
@@ -489,9 +465,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		return Optional.empty();
 	}
 
+	@Override
+	@Nonnull
+	public Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuch gesuch) {
+		return getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall());
+	}
+
 	@Nonnull
 	private Optional<Gesuch> getNeustesVerfuegtesGesuchFuerGesuch(Gesuchsperiode gesuchsperiode, Fall fall) {
-		// TODO (team): Diese methode macht, was sie sagt, evt. waere es aber sicherer, das *vorgänger*gesuch zu suchen? Könnte über die neue vorgängerId gemacht werden
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
 

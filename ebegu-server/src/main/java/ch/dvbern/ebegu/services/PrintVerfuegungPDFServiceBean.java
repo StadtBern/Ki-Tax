@@ -101,6 +101,7 @@ public class PrintVerfuegungPDFServiceBean extends AbstractPrintService implemen
 	private String getDefaultVorlagePathFromBetreuungsangebottyp(final Betreuung betreuung) {
 		if (Betreuungsstatus.NICHT_EINGETRETEN.equals(betreuung.getBetreuungsstatus())) {
 			if (betreuung.getBetreuungsangebotTyp().isAngebotJugendamtKleinkind()) {
+				//key verwenden wie unten
 				return "/vorlagen/Nichteintretensverfuegung.docx";
 			} else {
 				return "/vorlagen/Infoschreiben Maxtarif.docx";

@@ -19,7 +19,7 @@ public class Mahnung extends AbstractEntity {
 	private static final long serialVersionUID = -4210097012467874096L;
 
 	@NotNull
-	@ManyToOne(optional = false,  fetch = FetchType.EAGER)
+	@ManyToOne(optional = false)
 	@JoinColumn(foreignKey = @ForeignKey(name = "FK_mahnung_gesuch_id"))
 	private Gesuch gesuch;
 
