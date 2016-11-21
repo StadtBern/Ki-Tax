@@ -126,6 +126,12 @@ public class TestfaelleServiceBeanTest extends AbstractEbeguTest {
 	}
 
 	@Test
+	public void testVerfuegung_Abwesenheit() {
+		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.Abwesenheit, true, true);
+		ueberpruefeVerfuegungszeitabschnitte(gesuch, null);
+	}
+
+	@Test
 	public void testVerfuegung_WaeltiDagmar_mutationHeirat() {
 		Gesuch gesuch = testfaelleService.createAndSaveTestfaelle(TestfaelleService.WaeltiDagmar, true, true);
 		final Gesuch mutieren = testfaelleService.mutierenHeirat(gesuch.getFall().getFallNummer(),

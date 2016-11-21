@@ -63,6 +63,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 	private boolean bezahltVollkosten;
 
 	@Transient
+	private boolean longAbwesenheit;
+
+	@Transient
 	private int anspruchspensumRest;
 
 	@Max(100)
@@ -121,6 +124,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.wohnsitzNichtInGemeindeGS2 = other.wohnsitzNichtInGemeindeGS2;
 		this.kindMinestalterUnterschritten = other.kindMinestalterUnterschritten;
 		this.bezahltVollkosten = other.bezahltVollkosten;
+		this.longAbwesenheit = other.isLongAbwesenheit();
 		this.anspruchspensumRest = other.anspruchspensumRest;
 		this.betreuungspensum = other.betreuungspensum;
 		this.anspruchberechtigtesPensum = other.anspruchberechtigtesPensum;
@@ -267,6 +271,14 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.bezahltVollkosten = bezahltVollkosten;
 	}
 
+	public boolean isLongAbwesenheit() {
+		return longAbwesenheit;
+	}
+
+	public void setLongAbwesenheit(boolean longAbwesenheit) {
+		this.longAbwesenheit = longAbwesenheit;
+	}
+
 	public boolean isWohnsitzNichtInGemeindeGS1() {
 		return wohnsitzNichtInGemeindeGS1 != null ? wohnsitzNichtInGemeindeGS1 : true;
 	}
@@ -348,6 +360,9 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 		this.setWohnsitzNichtInGemeindeGS2(this.isWohnsitzNichtInGemeindeGS2() && other.isWohnsitzNichtInGemeindeGS2());
 
 		this.setBezahltVollkosten(this.isBezahltVollkosten() || other.isBezahltVollkosten());
+
+		this.setLongAbwesenheit(this.isLongAbwesenheit() || other.isLongAbwesenheit());
+
 		this.setKindMinestalterUnterschritten(this.isKindMinestalterUnterschritten() || other.isKindMinestalterUnterschritten());
 		// Der Familiengroessen Abzug kann nicht linear addiert werden, daher darf es hier nie uebschneidungen geben
 		if (other.getAbzugFamGroesse() != null) {
@@ -451,6 +466,7 @@ public class VerfuegungZeitabschnitt extends AbstractDateRangedEntity implements
 			(isWohnsitzNichtInGemeindeGS1() && isWohnsitzNichtInGemeindeGS2()) == (that.isWohnsitzNichtInGemeindeGS1() && that.isWohnsitzNichtInGemeindeGS2()) &&
 			zuSpaetEingereicht == that.zuSpaetEingereicht &&
 			bezahltVollkosten == that.bezahltVollkosten &&
+			longAbwesenheit == that.longAbwesenheit &&
 			kindMinestalterUnterschritten == that.kindMinestalterUnterschritten;
 	}
 

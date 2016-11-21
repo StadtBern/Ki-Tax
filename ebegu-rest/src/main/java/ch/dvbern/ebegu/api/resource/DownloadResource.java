@@ -235,6 +235,7 @@ public class DownloadResource {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
 			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
 				betreuung.getBetreuungspensumContainers().size();
+				betreuung.getAbwesenheitContainers().size();
 			}
 		}
 		if (gesuch.getGesuchsteller1() != null) {
