@@ -1,7 +1,7 @@
 package ch.dvbern.ebegu.rest.test;
 
 import ch.dvbern.ebegu.entities.AbstractEntity;
-import ch.dvbern.ebegu.tets.util.InfinispanTestCacheSetupTask;
+import ch.dvbern.ebegu.tets.util.LoginmoduleAndCacheSetupTask;
 import ch.dvbern.lib.cdipersistence.ISessionContextService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
@@ -30,7 +30,7 @@ import java.io.File;
 @ArquillianSuiteDeployment
 @UsingDataSet("datasets/empty.xml")
 @Transactional(TransactionMode.DISABLED)
-@ServerSetup(InfinispanTestCacheSetupTask.class)
+@ServerSetup(LoginmoduleAndCacheSetupTask.class)
 public abstract class AbstractEbeguRestTest {
 
 

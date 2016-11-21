@@ -43,7 +43,6 @@ public class FinanzielleSituationRechnerTest extends AbstractEbeguTest {
 
 
 
-
 	@Test
 	public void testPositiverDurschnittlicherGewinn() throws Exception {
 		Betreuung betreuung = TestDataUtil.createGesuchWithBetreuungspensum(false);
